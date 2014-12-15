@@ -17,7 +17,9 @@ class CreateAccountGroupsTable extends Migration {
 			$table->increments('id');
 			$table->string('account_group_code');
 			$table->string('account_group_name');
-			$table->index(array('account_group_code', 'account_group_name'));
+			
+			$table->index('account_group_code');
+			$table->index('account_group_nam');
 		});
 	}
 

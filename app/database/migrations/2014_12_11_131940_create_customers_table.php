@@ -19,7 +19,10 @@ class CreateCustomersTable extends Migration {
 			$table->string('customer_code');
 			$table->string('customer_name');
 			$table->boolean('active')->default(0);
-			$table->index(array('area_code' ,'customer_code', 'customer_name'));
+
+			$table->index('area_code');
+			$table->index('customer_code');
+			$table->index('customer_name');
 		});
 	}
 

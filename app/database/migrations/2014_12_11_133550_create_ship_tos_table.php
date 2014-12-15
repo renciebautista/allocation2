@@ -20,7 +20,10 @@ class CreateShipTosTable extends Migration {
 			$table->string('ship_to_name');
 			$table->integer('split')->nullable();
 			$table->boolean('active')->default(0);
-			$table->index(array('customer_code' ,'ship_to_code', 'ship_to_name'));
+			
+			$table->index('customer_code');
+			$table->index('ship_to_code');
+			$table->index('ship_to_name');
 		});
 	}
 

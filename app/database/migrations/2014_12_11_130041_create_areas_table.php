@@ -18,7 +18,10 @@ class CreateAreasTable extends Migration {
 			$table->string('group_code');
 			$table->string('area_code');
 			$table->string('area_name');
-			$table->index(array('group_code' ,'area_code', 'area_name'));
+
+			$table->index('group_code');
+			$table->index('area_code');
+			$table->index('area_name');
 		});
 	}
 

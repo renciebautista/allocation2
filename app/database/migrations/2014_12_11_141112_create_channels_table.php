@@ -17,7 +17,9 @@ class CreateChannelsTable extends Migration {
 			$table->increments('id');
 			$table->string('channel_code');
 			$table->string('channel_name');
-			$table->index(array('channel_code', 'channel_name'));
+
+			$table->index('channel_code');
+			$table->index('channel_name');
 		});
 	}
 
