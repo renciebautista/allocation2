@@ -16,6 +16,8 @@ Route::get('/', function()
 	return View::make('hello');
 });
 
+
+
 Route::get('/customer', function(){
 	$channels = DB::table('channels')->get();
 	$data = DB::table('groups')->get();
@@ -54,3 +56,6 @@ Route::get('/customer', function(){
 });
 
 Route::resource('scheme', 'SchemeController');
+Route::resource('activity', 'ActivityController');
+
+Route::get('api/customers', 'api\CustomerController@index');

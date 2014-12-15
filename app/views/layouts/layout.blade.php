@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
-  	<head>
+	<head>
 		<meta charset="utf-8">
 		<title>Allocation System</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
+		{{ HTML::style('assets/plugins/jquery-ui-1.11.2/jquery-ui.min.css') }}
 		{{ HTML::style('assets/plugins/twitter-bootstrap/css/bootstrap.css') }}
 		{{ HTML::style('assets/plugins/twitter-bootstrap/css/bootswatch.min.css') }}
 		{{ HTML::style('assets/plugins/font-awesome-4.2.0/css/font-awesome.min.css') }}
 		{{ HTML::style('assets/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css') }}
 		{{ HTML::style('assets/plugins/DataTables-1.10.4/css/jquery.dataTables.min.css') }}
+		{{ HTML::style('assets/plugins/fancytree-2.6.0/skin-xp/ui.fancytree.min.css') }}
 		{{ HTML::style('assets/css/styles.css') }}
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
@@ -20,8 +22,8 @@
 			  padding-top: 50px;
 			}
 		</style>
-  	</head>
-  	<body>
+	</head>
+	<body>
 		<div class="navbar navbar-default navbar-fixed-top">
 		  <div class="container">
 			<div class="navbar-header">
@@ -85,6 +87,9 @@
 			</footer> -->
 		</div>
 	{{ HTML::script('assets/js/jquery-1.11.1.min.js') }}
+
+	{{ HTML::script('assets/plugins/jquery-ui-1.11.2/jquery-ui.min.js') }}
+
 	{{ HTML::script('assets/plugins/twitter-bootstrap/js/bootstrap.min.js') }}
 
 	{{ HTML::script('assets/plugins/bootstrap-multiselect/js/bootstrap-multiselect.js') }}
@@ -93,9 +98,57 @@
 
 	{{ HTML::script('assets/js/selectchain.js') }}
 
+	{{ HTML::script('assets/plugins/fancytree-2.6.0/jquery.fancytree.min.js') }}
+
 	{{ HTML::script('assets/js/function.js') }}
 
 	<script type="text/javascript">
+		var treeData = [
+	{title: "Folder", isFolder: true, key: "id3",
+	  children: [
+		{title: "Sub-item 3.1",
+		  children: [
+			{title: "Sub-item 3.1.1", key: "id3.1.1" },
+			{title: "Sub-item 3.1.2", key: "id3.1.2" }
+		  ]
+		},
+		{title: "Sub-item 3.2",
+		  children: [
+			{title: "Sub-item 3.2.1", key: "id3.2.1" },
+			{title: "Sub-item 3.2.2", key: "id3.2.2" }
+		  ]
+		}
+	  ]
+	},
+	{title: "Document with some children (expanded on init)",isFolder: true, key: "id4",
+	  children: [
+		{title: "Sub-item 4.1 (active on init)", activate: true,
+		  children: [
+			{title: "Sub-item 4.1.1", key: "id4.1.1" },
+			{title: "Sub-item 4.1.2", key: "id4.1.2" }
+		  ]
+		},
+		{title: "Sub-item 4.2 (selected on init)", selected: true,
+		  children: [
+			{title: "Sub-item 4.2.1", key: "id4.2.1" },
+			{title: "Sub-item 4.2.2", key: "id4.2.2" }
+		  ]
+		},
+		{title: "Sub-item 4.3 (hideCheckbox)", hideCheckbox: true },
+		{title: "Sub-item 4.4 (unselectable)", unselectable: true }
+	  ]
+	}
+  ];
+
+		$("#tree3").fancytree({
+			checkbox: true,
+      		selectMode: 3,
+		  	source: {
+				url: "../api/customers"
+		  	}
+		});
+
+
 		function GetSelectValues(select) {
 		  var foo = []; 
 			select.each(function(i, selected){ 
@@ -107,7 +160,7 @@
 		function GetSelectValue(select) {
 		  var foo = []; 
 			select.each(function(i, selected){ 
-			  	foo[i] = $(selected).text(); 
+				foo[i] = $(selected).text(); 
 			});
 			if(foo.length > 1){
 				return 'MULTI';
@@ -119,7 +172,7 @@
 		function GetSelectText(select) {
 		  var foo = []; 
 			select.each(function(i, selected){ 
-			  	foo[i] = $(selected).text(); 
+				foo[i] = $(selected).text(); 
 			});
 			return foo;
 		}
@@ -129,8 +182,8 @@
 		$(document).ready(function() {
 		@section('page-script')
 
-        @show
-        });
-    </script>
-  	</body>
+		@show
+		});
+	</script>
+	</body>
 </html>
