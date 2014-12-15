@@ -15,11 +15,11 @@ class CreateOutletsTable extends Migration {
 		Schema::create('outlets', function(Blueprint $table)
 		{
 			$table->increments('id');
-			$table->string('area_code');
+			$table->string('area_code')->nullable();
 			$table->string('ship_to_code')->nullable();
 			$table->string('account_name')->nullable();
 			$table->string('customer_code')->nullable();
-			$table->string('outlet_code');
+			$table->string('outlet_code')->nullable();
 			$table->index('area_code');
 			$table->index('ship_to_code');
 			$table->index('account_name');

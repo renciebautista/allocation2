@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder {
 		$this->call('ChannelsTableSeeder');
 		$this->call('AccountsTableSeeder');
 		$this->call('OutletsTableSeeder');
+		$this->call('MotherChildSkusTableSeeder');
 	}
 
 }
