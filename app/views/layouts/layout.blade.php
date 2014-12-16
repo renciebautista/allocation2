@@ -21,6 +21,11 @@
 		body {
 			  padding-top: 50px;
 			}
+		.fancytree-container {
+		  height: 425px;
+		  overflow: auto;
+		}
+
 		</style>
 	</head>
 	<body>
@@ -141,6 +146,7 @@
   ];
 
 		$("#tree3").fancytree({
+			extensions: [],
 			checkbox: true,
       		selectMode: 3,
 		  	source: {

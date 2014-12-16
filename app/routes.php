@@ -55,7 +55,14 @@ Route::get('/customer', function(){
 	return View::make('customer',compact('data'));
 });
 
+Route::get('activity/{id}/scheme', 'SchemeController@index');
 Route::resource('scheme', 'SchemeController');
 Route::resource('activity', 'ActivityController');
 
-Route::get('api/customers', 'api\CustomerController@index');
+
+Route::group(array('prefix' => 'api'), function()
+{
+	Route::get('customers', 'api\CustomerController@index');
+	Route::post('category', 'api\SkuController@category');
+	Route::post('brand', 'api\SkuController@brand');
+});

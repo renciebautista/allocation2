@@ -10,7 +10,9 @@
 	min-width: 150px;
 	text-align: center;
 }
-
+.filter { 
+  padding-bottom: 10px;
+}
 .mytable{
 	margin-top: 10px;
 

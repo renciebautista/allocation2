@@ -10,6 +10,8 @@
 	</div>
 </div>
 
+@include('partials.notification')
+
 <div class="row">
 	{{ Form::open(array('route' => 'activity.store','class' => 'bs-component')) }}
 	<div class="col-lg-12">
@@ -34,7 +36,7 @@
 								<div class="row">
 									<div class="col-lg-12">
 										{{ Form::label('scope', 'Scope Type', array('class' => 'control-label')) }}
-										{{ Form::select('scope', $scopes, null, array('class' => 'form-control')) }}
+										{{ Form::select('scope', $scope_types, null, array('class' => 'form-control')) }}
 									</div>
 								</div>
 							</div>
@@ -233,18 +235,6 @@ $('select#brand').multiselect({
 	includeSelectAllOption: true,
 	enableFiltering: true,
 	onDropdownHide: function(event) {
-		$.ajax({
-		   	type: "POST",
-		   	data: {brand: GetSelectValues($('select#brand :selected'))},
-		   	url: "../api/sku",
-		   	success: function(data){
-		    	$('select#sku').empty();
-		   		$.each(data, function(i, text) {
-		   			$('<option />', {value: i, text: text}).appendTo($('select#sku')); 
-		   		});
-		   	$('select#sku').multiselect('rebuild');
-		   }
-		});
 		suggest_name();
 	}
 });
@@ -256,74 +246,7 @@ $('select#objective').multiselect({
 });
 
 
-$('select#area_group').multiselect({
-	maxHeight: 200,
-	includeSelectAllOption: true,
-	enableFiltering: true,
-	onDropdownHide: function(event) {
-		getCustomer();
-	}
-});
 
-$('select#channel').multiselect({
-	maxHeight: 200,
-	includeSelectAllOption: true,
-	enableFiltering: true,
-	onDropdownHide: function(event) {
-		getCustomer();
-	}
-});
-
-function getCustomer(){
-	$.ajax({
-	   	type: "POST",
-	   	data: {group: GetSelectText($('select#area_group :selected')), channel: GetSelectText($('select#channel :selected'))},
-	   	url: "../api/customer",
-	   	success: function(data){
-	    	$('select#customer').empty();
-	   		$.each(data, function(i, text) {
-	   			$('<option />', {value: i, text: text}).appendTo($('select#customer')); 
-	   		});
-	   	$('select#customer').multiselect('rebuild');
-	   }
-	});
-}
-
-$('select#customer').multiselect({
-	maxHeight: 200,
-	includeSelectAllOption: true,
-	enableFiltering: true,
-	onDropdownHide: function(event) {
-		$.ajax({
-		   	type: "POST",
-		   	data: {customer: GetSelectValues($('select#customer :selected'))},
-		   	url: "../api/outlet",
-		   	success: function(data){
-		    	$('select#outlet').empty();
-		   		$.each(data, function(i, text) {
-		   			$('<option />', {value: i, text: text}).appendTo($('select#outlet')); 
-		   		});
-		   	$('select#outlet').multiselect('rebuild');
-		   }
-		});
-	}
-});
-
-$('select#outlet').multiselect({
-	maxHeight: 200,
-	includeSelectAllOption: true,
-	enableFiltering: true
-});
-
-$('select#sku').multiselect({
-	maxHeight: 200,
-	includeSelectAllOption: true,
-	enableFiltering: true
-});
-
-$('select#scope,select#cycle,select#activity_type').on("change",function(){
-   	suggest_name();
-});
 
 function suggest_name(){
 	$scope = $("#scope option:selected").text();
