@@ -43,41 +43,54 @@ class ActivityController extends \BaseController {
 	 */
 	public function store()
 	{
-		$validation = Validator::make(Input::all(), Activity::$rules);
 
-		if($validation->passes())
-		{
-			DB::transaction(function() {
-				$activity = new Activity;
-				$activity->circular_name = Input::get('circular_name');
-				$activity->scope_type_id = Input::get('scope');
-				$activity->cycle_id = Input::get('cycle');
-				$activity->activity_type_id = Input::get('activity_type');
-				$activity->division_code = Input::get('division');
-				$activity->budget_tts = Input::get('budget_tts');
-				$activity->budget_pe = Input::get('budget_pe');
-				$activity->background = Input::get('background');
-				$activity->save();
+		dd(Input::all());
+		// $validation = Validator::make(Input::all(), Activity::$rules);
 
-				$activity_category = array();
-				foreach (Input::get('category') as $category){
-					$activity_category[] = array('activity_id' => $activity->id, 'category_code' => $category);
-				}
+		// if($validation->passes())
+		// {
+		// 	DB::transaction(function() {
+		// 		$activity = new Activity;
+		// 		$activity->circular_name = Input::get('circular_name');
+		// 		$activity->scope_type_id = Input::get('scope');
+		// 		$activity->cycle_id = Input::get('cycle');
+		// 		$activity->activity_type_id = Input::get('activity_type');
+		// 		$activity->division_code = Input::get('division');
+		// 		$activity->budget_tts = Input::get('budget_tts');
+		// 		$activity->budget_pe = Input::get('budget_pe');
+		// 		$activity->background = Input::get('background');
+		// 		$activity->save();
 
-				ActivityCategory::insert($activity_category);
-			});
+		// 		$activity_category = array();
+		// 		foreach (Input::get('category') as $category){
+		// 			$activity_category[] = array('activity_id' => $activity->id, 'category_code' => $category);
+		// 		}
+		// 		ActivityCategory::insert($activity_category);
 
-			return Redirect::route('activity.index')
-				->with('class', 'alert-success')
-				->with('message', 'Record successfuly created.');
+		// 		$activity_brand = array();
+		// 		foreach (Input::get('brand') as $brand){
+		// 			$activity_brand[] = array('activity_id' => $activity->id, 'brand_code' => $brand);
+		// 		}
+		// 		ActivityBrand::insert($activity_brand);
+
+		// 		$activity_objective = array();
+		// 		foreach (Input::get('objective') as $objective){
+		// 			$activity_objective[] = array('activity_id' => $activity->id, 'objective_id' => $objective);
+		// 		}
+		// 		ActivityObjective::insert($activity_objective);
+		// 	});
+
+		// 	return Redirect::route('activity.index')
+		// 		->with('class', 'alert-success')
+		// 		->with('message', 'Record successfuly created.');
 			
-		}
+		// }
 
-		return Redirect::route('activity.create')
-			->withInput()
-			->withErrors($validation)
-			->with('class', 'alert-danger')
-			->with('message', 'There were validation errors.');
+		// return Redirect::route('activity.create')
+		// 	->withInput()
+		// 	->withErrors($validation)
+		// 	->with('class', 'alert-danger')
+		// 	->with('message', 'There were validation errors.');
 	}
 
 	/**

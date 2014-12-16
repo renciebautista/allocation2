@@ -176,7 +176,11 @@
 				<h3 class="panel-title">Customer</h3>
 			</div>
 			<div class="panel-body">
-				<div id="tree3"></div>
+			  <div id="tree3"></div>
+			  <div>Selected keys: <span id="echoSelection3">-</span></div>
+			  <div>Selected root keys: <span id="echoSelectionRootKeys3">-</span></div>
+			  <div>Selected root nodes: <span id="echoSelectionRoots3">-</span></div>
+
 			</div>
 		</div>
 	</div>
@@ -267,6 +271,15 @@ function suggest_name(){
 	}
 	$('#circular_name').val($scope+'_'+$cycle+'_'+$activity_type+'_'+$division+$cat+$brd);
 }
+
+$("form").submit(function() {
+      // Render hidden <input> elements for active and selected nodes
+      $("#tree3").fancytree("getTree").generateFormElements();
+
+      alert("POST data:\n" + jQuery.param($(this).serializeArray()));
+      // return false to prevent submission of this sample
+      return false;
+    });
 
 
 @stop

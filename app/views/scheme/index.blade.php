@@ -19,7 +19,7 @@
 		  	</div>
 		  	<button type="submit" class="btn btn-success"><i class="fa fa-search"></i> Search</button>
 
-		  	<a href="{{ URL::action('SchemeController@create') }}" class="btn btn-primary"><i class="fa fa-plus"></i> Scheme</a>
+		  	<a href="{{ URL::action('SchemeController@create', $id) }}" class="btn btn-primary"><i class="fa fa-plus"></i> Scheme</a>
 		  	<a href="{{ URL::action('ActivityController@index') }}" class="btn btn-default">Back</a>
 		{{ Form::close() }}
 	</div>

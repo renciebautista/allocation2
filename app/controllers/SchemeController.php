@@ -10,7 +10,7 @@ class SchemeController extends \BaseController {
 	 */
 	public function index($id)
 	{
-		return View::make('scheme.index');
+		return View::make('scheme.index', compact('id'));
 	}
 
 	/**
@@ -19,9 +19,9 @@ class SchemeController extends \BaseController {
 	 *
 	 * @return Response
 	 */
-	public function create()
+	public function create($id)
 	{
-		//
+		return View::make('scheme.create', compact('id'));
 	}
 
 	/**

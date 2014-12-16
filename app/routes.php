@@ -56,6 +56,7 @@ Route::get('/customer', function(){
 });
 
 Route::get('activity/{id}/scheme', 'SchemeController@index');
+Route::get('activity/{id}/scheme/create', 'SchemeController@create');
 Route::resource('scheme', 'SchemeController');
 Route::resource('activity', 'ActivityController');
 

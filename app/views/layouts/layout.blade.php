@@ -151,7 +151,23 @@
       		selectMode: 3,
 		  	source: {
 				url: "../api/customers"
-		  	}
+		  	},
+		      select: function(event, data) {
+		        // Get a list of all selected nodes, and convert to a key array:
+		        var selKeys = $.map(data.tree.getSelectedNodes(), function(node){
+		          return node.key;
+		        });
+		        $("#echoSelection3").text(selKeys.join(", "));
+
+		        // Get a list of all selected TOP nodes
+		        var selRootNodes = data.tree.getSelectedNodes(true);
+		        // ... and convert to a key array:
+		        var selRootKeys = $.map(selRootNodes, function(node){
+		          return node.key;
+		        });
+		        $("#echoSelectionRootKeys3").text(selRootKeys.join(", "));
+		        $("#echoSelectionRoots3").text(selRootNodes.join(", "));
+		      },
 		});
 
 
