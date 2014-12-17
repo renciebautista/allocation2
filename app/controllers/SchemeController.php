@@ -47,8 +47,11 @@ class SchemeController extends \BaseController {
 		$skus = array('20226140');
 		$channels = array('C1','C2','C3');
 		$qty = 10000;
-		$allocations = Allocation::customers($skus,$channels);
-		$total_sales = Allocation::total_sales($skus,$channels);
+		// $allocations = Allocation::customers($skus,$channels);
+		// $total_sales = Allocation::total_sales($skus,$channels);
+		$_allocation = new AllocationRepository;
+		$allocations = $_allocation->customers($skus,$channels);
+		$total_sales = $_allocation->total_sales();
 		return View::make('scheme.show', compact('allocations','total_sales', 'qty'));
 	}
 

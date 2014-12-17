@@ -9,3 +9,13 @@
 		- split
 
 	- mt alloc on ship to split sold to allocation total
+
+	- ship to ado error not showing
+	- sold to allocatio split by sold to ado
+
+	- summary ng allocation
+		per group,area, account group
+		per a
+
+E51605	15102438	SAN SAN MARKETING - LA UNION			Y  - no ship_to sales
+E51605	15182230	SAN SAN MARKETING - LA UNION MAG		N

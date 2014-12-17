@@ -28,6 +28,7 @@
 						<th class="rotate-45"><div><span>SHIP TO GSV</span></div></th>
 						<th class="rotate-45"><div><span>SHIP TO ALLOC</span></div></th>
 						<th class="rotate-45"><div><span>OUTLET GSV</span></div></th>
+						<th class="rotate-45"><div><span>OUTLET ALLOC %</span></div></th>
 						<th class="rotate-45"><div><span>OUTLET ALLOC</span></div></th>
 						<th class="rotate-45"><div><span>ALLOCATION</span></div></th>
 						<th class="rotate-45"><div><span>COMPUTED ALLOCATION</span></div></th>
@@ -64,7 +65,7 @@
 						<td> 0.00 %</td>
 						<td> 0 </td>
 						@endif
-						
+						<td></td>
 						<td></td>
 						<td></td>
 						<td></td>
@@ -88,6 +89,19 @@
 							<td></td>
 							<td></td>
 							<td>{{ $shipto['gsv'] }}</td>
+							<td>
+								@if(!is_null( $shipto['split']))
+								{{ round(($alloc * $shipto['split']) / 100) }}
+								@else
+									@if($shipto['gsv'] >0)
+										<?php 
+											$shipto_alloc = number_format(round(round($shipto['gsv'] / $customer->ado_total,2) * $alloc));
+										 ?>
+										{{ $shipto_alloc }}
+									@else
+									@endif
+								@endif
+							</td>
 							<td></td>
 							<td></td>
 							<td></td>
@@ -97,6 +111,7 @@
 							<td></td>
 						</tr>
 							@if(!empty($shipto['accounts'] ))
+								<?php $others = $shipto_alloc; ?>
 								@foreach($shipto['accounts'] as $account)
 								<tr class="warning">
 									<td>{{ $customer->group_name }}</td>
@@ -111,13 +126,49 @@
 									<td></td>
 									<td></td>
 									<td>{{ number_format($account['gsv'],2) }}</td>
-									<td></td>
+									<td>
+										@if($customer->gsv > 0)
+										<?php 
+											$p = round($account['gsv']/$customer->gsv * 100,2)
+										 ?>
+										 {{ $p }} %
+										 @else
+										 0.00 %
+										 @endif
+									</td>
+									<td>
+										<?php 
+											$account_alloc = number_format(round(($shipto_alloc * $p) / 100));
+											$others -= $account_alloc;
+										 ?>
+										{{ $account_alloc }}
+									</td>
 									<td></td>
 									<td></td>
 									<td></td>
 									<td></td>
 								</tr>
 								@endforeach	
+								<tr class="warning">
+									<td>{{ $customer->group_name }}</td>
+									<td>{{ $customer->area_name }}</td>
+									<td>{{ $customer->customer_name }}</td>
+									<td>{{ $shipto['ship_to_name'] }}</td>
+									<td></td>
+									<td>OTHERS</td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td>{{ ($others > 0) ? $others: 0 }}</td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+								</tr>
 							@endif
 						@endforeach	
 						@endif
@@ -131,7 +182,8 @@
 
 
 <div>
-	<label>Total Sales</label> : {{ number_format($total_sales,2)}}
+	<label>Minimum Limit</label> : 10 <br>
+	<label>Total Sales</label> : {{ number_format($total_sales,2)}}<br>
 	<label>Total Allocattion</label> : {{ number_format($total_alloc)}}
 </div>
 @stop

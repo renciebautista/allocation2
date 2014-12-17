@@ -1,11 +1,13 @@
 <?php
 
-class Allocation extends \Eloquent {
-	protected $fillable = [];
+class AllocationRepository  {
+	private $mt_total_sales = 0;
+	private $dt_total_sales = 0;
+	private $_mt_primary_sales;
+	private $_dt_secondary_sales;
 
-	public static function customers($skus,$channels){
 
-
+	public function customers($skus,$channels){
 		$customers = DB::table('customers')
 			->select('areas.group_code as group_code','group_name','area_name','customer_name','customer_code','customers.area_code as area_code')
 			->join('areas', 'customers.area_code', '=', 'areas.area_code')
@@ -16,7 +18,7 @@ class Allocation extends \Eloquent {
 
 		// get all ship to
 		$_shiptos = DB::table('ship_tos')
-			->select('customer_code','ship_to_code','ship_to_name')
+			->select('customer_code','ship_to_code','ship_to_name','split')
 			->where('ship_tos.active', 1)
 			->get();
 
@@ -44,20 +46,24 @@ class Allocation extends \Eloquent {
 
 		
 		// get all MT Primary Sales
-		$_mt_primary_sales = DB::table('mt_primary_sales')
-					->select(DB::raw("area_code,customer_code, SUM(gsv) as gsv"))
+		$this->_mt_primary_sales = DB::table('mt_primary_sales')
+					->select(DB::raw("mt_primary_sales.area_code,mt_primary_sales.customer_code, SUM(gsv) as gsv"))
+					->join('customers', 'mt_primary_sales.customer_code', '=', 'customers.customer_code')
 					->whereIn('child_sku_code', $child_skus)
-					->groupBy(array('area_code','customer_code'))
+					->where('customers.active', 1)
+					->groupBy(array('mt_primary_sales.area_code','mt_primary_sales.customer_code'))
 					->get();
 		
 
 		// get all DT Secondary Sales
-		$_dt_secondary_sales = DB::table('dt_secondary_sales')
-					->select(DB::raw("area_code,customer_code, SUM(gsv) as gsv"))
+		$this->_dt_secondary_sales =DB::table('dt_secondary_sales')
+					->select(DB::raw("dt_secondary_sales.area_code,dt_secondary_sales.customer_code, SUM(gsv) as gsv"))
 					->join('sub_channels', 'dt_secondary_sales.coc_03_code', '=', 'sub_channels.coc_03_code')
+					->join('customers', 'dt_secondary_sales.customer_code', '=', 'customers.customer_code')
 					->whereIn('child_sku_code', $child_skus)
 					->whereIn('channel_code', $channels)
-					->groupBy(array('area_code','customer_code'))
+					->where('customers.active', 1)
+					->groupBy(array('dt_secondary_sales.area_code','dt_secondary_sales.customer_code'))
 					->get();
 
 		// get Ship To Sales
@@ -76,6 +82,7 @@ class Allocation extends \Eloquent {
 
 		$data = array();
 		foreach ($customers as $customer) {
+			$ado_total = 0;
 			foreach ($_shiptos as $_shipto) {
 				if($customer->customer_code == $_shipto->customer_code){
 					if(!is_null($_shipto->ship_to_code)){
@@ -116,22 +123,27 @@ class Allocation extends \Eloquent {
 					foreach ($_ship_to_sales as $_ship_to_sale) {
 						if($_shipto->ship_to_code == $_ship_to_sale->ship_to_code){
 							$_shipto->gsv = $_ship_to_sale->gsv;
+							$ado_total += $_ship_to_sale->gsv;
 							$abort_shipto = true;
 						}else{
-							$_shipto->gsv = 0;
+							$_shipto->gsv = '';
 						}
 						if ($abort_shipto === true) break;
 					}
 					// end ship to sales
 				
 					$customer->shiptos[] = (array)	$_shipto;
+
+					$customer->ado_total = $ado_total;
+				}else{
+
 				}
 
 			}
 
 			if($customer->group_code == 'E1397'){
 				$abort = false;
-				foreach ($_dt_secondary_sales as $_dt_secondary_sale) {
+				foreach ($this->_dt_secondary_sales as $_dt_secondary_sale) {
 					if(($customer->customer_code == $_dt_secondary_sale->customer_code) && ($customer->area_code == $_dt_secondary_sale->area_code)){
 						$customer->gsv = $_dt_secondary_sale->gsv;
 						$abort = true;
@@ -143,7 +155,7 @@ class Allocation extends \Eloquent {
 				}
 			}else{
 				$abort = false;
-				foreach ($_mt_primary_sales as $_mt_primary_sale) {
+				foreach ($this->_mt_primary_sales as $_mt_primary_sale) {
 					if(($customer->customer_code == $_mt_primary_sale->customer_code) && ($customer->area_code == $_mt_primary_sale->area_code)){
 						$customer->gsv = $_mt_primary_sale->gsv;
 						$abort = true;
@@ -163,55 +175,21 @@ class Allocation extends \Eloquent {
 	}
 
 
-	public static function total_sales($skus,$channels){
+	public function total_sales(){
 
-		// get all child skus
-		$child_sku = DB::table('mother_child_skus')
-			->select('child_sku')
-			->whereIn('mother_sku',$skus)->get();
-
-		// merge main and child skus
-		$data = array();
-		if(count($child_sku)>0){
-			foreach ($child_sku as $value) {
-				$data[] = $value->child_sku;
-			}
-		}
-		$child_skus = array_merge($data, $skus);
-
-
-		$_mt_primary_sales = DB::table('mt_primary_sales')
-					->select(DB::raw("mt_primary_sales.area_code,mt_primary_sales.customer_code, SUM(gsv) as gsv"))
-					->join('customers', 'mt_primary_sales.customer_code', '=', 'customers.customer_code')
-					->whereIn('child_sku_code', $child_skus)
-					->where('customers.active', 1)
-					->groupBy(array('mt_primary_sales.area_code','mt_primary_sales.customer_code'))
-					->get();
-		$_mt_primary_total_sales = 0;
-		foreach ($_mt_primary_sales  as $row) {
+		foreach ($this->_mt_primary_sales  as $row) {
 			if($row->gsv > 0){
-				$_mt_primary_total_sales += $row->gsv;
+				$this->mt_total_sales += $row->gsv;
 			}
 		}
 
-		// get all DT Secondary Sales
-		$_dt_secondary_sales = DB::table('dt_secondary_sales')
-					->select(DB::raw("dt_secondary_sales.area_code,dt_secondary_sales.customer_code, SUM(gsv) as gsv"))
-					->join('sub_channels', 'dt_secondary_sales.coc_03_code', '=', 'sub_channels.coc_03_code')
-					->join('customers', 'dt_secondary_sales.customer_code', '=', 'customers.customer_code')
-					->whereIn('child_sku_code', $child_skus)
-					->whereIn('channel_code', $channels)
-					->where('customers.active', 1)
-					->groupBy(array('dt_secondary_sales.area_code','dt_secondary_sales.customer_code'))
-					->get();
-		$_dt_secondary_total_sales =0;
-		foreach ($_dt_secondary_sales  as $row) {
+		foreach ($this->_dt_secondary_sales  as $row) {
 			if($row->gsv > 0){
-				$_dt_secondary_total_sales += $row->gsv;
+				$this->dt_total_sales += $row->gsv;
 			}
 		}
 
-		return $_mt_primary_total_sales + $_dt_secondary_total_sales;
+		return $this->dt_total_sales + $this->mt_total_sales;
 	}
 
 }
