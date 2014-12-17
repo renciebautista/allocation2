@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder {
 		$this->call('ShipTosTableSeeder');
 		$this->call('AccountGroupsTableSeeder');
 		$this->call('ChannelsTableSeeder');
+		$this->call('SubChannelsTableSeeder');
 		$this->call('AccountsTableSeeder');
 		$this->call('OutletsTableSeeder');
 		$this->call('MotherChildSkusTableSeeder');
@@ -33,6 +34,7 @@ class DatabaseSeeder extends Seeder {
 		$this->call('SkusTableSeeder');
 
 		$this->call('ObjectivesTableSeeder');
+
 	}
 
 }

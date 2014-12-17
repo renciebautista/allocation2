@@ -44,7 +44,7 @@
 				<li class="dropdown">
 				  <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="themes">Transaction <span class="caret"></span></a>
 				  <ul class="dropdown-menu" aria-labelledby="themes">
-					<li></li>	
+					<li>{{ HTML::linkRoute('activity.index', 'Activity') }}</li>	
 				  </ul>
 				</li>
 				<li>

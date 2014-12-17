@@ -272,6 +272,10 @@ function suggest_name(){
 	$('#circular_name').val($scope+'_'+$cycle+'_'+$activity_type+'_'+$division+$cat+$brd);
 }
 
+$('select#scope,select#cycle,select#activity_type').on("change",function(){
+   	suggest_name();
+});
+
 $("form").submit(function() {
       // Render hidden <input> elements for active and selected nodes
       $("#tree3").fancytree("getTree").generateFormElements();

@@ -3,8 +3,8 @@
 class Allocation extends \Eloquent {
 	protected $fillable = [];
 
-	public static function customers(){
-		$skus = array('20226140');
+	public static function customers($skus,$channels){
+
 
 		$customers = DB::table('customers')
 			->select('areas.group_code as group_code','group_name','area_name','customer_name','customer_code','customers.area_code as area_code')
@@ -49,11 +49,14 @@ class Allocation extends \Eloquent {
 					->whereIn('child_sku_code', $child_skus)
 					->groupBy(array('area_code','customer_code'))
 					->get();
+		
 
 		// get all DT Secondary Sales
 		$_dt_secondary_sales = DB::table('dt_secondary_sales')
 					->select(DB::raw("area_code,customer_code, SUM(gsv) as gsv"))
+					->join('sub_channels', 'dt_secondary_sales.coc_03_code', '=', 'sub_channels.coc_03_code')
 					->whereIn('child_sku_code', $child_skus)
+					->whereIn('channel_code', $channels)
 					->groupBy(array('area_code','customer_code'))
 					->get();
 
@@ -66,7 +69,9 @@ class Allocation extends \Eloquent {
 
 		// get Outlet Sales
 		$_outlet_sales = DB::table('outlet_sales')
+					->join('sub_channels', 'outlet_sales.coc_03_code', '=', 'sub_channels.coc_03_code')
 					->whereIn('child_sku_code', $child_skus)
+					->whereIn('channel_code', $channels)
 					->get();	
 
 		$data = array();
@@ -151,11 +156,69 @@ class Allocation extends \Eloquent {
 			}
 			$data[] = (array)$customer;
 		}
-
 		// echo '<pre>';
 		// print_r($customers);
 		// echo '</pre>';
 		return $customers;
+	}
+
+	public static function total_sales($skus,$channels){
+
+		// get all child skus
+		$child_sku = DB::table('mother_child_skus')
+			->select('child_sku')
+			->whereIn('mother_sku',$skus)->get();
+
+		// merge main and child skus
+		$data = array();
+		if(count($child_sku)>0){
+			foreach ($child_sku as $value) {
+				$data[] = $value->child_sku;
+			}
+		}
+		$child_skus = array_merge($data, $skus);
+
+		$customers = DB::table('customers')
+			->select('areas.group_code as group_code','group_name','area_name','customer_name','customer_code','customers.area_code as area_code')
+			->join('areas', 'customers.area_code', '=', 'areas.area_code')
+			->join('groups', 'areas.group_code', '=', 'groups.group_code')
+			->where('customers.active', 1)
+			->orderBy('customers.id')
+			->get();
+
+
+		$_mt_primary_sales = DB::table('mt_primary_sales')
+					->select(DB::raw("mt_primary_sales.area_code,mt_primary_sales.customer_code, SUM(gsv) as gsv"))
+					->join('customers', 'mt_primary_sales.customer_code', '=', 'customers.customer_code')
+					->whereIn('child_sku_code', $child_skus)
+					->where('customers.active', 1)
+					->groupBy(array('mt_primary_sales.area_code','mt_primary_sales.customer_code'))
+					->get();
+		$_mt_primary_total_sales = 0;
+		foreach ($_mt_primary_sales  as $row) {
+			if($row->gsv > 0){
+				$_mt_primary_total_sales += $row->gsv;
+			}
+		}
+
+		// get all DT Secondary Sales
+		$_dt_secondary_sales = DB::table('dt_secondary_sales')
+					->select(DB::raw("dt_secondary_sales.area_code,dt_secondary_sales.customer_code, SUM(gsv) as gsv"))
+					->join('sub_channels', 'dt_secondary_sales.coc_03_code', '=', 'sub_channels.coc_03_code')
+					->join('customers', 'dt_secondary_sales.customer_code', '=', 'customers.customer_code')
+					->whereIn('child_sku_code', $child_skus)
+					->whereIn('channel_code', $channels)
+					->where('customers.active', 1)
+					->groupBy(array('dt_secondary_sales.area_code','dt_secondary_sales.customer_code'))
+					->get();
+		$_dt_secondary_total_sales =0;
+		foreach ($_dt_secondary_sales  as $row) {
+			if($row->gsv > 0){
+				$_dt_secondary_total_sales += $row->gsv;
+			}
+		}
+
+		return $_mt_primary_total_sales + $_dt_secondary_total_sales;
 	}
 
 }

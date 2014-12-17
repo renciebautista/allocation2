@@ -22,8 +22,11 @@
 }
 
 #allocation{
-	/*font-size: 13px;	*/
+	font-size: 12px;	
 	max-height: 400px;
+}
+#allocation .warning{
+  background-color: #f30000;
 }
 #allocation .info, .warning{
   color: #FFF;

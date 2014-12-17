@@ -44,8 +44,12 @@ class SchemeController extends \BaseController {
 	 */
 	public function show($id)
 	{
-		$allocations = Allocation::customers();
-		return View::make('scheme.show', compact('allocations'));
+		$skus = array('20226140');
+		$channels = array('C1','C2','C3');
+		$qty = 10000;
+		$allocations = Allocation::customers($skus,$channels);
+		$total_sales = Allocation::total_sales($skus,$channels);
+		return View::make('scheme.show', compact('allocations','total_sales', 'qty'));
 	}
 
 	/**
