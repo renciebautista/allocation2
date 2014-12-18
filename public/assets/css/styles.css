@@ -25,6 +25,41 @@
 	font-size: 12px;	
 	/*max-height: 400px;*/
 }
+#allocation {
+  table {
+        width: 100%;
+    }
+
+  thead, tbody, tr, td, th { display: block; }
+
+  tr:after {
+      content: ' ';
+      display: block;
+      visibility: hidden;
+      clear: both;
+  }
+
+  thead th {
+      height: 30px;
+
+      /*text-align: left;*/
+  }
+
+  tbody {
+      height: 120px;
+      overflow-y: auto;
+  }
+
+  thead {
+      /* fallback */
+  }
+
+
+  tbody td, thead th {
+      width: 19.2%;
+      float: left;
+  }
+}
 #allocation .warning{
   background-color: #f30000;
 }
@@ -100,37 +135,3 @@
   // white-space: nowrap; /*whether to display in one line or not*/
 }
 
-#allocation {
-  table {
-        width: 100%;
-    }
-
-thead, tbody, tr, td, th { display: block; }
-
-tr:after {
-    content: ' ';
-    display: block;
-    visibility: hidden;
-    clear: both;
-}
-
-thead th {
-    height: 30px;
-
-    /*text-align: left;*/
-}
-
-tbody {
-    height: 120px;
-    overflow-y: auto;
-}
-
-thead {
-    /* fallback */
-}
-
-
-tbody td, thead th {
-    width: 19.2%;
-    float: left;
-}

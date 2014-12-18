@@ -13,10 +13,10 @@
 <div class="row mytable">
 	<div class="col-lg-12">
 		<div id="allocation" class="table-responsive">
-			<table id="customer-allocation" class="table table-condensed ">
+			<table id="customer-allocation" class="table table-condensed display compact ">
 				<thead>
 					<tr>
-						<th>Area Group</th>
+						<th>Group</th>
 						<th>Area</th>
 						<th>Sold To</th>
 						<th>Ship To</th>

@@ -207,7 +207,7 @@
 			"dom": 'C<"clear">lfrtip',
 			"bSort": false,
 			"searching": false,
-	       	"scrollY": "300px",
+	       	"scrollY": $(window).height()/2,
 	        "scrollX": "100%",
 	        "scrollCollapse": true,
 	        "paging": false
