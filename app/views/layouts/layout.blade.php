@@ -10,6 +10,8 @@
 		{{ HTML::style('assets/plugins/font-awesome-4.2.0/css/font-awesome.min.css') }}
 		{{ HTML::style('assets/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css') }}
 		{{ HTML::style('assets/plugins/DataTables-1.10.4/css/jquery.dataTables.min.css') }}
+		{{ HTML::style('assets/plugins/FixedColumns-3.0.2/css/dataTables.fixedColumns.min.css') }}
+		{{ HTML::style('assets/plugins/ColVis-1.1.1/css/dataTables.colVis.min.css') }}
 		{{ HTML::style('assets/plugins/fancytree-2.6.0/skin-xp/ui.fancytree.min.css') }}
 		{{ HTML::style('assets/css/styles.css') }}
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -100,6 +102,8 @@
 	{{ HTML::script('assets/plugins/bootstrap-multiselect/js/bootstrap-multiselect.js') }}
 
 	{{ HTML::script('assets/plugins/DataTables-1.10.4/js/jquery.dataTables.min.js') }}
+	{{ HTML::script('assets/plugins/FixedColumns-3.0.2/js/dataTables.fixedColumns.min.js') }}
+	{{ HTML::script('assets/plugins/ColVis-1.1.1/js/dataTables.colVis.min.js') }}
 
 	{{ HTML::script('assets/js/selectchain.js') }}
 
@@ -199,7 +203,18 @@
 			return foo;
 		}
 
-		
+		var table = $('#customer-allocation').DataTable( {
+			"dom": 'C<"clear">lfrtip',
+			"bSort": false,
+			"searching": false,
+	       	"scrollY": "300px",
+	        "scrollX": "100%",
+	        "scrollCollapse": true,
+	        "paging": false
+	    } );
+	   	new $.fn.dataTable.FixedColumns( table, {
+			leftColumns: 6
+		} );
 
 		$(document).ready(function() {
 		@section('page-script')

@@ -23,7 +23,7 @@
 
 #allocation{
 	font-size: 12px;	
-	max-height: 400px;
+	/*max-height: 400px;*/
 }
 #allocation .warning{
   background-color: #f30000;
@@ -133,5 +133,4 @@ thead {
 tbody td, thead th {
     width: 19.2%;
     float: left;
-}
 }

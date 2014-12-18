@@ -13,7 +13,7 @@
 <div class="row mytable">
 	<div class="col-lg-12">
 		<div id="allocation" class="table-responsive">
-			<table id="customer-allocation" class="table table-condensed ">
+			<table id="customer-allocation" class="table table-condensed table-header-rotated">
 				<thead>
 					<tr>
 						<th>Area Group</th>
