@@ -160,7 +160,7 @@
 								<div class="row">
 									<div class="col-lg-12">
 										{{ Form::label('background', 'Background and Rationale', array('class' => 'control-label')) }}
-										{{ Form::textarea('background','',array('class' => 'form-control', 'placeholder' => 'Background and Rationale' , 'size' => '50x12')) }}
+										{{ Form::textarea('background','',array('class' => 'form-control', 'placeholder' => 'Background and Rationale' , 'size' => '50x13')) }}
 									</div>
 								</div>
 							</div>
@@ -173,13 +173,32 @@
 	<div class="col-lg-6">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				<h3 class="panel-title">Customer</h3>
+				<h3 class="panel-title">Channels</h3>
 			</div>
 			<div class="panel-body">
-			  <div id="tree3"></div>
-			  <div>Selected keys: <span id="echoSelection3">-</span></div>
-			  <div>Selected root keys: <span id="echoSelectionRootKeys3">-</span></div>
-			  <div>Selected root nodes: <span id="echoSelectionRoots3">-</span></div>
+			<div class="col-lg-12">
+				<div class="form-group">
+					<div class="row">
+						<div class="col-lg-12">
+							{{ Form::label('channel', 'Channels', array('class' => 'control-label' )) }}
+							{{ Form::select('channel[]', $channels, null, array('id' => 'channel', 'class' => 'form-control', 'multiple' => 'multiple')) }}
+						</div>
+					</div>
+				</div>
+			</div>
+
+			</div>
+		</div>
+	</div>
+
+	<div class="col-lg-6">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<h3 class="panel-title">Customers</h3>
+			</div>
+			<div class="panel-body">
+				<div id="tree3"></div>
+				{{ Form::hidden('customers', null, array('id' => 'customers')) }}
 
 			</div>
 		</div>
@@ -198,16 +217,16 @@
 
 $('select#division').on("change",function(){
 	suggest_name();
-   	$.ajax({
-		   	type: "POST",
-		   	data: {q: $(this).val()},
-		   	url: "../api/category",
-		   	success: function(data){
-		    	$('select#category').empty();
-		   		$.each(data, function(i, text) {
-		   			$('<option />', {value: i, text: text}).appendTo($('select#category')); 
-		   		});
-		   	$('select#category').multiselect('rebuild');
+	$.ajax({
+			type: "POST",
+			data: {q: $(this).val()},
+			url: "../api/category",
+			success: function(data){
+				$('select#category').empty();
+				$.each(data, function(i, text) {
+					$('<option />', {value: i, text: text}).appendTo($('select#category')); 
+				});
+			$('select#category').multiselect('rebuild');
 		   }
 		});
 });
@@ -219,15 +238,15 @@ $('select#category').multiselect({
 	enableFiltering: true,
 	onDropdownHide: function(event) {
 		$.ajax({
-		   	type: "POST",
-		   	data: {categories: GetSelectValues($('select#category :selected'))},
-		   	url: "../api/brand",
-		   	success: function(data){
-		    	$('select#brand').empty();
-		   		$.each(data, function(i, text) {
-		   			$('<option />', {value: i, text: text}).appendTo($('select#brand')); 
-		   		});
-		   	$('select#brand').multiselect('rebuild');
+			type: "POST",
+			data: {categories: GetSelectValues($('select#category :selected'))},
+			url: "../api/brand",
+			success: function(data){
+				$('select#brand').empty();
+				$.each(data, function(i, text) {
+					$('<option />', {value: i, text: text}).appendTo($('select#brand')); 
+				});
+			$('select#brand').multiselect('rebuild');
 		   }
 		});
 		suggest_name();
@@ -249,6 +268,11 @@ $('select#objective').multiselect({
 	enableFiltering: true
 });
 
+$('select#channel').multiselect({
+	maxHeight: 200,
+	includeSelectAllOption: true,
+	enableFiltering: true
+});
 
 
 
@@ -273,20 +297,47 @@ function suggest_name(){
 }
 
 $('select#scope,select#cycle,select#activity_type').on("change",function(){
-   	suggest_name();
+	suggest_name();
 });
 
-$("form").submit(function() {
-      // Render hidden <input> elements for active and selected nodes
-      $("#tree3").fancytree("getTree").generateFormElements();
+// fancy tree
+$("#tree3").fancytree({
+	extensions: [],
+	checkbox: true,
+	selectMode: 3,
+	source: {
+		url: "../api/customers"
+	},
+	  select: function(event, data) {
+		// Get a list of all selected nodes, and convert to a key array:
+		// var selKeys = $.map(data.tree.getSelectedNodes(), function(node){
+		//   return node.key;
+		// });
+		// $("#echoSelection3").text(selKeys.join(", "));
 
-      alert("POST data:\n" + jQuery.param($(this).serializeArray()));
-      // return false to prevent submission of this sample
-      return false;
-    });
+		// Get a list of all selected TOP nodes
+		var selRootNodes = data.tree.getSelectedNodes(true);
+		// ... and convert to a key array:
+		var selRootKeys = $.map(selRootNodes, function(node){
+		  return node.key;
+		});
+		$("#echoSelectionRootKeys3").text(selRootKeys.join(", "));
+		$("#customers").val(selRootKeys.join(", "));
+		// $("#echoSelectionRoots3").text(selRootNodes.join(", "));
+	  },
+});
+
+
+//$("form").submit(function() {
+	  // Render hidden <input> elements for active and selected nodes
+	  //$("#tree3").fancytree("getTree").generateFormElements();
+
+	  //alert("POST data:\n" + jQuery.param($(this).serializeArray()));
+	  // return false to prevent submission of this sample
+	 ///return false;
+	//});
 
 
 @stop
 
 
-	

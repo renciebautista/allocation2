@@ -15,13 +15,13 @@
 		{{ Form::open(array('method' => 'get','class' => 'form-inline')) }}
 		  	<div class="filter">
 		  		<label class="radio-inline">
-			  		<input type="radio" name="status" value="1"> Drafted
+		  			<input type="radio" name="status" value="1" <?php echo Helper::oldRadio('status', '1', true); ?>> Drafted
 				</label>
 	  	  		<label class="radio-inline">
-			  		<input type="radio" name="status" value="2"> Posted
+	  	  			<input type="radio" name="status" value="2" <?php echo Helper::oldRadio('status', '2'); ?>> Posted
 				</label>
 				<label class="radio-inline">
-			  		<input type="radio" name="status" value="3"> Closed
+			  		<input type="radio" name="status" value="3" <?php echo Helper::oldRadio('status', '3'); ?>> Closed
 				</label>
 			</div>
 		 	<div class="form-group">

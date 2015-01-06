@@ -6,6 +6,10 @@ class AllocationRepository  {
 	private $_mt_primary_sales;
 	private $_dt_secondary_sales;
 
+	public function __construct()  {
+      	
+    }
+
 
 	public function customers($skus,$channels){
 		$customers = DB::table('customers')

@@ -23,10 +23,6 @@
 		body {
 			  padding-top: 50px;
 			}
-		.fancytree-container {
-		  height: 425px;
-		  overflow: auto;
-		}
 
 		</style>
 	</head>
@@ -112,68 +108,9 @@
 	{{ HTML::script('assets/js/function.js') }}
 
 	<script type="text/javascript">
-		var treeData = [
-	{title: "Folder", isFolder: true, key: "id3",
-	  children: [
-		{title: "Sub-item 3.1",
-		  children: [
-			{title: "Sub-item 3.1.1", key: "id3.1.1" },
-			{title: "Sub-item 3.1.2", key: "id3.1.2" }
-		  ]
-		},
-		{title: "Sub-item 3.2",
-		  children: [
-			{title: "Sub-item 3.2.1", key: "id3.2.1" },
-			{title: "Sub-item 3.2.2", key: "id3.2.2" }
-		  ]
-		}
-	  ]
-	},
-	{title: "Document with some children (expanded on init)",isFolder: true, key: "id4",
-	  children: [
-		{title: "Sub-item 4.1 (active on init)", activate: true,
-		  children: [
-			{title: "Sub-item 4.1.1", key: "id4.1.1" },
-			{title: "Sub-item 4.1.2", key: "id4.1.2" }
-		  ]
-		},
-		{title: "Sub-item 4.2 (selected on init)", selected: true,
-		  children: [
-			{title: "Sub-item 4.2.1", key: "id4.2.1" },
-			{title: "Sub-item 4.2.2", key: "id4.2.2" }
-		  ]
-		},
-		{title: "Sub-item 4.3 (hideCheckbox)", hideCheckbox: true },
-		{title: "Sub-item 4.4 (unselectable)", unselectable: true }
-	  ]
-	}
-  ];
 
-		$("#tree3").fancytree({
-			extensions: [],
-			checkbox: true,
-      		selectMode: 3,
-		  	source: {
-				url: "../api/customers"
-		  	},
-		      select: function(event, data) {
-		        // Get a list of all selected nodes, and convert to a key array:
-		        var selKeys = $.map(data.tree.getSelectedNodes(), function(node){
-		          return node.key;
-		        });
-		        $("#echoSelection3").text(selKeys.join(", "));
 
-		        // Get a list of all selected TOP nodes
-		        var selRootNodes = data.tree.getSelectedNodes(true);
-		        // ... and convert to a key array:
-		        var selRootKeys = $.map(selRootNodes, function(node){
-		          return node.key;
-		        });
-		        $("#echoSelectionRootKeys3").text(selRootKeys.join(", "));
-		        $("#echoSelectionRoots3").text(selRootNodes.join(", "));
-		      },
-		});
-
+		
 
 		function GetSelectValues(select) {
 		  var foo = []; 
@@ -203,18 +140,7 @@
 			return foo;
 		}
 
-		var table = $('#customer-allocation').DataTable( {
-			"dom": 'C<"clear">lfrtip',
-			"bSort": false,
-			"searching": false,
-	       	"scrollY": $(window).height()/2,
-	        "scrollX": "100%",
-	        "scrollCollapse": true,
-	        "paging": false
-	    } );
-	   	new $.fn.dataTable.FixedColumns( table, {
-			leftColumns: 6
-		} );
+		
 
 		$(document).ready(function() {
 		@section('page-script')

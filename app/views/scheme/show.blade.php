@@ -1,7 +1,10 @@
 @extends('layouts.layout')
 
 @section('content')
-
+<?php 
+	$groups = array();
+	$areas = array();
+ ?>
 <div class="page-header" id="banner">
 	<div class="row">
 	  	<div class="col-lg-8 col-md-7 col-sm-6">
@@ -58,6 +61,19 @@
 							<?php 
 								$alloc = round(($customer->gsv/$total_sales) * $qty);
 								$total_alloc += $alloc;
+
+								if (array_key_exists($customer->group_name, $groups)) {
+								    $groups[$customer->group_name] += $alloc;
+								}else{
+									$groups[$customer->group_name] = $alloc;
+								}
+
+								if (array_key_exists($customer->area_name, $areas)) {
+								    $areas[$customer->area_name] += $alloc;
+								}else{
+									$areas[$customer->area_name] = $alloc;
+								}
+								
 							 ?>
 							{{  number_format($alloc) }}
 						</td>
@@ -181,9 +197,105 @@
 </div>
 
 
+
 <div>
 	<label>Minimum Limit</label> : 10 <br>
 	<label>Total Sales</label> : {{ number_format($total_sales,2)}}<br>
 	<label>Total Allocattion</label> : {{ number_format($total_alloc)}}
 </div>
+
+<div class="row mytable">
+	<div class="col-lg-12">
+		<div class="allocation_total table-responsive">
+			<table class="table table-condensed display compact ">
+				<tbody>
+					<tr class="blue">
+						<td>Sub Total MT/DT</td>
+						<td>Allocated</td>
+					</tr>
+					<?php $total_group = 0; ?>
+					@foreach($groups as $key => $group)
+					<tr>
+						<td>{{ $key }}</td>
+						<td>{{ number_format($group) }}</td>
+						<?php $total_group += $group; ?>
+					</tr>
+					@endforeach
+					<tr class="blue">
+						<td>Total</td>
+						<td>{{ number_format($total_group) }}</td>
+					</tr>
+				</tbody>
+			</table> 
+		</div>
+	</div>
+</div>
+
+<div class="row mytable">
+	<div class="col-lg-12">
+		<div class="allocation_total table-responsive">
+			<table class="table table-condensed display compact ">
+				<tbody>
+					<tr class="blue">
+						<td>Sub Total AREA</td>
+						<td>Allocated</td>
+					</tr>
+					<?php $total_area = 0; ?>
+					@foreach($areas as $key => $area)
+					<tr>
+						<td>{{ $key }}</td>
+						<td>{{ number_format($area) }}</td>
+						<?php $total_area += $area; ?>
+					</tr>
+					@endforeach
+					<tr class="blue">
+						<td>Total</td>
+						<td>{{ number_format($total_area) }}</td>
+					</tr>
+				</tbody>
+			</table> 
+		</div>
+	</div>
+</div>
+
+<div class="row mytable">
+	<div class="col-lg-12">
+		<div class="allocation_total table-responsive">
+			<table class="table table-condensed display compact ">
+				<tbody>
+					<tr class="blue">
+						<td>Sub Total BIG 10 & GAISANO</td>
+					</tr>
+					<tr>
+						<td>MT</td>
+					</tr>
+					<tr>
+						<td>MT</td>
+					</tr>
+					<tr class="blue">
+						<td>Total</td>
+					</tr>
+				</tbody>
+			</table> 
+		</div>
+	</div>
+</div>
+
+
+@stop
+
+
+@section('page-script')
+var table = $('#customer-allocation').DataTable( {
+	"dom": 'C<"clear">lfrtip',
+	"bSort": false,
+	"searching": false,
+	"scrollY": $(window).height()/2,
+	"scrollX": "100%",
+	"scrollCollapse": true,
+	"paging": false
+} );
+new $.fn.dataTable.FixedColumns( table, {
+	leftColumns: 6
+} );
 @stop
