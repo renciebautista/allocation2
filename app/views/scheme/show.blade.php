@@ -4,6 +4,7 @@
 <?php 
 	$groups = array();
 	$areas = array();
+	$total_gsv = 0;
  ?>
 <div class="page-header" id="banner">
 	<div class="row">
@@ -54,7 +55,14 @@
 						<td>{{ $customer->customer_name }} TOTAL</td>
 						<td></td>
 						<td></td>
-						<td>{{ number_format($customer->gsv,2) }}</td>
+						<td>
+							<?php 
+							if($customer->gsv > 0){
+								$total_gsv += $customer->gsv;
+							}
+							?>
+							{{ number_format($customer->gsv,2) }}
+						</td>
 						@if( $customer->gsv > 0)
 						<td> {{ round(($customer->gsv/$total_sales) * 100,2) }} %</td>
 						<td>
@@ -200,6 +208,7 @@
 
 <div>
 	<label>Minimum Limit</label> : 10 <br>
+	<label>Total Sales GSV</label> : {{ number_format($total_gsv,2)}}<br>
 	<label>Total Sales</label> : {{ number_format($total_sales,2)}}<br>
 	<label>Total Allocattion</label> : {{ number_format($total_alloc)}}
 </div>

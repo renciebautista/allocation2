@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder {
 		$this->call('GroupsTableSeeder');
 		$this->call('AreasTableSeeder');
 		$this->call('CustomersTableSeeder');
+		$this->call('SplitOldCustomerTableSeeder');
 		$this->call('ShipTosTableSeeder');
 		$this->call('AccountGroupsTableSeeder');
 		$this->call('ChannelsTableSeeder');

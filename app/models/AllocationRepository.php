@@ -12,6 +12,8 @@ class AllocationRepository  {
 
 
 	public function customers($skus,$channels){
+		$salescources = DB::table('split_old_customers')->get();
+
 		$customers = DB::table('customers')
 			->select('areas.group_code as group_code','group_name','area_name','customer_name','customer_code','customers.area_code as area_code')
 			->join('areas', 'customers.area_code', '=', 'areas.area_code')
@@ -54,7 +56,7 @@ class AllocationRepository  {
 					->select(DB::raw("mt_primary_sales.area_code,mt_primary_sales.customer_code, SUM(gsv) as gsv"))
 					->join('customers', 'mt_primary_sales.customer_code', '=', 'customers.customer_code')
 					->whereIn('child_sku_code', $child_skus)
-					->where('customers.active', 1)
+					// ->where('customers.active', 1)
 					->groupBy(array('mt_primary_sales.area_code','mt_primary_sales.customer_code'))
 					->get();
 		
@@ -66,7 +68,7 @@ class AllocationRepository  {
 					->join('customers', 'dt_secondary_sales.customer_code', '=', 'customers.customer_code')
 					->whereIn('child_sku_code', $child_skus)
 					->whereIn('channel_code', $channels)
-					->where('customers.active', 1)
+					// ->where('customers.active', 1)
 					->groupBy(array('dt_secondary_sales.area_code','dt_secondary_sales.customer_code'))
 					->get();
 
@@ -155,8 +157,18 @@ class AllocationRepository  {
 						$customer->gsv = 0;
 					}
 
-					if ($abort === true) break;
+					$customer->gsv += self::additonal_sales($salescources,$customer->customer_code,$this->_dt_secondary_sales);
+
+					if ($abort === true) 
+					{
+						if($customer->gsv > 0){
+							$this->dt_total_sales += $customer->gsv;
+						}
+						break;
+					}
 				}
+
+
 			}else{
 				$abort = false;
 				foreach ($this->_mt_primary_sales as $_mt_primary_sale) {
@@ -167,7 +179,16 @@ class AllocationRepository  {
 						$customer->gsv = 0;
 					}
 
-					if ($abort === true) break;
+					$customer->gsv += self::additonal_sales($salescources,$customer->customer_code,$this->_mt_primary_sales);
+
+					if ($abort === true) 
+					{
+						if($customer->gsv > 0){
+							$this->mt_total_sales += $customer->gsv;
+						}
+						break;
+					}
+						
 				}
 			}
 			$data[] = (array)$customer;
@@ -181,19 +202,35 @@ class AllocationRepository  {
 
 	public function total_sales(){
 
-		foreach ($this->_mt_primary_sales  as $row) {
-			if($row->gsv > 0){
-				$this->mt_total_sales += $row->gsv;
-			}
-		}
+		// foreach ($this->_mt_primary_sales  as $row) {
+		// 	if($row->gsv > 0){
+		// 		$this->mt_total_sales += $row->gsv;
+		// 	}
+		// }
 
-		foreach ($this->_dt_secondary_sales  as $row) {
-			if($row->gsv > 0){
-				$this->dt_total_sales += $row->gsv;
-			}
-		}
+		// foreach ($this->_dt_secondary_sales  as $row) {
+		// 	if($row->gsv > 0){
+		// 		$this->dt_total_sales += $row->gsv;
+		// 	}
+		// }
 
 		return $this->dt_total_sales + $this->mt_total_sales;
+	}
+
+	public function additonal_sales($salescources,$customer_code,$sales){
+		$additonal_sales = 0;
+		foreach ($salescources as $salescource) {
+			if($salescource->active_customer_code == $customer_code){
+				foreach ($sales as $sale) {
+					if($sale->customer_code == $salescource->inactive_customer_code){
+						$additonal_sales += ($sale->gsv * $salescource->split) / 100;
+					}
+				}
+			}
+			
+		}
+
+		return $additonal_sales;
 	}
 
 }
