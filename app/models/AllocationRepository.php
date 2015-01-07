@@ -30,7 +30,8 @@ class AllocationRepository  {
 
 		// get all account
 		$_accounts = DB::table('accounts')
-			->select('ship_to_code','area_code', 'account_name')
+			->select('ship_to_code','area_code', 'account_name', 'channel_name')
+			->join('channels', 'accounts.channel_code', '=', 'channels.channel_code')
 			->get();
 
 		// get all outlet

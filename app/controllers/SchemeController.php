@@ -21,7 +21,18 @@ class SchemeController extends \BaseController {
 	 */
 	public function create($id)
 	{
-		return View::make('scheme.create', compact('id'));
+		$activity = Activity::find($id);
+
+		$categories = ActivityCategory::selected_category($id);
+		$brands = ActivityBrand::selected_brand($id);
+
+		$skus = Sku::orderBy('sku_desc')
+			->where('division_code',$activity->division_code)
+			->whereIn('category_code',$categories)
+			->whereIn('brand_code',$brands)
+			->lists('sku_desc', 'sku_code');
+
+		return View::make('scheme.create', compact('id','skus'));
 	}
 
 	/**
@@ -52,7 +63,7 @@ class SchemeController extends \BaseController {
 		$_allocation = new AllocationRepository;
 		$allocations = $_allocation->customers($skus,$channels);
 		$total_sales = $_allocation->total_sales();
-		return View::make('scheme.show', compact('allocations','total_sales', 'qty'));
+		return View::make('scheme.show', compact('allocations','total_sales', 'qty','id'));
 	}
 
 	/**

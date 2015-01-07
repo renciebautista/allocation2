@@ -142,7 +142,7 @@
 									<td>{{ $customer->area_name }}</td>
 									<td>{{ $customer->customer_name }}</td>
 									<td>{{ $shipto['ship_to_name'] }}</td>
-									<td></td>
+									<td>{{ $account['channel_name'] }}</td>
 									<td>{{ $account['account_name'] }}</td>
 									<td></td>
 									<td></td>
@@ -204,10 +204,8 @@
 	</div>
 </div>
 
-
-
 <div>
-	<label>Minimum Limit</label> : 10 <br>
+	<!-- <label>Minimum Limit</label> : 10 <br> -->
 	<label>Total Sales GSV</label> : {{ number_format($total_gsv,2)}}<br>
 	<label>Total Sales</label> : {{ number_format($total_sales,2)}}<br>
 	<label>Total Allocattion</label> : {{ number_format($total_alloc)}}
@@ -290,7 +288,9 @@
 	</div>
 </div>
 
-
+<div class="form-group">
+	{{ HTML::linkAction('SchemeController@index', 'Back', $id, array('class' => 'btn btn-default')) }}
+</div>
 @stop
 
 

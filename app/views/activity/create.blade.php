@@ -235,6 +235,7 @@ $('select#division').on("change",function(){
 $('select#category').multiselect({
 	maxHeight: 200,
 	includeSelectAllOption: true,
+	enableCaseInsensitiveFiltering: true,
 	enableFiltering: true,
 	onDropdownHide: function(event) {
 		$.ajax({
@@ -256,6 +257,7 @@ $('select#category').multiselect({
 $('select#brand').multiselect({
 	maxHeight: 200,
 	includeSelectAllOption: true,
+	enableCaseInsensitiveFiltering: true,
 	enableFiltering: true,
 	onDropdownHide: function(event) {
 		suggest_name();
@@ -265,12 +267,14 @@ $('select#brand').multiselect({
 $('select#objective').multiselect({
 	maxHeight: 200,
 	includeSelectAllOption: true,
+	enableCaseInsensitiveFiltering: true,
 	enableFiltering: true
 });
 
 $('select#channel').multiselect({
 	maxHeight: 200,
 	includeSelectAllOption: true,
+	enableCaseInsensitiveFiltering: true,
 	enableFiltering: true
 });
 
