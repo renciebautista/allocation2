@@ -62,7 +62,7 @@
 							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="download">User <span class="caret"></span></a>
 							<ul class="dropdown-menu" aria-labelledby="download">
 								<li><a href="./bootstrap.min.css">Profile</a></li>
-								<li><a href="/">Logout</a></li>
+								<li>{{ HTML::linkAction('LoginController@logout' , 'Logout') }}</li>    
 							</ul>
 						</li>
 					</ul>

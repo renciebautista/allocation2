@@ -2,6 +2,14 @@
 
 class LoginController extends \BaseController {
 
+	public function index(){
+		if (Confide::user()) {
+        	return Redirect::to('/dashboard');
+	    } else {
+	        return View::make('login.index');
+	    }
+	}
+
 	public function dologin()
 	{
 		$usernameinput =  Input::get('name');
@@ -36,7 +44,11 @@ class LoginController extends \BaseController {
 		// 		->withInput(Input::except('password'))
 		// 		->with('error', $err_msg);
 		// }
-		
-		
 	}
+
+	public function logout()
+    {
+        Confide::logout();
+        return Redirect::to('/dashboard');
+    }
 }

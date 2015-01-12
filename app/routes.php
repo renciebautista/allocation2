@@ -11,15 +11,8 @@
 |
 */
 
-Route::get('/', function()
-{
-	if (Confide::user()) {
-        return Redirect::to('/dashboard');
-    } else {
-        // return View::make(Config::get('confide::login_form'));
-        return View::make('login.login');
-    }
-});
+
+
 
 
 
@@ -59,15 +52,9 @@ Route::get('/customer', function(){
 	}
 	return View::make('customer',compact('data'));
 });
-
-Route::get('login',function(){
-	if (Confide::user()) {
-        return Redirect::to('/dashboard');
-    } else {
-        // return View::make(Config::get('confide::login_form'));
-        return View::make('login.login');
-    }
-});
+Route::get('/','LoginController@index');
+Route::get('login','LoginController@index');
+Route::get('logout','LoginController@logout');
 
 Route::post('login', 'LoginController@dologin');
 
