@@ -13,8 +13,12 @@
 
 Route::get('/', function()
 {
-	// return View::make('hello');
-	return View::make('login.index');
+	if (Confide::user()) {
+        return Redirect::to('/dashboard');
+    } else {
+        // return View::make(Config::get('confide::login_form'));
+        return View::make('login.login');
+    }
 });
 
 
@@ -57,7 +61,12 @@ Route::get('/customer', function(){
 });
 
 Route::get('login',function(){
-	return View::make('login.index');
+	if (Confide::user()) {
+        return Redirect::to('/dashboard');
+    } else {
+        // return View::make(Config::get('confide::login_form'));
+        return View::make('login.login');
+    }
 });
 
 Route::post('login', 'LoginController@dologin');
