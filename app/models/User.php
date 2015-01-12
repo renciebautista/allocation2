@@ -1,26 +1,40 @@
 <?php
 
-use Illuminate\Auth\UserTrait;
-use Illuminate\Auth\UserInterface;
-use Illuminate\Auth\Reminders\RemindableTrait;
-use Illuminate\Auth\Reminders\RemindableInterface;
+use Zizaco\Confide\ConfideUser;
+use Zizaco\Confide\ConfideUserInterface;
+use Zizaco\Entrust\HasRole;
+ 
+class User extends Eloquent implements ConfideUserInterface {
+    use HasRole;
+    use ConfideUser;
 
-class User extends Eloquent implements UserInterface, RemindableInterface {
+    public static $rules = array(
+    	'username' => 'required|unique:users',
+    	'password' => 'required|min:6|confirmed',
+		'password_confirmation' => 'same:password',
+		'email' => 'required|email|unique:users',
+		'first_name' => 'required',
+		'last_name' => 'required',
+		'group' => 'required|integer|min:1'
+	);
 
-	use UserTrait, RemindableTrait;
+	public static function search($status,$filter){
+		return self::where(function($query) use ($status){
+				if($status ==  1){
+					$query->where('active',1);
+				}elseif($status ==  2){
+					$query->where('active',0);
+				}else{
 
-	/**
-	 * The database table used by the model.
-	 *
-	 * @var string
-	 */
-	protected $table = 'users';
-
-	/**
-	 * The attributes excluded from the model's JSON form.
-	 *
-	 * @var array
-	 */
-	protected $hidden = array('password', 'remember_token');
+				}
+			})
+			->where(function($query) use ($filter){
+				$query->where('first_name', 'LIKE' ,"%$filter%")
+					->orwhere('last_name', 'LIKE' ,"%$filter%")
+					->orwhere('middle_initial', 'LIKE' ,"%$filter%")
+					->orwhere('email', 'LIKE' ,"%$filter%");
+			})
+			->get();
+	}
 
 }

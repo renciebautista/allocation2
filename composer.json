@@ -8,6 +8,8 @@
 		"laravel/framework": "4.2.*",
 		"maatwebsite/excel": "1.*",
 		"flynsarmy/csv-seeder": "1.0.*",
+		"zizaco/confide": "~4.0@dev",
+		"zizaco/entrust": "1.2.*@dev",
 		"barryvdh/laravel-debugbar": "~1.8"
 	},
 	"autoload": {

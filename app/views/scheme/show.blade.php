@@ -17,7 +17,7 @@
 <div class="row mytable">
 	<div class="col-lg-12">
 		<div id="allocation" class="table-responsive">
-			<table id="customer-allocation" class="table table-condensed display compact ">
+			<table id="customer-allocation" class="table table-bordered table-condensed display compact ">
 				<thead>
 					<tr>
 						<th>Group</th>

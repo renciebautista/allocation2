@@ -28,41 +28,46 @@
 	</head>
 	<body>
 		<div class="navbar navbar-default navbar-fixed-top">
-		  <div class="container">
-			<div class="navbar-header">
-			  <a href="../" class="navbar-brand">Allocation System</a>
-			  <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-			  </button>
-			</div>
-			<div class="navbar-collapse collapse" id="navbar-main">
-			  <ul class="nav navbar-nav">
-				<li class="dropdown">
-				  <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="themes">Transaction <span class="caret"></span></a>
-				  <ul class="dropdown-menu" aria-labelledby="themes">
-					<li>{{ HTML::linkRoute('activity.index', 'Activity') }}</li>	
-				  </ul>
-				</li>
-				<li>
-				  <a href="../help/">Help</a>
-				</li>
-				
-			  </ul>
+			<div class="container">
+				<div class="navbar-header">
+					<a href="../" class="navbar-brand">Allocation System</a>
+					<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+				</div>
+				<div class="navbar-collapse collapse" id="navbar-main">
+					<ul class="nav navbar-nav">
+						<li class="dropdown">
+							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="themes">Transaction <span class="caret"></span></a>
+							<ul class="dropdown-menu" aria-labelledby="themes">
+								<li>{{ HTML::linkRoute('activity.index', 'Activity') }}</li>    
+							</ul>
+						</li>
+						<li class="dropdown">
+							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="themes">Maintenance <span class="caret"></span></a>
+							<ul class="dropdown-menu" aria-labelledby="themes">
+								<li>{{ HTML::linkRoute('group.index', 'Group') }}</li>  
+								<li>{{ HTML::linkAction('UsersController@index' , 'User') }}</li>    
+							</ul>
+						</li>
+						<li>
+							<a href="../help/">Help</a>
+						</li>
+					</ul>
 
-			  <ul class="nav navbar-nav navbar-right">
-				<li class="dropdown">
-				  <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="download">User <span class="caret"></span></a>
-				  <ul class="dropdown-menu" aria-labelledby="download">
-					<li><a href="./bootstrap.min.css">Profile</a></li>
-					<li><a href="./bootstrap.css">Logout</a></li>
-				  </ul>
-				</li>
-			  </ul>
-
+					<ul class="nav navbar-nav navbar-right">
+						<li class="dropdown">
+							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="download">User <span class="caret"></span></a>
+							<ul class="dropdown-menu" aria-labelledby="download">
+								<li><a href="./bootstrap.min.css">Profile</a></li>
+								<li><a href="/">Logout</a></li>
+							</ul>
+						</li>
+					</ul>
+				</div>
 			</div>
-		  </div>
 		</div>
 
 		<div class="container">
@@ -108,10 +113,6 @@
 	{{ HTML::script('assets/js/function.js') }}
 
 	<script type="text/javascript">
-
-
-		
-
 		function GetSelectValues(select) {
 		  var foo = []; 
 			select.each(function(i, selected){ 
@@ -139,8 +140,6 @@
 			});
 			return foo;
 		}
-
-		
 
 		$(document).ready(function() {
 		@section('page-script')

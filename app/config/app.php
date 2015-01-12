@@ -123,7 +123,9 @@ return array(
 		'Illuminate\Workbench\WorkbenchServiceProvider',
 		'Maatwebsite\Excel\ExcelServiceProvider',
 		'Barryvdh\Debugbar\ServiceProvider',
-		'Way\Generators\GeneratorsServiceProvider'
+		'Way\Generators\GeneratorsServiceProvider',
+		'Zizaco\Confide\ServiceProvider',
+		'Zizaco\Entrust\EntrustServiceProvider',
 	),
 
 	/*
@@ -192,6 +194,8 @@ return array(
 		'View'              => 'Illuminate\Support\Facades\View',
 		'Excel'			    => 'Maatwebsite\Excel\Facades\Excel',
 		'Debugbar' 			=> 'Barryvdh\Debugbar\Facade',
+		'Confide'    		=> 'Zizaco\Confide\Facade',
+		'Entrust'           => 'Zizaco\Entrust\EntrustFacade',
 
 	),
 
