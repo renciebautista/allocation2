@@ -54,6 +54,7 @@ class AllocationRepository  {
 		$_grps = array();
 		$_areas = array();
 		$_cust = array();
+		$_shp = array();
 		if(!empty($selected_customers)){
 			foreach ($selected_customers as $selected_customer) {
 				$_selected_customer = explode(".", $selected_customer);
@@ -64,6 +65,10 @@ class AllocationRepository  {
 
 				if(!empty($_selected_customer[2])){
 					$_cust[$_selected_customer[1]][] = $_selected_customer[2];
+				}
+
+				if(!empty($_selected_customer[3])){
+					$_shp[$_selected_customer[2]][] = $_selected_customer[3];
 				}
 
 			}
@@ -77,7 +82,10 @@ class AllocationRepository  {
 					->join('customers', 'mt_primary_sales.customer_code', '=', 'customers.customer_code')
 					->whereIn('child_sku_code', $child_skus)
 					->where(function($query) use ($_areas) {
-						$query->whereIn('mt_primary_sales.area_code', $_areas['E1398']);
+						if(!empty($_areas)){
+							$query->whereIn('mt_primary_sales.area_code', $_areas['E1398']);
+						}
+						
 					})
 					->groupBy(array('mt_primary_sales.area_code','mt_primary_sales.customer_code'))
 					->get();
@@ -94,7 +102,10 @@ class AllocationRepository  {
 					->whereIn('child_sku_code', $child_skus)
 					->whereIn('channel_code', $channels)
 					->where(function($query) use ($_areas) {
-						$query->whereIn('dt_secondary_sales.area_code', $_areas['E1397']);
+						if(!empty($_areas)){
+							$query->whereIn('dt_secondary_sales.area_code', $_areas['E1397']);
+						}
+						
 					})
 
 					->groupBy(array('dt_secondary_sales.area_code','dt_secondary_sales.customer_code'))
@@ -110,6 +121,7 @@ class AllocationRepository  {
 
 		// get Outlet Sales
 		$_outlet_sales = DB::table('outlet_sales')
+					->select('area_code','customer_code','account_name','outlet_code','gsv')
 					->join('sub_channels', 'outlet_sales.coc_03_code', '=', 'sub_channels.coc_03_code')
 					->whereIn('child_sku_code', $child_skus)
 					->whereIn('channel_code', $channels)
@@ -158,12 +170,35 @@ class AllocationRepository  {
 					$_shipto->gsv = '';
 					foreach ($_ship_to_sales as $_ship_to_sale) {
 						if($_shipto->ship_to_code == $_ship_to_sale->ship_to_code){
-							$_shipto->gsv = $_ship_to_sale->gsv;
-							$ado_total += $_ship_to_sale->gsv;
+							// $_shipto->gsv = $_ship_to_sale->gsv;
+							if(in_array($customer->group_code, $_grps)){
+								if(!empty($_areas[$customer->group_code])){
+									if(in_array($customer->area_code, $_areas[$customer->group_code])){
+										if(!empty($_cust[$customer->area_code])){
+											if(in_array($customer->customer_code, $_cust[$customer->area_code])){
+												if(!empty($_shp[$customer->customer_code])){
+													if(in_array($_shipto->ship_to_code, $_shp[$customer->customer_code])){
+														$_shipto->gsv = $_ship_to_sale->gsv;
+													}
+												}else{
+													$_shipto->gsv = $_ship_to_sale->gsv;
+												}
+											}
+										}else{
+											$_shipto->gsv = $_ship_to_sale->gsv;
+										}
+									}
+								}else{
+									$_shipto->gsv = $_ship_to_sale->gsv;
+								}
+								
+							}
+							
+							// $ado_total += $_ship_to_sale->gsv;
+							$ado_total += $_shipto->gsv;
 							$abort_shipto = true;
-						}else{
-							$_shipto->gsv = '';
 						}
+						
 						if ($abort_shipto === true) break;
 					}
 					// end ship to sales
@@ -278,8 +313,16 @@ class AllocationRepository  {
 			$data[] = (array)$customer;
 		}
 
+		// $_grps = array();
+		// $_areas = array();
+		// $_cust = array();
+		// $_shp = array();
+
 		// echo '<pre>';
+		// print_r($_grps);
+		// print_r($_areas);
 		// print_r($_cust);
+		// print_r($_shp);
 		// echo '</pre>';
 
 		return $customers;
