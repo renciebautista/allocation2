@@ -2,10 +2,8 @@
 
 @section('content')
 
-
-@include('partials.notification')
-
 <div id="login" class="row">
+	@include('partials.notification')
 	{{ Form::open(array('action' => 'LoginController@dologin','class' => 'bs-component')) }}
 	<div class="panel panel-primary">
 		<div class="panel-heading">

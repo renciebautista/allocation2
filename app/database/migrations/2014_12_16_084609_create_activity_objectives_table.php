@@ -15,8 +15,10 @@ class CreateActivityObjectivesTable extends Migration {
 		Schema::create('activity_objectives', function(Blueprint $table)
 		{
 			$table->increments('id');
-			$table->integer('activity_id');
-			$table->integer('objective_id');
+			$table->integer('activity_id')->unsigned();
+			$table->foreign('activity_id')->references('id')->on('activities');
+			$table->integer('objective_id')->unsigned();
+			$table->foreign('objective_id')->references('id')->on('objectives');
 		});
 	}
 
@@ -28,6 +30,12 @@ class CreateActivityObjectivesTable extends Migration {
 	 */
 	public function down()
 	{
+		Schema::table('activity_objectives', function(Blueprint $table)
+		{
+			$table->dropForeign('activity_objectives_activity_id_foreign');
+			$table->dropForeign('activity_objectives_objective_id_foreign');
+		});
+		
 		Schema::drop('activity_objectives');
 	}
 

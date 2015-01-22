@@ -10,14 +10,27 @@
 	</div>
 </div>
 
+@include('partials.notification')
+
 <div class="row">
-	{{ Form::open(array('route' => 'activity.store','class' => 'bs-component')) }}
+	{{ Form::open(array('action' => array('SchemeController@store', $id) ,'class' => 'bs-component')) }}
+	{{ Form::hidden('activity_id', $id) }}
 	<div class="col-lg-12">
 		<div class="form-group">
 			<div class="row">
 				<div class="col-lg-6">
-					{{ Form::label('scheme_qty', 'Allocation Quantity', array('class' => 'control-label')) }}
-					{{ Form::text('scheme_qty','',array('class' => 'form-control', 'placeholder' => 'Allocation Quantity')) }}
+					{{ Form::label('name', 'Scheme Name', array('class' => 'control-label')) }}
+					{{ Form::text('name','',array('class' => 'form-control', 'placeholder' => 'Scheme Name')) }}
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-12">
+		<div class="form-group">
+			<div class="row">
+				<div class="col-lg-6">
+					{{ Form::label('quantity', 'Allocation Quantity', array('class' => 'control-label')) }}
+					{{ Form::text('quantity','',array('class' => 'form-control', 'placeholder' => 'Allocation Quantity')) }}
 				</div>
 			</div>
 		</div>
@@ -41,7 +54,7 @@
 	{{ Form::close() }}
 </div>
 
-@include('partials.notification')
+
 
 @stop
 

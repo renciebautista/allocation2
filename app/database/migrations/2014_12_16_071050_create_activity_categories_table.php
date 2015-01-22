@@ -15,7 +15,8 @@ class CreateActivityCategoriesTable extends Migration {
 		Schema::create('activity_categories', function(Blueprint $table)
 		{
 			$table->increments('id');
-			$table->integer('activity_id');
+			$table->integer('activity_id')->unsigned();
+			$table->foreign('activity_id')->references('id')->on('activities');
 			$table->string('category_code');
 		});
 	}
@@ -28,6 +29,11 @@ class CreateActivityCategoriesTable extends Migration {
 	 */
 	public function down()
 	{
+		Schema::table('activity_categories', function(Blueprint $table)
+		{
+			$table->dropForeign('activity_categories_activity_id_foreign');
+		});
+		
 		Schema::drop('activity_categories');
 	}
 

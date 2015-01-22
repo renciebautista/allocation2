@@ -3,15 +3,15 @@
 class AllocationRepository  {
 	private $mt_total_sales = 0;
 	private $dt_total_sales = 0;
-	private $_mt_primary_sales;
-	private $_dt_secondary_sales;
+	private $_mt_primary_sales = array();
+	private $_dt_secondary_sales = array();
 
 	public function __construct()  {
       	
     }
 
 
-	public function customers($skus,$channels){
+	public function customers($skus, $channels, $selected_customers){
 		$salescources = DB::table('split_old_customers')->get();
 
 		$customers = DB::table('customers')
@@ -51,17 +51,41 @@ class AllocationRepository  {
 		}
 		$child_skus = array_merge($data, $skus);
 
+		$_grps = array();
+		$_areas = array();
+		$_cust = array();
+		if(!empty($selected_customers)){
+			foreach ($selected_customers as $selected_customer) {
+				$_selected_customer = explode(".", $selected_customer);
+				$_grps[] = $_selected_customer[0];
+				if(!empty($_selected_customer[1])){
+					$_areas[$_selected_customer[0]][] = $_selected_customer[1];
+				}
+
+				if(!empty($_selected_customer[2])){
+					$_cust[$_selected_customer[1]][] = $_selected_customer[2];
+				}
+
+			}
+		}
 		
+		// print_r($areas);
 		// get all MT Primary Sales
-		$this->_mt_primary_sales = DB::table('mt_primary_sales')
+		if(in_array("E1398", $_grps)){
+			$this->_mt_primary_sales = DB::table('mt_primary_sales')
 					->select(DB::raw("mt_primary_sales.area_code,mt_primary_sales.customer_code, SUM(gsv) as gsv"))
 					->join('customers', 'mt_primary_sales.customer_code', '=', 'customers.customer_code')
 					->whereIn('child_sku_code', $child_skus)
-					// ->where('customers.active', 1)
+					->where(function($query) use ($_areas) {
+						$query->whereIn('mt_primary_sales.area_code', $_areas['E1398']);
+					})
 					->groupBy(array('mt_primary_sales.area_code','mt_primary_sales.customer_code'))
 					->get();
+		}
 		
-
+		
+		
+		if(in_array("E1397", $_grps)){	
 		// get all DT Secondary Sales
 		$this->_dt_secondary_sales =DB::table('dt_secondary_sales')
 					->select(DB::raw("dt_secondary_sales.area_code,dt_secondary_sales.customer_code, SUM(gsv) as gsv"))
@@ -69,9 +93,13 @@ class AllocationRepository  {
 					->join('customers', 'dt_secondary_sales.customer_code', '=', 'customers.customer_code')
 					->whereIn('child_sku_code', $child_skus)
 					->whereIn('channel_code', $channels)
-					// ->where('customers.active', 1)
+					->where(function($query) use ($_areas) {
+						$query->whereIn('dt_secondary_sales.area_code', $_areas['E1397']);
+					})
+
 					->groupBy(array('dt_secondary_sales.area_code','dt_secondary_sales.customer_code'))
 					->get();
+		}
 
 		// get Ship To Sales
 		$_ship_to_sales = DB::table('ship_to_sales')
@@ -107,7 +135,7 @@ class AllocationRepository  {
 											if(($_outlet_sale->outlet_code == $_outlet->outlet_code) &&
 												($_outlet_sale->area_code == $_outlet->area_code) &&
 												($_outlet_sale->account_name == $_outlet->account_name) &&
-												($_outlet_sale->outlet_code == $_outlet->outlet_code)){
+												($_outlet_sale->customer_code == $_outlet->customer_code)){
 												// $_outlet->sales[] = (array) $_outlet_sale;
 												$gsv +=  $_outlet_sale->gsv;
 											}
@@ -127,6 +155,7 @@ class AllocationRepository  {
 
 					// start ship to sales
 					$abort_shipto = false;
+					$_shipto->gsv = '';
 					foreach ($_ship_to_sales as $_ship_to_sale) {
 						if($_shipto->ship_to_code == $_ship_to_sale->ship_to_code){
 							$_shipto->gsv = $_ship_to_sale->gsv;
@@ -150,71 +179,126 @@ class AllocationRepository  {
 
 			if($customer->group_code == 'E1397'){
 				$abort = false;
+				$customer->gsv = 0;
 				foreach ($this->_dt_secondary_sales as $_dt_secondary_sale) {
-					if(($customer->customer_code == $_dt_secondary_sale->customer_code) && ($customer->area_code == $_dt_secondary_sale->area_code)){
-						$customer->gsv = $_dt_secondary_sale->gsv;
-						$abort = true;
-					}else{
-						$customer->gsv = 0;
-					}
-
-					$customer->gsv += self::additonal_sales($salescources,$customer->customer_code,$this->_dt_secondary_sales);
-
-					if ($abort === true) 
-					{
-						if($customer->gsv > 0){
-							$this->dt_total_sales += $customer->gsv;
+					// check if selected
+					if(!empty($_cust[$customer->area_code])){
+						if(in_array($customer->customer_code, $_cust[$customer->area_code])){
+							$_c_gsv = self::customer_gsv($abort, $customer, $_dt_secondary_sale, $salescources, $this->_dt_secondary_sales);
+							$customer->gsv = $_c_gsv['customer_gsv'];
+							if ($_c_gsv['abort'] === true) 
+							{
+								if($customer->gsv > 0){
+									$this->dt_total_sales += $customer->gsv;
+								}
+								break;
+							}
 						}
-						break;
-					}
-				}
+						
+					}else{
+						$_c_gsv = self::customer_gsv($abort, $customer, $_dt_secondary_sale, $salescources, $this->_dt_secondary_sales);
+						$customer->gsv = $_c_gsv['customer_gsv'];
+						if ($_c_gsv['abort'] === true) 
+						{
+							if($customer->gsv > 0){
+								$this->dt_total_sales += $customer->gsv;
+							}
+							break;
+						}
+						// if(($customer->customer_code == $_dt_secondary_sale->customer_code) && ($customer->area_code == $_dt_secondary_sale->area_code)){
+						// 	$customer->gsv = $_dt_secondary_sale->gsv;
+						// 	$abort = true;
+						// }else{
+						// 	$customer->gsv = 0;
+						// }
 
+						// $customer->gsv += self::additonal_sales($salescources,$customer->customer_code,$this->_dt_secondary_sales);
+
+						// if ($abort === true) 
+						// {
+						// 	if($customer->gsv > 0){
+						// 		$this->dt_total_sales += $customer->gsv;
+						// 	}
+						// 	break;
+						// }
+					}
+					
+				}
 
 			}else{
 				$abort = false;
+				$customer->gsv = 0;
 				foreach ($this->_mt_primary_sales as $_mt_primary_sale) {
-					if(($customer->customer_code == $_mt_primary_sale->customer_code) && ($customer->area_code == $_mt_primary_sale->area_code)){
-						$customer->gsv = $_mt_primary_sale->gsv;
-						$abort = true;
-					}else{
-						$customer->gsv = 0;
-					}
-
-					$customer->gsv += self::additonal_sales($salescources,$customer->customer_code,$this->_mt_primary_sales);
-
-					if ($abort === true) 
-					{
-						if($customer->gsv > 0){
-							$this->mt_total_sales += $customer->gsv;
-						}
-						break;
-					}
+					// check if selected
+					if(!empty($_cust[$customer->area_code])){
+						if(in_array($customer->customer_code, $_cust[$customer->area_code])){
+							$_c_gsv = self::customer_gsv($abort, $customer, $_mt_primary_sale, $salescources, $this->_mt_primary_sales);
 						
+							$customer->gsv = $_c_gsv['customer_gsv'];
+							if ($_c_gsv['abort'] === true) 
+							{
+								if($customer->gsv > 0){
+									$this->mt_total_sales += $customer->gsv;
+								}
+								break;
+							}
+							// if(($customer->customer_code == $_mt_primary_sale->customer_code) && ($customer->area_code == $_mt_primary_sale->area_code)){
+							// 	$customer->gsv = $_mt_primary_sale->gsv;
+							// 	$abort = true;
+							// }else{
+							// 	$customer->gsv = 0;
+							// }
+
+							// $customer->gsv += self::additonal_sales($salescources,$customer->customer_code,$this->_mt_primary_sales);
+
+							// if ($abort === true) 
+							// {
+							// 	if($customer->gsv > 0){
+							// 		$this->mt_total_sales += $customer->gsv;
+							// 	}
+							// 	break;
+							// }
+						}
+						
+					}else{
+						$_c_gsv = self::customer_gsv($abort, $customer, $_mt_primary_sale, $salescources, $this->_mt_primary_sales);
+
+						$customer->gsv = $_c_gsv['customer_gsv'];
+						if ($_c_gsv['abort'] === true) 
+						{
+							if($customer->gsv > 0){
+								$this->mt_total_sales += $customer->gsv;
+							}
+							break;
+						}
+					}
+					// end check if selected
 				}
 			}
 			$data[] = (array)$customer;
 		}
+
 		// echo '<pre>';
-		// print_r($customers);
+		// print_r($_cust);
 		// echo '</pre>';
+
 		return $customers;
 	}
 
+	public function customer_gsv($abort, $customer, $sale, $salescources,$fromsales){
+		$customer_gsv = 0;
+		if(($customer->customer_code == $sale->customer_code) && ($customer->area_code == $sale->area_code)){
+			$customer_gsv = $sale->gsv;
+			$abort = true;
+		}
+
+		$customer_gsv += self::additonal_sales($salescources,$customer->customer_code,$fromsales);
+
+		$data = array('customer_gsv' => $customer_gsv, 'abort' => $abort);
+		return $data;
+	}
 
 	public function total_sales(){
-
-		// foreach ($this->_mt_primary_sales  as $row) {
-		// 	if($row->gsv > 0){
-		// 		$this->mt_total_sales += $row->gsv;
-		// 	}
-		// }
-
-		// foreach ($this->_dt_secondary_sales  as $row) {
-		// 	if($row->gsv > 0){
-		// 		$this->dt_total_sales += $row->gsv;
-		// 	}
-		// }
-
 		return $this->dt_total_sales + $this->mt_total_sales;
 	}
 
@@ -228,7 +312,6 @@ class AllocationRepository  {
 					}
 				}
 			}
-			
 		}
 
 		return $additonal_sales;

@@ -37,4 +37,15 @@ class User extends Eloquent implements ConfideUserInterface {
 			->get();
 	}
 
+	public function getFullname()
+	{
+	    return $this->attributes['first_name'] .' '.$this->attributes['last_name'];
+	}
+
+
+	public function roles()
+	{
+		return $this->belongsToMany('Role','assigned_roles');
+	}
+
 }

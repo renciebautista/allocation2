@@ -8,7 +8,7 @@ class ObjectivesTableSeeder extends Seeder {
 	public function run()
 	{
 		DB::table('objectives')->truncate();
-
+		
 		DB::statement("INSERT INTO objectives (id, objective) VALUES
 			(1, 'INCREASE PENETRATION'),
 			(2, 'INCREASE CONSUMPTION'),

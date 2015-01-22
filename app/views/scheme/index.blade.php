@@ -37,17 +37,25 @@
 					</tr>
 				</thead>
 				<tbody>
+					@if(count($schemes) == 0)
 					<tr>
-						<td>Sample Scheme</td>
+						<td colspan="4">No record found!</td>
+					</tr>
+					@else
+					@foreach($schemes as $scheme)
+					<tr>
+						<td>{{ $scheme->name }}</td>
 						<td class="action">
-							{{ Form::open(array('method' => 'DELETE', 'action' => array('SchemeController@destroy', 1))) }}                       
+							{{ Form::open(array('method' => 'DELETE', 'action' => array('SchemeController@destroy', $scheme->id))) }}                       
 							{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}
 							{{ Form::close() }}
 						</td>
 						<td class="action">
-							{{ HTML::linkAction('SchemeController@show','View', 1, array('class' => 'btn btn-info btn-xs')) }}
+							{{ HTML::linkAction('SchemeController@show','View', $scheme->id, array('class' => 'btn btn-info btn-xs')) }}
 						</td>
 					</tr>
+					@endforeach
+					@endif
 				</tbody>
 			</table> 
 		</div>

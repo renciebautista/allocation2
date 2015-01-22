@@ -46,7 +46,7 @@
 						<td>{{ $group->name }}</td>
 						<td class="action">{{ HTML::linkAction('GroupController@show','Manage Privilleges', $group->id, array('class' => 'btn btn-primary btn-xs')) }}</td>
 						<td class="action">
-							{{ HTML::linkAction('GroupController@show','Edit', $group->id, array('class' => 'btn btn-info btn-xs')) }}
+							{{ HTML::linkAction('GroupController@edit','Edit', $group->id, array('class' => 'btn btn-info btn-xs')) }}
 						</td>
 						<td class="action">
 							{{ Form::open(array('method' => 'DELETE', 'action' => array('GroupController@destroy', $group->id))) }}                       

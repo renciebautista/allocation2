@@ -45,6 +45,7 @@
 								<li>{{ HTML::linkRoute('activity.index', 'Activity') }}</li>    
 							</ul>
 						</li>
+						@if(Auth::user()->hasRole("ADMINISTRATOR"))
 						<li class="dropdown">
 							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="themes">Maintenance <span class="caret"></span></a>
 							<ul class="dropdown-menu" aria-labelledby="themes">
@@ -52,6 +53,7 @@
 								<li>{{ HTML::linkAction('UsersController@index' , 'User') }}</li>    
 							</ul>
 						</li>
+						@endif
 						<li>
 							<a href="../help/">Help</a>
 						</li>
@@ -59,9 +61,9 @@
 
 					<ul class="nav navbar-nav navbar-right">
 						<li class="dropdown">
-							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="download">User <span class="caret"></span></a>
-							<ul class="dropdown-menu" aria-labelledby="download">
-								<li><a href="./bootstrap.min.css">Profile</a></li>
+							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="download">{{ ucwords(strtolower(Auth::user()->getFullname())) }} <span class="caret"></span></a>
+							<ul class="dropdown-menu" aria-labelledby="download">  
+								<li>{{ HTML::linkAction('ProfileController@index', 'Profile') }}</li>  
 								<li>{{ HTML::linkAction('LoginController@logout' , 'Logout') }}</li>    
 							</ul>
 						</li>

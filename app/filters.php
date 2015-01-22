@@ -88,3 +88,8 @@ Route::filter('csrf', function()
 		throw new Illuminate\Session\TokenMismatchException;
 	}
 });
+
+
+// Only owners will have access to routes within admin/advanced
+Entrust::routeNeedsRole( 'group*', 'ADMINISTRATOR',Redirect::to('/') );
+Entrust::routeNeedsRole( 'users', 'ADMINISTRATOR',Redirect::to('/') );

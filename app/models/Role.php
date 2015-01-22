@@ -11,6 +11,9 @@ class Role extends EntrustRole
 
     public static function search($filter){
 		return self::where('name', 'LIKE' ,"%$filter%")
+			->orderBy('name')
 			->get();
 	}
+
+
 }

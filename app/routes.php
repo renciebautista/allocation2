@@ -62,10 +62,14 @@ Route::group(array('before' => 'auth'), function()
 {	
 	Route::get('activity/{id}/scheme', 'SchemeController@index');
 	Route::get('activity/{id}/scheme/create', 'SchemeController@create');
-	Route::resource('scheme', 'SchemeController');
+	Route::post('activity/{id}/scheme', 'SchemeController@store');
+	Route::get('scheme/{id}', 'SchemeController@show');
+	Route::delete('scheme/{id}', 'SchemeController@destroy');
+
 	Route::resource('activity', 'ActivityController');
 	Route::resource('group', 'GroupController');
 	Route::resource('dashboard', 'DashboardController');
+	Route::get('profile','ProfileController@index');
 
 	Route::group(array('prefix' => 'api'), function()
 	{
@@ -86,4 +90,7 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('users/reset_password/{token}', 'UsersController@resetPassword');
 	Route::post('users/reset_password', 'UsersController@doResetPassword');
 	Route::get('users/logout', 'UsersController@logout');
+
+
+
 });

@@ -10,7 +10,8 @@ class SchemeController extends \BaseController {
 	 */
 	public function index($id)
 	{
-		return View::make('scheme.index', compact('id'));
+		$schemes = Scheme::where('activity_id',$id)->get();
+		return View::make('scheme.index', compact('id', 'schemes'));
 	}
 
 	/**
@@ -41,9 +42,39 @@ class SchemeController extends \BaseController {
 	 *
 	 * @return Response
 	 */
-	public function store()
+	public function store($id)
 	{
-		//
+		$validation = Validator::make(Input::all(), Scheme::$rules);
+
+		if($validation->passes())
+		{
+			DB::transaction(function() {
+				$scheme = new Scheme;
+				$scheme->activity_id = Input::get('activity_id');
+				$scheme->name = Input::get('name');
+				$scheme->quantity = Input::get('quantity');
+				$scheme->user_id = Auth::id();
+				$scheme->save();
+
+				$skus = array();
+				foreach (Input::get('skus') as $sku){
+					$skus[] = array('scheme_id' => $scheme->id, 'sku' => $sku);
+				}
+				SchemeSku::insert($skus);
+				
+			});
+
+			return Redirect::action('SchemeController@index', array('id' => $id))
+				->with('class', 'alert-success')
+				->with('message', 'Record successfuly created.');
+			
+		}
+
+		return Redirect::action('SchemeController@create', array('id' => $id))
+			->withInput()
+			->withErrors($validation)
+			->with('class', 'alert-danger')
+			->with('message', 'There were validation errors.');
 	}
 
 	/**
@@ -54,14 +85,20 @@ class SchemeController extends \BaseController {
 	 * @return Response
 	 */
 	public function show($id)
-	{
-		$skus = array('20226140');
-		$channels = array('C1','C2','C3');
-		$qty = 10000;
-		// $allocations = Allocation::customers($skus,$channels);
-		// $total_sales = Allocation::total_sales($skus,$channels);
+	{	
+		$scheme = Scheme::find($id);
+		$skus = SchemeSku::getSkus($id);
+		$customers = ActivityCustomer::customers($scheme->activity_id);
+		// echo '<pre>';
+		// print_r($customers);
+		// echo '</pre>';
+
+		$channels = array('C1', 'C2', 'C3');
+		$qty = $scheme->quantity;
+
 		$_allocation = new AllocationRepository;
-		$allocations = $_allocation->customers($skus,$channels);
+		$allocations = $_allocation->customers($skus, $channels, $customers);
+		
 		$total_sales = $_allocation->total_sales();
 		return View::make('scheme.show', compact('allocations','total_sales', 'qty','id'));
 	}

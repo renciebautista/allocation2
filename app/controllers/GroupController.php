@@ -77,7 +77,14 @@ class GroupController extends \BaseController {
 	 */
 	public function edit($id)
 	{
-		//
+		$group = Role::find($id);
+		if (is_null($group))
+		{
+			return Redirect::route('group.index')
+				->with('class', 'alert-danger')
+				->with('message', 'Record does not exist.');
+		}
+		return View::make('group.edit', compact('group'));
 	}
 
 	/**
@@ -89,7 +96,32 @@ class GroupController extends \BaseController {
 	 */
 	public function update($id)
 	{
-		//
+		$input = Input::all();
+		$rules = array(
+	        'name' => 'required|between:4,128|unique:roles,name,'.$id
+	    );
+		$validation = Validator::make($input,$rules);
+		if ($validation->passes())
+		{
+			$group = Role::find($id);
+			if (is_null($group))
+			{
+				return Redirect::route('group.index')
+					->with('class', 'alert-danger')
+					->with('message', 'Record does not exist.');
+			}
+			$group->name = strtoupper(Input::get('name'));
+			$group->save();
+			return Redirect::route('group.index')
+				->with('class', 'alert-success')
+				->with('message', 'Record successfuly updated.');
+		}
+
+		return Redirect::route('group.edit', $id)
+			->withInput()
+			->withErrors($validation)
+			->with('class', 'alert-danger')
+			->with('message', 'There were validation errors.');
 	}
 
 	/**
@@ -101,7 +133,18 @@ class GroupController extends \BaseController {
 	 */
 	public function destroy($id)
 	{
-		//
+		$role = Role::find($id)->delete();
+		if (is_null($role))
+		{
+			$class = 'alert-danger';
+			$message = 'Record does not exist.';
+		}else{
+			$class = 'alert-success';
+			$message = 'Record successfully deleted.';
+		}
+		return Redirect::route('group.index')
+				->with('class', $class )
+				->with('message', $message);
 	}
 
 }

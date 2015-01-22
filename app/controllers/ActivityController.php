@@ -81,13 +81,17 @@ class ActivityController extends \BaseController {
 				}
 				ActivityObjective::insert($activity_objective);
 
-				$activity_channels = array();
-				foreach (Input::get('channel') as $channel){
-					$activity_channels[] = array('activity_id' => $activity->id, 'channel_id' => $channel);
+				$channels = Input::get('channel');
+				if(!empty($channels)){
+					$activity_channels = array();
+					foreach ($channels as $channel){
+						$activity_channels[] = array('activity_id' => $activity->id, 'channel_id' => $channel);
+					}
+					if(!empty($activity_channels)){
+						ActivityChannel::insert($activity_channels);
+					}
 				}
-				if(!empty($activity_channels)){
-					ActivityChannel::insert($activity_channels);
-				}
+
 
 				$_customers = Input::get('customers');
 				if(!empty($_customers)){
@@ -95,7 +99,7 @@ class ActivityController extends \BaseController {
 					if(!empty($customers)){
 						$activity_customers = array();
 						foreach ($customers as $customer_node){
-							$activity_customers[] = array('activity_id' => $activity->id, 'customer_node' => $customer_node);
+							$activity_customers[] = array('activity_id' => $activity->id, 'customer_node' => trim($customer_node));
 						}
 						ActivityCustomer::insert($activity_customers);
 					}

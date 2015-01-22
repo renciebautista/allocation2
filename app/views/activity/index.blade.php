@@ -40,18 +40,20 @@
 			<table class="table table-striped table-hover">
 				<thead>
 					<tr>
-						<th>Circular Name</th>
+						<th>Activity Code</th>
+						<th>Activity Name</th>
 						<th colspan="3" style="text-align:center;">Action</th>
 					</tr>
 				</thead>
 				<tbody>
 					@if(count($activities) == 0)
 					<tr>
-						<td colspan="4">No record found!</td>
+						<td colspan="5">No record found!</td>
 					</tr>
 					@else
 					@foreach($activities as $activity)
 					<tr>
+						<td>{{ $activity->id }}</td>
 						<td>{{ $activity->circular_name }}</td>
 						<td class="action">
 							{{ HTML::linkAction('SchemeController@index','Scheme', $activity->id, array('class' => 'btn btn-primary btn-xs')) }}

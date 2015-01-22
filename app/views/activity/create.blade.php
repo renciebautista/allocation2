@@ -17,7 +17,7 @@
 	<div class="col-lg-12">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				<h3 class="panel-title">Header</h3>
+				<h3 class="panel-title">Activity</h3>
 			</div>
 			<div class="panel-body">
 				<div class="row">
@@ -25,7 +25,7 @@
 							<div class="form-group">
 								<div class="row">
 									<div class="col-lg-12">
-										{{ Form::label('circular_name', 'Circular Name', array('class' => 'control-label')) }}
+										{{ Form::label('circular_name', 'Activity Name', array('class' => 'control-label')) }}
 										{{ Form::text('circular_name','',array('class' => 'form-control', 'placeholder' => 'Circular No.' ,'readonly' => '')) }}
 									</div>
 								</div>
@@ -173,6 +173,24 @@
 	<div class="col-lg-6">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
+				<h3 class="panel-title">Customers</h3>
+			</div>
+			<div class="panel-body">
+				<div id="tree3"></div>
+				{{ Form::hidden('customers', null, array('id' => 'customers')) }}
+
+			</div>
+
+			<div>Selected keys: <span id="echoSelection3">-</span></div>
+  			<div>Selected root keys: <span id="echoSelectionRootKeys3">-</span></div>
+  			<div>Selected root nodes: <span id="echoSelectionRoots3">-</span></div>
+
+		</div>
+	</div>
+
+	<div class="col-lg-6">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
 				<h3 class="panel-title">Channels</h3>
 			</div>
 			<div class="panel-body">
@@ -191,18 +209,7 @@
 		</div>
 	</div>
 
-	<div class="col-lg-6">
-		<div class="panel panel-primary">
-			<div class="panel-heading">
-				<h3 class="panel-title">Customers</h3>
-			</div>
-			<div class="panel-body">
-				<div id="tree3"></div>
-				{{ Form::hidden('customers', null, array('id' => 'customers')) }}
-
-			</div>
-		</div>
-	</div>
+	
 	<div class="col-lg-12">
 		<div class="form-group">
 			{{ Form::submit('Submit', array('class' => 'btn btn-primary')) }}
@@ -278,6 +285,8 @@ $('select#channel').multiselect({
 	enableFiltering: true
 });
 
+$('select#channel').multiselect('disable');
+ 
 
 
 function suggest_name(){
@@ -313,11 +322,12 @@ $("#tree3").fancytree({
 		url: "../api/customers"
 	},
 	  select: function(event, data) {
-		// Get a list of all selected nodes, and convert to a key array:
-		// var selKeys = $.map(data.tree.getSelectedNodes(), function(node){
-		//   return node.key;
-		// });
-		// $("#echoSelection3").text(selKeys.join(", "));
+	  	// Get a list of all selected nodes, and convert to a key array:
+        // var selKeys = $.map(data.tree.getSelectedNodes(), function(node){
+        //  return node.key;
+        // });
+        // $("#echoSelection3").text(selKeys.join(", "));
+
 
 		// Get a list of all selected TOP nodes
 		var selRootNodes = data.tree.getSelectedNodes(true);
@@ -325,22 +335,23 @@ $("#tree3").fancytree({
 		var selRootKeys = $.map(selRootNodes, function(node){
 		  return node.key;
 		});
+
+		// $("#echoSelectionRootKeys3").text(selRootKeys.join("."));
 		$("#echoSelectionRootKeys3").text(selRootKeys.join(", "));
+
+		var keys = selRootKeys.join(".").split(".");
+		console.log(keys);
+		if($.inArray('E1397', keys) != -1){
+			$('select#channel').multiselect('enable');
+		}else{
+			$('select#channel').multiselect('deselectAll', false);
+			$('select#channel').multiselect('updateButtonText')
+			$('select#channel').multiselect('disable');
+		}
+
 		$("#customers").val(selRootKeys.join(", "));
-		// $("#echoSelectionRoots3").text(selRootNodes.join(", "));
 	  },
 });
-
-
-//$("form").submit(function() {
-	  // Render hidden <input> elements for active and selected nodes
-	  //$("#tree3").fancytree("getTree").generateFormElements();
-
-	  //alert("POST data:\n" + jQuery.param($(this).serializeArray()));
-	  // return false to prevent submission of this sample
-	 ///return false;
-	//});
-
 
 @stop
 

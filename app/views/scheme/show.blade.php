@@ -17,7 +17,7 @@
 <div class="row mytable">
 	<div class="col-lg-12">
 		<div id="allocation" class="table-responsive">
-			<table id="customer-allocation" class="table table-bordered table-condensed display compact ">
+			<table id="customer-allocation" class="table table-condensed display compact ">
 				<thead>
 					<tr>
 						<th>Group</th>
@@ -41,6 +41,7 @@
 					</tr>
 				</thead>
 				<tbody>
+					
 					@if(count($allocations) == 0)
 					<tr>
 						<td colspan="16">No record found!</td>
@@ -48,6 +49,7 @@
 					@else
 					<?php $total_alloc = 0; ?>
 					@foreach($allocations as $customer)
+					<?php $alloc = 0; ?>
 					<tr class="info">
 						<td>{{ $customer->group_name }}</td>
 						<td>{{ $customer->area_name }}</td>
@@ -83,7 +85,7 @@
 								}
 								
 							 ?>
-							{{  number_format($alloc) }}
+							{{ number_format($alloc) }}
 						</td>
 						@else
 						<td> 0.00 %</td>
@@ -99,6 +101,7 @@
 						<td></td>
 						<td></td>
 					</tr>
+						<?php $shipto_alloc = 0; ?>
 						@if(!empty($customer->shiptos))
 						@foreach($customer->shiptos as $shipto)
 						
@@ -114,15 +117,17 @@
 							<td></td>
 							<td>{{ $shipto['gsv'] }}</td>
 							<td>
-								@if(!is_null( $shipto['split']))
-								{{ round(($alloc * $shipto['split']) / 100) }}
+								@if(!is_null($shipto['split']))
+									@if($alloc > 0)
+										{{ round(($alloc * $shipto['split']) / 100) }}
+									@endif
+									
 								@else
 									@if($shipto['gsv'] >0)
 										<?php 
 											$shipto_alloc = number_format(round(round($shipto['gsv'] / $customer->ado_total,2) * $alloc));
 										 ?>
 										{{ $shipto_alloc }}
-									@else
 									@endif
 								@endif
 							</td>
@@ -151,6 +156,7 @@
 									<td></td>
 									<td>{{ number_format($account['gsv'],2) }}</td>
 									<td>
+										<?php $p = 0; ?>
 										@if($customer->gsv > 0)
 										<?php 
 											$p = round($account['gsv']/$customer->gsv * 100,2)
@@ -163,7 +169,10 @@
 									<td>
 										<?php 
 											$account_alloc = number_format(round(($shipto_alloc * $p) / 100));
-											$others -= $account_alloc;
+											if($account_alloc > 0){
+												$others -= $account_alloc;
+											}
+											
 										 ?>
 										{{ $account_alloc }}
 									</td>
@@ -295,6 +304,7 @@
 
 
 @section('page-script')
+
 var table = $('#customer-allocation').DataTable( {
 	"dom": 'C<"clear">lfrtip',
 	"bSort": false,
