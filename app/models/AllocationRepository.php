@@ -148,16 +148,11 @@ class AllocationRepository  {
 												($_outlet_sale->area_code == $_outlet->area_code) &&
 												($_outlet_sale->account_name == $_outlet->account_name) &&
 												($_outlet_sale->customer_code == $_outlet->customer_code)){
-												// $_outlet->sales[] = (array) $_outlet_sale;
 												$gsv +=  $_outlet_sale->gsv;
 											}
 										}	
-
-										// $outlets[] = (array) $_outlet;
 									}
 								}
-
-								// $_account->outlets = (array) $outlets;
 								$_account->gsv = $gsv;
 								$_shipto->accounts[] = (array) $_account;
 							}

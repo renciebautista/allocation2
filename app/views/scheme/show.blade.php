@@ -226,7 +226,7 @@
 			<table class="table table-condensed display compact ">
 				<tbody>
 					<tr class="blue">
-						<td>Sub Total MT/DT</td>
+						<td>MT/DT Breakdown </td>
 						<td>Allocated</td>
 					</tr>
 					<?php $total_group = 0; ?>
@@ -253,7 +253,7 @@
 			<table class="table table-condensed display compact ">
 				<tbody>
 					<tr class="blue">
-						<td>Sub Total AREA</td>
+						<td>Area Breakdown</td>
 						<td>Allocated</td>
 					</tr>
 					<?php $total_area = 0; ?>
@@ -280,7 +280,51 @@
 			<table class="table table-condensed display compact ">
 				<tbody>
 					<tr class="blue">
-						<td>Sub Total BIG 10 & GAISANO</td>
+						<td>BIG 10 Breakdown</td>
+					</tr>
+					<tr>
+						<td>MT</td>
+					</tr>
+					<tr>
+						<td>MT</td>
+					</tr>
+					<tr class="blue">
+						<td>Total</td>
+					</tr>
+				</tbody>
+			</table> 
+		</div>
+	</div>
+</div>
+<div class="row mytable">
+	<div class="col-lg-12">
+		<div class="allocation_total table-responsive">
+			<table class="table table-condensed display compact ">
+				<tbody>
+					<tr class="blue">
+						<td>GAISANO Breakdown</td>
+					</tr>
+					<tr>
+						<td>MT</td>
+					</tr>
+					<tr>
+						<td>MT</td>
+					</tr>
+					<tr class="blue">
+						<td>Total</td>
+					</tr>
+				</tbody>
+			</table> 
+		</div>
+	</div>
+</div>
+<div class="row mytable">
+	<div class="col-lg-12">
+		<div class="allocation_total table-responsive">
+			<table class="table table-condensed display compact ">
+				<tbody>
+					<tr class="blue">
+						<td>NCCC Breakdown</td>
 					</tr>
 					<tr>
 						<td>MT</td>
