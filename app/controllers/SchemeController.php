@@ -90,7 +90,10 @@ class SchemeController extends \BaseController {
 		$skus = SchemeSku::getSkus($id);
 		$customers = ActivityCustomer::customers($scheme->activity_id);
 
-		$channels = array('C1', 'C2', 'C3');
+		// $channels = array('C1', 'C2', 'C3');
+
+		$channels = ActivityChannel::channels($scheme->activity_id);
+
 		$qty = $scheme->quantity;
 
 		$_allocation = new AllocationRepository;
@@ -99,10 +102,13 @@ class SchemeController extends \BaseController {
 		$total_sales = $_allocation->total_sales();
 
 		$summary = $_allocation->allocation_summary();
+		$big10 = $_allocation->account_group("AG4");
+		$gaisanos = $_allocation->account_group("AG5");
+		$nccc = $_allocation->account_group("AG6");
 		// echo '<pre>';
-		// print_r($summary);
+		// print_r($big10);
 		// echo '</pre>';
-		return View::make('scheme.show', compact('allocations','total_sales', 'qty','id', 'summary'));
+		return View::make('scheme.show', compact('allocations','total_sales', 'qty','id', 'summary', 'big10', 'gaisanos', 'nccc'));
 	}
 
 	/**

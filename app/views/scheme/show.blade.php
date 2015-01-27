@@ -5,6 +5,8 @@
 	$groups_alloc = array();
 	$areas_alloc = array();
 	$big_10 = array();
+	$gia = array();
+	$nc = array();
 	$total_gsv = 0;
  ?>
 <div class="page-header" id="banner">
@@ -178,15 +180,32 @@
 											}
 											
 											if($account['account_group_code'] == 'AG4'){
-												if (array_key_exists($account['account_group_code'], $big_10)) {
-												    $big_10[$account['account_group_code']] += $account_alloc;
+												if (array_key_exists($account['account_name'], $big_10)) {
+												    $big_10[$account['account_name']] += $account_alloc;
 												}else{
-													$big_10[$account['account_group_code']] = $account_alloc;
+													$big_10[$account['account_name']] = $account_alloc;
 												}
 											}
+
+											if($account['account_group_code'] == 'AG5'){
+												if (array_key_exists($account['account_name'], $gia)) {
+												    $gia[$account['account_name']] += $account_alloc;
+												}else{
+													$gia[$account['account_name']] = $account_alloc;
+												}
+											}
+
+											if($account['account_group_code'] == 'AG7'){
+												if (array_key_exists($account['account_name'], $nc)) {
+												    $nc[$account['account_name']] += $account_alloc;
+												}else{
+													$nc[$account['account_name']] = $account_alloc;
+												}
+											}
+
 											
 										 ?>
-										{{ $account_alloc }}
+										{{ number_format($account_alloc) }}
 									</td>
 									<td></td>
 									<td></td>
@@ -208,7 +227,7 @@
 									<td></td>
 									<td></td>
 									<td></td>
-									<td>{{ ($others > 0) ? $others: 0 }}</td>
+									<td>{{ number_format(($others > 0) ? $others: 0) }}</td>
 									<td></td>
 									<td></td>
 									<td></td>
@@ -311,10 +330,28 @@
 			<table class="table table-condensed display compact ">
 				<tbody>
 					<tr class="blue">
-						<td>BIG 10 Breakdown</td>
+						<td colspan="2">BIG 10 Breakdown</td>
 						<td>Allocated</td>
 					</tr>
-					
+					<?php $total_10 = 0; ?>
+					@foreach($big10 as $row)
+					<tr>
+						<td colspan="2">{{ $row->account_name }}</td>
+						<td><?php 
+								if(array_key_exists($row->account_name, $big_10)){
+									$total_10 += $big_10[$row->account_name];
+									echo number_format($big_10[$row->account_name]);
+								}else{
+									echo 0;
+								}
+							 ?>
+							</td>
+					</tr>
+					@endforeach
+					<tr class="blue">
+							<td colspan="2">BIG 10 Total</td>
+							<td>{{ number_format($total_10) }}</td>
+						</tr>
 				</tbody>
 			</table> 
 		</div>
@@ -326,17 +363,28 @@
 			<table class="table table-condensed display compact ">
 				<tbody>
 					<tr class="blue">
-						<td>GAISANO Breakdown</td>
+						<td colspan="2">GAISANO Breakdown</td>
+						<td>Allocated</td>
 					</tr>
+					<?php $total_g = 0; ?>
+					@foreach($gaisanos as $row)
 					<tr>
-						<td>MT</td>
+						<td colspan="2">{{ $row->account_name }}</td>
+						<td><?php 
+								if(array_key_exists($row->account_name, $gia)){
+									$total_g += $gia[$row->account_name];
+									echo number_format($gia[$row->account_name]);
+								}else{
+									echo 0;
+								}
+							 ?>
+							</td>
 					</tr>
-					<tr>
-						<td>MT</td>
-					</tr>
+					@endforeach
 					<tr class="blue">
-						<td>Total</td>
-					</tr>
+							<td colspan="2">GAISANO Total</td>
+							<td>{{ number_format($total_g) }}</td>
+						</tr>
 				</tbody>
 			</table> 
 		</div>
@@ -348,17 +396,28 @@
 			<table class="table table-condensed display compact ">
 				<tbody>
 					<tr class="blue">
-						<td>NCCC Breakdown</td>
+						<td colspan="2">NCCC Breakdown</td>
+						<td>Allocated</td>
 					</tr>
+					<?php $total_n = 0; ?>
+					@foreach($nccc as $row)
 					<tr>
-						<td>MT</td>
+						<td colspan="2">{{ $row->account_name }}</td>
+						<td><?php 
+								if(array_key_exists($row->account_name, $nc)){
+									$total_n += $nc[$row->account_name];
+									echo number_format($nc[$row->account_name]);
+								}else{
+									echo 0;
+								}
+							 ?>
+							</td>
 					</tr>
-					<tr>
-						<td>MT</td>
-					</tr>
+					@endforeach
 					<tr class="blue">
-						<td>Total</td>
-					</tr>
+							<td colspan="2">NCCC Total</td>
+							<td>{{ number_format($total_n) }}</td>
+						</tr>
 				</tbody>
 			</table> 
 		</div>

@@ -414,4 +414,12 @@ class AllocationRepository  {
 		return $groups;
 	}
 
+	public function account_group($code){
+		return \DB::table('accounts')
+			->where('account_group_code', $code)
+			->groupBy('account_name')
+			->orderBy('account_name')
+			->get();
+	}
+
 }
