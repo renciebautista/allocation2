@@ -89,9 +89,6 @@ class SchemeController extends \BaseController {
 		$scheme = Scheme::find($id);
 		$skus = SchemeSku::getSkus($id);
 		$customers = ActivityCustomer::customers($scheme->activity_id);
-		// echo '<pre>';
-		// print_r($customers);
-		// echo '</pre>';
 
 		$channels = array('C1', 'C2', 'C3');
 		$qty = $scheme->quantity;
@@ -100,7 +97,12 @@ class SchemeController extends \BaseController {
 		$allocations = $_allocation->customers($skus, $channels, $customers);
 		
 		$total_sales = $_allocation->total_sales();
-		return View::make('scheme.show', compact('allocations','total_sales', 'qty','id'));
+
+		$summary = $_allocation->allocation_summary();
+		// echo '<pre>';
+		// print_r($summary);
+		// echo '</pre>';
+		return View::make('scheme.show', compact('allocations','total_sales', 'qty','id', 'summary'));
 	}
 
 	/**

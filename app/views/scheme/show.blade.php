@@ -2,8 +2,9 @@
 
 @section('content')
 <?php 
-	$groups = array();
-	$areas = array();
+	$groups_alloc = array();
+	$areas_alloc = array();
+	$big_10 = array();
 	$total_gsv = 0;
  ?>
 <div class="page-header" id="banner">
@@ -72,16 +73,16 @@
 								$alloc = round(($customer->gsv/$total_sales) * $qty);
 								$total_alloc += $alloc;
 
-								if (array_key_exists($customer->group_name, $groups)) {
-								    $groups[$customer->group_name] += $alloc;
+								if (array_key_exists($customer->group_code, $groups_alloc)) {
+								    $groups_alloc[$customer->group_code] += $alloc;
 								}else{
-									$groups[$customer->group_name] = $alloc;
+									$groups_alloc[$customer->group_code] = $alloc;
 								}
 
-								if (array_key_exists($customer->area_name, $areas)) {
-								    $areas[$customer->area_name] += $alloc;
+								if (array_key_exists($customer->area_code, $areas_alloc)) {
+								    $areas_alloc[$customer->area_code] += $alloc;
 								}else{
-									$areas[$customer->area_name] = $alloc;
+									$areas_alloc[$customer->area_code] = $alloc;
 								}
 								
 							 ?>
@@ -101,10 +102,10 @@
 						<td></td>
 						<td></td>
 					</tr>
-						<?php $shipto_alloc = 0; ?>
+						
 						@if(!empty($customer->shiptos))
 						@foreach($customer->shiptos as $shipto)
-						
+						<?php $shipto_alloc = 0; ?>
 						<tr>
 							<td>{{ $customer->group_name }}</td>
 							<td>{{ $customer->area_name }}</td>
@@ -119,15 +120,16 @@
 							<td>
 								@if(!is_null($shipto['split']))
 									@if($alloc > 0)
-										{{ round(($alloc * $shipto['split']) / 100) }}
+									<?php $shipto_alloc = round(($alloc * $shipto['split']) / 100) ?>
+										{{ number_format($shipto_alloc) }}
 									@endif
 									
 								@else
 									@if($shipto['gsv'] >0)
 										<?php 
-											$shipto_alloc = number_format(round(round($shipto['gsv'] / $customer->ado_total,2) * $alloc));
+											$shipto_alloc = round(round($shipto['gsv'] / $customer->ado_total,2) * $alloc);
 										 ?>
-										{{ $shipto_alloc }}
+										{{ number_format($shipto_alloc) }}
 									@endif
 								@endif
 							</td>
@@ -141,7 +143,9 @@
 						</tr>
 							@if(!empty($shipto['accounts'] ))
 								<?php $others = $shipto_alloc; ?>
+								
 								@foreach($shipto['accounts'] as $account)
+								<?php $account_alloc = 0; ?>
 								<tr class="warning">
 									<td>{{ $customer->group_name }}</td>
 									<td>{{ $customer->area_name }}</td>
@@ -168,9 +172,17 @@
 									</td>
 									<td>
 										<?php 
-											$account_alloc = number_format(round(($shipto_alloc * $p) / 100));
+											$account_alloc = round(($p * $shipto_alloc)/100);
 											if($account_alloc > 0){
 												$others -= $account_alloc;
+											}
+											
+											if($account['account_group_code'] == 'AG4'){
+												if (array_key_exists($account['account_group_code'], $big_10)) {
+												    $big_10[$account['account_group_code']] += $account_alloc;
+												}else{
+													$big_10[$account['account_group_code']] = $account_alloc;
+												}
 											}
 											
 										 ?>
@@ -230,11 +242,19 @@
 						<td>Allocated</td>
 					</tr>
 					<?php $total_group = 0; ?>
-					@foreach($groups as $key => $group)
+					@foreach($summary as $grp)
 					<tr>
-						<td>{{ $key }}</td>
-						<td>{{ number_format($group) }}</td>
-						<?php $total_group += $group; ?>
+						<td>{{ $grp->group_name }}</td>
+						<td>
+							<?php 
+								if(array_key_exists($grp->group_code, $groups_alloc)){
+									$total_group += $groups_alloc[$grp->group_code];
+									echo number_format($groups_alloc[$grp->group_code]);
+								}else{
+									echo 0;
+								}
+							 ?>
+						</td>
 					</tr>
 					@endforeach
 					<tr class="blue">
@@ -253,21 +273,32 @@
 			<table class="table table-condensed display compact ">
 				<tbody>
 					<tr class="blue">
-						<td>Area Breakdown</td>
+						<td colspan="2">Area Breakdown </td>
 						<td>Allocated</td>
 					</tr>
-					<?php $total_area = 0; ?>
-					@foreach($areas as $key => $area)
-					<tr>
-						<td>{{ $key }}</td>
-						<td>{{ number_format($area) }}</td>
-						<?php $total_area += $area; ?>
-					</tr>
+					
+					@foreach($summary as $grp)
+						<?php $total_areas = 0; ?>
+						@foreach($grp->areas as $area)
+						<tr>
+							<td>{{ $grp->group_name }}</td>
+							<td>{{ $area->area_name }}</td>
+							<td><?php 
+								if(array_key_exists($area->area_code, $areas_alloc)){
+									$total_areas += $areas_alloc[$area->area_code];
+									echo number_format($areas_alloc[$area->area_code]);
+								}else{
+									echo 0;
+								}
+							 ?>
+							</td>
+						</tr>
+						@endforeach
+						<tr class="blue">
+							<td colspan="2">{{ $grp->group_name }} Total</td>
+							<td>{{ number_format($total_areas) }}</td>
+						</tr>
 					@endforeach
-					<tr class="blue">
-						<td>Total</td>
-						<td>{{ number_format($total_area) }}</td>
-					</tr>
 				</tbody>
 			</table> 
 		</div>
@@ -281,16 +312,9 @@
 				<tbody>
 					<tr class="blue">
 						<td>BIG 10 Breakdown</td>
+						<td>Allocated</td>
 					</tr>
-					<tr>
-						<td>MT</td>
-					</tr>
-					<tr>
-						<td>MT</td>
-					</tr>
-					<tr class="blue">
-						<td>Total</td>
-					</tr>
+					
 				</tbody>
 			</table> 
 		</div>

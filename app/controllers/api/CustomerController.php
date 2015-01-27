@@ -95,7 +95,15 @@ class CustomerController extends \BaseController {
 			->get();
 		$data = array();
 		foreach ($groups as $group) {
-			$areas = \DB::table('areas')->where('group_code',$group->group_code)->orderBy('id')->get();
+			// $areas = \DB::table('areas')->where('group_code',$group->group_code)->orderBy('id')->get();
+			$areas = \DB::table('customers')
+			->select('areas.group_code as group_code','customers.area_code as area_code','area_name')
+			->join('areas', 'customers.area_code', '=', 'areas.area_code')
+			->where('areas.group_code',$group->group_code)
+			->where('customers.active', 1)
+			->groupBy('customers.area_code')
+			->orderBy('areas.id')
+			->get();
 			$group_children = array();
 			foreach ($areas as $area) {
 				$customers = \DB::table('customers')

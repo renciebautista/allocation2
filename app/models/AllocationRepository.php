@@ -30,8 +30,9 @@ class AllocationRepository  {
 
 		// get all account
 		$_accounts = DB::table('accounts')
-			->select('ship_to_code','area_code', 'account_name', 'channel_name')
+			->select('accounts.id','ship_to_code','area_code', 'account_name', 'channel_name','accounts.account_group_code')
 			->join('channels', 'accounts.channel_code', '=', 'channels.channel_code')
+			->join('account_groups', 'accounts.account_group_code', '=', 'account_groups.account_group_code')
 			->get();
 
 		// get all outlet
@@ -55,6 +56,7 @@ class AllocationRepository  {
 		$_areas = array();
 		$_cust = array();
 		$_shp = array();
+		$_otlts = array();
 		if(!empty($selected_customers)){
 			foreach ($selected_customers as $selected_customer) {
 				$_selected_customer = explode(".", $selected_customer);
@@ -71,6 +73,9 @@ class AllocationRepository  {
 					$_shp[$_selected_customer[2]][] = $_selected_customer[3];
 				}
 
+				if(!empty($_selected_customer[4])){
+					$_otlts[$_selected_customer[3]][] = $_selected_customer[4];
+				}
 			}
 		}
 		
@@ -148,12 +153,42 @@ class AllocationRepository  {
 												($_outlet_sale->area_code == $_outlet->area_code) &&
 												($_outlet_sale->account_name == $_outlet->account_name) &&
 												($_outlet_sale->customer_code == $_outlet->customer_code)){
-												$gsv +=  $_outlet_sale->gsv;
+
+												if(in_array($customer->group_code, $_grps)){
+													if(!empty($_areas[$customer->group_code])){
+														if(in_array($customer->area_code, $_areas[$customer->group_code])){
+															if(!empty($_cust[$customer->area_code])){
+																if(in_array($customer->customer_code, $_cust[$customer->area_code])){
+																	if(!empty($_shp[$customer->customer_code])){
+																		if(in_array($_shipto->ship_to_code, $_shp[$customer->customer_code])){
+																			if(!empty($_otlts[$_shipto->ship_to_code])){
+																				if(in_array($_account->id, $_otlts[$_shipto->ship_to_code])){
+																					$gsv +=  $_outlet_sale->gsv;
+																				}
+																			}else{
+																				$gsv +=  $_outlet_sale->gsv;
+																			}
+																		}
+																	}else{
+																		$gsv +=  $_outlet_sale->gsv;
+																	}
+																}
+															}else{
+																$gsv +=  $_outlet_sale->gsv;
+															}
+														}
+													}else{
+														$gsv +=  $_outlet_sale->gsv;
+													}
+												}
+
+												
 											}
 										}	
 									}
 								}
 								$_account->gsv = $gsv;
+								// print_r($_account);
 								$_shipto->accounts[] = (array) $_account;
 							}
 						}
@@ -186,7 +221,6 @@ class AllocationRepository  {
 								}else{
 									$_shipto->gsv = $_ship_to_sale->gsv;
 								}
-								
 							}
 							
 							// $ado_total += $_ship_to_sale->gsv;
@@ -318,6 +352,7 @@ class AllocationRepository  {
 		// print_r($_areas);
 		// print_r($_cust);
 		// print_r($_shp);
+		// print_r($_otlts);
 		// echo '</pre>';
 
 		return $customers;
@@ -353,6 +388,30 @@ class AllocationRepository  {
 		}
 
 		return $additonal_sales;
+	}
+
+	public function allocation_summary(){
+		$groups = \DB::table('groups')->get();
+		$data = array();
+		foreach ($groups as $group) {
+			$areas = \DB::table('customers')
+			->select('areas.group_code as group_code','customers.area_code as area_code','area_name')
+			->join('areas', 'customers.area_code', '=', 'areas.area_code')
+			->where('areas.group_code',$group->group_code)
+			->where('customers.active', 1)
+			->groupBy('customers.area_code')
+			->orderBy('areas.id')
+			->get();
+			// foreach ($areas as $area) {
+			// 	$customers = \DB::table('customers')
+			// 		->where('area_code',$area->area_code)
+			// 		->where('customers.active', 1)
+			// 		->get();
+			// }
+			$group->areas = $areas;
+		}
+
+		return $groups;
 	}
 
 }
