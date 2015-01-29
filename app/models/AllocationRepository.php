@@ -6,16 +6,20 @@ class AllocationRepository  {
 	private $_mt_primary_sales = array();
 	private $_dt_secondary_sales = array();
 
+	private $_customers = array();
+
 	public function __construct()  {
       	
     }
 
 
 	public function customers($skus, $channels, $selected_customers){
+
+		$this->_customers = $selected_customers;
 		$salescources = DB::table('split_old_customers')->get();
 
 		$customers = DB::table('customers')
-			->select('areas.group_code as group_code','group_name','area_name','customer_name','customer_code','customers.area_code as area_code')
+			->select('areas.group_code as group_code','group_name','area_name','customer_name','customer_code','customers.area_code as area_code', 'multiplier')
 			->join('areas', 'customers.area_code', '=', 'areas.area_code')
 			->join('groups', 'areas.group_code', '=', 'groups.group_code')
 			->where('customers.active', 1)
@@ -249,7 +253,7 @@ class AllocationRepository  {
 					if(!empty($_cust[$customer->area_code])){
 						if(in_array($customer->customer_code, $_cust[$customer->area_code])){
 							$_c_gsv = self::customer_gsv($abort, $customer, $_dt_secondary_sale, $salescources, $this->_dt_secondary_sales);
-							$customer->gsv = $_c_gsv['customer_gsv'];
+							$customer->gsv =  ($_c_gsv['customer_gsv'] * $customer->multiplier ) / 100;
 							if ($_c_gsv['abort'] === true) 
 							{
 								if($customer->gsv > 0){
@@ -261,7 +265,7 @@ class AllocationRepository  {
 						
 					}else{
 						$_c_gsv = self::customer_gsv($abort, $customer, $_dt_secondary_sale, $salescources, $this->_dt_secondary_sales);
-						$customer->gsv = $_c_gsv['customer_gsv'];
+						$customer->gsv =  ($_c_gsv['customer_gsv'] * $customer->multiplier ) / 100;
 						if ($_c_gsv['abort'] === true) 
 						{
 							if($customer->gsv > 0){
@@ -298,7 +302,7 @@ class AllocationRepository  {
 						if(in_array($customer->customer_code, $_cust[$customer->area_code])){
 							$_c_gsv = self::customer_gsv($abort, $customer, $_mt_primary_sale, $salescources, $this->_mt_primary_sales);
 						
-							$customer->gsv = $_c_gsv['customer_gsv'];
+							$customer->gsv = ($_c_gsv['customer_gsv'] * $customer->multiplier ) / 100;
 							if ($_c_gsv['abort'] === true) 
 							{
 								if($customer->gsv > 0){
@@ -327,7 +331,7 @@ class AllocationRepository  {
 					}else{
 						$_c_gsv = self::customer_gsv($abort, $customer, $_mt_primary_sale, $salescources, $this->_mt_primary_sales);
 
-						$customer->gsv = $_c_gsv['customer_gsv'];
+						$customer->gsv =  ($_c_gsv['customer_gsv'] * $customer->multiplier ) / 100;
 						if ($_c_gsv['abort'] === true) 
 						{
 							if($customer->gsv > 0){
@@ -422,4 +426,47 @@ class AllocationRepository  {
 			->get();
 	}
 
+
+	public function groups(){
+		$data = array();
+		if(!empty($this->_customers)){
+			foreach ($this->_customers as $selected_customer) {
+				$_selected_customer = explode(".", $selected_customer);
+				$data[] = $_selected_customer[0];
+			}
+		}
+
+		return \DB::table('groups')
+			->whereIn('group_code',$data)->get();
+	}
+
+	public function areas(){
+		$data = array();
+		if(!empty($this->_customers)){
+			foreach ($this->_customers as $selected_customer) {
+				$_selected_customer = explode(".", $selected_customer);
+				if(!empty($_selected_customer[1])){
+					$data[] = $_selected_customer[1];
+				}
+			}
+		}
+
+		return \DB::table('areas')
+			->whereIn('area_code',$data)->get();
+	}
+
+	public function soldtos(){
+		$data = array();
+		if(!empty($this->_customers)){
+			foreach ($this->_customers as $selected_customer) {
+				$_selected_customer = explode(".", $selected_customer);
+				if(!empty($_selected_customer[2])){
+					$data[] = $_selected_customer[2];
+				}
+			}
+		}
+
+		return \DB::table('customers')
+			->whereIn('customer_code',$data)->get();
+	}
 }

@@ -112,6 +112,10 @@
 
 	{{ HTML::script('assets/plugins/fancytree-2.6.0/jquery.fancytree.min.js') }}
 
+	
+	{{ HTML::script('assets/plugins/jquery.maskMoney/jquery.maskMoney.min.js') }}
+
+
 	{{ HTML::script('assets/js/function.js') }}
 
 	<script type="text/javascript">

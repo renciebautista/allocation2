@@ -92,12 +92,12 @@ class SchemeController extends \BaseController {
 
 		// $channels = array('C1', 'C2', 'C3');
 
-		$channels = ActivityChannel::channels($scheme->activity_id);
+		$_channels = ActivityChannel::channels($scheme->activity_id);
 
 		$qty = $scheme->quantity;
 
 		$_allocation = new AllocationRepository;
-		$allocations = $_allocation->customers($skus, $channels, $customers);
+		$allocations = $_allocation->customers($skus, $_channels, $customers);
 		
 		$total_sales = $_allocation->total_sales();
 
@@ -108,7 +108,12 @@ class SchemeController extends \BaseController {
 		// echo '<pre>';
 		// print_r($big10);
 		// echo '</pre>';
-		return View::make('scheme.show', compact('allocations','total_sales', 'qty','id', 'summary', 'big10', 'gaisanos', 'nccc'));
+		// $channels = array();
+		// $groups = $_allocation->groups();
+		// $areas = $_allocation->areas();
+		// $soldtos = $_allocation->soldtos();
+		return View::make('scheme.show', compact('allocations','total_sales',
+			'qty','id', 'summary', 'big10', 'gaisanos', 'nccc'));
 	}
 
 	/**

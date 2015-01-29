@@ -181,9 +181,9 @@
 
 			</div>
 
-			<div>Selected keys: <span id="echoSelection3">-</span></div>
+			<!-- <div>Selected keys: <span id="echoSelection3">-</span></div>
   			<div>Selected root keys: <span id="echoSelectionRootKeys3">-</span></div>
-  			<div>Selected root nodes: <span id="echoSelectionRoots3">-</span></div>
+  			<div>Selected root nodes: <span id="echoSelectionRoots3">-</span></div> -->
 
 		</div>
 	</div>
@@ -337,7 +337,7 @@ $("#tree3").fancytree({
 		});
 
 		// $("#echoSelectionRootKeys3").text(selRootKeys.join("."));
-		$("#echoSelectionRootKeys3").text(selRootKeys.join(", "));
+		// $("#echoSelectionRootKeys3").text(selRootKeys.join(", "));
 
 		var keys = selRootKeys.join(".").split(".");
 		console.log(keys);
@@ -352,6 +352,8 @@ $("#tree3").fancytree({
 		$("#customers").val(selRootKeys.join(", "));
 	  },
 });
+
+$('#budget_tts, #budget_pe').maskMoney();
 
 @stop
 

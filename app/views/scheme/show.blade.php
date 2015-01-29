@@ -17,6 +17,7 @@
 	</div>
 </div>
 
+
 <div class="row mytable">
 	<div class="col-lg-12">
 		<div id="allocation" class="table-responsive">
