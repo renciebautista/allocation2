@@ -42,6 +42,9 @@ class CycleController extends \BaseController {
 		{
 			DB::transaction(function()
 			{
+				$emergency_deadline = (!empty(Input::get('emergency_deadline'))) ? date('Y-m-d',strtotime(Input::get('emergency_deadline'))) : '0000-00-00';
+				$emergency_release_date = (!empty(Input::get('emergency_release_date'))) ? date('Y-m-d',strtotime(Input::get('emergency_release_date'))) : '0000-00-00';
+
 				$cycle = new Cycle;
 				$cycle->cycle_name = strtoupper(Input::get('cycle_name'));
 				$cycle->month_id = Input::get('month');
@@ -49,8 +52,8 @@ class CycleController extends \BaseController {
 				$cycle->replyback_deadline = date('Y-m-d',strtotime(Input::get('replyback_deadline')));
 				$cycle->submission_deadline = date('Y-m-d',strtotime(Input::get('submission_deadline')));
 				$cycle->release_date = date('Y-m-d',strtotime(Input::get('release_date')));
-				$cycle->emergency_deadline = (!empty(Input::get('emergency_deadline'))) ? date('Y-m-d',strtotime(Input::get('emergency_deadline'))) : '0000-00-00';
-				$cycle->emergency_release_date = (!empty(Input::get('emergency_release_date'))) ? date('Y-m-d',strtotime(Input::get('emergency_release_date'))) : '0000-00-00';
+				$cycle->emergency_deadline = $emergency_deadline;
+				$cycle->emergency_release_date = $emergency_release_date;
 				$cycle->implemintation_date = date('Y-m-d',strtotime(Input::get('implemintation_date')));
 				$cycle->save();
 			});
