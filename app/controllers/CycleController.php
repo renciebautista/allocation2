@@ -42,9 +42,19 @@ class CycleController extends \BaseController {
 		{
 			DB::transaction(function()
 			{
-				$emergency_deadline = (!empty(Input::get('emergency_deadline'))) ? date('Y-m-d',strtotime(Input::get('emergency_deadline'))) : '0000-00-00';
-				$emergency_release_date = (!empty(Input::get('emergency_release_date'))) ? date('Y-m-d',strtotime(Input::get('emergency_release_date'))) : '0000-00-00';
+				if(!empty(Input::get('emergency_deadline'))){
+					$emergency_deadline = date('Y-m-d',strtotime(Input::get('emergency_deadline')));
+				}else{
+					$emergency_deadline = '0000-00-00';
+				}
 
+				if(!empty(Input::get('emergency_release_date'))){
+					$emergency_release_date = date('Y-m-d',strtotime(Input::get('emergency_release_date')));
+				}else{
+					$emergency_release_date = '0000-00-00';
+				}
+				
+	
 				$cycle = new Cycle;
 				$cycle->cycle_name = strtoupper(Input::get('cycle_name'));
 				$cycle->month_id = Input::get('month');
