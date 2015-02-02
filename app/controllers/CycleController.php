@@ -42,13 +42,13 @@ class CycleController extends \BaseController {
 		{
 			DB::transaction(function()
 			{
-				if(Input::get('emergency_deadline')) != "" ){
+				if(Input::get('emergency_deadline') != "" ){
 					$emergency_deadline = date('Y-m-d',strtotime(Input::get('emergency_deadline')));
 				}else{
 					$emergency_deadline = '0000-00-00';
 				}
 
-				if(Input::get('emergency_release_date')) != "" ){
+				if(Input::get('emergency_release_date') != "" ){
 					$emergency_release_date = date('Y-m-d',strtotime(Input::get('emergency_release_date')));
 				}else{
 					$emergency_release_date = '0000-00-00';
