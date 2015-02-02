@@ -52,6 +52,8 @@ Route::get('/customer', function(){
 	}
 	return View::make('customer',compact('data'));
 });
+
+
 Route::get('/','LoginController@index');
 Route::get('login','LoginController@index');
 Route::get('logout','LoginController@logout');
@@ -91,6 +93,7 @@ Route::group(array('before' => 'auth'), function()
 	Route::post('users/reset_password', 'UsersController@doResetPassword');
 	Route::get('users/logout', 'UsersController@logout');
 
+	Route::resource('cycle', 'CycleController');
 
 
 });

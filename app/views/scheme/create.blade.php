@@ -66,6 +66,8 @@ $('select#skus').multiselect({
 	enableCaseInsensitiveFiltering: true,
 	enableFiltering: true
 });
+
+$('#quantity').inputNumber();
 @stop
 
 

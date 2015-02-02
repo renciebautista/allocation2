@@ -13,6 +13,7 @@
 		{{ HTML::style('assets/plugins/FixedColumns-3.0.2/css/dataTables.fixedColumns.min.css') }}
 		{{ HTML::style('assets/plugins/ColVis-1.1.1/css/dataTables.colVis.min.css') }}
 		{{ HTML::style('assets/plugins/fancytree-2.6.0/skin-xp/ui.fancytree.min.css') }}
+		{{ HTML::style('assets/plugins/bootstrap-datetimepicker-3.1.3/css/bootstrap-datetimepicker.min.css') }}
 		{{ HTML::style('assets/css/styles.css') }}
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
@@ -51,6 +52,8 @@
 							<ul class="dropdown-menu" aria-labelledby="themes">
 								<li>{{ HTML::linkRoute('group.index', 'Group') }}</li>  
 								<li>{{ HTML::linkAction('UsersController@index' , 'User') }}</li>    
+
+								<li>{{ HTML::linkRoute('cycle.index', 'Cycle') }}</li>  
 							</ul>
 						</li>
 						@endif
@@ -114,6 +117,12 @@
 
 	
 	{{ HTML::script('assets/plugins/jquery.maskMoney/jquery.maskMoney.min.js') }}
+	{{ HTML::script('assets/plugins/jquery-inputformat/jquery-inputformat.min.js') }}
+
+	{{ HTML::script('assets/plugins/moment/moment.js') }}
+	{{ HTML::script('assets/plugins/bootstrap-datetimepicker-3.1.3/js/bootstrap-datetimepicker.min.js') }}
+
+	{{ HTML::script('assets/plugins/digitalBush/jquery.maskedinput_1.4.0/jquery.maskedinput.min.js') }}
 
 
 	{{ HTML::script('assets/js/function.js') }}

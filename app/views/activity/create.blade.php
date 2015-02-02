@@ -352,9 +352,7 @@ $("#tree3").fancytree({
 		$("#customers").val(selRootKeys.join(", "));
 	  },
 });
-
-$('#budget_tts, #budget_pe').maskMoney();
-
+$('#budget_tts, #budget_pe').inputNumber();
 @stop
 
 

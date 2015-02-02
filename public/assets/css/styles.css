@@ -65,9 +65,9 @@
 #allocation .info, .warning{
 	color: #FFF;
 }
-#allocation table th, td {
+/*#allocation table th, td {
 	white-space:nowrap;
-}
+}*/
 
 .allocation_total {
 	font-size: 12px;   

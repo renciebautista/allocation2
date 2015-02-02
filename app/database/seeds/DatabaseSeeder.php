@@ -36,6 +36,8 @@ class DatabaseSeeder extends Seeder {
 
 		$this->call('ObjectivesTableSeeder');
 
+		$this->call('MonthTableSeeder');
+
 		DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
 	}
