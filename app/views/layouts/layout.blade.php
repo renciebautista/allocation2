@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<title>Allocation System</title>
+		<title>E-TOP</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		{{ HTML::style('assets/plugins/jquery-ui-1.11.2/jquery-ui.min.css') }}
 		{{ HTML::style('assets/plugins/twitter-bootstrap/css/bootstrap.css') }}
@@ -31,7 +31,7 @@
 		<div class="navbar navbar-default navbar-fixed-top">
 			<div class="container">
 				<div class="navbar-header">
-					<a href="../" class="navbar-brand">Allocation System</a>
+					<a href="../" class="navbar-brand">E-TOP</a>
 					<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
@@ -54,6 +54,7 @@
 								<li>{{ HTML::linkAction('UsersController@index' , 'User') }}</li>    
 
 								<li>{{ HTML::linkRoute('cycle.index', 'Cycle') }}</li>  
+								<li>{{ HTML::linkRoute('activitytype.index', 'Activity Type') }}</li>  
 							</ul>
 						</li>
 						@endif
@@ -124,6 +125,12 @@
 
 	{{ HTML::script('assets/plugins/digitalBush/jquery.maskedinput_1.4.0/jquery.maskedinput.min.js') }}
 
+	{{ HTML::script('assets/plugins/bootstrap-table/bootstrap-table.min.js') }}
+
+	{{ HTML::script('assets/plugins/ckeditor/ckeditor.js') }}
+	{{ HTML::script('assets/plugins/ckeditor/adapters/jquery.js') }}
+
+	{{ HTML::script('assets/plugins/ajax_table/js/ajax_table.js') }}
 
 	{{ HTML::script('assets/js/function.js') }}
 

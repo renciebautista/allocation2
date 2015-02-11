@@ -21,3 +21,59 @@ notes
 allocation quantity 
 	in case/deals
 	numbers with comma
+
+
+-------------------------------
+milestone to network
+pert/ cpm
+
+profile on viewign of dashboard filter
+
+hover over attachment icon to show attached files
+record locking activity
+
+Activiy
+activity log on activity
+move scheme button inside activity
+
+add pmog planner
+add activity title
+show lead time after selection activity type
+sku involve in activty multiple
+
+tab on activity 
+
+-----------------------------
+others on activity type no network
+save promt 
+autosave of activity every 15 minutes
+calendar with week no
+
+budget
+	- type drop TTS or PE
+	- io field format AA99999999
+	- ammount number format
+
+
+activity break date 
+dow load date base on today and type
+
+with approved io 
+	if yes
+		budget
+	if no
+		select raised by self/pmog list only one
+		if self
+			message promt 
+		if pmog
+			same as yes
+			Budget Holder (ID)
+			Budget Name (ID)
+			Type (TTS/PE) - dropdown
+			Amount
+			start 
+			end date
+			Notes 
+
+activity code
+	yyyy-(xxxx)ide-activitytype-cagetory-brand

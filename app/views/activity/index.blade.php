@@ -42,7 +42,7 @@
 					<tr>
 						<th>Activity Code</th>
 						<th>Activity Name</th>
-						<th colspan="3" style="text-align:center;">Action</th>
+						<th colspan="2" style="text-align:center;">Action</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -55,9 +55,6 @@
 					<tr>
 						<td>{{ $activity->id }}</td>
 						<td>{{ $activity->circular_name }}</td>
-						<td class="action">
-							{{ HTML::linkAction('SchemeController@index','Scheme', $activity->id, array('class' => 'btn btn-primary btn-xs')) }}
-						</td>
 						<td class="action">
 							{{ Form::open(array('method' => 'DELETE', 'action' => array('ActivityController@destroy', $activity->id))) }}                       
 							{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}

@@ -1,5 +1,5 @@
 <?php
-
+use Rencie\Cpm\CpmActivity;
 class BaseController extends Controller {
 
 	/**

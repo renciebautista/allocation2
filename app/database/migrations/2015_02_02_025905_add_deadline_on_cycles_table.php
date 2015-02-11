@@ -15,7 +15,7 @@ class AddDeadlineOnCyclesTable extends Migration {
 		Schema::table('cycles', function(Blueprint $table)
 		{
 			$table->integer('month_id')->unsigned();
-            $table->foreign('month_id')->references('id')->on('months');
+			$table->foreign('month_id')->references('id')->on('months');
 			$table->date('vetting_deadline')->nullable();
 			$table->date('replyback_deadline')->nullable();
 			$table->date('submission_deadline')->nullable();
@@ -34,8 +34,10 @@ class AddDeadlineOnCyclesTable extends Migration {
 	 */
 	public function down()
 	{
+
 		Schema::table('cycles', function(Blueprint $table)
 		{
+
 			$table->dropForeign('cycles_month_id_foreign');
 			$table->dropColumn(array('month_id' ,'vetting_deadline', 'replyback_deadline', 'submission_deadline',
 				'release_date', 'emergency_deadline', 'emergency_release_date', 'implemintation_date'));

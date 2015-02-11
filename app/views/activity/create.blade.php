@@ -13,214 +13,275 @@
 @include('partials.notification')
 
 <div class="row">
-	{{ Form::open(array('route' => 'activity.store','class' => 'bs-component')) }}
 	<div class="col-lg-12">
-		<div class="panel panel-primary">
-			<div class="panel-heading">
-				<h3 class="panel-title">Activity</h3>
-			</div>
-			<div class="panel-body">
-				<div class="row">
-						<div class="col-lg-12">
-							<div class="form-group">
-								<div class="row">
-									<div class="col-lg-12">
-										{{ Form::label('circular_name', 'Activity Name', array('class' => 'control-label')) }}
-										{{ Form::text('circular_name','',array('class' => 'form-control', 'placeholder' => 'Circular No.' ,'readonly' => '')) }}
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="col-lg-6">
-							<div class="form-group">
-								<div class="row">
-									<div class="col-lg-12">
-										{{ Form::label('scope', 'Scope Type', array('class' => 'control-label')) }}
-										{{ Form::select('scope', $scope_types, null, array('class' => 'form-control')) }}
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<div class="row">
-						<div class="col-lg-6">
-							<div class="form-group">
-								<div class="row">
-									<div class="col-lg-12">
-										{{ Form::label('cycle', 'TOP Cycle', array('class' => 'control-label')) }}
-										{{ Form::select('cycle', $cycles, null, array('class' => 'form-control')) }}
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="col-lg-6">
-							<div class="form-group">
-								<div class="row">
-									<div class="col-lg-12">
-										
-										{{ Form::label('activity_type', 'Activity Type', array('class' => 'control-label')) }}
-										{{ Form::select('activity_type', $activity_types, null, array('class' => 'form-control')) }}
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-lg-4">
-							<div class="form-group">
-								<div class="row">
-									<div class="col-lg-12">
-										{{ Form::label('division', 'Division', array('class' => 'control-label')) }}
-										{{ Form::select('division', $divisions, null, array('class' => 'form-control')) }}
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="col-lg-4">
-							<div class="form-group">
-								<div class="row">
-									<div id="multiselect" class="col-lg-12">
-										{{ Form::label('category', 'Category', array('class' => 'control-label')) }}
-										<select class="form-control" data-placeholder="SELECT CATEGORY" id="category" name="category[]" multiple="multiple" ></select>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="col-lg-4">
-							<div class="form-group">
-								<div class="row">
-									<div class="col-lg-12">
-										{{ Form::label('brand', 'Brand', array('class' => 'control-label')) }}
-										<select class="form-control" data-placeholder="SELECT BRAND" id="brand" name="brand[]" multiple="multiple" ></select>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					
-			</div>
+		<div class="form-group">
+			{{ HTML::linkRoute('activity.index', 'Back To Activity List', array(), array('class' => 'btn btn-default')) }}
 		</div>
 	</div>
 
-	<div class="col-lg-12">
-		<div class="panel panel-primary">
-			<div class="panel-heading">
-				<h3 class="panel-title">Budget</h3>
-			</div>
-			<div class="panel-body">
-				<div class="row">
-						<div class="col-lg-6">
-							<div class="form-group">
-								<div class="row">
-									<div class="col-lg-12">
-										{{ Form::label('budget_tts', 'Budget I/O TTS', array('class' => 'control-label')) }}
-										{{ Form::text('budget_tts','',array('class' => 'form-control', 'placeholder' => 'Budget I/O TTS')) }}
-									</div>
-								</div>
+</div>
+
+
+<ul class="nav nav-tabs">
+	<li class="active"><a aria-expanded="true" href="#activty" data-toggle="tab">Activity Details</a></li>
+	<li class="disabled"><a>Budget Details</a></li>
+	<li class="disabled"><a>Customer Details</a></li>
+	<li class="disabled"><a>Schemes</a></li>
+	<li class="disabled"><a>Timings Details</a></li>
+</ul>
+<div id="myTabContent" class="tab-content">
+  	<div class="tab-pane fade active in" id="activty">
+  		<br>
+  		{{ Form::open(array('route' => 'activity.store','class' => 'bs-component')) }}
+  		<div class="well">
+  			<div class="row">
+  				<div class="col-lg-6">
+					<div class="form-group">
+						<div class="row">
+							<div class="col-lg-12">
+								{{ Form::label('scope', 'Scope', array('class' => 'control-label')) }}
+								{{ Form::select('scope', $scope_types, null, array('class' => 'form-control')) }}
 							</div>
-						</div>
-						<div class="col-lg-6">
-							<div class="form-group">
-								<div class="row">
-									<div class="col-lg-12">
-										{{ Form::label('budget_pe', 'Budget I/O PE', array('class' => 'control-label')) }}
-										{{ Form::text('budget_pe','',array('class' => 'form-control', 'placeholder' => 'Budget I/O PE')) }}
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-			</div>
-		</div>
-	</div>
-
-	<div class="col-lg-6">
-		<div class="panel panel-primary">
-			<div class="panel-heading">
-				<h3 class="panel-title">Details</h3>
-			</div>
-			<div class="panel-body">
-				<div class="row">
-						<div class="col-lg-12">
-							<div class="form-group">
-								<div class="row">
-									<div class="col-lg-12">
-										{{ Form::label('objective', 'Objectives', array('class' => 'control-label' )) }}
-										{{ Form::select('objective[]', $objectives, null, array('id' => 'objective', 'class' => 'form-control', 'multiple' => 'multiple')) }}
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-
-				<div class="row">
-						<div class="col-lg-12">
-							<div class="form-group">
-								<div class="row">
-									<div class="col-lg-12">
-										{{ Form::label('background', 'Background and Rationale', array('class' => 'control-label')) }}
-										{{ Form::textarea('background','',array('class' => 'form-control', 'placeholder' => 'Background and Rationale' , 'size' => '50x13')) }}
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-			</div>
-		</div>
-	</div>
-
-	<div class="col-lg-6">
-		<div class="panel panel-primary">
-			<div class="panel-heading">
-				<h3 class="panel-title">Customers</h3>
-			</div>
-			<div class="panel-body">
-				<div id="tree3"></div>
-				{{ Form::hidden('customers', null, array('id' => 'customers')) }}
-
-			</div>
-
-			<!-- <div>Selected keys: <span id="echoSelection3">-</span></div>
-  			<div>Selected root keys: <span id="echoSelectionRootKeys3">-</span></div>
-  			<div>Selected root nodes: <span id="echoSelectionRoots3">-</span></div> -->
-
-		</div>
-	</div>
-
-	<div class="col-lg-6">
-		<div class="panel panel-primary">
-			<div class="panel-heading">
-				<h3 class="panel-title">Channels</h3>
-			</div>
-			<div class="panel-body">
-			<div class="col-lg-12">
-				<div class="form-group">
-					<div class="row">
-						<div class="col-lg-12">
-							{{ Form::label('channel', 'Channels', array('class' => 'control-label' )) }}
-							{{ Form::select('channel[]', $channels, null, array('id' => 'channel', 'class' => 'form-control', 'multiple' => 'multiple')) }}
 						</div>
 					</div>
 				</div>
 			</div>
 
+			<!-- Approver -->
+			<div class="row">
+  				<div class="col-lg-6">
+					<div class="form-group">
+						<div class="row">
+							<div class="col-lg-12">
+								{{ Form::label('planner', 'PMOG Planner', array('class' => 'control-label')) }}
+								{{ Form::select('planner', $planners, null, array('class' => 'form-control')) }}
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-6">
+					<div class="form-group">
+						<div class="row">
+							<div class="col-lg-12">
+								
+								{{ Form::label('approver', 'Activity Approver', array('class' => 'control-label')) }}
+								{{ Form::select('approver', $approvers, null, array('class' => 'form-control')) }}
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
-		</div>
-	</div>
+			<!-- End Approver -->
 
-	
-	<div class="col-lg-12">
-		<div class="form-group">
-			{{ Form::submit('Submit', array('class' => 'btn btn-primary')) }}
-			{{ HTML::linkRoute('activity.index', 'Back', array(), array('class' => 'btn btn-default')) }}
-		</div>
-	</div>
-	{{ Form::close() }}
+			<!-- Cycle -->
+			<div class="row">
+				<div class="col-lg-3">
+					<div class="form-group">
+						<div class="row">
+							<div id="multiselect" class="col-lg-12">
+								{{ Form::label('activity_type', 'Activity Type', array('class' => 'control-label')) }}
+								{{ Form::select('activity_type', $activity_types, null, array('class' => 'form-control')) }}
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-3">
+					<div class="form-group">
+						<div class="row">
+							<div class="col-lg-12">
+								{{ Form::label('lead_time', 'Activity Leadtime (days)', array('class' => 'control-label')) }}
+								{{ Form::text('lead_time','',array('class' => 'form-control', 'placeholder' => '0')) }}
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-3">
+					<div class="form-group">
+						<div class="row">
+							<div class="col-lg-12">
+								{{ Form::label('download_date', 'Expected Download Date ', array('class' => 'control-label')) }}
+								{{ Form::text('download_date','',array('class' => 'form-control', 'placeholder' => 'mm/dd/yyyy')) }}
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-3">
+					<div class="form-group">
+						<div class="row">
+							<div class="col-lg-12">
+								{{ Form::label('implementation_date', 'Expected Implementation Date', array('class' => 'control-label')) }}
+								{{ Form::text('implementation_date','',array('class' => 'form-control', 'placeholder' => 'mm/dd/yyyy')) }}
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				
+			</div>
+			<!-- End Cycle -->
+
+			<div class="row">
+  				<div class="col-lg-12">
+					<div class="form-group">
+						<div class="row">
+							<div class="col-lg-12">
+								{{ Form::label('activity_code', 'Activity Title', array('class' => 'control-label')) }}
+								{{ Form::text('activity_code','',array('class' => 'form-control', 'placeholder' => 'Activity Title')) }}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-lg-3">
+					<div class="form-group">
+						<div class="row">
+							<div class="col-lg-12">
+								{{ Form::label('division', 'Division', array('class' => 'control-label')) }}
+								{{ Form::select('division', $divisions, null, array('class' => 'form-control')) }}
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-3">
+					<div class="form-group">
+						<div class="row">
+							<div id="multiselect" class="col-lg-12">
+								{{ Form::label('category', 'Category', array('class' => 'control-label')) }}
+								<select class="form-control" data-placeholder="SELECT CATEGORY" id="category" name="category[]" multiple="multiple" ></select>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-3">
+					<div class="form-group">
+						<div class="row">
+							<div class="col-lg-12">
+								{{ Form::label('brand', 'Brand', array('class' => 'control-label')) }}
+								<select class="form-control" data-placeholder="SELECT BRAND" id="brand" name="brand[]" multiple="multiple" ></select>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-3">
+					<div class="form-group">
+						<div class="row">
+							<div class="col-lg-12">
+								{{ Form::label('involved', 'SKU/s Involved', array('class' => 'control-label' )) }}
+								<select class="form-control" data-placeholder="SELECT SKU" id="involve" name="involve[]" multiple="multiple" ></select>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+  				<div class="col-lg-6">
+					<div class="form-group">
+						<div class="row">
+							<div class="col-lg-12">
+								{{ Form::label('objective', 'Objectives', array('class' => 'control-label' )) }}
+									{{ Form::select('objective[]', $objectives, null, array('id' => 'objective', 'class' => 'form-control', 'multiple' => 'multiple')) }}
+							</div>
+						</div>
+					</div>
+					
+				</div>
+			</div>
+
+			<div class="row">
+  				<div class="col-lg-12">
+					<div class="form-group">
+						<div class="row">
+							<div class="col-lg-12">
+								{{ Form::label('background', 'Background and Rationale', array('class' => 'control-label')) }}
+									{{ Form::textarea('background','',array('class' => 'form-control', 'placeholder' => 'Background and Rationale')) }}
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-12">
+					<div class="form-group">
+						{{ HTML::linkRoute('activity.index', 'Save', array(), array('class' => 'btn btn-primary')) }}
+					</div>
+				</div>
+			</div>
+  		</div>
+  		{{ Form::close() }}
+  	</div>
 </div>
+
+
 @stop
 
 @section('page-script')
+<!-- $('textarea#background').ckeditor(); -->
+<!-- activity details -->
+
+$('#download_date').datetimepicker({
+	pickTime: false,
+	calendarWeeks: true,
+	minDate: moment()
+});
+
+$('#download_date').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
+
+function duration(value){
+
+	$.ajax({
+		type: "GET",
+		url: "../activitytype/"+value+"/network/totalduration",
+		success: function(msg){
+			$('#lead_time').val(msg);
+		},
+		error: function(){
+			alert("failure");
+		}
+	});
+}
+
+$('select#activity_type').on("change",function(){
+	duration($(this).val());
+});
+
+
+<!-- Budget details -->
+
+$('#budget_table').ajax_table({
+	columns: [
+		{ type: "select", id: "io_ttstype", placeholder: "Enter First Name"},
+    	{ type: "text", id: "io_no", placeholder: "Enter Last Name" },
+    	{ type: "text", id: "io_amount", placeholder: "Amount" },
+    	{ type: "text", id: "io_startdate", placeholder: "mm/dd/yyyy" },
+    	{ type: "text", id: "io_enddate", placeholder: "mm/dd/yyyy" },
+    	{ type: "text", id: "io_remarks", placeholder: "Enter Last Name" },
+	],
+	onInitRow: function() {
+        $('#io_startdate, #io_enddate').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
+        $('#io_startdate, #io_enddate').datetimepicker({
+			pickTime: false,
+			calendarWeeks: true,
+			minDate: moment()
+		});
+		$('#io_amount').inputNumber();
+		$("#io_no").mask("aa99999999");
+
+		$.ajax({
+			type: "GET",
+			url: "../api/budgettype",
+			success: function(data){
+				$('select#io_ttstype').empty();
+				$.each(data, function(i, text) {
+					$('<option />', {value: i, text: text}).appendTo($('select#io_ttstype')); 
+				});
+		   }
+		});
+    }
+});
+
+
+
 
 $('select#division').on("change",function(){
 	suggest_name();
@@ -306,12 +367,8 @@ function suggest_name(){
 	}else{
 		$brd='_'+$brand;
 	}
-	$('#circular_name').val($scope+'_'+$cycle+'_'+$activity_type+'_'+$division+$cat+$brd);
+	$('#activity_code').val($scope+'_'+$cycle+'_'+$activity_type+'_'+$division+$cat+$brd);
 }
-
-$('select#scope,select#cycle,select#activity_type').on("change",function(){
-	suggest_name();
-});
 
 // fancy tree
 $("#tree3").fancytree({
@@ -353,6 +410,16 @@ $("#tree3").fancytree({
 	  },
 });
 $('#budget_tts, #budget_pe').inputNumber();
+
+$().on('click', function() {
+    $.ajax({
+        url: 'http://10.100.12.145:8080/somePage/123',
+        success: function (response) {
+            // add response to the container you want: $(/* selector */).html(response);
+        }
+    });
+});
+
 @stop
 
 

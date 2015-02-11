@@ -24,17 +24,20 @@ class ActivityController extends \BaseController {
 	public function create()
 	{
 		$scope_types = ScopeType::orderBy('scope_name')->lists('scope_name', 'id');
-		$cycles = Cycle::orderBy('cycle_name')->lists('cycle_name', 'id');
+		$planners = User::lists('first_name', 'id');
+		$approvers = User::lists('first_name', 'id');
+
 		$activity_types = ActivityType::orderBy('activity_type')->lists('activity_type', 'id');
+		$cycles = Cycle::orderBy('cycle_name')->lists('cycle_name', 'id');
+		
 		$divisions = Sku::select('division_code', 'division_desc')
 			->groupBy('division_code')
 			->orderBy('division_desc')->lists('division_desc', 'division_code');
 
 		$objectives = Objective::orderBy('objective')->lists('objective', 'id');
-		$channels = Channel::orderBy('channel_name')->lists('channel_name', 'id');
 		
-		return View::make('activity.create', compact('scope_types', 'cycles',
-		 'activity_types', 'divisions' , 'objectives', 'channels'));
+		return View::make('activity.create', compact('scope_types', 'planners', 'approvers', 'cycles',
+		 'activity_types', 'divisions' , 'objectives',  'users'));
 	}
 
 	/**

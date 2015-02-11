@@ -126,6 +126,8 @@ return array(
 		'Way\Generators\GeneratorsServiceProvider',
 		'Zizaco\Confide\ServiceProvider',
 		'Zizaco\Entrust\EntrustServiceProvider',
+		'Rencie\Cpm\CpmServiceProvider',
+
 	),
 
 	/*
