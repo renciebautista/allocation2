@@ -55,8 +55,8 @@ class NetworkController extends \BaseController {
 				$milestone->responsible = strtoupper(Input::get('responsible'));
 				$milestone->duration = Input::get('duration');
 				$milestone->save();
-
-				if(!empty(Input::get('depend_on'))){
+				$depend_on = Input::get('depend_on');
+				if($depend_on !== null){
 					foreach (Input::get('depend_on') as $parent) {
 						$depend_on = new ActivityNetworkDependent;
 						$depend_on->child_id = $milestone->id;
