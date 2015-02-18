@@ -132,6 +132,9 @@
 
 	{{ HTML::script('assets/plugins/ajax_table/js/ajax_table.js') }}
 
+	{{ HTML::script('assets/plugins/jquery-validation-1.13.1/jquery.validate.min.js') }}
+	{{ HTML::script('assets/plugins/jquery-validation-1.13.1/additional-methods.js') }}
+
 	{{ HTML::script('assets/js/function.js') }}
 
 	<script type="text/javascript">

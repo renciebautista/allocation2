@@ -8,6 +8,13 @@ $(document).ready(function(){
 		var editingtdcol = 0;
 		var inputs = ':checked,:selected,:text,textarea,select';
 
+		var effect = "flash"; 
+		var saveAnimationDelay = 3000; 
+	 	var deleteAnimationDelay = 1000;
+
+		if(option.effect !== undefined){
+			effect = option.effect;
+		}
 
 
 		table  = $(this);
@@ -24,8 +31,8 @@ $(document).ready(function(){
 
 		// bind events
 		if (option.onInitRow !== undefined) {
-         	option.onInitRow();
-      	}
+			option.onInitRow();
+		}
 
 
 		// Add new record
@@ -49,11 +56,79 @@ $(document).ready(function(){
 				//console.log(this);
 				return this.value;
 			}).get();
-			
-			var serialized = $inputs.serialize();
+			// var serialized = $inputs.serialize();
 			// alert(serialized);
 			if(validation == 1){
-				ajax(serialized,"save");
+				// ajax(serialized,"save");
+				$.ajax({
+					type: "POST", 
+					url: option.add_url,
+					data : $inputs.serialize(),
+					dataType: "json",
+					success: function(response){
+						var _table = "#"+table.attr('id')+" tr";
+						var seclastRow = $(_table).length;
+						
+						var html = "";
+						for(i=0;i<option.columns.length;i++){
+							html +='<td>'+response[option.columns[i].id]+'</td>';
+						}
+						// console.log(html);
+						html += '<td><a href="javascript:;" id="'+response["id"]+'" class="ajaxEdit btn btn-primary btn-xs">Edit</a></td>';
+						html += '<td><a href="javascript:;" id="'+response["id"]+'" class="ajaxDelete btn btn-danger btn-xs">Delete</a></td>';
+						// Append new row as a second last row of a table
+						$(_table).last().before('<tr id="'+response.id+'">'+html+'</tr>');
+						
+						if(effect == "slide"){
+							// Little hack to animate TR element smoothly, wrap it in div and replace then again replace with td and tr's ;)
+							$("#"+table.attr('id') +" tr:nth-child("+seclastRow+")").find('td')
+							 .wrapInner('<div style="display: none;" />')
+							 .parent()
+							 .find('td > div')
+							 .slideDown(700, function(){
+								  var $set = $(this);
+								  $set.replaceWith($set.contents());
+							});
+						}
+						else if(effect == "flash"){
+						   $("#"+table.attr('id')+" tr:nth-child("+seclastRow+")").effect("highlight",{color: '#acfdaa'},100);
+						}else
+						   $("#"+table.attr('id')+" tr:nth-child("+seclastRow+")").effect("highlight",{color: '#acfdaa'},1000);
+
+						// Blank input fields
+						table.find(inputs).filter(function() {
+							// check if input element is blank ??
+							this.value = "";
+							$(this).removeClass("success").removeClass("error");
+						});
+					}
+				});
+			}
+		});
+
+		// Delete record
+		table.on("click",".ajaxDelete",function(){
+			var id = $(this).attr("id");
+			if(id){
+				if(confirm("Do you really want to delete record ?")){
+					// ajax("rid="+id,"del");
+					$.ajax({
+						type: "DELETE", 
+						url: option.delete_url,
+						data : { d_id: id },
+						dataType: "json",
+						success: function(response){
+							var _table = "#"+table.attr('id')+" tr";
+							var seclastRow = $(_table).length;
+							if(response.success == 1){
+								$("#"+table.attr('id')+" tr[id='"+response.id+"']").effect("highlight",{color: '#f4667b'},500,function(){
+									$("#"+table.attr('id')+" tr[id='"+response.id+"']").remove();
+								});
+							}
+						}
+					});
+				}
+					
 			}
 		});
 	};
@@ -83,83 +158,4 @@ $(document).ready(function(){
 		return input;
 	}
 
-
-	ajax = function (params,action){
-		$.ajax({
-			type: "POST", 
-			url: "ajax.php", 
-			data : params+"&action="+action,
-			dataType: "json",
-			success: function(response){
-			  switch(action){
-				case "save":
-					var seclastRow = $("."+table+" tr").length;
-					if(response.success == 1){
-						var html = "";
-						
-						html += "<td>"+parseInt(seclastRow - 1)+"</td>";
-						for(i=0;i<columns.length;i++){
-							html +='<td class="'+columns[i]+'">'+response[columns[i]]+'</td>';
-						}
-						html += '<td><a href="javascript:;" id="'+response["id"]+'" class="ajaxEdit"><img src="'+editImage+'"></a> <a href="javascript:;" id="'+response["id"]+'" class="'+deletebutton+'"><img src="'+deleteImage+'"></a></td>';
-						// Append new row as a second last row of a table
-						$("."+table+" tr").last().before('<tr id="'+response.id+'">'+html+'</tr>');
-						
-						if(effect == "slide"){
-							// Little hack to animate TR element smoothly, wrap it in div and replace then again replace with td and tr's ;)
-							$("."+table+" tr:nth-child("+seclastRow+")").find('td')
-							 .wrapInner('<div style="display: none;" />')
-							 .parent()
-							 .find('td > div')
-							 .slideDown(700, function(){
-								  var $set = $(this);
-								  $set.replaceWith($set.contents());
-							});
-						}
-						else if(effect == "flash"){
-						   $("."+table+" tr:nth-child("+seclastRow+")").effect("highlight",{color: '#acfdaa'},100);
-						}else
-						   $("."+table+" tr:nth-child("+seclastRow+")").effect("highlight",{color: '#acfdaa'},1000);
-
-						// Blank input fields
-						$(document).find("."+table).find(inputs).filter(function() {
-							// check if input element is blank ??
-							this.value = "";
-							$(this).removeClass("success").removeClass("error");
-						});
-					}
-				break;
-				case "del":
-					var seclastRow = $("."+table+" tr").length;
-					if(response.success == 1){
-						$("."+table+" tr[id='"+response.id+"']").effect("highlight",{color: '#f4667b'},500,function(){
-							$("."+table+" tr[id='"+response.id+"']").remove();
-						});
-					}
-				break;
-				case "update":
-					$("."+cancelbutton).trigger("click");
-					for(i=0;i<columns.length;i++){
-						$("tr[id='"+response.id+"'] td[class='"+columns[i]+"']").html(response[columns[i]]);
-					}
-				break;
-				case "updatetd":
-					//$("."+cancelbutton).trigger("click");
-					var newval = $("."+table+" tr[id='"+editingtrid+"'] td[class='"+editingtdcol+"']").find(inputs).val();
-					
-					//alert($("."+table+" tr[id='"+editingtrid+"'] td[class='"+editingtdcol+"']").html());
-					$("."+table+" tr[id='"+editingtrid+"'] td[class='"+editingtdcol+"']").html(newval);
-
-					//$("."+table+" tr[id='"+editingtrid+"'] td[class='"+editingtdcol+"']").html(newval);
-					// remove editing flag
-					tdediting = 0;
-					$("."+table+" tr[id='"+editingtrid+"'] td[class='"+editingtdcol+"']").effect("highlight",{color: '#acfdaa'},1000);
-				break;
-			  }
-			},
-			error: function(){
-				alert("Unexpected error, Please try again");
-			}
-		});
-	}
 });

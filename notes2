@@ -77,3 +77,19 @@ with approved io
 
 activity code
 	yyyy-(xxxx)ide-activitytype-cagetory-brand
+
+-----------------------------------
+cycle month
+	- year
+
+fetch cycle by month
+remarks not mandatory in budget
+
+activity -> customer -> scheme -> budget 
+								->yes -> pmog confirm / update timings/ notify proponet
+								->no -> pmog add budget
+									-> pmog confirm / update timings/ notify proponet
+
+pmog planner single
+
+activity approver

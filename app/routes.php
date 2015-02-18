@@ -57,6 +57,9 @@ Route::post('login', 'LoginController@dologin');
 
 Route::group(array('before' => 'auth'), function()
 {	
+	Route::post('activity/{id}/addbudget', 'ActivityController@addbudget');
+	Route::delete('activity/deletebudget', 'ActivityController@deletebudget');
+
 	Route::get('activity/{id}/scheme', 'SchemeController@index');
 	Route::get('activity/{id}/scheme/create', 'SchemeController@create');
 	Route::post('activity/{id}/scheme', 'SchemeController@store');
@@ -97,6 +100,7 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('activitytype/{id}/network/dependon', 'NetworkController@dependOn');
 	Route::get('activitytype/{id}/network/totalduration', 'NetworkController@totalduration');
 	Route::post('activitytype/{id}/network/create', 'NetworkController@store');
+
 
 	Route::resource('activitytype', 'ActivityTypeController');
 

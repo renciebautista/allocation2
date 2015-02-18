@@ -42,7 +42,7 @@
 					<tr>
 						<th>Activity Code</th>
 						<th>Activity Name</th>
-						<th colspan="2" style="text-align:center;">Action</th>
+						<th colspan="3" style="text-align:center;">Action</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -62,6 +62,10 @@
 						</td>
 						<td class="action">
 							{{ HTML::linkAction('ActivityController@show','View', $activity->id, array('class' => 'btn btn-info btn-xs')) }}
+							
+						</td>
+						<td>
+							{{ HTML::linkAction('ActivityController@edit','Edit', $activity->id, array('class' => 'btn btn-info btn-xs')) }}
 						</td>
 					</tr>
 					@endforeach
