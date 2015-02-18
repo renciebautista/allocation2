@@ -10,6 +10,7 @@
 		"flynsarmy/csv-seeder": "1.0.*",
 		"zizaco/confide": "~4.0@dev",
 		"zizaco/entrust": "1.2.*@dev",
+		"barryvdh/laravel-debugbar": "~1.8",
 		"rencie/cpm": "dev-master"
 	},
 	"autoload": {
@@ -40,7 +41,6 @@
 	},
 	"minimum-stability": "stable",
 	"require-dev": {
-		"barryvdh/laravel-debugbar": "~1.8",
 	    "way/generators": "~2.0"
 	}
 }
