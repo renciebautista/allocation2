@@ -10,7 +10,8 @@
 		"flynsarmy/csv-seeder": "1.0.*",
 		"zizaco/confide": "~4.0@dev",
 		"zizaco/entrust": "1.2.*@dev",
-		"barryvdh/laravel-debugbar": "~1.8"
+		"barryvdh/laravel-debugbar": "~1.8",
+		"rencie/cpm": "1.0"
 	},
 	"autoload": {
 		"classmap": [
