@@ -67,8 +67,8 @@ with approved io
 			message promt 
 		if pmog
 			same as yes
-			Budget Holder (ID)
-			Budget Name (ID)
+			Budget Holder => numeric 6min max 10
+			Budget Name => pretext
 			Type (TTS/PE) - dropdown
 			Amount
 			start 
@@ -76,7 +76,7 @@ with approved io
 			Notes 
 
 activity code
-	yyyy-(xxxx)ide-activitytype-cagetory-brand
+	yyyy-(xxxx)id-activitytype-cagetory-brand
 
 -----------------------------------
 cycle month

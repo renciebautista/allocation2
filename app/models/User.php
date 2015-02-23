@@ -48,4 +48,12 @@ class User extends Eloquent implements ConfideUserInterface {
 		return $this->belongsToMany('Role','assigned_roles');
 	}
 
+	public function scopeIsRole($query, $role) {
+	    return $query->whereHas(
+	        'roles', function($query) use ($role){
+	            $query->where('name', $role);
+	        }
+	    );
+	}
+
 }

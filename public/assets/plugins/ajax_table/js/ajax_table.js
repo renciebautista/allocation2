@@ -1,3 +1,4 @@
+
 $(document).ready(function(){
 	$.fn.ajax_table = function(option) {
 		// init variables
@@ -17,11 +18,11 @@ $(document).ready(function(){
 		}
 
 
-		table  = $(this);
-		blankrow = '<tr valign="top" class="inputform">';
+		var table  = $(this);
+		var blankrow = '<tr valign="top" class="inputform">';
 		for(i=0;i<option.columns.length;i++){
 			// Create input element as per the definition
-			input = createInput(i,'',option.columns);
+			var input = createInput(i,'',option.columns);
 			blankrow += '<td class="ajaxReq">'+input+'</td>';
 		}
 		blankrow += '<td><a href="javascript:;" class="ajaxSave btn btn-primary btn-xs">Save</a></td></tr>';
@@ -36,11 +37,12 @@ $(document).ready(function(){
 
 
 		// Add new record
-		$(".ajaxSave").on("click",function(){
+		$("#"+table.attr('id')+" .ajaxSave").on("click",function(){
+			// console.log($(this).closest("table"));
 			var validation = 1;
 
 			var $inputs =
-			table.find(inputs).filter(function() {
+			$(this).closest("table").find(inputs).filter(function() {
 				// check if input element is blank ??
 				if($.trim( this.value ) == ""){
 					$(this).parent().addClass("has-error");
@@ -67,6 +69,7 @@ $(document).ready(function(){
 					dataType: "json",
 					success: function(response){
 						var _table = "#"+table.attr('id')+" tr";
+						console.log(_table);
 						var seclastRow = $(_table).length;
 						
 						var html = "";
@@ -98,9 +101,17 @@ $(document).ready(function(){
 						// Blank input fields
 						table.find(inputs).filter(function() {
 							// check if input element is blank ??
-							this.value = "";
+							// console.log(this);
+							if($(this).is( ":text" )){
+								this.value = "";
+							}
+							
 							$(this).removeClass("success").removeClass("error");
 						});
+
+						if (option.onSaveRow !== undefined) {
+							option.onSaveRow();
+						}
 					}
 				});
 			}

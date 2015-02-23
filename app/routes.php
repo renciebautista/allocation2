@@ -60,6 +60,9 @@ Route::group(array('before' => 'auth'), function()
 	Route::post('activity/{id}/addbudget', 'ActivityController@addbudget');
 	Route::delete('activity/deletebudget', 'ActivityController@deletebudget');
 
+	Route::post('activity/{id}/addnobudget', 'ActivityController@addnobudget');
+	Route::delete('activity/deletenobudget', 'ActivityController@deletenobudget');
+
 	Route::get('activity/{id}/scheme', 'SchemeController@index');
 	Route::get('activity/{id}/scheme/create', 'SchemeController@create');
 	Route::post('activity/{id}/scheme', 'SchemeController@store');

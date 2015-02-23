@@ -54,7 +54,7 @@
 						<div class="row">
 							<div class="col-lg-12">
 								{{ Form::label('planner', 'PMOG Planner', array('class' => 'control-label')) }}
-								{{ Form::select('planner[]', $planners, null, array('id' => 'planner', 'class' => 'form-control', 'multiple' => 'multiple')) }}
+								{{ Form::select('planner', array('0' => 'PLEASE SELECT') + $planners, null, array('id' => 'planner', 'class' => 'form-control')) }}
 							</div>
 						</div>
 					</div>
@@ -110,7 +110,7 @@
 						<div class="row">
 							<div class="col-lg-12">
 								{{ Form::label('download_date', 'Target Download Date ', array('class' => 'control-label')) }}
-								{{ Form::text('download_date','',array('id' => 'download_date', 'class' => 'form-control', 'placeholder' => 'mm/dd/yyyy', 'disabled' => '')) }}
+								{{ Form::text('download_date','',array('id' => 'download_date', 'class' => 'form-control', 'placeholder' => 'mm/dd/yyyy', 'readonly' => '')) }}
 							</div>
 						</div>
 					</div>
@@ -140,7 +140,7 @@
 						<div class="row">
 							<div class="col-lg-12">
 								{{ Form::label('division', 'Division', array('class' => 'control-label')) }}
-								{{ Form::select('division', $divisions, null, array('class' => 'form-control')) }}
+								{{ Form::select('division',  array('0' => 'PLEASE SELECT') + $divisions, null, array('class' => 'form-control')) }}
 							</div>
 						</div>
 					</div>
@@ -239,7 +239,7 @@ function duration(value){
 	});
 }
 
-$('select#planner, select#approver, select#involve').multiselect({
+$('select#approver, select#involve').multiselect({
 	maxHeight: 200,
 	includeSelectAllOption: true,
 	enableCaseInsensitiveFiltering: true,
@@ -387,14 +387,6 @@ $('select#objective').multiselect({
 	enableFiltering: true
 });
 
-$('select#channel').multiselect({
-	maxHeight: 200,
-	includeSelectAllOption: true,
-	enableCaseInsensitiveFiltering: true,
-	enableFiltering: true
-});
-
-$('select#channel').multiselect('disable');
  
 
 
