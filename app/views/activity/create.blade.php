@@ -28,6 +28,8 @@
 	<li class="disabled"><a>Customer Details</a></li>
 	<li class="disabled"><a>Schemes</a></li>
 	<li class="disabled"><a>Timings Details</a></li>
+	<li class="disabled"><a>Material Sourcing</a></li>
+	<li class="disabled"><a>Attachment</a></li>
 </ul>
 <div id="myTabContent" class="tab-content">
   	<div class="tab-pane fade active in" id="activty">
@@ -90,7 +92,7 @@
 						<div class="row">
 							<div class="col-lg-12">
 								{{ Form::label('lead_time', 'Activity Leadtime (days)', array('class' => 'control-label')) }}
-								{{ Form::text('lead_time','',array('class' => 'form-control', 'placeholder' => '0' , 'disabled' => '')) }}
+								{{ Form::text('lead_time','',array('class' => 'form-control', 'placeholder' => '0' , 'readonly' => '')) }}
 							</div>
 						</div>
 					</div>
@@ -125,6 +127,19 @@
   				<div class="col-lg-12">
 					<div class="form-group">
 						<div class="row">
+							<div class="col-lg-6">
+								{{ Form::label('cycle', 'TOP Cycle', array('class' => 'control-label')) }}
+								{{ Form::select('cycle', array('0' => 'PLEASE SELECT') + $cycles, null, array('class' => 'form-control')) }}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+  				<div class="col-lg-12">
+					<div class="form-group">
+						<div class="row">
 							<div class="col-lg-12">
 								{{ Form::label('activity_title', 'Activity Title', array('class' => 'control-label')) }}
 								{{ Form::text('activity_title','',array('id' => 'activity_title', 'class' => 'form-control', 'placeholder' => 'Activity Title')) }}
@@ -135,7 +150,7 @@
 			</div>
 
 			<div class="row">
-				<div class="col-lg-3">
+				<div class="col-lg-4">
 					<div class="form-group">
 						<div class="row">
 							<div class="col-lg-12">
@@ -145,7 +160,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="col-lg-3">
+				<div class="col-lg-4">
 					<div class="form-group">
 						<div class="row">
 							<div id="multiselect" class="col-lg-12">
@@ -155,7 +170,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="col-lg-3">
+				<div class="col-lg-4">
 					<div class="form-group">
 						<div class="row">
 							<div class="col-lg-12">
@@ -165,12 +180,15 @@
 						</div>
 					</div>
 				</div>
-				<div class="col-lg-3">
+			</div>
+
+			<div class="row">
+				<div class="col-lg-12">
 					<div class="form-group">
 						<div class="row">
 							<div class="col-lg-12">
 								{{ Form::label('involve', 'SKU/s Involved', array('class' => 'control-label' )) }}
-								<select class="form-control" data-placeholder="SELECT SKU" id="involve" name="involve[]" multiple="multiple" ></select>
+								{{ Form::select('involve[]', $involves, null, array('id' => 'involve', 'data-placeholder' => 'Select SKUS Involve', 'class' => 'form-control','multiple' => 'multiple')) }}
 							</div>
 						</div>
 					</div>
@@ -217,11 +235,9 @@
 @stop
 
 @section('page-script')
-<!-- $('textarea#background').ckeditor(); -->
 <!-- activity details -->
 
 function duration(value){
-
 	$.ajax({
 		type: "GET",
 		url: "../activitytype/"+value+"/network/totalduration",
@@ -239,7 +255,7 @@ function duration(value){
 	});
 }
 
-$('select#approver, select#involve').multiselect({
+$('select#approver').multiselect({
 	maxHeight: 200,
 	includeSelectAllOption: true,
 	enableCaseInsensitiveFiltering: true,
@@ -268,6 +284,7 @@ $("form").validate({
 	errorClass : "has-error",
 	rules: {
 		activity_title: "required",
+		planner: "is_natural_no_zero",
 		scope: "is_natural_no_zero",
 		activity_type: "is_natural_no_zero",
 		implementation_date: {
@@ -293,46 +310,7 @@ $.validator.addMethod("greaterdate", function(value, element) {
 }, "Please select from the list.");
 
 
-
-<!-- Budget details -->
-
-$('#budget_table').ajax_table({
-	columns: [
-		{ type: "select", id: "io_ttstype", placeholder: "Enter First Name"},
-    	{ type: "text", id: "io_no", placeholder: "Enter Last Name" },
-    	{ type: "text", id: "io_amount", placeholder: "Amount" },
-    	{ type: "text", id: "io_startdate", placeholder: "mm/dd/yyyy" },
-    	{ type: "text", id: "io_enddate", placeholder: "mm/dd/yyyy" },
-    	{ type: "text", id: "io_remarks", placeholder: "Enter Last Name" },
-	],
-	onInitRow: function() {
-        $('#io_startdate, #io_enddate').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
-        $('#io_startdate, #io_enddate').datetimepicker({
-			pickTime: false,
-			calendarWeeks: true,
-			minDate: moment()
-		});
-		$('#io_amount').inputNumber();
-		$("#io_no").mask("aa99999999");
-
-		$.ajax({
-			type: "GET",
-			url: "../api/budgettype",
-			success: function(data){
-				$('select#io_ttstype').empty();
-				$.each(data, function(i, text) {
-					$('<option />', {value: i, text: text}).appendTo($('select#io_ttstype')); 
-				});
-		   }
-		});
-    }
-});
-
-
-
-
 $('select#division').on("change",function(){
-	suggest_name();
 	$.ajax({
 			type: "POST",
 			data: {q: $(this).val()},
@@ -366,7 +344,6 @@ $('select#category').multiselect({
 			$('select#brand').multiselect('rebuild');
 		   }
 		});
-		suggest_name();
 	}
 });
 
@@ -376,9 +353,10 @@ $('select#brand').multiselect({
 	enableCaseInsensitiveFiltering: true,
 	enableFiltering: true,
 	onDropdownHide: function(event) {
-		suggest_name();
 	}
 });
+
+$("#involve").chosen();
 
 $('select#objective').multiselect({
 	maxHeight: 200,
@@ -388,27 +366,6 @@ $('select#objective').multiselect({
 });
 
  
-
-
-function suggest_name(){
-	$scope = $("#scope option:selected").text();
-	$cycle = $("#cycle option:selected").text();
-	$activity_type = $("#activity_type option:selected").text();
-	$division = $("#division option:selected").text();
-	$category = GetSelectValue($("#category :selected"));
-	if(!$category){
-		$cat='';
-	}else{
-		$cat='_'+$category;
-	}
-	$brand = GetSelectValue($("#brand :selected"));
-	if(!$brand){
-		$brd='';
-	}else{
-		$brd='_'+$brand;
-	}
-	$('#activity_code').val($scope+'_'+$cycle+'_'+$activity_type+'_'+$division+$cat+$brd);
-}
 
 
 @stop

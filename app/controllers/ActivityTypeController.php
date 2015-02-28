@@ -23,7 +23,8 @@ class ActivityTypeController extends \BaseController {
 	 */
 	public function create()
 	{
-		//
+		$budget_types = BudgetType::all();
+		return View::make('activitytype.create', compact('budget_types'));
 	}
 
 	/**
@@ -34,7 +35,41 @@ class ActivityTypeController extends \BaseController {
 	 */
 	public function store()
 	{
-		//
+		$input = Input::all();
+
+		$validation = Validator::make($input, ActivityType::$rules);
+
+		if($validation->passes())
+		{
+			DB::transaction(function(){
+				$activitytype = new ActivityType();
+				$activitytype->activity_type = strtoupper(Input::get('activity_type'));
+				$activitytype->uom = strtoupper(Input::get('uom'));
+				$activitytype->save();
+
+				// add required
+				if (Input::has('budget_types'))
+				{
+				   	$required_budget = array();
+					foreach (Input::get('budget_types') as $budget_type) {
+						$required_budget[] = array('activity_type_id' => $activitytype->id, 'budget_type_id' => $budget_type);
+					}
+					ActivityTypeBudgetRequired::insert($required_budget);
+				}
+			});
+
+
+
+			return Redirect::route('activitytype.index')
+				->with('class', 'alert-success')
+				->with('message', 'Record successfuly created.');
+		}
+
+		return Redirect::route('activitytype.create')
+			->withInput()
+			->withErrors($validation)
+			->with('class', 'alert-danger')
+			->with('message', 'There were validation errors.');
 	}
 
 	/**
@@ -58,7 +93,10 @@ class ActivityTypeController extends \BaseController {
 	 */
 	public function edit($id)
 	{
-		//
+		$activitytype = ActivityType::findOrFail($id);
+		$required = ActivityTypeBudgetRequired::required($id);
+		$budget_types = BudgetType::all();
+		return View::make('activitytype.edit', compact('activitytype', 'budget_types', 'required'));
 	}
 
 	/**
@@ -70,7 +108,47 @@ class ActivityTypeController extends \BaseController {
 	 */
 	public function update($id)
 	{
-		//
+		$input = Input::all();
+
+		$rules = array(
+	        'activity_type' => 'required|between:4,128|unique:activity_types,activity_type,'.$id,
+	        'uom' => 'required'
+	    );
+
+		$validation = Validator::make($input, $rules);
+
+		if($validation->passes())
+		{
+			DB::transaction(function() use ($id){
+				$activitytype = ActivityType::findOrFail($id);
+				$activitytype->activity_type = strtoupper(Input::get('activity_type'));
+				$activitytype->uom = strtoupper(Input::get('uom'));
+				$activitytype->update();
+
+				// add required
+				ActivityTypeBudgetRequired::where('activity_type_id',$activitytype->id)->delete();
+				if (Input::has('budget_types'))
+				{
+				   	$required_budget = array();
+					foreach (Input::get('budget_types') as $budget_type) {
+						$required_budget[] = array('activity_type_id' => $activitytype->id, 'budget_type_id' => $budget_type);
+					}
+					ActivityTypeBudgetRequired::insert($required_budget);
+				}
+			});
+
+
+
+			return Redirect::route('activitytype.index')
+				->with('class', 'alert-success')
+				->with('message', 'Activity Type successfuly updated.');
+		}
+
+		return Redirect::route('activitytype.edit', $id)
+			->withInput()
+			->withErrors($validation)
+			->with('class', 'alert-danger')
+			->with('message', 'There were validation errors.');
 	}
 
 	/**

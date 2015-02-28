@@ -26,6 +26,7 @@ class ActivityController extends \BaseController {
 		$scope_types = ScopeType::orderBy('scope_name')->lists('scope_name', 'id');
 		$planners = User::isRole('PMOG PLANNER')->lists('first_name', 'id');
 		$approvers = User::isRole('CD OPS APPROVER')->lists('first_name', 'id');
+		$involves = Pricelist::orderBy('sap_desc')->lists('sap_desc', 'sap_code');
 
 		$activity_types = ActivityType::orderBy('activity_type')->lists('activity_type', 'id');
 		$cycles = Cycle::orderBy('cycle_name')->lists('cycle_name', 'id');
@@ -37,7 +38,7 @@ class ActivityController extends \BaseController {
 		$objectives = Objective::orderBy('objective')->lists('objective', 'id');
 		
 		return View::make('activity.create', compact('scope_types', 'planners', 'approvers', 'cycles',
-		 'activity_types', 'divisions' , 'objectives',  'users'));
+		 'activity_types', 'divisions' , 'objectives',  'users', 'involves'));
 	}
 
 	/**
@@ -55,20 +56,54 @@ class ActivityController extends \BaseController {
 		if($validation->passes())
 		{
 			$id =  DB::transaction(function()   {
+				$scope_id = Input::get('scope');
+				$cycle_id = Input::get('cycle');
+				$activity_type_id = Input::get('activity_type');
+				$division_code = Input::get('division');
+
 				$activity = new Activity;
 				$activity->created_by = Auth::id();
 				
-				$activity->scope_type_id = Input::get('scope');
-				
-				$activity->activity_type_id = Input::get('activity_type');
-				$activity->duration = (Input::get('duration') == '') ? 0 : Input::get('duration');
+				$activity->scope_type_id = $scope_id;
+				$activity->cycle_id = $cycle_id;
+				$activity->activity_type_id = $activity_type_id;
+				$activity->duration = (Input::get('lead_time') == '') ? 0 : Input::get('lead_time');
 				$activity->edownload_date = date('Y-m-d',strtotime(Input::get('download_date')));
 				$activity->eimplementation_date = date('Y-m-d',strtotime(Input::get('implementation_date')));
 				$activity->circular_name = strtoupper(Input::get('activity_title'));
-				$activity->division_code = Input::get('division');
+				$activity->division_code = $division_code;
 				$activity->background = Input::get('background');
+				$activity->status_id = 1;
 				$activity->save();
+
+				$scope = ScopeType::find($scope_id);
+				$cycle = Cycle::find($cycle_id);
+				$activity_type = ActivityType::find($activity_type_id);
+				$division = Sku::select('division_code', 'division_desc')
+									->where('division_code',$division_code)
+									->first();
+
 				
+				$code = date('Y').$activity->id;
+				if(!empty($scope)){
+					$code .= '-'.$scope->scope_name;
+				}
+				if(!empty($cycle)){
+					$code .= '_'.$cycle->cycle_name;
+				}
+				if(!empty($activity_type)){
+					$code .= '_'.$activity_type->activity_type;
+				}
+				if(!empty($division)){
+					$code .= '_'.$division->division_desc;
+				}
+				// // $activity->activity_code = 
+
+				$activity->activity_code =  $code;
+				$activity->update();
+				// echo '<pre>';
+				// print_r($code);
+				// echo '</pre>';
 
 				// add planner
 				if (Input::has('planner'))
@@ -88,6 +123,7 @@ class ActivityController extends \BaseController {
 					ActivityApprover::insert($activity_approver);
 				}
 
+				// add category
 				if (Input::has('category'))
 				{
 					$activity_category = array();
@@ -97,6 +133,7 @@ class ActivityController extends \BaseController {
 					ActivityCategory::insert($activity_category);
 				}
 
+				// add brand
 				if (Input::has('brand'))
 				{
 					$activity_brand = array();
@@ -105,7 +142,18 @@ class ActivityController extends \BaseController {
 					}
 					ActivityBrand::insert($activity_brand);
 				}
+
+				// add skus involve
+				if (Input::has('involve'))
+				{
+					$activity_skuinvoled = array();
+					foreach (Input::get('involve') as $sku){
+						$activity_skuinvoled[] = array('activity_id' => $activity->id, 'sap_code' => $sku);
+					}
+					ActivitySku::insert($activity_skuinvoled);
+				}
 				
+				// add objective
 				if (Input::has('objective'))
 				{
 					$activity_objective = array();
@@ -177,30 +225,78 @@ class ActivityController extends \BaseController {
 	public function edit($id)
 	{
 		$activity = Activity::find($id);
+		if(($activity->status_id == 1) || ($activity->status_id == 3)){
+			$sel_planner = ActivityPlanner::where('activity_id',$id)
+				->first();
+			$sel_approver = ActivityApprover::getList($id);
+			$sel_skus = ActivitySku::getList($id);
+			$sel_objectives = ActivityObjective::getList($id);
 
-		$scope_types = ScopeType::orderBy('scope_name')->lists('scope_name', 'id');
-		$planners = User::isRole('PMOG PLANNER')->lists('first_name', 'id');
-		$approvers = User::isRole('CD OPS APPROVER')->lists('first_name', 'id');
+			$scope_types = ScopeType::orderBy('scope_name')->lists('scope_name', 'id');
+			$planners = User::isRole('PMOG PLANNER')->lists('first_name', 'id');
+			$approvers = User::isRole('CD OPS APPROVER')->lists('first_name', 'id');
+			$involves = Pricelist::orderBy('sap_desc')->lists('sap_desc', 'sap_code');
 
-		$activity_types = ActivityType::orderBy('activity_type')->lists('activity_type', 'id');
-		$cycles = Cycle::orderBy('cycle_name')->lists('cycle_name', 'id');
-		
-		$divisions = Sku::select('division_code', 'division_desc')
-			->groupBy('division_code')
-			->orderBy('division_desc')->lists('division_desc', 'division_code');
+			$activity_types = ActivityType::orderBy('activity_type')->lists('activity_type', 'id');
+			$cycles = Cycle::orderBy('cycle_name')->lists('cycle_name', 'id');
+			
+			$divisions = Sku::select('division_code', 'division_desc')
+				->groupBy('division_code')
+				->orderBy('division_desc')->lists('division_desc', 'division_code');
 
-		$objectives = Objective::orderBy('objective')->lists('objective', 'id');
+			$objectives = Objective::orderBy('objective')->lists('objective', 'id');
 
-		$budgets = ActivityBudget::with('budgettype')
-			->where('activity_id', $id)
-			->get();
+			$budgets = ActivityBudget::with('budgettype')
+				->where('activity_id', $id)
+				->get();
 
-		$nobudgets = ActivityNobudget::with('budgettype')
-			->where('activity_id', $id)
-			->get();
+			$nobudgets = ActivityNobudget::with('budgettype')
+				->where('activity_id', $id)
+				->get();
 
-		return View::make('activity.edit', compact('activity', 'scope_types', 'planners', 'approvers', 'cycles',
-		 'activity_types', 'divisions' , 'objectives',  'users', 'budgets', 'nobudgets'));
+			// echo '<pre>';
+			// print_r($sel_approver);
+			// echo '</pre>';
+
+			return View::make('activity.edit', compact('activity', 'scope_types', 'planners', 'approvers', 'cycles',
+			 'activity_types', 'divisions' , 'objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
+			 'involves', 'sel_skus', 'sel_objectives'));
+		}
+
+		if($activity->status_id == 2){
+			$sel_planner = ActivityPlanner::where('activity_id',$id)
+				->first();
+			$sel_approver = ActivityApprover::getList($id);
+
+			$scope_types = ScopeType::orderBy('scope_name')->lists('scope_name', 'id');
+			$planners = User::isRole('PMOG PLANNER')->lists('first_name', 'id');
+			$approvers = User::isRole('CD OPS APPROVER')->lists('first_name', 'id');
+
+			$activity_types = ActivityType::orderBy('activity_type')->lists('activity_type', 'id');
+			$cycles = Cycle::orderBy('cycle_name')->lists('cycle_name', 'id');
+			
+			$divisions = Sku::select('division_code', 'division_desc')
+				->groupBy('division_code')
+				->orderBy('division_desc')->lists('division_desc', 'division_code');
+
+			$objectives = Objective::orderBy('objective')->lists('objective', 'id');
+
+			$budgets = ActivityBudget::with('budgettype')
+				->where('activity_id', $id)
+				->get();
+
+			$nobudgets = ActivityNobudget::with('budgettype')
+				->where('activity_id', $id)
+				->get();
+
+			// echo '<pre>';
+			// print_r($sel_approver);
+			// echo '</pre>';
+
+			return View::make('activity.downloaded', compact('activity', 'scope_types', 'planners', 'approvers', 'cycles',
+			 'activity_types', 'divisions' , 'objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver'));
+		}
+
 	}
 
 	/**
@@ -219,19 +315,61 @@ class ActivityController extends \BaseController {
 			{
 				DB::transaction(function() use ($id)  {
 					$activity = Activity::find($id);
-					$activity->activity_code = "2015";
+
+					$scope_id = Input::get('scope');
+					$cycle_id = Input::get('cycle');
+					$activity_type_id = Input::get('activity_type');
+					$division_code = Input::get('division');
 					
-					$activity->scope_type_id = Input::get('scope');
+					$scope = ScopeType::find($scope_id);
+					$cycle = Cycle::find($cycle_id);
+					$activity_type = ActivityType::find($activity_type_id);
+					$division = Sku::select('division_code', 'division_desc')
+										->where('division_code',$division_code)
+										->first();
+
+					$code = date('Y').$activity->id;
+					if(!empty($scope)){
+						$code .= '-'.$scope->scope_name;
+					}
+					if(!empty($cycle)){
+						$code .= '_'.$cycle->cycle_name;
+					}
+					if(!empty($activity_type)){
+						$code .= '_'.$activity_type->activity_type;
+					}
+					if(!empty($division)){
+						$code .= '_'.$division->division_desc;
+					}
+					$activity->activity_code =  $code;
+
 					
-					$activity->activity_type_id = Input::get('activity_type');
+					$activity->scope_type_id = $scope_id;
+					$activity->cycle_id = $cycle_id;
+					$activity->activity_type_id = $activity_type_id;
+					$activity->division_code = $division_code;
+
 					$activity->duration = (Input::get('duration') == '') ? 0 : Input::get('duration');
 					$activity->edownload_date = date('Y-m-d',strtotime(Input::get('download_date')));
 					$activity->eimplementation_date = date('Y-m-d',strtotime(Input::get('implementation_date')));
 					$activity->circular_name = strtoupper(Input::get('activity_title'));
-					$activity->division_code = Input::get('division');
 					$activity->background = Input::get('background');
 					$activity->update();
+
+					// update planner
+					ActivityPlanner::where('activity_id',$activity->id)->delete();
+					if (Input::has('planner'))
+					{
+						if(Input::get('planner') > 0){
+							ActivityPlanner::insert(array('activity_id' => $activity->id, 'user_id' => Input::get('planner')));
+						}
+					}
+
+
 				});
+
+
+
 				$arr['success'] = 1;
 				
 			}
@@ -305,9 +443,55 @@ class ActivityController extends \BaseController {
 
 			$budget_type = BudgetType::find($budget->budget_type_id);
 			$arr['id'] = $budget->id;
-			$arr['io_ttstype'] = $budget_type->budget_type;
+			$arr['budget_ttstype'] = $budget_type->budget_type;
 			return json_encode($arr);
 		}
 	}
 
+	public function deletenobudget(){
+		if(Request::ajax()){
+			$id = Input::get('d_id');
+			$budget = ActivityNobudget::find($id);
+			$budget->delete();
+
+			$arr['success'] = 1;
+			$arr['id'] = $id;
+			return json_encode($arr);
+		}
+	}
+
+
+	public function download($id){
+
+		$activity = Activity::findOrFail($id);
+
+		// print_r(Activity::validForDownload($activity));
+		$validation = Activity::validForDownload($activity);
+		if($validation['status'] == 0){
+			return Redirect::route('activity.edit',$id)
+				->with('class', 'alert-danger')
+				->withErrors($validation['message'])
+				->with('message', 'Budget details are required.');
+		}
+		
+
+		$activity->status_id = 2;
+		$activity->update();
+
+		return Redirect::route('activity.edit',$id)
+				->with('class', 'alert-success')
+				->with('message', 'Activity was successfuly downloaded to PMOG.');
+
+
+	}
+
+	public function recall($id){
+		$activity = Activity::findOrFail($id);
+		$activity->status_id = 3;
+		$activity->update();
+
+		return Redirect::route('activity.edit',$id)
+				->with('class', 'alert-success')
+				->with('message', 'Activity was successfuly recalled from PMOG');
+	}
 }

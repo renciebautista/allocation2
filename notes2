@@ -93,3 +93,25 @@ activity -> customer -> scheme -> budget
 pmog planner single
 
 activity approver
+
+-------------------------------
+proponent -> pmog planner -> gcom -> cd ops
+
+download to pmog and recall disable not hide
+next/back auto save
+
+both budget can have value
+
+activity type maintenance with requuired budget type used for activity
+alert if missing budget for download
+record locking
+
+pmog
+	submit with confirmation
+	form validate in ajax submit
+	reject downloded activity
+	without budget add ammount
+	insert cpg 
+	
+----------------------------
+price list with box?

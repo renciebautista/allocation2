@@ -2,6 +2,10 @@
 
 class ActivityType extends \Eloquent {
 	protected $fillable = ['id', 'activity_type', 'uom'];
+	public static $rules = array(
+        'activity_type' => 'required|between:4,128|unique:activity_types',
+        'uom' => 'required'
+    );
 	public $timestamps = false;
 
 	public static function batchInsert($records){

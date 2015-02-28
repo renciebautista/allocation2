@@ -17,7 +17,7 @@
 		<div class="form-group">
 			{{ HTML::linkRoute('activity.index', 'Back To Activity List', array(), array('class' => 'btn btn-default')) }}
 
-			{{ HTML::linkAction('ActivityController@download','Download to PMOG', $activity->id, array('class' => 'btn btn-primary', 'onclick' => "if(!confirm('Are you sure to download this activity?')){return false;};")) }}
+			{{ HTML::linkAction('ActivityController@download','Submit to Approver', $activity->id, array('class' => 'btn btn-primary', 'onclick' => "if(!confirm('Are you sure to download this activity?')){return false;};")) }}
 
 			<button class="btn btn-warning disabled">Recall</button>
 		</div>
@@ -169,17 +169,17 @@
 			</div>
 
 			<div class="row">
-				<div class="col-lg-4">
+				<div class="col-lg-3">
 					<div class="form-group">
 						<div class="row">
 							<div class="col-lg-12">
 								{{ Form::label('division', 'Division', array('class' => 'control-label')) }}
-								{{ Form::select('division',  array('0' => 'PLEASE SELECT') + $divisions, $activity->division_code, array('class' => 'form-control')) }}
+								{{ Form::select('division',  array('0' => 'PLEASE SELECT') + $divisions, null, array('class' => 'form-control')) }}
 							</div>
 						</div>
 					</div>
 				</div>
-				<div class="col-lg-4">
+				<div class="col-lg-3">
 					<div class="form-group">
 						<div class="row">
 							<div id="multiselect" class="col-lg-12">
@@ -189,7 +189,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="col-lg-4">
+				<div class="col-lg-3">
 					<div class="form-group">
 						<div class="row">
 							<div class="col-lg-12">
@@ -199,15 +199,12 @@
 						</div>
 					</div>
 				</div>
-			</div>
-
-			<div class="row">
-				<div class="col-lg-12">
+				<div class="col-lg-3">
 					<div class="form-group">
 						<div class="row">
 							<div class="col-lg-12">
-								{{ Form::label('involve', 'SKU/s Involved', array('class' => 'control-label' )) }}
-								{{ Form::select('involve[]', $involves, $sel_skus, array('id' => 'involve', 'data-placeholder' => 'Select SKUS Involve', 'class' => 'form-control','multiple' => 'multiple')) }}
+								{{ Form::label('objective', 'SKU/s Involved', array('class' => 'control-label' )) }}
+								{{ Form::select('objective[]', $objectives, null, array('id' => 'objective', 'class' => 'form-control', 'multiple' => 'multiple')) }}
 							</div>
 						</div>
 					</div>
@@ -220,7 +217,7 @@
 						<div class="row">
 							<div class="col-lg-12">
 								{{ Form::label('objective', 'Objectives', array('class' => 'control-label' )) }}
-									{{ Form::select('objective[]', $objectives, $sel_objectives, array('id' => 'objective', 'class' => 'form-control', 'multiple' => 'multiple')) }}
+									{{ Form::select('objective[]', $objectives, null, array('id' => 'objective', 'class' => 'form-control', 'multiple' => 'multiple')) }}
 							</div>
 						</div>
 					</div>
@@ -352,56 +349,57 @@
   	</div>
 
   	<!-- budget details -->
+  	<!-- budget details -->
   	<div class="tab-pane fade" id="budget">
-
 		<br>
+
 			<div class="panel panel-primary">
 				<div class="panel-heading">
 					<h3 class="panel-title">With Existing Budget IO</h3>
 				</div>
 				<div class="panel-body">
 					<div id="c_with_budget">
-	  			<div class="row">
-	  				<div class="col-lg-12">
-						<div class="form-group">
-							<div class="row">
-								<div class="col-lg-12">
-									<table id="budget_table" class="table table-striped table-hover ">
-									  	<thead>
-									    	<tr>
-									      		<th>Type</th>
-									      		<th>IO</th>
-									      		<th>Amount</th>
-									      		<th>Start Date</th>
-									      		<th>End Date</th>
-									      		<th>Remarks</th>
-									      		<th colspan="2">Action</th>
-									    	</tr>
-									  	</thead>
-									  	@if(count($budgets)> 0)
-									  	<tbody>
-									  		@foreach ($budgets as $budget)
-									  		<tr id="{{ $budget->id }}">
-									  			<td>{{ $budget->budgettype->budget_type }}</td>
-										  		<td>{{ strtoupper($budget->io_number) }}</td>
-										  		<td>{{ number_format($budget->amount,2) }}</td>
-										  		<td>{{ date_format(date_create($budget->start_date),'m/d/Y') }}</td>
-										  		<td>{{ date_format(date_create($budget->end_date),'m/d/Y') }}</td>
-										  		<td>{{ $budget->remarks }}</td>
-										  		<td>
-													<a href="javascript:;" id="{{ $budget->id }}" class="ajaxEdit btn btn-primary btn-xs">Edit</a>
-												</td>
-												<td><a href="javascript:;" id="{{ $budget->id }}" class="ajaxDelete btn btn-danger btn-xs">Delete</a></td>
-									  		</tr>
-									  		@endforeach
-									  	</tbody>
-									  	@endif
-									  	
-									</table> 
+	  					<div class="row">
+			  				<div class="col-lg-12">
+								<div class="form-group">
+									<div class="row">
+										<div class="col-lg-12">
+											<table id="budget_table" class="table table-striped table-hover ">
+											  	<thead>
+											    	<tr>
+											      		<th>Type</th>
+											      		<th>IO</th>
+											      		<th>Amount</th>
+											      		<th>Start Date</th>
+											      		<th>End Date</th>
+											      		<th>Remarks</th>
+											      		<th colspan="2">Action</th>
+											    	</tr>
+											  	</thead>
+											  	@if(count($budgets)> 0)
+											  	<tbody>
+											  		@foreach ($budgets as $budget)
+											  		<tr id="{{ $budget->id }}">
+											  			<td>{{ $budget->budgettype->budget_type }}</td>
+												  		<td>{{ strtoupper($budget->io_number) }}</td>
+												  		<td>{{ number_format($budget->amount,2) }}</td>
+												  		<td>{{ date_format(date_create($budget->start_date),'m/d/Y') }}</td>
+												  		<td>{{ date_format(date_create($budget->end_date),'m/d/Y') }}</td>
+												  		<td>{{ $budget->remarks }}</td>
+												  		<td>
+															<a href="javascript:;" id="{{ $budget->id }}" class="ajaxEdit btn btn-primary btn-xs">Edit</a>
+														</td>
+														<td><a href="javascript:;" id="{{ $budget->id }}" class="ajaxDelete btn btn-danger btn-xs">Delete</a></td>
+											  		</tr>
+											  		@endforeach
+											  	</tbody>
+											  	@endif
+											  	
+											</table> 
+										</div>
+									</div>
 								</div>
 							</div>
-						</div>
-					</div>
 				</div>
 
 				<div class="row">
@@ -415,7 +413,6 @@
 							</div>
 						</div>
 					</div>
-					
 				</div>
 
 				<div class="row">
@@ -752,8 +749,7 @@ function duration(value){
 	});
 }
 
-
-$('select#approver').multiselect({
+$('select#approver, select#involve').multiselect({
 	maxHeight: 200,
 	includeSelectAllOption: true,
 	enableCaseInsensitiveFiltering: true,
@@ -777,54 +773,21 @@ $("#implementation_date").on("dp.change",function (e) {
 
 $('#implementation_date').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
 
-function updatecategory(id){
-	$.ajax({
-		type: "POST",
-		data: {q: id, id: {{ $activity->id }}},
-		url: "../../api/category/getselected",
-		success: function(data){
-			$('select#category').empty();
-			$.each(data.selection, function(i, text) {
-				var sel_class = '';
-				if($.inArray( i,data.selected ) > -1){
-					sel_class = 'selected="selected"';
-				}
-				$('<option '+sel_class+' value="'+i+'">'+text+'</option>').appendTo($('select#category')); 
-			});
-		$('select#category').multiselect('rebuild');
-		updatebrand();
-	   }
-	});
-}
-
-function updatebrand(){
-	$.ajax({
-			type: "POST",
-			data: {categories: GetSelectValues($('select#category :selected')),id: {{ $activity->id }}},
-			url: "../../api/brand/getselected",
-			success: function(data){
-				$('select#brand').empty();
-				$.each(data.selection, function(i, text) {
-					var sel_class = '';
-					if($.inArray( i,data.selected ) > -1){
-						sel_class = 'selected="selected"';
-					}
-					$('<option '+sel_class+' value="'+i+'">'+text+'</option>').appendTo($('select#brand'));
-				});
-			$('select#brand').multiselect('rebuild');
-		   }
-		});
-}
-
-
-var div = $("select#division").val();
-if(parseInt(div) > 0) {
-   updatecategory(div);
-}
-
 
 $('select#division').on("change",function(){
-	updatecategory($(this).val());
+	suggest_name();
+	$.ajax({
+			type: "POST",
+			data: {q: $(this).val()},
+			url: "../api/category",
+			success: function(data){
+				$('select#category').empty();
+				$.each(data, function(i, text) {
+					$('<option />', {value: i, text: text}).appendTo($('select#category')); 
+				});
+			$('select#category').multiselect('rebuild');
+		   }
+		});
 });
 
 
@@ -834,7 +797,19 @@ $('select#category').multiselect({
 	enableCaseInsensitiveFiltering: true,
 	enableFiltering: true,
 	onDropdownHide: function(event) {
-		updatebrand();
+		$.ajax({
+			type: "POST",
+			data: {categories: GetSelectValues($('select#category :selected'))},
+			url: "../api/brand",
+			success: function(data){
+				$('select#brand').empty();
+				$.each(data, function(i, text) {
+					$('<option />', {value: i, text: text}).appendTo($('select#brand')); 
+				});
+			$('select#brand').multiselect('rebuild');
+		   }
+		});
+		suggest_name();
 	}
 });
 
@@ -844,10 +819,9 @@ $('select#brand').multiselect({
 	enableCaseInsensitiveFiltering: true,
 	enableFiltering: true,
 	onDropdownHide: function(event) {
+		suggest_name();
 	}
 });
-
-$("#involve").chosen();
 
 $('select#objective').multiselect({
 	maxHeight: 200,
@@ -871,8 +845,6 @@ $("form[id='updateActivity']").on("submit",function(e){
 	});
 	e.preventDefault();
 });
-
-
 
 
 <!-- Customer details -->

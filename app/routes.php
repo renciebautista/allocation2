@@ -57,6 +57,11 @@ Route::post('login', 'LoginController@dologin');
 
 Route::group(array('before' => 'auth'), function()
 {	
+	Route::pattern('id', '[0-9]+');
+
+	Route::get('activity/{id}/download', 'ActivityController@download');
+	Route::get('activity/{id}/recall', 'ActivityController@recall');
+
 	Route::post('activity/{id}/addbudget', 'ActivityController@addbudget');
 	Route::delete('activity/deletebudget', 'ActivityController@deletebudget');
 
@@ -68,8 +73,13 @@ Route::group(array('before' => 'auth'), function()
 	Route::post('activity/{id}/scheme', 'SchemeController@store');
 	Route::get('scheme/{id}', 'SchemeController@show');
 	Route::delete('scheme/{id}', 'SchemeController@destroy');
-
 	Route::resource('activity', 'ActivityController');
+
+	Route::get('downloadedactivity/nobudget', 'DownloadedActivityController@nobudget');
+
+	Route::resource('downloadedactivity', 'DownloadedActivityController');
+	Route::resource('submittedactivity', 'SubmittedActivityController');
+	
 	Route::resource('group', 'GroupController');
 	Route::resource('dashboard', 'DashboardController');
 	Route::get('profile','ProfileController@index');
@@ -77,8 +87,10 @@ Route::group(array('before' => 'auth'), function()
 	Route::group(array('prefix' => 'api'), function()
 	{
 		Route::get('customers', 'api\CustomerController@index');
+		Route::post('category/getselected', 'api\SkuController@categoryselected');
 		Route::post('category', 'api\SkuController@category');
 		Route::post('brand', 'api\SkuController@brand');
+		Route::post('brand/getselected', 'api\SkuController@brandselected');
 		Route::resource('network', 'api\NetworkController');
 		Route::get('budgettype', 'api\BudgetTypeController@gettype');
 	});//

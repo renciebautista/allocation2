@@ -42,19 +42,21 @@
 					<tr>
 						<th>Activity Code</th>
 						<th>Activity Name</th>
+						<th>Status</th>
 						<th colspan="3" style="text-align:center;">Action</th>
 					</tr>
 				</thead>
 				<tbody>
 					@if(count($activities) == 0)
 					<tr>
-						<td colspan="5">No record found!</td>
+						<td colspan="6">No record found!</td>
 					</tr>
 					@else
 					@foreach($activities as $activity)
 					<tr>
-						<td>{{ $activity->id }}</td>
+						<td>{{ $activity->activity_code }}</td>
 						<td>{{ $activity->circular_name }}</td>
+						<td>{{ $activity->status->status }}</td>
 						<td class="action">
 							{{ Form::open(array('method' => 'DELETE', 'action' => array('ActivityController@destroy', $activity->id))) }}                       
 							{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}

@@ -9,6 +9,7 @@
 		{{ HTML::style('assets/plugins/twitter-bootstrap/css/bootswatch.min.css') }}
 		{{ HTML::style('assets/plugins/font-awesome-4.2.0/css/font-awesome.min.css') }}
 		{{ HTML::style('assets/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css') }}
+		{{ HTML::style('assets/plugins/chosen_v1.3.0/bootstrap-chosen.css') }}
 		{{ HTML::style('assets/plugins/DataTables-1.10.4/css/jquery.dataTables.min.css') }}
 		{{ HTML::style('assets/plugins/FixedColumns-3.0.2/css/dataTables.fixedColumns.min.css') }}
 		{{ HTML::style('assets/plugins/ColVis-1.1.1/css/dataTables.colVis.min.css') }}
@@ -40,12 +41,22 @@
 				</div>
 				<div class="navbar-collapse collapse" id="navbar-main">
 					<ul class="nav navbar-nav">
+						@if(!Auth::user()->hasRole("ADMINISTRATOR"))
 						<li class="dropdown">
 							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="themes">Transaction <span class="caret"></span></a>
 							<ul class="dropdown-menu" aria-labelledby="themes">
-								<li>{{ HTML::linkRoute('activity.index', 'Activity') }}</li>    
+								@if(Auth::user()->hasRole("PROPONENT"))
+								<li>{{ HTML::linkRoute('activity.index', 'Activity') }}</li>   
+								@endif
+								@if(Auth::user()->hasRole("PMOG PLANNER"))
+								<li>{{ HTML::linkRoute('downloadedactivity.index', 'Downloaded Activity') }}</li>  
+								@endif
+								@if(Auth::user()->hasRole("GCOM APPROVER"))
+								<li>{{ HTML::linkAction('submittedactivity.index' , 'Submitted Activity') }}</li>  
+								@endif  
 							</ul>
 						</li>
+						@endif
 						@if(Auth::user()->hasRole("ADMINISTRATOR"))
 						<li class="dropdown">
 							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="themes">Maintenance <span class="caret"></span></a>
@@ -107,6 +118,9 @@
 	{{ HTML::script('assets/plugins/twitter-bootstrap/js/bootstrap.min.js') }}
 
 	{{ HTML::script('assets/plugins/bootstrap-multiselect/js/bootstrap-multiselect.js') }}
+
+	{{ HTML::script('assets/plugins/chosen_v1.3.0/chosen.jquery.min.js') }}
+	
 
 	{{ HTML::script('assets/plugins/DataTables-1.10.4/js/jquery.dataTables.min.js') }}
 	{{ HTML::script('assets/plugins/FixedColumns-3.0.2/js/dataTables.fixedColumns.min.js') }}

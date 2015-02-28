@@ -39,7 +39,8 @@ class DatabaseSeeder extends Seeder {
 		// new
 		$this->call('MonthTableSeeder');
 		$this->call('BudgetTypeTableSeeder');
-
+		$this->call('PricelistTableSeeder');
+		
 		DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
 	}
