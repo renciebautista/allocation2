@@ -27,6 +27,11 @@ class Activity extends \Eloquent {
         return $this->belongsTo('ScopeType','scope_type_id','id');
     }
 
+    public function activitytype()
+    {
+        return $this->belongsTo('ActivityType','activity_type_id');
+    }
+
 
     // static function
 	public static function validForDownload($activity){

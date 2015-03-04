@@ -4,7 +4,11 @@ class Scheme extends \Eloquent {
 	protected $fillable = [];
 
 	public static $rules = array(
-		'name' => 'required',
-		'quantity' => 'required|integer|min:1'
+		'scheme_name' => 'required',
+		'pr' => 'required',
+		'srp_p' => 'required',
+		'total_alloc' => 'required',
+		'deals' => 'required',
+		'skus' => 'required',
 	);
 }

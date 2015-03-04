@@ -90,6 +90,10 @@ class CustomerController extends \BaseController {
 		return \Response::json($data,200);
 	}
 	public function index(){
+		$id = \Input::get('id');
+
+
+
 		$channels = \DB::table('channels')->get();
 		$groups = \DB::table('groups')
 			->get();
@@ -165,6 +169,7 @@ class CustomerController extends \BaseController {
 					);
 				}
 				$group_children[] = array(
+					'select' => true,
 					'title' => $area->area_name,
 					'isFolder' => true,
 					'key' => $group->group_code.".".$area->area_code,
@@ -177,6 +182,18 @@ class CustomerController extends \BaseController {
 				'key' => $group->group_code,
 				'children' => $group_children
 				);
+		}
+		return \Response::json($data,200);
+	}
+
+	public function customerselected(){
+		$id = \Input::get('id');
+		$data = array();
+		$sel = \ActivityCustomer::where('activity_id',$id)->get();
+		if(!empty($sel)){
+			foreach ($sel as $row) {
+				$data[] = $row->customer_node;
+			}
 		}
 		return \Response::json($data,200);
 	}

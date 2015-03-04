@@ -68,12 +68,16 @@ Route::group(array('before' => 'auth'), function()
 	Route::post('activity/{id}/addnobudget', 'ActivityController@addnobudget');
 	Route::delete('activity/deletenobudget', 'ActivityController@deletenobudget');
 
+	Route::put('activity/{id}/updatecustomer', 'ActivityController@updatecustomer');
+
 	Route::get('activity/{id}/scheme', 'SchemeController@index');
 	Route::get('activity/{id}/scheme/create', 'SchemeController@create');
 	Route::post('activity/{id}/scheme', 'SchemeController@store');
-	Route::get('scheme/{id}', 'SchemeController@show');
-	Route::delete('scheme/{id}', 'SchemeController@destroy');
 	Route::resource('activity', 'ActivityController');
+	
+	Route::get('scheme/{id}/edit', 'SchemeController@edit');
+	Route::delete('scheme/{id}', 'SchemeController@destroy');
+	Route::put('scheme/{id}', 'SchemeController@update');
 
 	Route::get('downloadedactivity/nobudget', 'DownloadedActivityController@nobudget');
 
@@ -86,7 +90,10 @@ Route::group(array('before' => 'auth'), function()
 
 	Route::group(array('prefix' => 'api'), function()
 	{
+		Route::get('customerselected', 'api\CustomerController@customerselected');
 		Route::get('customers', 'api\CustomerController@index');
+		
+
 		Route::post('category/getselected', 'api\SkuController@categoryselected');
 		Route::post('category', 'api\SkuController@category');
 		Route::post('brand', 'api\SkuController@brand');

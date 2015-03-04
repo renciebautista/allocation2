@@ -1,0 +1,11 @@
+TRUNCATE `activity_approvers`;
+TRUNCATE `activity_brands`;
+TRUNCATE `activity_budgets`;
+TRUNCATE `activity_categories`;
+TRUNCATE `activity_channels`;
+TRUNCATE `activity_customers`;
+TRUNCATE `activity_network_dependents`;
+TRUNCATE `activity_nobudgets`;
+TRUNCATE `activity_objectives`;
+TRUNCATE `activity_planners`;
+TRUNCATE `activity_skus`;

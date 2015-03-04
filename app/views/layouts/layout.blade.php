@@ -149,6 +149,10 @@
 	{{ HTML::script('assets/plugins/jquery-validation-1.13.1/jquery.validate.min.js') }}
 	{{ HTML::script('assets/plugins/jquery-validation-1.13.1/additional-methods.js') }}
 
+	{{ HTML::script('assets/plugins/bootbox/bootbox.min.js') }}
+	{{ HTML::script('assets/plugins/accounting_js/accounting.min.js') }}
+
+
 	{{ HTML::script('assets/js/function.js') }}
 
 	<script type="text/javascript">

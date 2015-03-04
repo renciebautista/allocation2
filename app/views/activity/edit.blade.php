@@ -27,23 +27,23 @@
 
 
 <ul class="nav nav-tabs">
-	<li class="active"><a aria-expanded="true" href="#activty" data-toggle="tab">Activity Details</a></li>
-	<li class=""><a aria-expanded="false" href="#customer" data-toggle="tab">Customer Details</a></li>
-	<li class=""><a aria-expanded="false" href="#schemes" data-toggle="tab">Schemes</a></li>
-	<li class=""><a aria-expanded="false" href="#budget" data-toggle="tab">Budget Details</a></li>
-	<li class=""><a aria-expanded="false" href="#timings" data-toggle="tab">Timings Details</a></li>
-	<li class=""><a aria-expanded="false" href="#materials" data-toggle="tab">Material Sourcing</a></li>
-	<li class=""><a aria-expanded="false" href="#attachment" data-toggle="tab">Attachment</a></li>
+	<li class="active"><a aria-expanded="true" href="#activty">Activity Details</a></li>
+	<li class=""><a aria-expanded="false" href="#customer">Customer Details</a></li>
+	<li class=""><a aria-expanded="false" href="#schemes">Schemes</a></li>
+	<li class=""><a aria-expanded="false" href="#budget">Budget Details</a></li>
+	<li class=""><a aria-expanded="false" href="#timings">Timings Details</a></li>
+	<li class=""><a aria-expanded="false" href="#materials">Material Sourcing</a></li>
+	<li class=""><a aria-expanded="false" href="#attachment">Attachment</a></li>
 </ul>
 <div id="myTabContent" class="tab-content">
 
 	<!-- activity details -->
-  	<div class="tab-pane fade active in" id="activty">
-  		<br>
-  		{{ Form::open(array('route' => array('activity.update', $activity->id), 'method' => 'PUT', 'class' => 'bs-component','id' => 'updateActivity')) }}
-  		<div class="well">
-  			<div class="row">
-  				<div class="col-lg-6">
+	<div class="tab-pane fade active in" id="activty">
+		<br>
+		{{ Form::open(array('route' => array('activity.update', $activity->id), 'method' => 'PUT', 'class' => 'bs-component','id' => 'updateActivity')) }}
+		<div class="well">
+			<div class="row">
+				<div class="col-lg-6">
 					<div class="form-group">
 						<div class="row">
 							<div class="col-lg-12">
@@ -55,8 +55,8 @@
 				</div>
 			</div>
 
-  			<div class="row">
-  				<div class="col-lg-6">
+			<div class="row">
+				<div class="col-lg-6">
 					<div class="form-group">
 						<div class="row">
 							<div class="col-lg-12">
@@ -70,7 +70,7 @@
 
 			<!-- Approver -->
 			<div class="row">
-  				<div class="col-lg-6">
+				<div class="col-lg-6">
 					<div class="form-group">
 						<div class="row">
 							<div class="col-lg-12">
@@ -143,7 +143,7 @@
 			<!-- End Cycle -->
 
 			<div class="row">
-  				<div class="col-lg-12">
+				<div class="col-lg-12">
 					<div class="form-group">
 						<div class="row">
 							<div class="col-lg-6">
@@ -156,7 +156,7 @@
 			</div>
 
 			<div class="row">
-  				<div class="col-lg-12">
+				<div class="col-lg-12">
 					<div class="form-group">
 						<div class="row">
 							<div class="col-lg-12">
@@ -215,7 +215,7 @@
 			</div>
 
 			<div class="row">
-  				<div class="col-lg-6">
+				<div class="col-lg-6">
 					<div class="form-group">
 						<div class="row">
 							<div class="col-lg-12">
@@ -229,7 +229,7 @@
 			</div>
 
 			<div class="row">
-  				<div class="col-lg-12">
+				<div class="col-lg-12">
 					<div class="form-group">
 						<div class="row">
 							<div class="col-lg-12">
@@ -246,18 +246,32 @@
 					</div>
 				</div>
 			</div>
-  		</div>
-  		{{ Form::close() }}
-  	</div>
+		</div>
+		{{ Form::close() }}
+	</div>
 
-  	<!-- customer details -->
-  	<div class="tab-pane fade" id="customer">
-  		<br>
-  		<div class="well">
-  			<div class="row">
-  				<div class="col-lg-12">
-  					<div id="tree3"></div>
+	<!-- customer details -->
+	
+	<div class="tab-pane fade" id="customer">
+		<br>
+		{{ Form::open(array('action' => array('ActivityController@updatecustomer', $activity->id), 'method' => 'PUT', 'class' => 'bs-component','id' => 'updateCustomer')) }}
+		<div class="well">
+			<div class="row">
+				<div class="col-lg-12">
+					<div id="tree3"></div>
 					{{ Form::hidden('customers', null, array('id' => 'customers')) }}
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-lg-6">
+					<div class="form-group">
+						<div class="row">
+							<div class="col-lg-12">
+								{{ Form::label('channel', 'Select DT Channels Involved', array('class' => 'control-label' )) }}
+								{{ Form::select('channel[]', $channels, $sel_channels, array('id' => 'channel', 'class' => 'form-control', 'multiple' => 'multiple')) }}
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 			<br>
@@ -265,76 +279,72 @@
 				<div class="col-lg-12">
 					<div class="form-group">
 						<button class="btn btn-default btn-style" type="submit">Back</button>
-						{{ HTML::linkRoute('activity.index', 'Save', array(), array('class' => 'btn btn-primary')) }}
+						<button class="btn btn-primary">Update</button>
 						<button class="btn btn-primary btn-style" type="submit">Next</button>
 					</div>
 				</div>
 			</div>
 
-  		</div>
-  	</div>
+		</div>
+		{{ Form::close() }}
+	</div>
 
-  	<!-- scheme details -->
-  	<div class="tab-pane fade" id="schemes">
-  		<br>
-  		<div class="well">
-  			<div class="row">
-  				<div class="col-lg-12">
-					<table class="table table-striped table-hover ">
-					  <thead>
-					    <tr>
-					      <th>#</th>
-					      <th>Column heading</th>
-					      <th>Column heading</th>
-					      <th>Column heading</th>
-					    </tr>
-					  </thead>
-					  <tbody>
-					    <tr>
-					      <td>1</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					    </tr>
-					    <tr>
-					      <td>2</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					    </tr>
-					    <tr class="info">
-					      <td>3</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					    </tr>
-					    <tr class="success">
-					      <td>4</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					    </tr>
-					    <tr class="danger">
-					      <td>5</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					    </tr>
-					    <tr class="warning">
-					      <td>6</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					    </tr>
-					    <tr class="active">
-					      <td>7</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					    </tr>
-					  </tbody>
-					</table> 
+	<!-- scheme details -->
+	<div class="tab-pane fade" id="schemes">
 
+		<br>
+		<div class="well">
+			<a href="{{ URL::action('SchemeController@create', $activity->id) }}" class="btn btn-primary"><i class="fa fa-plus"></i> Scheme</a>
+			<div class="row">
+				<div class="col-lg-12">
+
+					<div class="table-responsive tableScroll">
+						<table class="table table-striped table-hover ">
+							<thead>
+								<tr>
+									<th>Date Created</th>
+									<th>Scheme Name</th>
+									<th>Item Code</th>
+									<th>Purchase Requirement</th>
+									<th>SRP of Premium</th>
+									<th>Other Cost Per Deal</th>
+									<th>Total Unilever Cost</th>
+									<th>Cost to Sales % </th>
+									<th>Total Allocation</th>
+									<th>UOM</th>
+									<th>No. of Deals Per Case</th>
+									<th>TTS Requirement</th>
+									<th>PE Requirement</th>
+									<th>Total Cost</th>
+									<th>Action</th>
+								</tr>
+							</thead>
+						  	<tbody>
+								@foreach($schemes as $scheme)
+								<tr>
+									<td>{{ date_format($scheme->created_at,'m/d/Y') }}</td>
+								  	<td>{{ $scheme->name }}</td>
+								  	<td>{{ $scheme->item_code }}</td>
+								  	<td class="text-right">{{ number_format($scheme->pr,2) }}</td>
+								  	<td class="text-right">{{ number_format($scheme->srp_p,2) }}</td>
+								  	<td class="text-right">{{ number_format($scheme->other_cost,2) }}</td>
+								  	<td class="text-right">{{ number_format($scheme->ulp,2) }}</td>
+								  	<td class="text-right">{{ number_format($scheme->cost_sale,2) }}</td>
+								  	<td class="text-right">{{ number_format($scheme->quantity) }}</td>
+								  	<td>{{ $activity->activitytype->uom }}</td>
+								  	<td class="text-right">{{ number_format($scheme->deals) }}</td>
+								  	<td class="text-right">{{ number_format($scheme->tts_r,2) }}</td>
+								  	<td class="text-right">{{ number_format($scheme->pe_r,2) }}</td>
+								  	<td class="text-right">{{ number_format($scheme->total_cost,2) }}</td>
+								  	<td>
+								  		{{ HTML::linkAction('SchemeController@edit','View', $scheme->id, array('class' => 'btn btn-primary btn-xs')) }}
+								  		<a class="btn btn-danger btn-xs" href="#">Delete</a>
+								  	</td>
+								</tr>
+								@endforeach
+						  	</tbody>
+						</table> 
+					</div>
 
 				</div>
 			</div>
@@ -348,11 +358,11 @@
 					</div>
 				</div>
 			</div>
-  		</div>
-  	</div>
+		</div>
+	</div>
 
-  	<!-- budget details -->
-  	<div class="tab-pane fade" id="budget">
+	<!-- budget details -->
+	<div class="tab-pane fade" id="budget">
 
 		<br>
 			<div class="panel panel-primary">
@@ -361,42 +371,42 @@
 				</div>
 				<div class="panel-body">
 					<div id="c_with_budget">
-	  			<div class="row">
-	  				<div class="col-lg-12">
+				<div class="row">
+					<div class="col-lg-12">
 						<div class="form-group">
 							<div class="row">
 								<div class="col-lg-12">
 									<table id="budget_table" class="table table-striped table-hover ">
-									  	<thead>
-									    	<tr>
-									      		<th>Type</th>
-									      		<th>IO</th>
-									      		<th>Amount</th>
-									      		<th>Start Date</th>
-									      		<th>End Date</th>
-									      		<th>Remarks</th>
-									      		<th colspan="2">Action</th>
-									    	</tr>
-									  	</thead>
-									  	@if(count($budgets)> 0)
-									  	<tbody>
-									  		@foreach ($budgets as $budget)
-									  		<tr id="{{ $budget->id }}">
-									  			<td>{{ $budget->budgettype->budget_type }}</td>
-										  		<td>{{ strtoupper($budget->io_number) }}</td>
-										  		<td>{{ number_format($budget->amount,2) }}</td>
-										  		<td>{{ date_format(date_create($budget->start_date),'m/d/Y') }}</td>
-										  		<td>{{ date_format(date_create($budget->end_date),'m/d/Y') }}</td>
-										  		<td>{{ $budget->remarks }}</td>
-										  		<td>
+										<thead>
+											<tr>
+												<th>Type</th>
+												<th>IO</th>
+												<th>Amount</th>
+												<th>Start Date</th>
+												<th>End Date</th>
+												<th>Remarks</th>
+												<th colspan="2">Action</th>
+											</tr>
+										</thead>
+										@if(count($budgets)> 0)
+										<tbody>
+											@foreach ($budgets as $budget)
+											<tr id="{{ $budget->id }}">
+												<td>{{ $budget->budgettype->budget_type }}</td>
+												<td>{{ strtoupper($budget->io_number) }}</td>
+												<td>{{ number_format($budget->amount,2) }}</td>
+												<td>{{ date_format(date_create($budget->start_date),'m/d/Y') }}</td>
+												<td>{{ date_format(date_create($budget->end_date),'m/d/Y') }}</td>
+												<td>{{ $budget->remarks }}</td>
+												<td>
 													<a href="javascript:;" id="{{ $budget->id }}" class="ajaxEdit btn btn-primary btn-xs">Edit</a>
 												</td>
 												<td><a href="javascript:;" id="{{ $budget->id }}" class="ajaxDelete btn btn-danger btn-xs">Delete</a></td>
-									  		</tr>
-									  		@endforeach
-									  	</tbody>
-									  	@endif
-									  	
+											</tr>
+											@endforeach
+										</tbody>
+										@endif
+										
 									</table> 
 								</div>
 							</div>
@@ -405,7 +415,7 @@
 				</div>
 
 				<div class="row">
-	  				<div class="col-lg-6">
+					<div class="col-lg-6">
 						<div class="form-group">
 							<div class="row">
 								<div class="col-lg-12">
@@ -442,42 +452,42 @@
 				</div>
 				<div class="panel-body">
 					<div id="c_without_budget">
-	  			<div class="row">
-	  				<div class="col-lg-12">
+				<div class="row">
+					<div class="col-lg-12">
 						<div class="form-group">
 							<div class="row">
 								<div class="col-lg-12">
 									<table id="no_budget_table" class="table table-striped table-hover ">
-									  	<thead>
-									    	<tr>
-									      		<th>Type</th>
-									      		<th>Budget Holder</th>
-									      		<th>Budget Name</th>
-									      		<th>Start Date</th>
-									      		<th>End Date</th>
-									      		<th>Remarks</th>
-									      		<th colspan="2">Action</th>
-									    	</tr>
-									  	</thead>
-									  	@if(count($nobudgets)> 0)
-									  	<tbody>
-									  		@foreach ($nobudgets as $nobudget)
-									  		<tr id="{{ $nobudget->id }}">
-									  			<td>{{ $nobudget->budgettype->budget_type }}</td>
-										  		<td>{{ $nobudget->budget_no }}</td>
-										  		<td>{{ $nobudget->budget_name }}</td>
-										  		<td>{{ date_format(date_create($nobudget->start_date),'m/d/Y') }}</td>
-										  		<td>{{ date_format(date_create($nobudget->end_date),'m/d/Y') }}</td>
-										  		<td>{{ $nobudget->remarks }}</td>
-										  		<td>
+										<thead>
+											<tr>
+												<th>Type</th>
+												<th>Budget Holder</th>
+												<th>Budget Name</th>
+												<th>Start Date</th>
+												<th>End Date</th>
+												<th>Remarks</th>
+												<th colspan="2">Action</th>
+											</tr>
+										</thead>
+										@if(count($nobudgets)> 0)
+										<tbody>
+											@foreach ($nobudgets as $nobudget)
+											<tr id="{{ $nobudget->id }}">
+												<td>{{ $nobudget->budgettype->budget_type }}</td>
+												<td>{{ $nobudget->budget_no }}</td>
+												<td>{{ $nobudget->budget_name }}</td>
+												<td>{{ date_format(date_create($nobudget->start_date),'m/d/Y') }}</td>
+												<td>{{ date_format(date_create($nobudget->end_date),'m/d/Y') }}</td>
+												<td>{{ $nobudget->remarks }}</td>
+												<td>
 													<a href="javascript:;" id="{{ $nobudget->id }}" class="ajaxEdit btn btn-primary btn-xs">Edit</a>
 												</td>
 												<td><a href="javascript:;" id="{{ $nobudget->id }}" class="ajaxDelete btn btn-danger btn-xs">Delete</a></td>
-									  		</tr>
-									  		@endforeach
-									  	</tbody>
-									  	@endif
-									  	
+											</tr>
+											@endforeach
+										</tbody>
+										@endif
+										
 									</table> 
 								</div>
 							</div>
@@ -501,66 +511,66 @@
 						</div>
 					</div>
 				</div>
-  	</div>
+	</div>
 
-  	  	<!-- timings details -->
-  	<div class="tab-pane fade" id="timings">
-  		<br>
-  		<div class="well">
-  			<div class="row">
-  				<div class="col-lg-12">
+		<!-- timings details -->
+	<div class="tab-pane fade" id="timings">
+		<br>
+		<div class="well">
+			<div class="row">
+				<div class="col-lg-12">
 					<table class="table table-striped table-hover ">
 					  <thead>
-					    <tr>
-					      <th>#</th>
-					      <th>Column heading</th>
-					      <th>Column heading</th>
-					      <th>Column heading</th>
-					    </tr>
+						<tr>
+						  <th>#</th>
+						  <th>Column heading</th>
+						  <th>Column heading</th>
+						  <th>Column heading</th>
+						</tr>
 					  </thead>
 					  <tbody>
-					    <tr>
-					      <td>1</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					    </tr>
-					    <tr>
-					      <td>2</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					    </tr>
-					    <tr class="info">
-					      <td>3</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					    </tr>
-					    <tr class="success">
-					      <td>4</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					    </tr>
-					    <tr class="danger">
-					      <td>5</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					    </tr>
-					    <tr class="warning">
-					      <td>6</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					    </tr>
-					    <tr class="active">
-					      <td>7</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					    </tr>
+						<tr>
+						  <td>1</td>
+						  <td>Column content</td>
+						  <td>Column content</td>
+						  <td>Column content</td>
+						</tr>
+						<tr>
+						  <td>2</td>
+						  <td>Column content</td>
+						  <td>Column content</td>
+						  <td>Column content</td>
+						</tr>
+						<tr class="info">
+						  <td>3</td>
+						  <td>Column content</td>
+						  <td>Column content</td>
+						  <td>Column content</td>
+						</tr>
+						<tr class="success">
+						  <td>4</td>
+						  <td>Column content</td>
+						  <td>Column content</td>
+						  <td>Column content</td>
+						</tr>
+						<tr class="danger">
+						  <td>5</td>
+						  <td>Column content</td>
+						  <td>Column content</td>
+						  <td>Column content</td>
+						</tr>
+						<tr class="warning">
+						  <td>6</td>
+						  <td>Column content</td>
+						  <td>Column content</td>
+						  <td>Column content</td>
+						</tr>
+						<tr class="active">
+						  <td>7</td>
+						  <td>Column content</td>
+						  <td>Column content</td>
+						  <td>Column content</td>
+						</tr>
 					  </tbody>
 					</table> 
 				</div>
@@ -574,67 +584,67 @@
 					</div>
 				</div>
 			</div>
-  		</div>
-  	</div>
+		</div>
+	</div>
 
-  	<!-- material details -->
-  	<div class="tab-pane fade" id="materials">
-  		<br>
-  		<div class="well">
-  			<div class="row">
-  				<div class="col-lg-12">
+	<!-- material details -->
+	<div class="tab-pane fade" id="materials">
+		<br>
+		<div class="well">
+			<div class="row">
+				<div class="col-lg-12">
 					<table class="table table-striped table-hover ">
 					  <thead>
-					    <tr>
-					      <th>#</th>
-					      <th>Column heading</th>
-					      <th>Column heading</th>
-					      <th>Column heading</th>
-					    </tr>
+						<tr>
+						  <th>#</th>
+						  <th>Column heading</th>
+						  <th>Column heading</th>
+						  <th>Column heading</th>
+						</tr>
 					  </thead>
 					  <tbody>
-					    <tr>
-					      <td>1</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					    </tr>
-					    <tr>
-					      <td>2</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					    </tr>
-					    <tr class="info">
-					      <td>3</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					    </tr>
-					    <tr class="success">
-					      <td>4</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					    </tr>
-					    <tr class="danger">
-					      <td>5</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					    </tr>
-					    <tr class="warning">
-					      <td>6</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					    </tr>
-					    <tr class="active">
-					      <td>7</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					    </tr>
+						<tr>
+						  <td>1</td>
+						  <td>Column content</td>
+						  <td>Column content</td>
+						  <td>Column content</td>
+						</tr>
+						<tr>
+						  <td>2</td>
+						  <td>Column content</td>
+						  <td>Column content</td>
+						  <td>Column content</td>
+						</tr>
+						<tr class="info">
+						  <td>3</td>
+						  <td>Column content</td>
+						  <td>Column content</td>
+						  <td>Column content</td>
+						</tr>
+						<tr class="success">
+						  <td>4</td>
+						  <td>Column content</td>
+						  <td>Column content</td>
+						  <td>Column content</td>
+						</tr>
+						<tr class="danger">
+						  <td>5</td>
+						  <td>Column content</td>
+						  <td>Column content</td>
+						  <td>Column content</td>
+						</tr>
+						<tr class="warning">
+						  <td>6</td>
+						  <td>Column content</td>
+						  <td>Column content</td>
+						  <td>Column content</td>
+						</tr>
+						<tr class="active">
+						  <td>7</td>
+						  <td>Column content</td>
+						  <td>Column content</td>
+						  <td>Column content</td>
+						</tr>
 					  </tbody>
 					</table> 
 				</div>
@@ -648,67 +658,67 @@
 					</div>
 				</div>
 			</div>
-  		</div>
-  	</div>
+		</div>
+	</div>
 
-  	<!-- attachment details -->
-  	<div class="tab-pane fade" id="attachment">
-  		<br>
-  		<div class="well">
-  			<div class="row">
-  				<div class="col-lg-12">
+	<!-- attachment details -->
+	<div class="tab-pane fade" id="attachment">
+		<br>
+		<div class="well">
+			<div class="row">
+				<div class="col-lg-12">
 					<table class="table table-striped table-hover ">
 					  <thead>
-					    <tr>
-					      <th>#</th>
-					      <th>Column heading</th>
-					      <th>Column heading</th>
-					      <th>Column heading</th>
-					    </tr>
+						<tr>
+						  <th>#</th>
+						  <th>Column heading</th>
+						  <th>Column heading</th>
+						  <th>Column heading</th>
+						</tr>
 					  </thead>
 					  <tbody>
-					    <tr>
-					      <td>1</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					    </tr>
-					    <tr>
-					      <td>2</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					    </tr>
-					    <tr class="info">
-					      <td>3</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					    </tr>
-					    <tr class="success">
-					      <td>4</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					    </tr>
-					    <tr class="danger">
-					      <td>5</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					    </tr>
-					    <tr class="warning">
-					      <td>6</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					    </tr>
-					    <tr class="active">
-					      <td>7</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					      <td>Column content</td>
-					    </tr>
+						<tr>
+						  <td>1</td>
+						  <td>Column content</td>
+						  <td>Column content</td>
+						  <td>Column content</td>
+						</tr>
+						<tr>
+						  <td>2</td>
+						  <td>Column content</td>
+						  <td>Column content</td>
+						  <td>Column content</td>
+						</tr>
+						<tr class="info">
+						  <td>3</td>
+						  <td>Column content</td>
+						  <td>Column content</td>
+						  <td>Column content</td>
+						</tr>
+						<tr class="success">
+						  <td>4</td>
+						  <td>Column content</td>
+						  <td>Column content</td>
+						  <td>Column content</td>
+						</tr>
+						<tr class="danger">
+						  <td>5</td>
+						  <td>Column content</td>
+						  <td>Column content</td>
+						  <td>Column content</td>
+						</tr>
+						<tr class="warning">
+						  <td>6</td>
+						  <td>Column content</td>
+						  <td>Column content</td>
+						  <td>Column content</td>
+						</tr>
+						<tr class="active">
+						  <td>7</td>
+						  <td>Column content</td>
+						  <td>Column content</td>
+						  <td>Column content</td>
+						</tr>
 					  </tbody>
 					</table> 
 				</div>
@@ -721,8 +731,8 @@
 					</div>
 				</div>
 			</div>
-  		</div>
-  	</div>
+		</div>
+	</div>
 
 </div>
 
@@ -733,6 +743,8 @@
 <!-- $('textarea#background').ckeditor(); -->
 
 <!-- activity details -->
+
+
 
 function duration(value){
 	$.ajax({
@@ -858,15 +870,20 @@ $('select#objective').multiselect({
 
 
 $("form[id='updateActivity']").on("submit",function(e){
-    var form = $(this);
+	var form = $(this);
 	var method = form.find('input[name="_method"]').val() || 'POST';
 	var url = form.prop('action');
 	$.ajax({
 		url: url,
 		data: form.serialize(),
 		method: method,
+		dataType: "json",
 		success: function(data){
-			alert('Activity updated');
+			if(data.success == "1"){
+				bootbox.alert("Activity details was successfully updated."); 
+			}else{
+				bootbox.alert("An error occured while updating."); 
+			}
 		}
 	});
 	e.preventDefault();
@@ -876,20 +893,30 @@ $("form[id='updateActivity']").on("submit",function(e){
 
 
 <!-- Customer details -->
+
+$('select#channel').multiselect({
+	maxHeight: 200,
+	includeSelectAllOption: true,
+	enableCaseInsensitiveFiltering: true,
+	enableFiltering: true
+});
+
+$('select#channel').multiselect('disable');
+ 
 // fancy tree
 $("#tree3").fancytree({
 	extensions: [],
 	checkbox: true,
 	selectMode: 3,
 	source: {
-		url: "../../api/customers"
+		url: "../../api/customers?id={{$activity->id}}"
 	},
-	  select: function(event, data) {
-	  	// Get a list of all selected nodes, and convert to a key array:
-        // var selKeys = $.map(data.tree.getSelectedNodes(), function(node){
-        //  return node.key;
-        // });
-        // $("#echoSelection3").text(selKeys.join(", "));
+	select: function(event, data) {
+		// Get a list of all selected nodes, and convert to a key array:
+		// var selKeys = $.map(data.tree.getSelectedNodes(), function(node){
+		//  return node.key;
+		// });
+		// $("#echoSelection3").text(selKeys.join(", "));
 
 
 		// Get a list of all selected TOP nodes
@@ -903,7 +930,7 @@ $("#tree3").fancytree({
 		// $("#echoSelectionRootKeys3").text(selRootKeys.join(", "));
 
 		var keys = selRootKeys.join(".").split(".");
-		console.log(keys);
+		// console.log(keys);
 		if($.inArray('E1397', keys) != -1){
 			$('select#channel').multiselect('enable');
 		}else{
@@ -913,7 +940,54 @@ $("#tree3").fancytree({
 		}
 
 		$("#customers").val(selRootKeys.join(", "));
-	  },
+	},
+});
+
+$('.nav-tabs a').click(function (e) {
+	// No e.preventDefault() here
+	var target = e.target.attributes.href.value;
+	if(target == '#customer'){
+		$.ajax({
+			type: "GET",
+			url: "../../api/customerselected?id={{$activity->id}}",
+			success: function(data){
+				$.each(data, function(i, node) {
+					 $("#tree3").fancytree("getTree").getNodeByKey(node).setSelected(true);
+					// console.log(node);
+					$("#tree3").fancytree("getTree").visit(function(node){
+						///if(node.key == node.text){
+							///console.log(node);
+							//node.setSelected(true);
+						//}        
+					});
+				});
+			}
+		});
+	}
+	$(this).tab('show');
+});
+
+
+
+
+$("form[id='updateCustomer']").on("submit",function(e){
+	var form = $(this);
+	var method = form.find('input[name="_method"]').val() || 'POST';
+	var url = form.prop('action');
+	$.ajax({
+		url: url,
+		data: form.serialize(),
+		method: method,
+		dataType: "json",
+		success: function(data){
+			if(data.success == "1"){
+				bootbox.alert("Activity customers was successfully updated."); 
+			}else{
+				bootbox.alert("An error occured while updating."); 
+			}
+		}
+	});
+	e.preventDefault();
 });
 
 
@@ -936,8 +1010,8 @@ function toggle_budget(value){
 	//toggle_budget();
 
 	$("#budget input:radio[name='with_budget']").change(function() {
-	   	toggle_budget($(this).val());
-	    //console.log($(this));
+		toggle_budget($(this).val());
+		//console.log($(this));
 	}); 
 
 
@@ -946,15 +1020,15 @@ $('#budget_table').ajax_table({
 	delete_url: "{{ URL::action('ActivityController@deletebudget') }}",
 	columns: [
 		{ type: "select", id: "io_ttstype"},
-    	{ type: "text", id: "io_no", placeholder: "IO Number" },
-    	{ type: "text", id: "io_amount", placeholder: "Amount" },
-    	{ type: "text", id: "io_startdate", placeholder: "mm/dd/yyyy" },
-    	{ type: "text", id: "io_enddate", placeholder: "mm/dd/yyyy" },
-    	{ type: "text", id: "io_remarks", placeholder: "Remarks" },
+		{ type: "text", id: "io_no", placeholder: "IO Number" },
+		{ type: "text", id: "io_amount", placeholder: "Amount" },
+		{ type: "text", id: "io_startdate", placeholder: "mm/dd/yyyy" },
+		{ type: "text", id: "io_enddate", placeholder: "mm/dd/yyyy" },
+		{ type: "text", id: "io_remarks", placeholder: "Remarks" },
 	],
 	onInitRow: function() {
-        $('#io_startdate, #io_enddate').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
-        $('#io_startdate, #io_enddate').datetimepicker({
+		$('#io_startdate, #io_enddate').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
+		$('#io_startdate, #io_enddate').datetimepicker({
 			pickTime: false,
 			calendarWeeks: true,
 			minDate: moment()
@@ -972,8 +1046,8 @@ $('#budget_table').ajax_table({
 				});
 		   }
 		});
-    },onSaveRow: function() {
-    	$("#budget_select").hide();
+	},onSaveRow: function() {
+		$("#budget_select").hide();
 	}
 });
 
@@ -982,15 +1056,15 @@ $('#no_budget_table').ajax_table({
 	delete_url: "{{ URL::action('ActivityController@deletenobudget') }}",
 	columns: [
 		{ type: "select", id: "budget_ttstype"},
-    	{ type: "text", id: "budget_no", placeholder: "Budget Number" },
-    	{ type: "text", id: "budget_name", placeholder: "Budget Name" },
-    	{ type: "text", id: "budget_startdate", placeholder: "mm/dd/yyyy" },
-    	{ type: "text", id: "budget_enddate", placeholder: "mm/dd/yyyy" },
-    	{ type: "text", id: "budget_remarks", placeholder: "Remarks" },
+		{ type: "text", id: "budget_no", placeholder: "Budget Number" },
+		{ type: "text", id: "budget_name", placeholder: "Budget Name" },
+		{ type: "text", id: "budget_startdate", placeholder: "mm/dd/yyyy" },
+		{ type: "text", id: "budget_enddate", placeholder: "mm/dd/yyyy" },
+		{ type: "text", id: "budget_remarks", placeholder: "Remarks" },
 	],
 	onInitRow: function() {
-        $('#budget_startdate, #budget_enddate').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
-        $('#budget_startdate, #budget_enddate').datetimepicker({
+		$('#budget_startdate, #budget_enddate').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
+		$('#budget_startdate, #budget_enddate').datetimepicker({
 			pickTime: false,
 			calendarWeeks: true,
 			minDate: moment()
@@ -1006,8 +1080,8 @@ $('#no_budget_table').ajax_table({
 				});
 		   }
 		});
-    },onSaveRow: function() {
-    	$("#budget_select").hide();
+	},onSaveRow: function() {
+		$("#budget_select").hide();
 	}
 });
 
@@ -1015,18 +1089,21 @@ $('#no_budget_table').ajax_table({
 
 $(".btn-style").click(function (e) {
 	e.preventDefault();
-    var target = $(".nav-tabs li.active");
-    var sibbling;
-    if ($(this).text() === "Next") {
-        sibbling = target.next();
-    } else {
-        sibbling = target.prev();
-    }
+	var target = $(".nav-tabs li.active");
+	var sibbling;
+	if ($(this).text() === "Next") {
+		sibbling = target.next();
+	} else {
+		sibbling = target.prev();
+	}
 
-    if (sibbling.is("li")) {
-        sibbling.children("a").tab("show");
-    }
+	if (sibbling.is("li")) {
+		sibbling.children("a").tab("show");
+	}
 });
+
+var activeTab = $('[href=' + location.hash + ']');
+activeTab && activeTab.tab('show');
 
 @stop
 

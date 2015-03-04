@@ -11,7 +11,9 @@ class ActivityController extends \BaseController {
 	public function index()
 	{
 		Input::flash();
-		$activities = Activity::where('created_by', '=', Auth::id())->get();
+		$activities = Activity::where('created_by', '=', Auth::id())
+			->orderBy('created_at','desc')
+			->get();
 		return View::make('activity.index',compact('activities'));
 	}
 
@@ -60,6 +62,8 @@ class ActivityController extends \BaseController {
 				$cycle_id = Input::get('cycle');
 				$activity_type_id = Input::get('activity_type');
 				$division_code = Input::get('division');
+				$category_code = Input::get('category');
+				$brand_code = Input::get('brand');
 
 				$activity = new Activity;
 				$activity->created_by = Auth::id();
@@ -86,7 +90,7 @@ class ActivityController extends \BaseController {
 				
 				$code = date('Y').$activity->id;
 				if(!empty($scope)){
-					$code .= '-'.$scope->scope_name;
+					$code .= '_'.$scope->scope_name;
 				}
 				if(!empty($cycle)){
 					$code .= '_'.$cycle->cycle_name;
@@ -97,13 +101,31 @@ class ActivityController extends \BaseController {
 				if(!empty($division)){
 					$code .= '_'.$division->division_desc;
 				}
-				// // $activity->activity_code = 
+				if(!empty($category_code)){
+					if(count($category_code) > 1){
+						$code .= '_MULTI';
+					}else{
+						$category = Sku::select('category_code', 'category_desc')
+									->where('category_code',$category_code[0])
+									->first();
+						$code .= '_'.$category->category_desc;
+					}
+					
+				}
+				if(!empty($brand_code)){
+					if(count($brand_code) > 1){
+						$code .= '_MULTI';
+					}else{
+						$brand = Sku::select('brand_code', 'brand_desc')
+									->where('brand_code',$brand_code[0])
+									->first();
+						$code .= '_'.$brand->brand_desc;
+					}
+					
+				}
 
 				$activity->activity_code =  $code;
 				$activity->update();
-				// echo '<pre>';
-				// print_r($code);
-				// echo '</pre>';
 
 				// add planner
 				if (Input::has('planner'))
@@ -162,37 +184,12 @@ class ActivityController extends \BaseController {
 					}
 					ActivityObjective::insert($activity_objective);
 				}
-				
-
-				// $channels = Input::get('channel');
-				// if(!empty($channels)){
-				// 	$activity_channels = array();
-				// 	foreach ($channels as $channel){
-				// 		$activity_channels[] = array('activity_id' => $activity->id, 'channel_id' => $channel);
-				// 	}
-				// 	if(!empty($activity_channels)){
-				// 		ActivityChannel::insert($activity_channels);
-				// 	}
-				// }
-
-
-				// $_customers = Input::get('customers');
-				// if(!empty($_customers)){
-				// 	$customers = explode(",", $_customers);
-				// 	if(!empty($customers)){
-				// 		$activity_customers = array();
-				// 		foreach ($customers as $customer_node){
-				// 			$activity_customers[] = array('activity_id' => $activity->id, 'customer_node' => trim($customer_node));
-				// 		}
-				// 		ActivityCustomer::insert($activity_customers);
-				// 	}
-				// }
 				return $activity->id;
 			});
 
 			return Redirect::route('activity.edit',$id)
 				->with('class', 'alert-success')
-				->with('message', 'Record successfuly created.');
+				->with('message', 'ACtivity was successfuly created.');
 			
 		}
 
@@ -231,11 +228,13 @@ class ActivityController extends \BaseController {
 			$sel_approver = ActivityApprover::getList($id);
 			$sel_skus = ActivitySku::getList($id);
 			$sel_objectives = ActivityObjective::getList($id);
+			$sel_channels = ActivityChannel::getList($id);
 
 			$scope_types = ScopeType::orderBy('scope_name')->lists('scope_name', 'id');
 			$planners = User::isRole('PMOG PLANNER')->lists('first_name', 'id');
 			$approvers = User::isRole('CD OPS APPROVER')->lists('first_name', 'id');
 			$involves = Pricelist::orderBy('sap_desc')->lists('sap_desc', 'sap_code');
+			$channels = Channel::orderBy('channel_name')->lists('channel_name', 'id');
 
 			$activity_types = ActivityType::orderBy('activity_type')->lists('activity_type', 'id');
 			$cycles = Cycle::orderBy('cycle_name')->lists('cycle_name', 'id');
@@ -254,13 +253,13 @@ class ActivityController extends \BaseController {
 				->where('activity_id', $id)
 				->get();
 
-			// echo '<pre>';
-			// print_r($sel_approver);
-			// echo '</pre>';
+			$schemes = Scheme::where('activity_id', $activity->id)
+				->orderBy('created_at', 'desc')
+				->get();
 
 			return View::make('activity.edit', compact('activity', 'scope_types', 'planners', 'approvers', 'cycles',
 			 'activity_types', 'divisions' , 'objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
-			 'involves', 'sel_skus', 'sel_objectives'));
+			 'involves', 'sel_skus', 'sel_objectives', 'channels', 'sel_channels', 'schemes'));
 		}
 
 		if($activity->status_id == 2){
@@ -289,10 +288,6 @@ class ActivityController extends \BaseController {
 				->where('activity_id', $id)
 				->get();
 
-			// echo '<pre>';
-			// print_r($sel_approver);
-			// echo '</pre>';
-
 			return View::make('activity.downloaded', compact('activity', 'scope_types', 'planners', 'approvers', 'cycles',
 			 'activity_types', 'divisions' , 'objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver'));
 		}
@@ -320,6 +315,9 @@ class ActivityController extends \BaseController {
 					$cycle_id = Input::get('cycle');
 					$activity_type_id = Input::get('activity_type');
 					$division_code = Input::get('division');
+					$category_code = Input::get('category');
+					$brand_code = Input::get('brand');
+
 					
 					$scope = ScopeType::find($scope_id);
 					$cycle = Cycle::find($cycle_id);
@@ -330,7 +328,7 @@ class ActivityController extends \BaseController {
 
 					$code = date('Y').$activity->id;
 					if(!empty($scope)){
-						$code .= '-'.$scope->scope_name;
+						$code .= '_'.$scope->scope_name;
 					}
 					if(!empty($cycle)){
 						$code .= '_'.$cycle->cycle_name;
@@ -341,8 +339,30 @@ class ActivityController extends \BaseController {
 					if(!empty($division)){
 						$code .= '_'.$division->division_desc;
 					}
-					$activity->activity_code =  $code;
+					if(!empty($category_code)){
+						if(count($category_code) > 1){
+							$code .= '_MULTI';
+						}else{
+							$category = Sku::select('category_code', 'category_desc')
+										->where('category_code',$category_code[0])
+										->first();
+							$code .= '_'.$category->category_desc;
+						}
+						
+					}
+					if(!empty($brand_code)){
+						if(count($brand_code) > 1){
+							$code .= '_MULTI';
+						}else{
+							$brand = Sku::select('brand_code', 'brand_desc')
+										->where('brand_code',$brand_code[0])
+										->first();
+							$code .= '_'.$brand->brand_desc;
+						}
+						
+					}
 
+					$activity->activity_code =  $code;
 					
 					$activity->scope_type_id = $scope_id;
 					$activity->cycle_id = $cycle_id;
@@ -364,11 +384,62 @@ class ActivityController extends \BaseController {
 							ActivityPlanner::insert(array('activity_id' => $activity->id, 'user_id' => Input::get('planner')));
 						}
 					}
+					
+					// update approver
+					ActivityApprover::where('activity_id',$activity->id)->delete();
+					if (Input::has('approver'))
+					{
+					   	$activity_approver = array();
+						foreach (Input::get('approver') as $approver) {
+							$activity_approver[] = array('activity_id' => $activity->id, 'user_id' => $approver);
+						}
+						ActivityApprover::insert($activity_approver);
+					}
 
+					// update category
+					ActivityCategory::where('activity_id',$activity->id)->delete();
+					if (Input::has('category'))
+					{
+						$activity_category = array();
+						foreach (Input::get('category') as $category){
+							$activity_category[] = array('activity_id' => $activity->id, 'category_code' => $category);
+						}
+						ActivityCategory::insert($activity_category);
+					}
 
+					// update brand
+					ActivityBrand::where('activity_id',$activity->id)->delete();
+					if (Input::has('brand'))
+					{
+						$activity_brand = array();
+						foreach (Input::get('brand') as $brand){
+							$activity_brand[] = array('activity_id' => $activity->id, 'brand_code' => $brand);
+						}
+						ActivityBrand::insert($activity_brand);
+					}
+
+					// update skus involve
+					ActivitySku::where('activity_id',$activity->id)->delete();
+					if (Input::has('involve'))
+					{
+						$activity_skuinvoled = array();
+						foreach (Input::get('involve') as $sku){
+							$activity_skuinvoled[] = array('activity_id' => $activity->id, 'sap_code' => $sku);
+						}
+						ActivitySku::insert($activity_skuinvoled);
+					}
+					
+					// update objective
+					ActivityObjective::where('activity_id',$activity->id)->delete();
+					if (Input::has('objective'))
+					{
+						$activity_objective = array();
+						foreach (Input::get('objective') as $objective){
+							$activity_objective[] = array('activity_id' => $activity->id, 'objective_id' => $objective);
+						}
+						ActivityObjective::insert($activity_objective);
+					}
 				});
-
-
 
 				$arr['success'] = 1;
 				
@@ -391,7 +462,44 @@ class ActivityController extends \BaseController {
 		//
 	}
 
-	public function addbudget($id){
+
+	public function download($id){
+
+		$activity = Activity::findOrFail($id);
+
+		// print_r(Activity::validForDownload($activity));
+		$validation = Activity::validForDownload($activity);
+		if($validation['status'] == 0){
+			return Redirect::route('activity.edit',$id)
+				->with('class', 'alert-danger')
+				->withErrors($validation['message'])
+				->with('message', 'Budget details are required.');
+		}
+		
+
+		$activity->status_id = 2;
+		$activity->update();
+
+		return Redirect::route('activity.edit',$id)
+				->with('class', 'alert-success')
+				->with('message', 'Activity was successfuly downloaded to PMOG.');
+
+
+	}
+
+	public function recall($id){
+		$activity = Activity::findOrFail($id);
+		$activity->status_id = 3;
+		$activity->update();
+
+		return Redirect::route('activity.edit',$id)
+				->with('class', 'alert-success')
+				->with('message', 'Activity was successfuly recalled from PMOG');
+	}
+
+	// ajac function
+
+		public function addbudget($id){
 		if(Request::ajax()){
 			$budget = new ActivityBudget;
 
@@ -460,38 +568,39 @@ class ActivityController extends \BaseController {
 		}
 	}
 
+	public function updatecustomer($id){
+		if(Request::ajax()){
+			DB::transaction(function() use ($id)  {
+				$_customers = Input::get('customers');
+				ActivityCustomer::where('activity_id',$id)->delete();
+				if(!empty($_customers)){
+					$customers = explode(",", $_customers);
+					if(!empty($customers)){
+						$activity_customers = array();
+						foreach ($customers as $customer_node){
+							$activity_customers[] = array('activity_id' => $id, 'customer_node' => trim($customer_node));
+						}
+						ActivityCustomer::insert($activity_customers);
+					}
+				}
 
-	public function download($id){
 
-		$activity = Activity::findOrFail($id);
+				$channels = Input::get('channel');
+				ActivityChannel::where('activity_id',$id)->delete();
+				if(!empty($channels)){
+					$activity_channels = array();
+					foreach ($channels as $channel){
+						$activity_channels[] = array('activity_id' => $id, 'channel_id' => $channel);
+					}
+					if(!empty($activity_channels)){
+						ActivityChannel::insert($activity_channels);
+					}
+				}
+			});
 
-		// print_r(Activity::validForDownload($activity));
-		$validation = Activity::validForDownload($activity);
-		if($validation['status'] == 0){
-			return Redirect::route('activity.edit',$id)
-				->with('class', 'alert-danger')
-				->withErrors($validation['message'])
-				->with('message', 'Budget details are required.');
+			$arr['success'] = 1;
+			$arr['id'] = $id;
+			return json_encode($arr);
 		}
-		
-
-		$activity->status_id = 2;
-		$activity->update();
-
-		return Redirect::route('activity.edit',$id)
-				->with('class', 'alert-success')
-				->with('message', 'Activity was successfuly downloaded to PMOG.');
-
-
-	}
-
-	public function recall($id){
-		$activity = Activity::findOrFail($id);
-		$activity->status_id = 3;
-		$activity->update();
-
-		return Redirect::route('activity.edit',$id)
-				->with('class', 'alert-success')
-				->with('message', 'Activity was successfuly recalled from PMOG');
 	}
 }
