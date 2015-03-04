@@ -120,9 +120,8 @@
 					<div class="form-group">
 						<div class="row">
 							<div class="col-lg-12">
-								{{ Form::label('implementation_date', 'Target Implementation Date', array('class' => 'control-label')) }}
-								{{ Form::text('implementation_date',date_format(date_create($activity->eimplementation_date),'m/d/Y'),array('class' => 'form-control', 'placeholder' => 'mm/dd/yyyy')) }}
-								
+								{{ Form::label('download_date', 'Target Download Date ', array('class' => 'control-label')) }}
+								{{ Form::text('download_date',date_format(date_create($activity->edownload_date),'m/d/Y'),array('class' => 'form-control', 'placeholder' => 'mm/dd/yyyy', 'readonly' => '')) }}								
 							</div>
 						</div>
 					</div>
@@ -131,8 +130,8 @@
 					<div class="form-group">
 						<div class="row">
 							<div class="col-lg-12">
-								{{ Form::label('download_date', 'Target Download Date ', array('class' => 'control-label')) }}
-								{{ Form::text('download_date',date_format(date_create($activity->edownload_date),'m/d/Y'),array('class' => 'form-control', 'placeholder' => 'mm/dd/yyyy', 'readonly' => '')) }}
+																{{ Form::label('implementation_date', 'Target Implementation Date', array('class' => 'control-label')) }}
+								{{ Form::text('implementation_date',date_format(date_create($activity->eimplementation_date),'m/d/Y'),array('class' => 'form-control', 'placeholder' => 'mm/dd/yyyy')) }}
 							</div>
 						</div>
 					</div>
@@ -353,7 +352,6 @@
 				<div class="col-lg-12">
 					<div class="form-group">
 						<button class="btn btn-default btn-style" type="submit">Back</button>
-						{{ HTML::linkRoute('activity.index', 'Save', array(), array('class' => 'btn btn-primary')) }}
 						<button class="btn btn-primary btn-style" type="submit">Next</button>
 					</div>
 				</div>
@@ -463,6 +461,7 @@
 												<th>Type</th>
 												<th>Budget Holder</th>
 												<th>Budget Name</th>
+												<th>Amount</th>
 												<th>Start Date</th>
 												<th>End Date</th>
 												<th>Remarks</th>
@@ -476,6 +475,7 @@
 												<td>{{ $nobudget->budgettype->budget_type }}</td>
 												<td>{{ $nobudget->budget_no }}</td>
 												<td>{{ $nobudget->budget_name }}</td>
+												<td>{{ number_format($nobudget->amount,2) }}</td>
 												<td>{{ date_format(date_create($nobudget->start_date),'m/d/Y') }}</td>
 												<td>{{ date_format(date_create($nobudget->end_date),'m/d/Y') }}</td>
 												<td>{{ $nobudget->remarks }}</td>
@@ -519,59 +519,19 @@
 		<div class="well">
 			<div class="row">
 				<div class="col-lg-12">
-					<table class="table table-striped table-hover ">
-					  <thead>
-						<tr>
-						  <th>#</th>
-						  <th>Column heading</th>
-						  <th>Column heading</th>
-						  <th>Column heading</th>
-						</tr>
-					  </thead>
-					  <tbody>
-						<tr>
-						  <td>1</td>
-						  <td>Column content</td>
-						  <td>Column content</td>
-						  <td>Column content</td>
-						</tr>
-						<tr>
-						  <td>2</td>
-						  <td>Column content</td>
-						  <td>Column content</td>
-						  <td>Column content</td>
-						</tr>
-						<tr class="info">
-						  <td>3</td>
-						  <td>Column content</td>
-						  <td>Column content</td>
-						  <td>Column content</td>
-						</tr>
-						<tr class="success">
-						  <td>4</td>
-						  <td>Column content</td>
-						  <td>Column content</td>
-						  <td>Column content</td>
-						</tr>
-						<tr class="danger">
-						  <td>5</td>
-						  <td>Column content</td>
-						  <td>Column content</td>
-						  <td>Column content</td>
-						</tr>
-						<tr class="warning">
-						  <td>6</td>
-						  <td>Column content</td>
-						  <td>Column content</td>
-						  <td>Column content</td>
-						</tr>
-						<tr class="active">
-						  <td>7</td>
-						  <td>Column content</td>
-						  <td>Column content</td>
-						  <td>Column content</td>
-						</tr>
-					  </tbody>
+					<table id="activity_timings" class="table table-striped table-hover ">
+					  	<thead>
+							<tr>
+						  		<th data-field="task_id">Task ID</th>
+						        <th data-field="milestone">Milestone</th>
+						        <th data-field="task">Task</th>
+						        <th data-field="responsible">Team Responsible</th>
+						        <th data-field="duration">Duration (days)</th>
+						        <th data-field="depend_on">Depends On</th>
+						  		<th data-field="start_date">Start Date</th>
+						  		<th data-field="end_date">End Date</th>
+							</tr>
+					  	</thead>
 					</table> 
 				</div>
 			</div>
@@ -749,7 +709,7 @@
 function duration(value){
 	$.ajax({
 		type: "GET",
-		url: "../activitytype/"+value+"/network/totalduration",
+		url: "../../activitytype/"+value+"/network/totalduration",
 		success: function(msg){
 			$('#lead_time').val(msg);
 
@@ -964,6 +924,10 @@ $('.nav-tabs a').click(function (e) {
 			}
 		});
 	}
+
+	if(target == '#timings'){
+		$('#activity_timings').bootstrapTable("refresh");
+	}
 	$(this).tab('show');
 });
 
@@ -1058,6 +1022,7 @@ $('#no_budget_table').ajax_table({
 		{ type: "select", id: "budget_ttstype"},
 		{ type: "text", id: "budget_no", placeholder: "Budget Number" },
 		{ type: "text", id: "budget_name", placeholder: "Budget Name" },
+		{ type: "text", id: "budget_amount", placeholder: "Amount" },
 		{ type: "text", id: "budget_startdate", placeholder: "mm/dd/yyyy" },
 		{ type: "text", id: "budget_enddate", placeholder: "mm/dd/yyyy" },
 		{ type: "text", id: "budget_remarks", placeholder: "Remarks" },
@@ -1069,6 +1034,7 @@ $('#no_budget_table').ajax_table({
 			calendarWeeks: true,
 			minDate: moment()
 		});
+		$('#budget_amount').inputNumber();
 
 		$.ajax({
 			type: "GET",
@@ -1100,6 +1066,10 @@ $(".btn-style").click(function (e) {
 	if (sibbling.is("li")) {
 		sibbling.children("a").tab("show");
 	}
+});
+<!-- activity timings -->
+$('#activity_timings').bootstrapTable({
+    url: 'timings'
 });
 
 var activeTab = $('[href=' + location.hash + ']');

@@ -10,11 +10,13 @@
 	</div>
 </div>
 
+
 <div class="row">
 	<div class="col-lg-12">
+		{{ HTML::linkRoute('activitytype.index', 'Back To Activity Type List', array(), array('class' => 'btn btn-default')) }}
 		<!-- Button trigger modal -->
 		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
-			<i class="fa fa-plus"></i> Network
+			<i class="fa fa-plus"></i> Milestone
 		</button>
 	</div>
 </div>
@@ -32,8 +34,8 @@
 			<form id="activity">
 				<div class="modal-body">
 					<div class="form-group">
-						{{ Form::label('milestone', 'Network', array('class' => 'control-label')) }}
-						{{ Form::text('milestone','',array('class' => 'form-control', 'placeholder' => 'Network')) }}
+						{{ Form::label('milestone', 'Milestone', array('class' => 'control-label')) }}
+						{{ Form::text('milestone','',array('class' => 'form-control', 'placeholder' => 'Milestone')) }}
 					</div>
 					<div class="form-group">
 						{{ Form::label('task', 'Task', array('class' => 'control-label')) }}
@@ -67,7 +69,7 @@
 			<table id="activity_table" class="table table-striped table-hover ">
 			  	<thead>
 				    <tr>
-				    	<th data-field="id">ID</th>
+				    	<th data-field="task_id">Task ID</th>
 				        <th data-field="milestone">Milestone</th>
 				        <th data-field="task">Task</th>
 				        <th data-field="responsible">Team Responsible</th>
@@ -121,7 +123,7 @@ $('#myModal').on('show.bs.modal', function (event) {
 		success: function(data){
 			$('select#depend_on').empty();
 			$.each(data, function(index, o) {
-				$('<option />', {value: o.id, text: o.id}).appendTo($('select#depend_on')); 
+				$('<option />', {value: o.id, text: o.task_id}).appendTo($('select#depend_on')); 
 			});
 		$('select#depend_on').multiselect('rebuild');
 	   }

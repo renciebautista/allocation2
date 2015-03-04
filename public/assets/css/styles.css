@@ -45,7 +45,7 @@
 	}
 
 	tbody {
-		height: 120px;
+		height: 200px;
 		overflow-y: auto;
 	}
 
@@ -63,11 +63,11 @@
 	background-color: #f30000;
 }
 #allocation .info, .warning{
-	color: #FFF;
+	color: #000;
 }
-/*#allocation table th, td {
+#allocation table th, td {
 	white-space:nowrap;
-}*/
+}
 
 .allocation_total {
 	font-size: 12px;   

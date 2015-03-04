@@ -15,6 +15,7 @@
 		{{ HTML::style('assets/plugins/ColVis-1.1.1/css/dataTables.colVis.min.css') }}
 		{{ HTML::style('assets/plugins/fancytree-2.6.0/skin-xp/ui.fancytree.min.css') }}
 		{{ HTML::style('assets/plugins/bootstrap-datetimepicker-3.1.3/css/bootstrap-datetimepicker.min.css') }}
+		
 		{{ HTML::style('assets/css/styles.css') }}
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
@@ -57,7 +58,7 @@
 							</ul>
 						</li>
 						@endif
-						@if(Auth::user()->hasRole("ADMINISTRATOR"))
+						
 						<li class="dropdown">
 							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="themes">Maintenance <span class="caret"></span></a>
 							<ul class="dropdown-menu" aria-labelledby="themes">
@@ -68,7 +69,7 @@
 								<li>{{ HTML::linkRoute('activitytype.index', 'Activity Type') }}</li>  
 							</ul>
 						</li>
-						@endif
+						
 						<li>
 							<a href="../help/">Help</a>
 						</li>

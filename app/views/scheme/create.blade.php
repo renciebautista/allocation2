@@ -188,7 +188,7 @@
 			<div class="form-group">
 				<div class="row">
 					<div class="col-lg-12">
-					<a class="btn btn-default" href="{{action('ActivityController@edit', $activity->id);}}#schemes">Back</a>
+					<a class="btn btn-default" href="{{action('ActivityController@edit', $activity->id);}}#schemes">Back to Activity Details</a>
 					{{ Form::submit('Submit', array('class' => 'btn btn-primary')) }}
 					</div>
 				</div>

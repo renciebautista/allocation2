@@ -33,6 +33,8 @@ class SchemeController extends \BaseController {
 			->orderBy('sku_code')
 			->lists('full_desc', 'sku_code');
 
+
+
 		return View::make('scheme.create', compact('activity','skus'));
 	}
 
@@ -157,7 +159,23 @@ class SchemeController extends \BaseController {
 			->orderBy('sku_code')
 			->lists('full_desc', 'sku_code');
 		$sel_skus =  SchemeSku::getSkus($scheme->id);
-		return View::make('scheme.edit',compact('scheme', 'activity', 'skus', 'sel_skus'));
+
+		$customers = ActivityCustomer::customers($scheme->activity_id);
+		$_channels = ActivityChannel::channels($scheme->activity_id);
+		$qty = $scheme->quantity;
+
+		$_allocation = new AllocationRepository;
+		$allocations = $_allocation->customers($skus, $_channels, $customers);
+		
+		$total_sales = $_allocation->total_sales();
+
+		$summary = $_allocation->allocation_summary();
+		$big10 = $_allocation->account_group("AG4");
+		$gaisanos = $_allocation->account_group("AG5");
+		$nccc = $_allocation->account_group("AG6");
+
+		return View::make('scheme.edit',compact('scheme', 'activity', 'skus', 'sel_skus',
+			'allocations', 'total_sales', 'qty','id', 'summary', 'big10', 'gaisanos', 'nccc'));
 	}
 
 	/**

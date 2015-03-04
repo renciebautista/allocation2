@@ -48,22 +48,37 @@ class NetworkController extends \BaseController {
 
 			if($validation->passes())
 			{
-				$milestone = new ActivityTypeNetwork();
-				$milestone->activitytype_id = $id;
-				$milestone->milestone = strtoupper(Input::get('milestone'));
-				$milestone->task = strtoupper(Input::get('task'));
-				$milestone->responsible = strtoupper(Input::get('responsible'));
-				$milestone->duration = Input::get('duration');
-				$milestone->save();
-				$depend_on = Input::get('depend_on');
-				if($depend_on !== null){
-					foreach (Input::get('depend_on') as $parent) {
-						$depend_on = new ActivityNetworkDependent;
-						$depend_on->child_id = $milestone->id;
-						$depend_on->parent_id = $parent;
-						$depend_on->save();
+				DB::transaction(function() use ($id){
+					$milestone = new ActivityTypeNetwork();
+					$milestone->activitytype_id = $id;
+					$milestone->milestone = strtoupper(Input::get('milestone'));
+					$milestone->task = strtoupper(Input::get('task'));
+					$milestone->responsible = strtoupper(Input::get('responsible'));
+					$milestone->duration = Input::get('duration');
+					$milestone->save();
+					$depend_on = Input::get('depend_on');
+					if($depend_on !== null){
+						foreach (Input::get('depend_on') as $parent) {
+							$depend_on = new ActivityNetworkDependent;
+							$depend_on->child_id = $milestone->id;
+							$depend_on->parent_id = $parent;
+							$depend_on->save();
+						}
 					}
-				}
+
+					// update task id
+					$milestones = ActivityTypeNetwork::where('activitytype_id', $id)
+						->get();
+					if(!empty($milestones)){
+						foreach ($milestones as $key => $value) {
+							$ml = ActivityTypeNetwork::find($value->id);
+							$ml->task_id = $key+1;
+							$ml->update();
+						}
+					}
+				});
+				
+
 				return 0;
 			}
 
@@ -85,7 +100,7 @@ class NetworkController extends \BaseController {
 			
 			$activities = ActivityTypeNetwork::where('activitytype_id', $id)->get();
 			foreach ($activities as $key => $value) {
-				$activities[$key]->depend_on = ActivityNetworkDependent::depend_on($value->id);
+				$activities[$key]->depend_on = ActivityNetworkDependent::depend_on_task($value->id);
 			}
 			return Response::json($activities);
 		}
@@ -94,7 +109,7 @@ class NetworkController extends \BaseController {
 	public function dependOn($id){
 		if(Request::ajax()){
 
-			$data = ActivityTypeNetwork::select('id', 'milestone')
+			$data = ActivityTypeNetwork::select('id', 'task_id')
 				->where('activitytype_id', $id)
 				->get();
 

@@ -47,7 +47,7 @@
 					<tr>
 						<td>{{ $type->activity_type }}</td>
 						<td class="action">
-							{{ HTML::linkAction('ActivityTypeController@index','Manage Networks', $type->id, array('class' => 'btn btn-primary btn-xs')) }}
+							{{ HTML::linkAction('NetworkController@index','Manage Networks', $type->id, array('class' => 'btn btn-primary btn-xs')) }}
 						</td>
 						<td class="action">
 							{{ Form::open(array('method' => 'DELETE', 'action' => array('ActivityTypeController@destroy', $type->id))) }}                       

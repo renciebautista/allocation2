@@ -101,8 +101,9 @@
 					<div class="form-group">
 						<div class="row">
 							<div class="col-lg-12">
-								{{ Form::label('implementation_date', 'Target Implementation Date', array('class' => 'control-label')) }}
-								{{ Form::text('implementation_date','',array('class' => 'form-control', 'placeholder' => 'mm/dd/yyyy')) }}
+								{{ Form::label('download_date', 'Target Download Date ', array('class' => 'control-label')) }}
+								{{ Form::text('download_date','',array('id' => 'download_date', 'class' => 'form-control', 'placeholder' => 'mm/dd/yyyy', 'readonly' => '')) }}
+								
 							</div>
 						</div>
 					</div>
@@ -111,8 +112,8 @@
 					<div class="form-group">
 						<div class="row">
 							<div class="col-lg-12">
-								{{ Form::label('download_date', 'Target Download Date ', array('class' => 'control-label')) }}
-								{{ Form::text('download_date','',array('id' => 'download_date', 'class' => 'form-control', 'placeholder' => 'mm/dd/yyyy', 'readonly' => '')) }}
+								{{ Form::label('implementation_date', 'Target Implementation Date', array('class' => 'control-label')) }}
+								{{ Form::text('implementation_date','',array('class' => 'form-control', 'placeholder' => 'mm/dd/yyyy')) }}
 							</div>
 						</div>
 					</div>

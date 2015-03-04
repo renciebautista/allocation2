@@ -59,6 +59,8 @@ Route::group(array('before' => 'auth'), function()
 {	
 	Route::pattern('id', '[0-9]+');
 
+	Route::get('activity/{id}/timings', 'ActivityController@timings');
+
 	Route::get('activity/{id}/download', 'ActivityController@download');
 	Route::get('activity/{id}/recall', 'ActivityController@recall');
 

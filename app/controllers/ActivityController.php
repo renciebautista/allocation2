@@ -257,9 +257,11 @@ class ActivityController extends \BaseController {
 				->orderBy('created_at', 'desc')
 				->get();
 
+			
+
 			return View::make('activity.edit', compact('activity', 'scope_types', 'planners', 'approvers', 'cycles',
 			 'activity_types', 'divisions' , 'objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
-			 'involves', 'sel_skus', 'sel_objectives', 'channels', 'sel_channels', 'schemes'));
+			 'involves', 'sel_skus', 'sel_objectives', 'channels', 'sel_channels', 'schemes', 'networks'));
 		}
 
 		if($activity->status_id == 2){
@@ -542,6 +544,7 @@ class ActivityController extends \BaseController {
 			$budget->budget_type_id = Input::get('budget_ttstype');
 			$budget->budget_no = Input::get('budget_no');
 			$budget->budget_name = Input::get('budget_name');
+			$budget->amount = str_replace(",", '', Input::get('budget_amount'));
 			$budget->start_date = date('Y-m-d',strtotime(Input::get('budget_startdate')));
 			$budget->end_date = date('Y-m-d',strtotime(Input::get('budget_enddate')));
 			$budget->remarks = Input::get('budget_remarks');
@@ -601,6 +604,14 @@ class ActivityController extends \BaseController {
 			$arr['success'] = 1;
 			$arr['id'] = $id;
 			return json_encode($arr);
+		}
+	}
+
+	public function timings($id){
+		if(Request::ajax()){
+			$activity = Activity::find($id);
+			$networks = ActivityTypeNetwork::timings($activity->activity_type_id,$activity->edownload_date);
+			return Response::json($networks);
 		}
 	}
 }
