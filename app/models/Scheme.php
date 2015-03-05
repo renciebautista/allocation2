@@ -11,4 +11,8 @@ class Scheme extends \Eloquent {
 		'deals' => 'required',
 		'skus' => 'required',
 	);
+
+	public static function getList($id){
+		return self::where('activity_id',$id)->get();
+	}
 }

@@ -115,3 +115,13 @@ pmog
 	
 ----------------------------
 price list with box?
+
+--------------------------------
+on tab show update contents
+	- customer
+	- 
+
+deals = alloc * srp
+case = alloc * deals * srp
+
+allow schemes if have division

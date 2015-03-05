@@ -99,9 +99,11 @@ class DownloadedActivityController extends \BaseController {
 				->where('activity_id', $id)
 				->get();
 
+			$attachments = ActivityAttachment::where('activity_id', $id)->get();
 
 			return View::make('downloadedactivity.edit', compact('activity', 'scope_types', 'planners', 'approvers', 'cycles',
-			 'activity_types', 'divisions' , 'objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver'));
+			 'activity_types', 'divisions' , 'objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
+			 'attachments'));
 		}
 
 		if($activity->status_id == 3){
@@ -161,4 +163,55 @@ class DownloadedActivityController extends \BaseController {
 		//
 	}
 
+	public function doupload($id){
+		if(Input::hasFile('file')){
+			$distination = storage_path().'/uploads/';
+			$file = Input::file('file');
+			$original_file_name = $file->getClientOriginalName();
+			$file_name = $original_file_name;
+			$file_path = $distination.$file_name;
+
+			//Alter the file name until it's unique to prevent overwriting
+			while(File::exists($file_path)) {
+				$file_name = Str::slug($file->getClientOriginalName()).Str::random(6).'.'.File::extension($file->getClientOriginalName());
+				$file_path = $distination.$file_name;
+			}
+
+			//Now the upload part
+			$file->move($distination,$file_name);
+
+			$docu = new ActivityAttachment;
+			$docu->created_by = Auth::id();
+			$docu->activity_id = $id;
+			$docu->hash_name = $file_name;
+			$docu->file_name = $original_file_name;
+			$docu->file_desc = (Input::get('file_desc') =='') ? $original_file_name : Input::get('file_desc');
+			$docu->save();
+
+			return Redirect::route('downloadedactivity.edit',$id)
+				->with('class', 'alert-success')
+				->with('message', 'Remarks successfuly posted.');
+		}else{
+			return Redirect::route('downloadedactivity.edit',$id)
+				->with('class', 'alert-danger')
+				->with('message', 'Error uploading file.');
+		}
+	}
+
+	public function downloadfile($id){
+		$file = ActivityAttachment::findOrFail($id);
+		// Check if file exists in app/storage/file folder
+		$file_path = storage_path() .'/uploads/'. $file->hash_name;
+		if (file_exists($file_path))
+		{
+			// Send Download
+			return Response::download($file_path);
+		}
+		else
+		{
+			exit('Requested file does not exist on our server!');
+		}
+	
+		
+	}
 }

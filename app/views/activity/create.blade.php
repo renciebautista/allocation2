@@ -288,6 +288,7 @@ $("form").validate({
 		planner: "is_natural_no_zero",
 		scope: "is_natural_no_zero",
 		activity_type: "is_natural_no_zero",
+		cycle: "is_natural_no_zero",
 		implementation_date: {
 			required: true,
 			greaterdate : true

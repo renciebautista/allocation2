@@ -44,7 +44,7 @@
 					@foreach($activities as $activity)
 					<tr>
 						<td>{{ $activity->activity_code }}</td>
-						<td>{{ $activity->circular_name }}</td>
+						<td>{{ $activity->createdby->getFullname() }}</td>
 						<td>YES</td>
 						<td>{{ $activity->status->status }}</td>
 						<td>

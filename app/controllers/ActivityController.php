@@ -257,21 +257,27 @@ class ActivityController extends \BaseController {
 				->orderBy('created_at', 'desc')
 				->get();
 
-			
+			$attachments = ActivityAttachment::where('activity_id', $activity->id)->get();
+
 
 			return View::make('activity.edit', compact('activity', 'scope_types', 'planners', 'approvers', 'cycles',
 			 'activity_types', 'divisions' , 'objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
-			 'involves', 'sel_skus', 'sel_objectives', 'channels', 'sel_channels', 'schemes', 'networks'));
+			 'involves', 'sel_skus', 'sel_objectives', 'channels', 'sel_channels', 'schemes', 'networks', 'attachments'));
 		}
 
 		if($activity->status_id == 2){
 			$sel_planner = ActivityPlanner::where('activity_id',$id)
 				->first();
 			$sel_approver = ActivityApprover::getList($id);
+			$sel_skus = ActivitySku::getList($id);
+			$sel_objectives = ActivityObjective::getList($id);
+			$sel_channels = ActivityChannel::getList($id);
 
 			$scope_types = ScopeType::orderBy('scope_name')->lists('scope_name', 'id');
 			$planners = User::isRole('PMOG PLANNER')->lists('first_name', 'id');
 			$approvers = User::isRole('CD OPS APPROVER')->lists('first_name', 'id');
+			$involves = Pricelist::orderBy('sap_desc')->lists('sap_desc', 'sap_code');
+			$channels = Channel::orderBy('channel_name')->lists('channel_name', 'id');
 
 			$activity_types = ActivityType::orderBy('activity_type')->lists('activity_type', 'id');
 			$cycles = Cycle::orderBy('cycle_name')->lists('cycle_name', 'id');
@@ -290,8 +296,23 @@ class ActivityController extends \BaseController {
 				->where('activity_id', $id)
 				->get();
 
+			$schemes = Scheme::where('activity_id', $activity->id)
+				->orderBy('created_at', 'desc')
+				->get();
+
+			$division = Sku::division($activity->division_code);
+			$categories = Sku::categories($activity->division_code);
+			$sel_categories = ActivityCategory::selected_category($activity->id);
+
+			$brands = Sku::brands($sel_categories);
+			$sel_brands = ActivityBrand::selected_brand($activity->id);
+
+			$attachments = ActivityAttachment::where('activity_id', $activity->id)->get();
+
 			return View::make('activity.downloaded', compact('activity', 'scope_types', 'planners', 'approvers', 'cycles',
-			 'activity_types', 'divisions' , 'objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver'));
+			 'activity_types', 'divisions' , 'objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
+			 'involves', 'sel_skus', 'sel_objectives', 'channels', 'sel_channels', 'schemes', 'networks', 'division', 
+			 'categories', 'sel_categories', 'brands', 'sel_brands', 'attachments'));
 		}
 
 	}
@@ -371,12 +392,27 @@ class ActivityController extends \BaseController {
 					$activity->activity_type_id = $activity_type_id;
 					$activity->division_code = $division_code;
 
-					$activity->duration = (Input::get('duration') == '') ? 0 : Input::get('duration');
+					$activity->duration = (Input::get('lead_time') == '') ? 0 : Input::get('lead_time');
 					$activity->edownload_date = date('Y-m-d',strtotime(Input::get('download_date')));
 					$activity->eimplementation_date = date('Y-m-d',strtotime(Input::get('implementation_date')));
 					$activity->circular_name = strtoupper(Input::get('activity_title'));
 					$activity->background = Input::get('background');
 					$activity->update();
+
+					// update timings
+					ActivityTiming::where('activity_id',$activity->id)->delete();
+					$networks = ActivityTypeNetwork::timings($activity->activity_type_id,$activity->edownload_date);
+					if(count($networks)> 0){
+						$activity_timing = array();
+
+						foreach ($networks as $network) {
+							$activity_timing[] = array('activity_id' => $activity->id, 'task_id' => $network->task_id,
+								'milestone' => $network->milestone, 'task' => $network->task, 'responsible' => $network->responsible,
+								'duration' => $network->duration, 'depend_on' => $network->depend_on,
+								'start_date' => date('Y-m-d',strtotime($network->start_date)), 'end_date' => date('Y-m-d',strtotime($network->end_date)));
+						}
+						ActivityTiming::insert($activity_timing);
+					}
 
 					// update planner
 					ActivityPlanner::where('activity_id',$activity->id)->delete();
@@ -469,15 +505,13 @@ class ActivityController extends \BaseController {
 
 		$activity = Activity::findOrFail($id);
 
-		// print_r(Activity::validForDownload($activity));
 		$validation = Activity::validForDownload($activity);
 		if($validation['status'] == 0){
 			return Redirect::route('activity.edit',$id)
 				->with('class', 'alert-danger')
 				->withErrors($validation['message'])
-				->with('message', 'Budget details are required.');
+				->with('message', 'Other information are required.');
 		}
-		
 
 		$activity->status_id = 2;
 		$activity->update();
@@ -607,10 +641,25 @@ class ActivityController extends \BaseController {
 		}
 	}
 
+	public function updatebilling($id){
+		if(Request::ajax()){
+			DB::transaction(function() use ($id)  {
+				$activity = Activity::find($id);
+				$activity->billing_date = date('Y-m-d',strtotime(Input::get('billing_deadline')));
+				$activity->billing_remarks = Input::get('billing_remarks');
+				$activity->update();
+			});
+
+			$arr['success'] = 1;
+			$arr['id'] = $id;
+			return json_encode($arr);
+		}
+	}
+
 	public function timings($id){
 		if(Request::ajax()){
-			$activity = Activity::find($id);
-			$networks = ActivityTypeNetwork::timings($activity->activity_type_id,$activity->edownload_date);
+			$networks = ActivityTiming::select(DB::raw('task_id,milestone,task,responsible,duration,depend_on,DATE_FORMAT(start_date, "%m/%d/%Y") AS start_date,DATE_FORMAT(end_date, "%m/%d/%Y") AS end_date'))
+			->where('activity_id', $id)->get();
 			return Response::json($networks);
 		}
 	}

@@ -32,13 +32,23 @@ class Activity extends \Eloquent {
         return $this->belongsTo('ActivityType','activity_type_id');
     }
 
+    public function cycle()
+    {
+        return $this->belongsTo('Cycle','cycle_id');
+    }
+
+    public function createdby()
+    {
+        return $this->belongsTo('User','created_by');
+    }
+
 
     // static function
 	public static function validForDownload($activity){
 		$return = array();
 		$required_budget_type = ActivityTypeBudgetRequired::required($activity->activity_type_id);
 		$valid_types = array();
-
+		$required = array();
 		if(!empty($required_budget_type)){
 			foreach ($required_budget_type as $value) {
 				$status = 0;
@@ -50,7 +60,7 @@ class Activity extends \Eloquent {
 		}
 
 		if(!empty($valid_types)){
-			$required = array();
+			
 			$_valid = 1;
 			foreach ($valid_types as $key => $value) {
 				if($value == 0){
@@ -60,12 +70,70 @@ class Activity extends \Eloquent {
 				$_valid &= $value;
 			}
 			$return['status'] = $_valid;
-			$return['message'] = $required;
-			return $return;
 		}else{
 			$return['status'] = 1;
-			return $return;
 		}
+
+		$approver = ActivityApprover::getList($activity->id);
+		if(count($approver)  == 0){
+			$required[] = 'Activty approver is required.';
+			$return['status'] = 0;
+		}
+
+		if($activity->cycle_id == 0){
+			$required[] = 'Activty cycle is required.';
+			$return['status'] = 0;
+		}
+
+		if($activity->division_code == 0){
+			$required[] = 'Activty division is required.';
+			$return['status'] = 0;
+		}
+
+		$category = ActivityCategory::selected_category($activity->id);
+		if(count($category)  == 0){
+			$required[] = 'Activty category is required.';
+			$return['status'] = 0;
+		}
+
+		$brand = ActivityBrand::selected_brand($activity->id);
+		if(count($brand) == 0){
+			$required[] = 'Activty brand is required.';
+			$return['status'] = 0;
+		}
+
+		$skus = ActivitySku::getList($activity->id);
+		if(count($skus) == 0){
+			$required[] = 'Activty skus involved is required.';
+			$return['status'] = 0;
+		}
+
+		$objective = ActivityObjective::getList($activity->id);
+		if(count($objective) == 0){
+			$required[] = 'Activty objective is required.';
+			$return['status'] = 0;
+		}
+
+		if($activity->background ==''){
+			$required[] = 'Activty background is required.';
+			$return['status'] = 0;
+		}
+
+		$customer = ActivityCustomer::customers($activity->id);
+		if(count($customer) == 0){
+			$required[] = 'Activty customer is required.';
+			$return['status'] = 0;
+		}
+
+		$scheme = Scheme::getList($activity->id);
+		if(count($scheme) == 0){
+			$required[] = 'Activty scheme is required.';
+			$return['status'] = 0;
+		}
+
+		$return['message'] = $required;
+		return $return;;
+		
 	}
 
 }

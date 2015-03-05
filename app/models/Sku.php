@@ -27,4 +27,27 @@ class Sku extends \Eloquent {
 			
 		});
 	}
+
+	public static function division($code){
+		return self::select('division_code', 'division_desc')
+			->where('division_code', $code)
+			->groupBy('division_code')
+			->first();
+	}
+
+	public static function categories($division_code){
+		return self::select('category_code', 'category_desc')
+			->where('division_code',$division_code)
+			->groupBy('category_code')
+			->orderBy('category_desc')
+			->lists('category_desc', 'category_code');
+	}
+
+	public static function brands($categories){
+		return self::select('brand_code', 'brand_desc')
+			->whereIn('category_code',$categories)
+			->groupBy('brand_code')
+			->orderBy('brand_desc')
+			->lists('brand_desc', 'brand_code');
+	}
 }

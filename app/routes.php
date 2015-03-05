@@ -71,6 +71,7 @@ Route::group(array('before' => 'auth'), function()
 	Route::delete('activity/deletenobudget', 'ActivityController@deletenobudget');
 
 	Route::put('activity/{id}/updatecustomer', 'ActivityController@updatecustomer');
+	Route::put('activity/{id}/updatebilling', 'ActivityController@updatebilling');
 
 	Route::get('activity/{id}/scheme', 'SchemeController@index');
 	Route::get('activity/{id}/scheme/create', 'SchemeController@create');
@@ -81,7 +82,10 @@ Route::group(array('before' => 'auth'), function()
 	Route::delete('scheme/{id}', 'SchemeController@destroy');
 	Route::put('scheme/{id}', 'SchemeController@update');
 
+	Route::post('downloadedactivity/{id}/upload', 'DownloadedActivityController@doupload');
+	Route::get('downloadedactivity/{id}/downloadfile', 'DownloadedActivityController@downloadfile');
 	Route::get('downloadedactivity/nobudget', 'DownloadedActivityController@nobudget');
+
 
 	Route::resource('downloadedactivity', 'DownloadedActivityController');
 	Route::resource('submittedactivity', 'SubmittedActivityController');

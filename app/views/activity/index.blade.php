@@ -43,13 +43,13 @@
 						<th>Activity Code</th>
 						<th>Activity Name</th>
 						<th>Status</th>
-						<th colspan="3" style="text-align:center;">Action</th>
+						<th colspan="2" style="text-align:center;">Action</th>
 					</tr>
 				</thead>
 				<tbody>
 					@if(count($activities) == 0)
 					<tr>
-						<td colspan="6">No record found!</td>
+						<td colspan="5">No record found!</td>
 					</tr>
 					@else
 					@foreach($activities as $activity)
@@ -58,16 +58,21 @@
 						<td>{{ $activity->circular_name }}</td>
 						<td>{{ $activity->status->status }}</td>
 						<td class="action">
+							@if($activity->status_id == 1)
 							{{ Form::open(array('method' => 'DELETE', 'action' => array('ActivityController@destroy', $activity->id))) }}                       
 							{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}
 							{{ Form::close() }}
+							@else
+							<button class="btn btn-danger btn-xs disabled">DELETE</button>
+							@endif
 						</td>
 						<td class="action">
-							{{ HTML::linkAction('ActivityController@show','View', $activity->id, array('class' => 'btn btn-info btn-xs')) }}
-							
-						</td>
-						<td>
+							@if($activity->status_id == 1)
 							{{ HTML::linkAction('ActivityController@edit','Edit', $activity->id, array('class' => 'btn btn-info btn-xs')) }}
+							@else
+							{{ HTML::linkAction('ActivityController@edit','View', $activity->id, array('class' => 'btn btn-info btn-xs')) }}
+							@endif
+							
 						</td>
 					</tr>
 					@endforeach
