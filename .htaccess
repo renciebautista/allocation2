@@ -1,4 +1,6 @@
 <IfModule mod_rewrite.c>
+	ini_set('memory_limit','2048M');
+	
 	RewriteEngine on
 	RewriteCond %{REQUEST_URI} !^public
 	RewriteRule ^(.*)$ public/$1 [L]
