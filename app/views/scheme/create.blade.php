@@ -120,7 +120,7 @@
 				<div class="row">
 					<div class="col-lg-12">
 						{{ Form::label('uom', 'UOM', array('class' => 'control-label')) }}
-						{{ Form::text('uom',$activity->activitytype->uom,array('class' => 'form-control', 'placeholder' => 'UOM', 'readonly' => '')) }}
+						{{ Form::text('uom',$activity->activitytype->uom,array('id' => 'oum', 'class' => 'form-control', 'placeholder' => 'UOM', 'readonly' => '')) }}
 					</div>
 				</div>
 			</div>
@@ -228,7 +228,7 @@ $('#pr, #srp_p, #other_cost').blur(function() {
 
 
 
-$('#total_alloc').blur(function() {
+$('#total_alloc,#deals').blur(function() {
 	compute_budget();
 });
 
@@ -236,7 +236,14 @@ function compute_budget(){
 	var total_alloc = accounting.unformat($('#total_alloc').val()) || 0;
 	var srp = accounting.unformat($('#srp_p').val()) || 0;
 	var others = accounting.unformat($('#other_cost').val()) || 0;
-	$('#tts_r').val(accounting.formatNumber(total_alloc*srp, 2, ",","."));
+	var deals = accounting.unformat($('#deals').val()) || 0;
+	console.log($('#oum').val() );
+	if($('#oum').val() == 'CASES'){
+		$('#tts_r').val(accounting.formatNumber(total_alloc*deals*srp, 2, ",","."));
+	}else{
+		$('#tts_r').val(accounting.formatNumber(total_alloc*srp, 2, ",","."));
+	}
+	
 
 	$('#pe_r').val(accounting.formatNumber(total_alloc*others, 2, ",","."));
 

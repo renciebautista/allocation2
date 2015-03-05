@@ -127,7 +127,6 @@ return array(
 		'Zizaco\Confide\ServiceProvider',
 		'Zizaco\Entrust\EntrustServiceProvider',
 		'Rencie\Cpm\CpmServiceProvider',
-		'CeesVanEgmond\Minify\MinifyServiceProvider',
 
 	),
 
