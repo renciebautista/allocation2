@@ -28,13 +28,12 @@
 	<li class="disabled"><a>Customer Details</a></li>
 	<li class="disabled"><a>Schemes</a></li>
 	<li class="disabled"><a>Timings Details</a></li>
-	<li class="disabled"><a>Material Sourcing</a></li>
 	<li class="disabled"><a>Attachment</a></li>
 </ul>
 <div id="myTabContent" class="tab-content">
   	<div class="tab-pane fade active in" id="activty">
   		<br>
-  		{{ Form::open(array('route' => 'activity.store','class' => 'bs-component')) }}
+  		{{ Form::open(array('route' => 'activity.store','class' => 'bs-component', 'id' => 'myform')) }}
   		<div class="well">
   			<div class="row">
   				<div class="col-lg-6">
@@ -184,19 +183,6 @@
 			</div>
 
 			<div class="row">
-				<div class="col-lg-12">
-					<div class="form-group">
-						<div class="row">
-							<div class="col-lg-12">
-								{{ Form::label('involve', 'SKU/s Involved', array('class' => 'control-label' )) }}
-								{{ Form::select('involve[]', $involves, null, array('id' => 'involve', 'data-placeholder' => 'Select SKUS Involve', 'class' => 'form-control','multiple' => 'multiple')) }}
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div class="row">
   				<div class="col-lg-6">
 					<div class="form-group">
 						<div class="row">
@@ -210,6 +196,8 @@
 				</div>
 			</div>
 
+
+
 			<div class="row">
   				<div class="col-lg-12">
 					<div class="form-group">
@@ -221,6 +209,9 @@
 						</div>
 					</div>
 				</div>
+			</div>
+
+			<div class="row">
 				<div class="col-lg-12">
 					<div class="form-group">
 						{{ Form::submit('Save', array('class' => 'btn btn-primary')) }}
@@ -280,7 +271,7 @@ $("#implementation_date").on("dp.change",function (e) {
 
 $('#implementation_date').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
 
-$("form").validate({
+$("#myform").validate({
 	errorElement: "span", 
 	errorClass : "has-error",
 	rules: {
@@ -299,11 +290,10 @@ $("form").validate({
 		
 	},
 	highlight: function( element, errorClass, validClass ) {
-		//console.log(element.closest('div'));
-    	$(element.closest('div')).addClass(errorClass).removeClass(validClass);
+    	$(element).closest('div').addClass(errorClass).removeClass(validClass);
   	},
   	unhighlight: function( element, errorClass, validClass ) {
-    	$(element.closest('div')).removeClass(errorClass).addClass(validClass);
+    	$(element).closest('div').removeClass(errorClass).addClass(validClass);
   	}
 });
 

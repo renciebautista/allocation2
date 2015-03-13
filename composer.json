@@ -11,7 +11,9 @@
 		"zizaco/confide": "~4.0@dev",
 		"zizaco/entrust": "1.2.*@dev",
 		"barryvdh/laravel-debugbar": "~1.8",
-		"rencie/cpm": "1.0"
+		"rencie/cpm": "1.0",
+		"barryvdh/laravel-dompdf": "0.4.*",
+		"dinesh/barcode": "dev-master"
 	},
 	"autoload": {
 		"classmap": [

@@ -15,4 +15,9 @@ class Scheme extends \Eloquent {
 	public static function getList($id){
 		return self::where('activity_id',$id)->get();
 	}
+
+	public function activity()
+    {
+        return $this->belongsTo('Activity','activity_id','id');
+    }
 }

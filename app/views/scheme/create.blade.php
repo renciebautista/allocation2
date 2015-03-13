@@ -26,6 +26,22 @@
 			</div>
 		</div>
 	</div>
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="form-group">
+				<div class="row">
+					<div class="col-lg-6">
+						{{ Form::label('skus', 'Reference Sales SKU', array('class' => 'control-label')) }}
+						{{ Form::select('skus[]', array('0' => '') + $skus, '', array('data-placeholder' => 'Select Reference Sales SKU','id' => 'skus', 'class' => 'form-control')) }}
+					</div>
+					<div class="col-lg-6">
+						{{ Form::label('involve', 'Host SKU', array('class' => 'control-label')) }}
+						{{ Form::select('involve[]', array('0' => '') + $involves, '', array('data-placeholder' => 'Select Host SKU','id' => 'skus', 'class' => 'form-control')) }}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 
 	<div class="row">
 		<div class="col-lg-12">
@@ -53,18 +69,8 @@
 			<div class="form-group">
 				<div class="row">
 					<div class="col-lg-12">
-						{{ Form::label('pr', 'Purchase Requirement (Php)', array('class' => 'control-label')) }}
-						{{ Form::text('pr','',array('id' => 'pr', 'class' => 'form-control', 'placeholder' => 'Purchase Requirement (Php)')) }}
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="col-lg-4">
-			<div class="form-group">
-				<div class="row">
-					<div class="col-lg-12">
 						{{ Form::label('srp_p', 'SRP of Premium (Php)', array('class' => 'control-label')) }}
-						{{ Form::text('srp_p','',array('id' => 'srp_p', 'class' => 'form-control', 'placeholder' => 'SRP of Premium (Php)')) }}
+						{{ Form::text('srp_p','', array('id' => 'srp_p', 'class' => 'form-control', 'placeholder' => 'SRP of Premium (Php)')) }}
 					</div>
 				</div>
 			</div>
@@ -74,20 +80,31 @@
 				<div class="row">
 					<div class="col-lg-12">
 						{{ Form::label('other_cost', 'Other Cost Per Deal (Php)', array('class' => 'control-label')) }}
-						{{ Form::text('other_cost','',array('class' => 'form-control', 'placeholder' => 'Other Cost Per Deal (Php)')) }}
+						{{ Form::text('other_cost','', array('class' => 'form-control', 'placeholder' => 'Other Cost Per Deal (Php)')) }}
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-lg-4">
+			<div class="form-group">
+				<div class="row">
+					<div class="col-lg-12">
+						{{ Form::label('ulp', 'Total Unilever Cost (Php)', array('class' => 'control-label')) }}
+						{{ Form::text('ulp','', array('class' => 'form-control', 'placeholder' => 'Total Unilever Cost (Php)', 'id' => 'ulp', 'readonly' => '')) }}
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 
+	
 	<div class="row">
 		<div class="col-lg-4">
 			<div class="form-group">
 				<div class="row">
 					<div class="col-lg-12">
-						{{ Form::label('ulp', 'Total Unilever Cost (Php)', array('class' => 'control-label')) }}
-						{{ Form::text('ulp','',array('class' => 'form-control', 'placeholder' => 'Total Unilever Cost (Php)', 'id' => 'ulp', 'readonly' => '')) }}
+						{{ Form::label('pr', 'Purchase Requirement (Php)', array('class' => 'control-label')) }}
+						{{ Form::text('pr', '', array('id' => 'pr', 'class' => 'form-control', 'placeholder' => 'Purchase Requirement (Php)')) }}
 					</div>
 				</div>
 			</div>
@@ -97,7 +114,7 @@
 				<div class="row">
 					<div class="col-lg-12">
 						{{ Form::label('cost_sale', 'Cost to Sales %', array('class' => 'control-label')) }}
-						{{ Form::text('cost_sale','',array('class' => 'form-control', 'placeholder' => 'Cost to Sales %', 'id' => 'cost_sale', 'readonly' => '')) }}
+						{{ Form::text('cost_sale','', array('class' => 'form-control', 'placeholder' => 'Cost to Sales %', 'id' => 'cost_sale', 'readonly' => '')) }}
 					</div>
 				</div>
 			</div>
@@ -108,29 +125,32 @@
 		<div class="col-lg-4">
 			<div class="form-group">
 				<div class="row">
-					<div class="col-lg-12">
-						{{ Form::label('total_alloc', 'Total Allocation', array('class' => 'control-label')) }}
-						{{ Form::text('total_alloc','',array('class' => 'form-control', 'placeholder' => 'Total Allocation')) }}
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="col-lg-4">
-			<div class="form-group">
-				<div class="row">
-					<div class="col-lg-12">
+					
+					<div class="col-lg-6">
 						{{ Form::label('uom', 'UOM', array('class' => 'control-label')) }}
-						{{ Form::text('uom',$activity->activitytype->uom,array('id' => 'oum', 'class' => 'form-control', 'placeholder' => 'UOM', 'readonly' => '')) }}
+						{{ Form::text('uom',$activity->activitytype->uom,array('id' => 'uom', 'class' => 'form-control', 'placeholder' => 'UOM', 'readonly' => '')) }}
+					</div>
+					<div class="col-lg-6">
+						{{ Form::label('total_alloc', 'Total Allocation', array('class' => 'control-label')) }}
+						{{ Form::text('total_alloc','', array('class' => 'form-control', 'placeholder' => 'Total Allocation')) }}
 					</div>
 				</div>
 			</div>
 		</div>
-		<div class="col-lg-4">
+		<div class="col-lg-8">
 			<div class="form-group">
 				<div class="row">
-					<div class="col-lg-12">
-						{{ Form::label('deals', 'No. of Deals Per Case', array('class' => 'control-label')) }}
-						{{ Form::text('deals','',array('class' => 'form-control', 'placeholder' => 'No. of Deals Per Case')) }}
+					<div class="col-lg-3">
+						{{ Form::label('deals', 'Deals Per Case', array('class' => 'control-label')) }}
+						{{ Form::text('deals','', array('class' => 'form-control', 'placeholder' => 'Deals Per Case')) }}
+					</div>
+					<div class="col-lg-3">
+						{{ Form::label('total_deals', 'Total No. of Deals', array('class' => 'control-label')) }}
+						{{ Form::text('total_deals','', array('id' => 'total_deals', 'class' => 'form-control', 'placeholder' => 'Total No. of Deals','readonly' => '')) }}
+					</div>
+					<div class="col-lg-3">
+						{{ Form::label('total_cases', 'Total No. of Cases', array('class' => 'control-label')) }}
+						{{ Form::text('total_cases','', array('id' => 'total_cases', 'class' => 'form-control', 'placeholder' => 'Total No. of Cases','readonly' => '')) }}
 					</div>
 				</div>
 			</div>
@@ -169,19 +189,6 @@
 			</div>
 		</div>
 	</div>
-
-	<div class="row">
-		<div class="col-lg-12">
-			<div class="form-group">
-				<div class="row">
-					<div class="col-lg-12">
-						{{ Form::label('skus', 'Reference Sales SKUS', array('class' => 'control-label')) }}
-						{{ Form::select('skus[]', $skus, null, array('data-placeholder' => 'Select Reference SKUS','id' => 'skus', 'class' => 'form-control', 'multiple' => 'multiple')) }}
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
 	
 	<div class="row">
 		<div class="col-lg-12">
@@ -204,13 +211,41 @@
 
 @section('page-script')
 
+$("form").validate({
+	ignore: null,
+	errorElement: "span", 
+	errorClass : "has-error",
+	rules: {
+		scheme_name: "required",
+		pr: "required",
+		srp_p: "required",
+		total_alloc: "required",
+		deals: "required",
+		'skus[]': {
+                is_natural_no_zero: true
+            },
+        'involve[]': {
+                is_natural_no_zero: true
+            }
+	},
+	errorPlacement: function(error, element) {               
+		
+	},
+	highlight: function( element, errorClass, validClass ) {
+    	$(element).closest('div').addClass(errorClass).removeClass(validClass);
+  	},
+  	unhighlight: function( element, errorClass, validClass ) {
+    	$(element).closest('div').removeClass(errorClass).addClass(validClass);
+  	}
+});
 
 
-
-$("#skus").chosen();
+$("#skus,#invole").chosen({
+	search_contains: true,
+	allow_single_deselect: true
+});
 
 $('#pr, #srp_p, #other_cost,#total_alloc').inputNumber();
-
 
 $('#pr, #srp_p, #other_cost').blur(function() {
 	var srp = accounting.unformat($('#srp_p').val()) || 0;
@@ -237,14 +272,26 @@ function compute_budget(){
 	var srp = accounting.unformat($('#srp_p').val()) || 0;
 	var others = accounting.unformat($('#other_cost').val()) || 0;
 	var deals = accounting.unformat($('#deals').val()) || 0;
-	console.log($('#oum').val() );
-	if($('#oum').val() == 'CASES'){
+
+	if($('#uom').val() == "CASES"){
+		$('#total_deals').val(accounting.formatNumber(total_alloc*deals));
+		$('#total_cases').val(accounting.formatNumber(total_alloc));
+
 		$('#tts_r').val(accounting.formatNumber(total_alloc*deals*srp, 2, ",","."));
+
+		
 	}else{
+		$('#total_deals').val(accounting.formatNumber(total_alloc));
+		if(deals < 1){
+			$('#total_cases').val(0);
+		}else{
+			$('#total_cases').val(accounting.formatNumber(Math.ceil(total_alloc/deals)));
+		}
+		
+
 		$('#tts_r').val(accounting.formatNumber(total_alloc*srp, 2, ",","."));
 	}
 	
-
 	$('#pe_r').val(accounting.formatNumber(total_alloc*others, 2, ",","."));
 
 	var tts_r = accounting.unformat($('#tts_r').val()) || 0;
@@ -253,30 +300,6 @@ function compute_budget(){
 	$('#total_cost').val(accounting.formatNumber(tts_r+pe_r, 2, ",","."));
 }
 
-$("form").validate({
-	ignore: null,
-	errorElement: "span", 
-	errorClass : "has-error",
-	rules: {
-		scheme_name: "required",
-		pr: "required",
-		srp_p: "required",
-		total_alloc: "required",
-		deals: "required",
-		'skus[]': {
-                required: true
-            }
-	},
-	errorPlacement: function(error, element) {               
-		
-	},
-	highlight: function( element, errorClass, validClass ) {
-    	$(element.closest('div')).addClass(errorClass).removeClass(validClass);
-  	},
-  	unhighlight: function( element, errorClass, validClass ) {
-    	$(element.closest('div')).removeClass(errorClass).addClass(validClass);
-  	}
-});
 
 @stop
 

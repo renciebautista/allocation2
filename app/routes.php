@@ -48,6 +48,13 @@
 // 	return View::make('customer',compact('data'));
 // });
 
+Route::get('print', function (){
+	// return View::make('pdf.test');
+	// echo EAN13::draw('1234567890');
+	
+	$pdf = PDF::loadView('pdf.test');
+	return $pdf->stream();
+});
 
 Route::get('/','LoginController@index');
 Route::get('login','LoginController@index');
@@ -66,9 +73,15 @@ Route::group(array('before' => 'auth'), function()
 
 	Route::post('activity/{id}/addbudget', 'ActivityController@addbudget');
 	Route::delete('activity/deletebudget', 'ActivityController@deletebudget');
+	Route::put('activity/updatebudget', 'ActivityController@updatebudget');
 
 	Route::post('activity/{id}/addnobudget', 'ActivityController@addnobudget');
 	Route::delete('activity/deletenobudget', 'ActivityController@deletenobudget');
+	Route::put('activity/updatenobudget', 'ActivityController@updatenobudget');
+
+	Route::post('activity/{id}/addmaterial', 'ActivityController@addmaterial');
+	Route::delete('activity/deletematerial', 'ActivityController@deletematerial');
+	Route::put('activity/updatematerial', 'ActivityController@updatematerial');
 
 	Route::put('activity/{id}/updatecustomer', 'ActivityController@updatecustomer');
 	Route::put('activity/{id}/updatebilling', 'ActivityController@updatebilling');
@@ -78,6 +91,7 @@ Route::group(array('before' => 'auth'), function()
 	Route::post('activity/{id}/scheme', 'SchemeController@store');
 	Route::resource('activity', 'ActivityController');
 	
+	Route::get('scheme/{id}', 'SchemeController@show');
 	Route::get('scheme/{id}/edit', 'SchemeController@edit');
 	Route::delete('scheme/{id}', 'SchemeController@destroy');
 	Route::put('scheme/{id}', 'SchemeController@update');
@@ -93,20 +107,6 @@ Route::group(array('before' => 'auth'), function()
 	Route::resource('group', 'GroupController');
 	Route::resource('dashboard', 'DashboardController');
 	Route::get('profile','ProfileController@index');
-
-	Route::group(array('prefix' => 'api'), function()
-	{
-		Route::get('customerselected', 'api\CustomerController@customerselected');
-		Route::get('customers', 'api\CustomerController@index');
-		
-
-		Route::post('category/getselected', 'api\SkuController@categoryselected');
-		Route::post('category', 'api\SkuController@category');
-		Route::post('brand', 'api\SkuController@brand');
-		Route::post('brand/getselected', 'api\SkuController@brandselected');
-		Route::resource('network', 'api\NetworkController');
-		Route::get('budgettype', 'api\BudgetTypeController@gettype');
-	});//
 
 	// Confide routes
 	Route::get('users', 'UsersController@index');
@@ -132,5 +132,20 @@ Route::group(array('before' => 'auth'), function()
 
 	Route::resource('activitytype', 'ActivityTypeController');
 
+
+	Route::group(array('prefix' => 'api'), function()
+	{
+		Route::get('customerselected', 'api\CustomerController@customerselected');
+		Route::get('customers', 'api\CustomerController@index');
+		
+
+		Route::post('category/getselected', 'api\SkuController@categoryselected');
+		Route::post('category', 'api\SkuController@category');
+		Route::post('brand', 'api\SkuController@brand');
+		Route::post('brand/getselected', 'api\SkuController@brandselected');
+		Route::resource('network', 'api\NetworkController');
+		Route::get('budgettype', 'api\BudgetTypeController@gettype');
+		Route::get('materialsource', 'api\MaterialController@getsource');
+	});//
 
 });

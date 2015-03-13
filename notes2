@@ -121,7 +121,38 @@ on tab show update contents
 	- customer
 	- 
 
-deals = alloc * srp
-case = alloc * deals * srp
-
 allow schemes if have division
+
+-------------------------------
+cases
+	Total No. of Deals = alloc * No. of Deals Per Case
+	Total No. of Cases = alloc 
+
+deals
+	Total No. of Deals = alloc 
+	Total No. of Cases = alloc / No. of Deals Per Case
+
+TTS Requirement = Total No. of Deals * SRP of Premium
+PE Requirement (Php) = Total No. of Deals * Other Cost Per Deal (Php)
+
+
+required picture attachment
+artwork packshot
+barcode  barcode generated
+casecode barcode generated
+
+ps form
+
+
+
+
+---------------------------
+
+
+
+if revised ask to save in scheme
+
+
+fda special attachments
+4800888175175
+24800888175179

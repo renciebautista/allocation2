@@ -1033,6 +1033,8 @@ FancytreeNode.prototype = /** @lends FancytreeNode# */{
 				that.render();
 			});
 		}
+
+		
 		return res;
 	},
 	/** Expand all parents and optionally scroll into visible area as neccessary.

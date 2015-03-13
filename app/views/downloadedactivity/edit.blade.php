@@ -32,7 +32,6 @@
 	<li class=""><a aria-expanded="false" href="#schemes" data-toggle="tab">Schemes</a></li>
 	<li class=""><a aria-expanded="false" href="#budget" data-toggle="tab">Budget Details</a></li>
 	<li class=""><a aria-expanded="false" href="#timings" data-toggle="tab">Timings Details</a></li>
-	<li class=""><a aria-expanded="false" href="#materials" data-toggle="tab">Material Sourcing</a></li>
 	<li class=""><a aria-expanded="false" href="#attachment" data-toggle="tab">Attachment</a></li>
 </ul>
 <div id="myTabContent" class="tab-content">
@@ -231,11 +230,39 @@
 						<div class="row">
 							<div class="col-lg-12">
 								{{ Form::label('background', 'Background and Rationale', array('class' => 'control-label')) }}
-									{{ Form::textarea('background',$activity->background,array('class' => 'form-control', 'placeholder' => 'Background and Rationale')) }}
+								{{ Form::textarea('background',$activity->background,array('class' => 'form-control', 'placeholder' => 'Background and Rationale')) }}
 							</div>
 						</div>
 					</div>
+					
 				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="form-group">
+						<div class="row">
+							<div class="col-lg-12">
+								Material Sourcing
+								<table id="materials" class="table table-striped table-hover ">
+								  	<thead>
+										<tr>
+									  		<th>Source</th>
+									  		<th>Material</th>
+									  		<th>Action</th>
+										</tr>
+								 	 </thead>
+								  
+								</table> 
+							</div>
+						</div>
+					</div>
+					
+				</div>
+			</div>
+
+
+			<div class="row">
 				<div class="col-lg-12">
 					<div class="form-group">
 						<button class="btn btn-primary">Update</button>
@@ -243,6 +270,8 @@
 					</div>
 				</div>
 			</div>
+
+
 		</div>
 		{{ Form::close() }}
 	</div>
@@ -573,80 +602,6 @@
 		</div>
 	</div>
 
-	<!-- material details -->
-	<div class="tab-pane fade" id="materials">
-		<br>
-		<div class="well">
-			<div class="row">
-				<div class="col-lg-12">
-					<table class="table table-striped table-hover ">
-					  <thead>
-						<tr>
-						  <th>#</th>
-						  <th>Column heading</th>
-						  <th>Column heading</th>
-						  <th>Column heading</th>
-						</tr>
-					  </thead>
-					  <tbody>
-						<tr>
-						  <td>1</td>
-						  <td>Column content</td>
-						  <td>Column content</td>
-						  <td>Column content</td>
-						</tr>
-						<tr>
-						  <td>2</td>
-						  <td>Column content</td>
-						  <td>Column content</td>
-						  <td>Column content</td>
-						</tr>
-						<tr class="info">
-						  <td>3</td>
-						  <td>Column content</td>
-						  <td>Column content</td>
-						  <td>Column content</td>
-						</tr>
-						<tr class="success">
-						  <td>4</td>
-						  <td>Column content</td>
-						  <td>Column content</td>
-						  <td>Column content</td>
-						</tr>
-						<tr class="danger">
-						  <td>5</td>
-						  <td>Column content</td>
-						  <td>Column content</td>
-						  <td>Column content</td>
-						</tr>
-						<tr class="warning">
-						  <td>6</td>
-						  <td>Column content</td>
-						  <td>Column content</td>
-						  <td>Column content</td>
-						</tr>
-						<tr class="active">
-						  <td>7</td>
-						  <td>Column content</td>
-						  <td>Column content</td>
-						  <td>Column content</td>
-						</tr>
-					  </tbody>
-					</table> 
-				</div>
-			</div>
-
-			<div class="row">
-				<div class="col-lg-12">
-					<div class="form-group">
-						<button class="btn btn-default btn-style" type="submit">Back</button>
-						<button class="btn btn-primary btn-style" type="submit">Next</button>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-
 	<!-- attachment details -->
 	<div class="tab-pane fade" id="attachment">
 		<br>
@@ -840,6 +795,28 @@ $("form[id='updateActivity']").on("submit",function(e){
 		}
 	});
 	e.preventDefault();
+});
+
+$('#materials').ajax_table({
+	add_url: "{{ URL::action('ActivityController@addnobudget', $activity->id ) }}",
+	delete_url: "{{ URL::action('ActivityController@deletenobudget') }}",
+	columns: [
+		{ type: "select", id: "source"},
+		{ type: "text", id: "material", placeholder: "Material" },
+	],
+	onInitRow: function() {
+		
+		$.ajax({
+			type: "GET",
+			url: "{{url('api/budgettype')}}",
+			success: function(data){
+				$('select#source').empty();
+				$.each(data, function(i, text) {
+					$('<option />', {value: i, text: text}).appendTo($('select#source')); 
+				});
+		   }
+		});
+	}
 });
 
 

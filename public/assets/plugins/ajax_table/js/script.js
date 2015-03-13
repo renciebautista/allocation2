@@ -198,7 +198,7 @@ createInput = function(i,str){
 	}
 	else if(inputType[i] == "select"){
 		input = '<select name='+columns[i]+'>';
-		for(i=0;i<selectOpt.length;i++){
+		for(i = 0;i < selectOpt.length; i++){
 			//console.log(selectOpt[i]);
 			selected = "";
 			if(str == selectOpt[i])
