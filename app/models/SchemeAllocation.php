@@ -14,11 +14,7 @@ class SchemeAllocation extends \Eloquent {
 	}
 
 	public static function getCustomerAllocation($id){
-		return self::select('allocations.*')
-			->join('schemes','allocations.scheme_id', '=', 'schemes.id')
-			->where('schemes.activity_id', $id)
-			->groupBy(array('group', 'area', 'sold_to', 'ship_to', 'channel', 'outlet'))
-			->orderBy('allocations.id')
+		return self::where('scheme_id', $id)
 			->get();
 	}
 

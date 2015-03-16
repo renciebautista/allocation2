@@ -91,10 +91,14 @@ Route::group(array('before' => 'auth'), function()
 	Route::post('activity/{id}/scheme', 'SchemeController@store');
 	Route::resource('activity', 'ActivityController');
 	
+
+	Route::get('scheme/{id}/allocation', 'SchemeController@allocation');
 	Route::get('scheme/{id}', 'SchemeController@show');
 	Route::get('scheme/{id}/edit', 'SchemeController@edit');
 	Route::delete('scheme/{id}', 'SchemeController@destroy');
 	Route::put('scheme/{id}', 'SchemeController@update');
+	Route::put('scheme/updatealloc', 'SchemeController@updateallocation');
+
 
 	Route::post('downloadedactivity/{id}/upload', 'DownloadedActivityController@doupload');
 	Route::get('downloadedactivity/{id}/downloadfile', 'DownloadedActivityController@downloadfile');

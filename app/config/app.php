@@ -128,7 +128,8 @@ return array(
 		'Zizaco\Entrust\EntrustServiceProvider',
 		'Rencie\Cpm\CpmServiceProvider',
 		'Barryvdh\DomPDF\ServiceProvider',
-		'Dinesh\Barcode\BarcodeServiceProvider'
+		'Dinesh\Barcode\BarcodeServiceProvider',
+		'Bllim\Datatables\DatatablesServiceProvider',
 
 
 	),
@@ -201,9 +202,10 @@ return array(
 		'Debugbar' 			=> 'Barryvdh\Debugbar\Facade',
 		'Confide'    		=> 'Zizaco\Confide\Facade',
 		'Entrust'           => 'Zizaco\Entrust\EntrustFacade',
-		'PDF' => 'Barryvdh\DomPDF\Facade',
-		'DNS1D' => 'Dinesh\Barcode\Facades\DNS1DFacade',
-		'DNS2D' => 'Dinesh\Barcode\Facades\DNS2DFacade',
+		'PDF' 				=> 'Barryvdh\DomPDF\Facade',
+		'DNS1D' 			=> 'Dinesh\Barcode\Facades\DNS1DFacade',
+		'DNS2D' 			=> 'Dinesh\Barcode\Facades\DNS2DFacade',
+		'Datatables'      	=> 'Bllim\Datatables\Facade\Datatables',
 
 	),
 

@@ -469,4 +469,7 @@ class AllocationRepository  {
 		return \DB::table('customers')
 			->whereIn('customer_code',$data)->get();
 	}
+
+
+	
 }

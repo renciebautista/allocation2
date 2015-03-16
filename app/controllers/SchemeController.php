@@ -86,105 +86,7 @@ class SchemeController extends \BaseController {
 				SchemeSku::insert($skus);
 
 				// create allocation
-				$customers = ActivityCustomer::customers($scheme->activity_id);
-				$_channels = ActivityChannel::channels($scheme->activity_id);
-
-				$_allocation = new AllocationRepository;
-				$allocations = $_allocation->customers(Input::get('skus'), $_channels, $customers);
-				$total_sales = $_allocation->total_sales();
-
-				foreach ($allocations as $customer) {
-					$scheme_alloc = new SchemeAllocation;
-					$scheme_alloc->scheme_id = $scheme->id;
-					$scheme_alloc->group = $customer->group_name;
-					$scheme_alloc->area = $customer->area_name;
-					$scheme_alloc->sold_to = $customer->customer_name;
-					$scheme_alloc->ship_to = $customer->customer_name . ' TOTAL';
-					$scheme_alloc->sold_to_gsv = $customer->gsv;	
-					$sold_to_gsv_p = 0;
-					if($customer->gsv > 0){
-						if($total_sales > 0){
-							$sold_to_gsv_p = round(($customer->gsv/$total_sales) * 100,2);
-						}
-					}
-					$scheme_alloc->sold_to_gsv_p = $sold_to_gsv_p;
-					$_sold_to_alloc = 0;
-					if($total_sales > 0){
-						$_sold_to_alloc = round(($customer->gsv/$total_sales) * $scheme->quantity);
-					}
-					$scheme_alloc->sold_to_alloc = $_sold_to_alloc;
-					$scheme_alloc->save();
-
-					if(!empty($customer->shiptos)){
-						foreach($customer->shiptos as $shipto){
-							$shipto_alloc = 0;
-							$shipto_alloc = new SchemeAllocation;
-							$shipto_alloc->scheme_id = $scheme->id;
-							$shipto_alloc->customer_id = $scheme_alloc->id;
-							$shipto_alloc->group = $customer->group_name;
-							$shipto_alloc->area = $customer->area_name;
-							$shipto_alloc->sold_to = $customer->customer_name;
-							$shipto_alloc->ship_to = $shipto['ship_to_name'];
-							$shipto_alloc->ship_to_gsv = $shipto['gsv'];
-							$_shipto_alloc = 0;
-							if(!is_null($shipto['split'])){
-								if($scheme_alloc->sold_to_alloc > 0){
-									$_shipto_alloc = round(($scheme_alloc->sold_to_alloc * $shipto['split']) / 100);
-								}
-							}else{
-								if($shipto['gsv'] >0){
-									$_shipto_alloc = round(round($shipto['gsv'] / $customer->ado_total,2) * $scheme_alloc->sold_to_alloc);
-								}
-							}
-							$shipto_alloc->ship_to_alloc = $_shipto_alloc;
-							$shipto_alloc->save();	
-
-							if(!empty($shipto['accounts'] )){
-								$others = $shipto_alloc->ship_to_alloc;
-								foreach($shipto['accounts'] as $account){
-									$account_alloc = new SchemeAllocation;
-									$account_alloc->scheme_id = $scheme->id;
-									$account_alloc->customer_id = $scheme_alloc->id;
-									$account_alloc->shipto_id = $shipto_alloc->id;
-									$account_alloc->group = $customer->group_name;
-									$account_alloc->area = $customer->area_name;
-									$account_alloc->sold_to = $customer->customer_name;
-									$account_alloc->ship_to = $shipto['ship_to_name'];
-									$account_alloc->channel = $account['channel_name'];
-									$account_alloc->outlet = $account['account_name'];
-									$account_alloc->outlet_to_gsv = $account['gsv'];
-									$p = 0;
-									if($customer->gsv > 0){
-										$p = round($account['gsv']/$customer->gsv * 100,2);
-									}
-									$account_alloc->outlet_to_gsv_p = $p;
-									$_account_alloc = round(($p * $shipto_alloc->ship_to_alloc)/100);
-									$account_alloc->outlet_to_alloc = $_account_alloc;
-									if($_account_alloc > 0){
-										$others -= $_account_alloc;
-									}
-									$account_alloc->save();
-								}
-								$_others_alloc = 0;
-								$others_alloc = new SchemeAllocation;
-								$others_alloc->scheme_id = $scheme->id;
-								$others_alloc->customer_id = $scheme_alloc->id;
-								$others_alloc->shipto_id = $shipto_alloc->id;
-								$others_alloc->group = $customer->group_name;
-								$others_alloc->area = $customer->area_name;
-								$others_alloc->sold_to = $customer->customer_name;
-								$others_alloc->ship_to = $shipto['ship_to_name'];
-								$others_alloc->outlet = 'OTHERS';
-								$others_alloc->outlet_to_gsv = $account['gsv'];
-								if($others > 0){
-									$_others_alloc = $others;
-								}
-								$others_alloc->outlet_to_alloc = $_others_alloc;
-								$others_alloc->save();
-							}
-						}
-					}
-				}
+				SchemeAllocRepository::saveAlllocation($scheme);
 
 			});
 			// #schemes
@@ -281,7 +183,11 @@ class SchemeController extends \BaseController {
 		// $gaisanos = $_allocation->account_group("AG5");
 		// $nccc = $_allocation->account_group("AG6");
 
-		$scheme_customers = SchemeAllocation::getCustomerAllocation($activity->id);
+		$scheme_customers = SchemeAllocation::getCustomerAllocation($id);
+
+		// echo "<pre>";
+		// print_r($scheme_customers);
+		// echo "</pre>";
 		return View::make('scheme.edit',compact('scheme', 'activity', 'skus', 'sel_skus',
 			'allocations', 'total_sales', 'qty','id', 'summary', 'big10', 'gaisanos', 'nccc', 'scheme_customers'));
 	}
@@ -330,6 +236,8 @@ class SchemeController extends \BaseController {
 					$skus[] = array('scheme_id' => $scheme->id, 'sku' => $sku);
 				}
 				SchemeSku::insert($skus);
+
+				SchemeAllocRepository::updateAllocation($scheme);
 				
 			});
 			// #schemes
@@ -358,4 +266,86 @@ class SchemeController extends \BaseController {
 		//
 	}
 
+	public function updateallocation(){
+		// return json_encode(Input::all());
+		if(Request::ajax()){
+			$id = Input::get('scheme_id');
+			$new_alloc = Input::get('new_alloc');
+			$alloc = SchemeAllocation::find($id);
+
+			if(empty($alloc)){
+				$arr['success'] = 0;
+			}else{
+				$alloc->final_alloc = str_replace(",", "", $new_alloc);
+				$alloc->update();
+				$arr['success'] = 1;
+			}
+			
+			$arr['id'] = $id;
+			return json_encode($arr);
+		}
+	}
+
+	public function allocation($id){
+		// $scheme_customers = SchemeAllocation::where('scheme_id', $id)->get();
+		$result = DB::table('allocations')
+		->select('allocations.id','allocations.group','allocations.area','allocations.sold_to',
+			'allocations.ship_to', 'allocations.channel', 'allocations.outlet', 'allocations.sold_to_gsv', 
+			'allocations.sold_to_gsv_p', 'allocations.sold_to_alloc', 'allocations.ship_to_gsv',
+			'allocations.ship_to_alloc' ,'allocations.outlet_to_gsv', 'allocations.outlet_to_gsv_p', 'allocations.outlet_to_alloc',
+			'allocations.final_alloc')
+		->where('scheme_id', $id);
+
+		// echo '<pre>';
+		// echo print_r($result);
+		// echo '</pre>';
+		return Datatables::of($result)
+			->set_index_column('id')
+			->edit_column('sold_to_gsv', function($row) {
+				if($row->sold_to_gsv != 0){
+					return number_format($row->sold_to_gsv,2);
+				}
+		    })
+		    ->edit_column('sold_to_gsv_p', function($row) {
+				if($row->sold_to_gsv_p != 0){
+					return number_format($row->sold_to_gsv_p,2);
+				}
+		    })
+		    ->edit_column('sold_to_alloc', function($row) {
+				if($row->sold_to_alloc != 0){
+					return number_format($row->sold_to_alloc);
+				}
+		    })
+		    ->edit_column('ship_to_gsv', function($row) {
+				if($row->ship_to_gsv != 0){
+					return number_format($row->ship_to_gsv,2);
+				}
+		    })
+		    ->edit_column('ship_to_alloc', function($row) {
+				if($row->ship_to_alloc != 0){
+					return number_format($row->ship_to_alloc);
+				}
+		    })
+		    ->edit_column('outlet_to_gsv', function($row) {
+				if($row->outlet_to_gsv != 0){
+					return number_format($row->outlet_to_gsv,2);
+				}
+		    })
+		    ->edit_column('outlet_to_gsv_p', function($row) {
+				if($row->outlet_to_gsv_p != 0){
+					return number_format($row->outlet_to_gsv_p,2);
+				}
+		    })
+		    ->edit_column('outlet_to_alloc', function($row) {
+				if($row->outlet_to_alloc != 0){
+					return number_format($row->outlet_to_alloc);
+				}
+		    })
+		    ->edit_column('final_alloc', function($row) {
+				if($row->final_alloc != 0){
+					return number_format($row->final_alloc);
+				}
+		    })
+			->make(true);
+	}
 }

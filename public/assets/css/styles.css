@@ -167,3 +167,6 @@
     margin-bottom: 10px;
 }
 
+#alloc_table tbody td:first-child {
+	width: 200px;
+}
