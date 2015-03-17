@@ -499,7 +499,11 @@ var table = $("#customer-allocation").dataTable({
             { "data" : "final_alloc",     "title" : "FINAL ALLOC", "searchable": true }
         ],
         "createdRow" : function( row, data, index ) {
-            $(row).attr('data-link', data.id);
+            if(((data.customer_id === null) && (data.shipto_id === null)) || ((data.customer_id !== null) && (data.shipto_id === null))){
+                $(row).attr('data-link', data.id);
+            }
+            
+
             $(row).find('td').each (function(index) {
                 if(index == 0){
                     $(this).attr('field', 'group');

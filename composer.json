@@ -12,9 +12,10 @@
 		"zizaco/entrust": "1.2.*@dev",
 		"barryvdh/laravel-debugbar": "~1.8",
 		"rencie/cpm": "1.0",
-		"barryvdh/laravel-dompdf": "0.4.*",
 		"dinesh/barcode": "dev-master",
-		"bllim/datatables": "*"
+		"bllim/datatables": "*",
+		"maxxscho/laravel-tcpdf": "0.*"
+		
 	},
 	"autoload": {
 		"classmap": [

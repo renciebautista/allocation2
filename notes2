@@ -104,12 +104,12 @@ both budget can have value
 
 activity type maintenance with requuired budget type used for activity
 alert if missing budget for download
-record locking
+
 
 pmog
 	submit with confirmation
 	form validate in ajax submit
-	reject downloded activity
+	
 	without budget add ammount
 	insert cpg 
 	
@@ -135,24 +135,3 @@ deals
 TTS Requirement = Total No. of Deals * SRP of Premium
 PE Requirement (Php) = Total No. of Deals * Other Cost Per Deal (Php)
 
-
-required picture attachment
-artwork packshot
-barcode  barcode generated
-casecode barcode generated
-
-ps form
-
-
-
-
----------------------------
-
-
-
-if revised ask to save in scheme
-
-
-fda special attachments
-4800888175175
-24800888175179

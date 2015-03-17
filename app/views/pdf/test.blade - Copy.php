@@ -85,11 +85,6 @@
 	#artwork {
 		margin-top: 20px;
 	}
-
-	#allocation table {
-		font-size: 11px;
-		width: 100%;
-	}
 	
 	/*#footer { position: fixed; left: 0px; bottom: -180px; right: 0px; height: 150px; background-color: lightblue; }
 	#footer .page:after { content: counter(page, upper-roman); }*/
@@ -344,22 +339,35 @@
 				<table id="scheme_summary" class="table table-condensed table-bordered display compact ">
 					<thead>
 						<tr>
+							<th>Customers</th>
+							@foreach($schemes as $scheme)
+								<th class="text-center" colspan="4">{{ $scheme->name }}</th>
+							@endforeach
+						</tr>
+						
+						<tr>
 							<th>Group</th>
 							<th>Area</th>
 							<th>Sold To</th>
 							<th>Ship To</th>
 							<th>Channel</th>
 							<th>Outlet</th>
-							<th></th>
-							<th></th>
-							<th></th>
-							<th></th>
-							<th></th>
-							<th></th>
+							@foreach($schemes as $scheme)
+								<th class="rotate-45"><div><span>Deals</span></th>
+								<th class="rotate-45"><div><span>Cases</span></th>
+								<th class="rotate-45"><div><span>TTS Budget</span></th>
+								<th class="rotate-45"><div><span>PE Budget</span></th>
+							@endforeach
 						</tr>
 					</thead>
 				  	<tbody>
-				  		@foreach($scheme_customers as $scheme_customer)
+				  		@if(count($scheme_customers) == 0)
+				  		<tr>
+				  			<td colspan="15">No record found!</td>
+				  		</tr>
+				  		@endif
+
+						@foreach($scheme_customers as $scheme_customer)
 						<tr>
 							<td>{{ $scheme_customer->group }}</td>
 							<td>{{ $scheme_customer->area }}</td>
@@ -392,7 +400,7 @@
 				  	</tbody>
 				</table> 
 			</div>
-			
+
 			<p style="page-break-before: always;"></p>
 			
 	  	</div>

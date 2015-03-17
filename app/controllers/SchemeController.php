@@ -279,6 +279,7 @@ class SchemeController extends \BaseController {
 				$alloc->final_alloc = str_replace(",", "", $new_alloc);
 				$alloc->update();
 				$arr['success'] = 1;
+				
 			}
 			
 			$arr['id'] = $id;
@@ -293,7 +294,7 @@ class SchemeController extends \BaseController {
 			'allocations.ship_to', 'allocations.channel', 'allocations.outlet', 'allocations.sold_to_gsv', 
 			'allocations.sold_to_gsv_p', 'allocations.sold_to_alloc', 'allocations.ship_to_gsv',
 			'allocations.ship_to_alloc' ,'allocations.outlet_to_gsv', 'allocations.outlet_to_gsv_p', 'allocations.outlet_to_alloc',
-			'allocations.final_alloc')
+			'allocations.final_alloc' ,'allocations.customer_id', 'allocations.shipto_id')
 		->where('scheme_id', $id);
 
 		// echo '<pre>';
@@ -342,7 +343,7 @@ class SchemeController extends \BaseController {
 				}
 		    })
 		    ->edit_column('final_alloc', function($row) {
-				if($row->final_alloc != 0){
+				if($row->final_alloc > -1){
 					return number_format($row->final_alloc);
 				}
 		    })

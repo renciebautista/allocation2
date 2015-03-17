@@ -1,7 +1,8 @@
+
 <html>
 <head>
   	<style>
-	@page { margin:120px 50px 50px 50px; }
+	@page  { margin:120px 50px 50px 50px; }
 	body{
 		font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
 		font-size: 12px;
@@ -32,7 +33,7 @@
 		width: 150px;
 
 	}
-	#header { position: fixed; left: 0px; top: -70px; right: 0px; height: 150px;}
+	/*#header { position: fixed; left: 0px; top: -70px; right: 0px; height: 150px;}*/
 	#activity{
 		padding-top: 15px;
 	}
@@ -100,7 +101,7 @@
 	  		<p>Customer Marketing Department</p>
 	  		<div id="logo">
 	  			
-	  			<img src="{{$_SERVER["DOCUMENT_ROOT"].'/assets/images/logo.png'}}" alt="Uniliver Logo">
+	  			<img src="D:\laravel.dev\allocation\public/assets/images/logo.png" alt="Uniliver Logo">
 	  		</div>
 	  		
   		</div>
@@ -329,70 +330,86 @@
 
 			<div id="artwork">
 				<h3>Artwork</h3>
-				<img src="{{$_SERVER["DOCUMENT_ROOT"].'/assets/images/logo.png'}}" alt="Uniliver Logo">
+				<img src="D:\laravel.dev\allocation\public/assets/images/logo.png" alt="Uniliver Logo">
 			</div>
 
 			<div id="barcode">
 				<h3>Case Codes/Bar Codes</h3>
-				{{ DNS1D::getBarcodeHTML("89360360272", "I25",3,60) }}
+				<div style="font-size:0;position:relative;width:279px;height:60px;">
+<div style="background-color:black;width:3px;height:60px;position:absolute;left:0px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:3px;height:60px;position:absolute;left:6px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:3px;height:60px;position:absolute;left:12px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:3px;height:60px;position:absolute;left:21px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:6px;height:60px;position:absolute;left:27px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:6px;height:60px;position:absolute;left:36px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:3px;height:60px;position:absolute;left:48px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:3px;height:60px;position:absolute;left:54px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:6px;height:60px;position:absolute;left:63px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:3px;height:60px;position:absolute;left:75px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:6px;height:60px;position:absolute;left:81px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:3px;height:60px;position:absolute;left:90px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:3px;height:60px;position:absolute;left:96px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:6px;height:60px;position:absolute;left:102px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:6px;height:60px;position:absolute;left:111px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:3px;height:60px;position:absolute;left:123px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:3px;height:60px;position:absolute;left:132px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:6px;height:60px;position:absolute;left:138px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:6px;height:60px;position:absolute;left:147px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:3px;height:60px;position:absolute;left:159px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:3px;height:60px;position:absolute;left:168px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:3px;height:60px;position:absolute;left:174px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:3px;height:60px;position:absolute;left:180px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:3px;height:60px;position:absolute;left:186px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:6px;height:60px;position:absolute;left:195px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:6px;height:60px;position:absolute;left:204px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:3px;height:60px;position:absolute;left:213px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:3px;height:60px;position:absolute;left:222px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:3px;height:60px;position:absolute;left:228px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:3px;height:60px;position:absolute;left:237px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:6px;height:60px;position:absolute;left:243px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:6px;height:60px;position:absolute;left:252px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:6px;height:60px;position:absolute;left:264px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:3px;height:60px;position:absolute;left:273px;top:0px;">&nbsp;</div>
+</div>
+
 				<br>
 				<br>
-				{{ DNS1D::getBarcodeHTML("89360360272", "EAN13", 2, 60) }}
+				<div style="font-size:0;position:relative;width:190px;height:60px;">
+<div style="background-color:black;width:2px;height:60px;position:absolute;left:0px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:2px;height:60px;position:absolute;left:4px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:4px;height:60px;position:absolute;left:8px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:6px;height:60px;position:absolute;left:14px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:2px;height:60px;position:absolute;left:26px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:4px;height:60px;position:absolute;left:30px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:8px;height:60px;position:absolute;left:36px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:2px;height:60px;position:absolute;left:46px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:2px;height:60px;position:absolute;left:50px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:8px;height:60px;position:absolute;left:54px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:4px;height:60px;position:absolute;left:68px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:2px;height:60px;position:absolute;left:74px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:8px;height:60px;position:absolute;left:78px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:2px;height:60px;position:absolute;left:88px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:2px;height:60px;position:absolute;left:92px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:2px;height:60px;position:absolute;left:96px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:2px;height:60px;position:absolute;left:100px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:2px;height:60px;position:absolute;left:104px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:6px;height:60px;position:absolute;left:114px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:2px;height:60px;position:absolute;left:124px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:4px;height:60px;position:absolute;left:128px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:4px;height:60px;position:absolute;left:134px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:2px;height:60px;position:absolute;left:142px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:2px;height:60px;position:absolute;left:150px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:4px;height:60px;position:absolute;left:156px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:4px;height:60px;position:absolute;left:162px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:4px;height:60px;position:absolute;left:170px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:4px;height:60px;position:absolute;left:176px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:2px;height:60px;position:absolute;left:184px;top:0px;">&nbsp;</div>
+<div style="background-color:black;width:2px;height:60px;position:absolute;left:188px;top:0px;">&nbsp;</div>
+</div>
+
 			</div>
 
-			<div id="allocation" class="table-responsive">
-				<table id="scheme_summary" class="table table-condensed table-bordered display compact ">
-					<thead>
-						<tr>
-							<th>Group</th>
-							<th>Area</th>
-							<th>Sold To</th>
-							<th>Ship To</th>
-							<th>Channel</th>
-							<th>Outlet</th>
-							<th></th>
-							<th></th>
-							<th></th>
-							<th></th>
-							<th></th>
-							<th></th>
-						</tr>
-					</thead>
-				  	<tbody>
-				  		@foreach($scheme_customers as $scheme_customer)
-						<tr>
-							<td>{{ $scheme_customer->group }}</td>
-							<td>{{ $scheme_customer->area }}</td>
-							<td>{{ $scheme_customer->sold_to }}</td>
-							<td>{{ $scheme_customer->ship_to }}</td>
-							<td>{{ $scheme_customer->channel }}</td>
-							<td>{{ $scheme_customer->outlet }}</td>
-							@foreach($schemes as $scheme)
-								@if($activity->activitytype->uom == "CASES")
-								<td class="text-right">0</td>
-								<td class="text-right">
-									@if(isset($scheme_allcations[$scheme->id][md5($scheme_customer->group.'.'.$scheme_customer->area.'.'.$scheme_customer->sold_to.'.'.$scheme_customer->ship_to.'.'.$scheme_customer->channel.'.'.$scheme_customer->outlet)]))
-									{{ number_format($scheme_allcations[$scheme->id][md5($scheme_customer->group.'.'.$scheme_customer->area.'.'.$scheme_customer->sold_to.'.'.$scheme_customer->ship_to.'.'.$scheme_customer->channel.'.'.$scheme_customer->outlet)]) }}
-									@endif
-								</td>
-								@else
-								<td class="text-right">
-									@if(isset($scheme_allcations[$scheme->id][md5($scheme_customer->group.'.'.$scheme_customer->area.'.'.$scheme_customer->sold_to.'.'.$scheme_customer->ship_to.'.'.$scheme_customer->channel.'.'.$scheme_customer->outlet)]))
-									{{ number_format($scheme_allcations[$scheme->id][md5($scheme_customer->group.'.'.$scheme_customer->area.'.'.$scheme_customer->sold_to.'.'.$scheme_customer->ship_to.'.'.$scheme_customer->channel.'.'.$scheme_customer->outlet)]) }}
-									@endif
-								</td>
-								<td class="text-right">0</td>
-								@endif
-								
-								<td class="text-right">1</td>
-								<td class="text-right">1</td>
-							@endforeach
-						</tr>
-						@endforeach
-				  	</tbody>
-				</table> 
-			</div>
-			
+
 			<p style="page-break-before: always;"></p>
 			
 	  	</div>
