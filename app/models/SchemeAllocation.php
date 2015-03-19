@@ -62,4 +62,56 @@ class SchemeAllocation extends \Eloquent {
 		}
 		return $data;
 	}
+
+	public static function recomputeAlloc($alloc){
+		
+		if(is_null($alloc->customer_id)){
+			$customer_id = $alloc->id;
+			$customer_alloc = $alloc->final_alloc;
+		}else{
+			$customer_id = $alloc->customer_id;
+			$parent = self::find($alloc->customer_id);
+			$parent->final_alloc = round($alloc->final_alloc / $alloc->multi);
+			$parent->update();		
+
+			$customer_alloc	= $parent->final_alloc;
+		}
+
+		$childs = self::where('customer_id',$customer_id)
+			->where('shipto_id',null)
+			->get();
+
+		if(!empty($childs)){
+			foreach ($childs as $child) {
+				$child->final_alloc = $customer_alloc * $child->multi;
+				$child->update();
+
+				$outlets = self::where('customer_id',$customer_id)
+					->where('shipto_id',$child->id)
+					->get();
+
+				$others_alloc = $child->final_alloc;
+				if(!empty($outlets)){
+					foreach ($outlets as $outlet) {
+						$outlet_final_alloc = $child->final_alloc * $outlet->multi;
+						if($outlet->outlet == 'OTHERS'){
+							$outlet->final_alloc = $others_alloc;
+						}else{
+							$outlet->final_alloc = $outlet_final_alloc;
+							$others_alloc -= $outlet_final_alloc;
+						}
+						// $outlet->multi = $child->final_alloc/$others_alloc;
+						$outlet->update();
+					}
+				}
+			}
+		}
+	}
+
+	public static function finalallocation($id){
+		return self::where('scheme_id',$id)
+			->where('customer_id',null)
+			->where('shipto_id',null)
+			->sum('final_alloc');;
+	}
 }

@@ -2,7 +2,7 @@
 
 class SchemeAllocRepository
 {
-    public static function saveAllocation($scheme){
+    public static function insertAlllocation($scheme){
         self::save($scheme);
     }
 
@@ -35,10 +35,12 @@ class SchemeAllocRepository
             }
             $scheme_alloc->sold_to_gsv_p = $sold_to_gsv_p;
             $_sold_to_alloc = 0;
+            $c_multi = $customer->gsv/$total_sales;
             if($total_sales > 0){
-                $_sold_to_alloc = round(($customer->gsv/$total_sales) * $scheme->quantity);
+                $_sold_to_alloc = round($c_multi * $scheme->quantity);
             }
             $scheme_alloc->sold_to_alloc = $_sold_to_alloc;
+            $scheme_alloc->multi = $c_multi;
             $scheme_alloc->final_alloc = $_sold_to_alloc;
             $scheme_alloc->save();
 
@@ -54,17 +56,20 @@ class SchemeAllocRepository
                     $shipto_alloc->ship_to = $shipto['ship_to_name'];
                     $shipto_alloc->ship_to_gsv = $shipto['gsv'];
                     $_shipto_alloc = 0;
+                    $s_multi = 0;
                     if(!is_null($shipto['split'])){
                         if($scheme_alloc->sold_to_alloc > 0){
-                            $_shipto_alloc = round(($scheme_alloc->sold_to_alloc * $shipto['split']) / 100);
+                            $s_multi = $shipto['split'] / 100;
                         }
                     }else{
                         if($shipto['gsv'] >0){
-                            $_shipto_alloc = round(round($shipto['gsv'] / $customer->ado_total,2) * $scheme_alloc->sold_to_alloc);
+                            $s_multi = round($shipto['gsv'] / $customer->ado_total,2);
                         }
                     }
+                    $_shipto_alloc = round($s_multi  * $scheme_alloc->sold_to_alloc);
                     $shipto_alloc->ship_to_alloc = $_shipto_alloc;
                     $shipto_alloc->final_alloc = $_shipto_alloc;
+                    $shipto_alloc->multi = $s_multi;
                     $shipto_alloc->save();  
 
                     if(!empty($shipto['accounts'] )){
@@ -91,9 +96,11 @@ class SchemeAllocRepository
                             if($_account_alloc > 0){
                                 $others -= $_account_alloc;
                             }
+                            $account_alloc->multi = $p/100;
                             $account_alloc->final_alloc = $_account_alloc;
                             $account_alloc->save();
                         }
+
                         $_others_alloc = 0;
                         $others_alloc = new SchemeAllocation;
                         $others_alloc->scheme_id = $scheme->id;
@@ -109,6 +116,13 @@ class SchemeAllocRepository
                             $_others_alloc = $others;
                         }
                         $others_alloc->outlet_to_alloc = $_others_alloc;
+
+                        if(($_others_alloc > 0) && ($account_alloc->final_alloc > 0)){
+                            $others_alloc->multi = $_others_alloc/$account_alloc->final_alloc;
+                        }else{
+                            $others_alloc->multi = 0;
+                        }
+                       
                         $others_alloc->final_alloc = $_others_alloc;
                         $others_alloc->save();
                     }

@@ -576,6 +576,7 @@
 				</div>
 			</div>
 		</div>
+
 		<div class="row mytable">
 			<div class="col-lg-12">
 				<div class="allocation_total table-responsive">
@@ -609,6 +610,7 @@
 				</div>
 			</div>
 		</div>
+
 		<div class="row mytable">
 			<div class="col-lg-12">
 				<div class="allocation_total table-responsive">
@@ -642,6 +644,7 @@
 				</div>
 			</div>
 		</div>
+		
 	</div>
 </div>
 

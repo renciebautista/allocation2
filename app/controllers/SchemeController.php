@@ -51,7 +51,7 @@ class SchemeController extends \BaseController {
 
 		if($validation->passes())
 		{
-			DB::transaction(function() use ($id)  {
+			$insert_id = DB::transaction(function() use ($id)  {
 				$total_sales = 0;
 				$activity = Activity::find($id);
 
@@ -62,19 +62,51 @@ class SchemeController extends \BaseController {
 				$scheme->item_code = Input::get('item_code');
 				$scheme->item_barcode = Input::get('item_barcode');
 				$scheme->item_casecode = Input::get('item_casecode');
+				$pr = str_replace(",", "", Input::get('pr'));
+				$scheme->pr = $pr;
+				$srp_p = str_replace(",", "", Input::get('srp_p'));
+				$scheme->srp_p = $srp_p;
+				$other_cost = str_replace(",", "", Input::get('other_cost'));
+				$scheme->other_cost = $other_cost;
 
-				$scheme->pr =  str_replace(",", "", Input::get('pr'));
-				$scheme->srp_p = str_replace(",", "", Input::get('srp_p'));
-				$scheme->other_cost =str_replace(",", "", Input::get('other_cost'));
-
-				$scheme->ulp =  str_replace(",", "", Input::get('ulp'));
-				$scheme->cost_sale = str_replace(",", "", Input::get('cost_sale'));
+				// $scheme->ulp =  str_replace(",", "", Input::get('ulp'));
+				$ulp = $srp_p + $other_cost;
+				$scheme->ulp = $ulp;
+				// $scheme->cost_sale = str_replace(",", "", Input::get('cost_sale'));
+				$scheme->cost_sale = ($ulp/$pr) * 100;
 
 				$scheme->quantity = str_replace(",", "", Input::get('total_alloc'));
+
+				$activitytype = ActivityType::find($activity->activity_type_id);
+
 				$scheme->deals = str_replace(",", "", Input::get('deals'));
-				$scheme->tts_r =  str_replace(",", "", Input::get('tts_r'));
-				$scheme->pe_r = str_replace(",", "", Input::get('pe_r'));
-				$scheme->total_cost = str_replace(",", "", Input::get('total_cost'));
+				// $scheme->total_deals = str_replace(",", "", Input::get('total_deals'));
+				// $scheme->total_cases = str_replace(",", "", Input::get('total_cases'));
+
+				if($activitytype->uom == "CASES"){
+					$scheme->total_deals = $scheme->quantity * $scheme->deals;
+					$scheme->total_cases = $scheme->quantity;
+				}else{
+					$scheme->total_deals = $scheme->quantity;
+					$scheme->total_cases = round($scheme->quantity/ $scheme->deals);
+				}
+				
+				
+				// $scheme->tts_r =  str_replace(",", "", Input::get('tts_r'));
+				$tts_r = $scheme->quantity * $scheme->deals * $srp_p;;
+				$scheme->tts_r =  $tts_r;
+				// $scheme->pe_r = str_replace(",", "", Input::get('pe_r'));
+				$pe_r = $scheme->quantity * $other_cost;;
+				$scheme->pe_r = $pe_r;
+				// $scheme->total_cost = str_replace(",", "", Input::get('total_cost'));
+				$scheme->total_cost = $tts_r + $pe_r;
+
+				$scheme->final_total_deals = $scheme->total_deal;
+				$scheme->final_total_cases = $scheme->total_cases;
+				$scheme->final_tts_r =$scheme->tts_r;
+				$scheme->final_pe_r = $scheme->pe_r;
+				$scheme->final_total_cost = $scheme->total_cost;
+
 				$scheme->user_id = Auth::id();
 
 				$scheme->save();
@@ -86,12 +118,16 @@ class SchemeController extends \BaseController {
 				SchemeSku::insert($skus);
 
 				// create allocation
-				SchemeAllocRepository::saveAlllocation($scheme);
+				SchemeAllocRepository::insertAlllocation($scheme);
 
+				return $scheme->id;
 			});
 			// #schemes
 			// return Redirect::action('ActivityController@edit', array('id' => $id))
-			return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#schemes")
+			// return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#schemes")
+			// 	->with('class', 'alert-success')
+			// 	->with('message', 'Scheme "'.Input::get('scheme_name').'" was successfuly created.');
+			return Redirect::to(URL::action('SchemeController@edit', array('id' => $insert_id)))
 				->with('class', 'alert-success')
 				->with('message', 'Scheme "'.Input::get('scheme_name').'" was successfuly created.');
 			
@@ -172,16 +208,16 @@ class SchemeController extends \BaseController {
 		// print_r($_channels);
 		$qty = $scheme->quantity;
 		// print_r($qty);
-		// $_allocation = new AllocationRepository;
+		$_allocation = new AllocationRepository;
 		
-		// $allocations = $_allocation->customers($sel_skus, $_channels, $customers);
-		// // print_r($allocations);
-		// $total_sales = $_allocation->total_sales();
+		$allocations = $_allocation->customers($sel_skus, $_channels, $customers);
+		// print_r($allocations);
+		$total_sales = $_allocation->total_sales();
 
-		// $summary = $_allocation->allocation_summary();
-		// $big10 = $_allocation->account_group("AG4");
-		// $gaisanos = $_allocation->account_group("AG5");
-		// $nccc = $_allocation->account_group("AG6");
+		$summary = $_allocation->allocation_summary();
+		$big10 = $_allocation->account_group("AG4");
+		$gaisanos = $_allocation->account_group("AG5");
+		$nccc = $_allocation->account_group("AG6");
 
 		$scheme_customers = SchemeAllocation::getCustomerAllocation($id);
 
@@ -223,6 +259,9 @@ class SchemeController extends \BaseController {
 
 				$scheme->quantity = str_replace(",", "", Input::get('total_alloc'));
 				$scheme->deals = str_replace(",", "", Input::get('deals'));
+				$scheme->total_deals = str_replace(",", "", Input::get('total_deals'));
+				$scheme->total_cases = str_replace(",", "", Input::get('total_cases'));
+
 				$scheme->tts_r =  str_replace(",", "", Input::get('tts_r'));
 				$scheme->pe_r = str_replace(",", "", Input::get('pe_r'));
 				$scheme->total_cost = str_replace(",", "", Input::get('total_cost'));
@@ -238,6 +277,11 @@ class SchemeController extends \BaseController {
 				SchemeSku::insert($skus);
 
 				SchemeAllocRepository::updateAllocation($scheme);
+				
+
+				$scheme2 = Scheme::find($id);
+				$scheme2->final_alloc = SchemeAllocation::finalallocation($scheme->id);
+				$scheme2->update();
 				
 			});
 			// #schemes
@@ -267,7 +311,6 @@ class SchemeController extends \BaseController {
 	}
 
 	public function updateallocation(){
-		// return json_encode(Input::all());
 		if(Request::ajax()){
 			$id = Input::get('scheme_id');
 			$new_alloc = Input::get('new_alloc');
@@ -278,7 +321,45 @@ class SchemeController extends \BaseController {
 			}else{
 				$alloc->final_alloc = str_replace(",", "", $new_alloc);
 				$alloc->update();
-				$arr['success'] = 1;
+
+				$scheme = Scheme::find($alloc->scheme_id);
+
+				SchemeAllocation::recomputeAlloc($alloc);
+				$final_alloc = SchemeAllocation::finalallocation($alloc->scheme_id);
+
+				if($scheme->activity->activitytype->uom == 'CASES'){
+					$total_deals = $final_alloc * $scheme->deals;
+					$total_cases = $final_alloc;
+					$final_tts = $final_alloc * $scheme->deals * $scheme->srp_p; 
+				}else{
+					$total_deals = $final_alloc;
+					if($total_deals < 1){
+						$total_cases = 0;
+					}else{
+						$total_cases = round($final_alloc/$total_deals);
+					}
+					$final_tts = $final_alloc * $scheme->srp_p; 
+				}
+				
+				$final_pe = $final_alloc *  $scheme->other_cost;
+				
+				$scheme->final_alloc = $final_alloc;
+				$scheme->final_total_deals = $total_deals;
+				$scheme->final_total_cases = $total_cases;
+				$scheme->final_tts_r = $final_tts;
+				$scheme->final_pe_r = $final_pe;
+				$scheme->final_total_cost = $final_tts+$final_pe;
+				$scheme->update();
+
+				$arr['srp_p'] = $scheme->srp_p;
+				$arr['scheme_id'] = $scheme;
+				$arr['final_total'] = $final_alloc;
+				$arr['final_total_deals'] = $scheme->final_total_deals;
+				$arr['final_total_cases'] = $scheme->final_total_cases;
+				$arr['final_tts_r'] = $final_tts;
+				$arr['final_pe_r'] = $final_pe;
+				$arr['final_total_cost'] = $scheme->final_total_cost;
+				$arr['success'] = 1;	
 				
 			}
 			
@@ -294,7 +375,7 @@ class SchemeController extends \BaseController {
 			'allocations.ship_to', 'allocations.channel', 'allocations.outlet', 'allocations.sold_to_gsv', 
 			'allocations.sold_to_gsv_p', 'allocations.sold_to_alloc', 'allocations.ship_to_gsv',
 			'allocations.ship_to_alloc' ,'allocations.outlet_to_gsv', 'allocations.outlet_to_gsv_p', 'allocations.outlet_to_alloc',
-			'allocations.final_alloc' ,'allocations.customer_id', 'allocations.shipto_id')
+			'allocations.final_alloc' ,'allocations.customer_id', 'multi','allocations.shipto_id')
 		->where('scheme_id', $id);
 
 		// echo '<pre>';

@@ -273,22 +273,6 @@ class AllocationRepository  {
 							}
 							break;
 						}
-						// if(($customer->customer_code == $_dt_secondary_sale->customer_code) && ($customer->area_code == $_dt_secondary_sale->area_code)){
-						// 	$customer->gsv = $_dt_secondary_sale->gsv;
-						// 	$abort = true;
-						// }else{
-						// 	$customer->gsv = 0;
-						// }
-
-						// $customer->gsv += self::additonal_sales($salescources,$customer->customer_code,$this->_dt_secondary_sales);
-
-						// if ($abort === true) 
-						// {
-						// 	if($customer->gsv > 0){
-						// 		$this->dt_total_sales += $customer->gsv;
-						// 	}
-						// 	break;
-						// }
 					}
 					
 				}
@@ -310,22 +294,6 @@ class AllocationRepository  {
 								}
 								break;
 							}
-							// if(($customer->customer_code == $_mt_primary_sale->customer_code) && ($customer->area_code == $_mt_primary_sale->area_code)){
-							// 	$customer->gsv = $_mt_primary_sale->gsv;
-							// 	$abort = true;
-							// }else{
-							// 	$customer->gsv = 0;
-							// }
-
-							// $customer->gsv += self::additonal_sales($salescources,$customer->customer_code,$this->_mt_primary_sales);
-
-							// if ($abort === true) 
-							// {
-							// 	if($customer->gsv > 0){
-							// 		$this->mt_total_sales += $customer->gsv;
-							// 	}
-							// 	break;
-							// }
 						}
 						
 					}else{
@@ -346,18 +314,6 @@ class AllocationRepository  {
 			$data[] = (array)$customer;
 		}
 
-		// $_grps = array();
-		// $_areas = array();
-		// $_cust = array();
-		// $_shp = array();
-
-		// echo '<pre>';
-		// print_r($_grps);
-		// print_r($_areas);
-		// print_r($_cust);
-		// print_r($_shp);
-		// print_r($_otlts);
-		// echo '</pre>';
 
 		return $customers;
 	}

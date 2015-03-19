@@ -6,7 +6,7 @@ class ActivityPDF extends \TCPDF {
 	public function Header() {
 
 		$image_file = $_SERVER["DOCUMENT_ROOT"].'assets/images/logo.png';
-	    $this->Image($image_file, 2, 2, 30, '', 'PNG', '', 'T', false, 300, 'R', false, false, 0, false, false, false);
+	    $this->Image($image_file, 0, 5, 30, '', 'PNG', '', 'T', false, 300, 'R', false, false, 0, false, false, false);
 
 		$this->SetFont('helvetica', 'B', 13);
 		$this->MultiCell(0, 14,'', 0, 'L', 0, 1, '', '', true);
