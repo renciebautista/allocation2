@@ -76,6 +76,7 @@ class ActivityController extends \BaseController {
 				$activity->circular_name = strtoupper(Input::get('activity_title'));
 				$activity->division_code = $division_code;
 				$activity->background = Input::get('background');
+				$activity->instruction = Input::get('instruction');
 				$activity->status_id = 1;
 				$activity->save();
 
@@ -163,16 +164,6 @@ class ActivityController extends \BaseController {
 					}
 					ActivityBrand::insert($activity_brand);
 				}
-
-				// add skus involve
-				// if (Input::has('involve'))
-				// {
-				// 	$activity_skuinvoled = array();
-				// 	foreach (Input::get('involve') as $sku){
-				// 		$activity_skuinvoled[] = array('activity_id' => $activity->id, 'sap_code' => $sku);
-				// 	}
-				// 	ActivitySku::insert($activity_skuinvoled);
-				// }
 				
 				// add objective
 				if (Input::has('objective'))
@@ -188,7 +179,7 @@ class ActivityController extends \BaseController {
 
 			return Redirect::route('activity.edit',$id)
 				->with('class', 'alert-success')
-				->with('message', 'ACtivity was successfuly created.');
+				->with('message', 'Activity was successfuly created.');
 			
 		}
 
@@ -222,8 +213,7 @@ class ActivityController extends \BaseController {
 	{
 		$activity = Activity::find($id);
 		if(($activity->status_id == 1) || ($activity->status_id == 3)){
-			$sel_planner = ActivityPlanner::where('activity_id',$id)
-				->first();
+			$sel_planner = ActivityPlanner::where('activity_id',$id)->first();
 			$sel_approver = ActivityApprover::getList($id);
 			$sel_objectives = ActivityObjective::getList($id);
 			$sel_channels = ActivityChannel::getList($id);
@@ -403,6 +393,7 @@ class ActivityController extends \BaseController {
 						$activity->eimplementation_date = date('Y-m-d',strtotime(Input::get('implementation_date')));
 						$activity->circular_name = strtoupper(Input::get('activity_title'));
 						$activity->background = Input::get('background');
+						$activity->instruction = Input::get('instruction');
 						$activity->update();
 
 						// update timings
@@ -786,8 +777,9 @@ class ActivityController extends \BaseController {
 				$material->source_id = $source_id;
 				$material->material = Input::get('material');
 				$material->save();
-				$arr['success'] = 1;
+
 				$arr = Input::all();
+				$arr['success'] = 1;
 				$arr['id'] = $material->id;
 				$arr['source'] = $source->source;
 			}

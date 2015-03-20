@@ -168,10 +168,13 @@
 								{{ Form::label('total_cases', 'Total No. of Cases', array('class' => 'control-label')) }}
 								{{ Form::text('total_cases',number_format($scheme->total_cases), array('id' => 'total_cases', 'class' => 'form-control', 'placeholder' => 'Total No. of Cases','readonly' => '')) }}
 							</div>
-
+							<div class="col-lg-3">
+								{{ Form::label('weeks_alloc', 'Total Allocation in Weeks', array('class' => 'control-label')) }}
+								{{ Form::text('weeks_alloc','', array('id' => 'weeks_alloc', 'class' => 'form-control', 'placeholder' => 'Total Allocation in Weeks','readonly' => '')) }}
+							</div>
 						</div>
 					</div>
-				</div>
+				</div>	
 			</div>
 
 			<div class="row">
@@ -213,6 +216,7 @@
 						<div class="row">
 							<div class="col-lg-12">
 								{{ Form::submit('Update', array('class' => 'btn btn-primary')) }}
+								<button type="button" class="btn btn-info" data-toggle="modal" data-target="#myCalculator">Deal Calculator</button>
 							</div>
 						</div>
 					</div>
@@ -259,6 +263,7 @@
 							{{ Form::label('final_total_cases', 'Total No. of Cases', array('class' => 'control-label')) }}
 							{{ Form::text('final_total_cases',number_format($scheme->total_cases), array('id' => 'final_total_cases', 'class' => 'form-control', 'placeholder' => 'No. of Deals Per Case','readonly' => '')) }}
 						</div>
+
 					</div>
 				</div>
 			</div>
@@ -764,7 +769,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<h4 class="modal-title" id="myModalLabel">Udpate Allocation</h4>
+				<h4 class="modal-title" id="myModalLabel">Update Allocation</h4>
 			</div>
 			<div class="modal-body">
 				<table id="alloc_table" class="table table-bordered">
@@ -811,16 +816,70 @@
 	</div>
 </div>
 
+
+<!-- Modal -->
+<div class="modal fade" id="myCalculator" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="myModalLabel">Deal Calculator</h4>
+			</div>
+			<div class="modal-body">
+				<table id="calculator" class="table table-bordered">
+					<tbody>
+						<tr>
+							<td>Average Weekly Sales</td>
+							<td>
+								<input class="form-control" name="weekly_sales" type="text" value="{{ number_format($total_gsv/52,2) }}" id="weekly_sales" readonly =''>
+								
+							</td>
+						</tr>
+						<tr>
+							<td>Desired Number of Weeks</td>
+							<td>
+								<input class="form-control" placeholder="Desired Number of Weeks" name="no_weeks" type="text" value="" id="no_weeks">
+							</td>
+						</tr>
+						<tr>
+							<td>Ideal Number of Allocation in Cases</td>
+							<td>
+								<input class="form-control" placeholder="Ideal Number of Allocation in Cases" name="no_alloc_cases" type="text" value="" id="no_alloc_cases" readonly =''>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
 @stop
 
 
 @section('page-script')
 
+// calculator
+$('#no_weeks').blur(function() {
+	var avg_wk_sales = accounting.unformat($('#weekly_sales').val()) || 0;
+	var no_weeks = accounting.unformat($('#no_weeks').val()) || 0;
+	$('#no_alloc_cases').val(accounting.formatNumber((avg_wk_sales*no_weeks)));
+});
 
+$('#myCalculator').on('show.bs.modal', function (e) {
+  	$('#no_alloc_cases').val(0);
+  	$('#no_weeks').val(0);
+})
 
+function getWeeks(){
+	var avg_wk_sales = accounting.unformat($('#weekly_sales').val()) || 0;
+	var allocs_in_cases = accounting.unformat($('#total_cases').val()) || 0;
+	$('#weeks_alloc').val(accounting.formatNumber(allocs_in_cases/avg_wk_sales));
+}
+
+getWeeks();
 $("#skus,#involve").chosen();
 
-$('#pr, #srp_p, #other_cost,#total_alloc,#new_alloc').inputNumber();
+$('#pr, #srp_p, #other_cost,#total_alloc,#new_alloc,#no_weeks').inputNumber();
 
 
 $('#pr, #srp_p, #other_cost').blur(function() {
@@ -874,6 +933,8 @@ function compute_budget(){
 	var pe_r = accounting.unformat($('#pe_r').val()) || 0;
 
 	$('#total_cost').val(accounting.formatNumber(tts_r+pe_r, 2, ",","."));
+
+	getWeeks();
 }
 
 $("form").validate({

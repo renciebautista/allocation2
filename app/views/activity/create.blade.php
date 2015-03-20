@@ -212,6 +212,19 @@
 			</div>
 
 			<div class="row">
+  				<div class="col-lg-12">
+					<div class="form-group">
+						<div class="row">
+							<div class="col-lg-12">
+								{{ Form::label('instruction', 'Special Instruction', array('class' => 'control-label')) }}
+									{{ Form::textarea('instruction','',array('class' => 'form-control', 'placeholder' => 'Special Instruction')) }}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
 				<div class="col-lg-12">
 					<div class="form-group">
 						{{ Form::submit('Save', array('class' => 'btn btn-primary')) }}

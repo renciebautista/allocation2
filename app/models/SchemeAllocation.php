@@ -114,4 +114,11 @@ class SchemeAllocation extends \Eloquent {
 			->where('shipto_id',null)
 			->sum('final_alloc');;
 	}
+
+	public static function totalgsv($id){
+		return self::where('scheme_id',$id)
+			->where('customer_id',null)
+			->where('shipto_id',null)
+			->sum('sold_to_gsv');;
+	}
 }

@@ -229,6 +229,19 @@
 			</div>
 
 			<div class="row">
+  				<div class="col-lg-12">
+					<div class="form-group">
+						<div class="row">
+							<div class="col-lg-12">
+								{{ Form::label('instruction', 'Special Instruction', array('class' => 'control-label')) }}
+									{{ Form::textarea('instruction',$activity->instruction ,array('class' => 'form-control', 'placeholder' => 'Special Instruction')) }}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
 				<div class="col-lg-12">
 					<div class="form-group">
 						<div class="row">
@@ -671,6 +684,67 @@
 		<div class="well">
 			<div class="row">
 				<div class="col-lg-12">
+					<caption>FDA Permit</caption>
+					<table class="table table-striped table-hover">
+						<thead>
+							<tr>
+								<th>Description</th>
+								<th>Filename</th>
+								<th>Date Uploaded</th>
+								<th>Action</th>
+							</tr>
+						</thead>
+						<tbody>
+							@if(count($attachments) == 0)
+							<tr>
+								<td colspan="4">No file attachment found!</td>
+							</tr>
+							@endif
+
+							@foreach($attachments as $attachment)
+							<tr>
+								<td>{{ $attachment->file_desc }}</td>
+								<td>{{ $attachment->file_name }}</td>
+								<td>{{ date_format(date_create($attachment->created_at),'m/d/Y H:m:s') }}</td>
+								<td>
+									{{ HTML::linkAction('DownloadedActivityController@downloadfile','Download', $attachment->id, array('class' => 'btn btn-info btn-xs')) }}
+								</td>
+							</tr>
+							@endforeach
+						</tbody>
+					</table>
+
+					<caption>Product Information Sheet</caption>
+					<table class="table table-striped table-hover">
+						<thead>
+							<tr>
+								<th>Description</th>
+								<th>Filename</th>
+								<th>Date Uploaded</th>
+								<th>Action</th>
+							</tr>
+						</thead>
+						<tbody>
+							@if(count($attachments) == 0)
+							<tr>
+								<td colspan="4">No file attachment found!</td>
+							</tr>
+							@endif
+
+							@foreach($attachments as $attachment)
+							<tr>
+								<td>{{ $attachment->file_desc }}</td>
+								<td>{{ $attachment->file_name }}</td>
+								<td>{{ date_format(date_create($attachment->created_at),'m/d/Y H:m:s') }}</td>
+								<td>
+									{{ HTML::linkAction('DownloadedActivityController@downloadfile','Download', $attachment->id, array('class' => 'btn btn-info btn-xs')) }}
+								</td>
+							</tr>
+							@endforeach
+						</tbody>
+					</table>
+
+					<caption>Artwork Packshot</caption>
 					<table class="table table-striped table-hover">
 						<thead>
 							<tr>
@@ -908,21 +982,54 @@ $("form[id='updateActivity']").on("submit",function(e){
 	var form = $(this);
 	var method = form.find('input[name="_method"]').val() || 'POST';
 	var url = form.prop('action');
-	$.ajax({
-		url: url,
-		data: form.serialize(),
-		method: method,
-		dataType: "json",
-		success: function(data){
-			if(data.success == "1"){
-				bootbox.alert("Activity details was successfully updated."); 
-			}else{
-				bootbox.alert("An error occured while updating."); 
+	if(form.valid()){
+		$.ajax({
+			url: url,
+			data: form.serialize(),
+			method: method,
+			dataType: "json",
+			success: function(data){
+				if(data.success == "1"){
+					bootbox.alert("Activity details was successfully updated."); 
+				}else{
+					bootbox.alert("An error occured while updating."); 
+				}
 			}
-		}
-	});
+		});
+	}
+	
 	e.preventDefault();
 });
+
+$("#updateActivity").validate({
+	errorElement: "span", 
+	errorClass : "has-error",
+	rules: {
+		activity_title: "required",
+		planner: "is_natural_no_zero",
+		scope: "is_natural_no_zero",
+		activity_type: "is_natural_no_zero",
+		cycle: "is_natural_no_zero",
+		implementation_date: {
+			required: true,
+			greaterdate : true
+		}
+
+	},
+	errorPlacement: function(error, element) {               
+		
+	},
+	highlight: function( element, errorClass, validClass ) {
+    	$(element).closest('div').addClass(errorClass).removeClass(validClass);
+  	},
+  	unhighlight: function( element, errorClass, validClass ) {
+    	$(element).closest('div').removeClass(errorClass).addClass(validClass);
+  	}
+});
+
+$.validator.addMethod("greaterdate", function(value, element) {
+	return this.optional(element) || (moment(value).isAfter(moment().format('MM/DD/YYYY')) || moment(value).isSame(moment().format('MM/DD/YYYY')));
+}, "Please select from the list.");
 
 $('#materials').ajax_table({
 	add_url: "{{ URL::action('ActivityController@addmaterial', $activity->id ) }}",
@@ -1011,17 +1118,23 @@ $("form[id='updateCustomer']").on("submit",function(e){
 });
 
 <!-- schemes -->
-var table = $('#scheme_summary').DataTable( {
-	//"dom": 'C<"clear">lfrtip',
+
+		
+
+/*var table = $('#scheme_summary').DataTable( {
+	"scrollY": "300px",
+	"scrollX": true,
+	"scrollCollapse": true,
+	"paging": false,
 	"bSort": false,
-	scrollY: "300px",
-    scrollX: true,
-    scrollCollapse: true,
-    paging: false,
+	"columnDefs": [ { //this prevents errors if the data is null
+		"targets": "_all",
+		"defaultContent": ""
+	} ],
 } );
 new $.fn.dataTable.FixedColumns( table, {
 	leftColumns: 6
-} );
+} );*/
 <!-- Budget details -->
 
 $('#billing_deadline').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
