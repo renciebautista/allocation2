@@ -246,15 +246,19 @@ class ActivityController extends \BaseController {
 
 			$scheme_customers = SchemeAllocation::getCustomers($activity->id);
 
-			$attachments = ActivityAttachment::where('activity_id', $activity->id)->get();
+			// $attachments = ActivityAttachment::where('activity_id', $activity->id)->get();
 
 			$scheme_allcations = SchemeAllocation::getAllocation($activity->id);
 			$materials = ActivityMaterial::where('activity_id', $activity->id)->get();
 
+			$fdapermits = ActivityFdapermit::where('activity_id', $activity->id)->get();
+			$fis = ActivityFis::where('activity_id', $activity->id)->get();
+			$artworks = ActivityArtwork::where('activity_id', $activity->id)->get();
+
 			return View::make('activity.edit', compact('activity', 'scope_types', 'planners', 'approvers', 'cycles',
 			 'activity_types', 'divisions' , 'objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
-			 'sel_objectives', 'channels', 'sel_channels', 'schemes', 'networks', 'attachments',
-			 'scheme_customers', 'scheme_allcations', 'materials'));
+			 'sel_objectives', 'channels', 'sel_channels', 'schemes', 'networks',
+			 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks'));
 		}
 
 		if($activity->status_id == 2){
@@ -825,6 +829,129 @@ class ActivityController extends \BaseController {
 				$arr['success'] = 1;
 			}
 			return json_encode($arr);
+		}
+	}
+
+	public function fdaupload($id){
+		if(Input::hasFile('file')){
+			$distination = storage_path().'/uploads/fdapermits';
+			$file = Input::file('file');
+			$original_file_name = $file->getClientOriginalName();
+			$file_name = $original_file_name;
+			$file_path = $distination.$file_name;
+
+			//Alter the file name until it's unique to prevent overwriting
+			while(File::exists($file_path)) {
+				$file_name = Str::slug($file->getClientOriginalName()).Str::random(6).'.'.File::extension($file->getClientOriginalName());
+				$file_path = $distination.$file_name;
+			}
+
+			//Now the upload part
+			$file->move($distination,$file_name);
+
+			$docu = new ActivityFdapermit;
+			$docu->created_by = Auth::id();
+			$docu->activity_id = $id;
+			$docu->permit_no = Input::get('permitno');
+			$docu->hash_name = strtolower($file_name);
+			$docu->file_name = $original_file_name;
+			$docu->file_desc = (Input::get('file_desc') =='') ? $original_file_name : Input::get('file_desc');
+			$docu->save();
+
+			return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
+				->with('class', 'alert-success')
+				->with('message', 'FDA Permits is successfuly uploaded!');
+		}else{
+			return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
+				->with('class', 'alert-danger')
+				->with('message', 'Error uploading file.');
+		}
+	}
+
+	public function fdadelete($id){
+		$fda = ActivityFdapermit::find($id);
+		$activity_id = Input::get('activity_id');
+		if(empty($fda)){
+			return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity_id)) . "#attachment")
+				->with('class', 'alert-danger')
+				->with('message', 'Error uploading file.');
+		}else{
+			$fda->delete();
+			$filename = storage_path().'/uploads/fdapermits';
+			File::delete($filename.$fda->hash_name);
+			return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity_id)) . "#attachment")
+				->with('class', 'alert-success')
+				->with('message', 'FDA Permits is successfuly deleted!');
+		}
+	}
+
+	public function fisupload($id){
+		if(Input::hasFile('file')){
+			$distination = storage_path().'/uploads/fisupload';
+			$file = Input::file('file');
+			$original_file_name = $file->getClientOriginalName();
+			$file_name = $original_file_name;
+			$file_path = $distination.$file_name;
+
+			//Alter the file name until it's unique to prevent overwriting
+			while(File::exists($file_path)) {
+				$file_name = Str::slug($file->getClientOriginalName()).Str::random(6).'.'.File::extension($file->getClientOriginalName());
+				$file_path = $distination.$file_name;
+			}
+
+			//Now the upload part
+			$file->move($distination,$file_name);
+
+			$docu = new ActivityFis;
+			$docu->created_by = Auth::id();
+			$docu->activity_id = $id;
+			$docu->hash_name = strtolower($file_name);
+			$docu->file_name = $original_file_name;
+			$docu->file_desc = (Input::get('file_desc') =='') ? $original_file_name : Input::get('file_desc');
+			$docu->save();
+
+			return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
+				->with('class', 'alert-success')
+				->with('message', 'Product information Sheet is successfuly uploaded!');
+		}else{
+			return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
+				->with('class', 'alert-danger')
+				->with('message', 'Error uploading file.');
+		}
+	}
+
+		public function artworkupload($id){
+		if(Input::hasFile('file')){
+			$distination = storage_path().'/uploads/artworkupload';
+			$file = Input::file('file');
+			$original_file_name = $file->getClientOriginalName();
+			$file_name = $original_file_name;
+			$file_path = $distination.$file_name;
+
+			//Alter the file name until it's unique to prevent overwriting
+			while(File::exists($file_path)) {
+				$file_name = Str::slug($file->getClientOriginalName()).Str::random(6).'.'.File::extension($file->getClientOriginalName());
+				$file_path = $distination.$file_name;
+			}
+
+			//Now the upload part
+			$file->move($distination,$file_name);
+
+			$docu = new ActivityArtwork;
+			$docu->created_by = Auth::id();
+			$docu->activity_id = $id;
+			$docu->hash_name = strtolower($file_name);
+			$docu->file_name = $original_file_name;
+			$docu->file_desc = (Input::get('file_desc') =='') ? $original_file_name : Input::get('file_desc');
+			$docu->save();
+
+			return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
+				->with('class', 'alert-success')
+				->with('message', 'Product artwork is successfuly uploaded!');
+		}else{
+			return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
+				->with('class', 'alert-danger')
+				->with('message', 'Error uploading file.');
 		}
 	}
 }

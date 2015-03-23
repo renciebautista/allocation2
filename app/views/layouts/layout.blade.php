@@ -156,6 +156,7 @@
 
 	{{ HTML::script('assets/plugins/bootstrap3-editable/js/bootstrap-editable.min.js') }}
 
+
 	{{ HTML::script('assets/js/function.js') }}
 
 	<script type="text/javascript">

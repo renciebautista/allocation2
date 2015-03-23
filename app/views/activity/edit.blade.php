@@ -681,109 +681,132 @@
 	<!-- attachment details -->
 	<div class="tab-pane fade" id="attachment">
 		<br>
-		<div class="well">
-			<div class="row">
-				<div class="col-lg-12">
-					<caption>FDA Permit</caption>
-					<table class="table table-striped table-hover">
-						<thead>
-							<tr>
-								<th>Description</th>
-								<th>Filename</th>
-								<th>Date Uploaded</th>
-								<th>Action</th>
-							</tr>
-						</thead>
-						<tbody>
-							@if(count($attachments) == 0)
-							<tr>
-								<td colspan="4">No file attachment found!</td>
-							</tr>
-							@endif
-
-							@foreach($attachments as $attachment)
-							<tr>
-								<td>{{ $attachment->file_desc }}</td>
-								<td>{{ $attachment->file_name }}</td>
-								<td>{{ date_format(date_create($attachment->created_at),'m/d/Y H:m:s') }}</td>
-								<td>
-									{{ HTML::linkAction('DownloadedActivityController@downloadfile','Download', $attachment->id, array('class' => 'btn btn-info btn-xs')) }}
+		<div class="panel panel-default">
+		  	<div class="panel-heading">FDA Permit</div>
+		  	<div class="panel-body">
+		  		@if(count($fdapermits)==0)
+		  		{{ Form::open(array('action' => array('ActivityController@fdaupload', $activity->id),  'class' => 'bs-component','id' => 'fdaupload', 'files'=>true)) }}
+		  			<div class="row">
+						<div class="col-lg-6">
+						  	<div class="form-group">
+						  		{{ Form::label('permitno', 'FDA Permit No.', array('class' => 'control-label')) }}
+								{{ Form::text('permitno','',array('class' => 'form-control', 'placeholder' => 'FDA Permit No.')) }}
+						 	</div>
+						  	<div class="form-group">
+						    	{{ Form::file('file','',array('id'=>'','class'=>'')) }}
+						  	</div>
+						  	{{ Form::submit('Upload', array('class' => 'btn btn-primary')) }}
+					  	</div>
+				  	</div>
+				{{ Form::close() }}
+				@else
+					<table class="table table-striped table-hover ">
+					  	<thead>
+						    <tr>
+						      	<th>FDA Permit No.</th>
+						      	<th>File Name</th>
+						      	<th>Uploaded Date</th>
+						      	<th colspan="2">Action</th>
+						    </tr>
+					  	</thead>
+					  	<tbody>
+					  		@foreach($fdapermits as $permit)
+						    <tr>
+						      	<td>{{ $permit->permit_no }}</td>
+						      	<td>{{ $permit->file_name }}</td>
+						      	<td>{{ date_format(date_create($permit->created_at),'m/d/Y H:m:s') }}</td>
+						      	<td class="action">
+									{{ Form::open(array('method' => 'DELETE', 'action' => array('ActivityController@fdadelete', $permit->id))) }}  
+									{{ Form::hidden('activity_id', $activity->id) }}                     
+									{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}
+									{{ Form::close() }}
 								</td>
-							</tr>
-							@endforeach
-						</tbody>
-					</table>
-
-					<caption>Product Information Sheet</caption>
-					<table class="table table-striped table-hover">
-						<thead>
-							<tr>
-								<th>Description</th>
-								<th>Filename</th>
-								<th>Date Uploaded</th>
-								<th>Action</th>
-							</tr>
-						</thead>
-						<tbody>
-							@if(count($attachments) == 0)
-							<tr>
-								<td colspan="4">No file attachment found!</td>
-							</tr>
-							@endif
-
-							@foreach($attachments as $attachment)
-							<tr>
-								<td>{{ $attachment->file_desc }}</td>
-								<td>{{ $attachment->file_name }}</td>
-								<td>{{ date_format(date_create($attachment->created_at),'m/d/Y H:m:s') }}</td>
-								<td>
-									{{ HTML::linkAction('DownloadedActivityController@downloadfile','Download', $attachment->id, array('class' => 'btn btn-info btn-xs')) }}
+								<td class="action">
+									<!-- {{ HTML::linkAction('ActivityController@edit','View', $activity->id, array('class' => 'btn btn-info btn-xs')) }} -->
 								</td>
-							</tr>
-							@endforeach
-						</tbody>
-					</table>
-
-					<caption>Artwork Packshot</caption>
-					<table class="table table-striped table-hover">
-						<thead>
-							<tr>
-								<th>Description</th>
-								<th>Filename</th>
-								<th>Date Uploaded</th>
-								<th>Action</th>
-							</tr>
-						</thead>
-						<tbody>
-							@if(count($attachments) == 0)
-							<tr>
-								<td colspan="4">No file attachment found!</td>
-							</tr>
-							@endif
-
-							@foreach($attachments as $attachment)
-							<tr>
-								<td>{{ $attachment->file_desc }}</td>
-								<td>{{ $attachment->file_name }}</td>
-								<td>{{ date_format(date_create($attachment->created_at),'m/d/Y H:m:s') }}</td>
-								<td>
-									{{ HTML::linkAction('DownloadedActivityController@downloadfile','Download', $attachment->id, array('class' => 'btn btn-info btn-xs')) }}
-								</td>
-							</tr>
-							@endforeach
-						</tbody>
-					</table>
-				</div>
-			</div>
-
-			<div class="row">
-				<div class="col-lg-12">
-					<div class="form-group">
-						<button class="btn btn-default btn-style" type="submit">Back</button>
-					</div>
-				</div>
-			</div>
+						    </tr>
+						    @endforeach
+					  	</tbody>
+					</table> 
+				@endif
+		  	</div>
 		</div>
+
+		<div class="panel panel-default">
+		  	<div class="panel-heading">Product Information Sheet</div>
+		  	<div class="panel-body">
+		  		@if(count($fis)==0)
+		  		{{ Form::open(array('action' => array('ActivityController@fisupload', $activity->id),  'class' => 'bs-component','id' => 'fisupload', 'files'=>true)) }}
+		  			<div class="row">
+						<div class="col-lg-6">
+						  	<div class="form-group">
+						    	{{ Form::file('file','',array('id'=>'','class'=>'')) }}
+						  	</div>
+						  	{{ Form::submit('Upload', array('class' => 'btn btn-primary')) }}
+				  			</div>
+				  		</div>
+				  	</div>
+				{{ Form::close() }}
+				@else
+					<table class="table table-striped table-hover ">
+					  	<thead>
+						    <tr>
+						      	<th>File Name</th>
+						      	<th>Uploaded Date</th>
+						      	<th>Action</th>
+						    </tr>
+					  	</thead>
+					  	<tbody>
+					  		@foreach($fis as $fi)
+						    <tr>
+						      	<td>{{ $fi->file_name }}</td>
+						      	<td>{{ date_format(date_create($fi->created_at),'m/d/Y H:m:s') }}</td>
+						      	<td></td>
+						    </tr>
+						    @endforeach
+					  	</tbody>
+					</table> 
+				@endif
+		  	</div>
+		</div>
+
+		<div class="panel panel-default">
+		  	<div class="panel-heading">Artwork Packshot</div>
+		  	<div class="panel-body">
+		  		{{ Form::open(array('action' => array('ActivityController@artworkupload', $activity->id),  'class' => 'bs-component','id' => 'fisupload', 'files'=>true)) }}
+		  			<div class="row">
+						<div class="col-lg-6">
+						  	<div class="form-group">
+						    	{{ Form::file('file','',array('id'=>'','class'=>'')) }}
+						  	</div>
+						  	{{ Form::submit('Upload', array('class' => 'btn btn-primary')) }}
+				  		</div>
+				  	</div>
+				{{ Form::close() }}
+					<div class="row">
+						<div class="col-lg-12">
+							<table class="table table-striped table-hover ">
+							  	<thead>
+								    <tr>
+								      	<th>File Name</th>
+								      	<th>Uploaded Date</th>
+								      	<th>Action</th>
+								    </tr>
+							  	</thead>
+							  	<tbody>
+							  		@foreach($artworks as $artwork)
+								    <tr>
+								      	<td>{{ $artwork->file_name }}</td>
+								      	<td>{{ date_format(date_create($artwork->created_at),'m/d/Y H:m:s') }}</td>
+								      	<td></td>
+								    </tr>
+								    @endforeach
+							  	</tbody>
+							</table> 
+						</div>
+				  	</div>
+		  	</div>
+		</div>	
 	</div>
 
 </div>
@@ -792,6 +815,8 @@
 @stop
 
 @section('page-script')
+
+
 $('.nav-tabs a').click(function (e) {
 	// No e.preventDefault() here
 	var target = e.target.attributes.href.value;

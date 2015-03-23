@@ -439,6 +439,12 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('activity/{id}/scheme', 'SchemeController@index');
 	Route::get('activity/{id}/scheme/create', 'SchemeController@create');
 	Route::post('activity/{id}/scheme', 'SchemeController@store');
+
+	Route::post('activity/{id}/fdaupload', 'ActivityController@fdaupload');
+	Route::delete('activity/{id}/fdadelete', 'ActivityController@fdadelete');
+	Route::post('activity/{id}/fisupload', 'ActivityController@fisupload');
+	Route::post('activity/{id}/artworkupload', 'ActivityController@artworkupload');
+
 	Route::resource('activity', 'ActivityController');
 	
 
