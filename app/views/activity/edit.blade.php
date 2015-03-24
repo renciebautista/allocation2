@@ -34,7 +34,7 @@
 	<li class=""><a aria-expanded="false" href="#schemes">Schemes</a></li>
 	<li class=""><a aria-expanded="false" href="#budget">Budget Details</a></li>
 	<li class=""><a aria-expanded="false" href="#timings">Timings Details</a></li>
-	<li class=""><a aria-expanded="false" href="#attachment">Attachment</a></li>
+	<li class=""><a aria-expanded="false" href="#attachment">Attachments</a></li>
 </ul>
 <div id="myTabContent" class="tab-content">
 
@@ -410,7 +410,7 @@
 						<table id="scheme_summary" class="table table-condensed table-bordered display compact ">
 							<thead>
 								<tr>
-									<th>Customers</th>
+									<th colspan="6">Customers</th>
 									@foreach($schemes as $scheme)
 										<th class="text-center" colspan="4">{{ $scheme->name }}</th>
 									@endforeach
@@ -703,10 +703,10 @@
 					<table class="table table-striped table-hover ">
 					  	<thead>
 						    <tr>
-						      	<th>FDA Permit No.</th>
-						      	<th>File Name</th>
-						      	<th>Uploaded Date</th>
-						      	<th colspan="2">Action</th>
+						      	<th class="permit">FDA Permit No.</th>
+						      	<th >File Name</th>
+						      	<th class="update">Uploaded Date</th>
+						      	<th colspan="2" class="action">Action</th>
 						    </tr>
 					  	</thead>
 					  	<tbody>
@@ -722,7 +722,7 @@
 									{{ Form::close() }}
 								</td>
 								<td class="action">
-									<!-- {{ HTML::linkAction('ActivityController@edit','View', $activity->id, array('class' => 'btn btn-info btn-xs')) }} -->
+									{{ HTML::linkAction('ActivityController@fdadownload','Download', $permit->id, array('class' => 'btn btn-info btn-xs')) }}
 								</td>
 						    </tr>
 						    @endforeach
@@ -752,8 +752,8 @@
 					  	<thead>
 						    <tr>
 						      	<th>File Name</th>
-						      	<th>Uploaded Date</th>
-						      	<th>Action</th>
+						      	<th class="update">Uploaded Date</th>
+						      	<th colspan="2" class="action">Action</th>
 						    </tr>
 					  	</thead>
 					  	<tbody>
@@ -761,7 +761,15 @@
 						    <tr>
 						      	<td>{{ $fi->file_name }}</td>
 						      	<td>{{ date_format(date_create($fi->created_at),'m/d/Y H:m:s') }}</td>
-						      	<td></td>
+						      	<td class="action">
+									{{ Form::open(array('method' => 'DELETE', 'action' => array('ActivityController@fisdelete', $fi->id))) }}  
+									{{ Form::hidden('activity_id', $activity->id) }}                     
+									{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}
+									{{ Form::close() }}
+								</td>
+								<td class="action">
+									{{ HTML::linkAction('ActivityController@fisdownload','Download', $fi->id, array('class' => 'btn btn-info btn-xs')) }}
+								</td>
 						    </tr>
 						    @endforeach
 					  	</tbody>
@@ -771,7 +779,7 @@
 		</div>
 
 		<div class="panel panel-default">
-		  	<div class="panel-heading">Artwork Packshot</div>
+		  	<div class="panel-heading">Artwork Packshots</div>
 		  	<div class="panel-body">
 		  		{{ Form::open(array('action' => array('ActivityController@artworkupload', $activity->id),  'class' => 'bs-component','id' => 'fisupload', 'files'=>true)) }}
 		  			<div class="row">
@@ -789,8 +797,8 @@
 							  	<thead>
 								    <tr>
 								      	<th>File Name</th>
-								      	<th>Uploaded Date</th>
-								      	<th>Action</th>
+								      	<th class="update">Uploaded Date</th>
+						      			<th colspan="2" class="action">Action</th>
 								    </tr>
 							  	</thead>
 							  	<tbody>
@@ -798,7 +806,15 @@
 								    <tr>
 								      	<td>{{ $artwork->file_name }}</td>
 								      	<td>{{ date_format(date_create($artwork->created_at),'m/d/Y H:m:s') }}</td>
-								      	<td></td>
+								      	<td class="action">
+											{{ Form::open(array('method' => 'DELETE', 'action' => array('ActivityController@artworkdelete', $artwork->id))) }}  
+											{{ Form::hidden('activity_id', $activity->id) }}                     
+											{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}
+											{{ Form::close() }}
+										</td>
+										<td class="action">
+											{{ HTML::linkAction('ActivityController@artworkdownload','Download', $artwork->id, array('class' => 'btn btn-info btn-xs')) }}
+										</td>
 								    </tr>
 								    @endforeach
 							  	</tbody>
@@ -807,6 +823,98 @@
 				  	</div>
 		  	</div>
 		</div>	
+
+		<div class="panel panel-default">
+		  	<div class="panel-heading">Marketing Backgrounds</div>
+		  	<div class="panel-body">
+		  		{{ Form::open(array('action' => array('ActivityController@backgroundupload', $activity->id),  'class' => 'bs-component','id' => 'backgroundupload', 'files'=>true)) }}
+		  			<div class="row">
+						<div class="col-lg-6">
+						  	<div class="form-group">
+						    	{{ Form::file('file','',array('id'=>'','class'=>'')) }}
+						  	</div>
+						  	{{ Form::submit('Upload', array('class' => 'btn btn-primary')) }}
+				  		</div>
+				  	</div>
+				{{ Form::close() }}
+					<div class="row">
+						<div class="col-lg-12">
+							<table class="table table-striped table-hover ">
+							  	<thead>
+								    <tr>
+								      	<th>File Name</th>
+								      	<th class="update">Uploaded Date</th>
+						      			<th colspan="2" class="action">Action</th>
+								    </tr>
+							  	</thead>
+							  	<tbody>
+							  		@foreach($backgrounds as $background)
+								    <tr>
+								      	<td>{{ $background->file_name }}</td>
+								      	<td>{{ date_format(date_create($background->created_at),'m/d/Y H:m:s') }}</td>
+								      	<td class="action">
+											{{ Form::open(array('method' => 'DELETE', 'action' => array('ActivityController@backgrounddelete', $artwork->id))) }}  
+											{{ Form::hidden('activity_id', $activity->id) }}                     
+											{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}
+											{{ Form::close() }}
+										</td>
+										<td class="action">
+											{{ HTML::linkAction('ActivityController@backgrounddownload','Download', $background->id, array('class' => 'btn btn-info btn-xs')) }}
+										</td>
+								    </tr>
+								    @endforeach
+							  	</tbody>
+							</table> 
+						</div>
+				  	</div>
+		  	</div>
+		</div>
+
+		<div class="panel panel-default">
+		  	<div class="panel-heading">Banding Guidelines / Activation Mechanics</div>
+		  	<div class="panel-body">
+		  		{{ Form::open(array('action' => array('ActivityController@bandingupload', $activity->id),  'class' => 'bs-component','id' => 'fisupload', 'files'=>true)) }}
+		  			<div class="row">
+						<div class="col-lg-6">
+						  	<div class="form-group">
+						    	{{ Form::file('file','',array('id'=>'','class'=>'')) }}
+						  	</div>
+						  	{{ Form::submit('Upload', array('class' => 'btn btn-primary')) }}
+				  		</div>
+				  	</div>
+				{{ Form::close() }}
+					<div class="row">
+						<div class="col-lg-12">
+							<table class="table table-striped table-hover ">
+							  	<thead>
+								    <tr>
+								      	<th>File Name</th>
+								      	<th class="update">Uploaded Date</th>
+						      			<th colspan="2" class="action">Action</th>
+								    </tr>
+							  	</thead>
+							  	<tbody>
+							  		@foreach($bandings as $banding)
+								    <tr>
+								      	<td>{{ $banding->file_name }}</td>
+								      	<td>{{ date_format(date_create($banding->created_at),'m/d/Y H:m:s') }}</td>
+								      	<td class="action">
+											{{ Form::open(array('method' => 'DELETE', 'action' => array('ActivityController@bandingdelete', $banding->id))) }}  
+											{{ Form::hidden('activity_id', $activity->id) }}                     
+											{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}
+											{{ Form::close() }}
+										</td>
+										<td class="action">
+											{{ HTML::linkAction('ActivityController@bandingdownload','Download', $banding->id, array('class' => 'btn btn-info btn-xs')) }}
+										</td>
+								    </tr>
+								    @endforeach
+							  	</tbody>
+							</table> 
+						</div>
+				  	</div>
+		  	</div>
+		</div>
 	</div>
 
 </div>
@@ -1146,7 +1254,7 @@ $("form[id='updateCustomer']").on("submit",function(e){
 
 		
 
-/*var table = $('#scheme_summary').DataTable( {
+var table = $('#scheme_summary').DataTable( {
 	"scrollY": "300px",
 	"scrollX": true,
 	"scrollCollapse": true,
@@ -1159,7 +1267,7 @@ $("form[id='updateCustomer']").on("submit",function(e){
 } );
 new $.fn.dataTable.FixedColumns( table, {
 	leftColumns: 6
-} );*/
+} );
 <!-- Budget details -->
 
 $('#billing_deadline').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});

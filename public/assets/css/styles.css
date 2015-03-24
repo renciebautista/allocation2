@@ -173,3 +173,14 @@
 
 
 /*upload*/
+#attachment .action {
+	width: 80px;
+	text-align: center;
+}
+
+#attachment .update {
+	width: 100px;
+}
+#attachment .permit {
+	width: 150px;
+}

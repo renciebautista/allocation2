@@ -240,7 +240,7 @@ $("form").validate({
 });
 
 
-$("#skus,#invole").chosen({
+$("#skus,#involve").chosen({
 	search_contains: true,
 	allow_single_deselect: true
 });

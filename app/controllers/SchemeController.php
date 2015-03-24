@@ -117,16 +117,17 @@ class SchemeController extends \BaseController {
 				}
 				SchemeSku::insert($skus);
 
+				$hosts = array();
+				foreach (Input::get('involve') as $sap_code){
+					$hosts[] = array('scheme_id' => $scheme->id, 'sap_code' => $sap_code);
+				}
+				SchemeHostSku::insert($hosts);
+
 				// create allocation
 				SchemeAllocRepository::insertAlllocation($scheme);
 
 				return $scheme->id;
 			});
-			// #schemes
-			// return Redirect::action('ActivityController@edit', array('id' => $id))
-			// return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#schemes")
-			// 	->with('class', 'alert-success')
-			// 	->with('message', 'Scheme "'.Input::get('scheme_name').'" was successfuly created.');
 			return Redirect::to(URL::action('SchemeController@edit', array('id' => $insert_id)))
 				->with('class', 'alert-success')
 				->with('message', 'Scheme "'.Input::get('scheme_name').'" was successfuly created.');
@@ -199,8 +200,11 @@ class SchemeController extends \BaseController {
 			->whereIn('brand_code',$brands)
 			->orderBy('sku_code')
 			->lists('full_desc', 'sku_code');
+		$involves = Pricelist::orderBy('sap_desc')->lists('sap_desc', 'sap_code');
 
 		$sel_skus =  SchemeSku::getSkus($scheme->id);
+
+		$sel_hosts = SchemeHostSku::getHosts($scheme->id);
 		// print_r($sel_skus);
 		$customers = ActivityCustomer::customers($scheme->activity_id);
 		// print_r($customers);
@@ -225,7 +229,7 @@ class SchemeController extends \BaseController {
 		// echo "<pre>";
 		// print_r($scheme_customers);
 		// echo "</pre>";
-		return View::make('scheme.edit',compact('scheme', 'activity', 'skus', 'sel_skus',
+		return View::make('scheme.edit',compact('scheme', 'activity', 'skus', 'involves', 'sel_skus', 'sel_hosts',
 			'allocations', 'total_sales', 'qty','id', 'summary', 'big10', 'gaisanos', 'nccc', 'scheme_customers', 'total_gsv'));
 	}
 
@@ -276,6 +280,13 @@ class SchemeController extends \BaseController {
 					$skus[] = array('scheme_id' => $scheme->id, 'sku' => $sku);
 				}
 				SchemeSku::insert($skus);
+
+				$hosts = array();
+				SchemeHostSku::where('scheme_id',$scheme->id)->delete();
+				foreach (Input::get('involve') as $sap_code){
+					$hosts[] = array('scheme_id' => $scheme->id, 'sap_code' => $sap_code);
+				}
+				SchemeHostSku::insert($hosts);
 
 				SchemeAllocRepository::updateAllocation($scheme);
 				
@@ -376,7 +387,7 @@ class SchemeController extends \BaseController {
 			'allocations.ship_to', 'allocations.channel', 'allocations.outlet', 'allocations.sold_to_gsv', 
 			'allocations.sold_to_gsv_p', 'allocations.sold_to_alloc', 'allocations.ship_to_gsv',
 			'allocations.ship_to_alloc' ,'allocations.outlet_to_gsv', 'allocations.outlet_to_gsv_p', 'allocations.outlet_to_alloc',
-			'allocations.final_alloc' ,'allocations.customer_id', 'multi','allocations.shipto_id')
+			'allocations.final_alloc' ,'allocations.customer_id', 'multi','allocations.shipto_id','allocations.computed_alloc', 'allocations.force_alloc')
 		->where('scheme_id', $id);
 
 		// echo '<pre>';

@@ -254,11 +254,13 @@ class ActivityController extends \BaseController {
 			$fdapermits = ActivityFdapermit::where('activity_id', $activity->id)->get();
 			$fis = ActivityFis::where('activity_id', $activity->id)->get();
 			$artworks = ActivityArtwork::where('activity_id', $activity->id)->get();
+			$backgrounds = ActivityBackground::where('activity_id', $activity->id)->get();
+			$bandings = ActivityBanding::where('activity_id', $activity->id)->get();
 
 			return View::make('activity.edit', compact('activity', 'scope_types', 'planners', 'approvers', 'cycles',
 			 'activity_types', 'divisions' , 'objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
 			 'sel_objectives', 'channels', 'sel_channels', 'schemes', 'networks',
-			 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks'));
+			 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings'));
 		}
 
 		if($activity->status_id == 2){
@@ -832,30 +834,39 @@ class ActivityController extends \BaseController {
 		}
 	}
 
+	private function doupload($path){
+		$distination = storage_path().'/uploads/'.$path.'/';
+		$file = Input::file('file');
+		$original_file_name = $file->getClientOriginalName();
+		$file_name = Str::random(20).'.'.File::extension($file->getClientOriginalName());
+		$file_path = $distination.$file_name;
+
+
+		//Alter the file name until it's unique to prevent overwriting
+		while(File::exists($file_path)) {
+			$file_name = Str::random(20).'.'.File::extension($file->getClientOriginalName());
+			$file_path = $distination.$file_name;
+		}
+
+		$file->move($distination,$file_name);
+
+		return (object) array('file_name' => $file_name,
+		 'original_file_name' => $original_file_name,
+		 'status' => 1);
+	}
+
 	public function fdaupload($id){
 		if(Input::hasFile('file')){
-			$distination = storage_path().'/uploads/fdapermits';
-			$file = Input::file('file');
-			$original_file_name = $file->getClientOriginalName();
-			$file_name = $original_file_name;
-			$file_path = $distination.$file_name;
-
-			//Alter the file name until it's unique to prevent overwriting
-			while(File::exists($file_path)) {
-				$file_name = Str::slug($file->getClientOriginalName()).Str::random(6).'.'.File::extension($file->getClientOriginalName());
-				$file_path = $distination.$file_name;
-			}
-
-			//Now the upload part
-			$file->move($distination,$file_name);
+			
+			$upload = self::doupload('fdapermits');
 
 			$docu = new ActivityFdapermit;
 			$docu->created_by = Auth::id();
 			$docu->activity_id = $id;
 			$docu->permit_no = Input::get('permitno');
-			$docu->hash_name = strtolower($file_name);
-			$docu->file_name = $original_file_name;
-			$docu->file_desc = (Input::get('file_desc') =='') ? $original_file_name : Input::get('file_desc');
+			$docu->hash_name = $upload->file_name;
+			$docu->file_name = $upload->original_file_name;
+			$docu->file_desc = (Input::get('file_desc') =='') ? $upload->original_file_name : Input::get('file_desc');
 			$docu->save();
 
 			return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
@@ -874,10 +885,10 @@ class ActivityController extends \BaseController {
 		if(empty($fda)){
 			return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity_id)) . "#attachment")
 				->with('class', 'alert-danger')
-				->with('message', 'Error uploading file.');
+				->with('message', 'Error deleting file.');
 		}else{
 			$fda->delete();
-			$filename = storage_path().'/uploads/fdapermits';
+			$filename = storage_path().'/uploads/fdapermits/';
 			File::delete($filename.$fda->hash_name);
 			return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity_id)) . "#attachment")
 				->with('class', 'alert-success')
@@ -885,29 +896,23 @@ class ActivityController extends \BaseController {
 		}
 	}
 
+	public function fdadownload($id){
+		$fda = ActivityFdapermit::find($id);
+		$filename = storage_path().'/uploads/fdapermits/';
+		return Response::download($filename.$fda->hash_name, $fda->file_name);
+	}
+
 	public function fisupload($id){
 		if(Input::hasFile('file')){
-			$distination = storage_path().'/uploads/fisupload';
-			$file = Input::file('file');
-			$original_file_name = $file->getClientOriginalName();
-			$file_name = $original_file_name;
-			$file_path = $distination.$file_name;
 
-			//Alter the file name until it's unique to prevent overwriting
-			while(File::exists($file_path)) {
-				$file_name = Str::slug($file->getClientOriginalName()).Str::random(6).'.'.File::extension($file->getClientOriginalName());
-				$file_path = $distination.$file_name;
-			}
-
-			//Now the upload part
-			$file->move($distination,$file_name);
+			$upload = self::doupload('fisupload');
 
 			$docu = new ActivityFis;
 			$docu->created_by = Auth::id();
 			$docu->activity_id = $id;
-			$docu->hash_name = strtolower($file_name);
-			$docu->file_name = $original_file_name;
-			$docu->file_desc = (Input::get('file_desc') =='') ? $original_file_name : Input::get('file_desc');
+			$docu->hash_name = $upload->file_name;
+			$docu->file_name =  $upload->original_file_name;
+			$docu->file_desc = (Input::get('file_desc') =='') ? $upload->original_file_name : Input::get('file_desc');
 			$docu->save();
 
 			return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
@@ -920,29 +925,39 @@ class ActivityController extends \BaseController {
 		}
 	}
 
-		public function artworkupload($id){
+	public function fisdelete($id){
+		$fis = ActivityFis::find($id);
+		$activity_id = Input::get('activity_id');
+		if(empty($fis)){
+			return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity_id)) . "#attachment")
+				->with('class', 'alert-danger')
+				->with('message', 'Error deleting file.');
+		}else{
+			$fis->delete();
+			$filename = storage_path().'/uploads/fisupload/';
+			File::delete($filename.$fis->hash_name);
+			return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity_id)) . "#attachment")
+				->with('class', 'alert-success')
+				->with('message', 'Product Information Sheet is successfuly deleted!');
+		}
+	}
+
+	public function fisdownload($id){
+		$fis = ActivityFis::find($id);
+		$filename = storage_path().'/uploads/fisupload/';
+		return Response::download($filename.$fis->hash_name, $fis->file_name);
+	}
+
+	public function artworkupload($id){
 		if(Input::hasFile('file')){
-			$distination = storage_path().'/uploads/artworkupload';
-			$file = Input::file('file');
-			$original_file_name = $file->getClientOriginalName();
-			$file_name = $original_file_name;
-			$file_path = $distination.$file_name;
-
-			//Alter the file name until it's unique to prevent overwriting
-			while(File::exists($file_path)) {
-				$file_name = Str::slug($file->getClientOriginalName()).Str::random(6).'.'.File::extension($file->getClientOriginalName());
-				$file_path = $distination.$file_name;
-			}
-
-			//Now the upload part
-			$file->move($distination,$file_name);
+			$upload = self::doupload('artworkupload');
 
 			$docu = new ActivityArtwork;
 			$docu->created_by = Auth::id();
 			$docu->activity_id = $id;
-			$docu->hash_name = strtolower($file_name);
-			$docu->file_name = $original_file_name;
-			$docu->file_desc = (Input::get('file_desc') =='') ? $original_file_name : Input::get('file_desc');
+			$docu->hash_name = $upload->file_name;
+			$docu->file_name = $upload->original_file_name;
+			$docu->file_desc = (Input::get('file_desc') =='') ? $upload->original_file_name : Input::get('file_desc');
 			$docu->save();
 
 			return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
@@ -953,5 +968,118 @@ class ActivityController extends \BaseController {
 				->with('class', 'alert-danger')
 				->with('message', 'Error uploading file.');
 		}
+	}
+
+	public function artworkdelete($id){
+		$artwork = ActivityArtwork::find($id);
+		$activity_id = Input::get('activity_id');
+		if(empty($artwork)){
+			return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity_id)) . "#attachment")
+				->with('class', 'alert-danger')
+				->with('message', 'Error deleting file.');
+		}else{
+			$artwork->delete();
+			$filename = storage_path().'/uploads/artworkupload/';
+			File::delete($filename.$artwork->hash_name);
+			return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity_id)) . "#attachment")
+				->with('class', 'alert-success')
+				->with('message', 'Product artwork is successfuly deleted!');
+		}
+	}
+
+	public function artworkdownload($id){
+		$artwork = ActivityArtwork::find($id);
+		$filename = storage_path().'/uploads/artworkupload/';
+		return Response::download($filename.$artwork->hash_name, $artwork->file_name);
+	}
+
+	public function backgroundupload($id){
+		if(Input::hasFile('file')){
+			$upload = self::doupload('background');
+
+			$docu = new ActivityBackground;
+			$docu->created_by = Auth::id();
+			$docu->activity_id = $id;
+			$docu->hash_name = $upload->file_name;
+			$docu->file_name = $upload->original_file_name;
+			$docu->file_desc = (Input::get('file_desc') =='') ? $upload->original_file_name : Input::get('file_desc');
+			$docu->save();
+
+			return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
+				->with('class', 'alert-success')
+				->with('message', 'Marketing Background is successfuly uploaded!');
+		}else{
+			return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
+				->with('class', 'alert-danger')
+				->with('message', 'Error uploading file.');
+		}
+	}
+
+	public function backgrounddelete($id){
+		$background = ActivityBackground::find($id);
+		$activity_id = Input::get('activity_id');
+		if(empty($background)){
+			return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity_id)) . "#attachment")
+				->with('class', 'alert-danger')
+				->with('message', 'Error deleting file.');
+		}else{
+			$artwork->delete();
+			$filename = storage_path().'/uploads/background/';
+			File::delete($filename.$artwork->hash_name);
+			return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity_id)) . "#attachment")
+				->with('class', 'alert-success')
+				->with('message', 'Marketing Background is successfuly deleted!');
+		}
+	}
+
+	public function backgrounddownload($id){
+		$background = ActivityBackground::find($id);
+		$filename = storage_path().'/uploads/background/';
+		return Response::download($filename.$background->hash_name, $background->file_name);
+	}
+
+		public function bandingupload($id){
+		if(Input::hasFile('file')){
+			$upload = self::doupload('banding');
+
+			$docu = new ActivityBanding;
+			$docu->created_by = Auth::id();
+			$docu->activity_id = $id;
+			$docu->hash_name = $upload->file_name;
+			$docu->file_name = $upload->original_file_name;
+			$docu->file_desc = (Input::get('file_desc') =='') ? $upload->original_file_name : Input::get('file_desc');
+			$docu->save();
+
+			return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
+				->with('class', 'alert-success')
+				->with('message', 'Banding Guideline / Activation Mechanic is successfuly uploaded!');
+		}else{
+			return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
+				->with('class', 'alert-danger')
+				->with('message', 'Error uploading file.');
+		}
+	}
+
+	public function bandingdelete($id){
+		$banding = ActivityBanding::find($id);
+		$activity_id = Input::get('activity_id');
+		if(empty($banding)){
+			return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity_id)) . "#attachment")
+				->with('class', 'alert-danger')
+				->with('message', 'Error deleting file.');
+		}else{
+			$artwork->delete();
+			$filename = storage_path().'/uploads/banding/';
+			File::delete($filename.$artwork->hash_name);
+			return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity_id)) . "#attachment")
+				->with('class', 'alert-success')
+				->with('message', 'Banding Guideline / Activation Mechanic is successfuly deleted!');
+		}
+	}
+
+	public function bandingdownload($id){
+		$banding = ActivityBanding::find($id);
+		$filename = storage_path().'/uploads/banding/';
+		return Response::download($filename.$banding->hash_name, $banding->file_name);
 	}
 }

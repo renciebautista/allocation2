@@ -46,13 +46,13 @@
 					<div class="form-group">
 						<div class="row">
 							<div class="col-lg-6">
-								{{ Form::label('skus', 'Reference Sales SKU', array('class' => 'control-label')) }}
-								{{ Form::select('skus[]', $skus, $sel_skus, array('data-placeholder' => 'Select Reference SKUS','id' => 'skus', 'class' => 'form-control')) }}
-							</div>
-							<div class="col-lg-6">
-								{{ Form::label('involve', 'Host SKU', array('class' => 'control-label')) }}
-								{{ Form::select('involve[]', $skus, $sel_skus, array('data-placeholder' => 'Select Reference SKUS','id' => 'involve', 'class' => 'form-control')) }}
-							</div>
+						{{ Form::label('skus', 'Reference Sales SKU', array('class' => 'control-label')) }}
+						{{ Form::select('skus[]', array('0' => '') + $skus, $sel_skus, array('data-placeholder' => 'Select Reference Sales SKU','id' => 'skus', 'class' => 'form-control')) }}
+					</div>
+					<div class="col-lg-6">
+						{{ Form::label('involve', 'Host SKU', array('class' => 'control-label')) }}
+						{{ Form::select('involve[]', array('0' => '') + $involves, $sel_hosts, array('data-placeholder' => 'Select Host SKU','id' => 'skus', 'class' => 'form-control')) }}
+					</div>
 						</div>
 					</div>
 				</div>
@@ -327,6 +327,8 @@
 						<th>OUTLET ALLOC %</th>
 						<th>OUTLET ALLOC</th>
 						<th>MULTI</th>
+						<th>COMPUTED ALLOC</th>
+						<th>FORCED ALLOC</th>
 						<th>FINAL ALLOC</th>
 					</tr>
 				</thead>
@@ -829,7 +831,7 @@
 				<table id="calculator" class="table table-bordered">
 					<tbody>
 						<tr>
-							<td>Average Weekly Sales</td>
+							<td>Average Weekly Sales (in cases)</td>
 							<td>
 								<input class="form-control" name="weekly_sales" type="text" value="{{ number_format($total_gsv/52,2) }}" id="weekly_sales" readonly =''>
 								
@@ -842,13 +844,17 @@
 							</td>
 						</tr>
 						<tr>
-							<td>Ideal Number of Allocation in Cases</td>
+							<td>Ideal Number of Allocation (in cases)</td>
 							<td>
 								<input class="form-control" placeholder="Ideal Number of Allocation in Cases" name="no_alloc_cases" type="text" value="" id="no_alloc_cases" readonly =''>
 							</td>
 						</tr>
 					</tbody>
 				</table>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				<button id="calculate" class="btn btn-primary">Calculate</button>
 			</div>
 		</div>
 	</div>
@@ -859,7 +865,7 @@
 @section('page-script')
 
 // calculator
-$('#no_weeks').blur(function() {
+$('#calculate').on( "click", function() {
 	var avg_wk_sales = accounting.unformat($('#weekly_sales').val()) || 0;
 	var no_weeks = accounting.unformat($('#no_weeks').val()) || 0;
 	$('#no_alloc_cases').val(accounting.formatNumber((avg_wk_sales*no_weeks)));
@@ -877,7 +883,12 @@ function getWeeks(){
 }
 
 getWeeks();
-$("#skus,#involve").chosen();
+
+$("#skus,#involve").chosen({
+	search_contains: true,
+	allow_single_deselect: true
+});
+
 
 $('#pr, #srp_p, #other_cost,#total_alloc,#new_alloc,#no_weeks').inputNumber();
 
@@ -990,8 +1001,10 @@ var table = $("#customer-allocation").dataTable({
 			{ "data" : "outlet_to_gsv",     "title" : "OUTLET GSV", "searchable": true },
 			{ "data" : "outlet_to_gsv_p",     "title" : "OUTLET ALLOC %", "searchable": true },
 			{ "data" : "outlet_to_alloc",     "title" : "OUTLET ALLOC", "searchable": true },
-			{ "data" : "multi",     "title" : "MULTI", "searchable": true },
-			{ "data" : "final_alloc",     "title" : "FINAL ALLOC", "searchable": true }
+			{ "data" : "multi",     "title" : "MULTI", "searchable": false },
+			{ "data" : "computed_alloc",     "title" : "COMPUTED ALLOC", "searchable": false },
+			{ "data" : "force_alloc",     "title" : "FORCED ALLOC", "searchable": false },
+			{ "data" : "final_alloc",     "title" : "FINAL ALLOC", "searchable": false }
 		],
 		"createdRow" : function( row, data, index ) {
 			if(((data.customer_id === null) && (data.shipto_id === null)) || ((data.customer_id !== null) && (data.shipto_id === null))){
@@ -1018,7 +1031,7 @@ var table = $("#customer-allocation").dataTable({
 				if(index == 5){
 					$(this).attr('field', 'outlet');
 				}
-				if(index == 15){
+				if(index == 17){
 					$(this).attr('field', 'alloc');
 				}
 			}); 

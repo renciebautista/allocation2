@@ -41,6 +41,8 @@ class SchemeAllocRepository
             }
             $scheme_alloc->sold_to_alloc = $_sold_to_alloc;
             $scheme_alloc->multi = $c_multi;
+            $scheme_alloc->computed_alloc = $_sold_to_alloc;
+            $scheme_alloc->force_alloc = $_sold_to_alloc;
             $scheme_alloc->final_alloc = $_sold_to_alloc;
             $scheme_alloc->save();
 
@@ -68,8 +70,11 @@ class SchemeAllocRepository
                     }
                     $_shipto_alloc = round($s_multi  * $scheme_alloc->sold_to_alloc);
                     $shipto_alloc->ship_to_alloc = $_shipto_alloc;
-                    $shipto_alloc->final_alloc = $_shipto_alloc;
                     $shipto_alloc->multi = $s_multi;
+                    $shipto_alloc->computed_alloc = $_shipto_alloc;
+                    $shipto_alloc->force_alloc = $_shipto_alloc;
+                    $shipto_alloc->final_alloc = $_shipto_alloc;
+                   
                     $shipto_alloc->save();  
 
                     if(!empty($shipto['accounts'] )){
@@ -97,6 +102,8 @@ class SchemeAllocRepository
                                 $others -= $_account_alloc;
                             }
                             $account_alloc->multi = $p/100;
+                            $account_alloc->computed_alloc = $_account_alloc;
+                            $account_alloc->force_alloc = $_account_alloc;
                             $account_alloc->final_alloc = $_account_alloc;
                             $account_alloc->save();
                         }
@@ -122,7 +129,8 @@ class SchemeAllocRepository
                         }else{
                             $others_alloc->multi = 0;
                         }
-                       
+                        $others_alloc->computed_alloc = $_others_alloc;
+                        $others_alloc->force_alloc = $_others_alloc;
                         $others_alloc->final_alloc = $_others_alloc;
                         $others_alloc->save();
                     }
