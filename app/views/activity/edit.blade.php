@@ -307,8 +307,9 @@
 	
 	<div class="tab-pane fade" id="customer">
 		<br>
-		{{ Form::open(array('action' => array('ActivityController@updatecustomer', $activity->id), 'method' => 'PUT', 'class' => 'bs-component','id' => 'updateCustomer')) }}
+		
 		<div class="well">
+			{{ Form::open(array('action' => array('ActivityController@updatecustomer', $activity->id), 'method' => 'PUT', 'class' => 'bs-component','id' => 'updateCustomer')) }}
 			<div class="row">
 				<div class="col-lg-6">
 					{{ Form::label('tree3', 'Select Customers', array('class' => 'control-label' )) }}
@@ -325,6 +326,17 @@
 						</div>
 					</div>
 				</div>
+			</div>	
+			<div class="row">
+				<div class="col-lg-6">
+					<div class="form-group">
+						<div class="checkbox">
+					        <label>
+					        	{{ Form::checkbox('allow_force', 1,$activity->allow_force) }} Enable Force Allocation
+					        </label>
+					    </div>
+					</div>
+				</div>
 			</div>
 			<br>
 			<div class="row">
@@ -336,9 +348,38 @@
 					</div>
 				</div>
 			</div>
+			{{ Form::close() }}
+			@if($activity->allow_force)
+			<hr>
 
+			<div class="row">
+				<div  class="col-lg-12">
+					<caption>Force Allocation</caption>
+					<table id="force_alloc" class="table table-striped table-hover ">
+					  	<thead>
+						    <tr>
+						      	<th>Area</th>
+						      	<th class="multiplier">Force Percentage</th>
+				      			<th class="action">Action</th>
+						    </tr>
+					  	</thead>
+					  	<tbody>
+					  		@foreach($force_allocs as $force)
+					  		<tr data-link="{{ $force->id }}">
+					  			<td>{{ $force->area_name }}</td>
+				  				<td class="multiplier">{{ $force->multi }}</td>
+					  			<td class="action">
+					  				<button class="btn btn-primary btn-xs">Update</button>
+					  			</td>
+					  		</tr>
+					  		@endforeach
+					  	</tbody>
+					</table> 
+				</div>
+		  	</div>
+		  	@endif
 		</div>
-		{{ Form::close() }}
+		
 	</div>
 
 	<!-- scheme details -->
@@ -917,6 +958,41 @@
 		</div>
 	</div>
 
+	<!-- Modal -->
+	<div class="modal fade" id="myForceAlloc" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="myModalLabel">Force Allocation</h4>
+				</div>
+				{{ Form::open(array('action' => array('ActivityController@updateforcealloc'), 'method' => 'PUT', 'class' => 'bs-component','id' => 'updateforcealloc')) }}
+				{{ Form::hidden('f_id', '', array('id' => 'f_id')) }}
+				<div class="modal-body">
+					<table id="forcealloc" class="table table-bordered">
+						<tbody>
+							<tr>
+								<td>Area</td>
+								<td field="area_name">
+								</td>
+							</tr>
+							<tr>
+								<td>Force Allocation (percentage)</td>
+								<td>
+									<input class="form-control" placeholder="Force Allocation (percentage)" name="f_percent" type="text" value="" id="f_percent">
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<button class="btn btn-primary">Update</button>
+				</div>
+				{{ Form::close() }}
+			</div>
+		</div>
+	</div>
 </div>
 
 
@@ -924,6 +1000,17 @@
 
 @section('page-script')
 
+function sumOfColumns(table, columnIndex) {
+    var tot = 0;
+    table.find("tr").children("td:nth-child(" + columnIndex + ")")
+    .each(function() {
+        $this = $(this);
+        if (!$this.hasClass("sum") && $this.html() != "") {
+            tot += parseInt($this.html());
+        }
+    });
+    return tot;
+}
 
 $('.nav-tabs a').click(function (e) {
 	// No e.preventDefault() here
@@ -1241,7 +1328,8 @@ $("form[id='updateCustomer']").on("submit",function(e){
 		dataType: "json",
 		success: function(data){
 			if(data.success == "1"){
-				bootbox.alert("Activity customers was successfully updated."); 
+				 location.reload();
+				// bootbox.alert("Activity customers was successfully updated."); 
 			}else{
 				bootbox.alert("An error occured while updating."); 
 			}
@@ -1250,6 +1338,63 @@ $("form[id='updateCustomer']").on("submit",function(e){
 	e.preventDefault();
 });
 
+$("#force_alloc").on('click',"button",function() {
+	var id = $(this).closest("tr").attr('data-link');
+	var percent = $(this).closest("tr").find('td:eq(1)').text();
+	$('#forcealloc td[field="area_name"]').text($(this).closest("tr").find('td:eq(0)').text());
+
+	$('#f_id').val(id); 
+	$("#f_percent").val($(this).closest("tr").find('td:eq(1)').text());
+	$('#myForceAlloc').modal('show');
+
+	$('#f_percent').rules('remove', 'max');
+    $('#f_percent').rules('add', { required: true, min:0, max: function() { return 100 - sumOfColumns($('#force_alloc'), 2) + parseInt(percent) } } );
+
+});
+
+$("form[id='updateforcealloc']").on("submit",function(e){
+	var form = $(this);
+	var method = form.find('input[name="_method"]').val() || 'POST';
+	var url = form.prop('action');
+	if(form.valid()){
+		$.ajax({
+			url: url,
+			data: form.serialize(),
+			method: method,
+			dataType: "json",
+			success: function(data){
+				if(data.success == "1"){
+					$('#force_alloc tr[data-link="'+data.id+'"]').find('td:eq(1)').text(data.f_percent);
+					bootbox.alert("Allocation was successfully updated."); 
+					$('#myForceAlloc').modal('hide');
+					
+				}else{
+					bootbox.alert("An error occured while updating."); 
+				}
+			}
+		});
+	}
+	
+
+	e.preventDefault();
+});
+
+
+$("#updateforcealloc").validate({
+	errorElement: "span", 
+	errorClass : "has-error",
+	errorPlacement: function(error, element) {               
+		
+	},
+	highlight: function( element, errorClass, validClass ) {
+    	$(element).closest('div').addClass(errorClass).removeClass(validClass);
+  	},
+  	unhighlight: function( element, errorClass, validClass ) {
+    	$(element).closest('div').removeClass(errorClass).addClass(validClass);
+  	}
+});
+
+$('#f_percent').inputNumber();
 <!-- schemes -->
 
 		

@@ -184,3 +184,12 @@
 #attachment .permit {
 	width: 150px;
 }
+
+#force_alloc .multiplier {
+	width: 150px;
+	text-align: center;
+}
+
+#force_alloc .update {
+	width: 100px;
+}

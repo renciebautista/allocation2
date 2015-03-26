@@ -7,7 +7,7 @@ class AllocationRepository  {
 	private $_dt_secondary_sales = array();
 
 	private $_customers = array();
-
+	private $area_sales = array();
 	public function __construct()  {
       	
     }
@@ -274,7 +274,10 @@ class AllocationRepository  {
 							break;
 						}
 					}
-					
+					if(!isset($this->area_sales[$customer->area_code])){
+						$this->area_sales[$customer->area_code] = 0;
+					}
+					$this->area_sales[$customer->area_code] += $customer->gsv;
 				}
 
 			}else{
@@ -310,6 +313,10 @@ class AllocationRepository  {
 					}
 					// end check if selected
 				}
+				if(!isset($this->area_sales[$customer->area_code])){
+					$this->area_sales[$customer->area_code] = 0;
+				}
+				$this->area_sales[$customer->area_code] += $customer->gsv;
 			}
 			$data[] = (array)$customer;
 		}
@@ -426,6 +433,8 @@ class AllocationRepository  {
 			->whereIn('customer_code',$data)->get();
 	}
 
-
+	public function area_sales(){
+		return $this->area_sales;
+	}
 	
 }

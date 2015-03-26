@@ -435,6 +435,7 @@ Route::group(array('before' => 'auth'), function()
 
 	Route::put('activity/{id}/updatecustomer', 'ActivityController@updatecustomer');
 	Route::put('activity/{id}/updatebilling', 'ActivityController@updatebilling');
+	Route::put('activity/updateforcealloc', 'ActivityController@updateforcealloc');
 
 	Route::get('activity/{id}/scheme', 'SchemeController@index');
 	Route::get('activity/{id}/scheme/create', 'SchemeController@create');

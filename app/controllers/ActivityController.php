@@ -245,6 +245,7 @@ class ActivityController extends \BaseController {
 				->get();
 
 			$scheme_customers = SchemeAllocation::getCustomers($activity->id);
+			$force_allocs = ForceAllocation::getlist($activity->id);
 
 			// $attachments = ActivityAttachment::where('activity_id', $activity->id)->get();
 
@@ -260,58 +261,59 @@ class ActivityController extends \BaseController {
 			return View::make('activity.edit', compact('activity', 'scope_types', 'planners', 'approvers', 'cycles',
 			 'activity_types', 'divisions' , 'objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
 			 'sel_objectives', 'channels', 'sel_channels', 'schemes', 'networks',
-			 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings'));
+			 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings',
+			 'force_allocs'));
 		}
 
-		if($activity->status_id == 2){
-			$sel_planner = ActivityPlanner::where('activity_id',$id)
-				->first();
-			$sel_approver = ActivityApprover::getList($id);
-			$sel_skus = ActivitySku::getList($id);
-			$sel_objectives = ActivityObjective::getList($id);
-			$sel_channels = ActivityChannel::getList($id);
+		// if($activity->status_id == 2){
+		// 	$sel_planner = ActivityPlanner::where('activity_id',$id)
+		// 		->first();
+		// 	$sel_approver = ActivityApprover::getList($id);
+		// 	$sel_skus = ActivitySku::getList($id);
+		// 	$sel_objectives = ActivityObjective::getList($id);
+		// 	$sel_channels = ActivityChannel::getList($id);
 
-			$scope_types = ScopeType::orderBy('scope_name')->lists('scope_name', 'id');
-			$planners = User::isRole('PMOG PLANNER')->lists('first_name', 'id');
-			$approvers = User::isRole('CD OPS APPROVER')->lists('first_name', 'id');
-			$involves = Pricelist::orderBy('sap_desc')->lists('sap_desc', 'sap_code');
-			$channels = Channel::orderBy('channel_name')->lists('channel_name', 'id');
+		// 	$scope_types = ScopeType::orderBy('scope_name')->lists('scope_name', 'id');
+		// 	$planners = User::isRole('PMOG PLANNER')->lists('first_name', 'id');
+		// 	$approvers = User::isRole('CD OPS APPROVER')->lists('first_name', 'id');
+		// 	$involves = Pricelist::orderBy('sap_desc')->lists('sap_desc', 'sap_code');
+		// 	$channels = Channel::orderBy('channel_name')->lists('channel_name', 'id');
 
-			$activity_types = ActivityType::orderBy('activity_type')->lists('activity_type', 'id');
-			$cycles = Cycle::orderBy('cycle_name')->lists('cycle_name', 'id');
+		// 	$activity_types = ActivityType::orderBy('activity_type')->lists('activity_type', 'id');
+		// 	$cycles = Cycle::orderBy('cycle_name')->lists('cycle_name', 'id');
 			
-			$divisions = Sku::select('division_code', 'division_desc')
-				->groupBy('division_code')
-				->orderBy('division_desc')->lists('division_desc', 'division_code');
+		// 	$divisions = Sku::select('division_code', 'division_desc')
+		// 		->groupBy('division_code')
+		// 		->orderBy('division_desc')->lists('division_desc', 'division_code');
 
-			$objectives = Objective::orderBy('objective')->lists('objective', 'id');
+		// 	$objectives = Objective::orderBy('objective')->lists('objective', 'id');
 
-			$budgets = ActivityBudget::with('budgettype')
-				->where('activity_id', $id)
-				->get();
+		// 	$budgets = ActivityBudget::with('budgettype')
+		// 		->where('activity_id', $id)
+		// 		->get();
 
-			$nobudgets = ActivityNobudget::with('budgettype')
-				->where('activity_id', $id)
-				->get();
+		// 	$nobudgets = ActivityNobudget::with('budgettype')
+		// 		->where('activity_id', $id)
+		// 		->get();
 
-			$schemes = Scheme::where('activity_id', $activity->id)
-				->orderBy('created_at', 'desc')
-				->get();
+		// 	$schemes = Scheme::where('activity_id', $activity->id)
+		// 		->orderBy('created_at', 'desc')
+		// 		->get();
 
-			$division = Sku::division($activity->division_code);
-			$categories = Sku::categories($activity->division_code);
-			$sel_categories = ActivityCategory::selected_category($activity->id);
+		// 	$division = Sku::division($activity->division_code);
+		// 	$categories = Sku::categories($activity->division_code);
+		// 	$sel_categories = ActivityCategory::selected_category($activity->id);
 
-			$brands = Sku::brands($sel_categories);
-			$sel_brands = ActivityBrand::selected_brand($activity->id);
+		// 	$brands = Sku::brands($sel_categories);
+		// 	$sel_brands = ActivityBrand::selected_brand($activity->id);
 
-			$attachments = ActivityAttachment::where('activity_id', $activity->id)->get();
+		// 	$attachments = ActivityAttachment::where('activity_id', $activity->id)->get();
 
-			return View::make('activity.downloaded', compact('activity', 'scope_types', 'planners', 'approvers', 'cycles',
-			 'activity_types', 'divisions' , 'objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
-			 'involves', 'sel_skus', 'sel_objectives', 'channels', 'sel_channels', 'schemes', 'networks', 'division', 
-			 'categories', 'sel_categories', 'brands', 'sel_brands', 'attachments'));
-		}
+		// 	// return View::make('activity.downloaded', compact('activity', 'scope_types', 'planners', 'approvers', 'cycles',
+		// 	//  'activity_types', 'divisions' , 'objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
+		// 	//  'involves', 'sel_skus', 'sel_objectives', 'channels', 'sel_channels', 'schemes', 'networks', 'division', 
+		// 	//  'categories', 'sel_categories', 'brands', 'sel_brands', 'attachments'));
+		// }
 
 	}
 
@@ -698,19 +700,45 @@ class ActivityController extends \BaseController {
 			if(empty($activity)){
 				$arr['success'] = 0;
 			}else{
-				DB::transaction(function() use ($id)  {
+				DB::transaction(function() use ($id,$activity)  {
 					$_customers = Input::get('customers');
 					ActivityCustomer::where('activity_id',$id)->delete();
+
+					$enable_force = (Input::has('allow_force')) ? 1 : 0;
+					$activity->allow_force = $enable_force;
+					$activity->update();
 					if(!empty($_customers)){
 						$customers = explode(",", $_customers);
 						if(!empty($customers)){
 							$activity_customers = array();
+							$area_list = array();
 							foreach ($customers as $customer_node){
 								$activity_customers[] = array('activity_id' => $id, 'customer_node' => trim($customer_node));
+								// add area
+								if($enable_force){
+									$_selected_customer = explode(".", trim($customer_node));
+
+									if(count($_selected_customer) < 2){
+										$areas = Area::where('group_code',$_selected_customer[0])->get();
+										foreach ($areas as $area) {
+											$area_list[$area->area_code] = array('activity_id' => $id, 'area_code' => $area->area_code);
+										}
+									}else{
+										if(!empty($_selected_customer[1])){
+											$area_list[$_selected_customer[1]] = array('activity_id' => $id, 'area_code' => $_selected_customer[1]);
+										}
+									}
+								}
+								
+							}
+							ForceAllocation::where('activity_id',$id)->delete();
+							if($enable_force){
+								ForceAllocation::insert($area_list);
 							}
 							ActivityCustomer::insert($activity_customers);
 						}
 					}
+
 
 
 					$channels = Input::get('channel');
@@ -724,6 +752,8 @@ class ActivityController extends \BaseController {
 							ActivityChannel::insert($activity_channels);
 						}
 					}
+
+
 				});
 
 				$arr['success'] = 1;
@@ -732,6 +762,24 @@ class ActivityController extends \BaseController {
 			$arr['id'] = $id;
 			return json_encode($arr);
 		}
+	}
+
+	public function updateforcealloc(){
+		$id = Input::get("f_id");
+		if(Request::ajax()){
+			$arr['f_percent'] = Input::get("f_percent");
+			$force_alloc = ForceAllocation::find($id);
+			if(!empty($force_alloc)){
+				$force_alloc->multi = $arr['f_percent'];
+				$force_alloc->update();
+				$arr['success'] = 1;
+			}else{
+				$arr['success'] = 0;
+			}
+		}
+		
+		$arr['id'] = $id;
+		return json_encode($arr);
 	}
 
 	public function updatebilling($id){
