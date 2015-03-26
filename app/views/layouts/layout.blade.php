@@ -60,6 +60,7 @@
 						</li>
 						@endif
 						
+						@if(Auth::user()->hasRole("ADMINISTRATOR"))
 						<li class="dropdown">
 							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="themes">Maintenance <span class="caret"></span></a>
 							<ul class="dropdown-menu" aria-labelledby="themes">
@@ -70,7 +71,7 @@
 								<li>{{ HTML::linkRoute('activitytype.index', 'Activity Type') }}</li>  
 							</ul>
 						</li>
-						
+						@endif
 						<li>
 							<a href="../help/">Help</a>
 						</li>

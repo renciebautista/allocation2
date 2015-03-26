@@ -14,7 +14,7 @@ class AddAllowForceOnActivities extends Migration {
 	{
 		Schema::table('activities', function(Blueprint $table)
 		{
-			$table->boolean('allow_force')->default(0);
+			$table->boolean('allow_force')->default(0)->after('instruction');
 		});
 	}
 

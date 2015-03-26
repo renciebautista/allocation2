@@ -304,7 +304,6 @@
 	</div>
 
 	<!-- customer details -->
-	
 	<div class="tab-pane fade" id="customer">
 		<br>
 		
@@ -384,7 +383,6 @@
 
 	<!-- scheme details -->
 	<div class="tab-pane fade" id="schemes">
-
 		<br>
 		<div class="well">
 			<a href="{{ URL::action('SchemeController@create', $activity->id) }}" class="btn btn-primary"><i class="fa fa-plus"></i> Scheme</a>
@@ -530,7 +528,6 @@
 
 	<!-- budget details -->
 	<div class="tab-pane fade" id="budget">
-
 		<br>
 			<div class="panel panel-default">
 				<div class="panel-heading">
@@ -685,7 +682,7 @@
 				</div>
 	</div>
 
-		<!-- timings details -->
+	<!-- timings details -->
 	<div class="tab-pane fade" id="timings">
 		<br>
 		<div class="well">
@@ -757,13 +754,13 @@
 						      	<td>{{ $permit->file_name }}</td>
 						      	<td>{{ date_format(date_create($permit->created_at),'m/d/Y H:m:s') }}</td>
 						      	<td class="action">
+									{{ HTML::linkAction('ActivityController@fdadownload','Download', $permit->id, array('class' => 'btn btn-info btn-xs')) }}
+								</td>
+						      	<td class="action">
 									{{ Form::open(array('method' => 'DELETE', 'action' => array('ActivityController@fdadelete', $permit->id))) }}  
 									{{ Form::hidden('activity_id', $activity->id) }}                     
 									{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}
 									{{ Form::close() }}
-								</td>
-								<td class="action">
-									{{ HTML::linkAction('ActivityController@fdadownload','Download', $permit->id, array('class' => 'btn btn-info btn-xs')) }}
 								</td>
 						    </tr>
 						    @endforeach
@@ -803,13 +800,13 @@
 						      	<td>{{ $fi->file_name }}</td>
 						      	<td>{{ date_format(date_create($fi->created_at),'m/d/Y H:m:s') }}</td>
 						      	<td class="action">
+									{{ HTML::linkAction('ActivityController@fisdownload','Download', $fi->id, array('class' => 'btn btn-info btn-xs')) }}
+								</td>
+						      	<td class="action">
 									{{ Form::open(array('method' => 'DELETE', 'action' => array('ActivityController@fisdelete', $fi->id))) }}  
 									{{ Form::hidden('activity_id', $activity->id) }}                     
 									{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}
 									{{ Form::close() }}
-								</td>
-								<td class="action">
-									{{ HTML::linkAction('ActivityController@fisdownload','Download', $fi->id, array('class' => 'btn btn-info btn-xs')) }}
 								</td>
 						    </tr>
 						    @endforeach
@@ -848,13 +845,13 @@
 								      	<td>{{ $artwork->file_name }}</td>
 								      	<td>{{ date_format(date_create($artwork->created_at),'m/d/Y H:m:s') }}</td>
 								      	<td class="action">
+											{{ HTML::linkAction('ActivityController@artworkdownload','Download', $artwork->id, array('class' => 'btn btn-info btn-xs')) }}
+										</td>
+								      	<td class="action">
 											{{ Form::open(array('method' => 'DELETE', 'action' => array('ActivityController@artworkdelete', $artwork->id))) }}  
 											{{ Form::hidden('activity_id', $activity->id) }}                     
 											{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}
 											{{ Form::close() }}
-										</td>
-										<td class="action">
-											{{ HTML::linkAction('ActivityController@artworkdownload','Download', $artwork->id, array('class' => 'btn btn-info btn-xs')) }}
 										</td>
 								    </tr>
 								    @endforeach
@@ -894,14 +891,15 @@
 								      	<td>{{ $background->file_name }}</td>
 								      	<td>{{ date_format(date_create($background->created_at),'m/d/Y H:m:s') }}</td>
 								      	<td class="action">
+											{{ HTML::linkAction('ActivityController@backgrounddownload','Download', $background->id, array('class' => 'btn btn-info btn-xs')) }}
+										</td>
+								      	<td class="action">
 											{{ Form::open(array('method' => 'DELETE', 'action' => array('ActivityController@backgrounddelete', $artwork->id))) }}  
 											{{ Form::hidden('activity_id', $activity->id) }}                     
 											{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}
 											{{ Form::close() }}
 										</td>
-										<td class="action">
-											{{ HTML::linkAction('ActivityController@backgrounddownload','Download', $background->id, array('class' => 'btn btn-info btn-xs')) }}
-										</td>
+
 								    </tr>
 								    @endforeach
 							  	</tbody>
@@ -939,14 +937,14 @@
 								    <tr>
 								      	<td>{{ $banding->file_name }}</td>
 								      	<td>{{ date_format(date_create($banding->created_at),'m/d/Y H:m:s') }}</td>
+										<td class="action">
+											{{ HTML::linkAction('ActivityController@bandingdownload','Download', $banding->id, array('class' => 'btn btn-info btn-xs')) }}
+										</td>
 								      	<td class="action">
 											{{ Form::open(array('method' => 'DELETE', 'action' => array('ActivityController@bandingdelete', $banding->id))) }}  
 											{{ Form::hidden('activity_id', $activity->id) }}                     
 											{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}
 											{{ Form::close() }}
-										</td>
-										<td class="action">
-											{{ HTML::linkAction('ActivityController@bandingdownload','Download', $banding->id, array('class' => 'btn btn-info btn-xs')) }}
 										</td>
 								    </tr>
 								    @endforeach

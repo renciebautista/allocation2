@@ -14,7 +14,7 @@ class AddInstructionOnActivities extends Migration {
 	{
 		Schema::table('activities', function(Blueprint $table)
 		{
-			$table->text('instruction');
+			$table->text('instruction')->after('billing_remarks');
 		});
 	}
 

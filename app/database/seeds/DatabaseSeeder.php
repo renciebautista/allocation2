@@ -40,6 +40,7 @@ class DatabaseSeeder extends Seeder {
 		$this->call('MonthTableSeeder');
 		$this->call('BudgetTypeTableSeeder');
 		$this->call('PricelistTableSeeder');
+		$this->call('ActivityStatusTableSeeder');
 		
 		DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 

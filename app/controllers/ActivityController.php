@@ -265,55 +265,46 @@ class ActivityController extends \BaseController {
 			 'force_allocs'));
 		}
 
-		// if($activity->status_id == 2){
-		// 	$sel_planner = ActivityPlanner::where('activity_id',$id)
-		// 		->first();
-		// 	$sel_approver = ActivityApprover::getList($id);
-		// 	$sel_skus = ActivitySku::getList($id);
-		// 	$sel_objectives = ActivityObjective::getList($id);
-		// 	$sel_channels = ActivityChannel::getList($id);
+		if($activity->status_id > 3){
 
-		// 	$scope_types = ScopeType::orderBy('scope_name')->lists('scope_name', 'id');
-		// 	$planners = User::isRole('PMOG PLANNER')->lists('first_name', 'id');
-		// 	$approvers = User::isRole('CD OPS APPROVER')->lists('first_name', 'id');
-		// 	$involves = Pricelist::orderBy('sap_desc')->lists('sap_desc', 'sap_code');
-		// 	$channels = Channel::orderBy('channel_name')->lists('channel_name', 'id');
+			// details
+			$sel_planner = ActivityPlanner::where('activity_id',$id)->first();
+			$sel_approver = ActivityApprover::getList($id);
+			$approvers = User::isRole('CD OPS APPROVER')->lists('first_name', 'id');
+			$division = Sku::division($activity->division_code);
 
-		// 	$activity_types = ActivityType::orderBy('activity_type')->lists('activity_type', 'id');
-		// 	$cycles = Cycle::orderBy('cycle_name')->lists('cycle_name', 'id');
-			
-		// 	$divisions = Sku::select('division_code', 'division_desc')
-		// 		->groupBy('division_code')
-		// 		->orderBy('division_desc')->lists('division_desc', 'division_code');
+			$sel_objectives = ActivityObjective::getList($id);
 
-		// 	$objectives = Objective::orderBy('objective')->lists('objective', 'id');
+			$sel_channels = ActivityChannel::getList($id);
+			$channels = Channel::orderBy('channel_name')->lists('channel_name', 'id');
+			$objectives = Objective::orderBy('objective')->lists('objective', 'id');
+			$budgets = ActivityBudget::with('budgettype')
+				->where('activity_id', $id)
+				->get();
+			$nobudgets = ActivityNobudget::with('budgettype')
+				->where('activity_id', $id)
+				->get();
+			$schemes = Scheme::where('activity_id', $activity->id)
+				->orderBy('created_at', 'desc')
+				->get();
+			$scheme_customers = SchemeAllocation::getCustomers($activity->id);
+			$force_allocs = ForceAllocation::getlist($activity->id);
+			$scheme_allcations = SchemeAllocation::getAllocation($activity->id);
+			$materials = ActivityMaterial::where('activity_id', $activity->id)->get();
 
-		// 	$budgets = ActivityBudget::with('budgettype')
-		// 		->where('activity_id', $id)
-		// 		->get();
+			// attachments
+			$fdapermits = ActivityFdapermit::where('activity_id', $activity->id)->get();
+			$fis = ActivityFis::where('activity_id', $activity->id)->get();
+			$artworks = ActivityArtwork::where('activity_id', $activity->id)->get();
+			$backgrounds = ActivityBackground::where('activity_id', $activity->id)->get();
+			$bandings = ActivityBanding::where('activity_id', $activity->id)->get();
 
-		// 	$nobudgets = ActivityNobudget::with('budgettype')
-		// 		->where('activity_id', $id)
-		// 		->get();
-
-		// 	$schemes = Scheme::where('activity_id', $activity->id)
-		// 		->orderBy('created_at', 'desc')
-		// 		->get();
-
-		// 	$division = Sku::division($activity->division_code);
-		// 	$categories = Sku::categories($activity->division_code);
-		// 	$sel_categories = ActivityCategory::selected_category($activity->id);
-
-		// 	$brands = Sku::brands($sel_categories);
-		// 	$sel_brands = ActivityBrand::selected_brand($activity->id);
-
-		// 	$attachments = ActivityAttachment::where('activity_id', $activity->id)->get();
-
-		// 	// return View::make('activity.downloaded', compact('activity', 'scope_types', 'planners', 'approvers', 'cycles',
-		// 	//  'activity_types', 'divisions' , 'objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
-		// 	//  'involves', 'sel_skus', 'sel_objectives', 'channels', 'sel_channels', 'schemes', 'networks', 'division', 
-		// 	//  'categories', 'sel_categories', 'brands', 'sel_brands', 'attachments'));
-		// }
+			return View::make('shared.activity_readonly', compact('activity', 'sel_planner', 'approvers', 'division',
+			 'objectives',  'users', 'budgets', 'nobudgets','sel_approver',
+			 'sel_objectives', 'channels', 'sel_channels', 'schemes', 'networks',
+			 'scheme_customers', 'scheme_allcations', 'materials', 'force_allocs',
+			 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings'));
+		}
 
 	}
 
@@ -519,7 +510,7 @@ class ActivityController extends \BaseController {
 				->with('message', 'Other information are required.');
 		}
 
-		$activity->status_id = 2;
+		$activity->status_id = 4;
 		$activity->update();
 
 		return Redirect::route('activity.edit',$id)

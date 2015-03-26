@@ -15,7 +15,7 @@ class CreateActivityStatusesTable extends Migration {
 		Schema::create('activity_statuses', function(Blueprint $table)
 		{
 			$table->increments('id');
-			$table->text('status');
+			$table->string('status');
 		});
 	}
 
