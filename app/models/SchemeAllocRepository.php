@@ -95,6 +95,7 @@ class SchemeAllocRepository
                         $shipto_alloc->force_alloc = 0;
                         $shipto_alloc->final_alloc = $_shipto_alloc;
                     }else{
+                        $fs_multi = 0;
                         if(!is_null($shipto['split'])){
                             if($scheme_alloc->sold_to_alloc > 0){
                                 $fs_multi = $shipto['split'] / 100;

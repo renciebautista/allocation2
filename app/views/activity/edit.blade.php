@@ -35,6 +35,7 @@
 	<li class=""><a aria-expanded="false" href="#budget">Budget Details</a></li>
 	<li class=""><a aria-expanded="false" href="#timings">Timings Details</a></li>
 	<li class=""><a aria-expanded="false" href="#attachment">Attachments</a></li>
+	<li class=""><a aria-expanded="false" href="#comments">Comments</a></li>
 </ul>
 <div id="myTabContent" class="tab-content">
 
@@ -297,16 +298,13 @@
 					</div>
 				</div>
 			</div>
-
-
 		</div>
 		{{ Form::close() }}
 	</div>
 
 	<!-- customer details -->
 	<div class="tab-pane fade" id="customer">
-		<br>
-		
+		<br>	
 		<div class="well">
 			{{ Form::open(array('action' => array('ActivityController@updatecustomer', $activity->id), 'method' => 'PUT', 'class' => 'bs-component','id' => 'updateCustomer')) }}
 			<div class="row">
@@ -378,7 +376,6 @@
 		  	</div>
 		  	@endif
 		</div>
-		
 	</div>
 
 	<!-- scheme details -->
@@ -781,7 +778,6 @@
 						    	{{ Form::file('file','',array('id'=>'','class'=>'')) }}
 						  	</div>
 						  	{{ Form::submit('Upload', array('class' => 'btn btn-primary')) }}
-				  			</div>
 				  		</div>
 				  	</div>
 				{{ Form::close() }}
@@ -952,6 +948,42 @@
 							</table> 
 						</div>
 				  	</div>
+		  	</div>
+		</div>
+	</div>
+
+		<!-- attachment details -->
+	<div class="tab-pane fade" id="comments">
+		<br>
+		<div class="panel panel-default">
+		  	<div class="panel-heading">Comments</div>
+		  	<div class="panel-body">
+				<ul class="comment">
+					@foreach($comments as $comment)
+	                <li class="left clearfix">
+	                    <div class="comment-body clearfix">
+	                        <div class="header">
+	                            <strong class="primary-font">{{ $comment->createdby->getFullname()}} 
+	                            	@if($comment->comment_status_id == 2)
+	                            		<p class="text-danger">({{ $comment->status->status }})</p>
+	                            	@endif
+	                            	@if($comment->comment_status_id == 3)
+	                            		<p class="text-warning">({{ $comment->status->status }})</p>
+	                            	@endif
+	                            	@if($comment->comment_status_id > 4)
+	                            		<p class="text-success">({{ $comment->status->status }})</p>
+	                            	@endif
+	                            	
+	                            </strong> 
+	                            <small class="pull-right text-muted">
+	                                <i class="fa fa-clock-o fa-fw"></i> {{ Carbon::parse($comment->created_at)->subMinutes(2)->diffForHumans()}}
+	                            </small>
+	                        </div>
+	                        <p>{{ $comment->comment }}</p>
+	                    </div>
+	                </li>
+	                @endforeach
+	            </ul>
 		  	</div>
 		</div>
 	</div>
@@ -1518,7 +1550,7 @@ $('#no_budget_table').ajax_table({
 
 <!-- activity timings -->
 $('#activity_timings').bootstrapTable({
-    url: 'timings'
+    url: '{{ URL::action('ActivityController@timings', $activity->id ) }}'
 });
 
 

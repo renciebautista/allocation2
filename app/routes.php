@@ -471,12 +471,9 @@ Route::group(array('before' => 'auth'), function()
 	Route::put('scheme/{id}', 'SchemeController@update');
 	Route::put('scheme/updatealloc', 'SchemeController@updateallocation');
 
-
-	Route::post('downloadedactivity/{id}/upload', 'DownloadedActivityController@doupload');
-	Route::get('downloadedactivity/{id}/downloadfile', 'DownloadedActivityController@downloadfile');
-	Route::get('downloadedactivity/nobudget', 'DownloadedActivityController@nobudget');
-
-
+	Route::get('downloadedactivity/{id}/preview', 'DownloadedActivityController@preview');
+	Route::post('downloadedactivity/{id}/submittogcm', 'DownloadedActivityController@submittogcm');
+	
 	Route::resource('downloadedactivity', 'DownloadedActivityController');
 	Route::resource('submittedactivity', 'SubmittedActivityController');
 	

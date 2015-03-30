@@ -205,6 +205,7 @@ return array(
 		'DNS1D' 			=> 'Dinesh\Barcode\Facades\DNS1DFacade',
 		'DNS2D' 			=> 'Dinesh\Barcode\Facades\DNS2DFacade',
 		'Datatables'      	=> 'Bllim\Datatables\Facade\Datatables',
+		'Carbon'            => 'Carbon\Carbon',
 	),
 
 );

@@ -14,7 +14,8 @@
 		"rencie/cpm": "1.0",
 		"dinesh/barcode": "dev-master",
 		"bllim/datatables": "*",
-		"maxxscho/laravel-tcpdf": "0.*"
+		"maxxscho/laravel-tcpdf": "0.*",
+		"nesbot/carbon": "~1.14"
 		
 	},
 	"autoload": {

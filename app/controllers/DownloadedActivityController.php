@@ -13,22 +13,11 @@ class DownloadedActivityController extends \BaseController {
 		Input::flash();
 		$activities = Activity::select('activities.*')
 			->join('activity_planners', 'activities.id', '=', 'activity_planners.activity_id')
-			->whereIn('activities.status_id',array(2,3))
+			->whereIn('activities.status_id',array(4))
 			->where('activity_planners.user_id',Auth::id())
 			->get();
 		return View::make('downloadedactivity.index',compact('activities'));
 	}
-
-	// public function nobudget()
-	// {
-	// 	Input::flash();
-	// 	$activities = Activity::join('activity_planners', 'activities.id', '=', 'activity_planners.activity_id')
-	// 		->where('activities.downloaded','1')
-	// 		->where('activity_planners.user_id',Auth::id())
-	// 		->get();
-	// 	return View::make('downloadedactivity.nobudget',compact('activities'));
-	// }
-
 	/**
 	 * Show the form for creating a new resource.
 	 * GET /downloadedactivity/create
@@ -73,14 +62,17 @@ class DownloadedActivityController extends \BaseController {
 	public function edit($id)
 	{	
 		$activity = Activity::find($id);
-		if($activity->status_id == 2){
-			$sel_planner = ActivityPlanner::where('activity_id',$id)
-				->first();
+		if($activity->status_id == 4){
+			$submitstatus = array('2' => 'DENY', '5' => 'SUBMIT TO GCOM');
+			$sel_planner = ActivityPlanner::where('activity_id',$id)->first();
 			$sel_approver = ActivityApprover::getList($id);
+			$sel_objectives = ActivityObjective::getList($id);
+			$sel_channels = ActivityChannel::getList($id);
 
 			$scope_types = ScopeType::orderBy('scope_name')->lists('scope_name', 'id');
 			$planners = User::isRole('PMOG PLANNER')->lists('first_name', 'id');
 			$approvers = User::isRole('CD OPS APPROVER')->lists('first_name', 'id');
+			$channels = Channel::orderBy('channel_name')->lists('channel_name', 'id');
 
 			$activity_types = ActivityType::orderBy('activity_type')->lists('activity_type', 'id');
 			$cycles = Cycle::orderBy('cycle_name')->lists('cycle_name', 'id');
@@ -99,42 +91,32 @@ class DownloadedActivityController extends \BaseController {
 				->where('activity_id', $id)
 				->get();
 
-			$attachments = ActivityAttachment::where('activity_id', $id)->get();
+			$schemes = Scheme::where('activity_id', $activity->id)
+				->orderBy('created_at', 'desc')
+				->get();
+
+			$scheme_customers = SchemeAllocation::getCustomers($activity->id);
+			$force_allocs = ForceAllocation::getlist($activity->id);
+
+			// $attachments = ActivityAttachment::where('activity_id', $activity->id)->get();
+
+			$scheme_allcations = SchemeAllocation::getAllocation($activity->id);
+			$materials = ActivityMaterial::where('activity_id', $activity->id)->get();
+
+			$fdapermits = ActivityFdapermit::where('activity_id', $activity->id)->get();
+			$fis = ActivityFis::where('activity_id', $activity->id)->get();
+			$artworks = ActivityArtwork::where('activity_id', $activity->id)->get();
+			$backgrounds = ActivityBackground::where('activity_id', $activity->id)->get();
+			$bandings = ActivityBanding::where('activity_id', $activity->id)->get();
+
+			// comments
+			$comments = ActivityComment::where('activity_id', $activity->id)->orderBy('created_at','desc')->get();
 
 			return View::make('downloadedactivity.edit', compact('activity', 'scope_types', 'planners', 'approvers', 'cycles',
 			 'activity_types', 'divisions' , 'objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
-			 'attachments'));
-		}
-
-		if($activity->status_id == 3){
-			$sel_planner = ActivityPlanner::where('activity_id',$id)
-				->first();
-			$sel_approver = ActivityApprover::getList($id);
-
-			$scope_types = ScopeType::orderBy('scope_name')->lists('scope_name', 'id');
-			$planners = User::isRole('PMOG PLANNER')->lists('first_name', 'id');
-			$approvers = User::isRole('CD OPS APPROVER')->lists('first_name', 'id');
-
-			$activity_types = ActivityType::orderBy('activity_type')->lists('activity_type', 'id');
-			$cycles = Cycle::orderBy('cycle_name')->lists('cycle_name', 'id');
-			
-			$divisions = Sku::select('division_code', 'division_desc')
-				->groupBy('division_code')
-				->orderBy('division_desc')->lists('division_desc', 'division_code');
-
-			$objectives = Objective::orderBy('objective')->lists('objective', 'id');
-
-			$budgets = ActivityBudget::with('budgettype')
-				->where('activity_id', $id)
-				->get();
-
-			$nobudgets = ActivityNobudget::with('budgettype')
-				->where('activity_id', $id)
-				->get();
-
-
-			return View::make('downloadedactivity.recalled', compact('activity', 'scope_types', 'planners', 'approvers', 'cycles',
-			 'activity_types', 'divisions' , 'objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver'));
+			 'sel_objectives', 'channels', 'sel_channels', 'schemes', 'networks',
+			 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings',
+			 'force_allocs','submitstatus', 'comments'));
 		}
 			
 	}
@@ -163,55 +145,31 @@ class DownloadedActivityController extends \BaseController {
 		//
 	}
 
-	public function doupload($id){
-		if(Input::hasFile('file')){
-			$distination = storage_path().'/uploads/';
-			$file = Input::file('file');
-			$original_file_name = $file->getClientOriginalName();
-			$file_name = $original_file_name;
-			$file_path = $distination.$file_name;
+	public function submittogcm($id){
+		if(Request::ajax()){
+			$activity = Activity::find($id);
 
-			//Alter the file name until it's unique to prevent overwriting
-			while(File::exists($file_path)) {
-				$file_name = Str::slug($file->getClientOriginalName()).Str::random(6).'.'.File::extension($file->getClientOriginalName());
-				$file_path = $distination.$file_name;
+			if(empty($activity)){
+				$arr['success'] = 0;
+			}else{
+				$activity->status_id = Input::get('submitstatus');
+				$activity->update();
+
+				$comment = new ActivityComment;
+				$comment->created_by = Auth::id();
+				$comment->activity_id = $id;
+				$comment->comment = Input::get('submitremarks');
+				$comment->comment_status_id = Input::get('submitstatus');
+				$comment->save();
+
+				$arr['success'] = 1;
 			}
-
-			//Now the upload part
-			$file->move($distination,$file_name);
-
-			$docu = new ActivityAttachment;
-			$docu->created_by = Auth::id();
-			$docu->activity_id = $id;
-			$docu->hash_name = $file_name;
-			$docu->file_name = $original_file_name;
-			$docu->file_desc = (Input::get('file_desc') =='') ? $original_file_name : Input::get('file_desc');
-			$docu->save();
-
-			return Redirect::route('downloadedactivity.edit',$id)
-				->with('class', 'alert-success')
-				->with('message', 'Remarks successfuly posted.');
-		}else{
-			return Redirect::route('downloadedactivity.edit',$id)
-				->with('class', 'alert-danger')
-				->with('message', 'Error uploading file.');
+			return json_encode($arr);
 		}
 	}
 
-	public function downloadfile($id){
-		$file = ActivityAttachment::findOrFail($id);
-		// Check if file exists in app/storage/file folder
-		$file_path = storage_path() .'/uploads/'. $file->hash_name;
-		if (file_exists($file_path))
-		{
-			// Send Download
-			return Response::download($file_path);
-		}
-		else
-		{
-			exit('Requested file does not exist on our server!');
-		}
-	
-		
+	public function preview($id){
+		return View::make('shared.preview');
 	}
+
 }

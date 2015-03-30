@@ -17,7 +17,7 @@
 		<div class="form-group">
 			{{ HTML::linkRoute('activity.index', 'Back To Activity List', array(), array('class' => 'btn btn-default')) }}
 
-			{{ HTML::linkAction('ActivityController@download','Download to PMOG', $activity->id, array('class' => 'btn btn-primary', 'onclick' => "if(!confirm('Are you sure to download this activity?')){return false;};")) }}
+			<button class="btn btn-primary disabled">Download to PMOG</button>
 
 			<button class="btn btn-warning disabled">Recall</button>
 		</div>
@@ -35,6 +35,7 @@
 	<li class=""><a aria-expanded="false" href="#budget">Budget Details</a></li>
 	<li class=""><a aria-expanded="false" href="#timings">Timings Details</a></li>
 	<li class=""><a aria-expanded="false" href="#attachment">Attachments</a></li>
+	<li class=""><a aria-expanded="false" href="#comments">Comments</a></li>
 </ul>
 <div id="myTabContent" class="tab-content">
 
@@ -658,7 +659,7 @@
 			</div>
 	</div>
 
-		<!-- timings details -->
+	<!-- timings details -->
 	<div class="tab-pane fade" id="timings">
 		<br>
 		<div class="well">
@@ -690,7 +691,7 @@
 				</div>
 			</div>
 		</div>
-	</div>
+	</div>	
 
 	<!-- attachment details -->
 	<div class="tab-pane fade" id="attachment">
@@ -860,6 +861,42 @@
 					<button class="btn btn-default btn-style" type="submit">Back</button>
 				</div>
 			</div>
+		</div>
+	</div>
+
+	<!-- attachment details -->
+	<div class="tab-pane fade" id="comments">
+		<br>
+		<div class="panel panel-default">
+		  	<div class="panel-heading">Comments</div>
+		  	<div class="panel-body">
+				<ul class="comment">
+					@foreach($comments as $comment)
+	                <li class="left clearfix">
+	                    <div class="comment-body clearfix">
+	                        <div class="header">
+	                            <strong class="primary-font">{{ $comment->createdby->getFullname()}} 
+	                            	@if($comment->comment_status_id == 2)
+	                            		<p class="text-danger">({{ $comment->status->status }})</p>
+	                            	@endif
+	                            	@if($comment->comment_status_id == 3)
+	                            		<p class="text-warning">({{ $comment->status->status }})</p>
+	                            	@endif
+	                            	@if($comment->comment_status_id > 4)
+	                            		<p class="text-success">({{ $comment->status->status }})</p>
+	                            	@endif
+	                            	
+	                            </strong> 
+	                            <small class="pull-right text-muted">
+	                                <i class="fa fa-clock-o fa-fw"></i> {{ Carbon::parse($comment->created_at)->subMinutes(2)->diffForHumans()}}
+	                            </small>
+	                        </div>
+	                        <p>{{ $comment->comment }}</p>
+	                    </div>
+	                </li>
+	                @endforeach
+	            </ul>
+		  	</div>
 		</div>
 	</div>
 

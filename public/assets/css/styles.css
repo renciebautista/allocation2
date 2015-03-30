@@ -193,3 +193,14 @@
 #force_alloc .update {
 	width: 100px;
 }
+
+.comment {
+    list-style: outside none none;
+    margin: 0;
+    padding: 0;
+}
+.comment li {
+    border-bottom: 1px dotted #999;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+}

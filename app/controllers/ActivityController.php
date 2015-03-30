@@ -80,6 +80,21 @@ class ActivityController extends \BaseController {
 				$activity->status_id = 1;
 				$activity->save();
 
+				// add timings
+				$networks = ActivityTypeNetwork::timings($activity->activity_type_id,$activity->edownload_date);
+				if(count($networks)> 0){
+					$activity_timing = array();
+
+					foreach ($networks as $network) {
+						$activity_timing[] = array('activity_id' => $activity->id, 'task_id' => $network->task_id,
+							'milestone' => $network->milestone, 'task' => $network->task, 'responsible' => $network->responsible,
+							'duration' => $network->duration, 'depend_on' => $network->depend_on,
+							'start_date' => date('Y-m-d',strtotime($network->start_date)), 'end_date' => date('Y-m-d',strtotime($network->end_date)));
+					}
+					ActivityTiming::insert($activity_timing);
+				}
+
+
 				$scope = ScopeType::find($scope_id);
 				$cycle = Cycle::find($cycle_id);
 				$activity_type = ActivityType::find($activity_type_id);
@@ -212,7 +227,7 @@ class ActivityController extends \BaseController {
 	public function edit($id)
 	{
 		$activity = Activity::find($id);
-		if(($activity->status_id == 1) || ($activity->status_id == 3)){
+		if($activity->status_id < 4){
 			$sel_planner = ActivityPlanner::where('activity_id',$id)->first();
 			$sel_approver = ActivityApprover::getList($id);
 			$sel_objectives = ActivityObjective::getList($id);
@@ -258,11 +273,14 @@ class ActivityController extends \BaseController {
 			$backgrounds = ActivityBackground::where('activity_id', $activity->id)->get();
 			$bandings = ActivityBanding::where('activity_id', $activity->id)->get();
 
+			// comments
+			$comments = ActivityComment::where('activity_id', $activity->id)->orderBy('created_at','desc')->get();
+
 			return View::make('activity.edit', compact('activity', 'scope_types', 'planners', 'approvers', 'cycles',
 			 'activity_types', 'divisions' , 'objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
 			 'sel_objectives', 'channels', 'sel_channels', 'schemes', 'networks',
 			 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings',
-			 'force_allocs'));
+			 'force_allocs', 'comments'));
 		}
 
 		if($activity->status_id > 3){
@@ -299,11 +317,14 @@ class ActivityController extends \BaseController {
 			$backgrounds = ActivityBackground::where('activity_id', $activity->id)->get();
 			$bandings = ActivityBanding::where('activity_id', $activity->id)->get();
 
+			// comments
+			$comments = ActivityComment::where('activity_id', $activity->id)->orderBy('created_at','desc')->get();
+
 			return View::make('shared.activity_readonly', compact('activity', 'sel_planner', 'approvers', 'division',
 			 'objectives',  'users', 'budgets', 'nobudgets','sel_approver',
 			 'sel_objectives', 'channels', 'sel_channels', 'schemes', 'networks',
 			 'scheme_customers', 'scheme_allcations', 'materials', 'force_allocs',
-			 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings'));
+			 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings', 'comments'));
 		}
 
 	}
@@ -800,7 +821,7 @@ class ActivityController extends \BaseController {
 				return Response::json(array('success' => 0));
 			}else{
 				$networks = ActivityTiming::select(DB::raw('task_id,milestone,task,responsible,duration,depend_on,DATE_FORMAT(start_date, "%m/%d/%Y") AS start_date,DATE_FORMAT(end_date, "%m/%d/%Y") AS end_date'))
-					->where('activity_id', $id)->get();
+					->where('activity_id', $activity->id)->get();
 				return Response::json($networks);
 			}
 			
