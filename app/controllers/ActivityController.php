@@ -26,8 +26,8 @@ class ActivityController extends \BaseController {
 	public function create()
 	{
 		$scope_types = ScopeType::orderBy('scope_name')->lists('scope_name', 'id');
-		$planners = User::isRole('PMOG PLANNER')->lists('first_name', 'id');
-		$approvers = User::isRole('CD OPS APPROVER')->lists('first_name', 'id');
+		$planners = User::getApprovers(['PMOG PLANNER']);
+		$approvers = User::getApprovers(['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']);
 		
 		$activity_types = ActivityType::orderBy('activity_type')->lists('activity_type', 'id');
 		$cycles = Cycle::orderBy('cycle_name')->lists('cycle_name', 'id');
@@ -228,14 +228,16 @@ class ActivityController extends \BaseController {
 	{
 		$activity = Activity::find($id);
 		if($activity->status_id < 4){
+			$submitstatus = array('4' => 'SUBMIT TO PMOG');
+
 			$sel_planner = ActivityPlanner::where('activity_id',$id)->first();
 			$sel_approver = ActivityApprover::getList($id);
 			$sel_objectives = ActivityObjective::getList($id);
 			$sel_channels = ActivityChannel::getList($id);
 
 			$scope_types = ScopeType::orderBy('scope_name')->lists('scope_name', 'id');
-			$planners = User::isRole('PMOG PLANNER')->lists('first_name', 'id');
-			$approvers = User::isRole('CD OPS APPROVER')->lists('first_name', 'id');
+			$planners = User::getApprovers(['PMOG PLANNER']);
+			$approvers = User::getApprovers(['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']);
 			$channels = Channel::orderBy('channel_name')->lists('channel_name', 'id');
 
 			$activity_types = ActivityType::orderBy('activity_type')->lists('activity_type', 'id');
@@ -269,7 +271,7 @@ class ActivityController extends \BaseController {
 
 			$fdapermits = ActivityFdapermit::where('activity_id', $activity->id)->get();
 			$fis = ActivityFis::where('activity_id', $activity->id)->get();
-			$artworks = ActivityArtwork::where('activity_id', $activity->id)->get();
+			$artworks = ActivityArtwork::getArtworks($activity->id);
 			$backgrounds = ActivityBackground::where('activity_id', $activity->id)->get();
 			$bandings = ActivityBanding::where('activity_id', $activity->id)->get();
 
@@ -280,15 +282,15 @@ class ActivityController extends \BaseController {
 			 'activity_types', 'divisions' , 'objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
 			 'sel_objectives', 'channels', 'sel_channels', 'schemes', 'networks',
 			 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings',
-			 'force_allocs', 'comments'));
+			 'force_allocs', 'comments' ,'submitstatus'));
 		}
 
 		if($activity->status_id > 3){
-
+			$submitstatus = array('3' => 'RECALL ACTIVITY');
 			// details
 			$sel_planner = ActivityPlanner::where('activity_id',$id)->first();
 			$sel_approver = ActivityApprover::getList($id);
-			$approvers = User::isRole('CD OPS APPROVER')->lists('first_name', 'id');
+			$approvers = User::getApprovers(['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']);
 			$division = Sku::division($activity->division_code);
 
 			$sel_objectives = ActivityObjective::getList($id);
@@ -324,7 +326,7 @@ class ActivityController extends \BaseController {
 			 'objectives',  'users', 'budgets', 'nobudgets','sel_approver',
 			 'sel_objectives', 'channels', 'sel_channels', 'schemes', 'networks',
 			 'scheme_customers', 'scheme_allcations', 'materials', 'force_allocs',
-			 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings', 'comments'));
+			 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings', 'comments' ,'submitstatus'));
 		}
 
 	}
@@ -519,24 +521,63 @@ class ActivityController extends \BaseController {
 	}
 
 
-	public function download($id){
+	public function updateactivity($id){
+		if(Request::ajax()){
+			$arr = DB::transaction(function() use ($id)  {
+				$activity = Activity::findOrFail($id);
+				$validation = Activity::validForDownload($activity);
+				if(empty($activity) || ($validation['status'] == 0)){
+					$arr['success'] = 0;
+					$arr['error'] = $validation['message'];
+				}else{
+					$status_id = (int) Input::get('submitstatus');
+					$activity->status_id =$status_id;
+					$activity->update();
 
-		$activity = Activity::findOrFail($id);
+					if($status_id == 4){
+						$comment_status = "SUBMITTED TO PMOG";
+						$class = "text-success";
+					}
 
-		$validation = Activity::validForDownload($activity);
-		if($validation['status'] == 0){
-			return Redirect::route('activity.edit',$id)
-				->with('class', 'alert-danger')
-				->withErrors($validation['message'])
-				->with('message', 'Other information are required.');
+					if($status_id == 3){
+						$comment_status = "RECALLED ACTIVITY";
+						$class = "text-warning";
+
+						ActivityApprover::where('activity_id',$id)->update(array('status_id' => 0));
+					}
+
+					$comment = new ActivityComment;
+					$comment->created_by = Auth::id();
+					$comment->activity_id = $id;
+					$comment->comment = Input::get('submitremarks');
+					$comment->comment_status = $comment_status;
+					$comment->class = $class;
+					$comment->save();
+
+					$arr['success'] = 1;
+					Session::flash('class', 'alert-success');
+					Session::flash('message', 'Activity successfully updated.'); 
+				}
+				return $arr;
+			});
+			return json_encode($arr);
 		}
+		// $activity = Activity::findOrFail($id);
 
-		$activity->status_id = 4;
-		$activity->update();
+		// $validation = Activity::validForDownload($activity);
+		// if($validation['status'] == 0){
+		// 	return Redirect::route('activity.edit',$id)
+		// 		->with('class', 'alert-danger')
+		// 		->withErrors($validation['message'])
+		// 		->with('message', 'Other information are required.');
+		// }
 
-		return Redirect::route('activity.edit',$id)
-				->with('class', 'alert-success')
-				->with('message', 'Activity was successfuly downloaded to PMOG.');
+		// $activity->status_id = 4;
+		// $activity->update();
+
+		// return Redirect::route('activity.edit',$id)
+		// 		->with('class', 'alert-success')
+		// 		->with('message', 'Activity was successfuly downloaded to PMOG.');
 
 
 	}
@@ -820,8 +861,7 @@ class ActivityController extends \BaseController {
 			if(empty($activity)){
 				return Response::json(array('success' => 0));
 			}else{
-				$networks = ActivityTiming::select(DB::raw('task_id,milestone,task,responsible,duration,depend_on,DATE_FORMAT(start_date, "%m/%d/%Y") AS start_date,DATE_FORMAT(end_date, "%m/%d/%Y") AS end_date'))
-					->where('activity_id', $activity->id)->get();
+				$networks = ActivityTiming::getTimings($activity->id);
 				return Response::json($networks);
 			}
 			

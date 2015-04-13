@@ -48,7 +48,7 @@
 						<td>YES</td>
 						<td>{{ $activity->status->status }}</td>
 						<td>
-							{{ HTML::linkAction('DownloadedActivityController@edit','Edit', $activity->id, array('class' => 'btn btn-info btn-xs')) }}
+							{{ HTML::linkAction('SubmittedActivityController@edit','Edit', $activity->id, array('class' => 'btn btn-info btn-xs')) }}
 						</td>
 					</tr>
 					@endforeach

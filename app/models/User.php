@@ -56,4 +56,29 @@ class User extends Eloquent implements ConfideUserInterface {
 	    );
 	}
 
+	public function inRoles($roles){
+		foreach ($this->roles as $role) {
+            if (in_array($role->name, $roles)) {
+                return true;
+            }
+        }
+
+        return false;
+	}
+
+	public static function getApprovers($roles){
+		$users = self::select('users.id','users.first_name', 'users.middle_initial', 'users.last_name', 'roles.name')
+			->join('assigned_roles', 'users.id', '=', 'assigned_roles.user_id')
+			->join('roles', 'assigned_roles.role_id', '=', 'roles.id')
+			->where('users.active',1)
+			->whereIn('roles.name',$roles)
+			->orderBy('first_name')
+			->get();
+		$data = array();
+		foreach ($users as $user) {
+			$data[$user->id] = $user->first_name .' '.$user->middle_initial.' '.$user->last_name .' ('. $user->name.')';
+		}
+
+		return $data;
+	}
 }

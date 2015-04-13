@@ -49,7 +49,7 @@ class DownloadedActivityController extends \BaseController {
 	 */
 	public function show($id)
 	{
-		//
+		
 	}
 
 	/**
@@ -62,8 +62,10 @@ class DownloadedActivityController extends \BaseController {
 	public function edit($id)
 	{	
 		$activity = Activity::find($id);
+		$approvers = User::getApprovers(['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']);
 		if($activity->status_id == 4){
-			$submitstatus = array('2' => 'DENY', '5' => 'SUBMIT TO GCOM');
+
+			$submitstatus = array('2' => 'SUBMIT ACTIVITY','3' => 'DENY ACTIVITY');
 			$sel_planner = ActivityPlanner::where('activity_id',$id)->first();
 			$sel_approver = ActivityApprover::getList($id);
 			$sel_objectives = ActivityObjective::getList($id);
@@ -71,7 +73,6 @@ class DownloadedActivityController extends \BaseController {
 
 			$scope_types = ScopeType::orderBy('scope_name')->lists('scope_name', 'id');
 			$planners = User::isRole('PMOG PLANNER')->lists('first_name', 'id');
-			$approvers = User::isRole('CD OPS APPROVER')->lists('first_name', 'id');
 			$channels = Channel::orderBy('channel_name')->lists('channel_name', 'id');
 
 			$activity_types = ActivityType::orderBy('activity_type')->lists('activity_type', 'id');
@@ -91,9 +92,7 @@ class DownloadedActivityController extends \BaseController {
 				->where('activity_id', $id)
 				->get();
 
-			$schemes = Scheme::where('activity_id', $activity->id)
-				->orderBy('created_at', 'desc')
-				->get();
+			$schemes =  Scheme::sorted($id);
 
 			$scheme_customers = SchemeAllocation::getCustomers($activity->id);
 			$force_allocs = ForceAllocation::getlist($activity->id);
@@ -147,29 +146,104 @@ class DownloadedActivityController extends \BaseController {
 
 	public function submittogcm($id){
 		if(Request::ajax()){
-			$activity = Activity::find($id);
+			$arr = DB::transaction(function() use ($id)  {
+				$activity = Activity::find($id);
 
-			if(empty($activity)){
-				$arr['success'] = 0;
-			}else{
-				$activity->status_id = Input::get('submitstatus');
-				$activity->update();
+				if(empty($activity)){
+					$arr['success'] = 0;
+				}else{
+					$status_id = (int) Input::get('submitstatus');
+					
+					if($status_id == 2){
+						//check next approver
+						$gcom_approvers = ActivityApprover::getApproverByRole($id,'GCOM APPROVER');
+						if(count($gcom_approvers) > 0){
+							$comment_status = "SUBMITTED TO GCOM";
+							$activity->status_id = 5;
+						}else{
+							$cdops_approvers = ActivityApprover::getApproverByRole($id,'CD OPS APPROVER');
+							if(count($cdops_approvers) > 0){
+								$comment_status = "SUBMITTED TO CD OPS";
+								$activity->status_id = 6;
+							}else{
+								$cmd_approvers = ActivityApprover::getApproverByRole($id,'CMD DIRECTOR');
+								if(count($cmd_approvers) > 0){
+									$comment_status = "SUBMITTED TO CMD";
+									$activity->status_id = 7;
+								}else{
+									$comment_status = "APPROVED FOR FIELD";
+									$activity->status_id = 8;
+								}
+							}
+						}
+						$class = "text-success";
+					}elseif($status_id == 3){
+						$comment_status = "DENIED ACTIVITY";
+						$class = "text-danger";
+						$activity->status_id = 2;
+					}
+					$activity->update();
 
-				$comment = new ActivityComment;
-				$comment->created_by = Auth::id();
-				$comment->activity_id = $id;
-				$comment->comment = Input::get('submitremarks');
-				$comment->comment_status_id = Input::get('submitstatus');
-				$comment->save();
+					
 
-				$arr['success'] = 1;
-			}
+					$comment = new ActivityComment;
+					$comment->created_by = Auth::id();
+					$comment->activity_id = $id;
+					$comment->comment = Input::get('submitremarks');
+					$comment->comment_status = $comment_status;
+					$comment->class = $class;
+					$comment->save();
+
+					$arr['success'] = 1;
+					Session::flash('class', 'alert-success');
+					Session::flash('message', 'Activity successfully updated.'); 
+				}
+				return $arr;
+			});
 			return json_encode($arr);
 		}
 	}
 
+
 	public function preview($id){
-		return View::make('shared.preview');
+		$activity = Activity::find($id);
+		$planner = ActivityPlanner::where('activity_id', $activity->id)->first();
+		$budgets = ActivityBudget::with('budgettype')
+				->where('activity_id', $id)
+				->get();
+
+		$nobudgets = ActivityNobudget::with('budgettype')
+			->where('activity_id', $id)
+			->get();
+		$schemes = Scheme::sorted($id);
+
+		$skuinvolves = array();
+		foreach ($schemes as $scheme) {
+			$involves = SchemeHostSku::where('scheme_id',$scheme->id)
+				->join('pricelists', 'scheme_host_skus.sap_code', '=', 'pricelists.sap_code')
+				->get();
+			foreach ($involves as $value) {
+				$skuinvolves[] = $value;
+			}
+			
+		}
+
+		$materials = ActivityMaterial::where('activity_id', $activity->id)
+			->with('source')
+			->get();
+
+		$fdapermit = ActivityFdapermit::where('activity_id', $activity->id)->first();
+		$networks = ActivityTiming::getTimings($activity->id);
+		$artworks = ActivityArtwork::getArtworks($activity->id);
+
+		$scheme_customers = SchemeAllocation::getCustomers($activity->id);
+		
+		$pis = Excel::selectSheets('Output')->load(storage_path().'/uploads/fisupload/i1U6YvxiUjCuTXswyUGW.xlsx')->get();
+		// echo '<pre>';
+		// print_r($pis);
+		// echo '</pre>';
+		return View::make('shared.preview', compact('activity' ,'planner','budgets','nobudgets','schemes','skuinvolves','materials',
+			'fdapermit', 'networks','artworks' ,'scheme_customers', 'pis'));
 	}
 
 }

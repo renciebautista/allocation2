@@ -29,6 +29,8 @@
 			}
 
 		</style>
+
+		
 	</head>
 	<body>
 		<div class="navbar navbar-default navbar-fixed-top">
@@ -53,7 +55,7 @@
 								@if(Auth::user()->hasRole("PMOG PLANNER"))
 								<li>{{ HTML::linkRoute('downloadedactivity.index', 'Downloaded Activity') }}</li>  
 								@endif
-								@if(Auth::user()->hasRole("GCOM APPROVER"))
+								@if(Auth::user()->inRoles(['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']))
 								<li>{{ HTML::linkAction('submittedactivity.index' , 'Submitted Activity') }}</li>  
 								@endif  
 							</ul>
@@ -91,7 +93,21 @@
 		</div>
 
 		<div class="container">
-			@yield('content')
+			<div id="pageloading">
+				<div class="row">
+				  	<div class="col-md-6 col-md-offset-3">
+				  		<h3 id="progress-animated">Please wait page loading....</h3>
+				  		<div class="progress progress-striped active">
+			                <div class="progress-bar" style="width: 100%"></div>
+			            </div>
+				  	</div>
+				</div>
+				
+			</div>
+			<div id="page">
+				@yield('content')
+			</div>
+			
 			<!-- <footer>
 				<div class="row">
 				  <div class="col-lg-12">
@@ -161,38 +177,15 @@
 	{{ HTML::script('assets/js/function.js') }}
 
 	<script type="text/javascript">
-		function GetSelectValues(select) {
-		  var foo = []; 
-			select.each(function(i, selected){ 
-			  foo[i] = $(selected).val(); 
-			});
-			return foo;
-		}
-
-		function GetSelectValue(select) {
-		  var foo = []; 
-			select.each(function(i, selected){ 
-				foo[i] = $(selected).text(); 
-			});
-			if(foo.length > 1){
-				return 'MULTI';
-			}else{
-				return foo[0];
-			}
-		}
-
-		function GetSelectText(select) {
-		  var foo = []; 
-			select.each(function(i, selected){ 
-				foo[i] = $(selected).text(); 
-			});
-			return foo;
-		}
+		
 
 		$(document).ready(function() {
-		@section('page-script')
+			
+			$("#page").show();
+			$("#pageloading").hide();
+			@section('page-script')
 
-		@show
+			@show
 		});
 	</script>
 	</body>

@@ -14,7 +14,7 @@ class ActivityStatusTableSeeder extends Seeder {
 			(1, 'DRAFTED'),
 			(2, 'DENIED'),
 			(3, 'RECALLED'),
-			(4, 'DOWNLOADED TO PMOG'),
+			(4, 'SUBMITTED TO PMOG'),
 			(5, 'SUBMITTED TO GCOM'),
 			(6, 'SUBMITTED TO CD OPS'),
 			(7, 'SUBMITTED TO CMD DIRECTOR'),

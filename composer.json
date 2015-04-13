@@ -15,7 +15,8 @@
 		"dinesh/barcode": "dev-master",
 		"bllim/datatables": "*",
 		"maxxscho/laravel-tcpdf": "0.*",
-		"nesbot/carbon": "~1.14"
+		"nesbot/carbon": "~1.14",
+		"intervention/image": "~2.1"
 		
 	},
 	"autoload": {

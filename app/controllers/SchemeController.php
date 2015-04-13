@@ -26,16 +26,8 @@ class SchemeController extends \BaseController {
 
 		$categories = ActivityCategory::selected_category($id);
 		$brands = ActivityBrand::selected_brand($id);
-		$skus = Sku::select('sku_code', DB::raw('CONCAT(sku_desc, "- ", sku_code) AS full_desc'))
-			->where('division_code',$activity->division_code)
-			->whereIn('category_code',$categories)
-			->whereIn('brand_code',$brands)
-			->orderBy('sku_code')
-			->lists('full_desc', 'sku_code');
-		$involves = Pricelist::orderBy('sap_desc')->lists('sap_desc', 'sap_code');
-
-
-
+		$skus = Sku::items($activity->division_code,$categories,$brands);
+		$involves = Pricelist::items();
 		return View::make('scheme.create', compact('activity','skus', 'involves'));
 	}
 
@@ -194,13 +186,8 @@ class SchemeController extends \BaseController {
 		$activity = Activity::find($scheme->activity_id);
 		$categories = ActivityCategory::selected_category($scheme->activity_id);
 		$brands = ActivityBrand::selected_brand($scheme->activity_id);
-		$skus = Sku::select('sku_code', DB::raw('CONCAT(sku_desc, "- ", sku_code) AS full_desc'))
-			->where('division_code',$activity->division_code)
-			->whereIn('category_code',$categories)
-			->whereIn('brand_code',$brands)
-			->orderBy('sku_code')
-			->lists('full_desc', 'sku_code');
-		$involves = Pricelist::orderBy('sap_desc')->lists('sap_desc', 'sap_code');
+		$skus = Sku::items($activity->division_code,$categories,$brands);
+		$involves = Pricelist::items();
 
 		$sel_skus =  SchemeSku::getSkus($scheme->id);
 

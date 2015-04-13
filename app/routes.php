@@ -418,7 +418,7 @@ Route::group(array('before' => 'auth'), function()
 
 	Route::get('activity/{id}/timings', 'ActivityController@timings');
 
-	Route::get('activity/{id}/download', 'ActivityController@download');
+	Route::post('activity/{id}/updateactivity', 'ActivityController@updateactivity');
 	Route::get('activity/{id}/recall', 'ActivityController@recall');
 
 	Route::post('activity/{id}/addbudget', 'ActivityController@addbudget');
@@ -475,6 +475,8 @@ Route::group(array('before' => 'auth'), function()
 	Route::post('downloadedactivity/{id}/submittogcm', 'DownloadedActivityController@submittogcm');
 	
 	Route::resource('downloadedactivity', 'DownloadedActivityController');
+
+	Route::post('submittedactivity/{id}/updateactivity', 'SubmittedActivityController@updateactivity');
 	Route::resource('submittedactivity', 'SubmittedActivityController');
 	
 	Route::resource('group', 'GroupController');
@@ -505,6 +507,16 @@ Route::group(array('before' => 'auth'), function()
 
 	Route::resource('activitytype', 'ActivityTypeController');
 
+	Route::get('images/{folder}/{image}', function($folder = null,$image = null)
+	{
+	    $path = storage_path().'/uploads/'.$folder.'/' . $image;
+	    // echo $path;
+	    if (file_exists($path)) { 
+	    	$img = Image::make($path)->resize(300, 200);
+	    	return $img->response();
+	        // return Response::download($path);
+	    }
+	});
 
 	Route::group(array('prefix' => 'api'), function()
 	{

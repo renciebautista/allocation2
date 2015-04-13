@@ -50,7 +50,10 @@ class DashboardController extends \BaseController {
 
 		// $cpm = new Cpm($activities);
 		// echo $cpm->TotalDuration();
-
+		// $user =  Auth::user();
+		// echo '<pre>';
+		// print_r(Auth::user()->roles->first()->name);
+		// echo '</pre>';
 		return View::make('dashboard.index');
 	}
 

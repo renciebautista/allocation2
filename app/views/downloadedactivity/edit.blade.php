@@ -983,6 +983,16 @@
 				  	</div>
 		  	</div>
 		</div>
+
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="form-group">
+					<button class="btn btn-default btn-style" type="submit">Back</button>
+					<button class="btn btn-primary btn-style" type="submit">Next</button>
+				</div>
+			</div>
+		</div>
+
 	</div>
 
 		<!-- attachment details -->
@@ -997,16 +1007,7 @@
 	                    <div class="comment-body clearfix">
 	                        <div class="header">
 	                            <strong class="primary-font">{{ $comment->createdby->getFullname()}} 
-	                            	@if($comment->comment_status_id == 2)
-	                            		<p class="text-danger">({{ $comment->status->status }})</p>
-	                            	@endif
-	                            	@if($comment->comment_status_id == 3)
-	                            		<p class="text-warning">({{ $comment->status->status }})</p>
-	                            	@endif
-	                            	@if($comment->comment_status_id > 4)
-	                            		<p class="text-success">({{ $comment->status->status }})</p>
-	                            	@endif
-	                            	
+	                            	<p class="{{ $comment->class }}">({{ $comment->comment_status }})</p>
 	                            </strong> 
 	                            <small class="pull-right text-muted">
 	                                <i class="fa fa-clock-o fa-fw"></i> {{ Carbon::parse($comment->created_at)->subMinutes(2)->diffForHumans()}}
@@ -1018,6 +1019,14 @@
 	                @endforeach
 	            </ul>
 		  	</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="form-group">
+					<button class="btn btn-default btn-style" type="submit">Back</button>
+				</div>
+			</div>
 		</div>
 	</div>
 

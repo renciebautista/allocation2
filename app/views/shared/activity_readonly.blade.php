@@ -17,14 +17,41 @@
 		<div class="form-group">
 			{{ HTML::linkRoute('activity.index', 'Back To Activity List', array(), array('class' => 'btn btn-default')) }}
 
-			<button class="btn btn-primary disabled">Download to PMOG</button>
-
-			<button class="btn btn-warning disabled">Recall</button>
+			<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myAction">
+			  	Actions
+			</button>
 		</div>
 	</div>
 
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="myAction" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  	<div class="modal-dialog">
+  		<div class="modal-content">
+	    	{{ Form::open(array('action' => array('ActivityController@updateactivity', $activity->id), 'class' => 'bs-component','id' => 'updateactivity')) }}
+	      	<div class="modal-header">
+	        	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        	<h4 class="modal-title" id="myModalLabel">Activity Actions</h4>
+	      	</div>
+	      	<div class="modal-body">
+	          	<div class="form-group">
+	            	{{ Form::label('submitstatus', 'Status:', array('class' => 'control-label')) }}
+	            	{{ Form::select('submitstatus', array('0' => 'PLEASE SELECT') + $submitstatus, null, array('id' => 'submitstatus', 'class' => 'form-control')) }}
+	          	</div>
+	          	<div class="form-group">
+	            	{{ Form::label('submitremarks', 'Comments:', array('class' => 'control-label')) }}
+	            	{{ Form::textarea('submitremarks','',array('class' => 'form-control', 'placeholder' => 'Comments')) }}
+	          	</div>
+	      	</div>
+	      	<div class="modal-footer">
+	        	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	        	<button class="btn btn-primary">Submit</button>	    
+	     	</div>
+	     	{{ Form::close() }}
+	    </div>
+  	</div>
+</div>
 
 
 
@@ -325,18 +352,9 @@
 					<div class="form-group">
 						<div class="checkbox">
 					        <label>
-					        	{{ Form::checkbox('allow_force', 1,$activity->allow_force) }} Enable Force Allocation
+					        	{{ Form::checkbox('allow_force', 1,$activity->allow_force, array('disabled' => '')) }} Enable Force Allocation
 					        </label>
 					    </div>
-					</div>
-				</div>
-			</div>
-			<br>
-			<div class="row">
-				<div class="col-lg-12">
-					<div class="form-group">
-						<button class="btn btn-default btn-style" type="submit">Back</button>
-						<button class="btn btn-primary btn-style" type="submit">Next</button>
 					</div>
 				</div>
 			</div>
@@ -369,6 +387,14 @@
 				</div>
 		  	</div>
 		  	@endif
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="form-group">
+						<button class="btn btn-default btn-style" type="submit">Back</button>
+						<button class="btn btn-primary btn-style" type="submit">Next</button>
+					</div>
+				</div>
+			</div>
 		</div>
 		
 	</div>
@@ -377,7 +403,6 @@
 	<div class="tab-pane fade" id="schemes">
 		<br>
 		<div class="well">
-			<a href="{{ URL::action('SchemeController@create', $activity->id) }}" class="btn btn-primary"><i class="fa fa-plus"></i> Scheme</a>
 			<div class="row">
 				<div class="col-lg-12">
 
@@ -859,6 +884,7 @@
 			<div class="col-lg-12">
 				<div class="form-group">
 					<button class="btn btn-default btn-style" type="submit">Back</button>
+					<button class="btn btn-primary btn-style" type="submit">Next</button>
 				</div>
 			</div>
 		</div>
@@ -876,16 +902,7 @@
 	                    <div class="comment-body clearfix">
 	                        <div class="header">
 	                            <strong class="primary-font">{{ $comment->createdby->getFullname()}} 
-	                            	@if($comment->comment_status_id == 2)
-	                            		<p class="text-danger">({{ $comment->status->status }})</p>
-	                            	@endif
-	                            	@if($comment->comment_status_id == 3)
-	                            		<p class="text-warning">({{ $comment->status->status }})</p>
-	                            	@endif
-	                            	@if($comment->comment_status_id > 4)
-	                            		<p class="text-success">({{ $comment->status->status }})</p>
-	                            	@endif
-	                            	
+	                            	<p class="{{ $comment->class }}">({{ $comment->comment_status }})</p>
 	                            </strong> 
 	                            <small class="pull-right text-muted">
 	                                <i class="fa fa-clock-o fa-fw"></i> {{ Carbon::parse($comment->created_at)->subMinutes(2)->diffForHumans()}}
@@ -897,6 +914,14 @@
 	                @endforeach
 	            </ul>
 		  	</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="form-group">
+					<button class="btn btn-default btn-style" type="submit">Back</button>
+				</div>
+			</div>
 		</div>
 	</div>
 
@@ -1161,6 +1186,53 @@ new $.fn.dataTable.FixedColumns( table, {
 <!-- activity timings -->
 $('#activity_timings').bootstrapTable({
     url: 'timings'
+});
+
+<!-- update activty -->
+
+$("form[id='updateactivity']").on("submit",function(e){
+	var form = $(this);
+	var method = form.find('input[name="_method"]').val() || 'POST';
+	var url = form.prop('action');
+	$.ajax({
+		url: url,
+		data: form.serialize(),
+		method: method,
+		dataType: "json",
+		success: function(data){
+			if(data.success == "1"){
+				location.reload();
+			}else{
+				bootbox.alert("An error occured while updating."); 
+			}
+		}
+	});
+	e.preventDefault();
+});
+
+$("#updateactivity").validate({
+	errorElement: "span", 
+	errorClass : "has-error",
+	rules: {
+		submitstatus: "is_natural_no_zero",
+		submitremarks: "required"
+
+	},
+	errorPlacement: function(error, element) {               
+		
+	},
+	highlight: function( element, errorClass, validClass ) {
+    	$(element).closest('div').addClass(errorClass).removeClass(validClass);
+  	},
+  	unhighlight: function( element, errorClass, validClass ) {
+    	$(element).closest('div').removeClass(errorClass).addClass(validClass);
+  	}
+});
+
+$("#myAction" ).on('show.bs.modal', function(){
+    $("#submitstatus").val(0);
+    $("#submitremarks").val('');
+    $('.form-group').removeClass('has-error');
 });
 
 

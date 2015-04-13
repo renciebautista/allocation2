@@ -20,4 +20,10 @@ class Scheme extends \Eloquent {
     {
         return $this->belongsTo('Activity','activity_id','id');
     }
+
+    public static function sorted($id){
+    	return self::where('activity_id',$id)
+			->orderBy('created_at', 'desc')
+			->get();
+    }
 }

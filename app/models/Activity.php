@@ -42,6 +42,11 @@ class Activity extends \Eloquent {
         return $this->belongsTo('User','created_by');
     }
 
+    public function objectives()
+    {
+        return $this->belongsToMany('Objective','activity_objectives');
+    }
+
 
     // static function
 	public static function validForDownload($activity){
@@ -133,6 +138,10 @@ class Activity extends \Eloquent {
 
 		$return['message'] = $required;
 		return $return;;
+		
+	}
+
+	public static function updateStatus($status_id){
 		
 	}
 

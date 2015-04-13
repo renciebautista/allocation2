@@ -54,7 +54,11 @@ class SchemeAllocRepository
                 foreach ($areas as $area) {
                     if($area->area_code == $customer->area_code){
                         $area_alloc = round(($scheme->quantity * $area->multi)/100);
-                        $area_multiplier = $customer->gsv/$_areasales[$customer->area_code];
+                        $area_multiplier = 0;
+                        if($_areasales[$customer->area_code] > 0){
+                            $area_multiplier = $customer->gsv/$_areasales[$customer->area_code];
+                        }
+                        
                         $f_c = round($area_multiplier * $area_alloc);
                         $scheme_alloc->force_alloc = $f_c;
                         $scheme_alloc->final_alloc = $f_c;
