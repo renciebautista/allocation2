@@ -504,6 +504,8 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('activitytype/{id}/network/totalduration', 'NetworkController@totalduration');
 	Route::post('activitytype/{id}/network/create', 'NetworkController@store');
 
+	Route::get('reports/activities', 'ReportController@activities');
+	Route::get('reports/{id}/preview', 'ReportController@preview');
 
 	Route::resource('activitytype', 'ActivityTypeController');
 

@@ -53,6 +53,13 @@
 						{{ Form::label('duration', 'Duration (days)', array('class' => 'control-label')) }}
 						{{ Form::text('duration','',array('class' => 'form-control', 'placeholder' => 'Duration (days)')) }}
 					</div>
+					<div class="form-group">
+						<div class="checkbox">
+					        <label>
+					        	{{ Form::checkbox('show') }} Show in Activity Preview
+					        </label>
+					    </div>
+					</div>
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -75,6 +82,7 @@
 				        <th data-field="responsible">Team Responsible</th>
 				        <th data-field="duration">Duration (days)</th>
 				        <th data-field="depend_on">Depends On</th>
+				        <th data-field="show">Show On Preview</th>
 				        <th data-field="action" data-formatter="actionFormatter" data-events="actionEvents">Action</th>
 				    </tr>
 				</thead>

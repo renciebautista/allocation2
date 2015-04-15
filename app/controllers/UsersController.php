@@ -53,6 +53,7 @@ class UsersController extends Controller
 				$user->last_name = strtoupper(Input::get('last_name'));
 				$user->username = Input::get('username');
 				$user->email = Input::get('email');
+				$user->contact_no = Input::get('contact_no');
 				$user->password = Input::get('password');
 				$user->password_confirmation = Input::get('password_confirmation');
 				$user->confirmation_code = md5(uniqid(mt_rand(), true));

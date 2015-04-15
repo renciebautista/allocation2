@@ -5,7 +5,7 @@
 <div class="page-header" id="banner">
 	<div class="row">
 		<div class="col-lg-8 col-md-7 col-sm-6">
-			<h1>Activity List</h1>
+			<h1>All Activities Report</h1>
 		</div>
 	</div>
 </div>
@@ -73,6 +73,19 @@
 				<div class="form-group">
 					<div class="row">
 						<div class="col-lg-12">
+						{{ Form::label('proponent', 'Proponent', array('class' => 'control-label')) }}
+						{{ Form::select('proponent', array('0' => 'ALL PROPONENTS') + $proponents, null, array('id' => 'proponent','class' => 'form-control')) }}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-6">
+				<div class="form-group">
+					<div class="row">
+						<div class="col-lg-12">
 						{{ Form::label('title', 'Activity Title', array('class' => 'control-label')) }}
 						{{ Form::text('title',Input::old('title'),array('class' => 'form-control', 'placeholder' => 'Activity Title')) }}
 						</div>
@@ -80,6 +93,7 @@
 				</div>
 			</div>
 		</div>
+
 		<div class="row">
 			<div class="col-lg-6">
 				<div class="form-group">
@@ -87,7 +101,6 @@
 						<div class="col-lg-12">
 							<div class="search">
 								<button type="submit" class="btn btn-success"><i class="fa fa-search"></i> Search</button>
-								<a href="{{ URL::action('ActivityController@create') }}" class="btn btn-primary"><i class="fa fa-plus"></i> Activity</a>
 							</div>
 						</div>
 					</div>
@@ -111,6 +124,7 @@
 						<th>Scope</th>
 						<th>Activity Type</th>
 						<th>Activity Title</th>
+						<th>Proponent</th>
 						<th>PMOG Partner</th>
 						<th>Start Date</th>
 						<th>End Date</th>
@@ -131,26 +145,16 @@
 						<td>{{ $activity->scope_name }}</td>
 						<td>{{ $activity->activity_type }}</td>
 						<td>{{ $activity->circular_name }}</td>
+						<td>{{ $activity->proponent }}</td>
 						<td>{{ $activity->planner }}</td>
 						<td>{{ date_format(date_create($activity->edownload_date),'m/d/Y') }}</td>
 						<td>{{ date_format(date_create($activity->eimplementation_date),'m/d/Y') }}</td>
 						<td>{{ date_format(date_create($activity->billing_date),'m/d/Y') }}</td>
 						<td class="action">
-							@if($activity->status_id == 1)
-							{{ Form::open(array('method' => 'DELETE', 'action' => array('ActivityController@destroy', $activity->id))) }}                       
-							{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}
-							{{ Form::close() }}
-							@else
-							<button class="btn btn-danger btn-xs disabled">DELETE</button>
-							@endif
+							{{ HTML::linkAction('ActivityController@edit','Download', $activity->id, array('class' => 'btn btn-success btn-xs')) }}
 						</td>
 						<td class="action">
-							@if($activity->status_id == 1)
-							{{ HTML::linkAction('ActivityController@edit','Edit', $activity->id, array('class' => 'btn btn-info btn-xs')) }}
-							@else
-							{{ HTML::linkAction('ActivityController@edit','View', $activity->id, array('class' => 'btn btn-info btn-xs')) }}
-							@endif
-							
+							<a class="btn btn-info btn-xs" target="_blank" href="{{ URL::action('ReportController@preview', $activity->id ) }}">Preview</a>							
 						</td>
 					</tr>
 					@endforeach

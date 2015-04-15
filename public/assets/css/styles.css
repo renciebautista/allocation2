@@ -1,3 +1,6 @@
+/*.container {
+  	width: 1200px;
+}*/
 .page-header{
 	margin: 10px 0 21px;
 	border-bottom: 1px solid #eee;
@@ -373,4 +376,11 @@
   	padding: 5px;
   	font-size: 10px;
 }
-#activity_container .p-head  tr > td:first-child{width:300px;}*/
+#activity_container .p-head  tr > td:first-child{width:300px;}
+
+.form-group {
+  margin-bottom: 5px;
+}
+.search{
+	margin-top: 10px;
+}

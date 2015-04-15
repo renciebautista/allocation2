@@ -22,4 +22,8 @@ class Cycle extends \Eloquent {
 			->where('cycles.cycle_name', 'LIKE' ,"%$filter%")
 			->get();
 	}
+
+	public static function getLists(){
+		return self::orderBy('cycle_name')->lists('cycle_name', 'id');
+	}
 }

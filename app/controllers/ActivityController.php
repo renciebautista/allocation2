@@ -11,10 +11,15 @@ class ActivityController extends \BaseController {
 	public function index()
 	{
 		Input::flash();
-		$activities = Activity::where('created_by', '=', Auth::id())
-			->orderBy('created_at','desc')
-			->get();
-		return View::make('activity.index',compact('activities'));
+		$statuses = ActivityStatus::orderBy('status')->lists('status', 'id');
+		$activities = Activity::search(Auth::id(),Input::get('status'),Input::get('cycle'),Input::get('scope'),
+			Input::get('type'),Input::get('pmog'),Input::get('title'));
+		$cycles = Activity::availableCycles(Auth::id());
+		$scopes = Activity::availableScopes(Auth::id());
+		$types = Activity::availableTypes(Auth::id());
+		$planners = Activity::availablePlanners(Auth::id());
+		// Helper::print_array($planners);
+		return View::make('activity.index',compact('statuses', 'activities', 'cycles', 'scopes', 'types', 'planners'));
 	}
 
 	/**
@@ -25,12 +30,12 @@ class ActivityController extends \BaseController {
 	 */
 	public function create()
 	{
-		$scope_types = ScopeType::orderBy('scope_name')->lists('scope_name', 'id');
+		$scope_types = ScopeType::getLists();
 		$planners = User::getApprovers(['PMOG PLANNER']);
 		$approvers = User::getApprovers(['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']);
 		
-		$activity_types = ActivityType::orderBy('activity_type')->lists('activity_type', 'id');
-		$cycles = Cycle::orderBy('cycle_name')->lists('cycle_name', 'id');
+		$activity_types = ActivityType::getLists();
+		$cycles = Cycle::getLists();
 		
 		$divisions = Sku::select('division_code', 'division_desc')
 			->groupBy('division_code')
@@ -475,17 +480,6 @@ class ActivityController extends \BaseController {
 							ActivityBrand::insert($activity_brand);
 						}
 
-						// update skus involve
-						// ActivitySku::where('activity_id',$activity->id)->delete();
-						// if (Input::has('involve'))
-						// {
-						// 	$activity_skuinvoled = array();
-						// 	foreach (Input::get('involve') as $sku){
-						// 		$activity_skuinvoled[] = array('activity_id' => $activity->id, 'sap_code' => $sku);
-						// 	}
-						// 	ActivitySku::insert($activity_skuinvoled);
-						// }
-						
 						// update objective
 						ActivityObjective::where('activity_id',$activity->id)->delete();
 						if (Input::has('objective'))
@@ -502,7 +496,6 @@ class ActivityController extends \BaseController {
 				}
 			}
 			
-
 			$arr['id'] = $id;
 			return json_encode($arr);
 		}
@@ -562,23 +555,6 @@ class ActivityController extends \BaseController {
 			});
 			return json_encode($arr);
 		}
-		// $activity = Activity::findOrFail($id);
-
-		// $validation = Activity::validForDownload($activity);
-		// if($validation['status'] == 0){
-		// 	return Redirect::route('activity.edit',$id)
-		// 		->with('class', 'alert-danger')
-		// 		->withErrors($validation['message'])
-		// 		->with('message', 'Other information are required.');
-		// }
-
-		// $activity->status_id = 4;
-		// $activity->update();
-
-		// return Redirect::route('activity.edit',$id)
-		// 		->with('class', 'alert-success')
-		// 		->with('message', 'Activity was successfuly downloaded to PMOG.');
-
 
 	}
 
@@ -592,7 +568,7 @@ class ActivityController extends \BaseController {
 				->with('message', 'Activity was successfuly recalled from PMOG');
 	}
 
-	// ajac function
+	// ajax function
 	// Activity Materials
 	public function addbudget($id){
 		if(Request::ajax()){

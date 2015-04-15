@@ -198,11 +198,11 @@
 					</tr>
 					<tr>
 						<td>Proponent Name</td>
-						<td>: {{ $activity->createdby->getFullname() }}</td>
+						<td>: {{ $activity->createdby->getFullname() }} / {{ $activity->createdby->contact_no }}</td>
 					</tr>
 					<tr>
 						<td>PMOG Partner</td>
-						<td>: {{ $planner->planner->getFullname() }}</td>
+						<td>: {{ $planner->planner->getFullname() }} / {{ $planner->planner->contact_no }}</td>
 					</tr>
 					<tr>
 						<td>TOP Cycle</td>

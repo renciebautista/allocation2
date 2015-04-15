@@ -25,4 +25,8 @@ class ActivityType extends \Eloquent {
 		return self::where('activity_type', 'LIKE' ,"%$filter%")
 			->get();
 	}
+
+	public static function getLists(){
+		return self::orderBy('activity_type')->lists('activity_type', 'id');
+	}
 }

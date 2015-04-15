@@ -38,6 +38,11 @@
 		</div>
 
 		<div class="form-group">
+			{{ Form::label('contact_no', 'Contact No.', array('class' => 'control-label')) }}
+			{{ Form::text('contact_no','',array('class' => 'form-control', 'placeholder' => 'Contact No.')) }}
+		</div>
+
+		<div class="form-group">
 			{{ Form::label('first_name', 'First Name', array('class' => 'control-label')) }}
 			{{ Form::text('first_name','',array('class' => 'form-control', 'placeholder' => 'First Name')) }}
 		</div>
