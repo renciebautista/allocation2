@@ -15,11 +15,13 @@
 <div class="row">
 	<div class="col-lg-12">
 		<div class="form-group">
-			{{ HTML::linkRoute('activity.index', 'Back To Activity List', array(), array('class' => 'btn btn-default')) }}
+			{{ HTML::linkRoute($route, 'Back To Activity List', array(), array('class' => 'btn btn-default')) }}
 
+			@if($recall)
 			<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myAction">
 			  	Actions
 			</button>
+			@endif
 		</div>
 	</div>
 
@@ -29,7 +31,7 @@
 <div class="modal fade" id="myAction" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   	<div class="modal-dialog">
   		<div class="modal-content">
-	    	{{ Form::open(array('action' => array('ActivityController@updateactivity', $activity->id), 'class' => 'bs-component','id' => 'updateactivity')) }}
+	    	{{ Form::open(array('action' => array($submit_action, $activity->id), 'class' => 'bs-component','id' => 'updateactivity')) }}
 	      	<div class="modal-header">
 	        	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 	        	<h4 class="modal-title" id="myModalLabel">Activity Actions</h4>
@@ -41,7 +43,7 @@
 	          	</div>
 	          	<div class="form-group">
 	            	{{ Form::label('submitremarks', 'Comments:', array('class' => 'control-label')) }}
-	            	{{ Form::textarea('submitremarks','',array('class' => 'form-control', 'placeholder' => 'Comments')) }}
+	            	{{ Form::textarea('submitremarks','',array('class' => 'form-control', 'placeholder' => 'Comments', 'size' => '30x5')) }}
 	          	</div>
 	      	</div>
 	      	<div class="modal-footer">
@@ -103,7 +105,7 @@
 						<div class="row">
 							<div class="col-lg-12">
 								{{ Form::label('planner', 'PMOG Planner', array('class' => 'control-label')) }}
-								{{ Form::text('planner',$sel_planner->planner->getFullname(), array('class' => 'form-control','readonly' => '')) }}
+								{{ Form::text('planner',(!empty($sel_planner->planner)?$sel_planner->planner->getFullname : ''), array('class' => 'form-control','readonly' => '')) }}
 							</div>
 						</div>
 					</div>

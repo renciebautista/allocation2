@@ -47,7 +47,7 @@
 					<ul class="nav navbar-nav">
 						@if(!Auth::user()->hasRole("ADMINISTRATOR"))
 						<li class="dropdown">
-							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="transaction">Transaction <span class="caret"></span></a>
+							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="transaction">Transactions <span class="caret"></span></a>
 							<ul class="dropdown-menu" aria-labelledby="transaction">
 								@if(Auth::user()->hasRole("PROPONENT"))
 								<li>{{ HTML::linkRoute('activity.index', 'Activity') }}</li>   

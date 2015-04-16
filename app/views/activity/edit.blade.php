@@ -28,19 +28,22 @@
 <div class="modal fade" id="myAction" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   	<div class="modal-dialog">
   		<div class="modal-content">
-	    	{{ Form::open(array('action' => array('ActivityController@updateactivity', $activity->id), 'class' => 'bs-component','id' => 'updateactivity')) }}
+  			
+	    	{{ Form::open(array('action' => array('ActivityController@updateactivity', $activity->id), 'class' => 'bs-component','id' => 'submitactivity')) }}
 	      	<div class="modal-header">
 	        	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 	        	<h4 class="modal-title" id="myModalLabel">Activity Actions</h4>
 	      	</div>
 	      	<div class="modal-body">
+	      		<div id="error"></div>
+	      		
 	          	<div class="form-group">
 	            	{{ Form::label('submitstatus', 'Status:', array('class' => 'control-label')) }}
 	            	{{ Form::select('submitstatus', array('0' => 'PLEASE SELECT') + $submitstatus, null, array('id' => 'submitstatus', 'class' => 'form-control')) }}
 	          	</div>
 	          	<div class="form-group">
 	            	{{ Form::label('submitremarks', 'Comments:', array('class' => 'control-label')) }}
-	            	{{ Form::textarea('submitremarks','',array('class' => 'form-control', 'placeholder' => 'Comments')) }}
+	            	{{ Form::textarea('submitremarks','',array('class' => 'form-control', 'placeholder' => 'Comments', 'size' => '30x5')) }}
 	          	</div>
 	      	</div>
 	      	<div class="modal-footer">
@@ -1272,7 +1275,6 @@ $("#updateActivity").validate({
 	errorClass : "has-error",
 	rules: {
 		activity_title: "required",
-		planner: "is_natural_no_zero",
 		scope: "is_natural_no_zero",
 		activity_type: "is_natural_no_zero",
 		cycle: "is_natural_no_zero",
@@ -1574,27 +1576,34 @@ $('#activity_timings').bootstrapTable({
 
 <!-- update activty -->
 
-$("form[id='updateactivity']").on("submit",function(e){
+$("form[id='submitactivity']").on("submit",function(e){
 	var form = $(this);
 	var method = form.find('input[name="_method"]').val() || 'POST';
 	var url = form.prop('action');
-	$.ajax({
-		url: url,
-		data: form.serialize(),
-		method: method,
-		dataType: "json",
-		success: function(data){
-			if(data.success == "1"){
-				location.reload();
-			}else{
-				bootbox.alert("An error occured while updating."); 
+	if(form.valid()){
+		$.ajax({
+			url: url,
+			data: form.serialize(),
+			method: method,
+			dataType: "json",
+			success: function(data){
+				if(data.success == "1"){
+					location.reload();
+				}else{
+					var obj = data.error,  
+			        ul = $("<ul>");                    
+			        for (var i = 0, l = obj.length; i < l; ++i) {
+			            ul.append("<li>" + obj[i] + "</li>");
+			        }
+			        $("#error").append(ul);
+				}
 			}
-		}
-	});
+		});
+	}
 	e.preventDefault();
 });
 
-$("#updateactivity").validate({
+$("#submitactivity").validate({
 	errorElement: "span", 
 	errorClass : "has-error",
 	rules: {
@@ -1616,6 +1625,7 @@ $("#updateactivity").validate({
 $("#myAction" ).on('show.bs.modal', function(){
     $("#submitstatus").val(0);
     $("#submitremarks").val('');
+     $("#error").empty();
     $('.form-group').removeClass('has-error');
 });
 

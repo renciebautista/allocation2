@@ -15,4 +15,8 @@ class Channel extends \Eloquent {
 			
 		});
 	}
+
+	public static function getList(){
+		return self::orderBy('channel_name')->lists('channel_name', 'id');
+	}
 }

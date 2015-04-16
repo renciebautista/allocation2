@@ -35,6 +35,13 @@ class Sku extends \Eloquent {
 			->first();
 	}
 
+	public static function getDivisionLists(){
+		return self::select('division_code', 'division_desc')
+				->groupBy('division_code')
+				->orderBy('division_desc')
+				->lists('division_desc', 'division_code');
+	}
+
 	public static function categories($division_code){
 		return self::select('category_code', 'category_desc')
 			->where('division_code',$division_code)
@@ -58,5 +65,11 @@ class Sku extends \Eloquent {
 			->whereIn('brand_code',$brands)
 			->orderBy('sku_desc')
 			->lists('full_desc', 'sku_code');
+	}
+
+	public static function divisions(){
+		return self::select('division_code', 'division_desc')
+			->groupBy('division_code')
+			->orderBy('division_desc')->lists('division_desc', 'division_code');
 	}
 }

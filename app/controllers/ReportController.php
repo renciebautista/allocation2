@@ -34,7 +34,7 @@ class ReportController extends \BaseController {
 			$nobudgets = ActivityNobudget::with('budgettype')
 				->where('activity_id', $id)
 				->get();
-			$schemes = Scheme::sorted($id);
+			$schemes = Scheme::getList($id);
 
 			$skuinvolves = array();
 			foreach ($schemes as $scheme) {

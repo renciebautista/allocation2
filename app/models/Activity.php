@@ -87,58 +87,58 @@ class Activity extends \Eloquent {
 
 		$approver = ActivityApprover::getList($activity->id);
 		if(count($approver)  == 0){
-			$required[] = 'Activty approver is required.';
+			$required[] = 'Activity approver is required.';
 			$return['status'] = 0;
 		}
 
 		if($activity->cycle_id == 0){
-			$required[] = 'Activty cycle is required.';
+			$required[] = 'Activity cycle is required.';
 			$return['status'] = 0;
 		}
 
 		if($activity->division_code == 0){
-			$required[] = 'Activty division is required.';
+			$required[] = 'Activity division is required.';
 			$return['status'] = 0;
 		}
 
 		$category = ActivityCategory::selected_category($activity->id);
 		if(count($category)  == 0){
-			$required[] = 'Activty category is required.';
+			$required[] = 'Activity category is required.';
 			$return['status'] = 0;
 		}
 
 		$brand = ActivityBrand::selected_brand($activity->id);
 		if(count($brand) == 0){
-			$required[] = 'Activty brand is required.';
+			$required[] = 'Activity brand is required.';
 			$return['status'] = 0;
 		}
 
 		// $skus = ActivitySku::getList($activity->id);
 		// if(count($skus) == 0){
-		// 	$required[] = 'Activty skus involved is required.';
+		// 	$required[] = 'Activity skus involved is required.';
 		// 	$return['status'] = 0;
 		// }
 
 		$objective = ActivityObjective::getList($activity->id);
 		if(count($objective) == 0){
-			$required[] = 'Activty objective is required.';
+			$required[] = 'Activity objective is required.';
 			$return['status'] = 0;
 		}
 
 		if($activity->background ==''){
-			$required[] = 'Activty background is required.';
+			$required[] = 'Activity background is required.';
 			$return['status'] = 0;
 		}
 
 		$customer = ActivityCustomer::customers($activity->id);
 		if(count($customer) == 0){
-			$required[] = 'Activty customer is required.';
+			$required[] = 'Activity customer is required.';
 			$return['status'] = 0;
 		}
 
 		$scheme = Scheme::getList($activity->id);
 		if(count($scheme) == 0){
-			$required[] = 'Activty scheme is required.';
+			$required[] = 'Activity scheme is required.';
 			$return['status'] = 0;
 		}
 
@@ -146,25 +146,6 @@ class Activity extends \Eloquent {
 		return $return;;
 		
 	}
-
-	// public static function search($user_id){
-	// 	return DB::select( DB::raw("SELECT *,activity_statuses.status,cycles.cycle_name,
-	// 		scope_types.scope_name,activity_types.activity_type,concat(first_name, ' ', last_name) as planner
-	// 	 	FROM activities
-	// 		join activity_statuses on activities.status_id = activity_statuses.id
-	// 		join cycles on activities.cycle_id = cycles.id
-	// 		join scope_types on activities.scope_type_id = scope_types.id
-	// 		join activity_types on activities.activity_type_id = activity_types.id
-	// 		left join activity_planners on activities.id = activity_planners.activity_id
-	// 		left join users on activity_planners.user_id = users.id
-	// 		WHERE created_by = :user_id
-	// 		ORDER BY activities.created_at desc"), 
-	// 		array('user_id' => $user_id,
-	// 	 ));
-	// 	// return self::where('created_by', '=', $user_id)
-	// 	// 	->orderBy('activities.created_at','desc')
-	// 	// 	->get();
-	// }
 
 	public static function search($user_id = 0,$status,$cycle,$scope,$type,$pmog,$title){
 		return self::select('activities.id','activities.circular_name','activities.edownload_date',
@@ -177,8 +158,8 @@ class Activity extends \Eloquent {
 			->join('cycles', 'activities.cycle_id','=','cycles.id')
 			->join('scope_types', 'activities.scope_type_id','=','scope_types.id')
 			->join('activity_types', 'activities.activity_type_id','=','activity_types.id')
-			->join('activity_planners', 'activities.id','=','activity_planners.activity_id')
-			->join('users', 'activity_planners.user_id','=','users.id')
+			->join('activity_planners', 'activities.id','=','activity_planners.activity_id', 'left')
+			->join('users', 'activity_planners.user_id','=','users.id', 'left')
 			->join('users as propo', 'activities.created_by','=','propo.id')
 			->where(function($query) use ($user_id){
 				if($user_id > 0){
@@ -213,6 +194,54 @@ class Activity extends \Eloquent {
 					$query->where('activity_planners.user_id', $pmog);
 				}
 			})
+			->orderBy('activities.created_at', 'desc')
+			->get();
+	}
+
+	public static function searchDownloaded($user_id,$proponent_id,$status,$cycle,$scope,$type,$title){
+		return self::select('activities.id','activities.circular_name','activities.edownload_date',
+			'activities.eimplementation_date','activities.billing_date',
+			'activity_statuses.status','cycles.cycle_name',
+			'scope_types.scope_name','activity_types.activity_type',
+			DB::raw('CONCAT(propo.first_name, " ", propo.last_name) AS proponent'))
+			->join('activity_statuses', 'activities.status_id','=','activity_statuses.id')
+			->join('cycles', 'activities.cycle_id','=','cycles.id')
+			->join('scope_types', 'activities.scope_type_id','=','scope_types.id')
+			->join('activity_types', 'activities.activity_type_id','=','activity_types.id')
+			->join('activity_planners', 'activities.id','=','activity_planners.activity_id')
+			->join('users', 'activity_planners.user_id','=','users.id')
+			->join('users as propo', 'activities.created_by','=','propo.id')
+			->where('activity_planners.user_id',$user_id)
+			->where('activities.status_id','>',2)
+			->where(function($query) use ($proponent_id){
+				if($proponent_id > 0){
+					$query->where('activities.created_by', $proponent_id);
+				}
+			})
+			->where(function($query) use ($title){
+				$query->where('activities.circular_name', 'LIKE' ,"%$title%");
+			})
+			->where(function($query) use ($status){
+				if($status > 0){
+					$query->where('activities.status_id', $status);
+				}
+			})
+			->where(function($query) use ($cycle){
+				if($cycle > 0){
+					$query->where('activities.cycle_id', $cycle);
+				}
+			})
+			->where(function($query) use ($scope){
+				if($scope > 0){
+					$query->where('activities.scope_type_id', $scope);
+				}
+			})
+			->where(function($query) use ($type){
+				if($type > 0){
+					$query->where('activities.activity_type_id', $type);
+				}
+			})
+			->orderBy('activities.created_at', 'desc')
 			->get();
 	}
 
@@ -272,5 +301,11 @@ class Activity extends \Eloquent {
 			->get()
 			->lists('planner','id');
 	}
+
+	public static function myActivity($activity){
+		return ($activity->created_by == Auth::id()) ? true : false;
+	}
+
+	
 
 }

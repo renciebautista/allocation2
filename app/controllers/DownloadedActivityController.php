@@ -11,45 +11,14 @@ class DownloadedActivityController extends \BaseController {
 	public function index()
 	{
 		Input::flash();
-		$activities = Activity::select('activities.*')
-			->join('activity_planners', 'activities.id', '=', 'activity_planners.activity_id')
-			->whereIn('activities.status_id',array(4))
-			->where('activity_planners.user_id',Auth::id())
-			->get();
-		return View::make('downloadedactivity.index',compact('activities'));
-	}
-	/**
-	 * Show the form for creating a new resource.
-	 * GET /downloadedactivity/create
-	 *
-	 * @return Response
-	 */
-	public function create()
-	{
-		//
-	}
-
-	/**
-	 * Store a newly created resource in storage.
-	 * POST /downloadedactivity
-	 *
-	 * @return Response
-	 */
-	public function store()
-	{
-		//
-	}
-
-	/**
-	 * Display the specified resource.
-	 * GET /downloadedactivity/{id}
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function show($id)
-	{
-		
+		$statuses = ActivityStatus::availableStatus(1);
+		$activities = Activity::searchDownloaded(Auth::id(),Input::get('proponent'),Input::get('status'),Input::get('cycle'),Input::get('scope'),
+			Input::get('type'),Input::get('title'));
+		$cycles = Cycle::getLists();
+		$scopes = ScopeType::getLists();
+		$types = ActivityType::getLists();
+		$proponents = User::getApprovers(['PROPONENT']);
+		return View::make('downloadedactivity.index',compact('statuses', 'activities', 'cycles', 'scopes', 'types', 'proponents'));
 	}
 
 	/**
@@ -61,130 +30,117 @@ class DownloadedActivityController extends \BaseController {
 	 */
 	public function edit($id)
 	{	
-		$activity = Activity::find($id);
+		$activity = Activity::findOrFail($id);
+		if(!ActivityPlanner::myActivity($activity->id)){
+			return Response::make(View::make('shared/404'), 404);
+		}
+
+		$sel_planner = ActivityPlanner::getPlanner($activity->id);
+		$sel_approver = ActivityApprover::getList($activity->id);
+		$sel_objectives = ActivityObjective::getList($activity->id);
+		$sel_channels = ActivityChannel::getList($activity->id);
 		$approvers = User::getApprovers(['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']);
+		$channels = Channel::getList();
+		$objectives = Objective::getLists();
+		$budgets = ActivityBudget::getBudgets($activity->id);
+		$nobudgets = ActivityNobudget::getBudgets($activity->id);
+		$schemes = Scheme::getList($activity->id);
+		$scheme_customers = SchemeAllocation::getCustomers($activity->id);
+		$force_allocs = ForceAllocation::getlist($activity->id);
+		$scheme_customers = SchemeAllocation::getCustomers($activity->id);
+		$force_allocs = ForceAllocation::getlist($activity->id);
+		$scheme_allcations = SchemeAllocation::getAllocation($activity->id);
+		$materials = ActivityMaterial::getList($activity->id);
+		// attachments
+		$fdapermits = ActivityFdapermit::getList($activity->id);
+		$fis = ActivityFis::getList($activity->id);
+		$artworks = ActivityArtwork::getList($activity->id);
+		$backgrounds = ActivityBackground::getList($activity->id);
+		$bandings = ActivityBanding::getList($activity->id);
+		// comments
+		$comments = ActivityComment::getList($activity->id);
+
 		if($activity->status_id == 4){
-
-			$submitstatus = array('2' => 'SUBMIT ACTIVITY','3' => 'DENY ACTIVITY');
-			$sel_planner = ActivityPlanner::where('activity_id',$id)->first();
-			$sel_approver = ActivityApprover::getList($id);
-			$sel_objectives = ActivityObjective::getList($id);
-			$sel_channels = ActivityChannel::getList($id);
-
-			$scope_types = ScopeType::orderBy('scope_name')->lists('scope_name', 'id');
-			$planners = User::isRole('PMOG PLANNER')->lists('first_name', 'id');
-			$channels = Channel::orderBy('channel_name')->lists('channel_name', 'id');
-
-			$activity_types = ActivityType::orderBy('activity_type')->lists('activity_type', 'id');
-			$cycles = Cycle::orderBy('cycle_name')->lists('cycle_name', 'id');
-			
-			$divisions = Sku::select('division_code', 'division_desc')
-				->groupBy('division_code')
-				->orderBy('division_desc')->lists('division_desc', 'division_code');
-
-			$objectives = Objective::orderBy('objective')->lists('objective', 'id');
-
-			$budgets = ActivityBudget::with('budgettype')
-				->where('activity_id', $id)
-				->get();
-
-			$nobudgets = ActivityNobudget::with('budgettype')
-				->where('activity_id', $id)
-				->get();
-
-			$schemes =  Scheme::sorted($id);
-
-			$scheme_customers = SchemeAllocation::getCustomers($activity->id);
-			$force_allocs = ForceAllocation::getlist($activity->id);
-
-			// $attachments = ActivityAttachment::where('activity_id', $activity->id)->get();
-
-			$scheme_allcations = SchemeAllocation::getAllocation($activity->id);
-			$materials = ActivityMaterial::where('activity_id', $activity->id)->get();
-
-			$fdapermits = ActivityFdapermit::where('activity_id', $activity->id)->get();
-			$fis = ActivityFis::where('activity_id', $activity->id)->get();
-			$artworks = ActivityArtwork::where('activity_id', $activity->id)->get();
-			$backgrounds = ActivityBackground::where('activity_id', $activity->id)->get();
-			$bandings = ActivityBanding::where('activity_id', $activity->id)->get();
-
-			// comments
-			$comments = ActivityComment::where('activity_id', $activity->id)->orderBy('created_at','desc')->get();
+			$submitstatus = array('1' => 'SUBMIT ACTIVITY','2' => 'DENY ACTIVITY');
+			$scope_types = ScopeType::getLists($activity->id);
+			$planners = User::getApprovers(['PMOG PLANNER']);
+			$activity_types = ActivityType::getLists();
+			$cycles = Cycle::getLists();
+			$divisions = Sku::getDivisionLists();
 
 			return View::make('downloadedactivity.edit', compact('activity', 'scope_types', 'planners', 'approvers', 'cycles',
 			 'activity_types', 'divisions' , 'objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
 			 'sel_objectives', 'channels', 'sel_channels', 'schemes', 'networks',
 			 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings',
 			 'force_allocs','submitstatus', 'comments'));
+		}else{
+			$submitstatus = array('3' => 'RECALL ACTIVITY');
+			$division = Sku::division($activity->division_code);
+			$route = 'downloadedactivity.index';
+			$recall = $activity->pmog_recall;
+			$submit_action = 'DownloadedActivityController@submittogcm';
+			return View::make('shared.activity_readonly', compact('activity', 'sel_planner', 'approvers', 'division',
+			 'objectives',  'users', 'budgets', 'nobudgets','sel_approver',
+			 'sel_objectives', 'channels', 'sel_channels', 'schemes', 'networks',
+			 'scheme_customers', 'scheme_allcations', 'materials', 'force_allocs',
+			 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings', 'comments' ,'submitstatus', 'route', 'recall', 'submit_action'));
 		}
 			
 	}
 
-	/**
-	 * Update the specified resource in storage.
-	 * PUT /downloadedactivity/{id}
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function update($id)
-	{
-		//
-	}
-
-	/**
-	 * Remove the specified resource from storage.
-	 * DELETE /downloadedactivity/{id}
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function destroy($id)
-	{
-		//
-	}
 
 	public function submittogcm($id){
 		if(Request::ajax()){
 			$arr = DB::transaction(function() use ($id)  {
 				$activity = Activity::find($id);
-
-				if(empty($activity)){
+				if((empty($activity)) || (!ActivityPlanner::myActivity($activity->id))){
 					$arr['success'] = 0;
 				}else{
-					$status_id = (int) Input::get('submitstatus');
-					
-					if($status_id == 2){
+					$status = (int) Input::get('submitstatus');
+					$activity_status = 2;
+					$pro_recall = 0;
+					$pmog_recall = 0;
+					if($status == 1){
 						//check next approver
-						$gcom_approvers = ActivityApprover::getApproverByRole($id,'GCOM APPROVER');
+						$pmog_recall = 1;
+						$gcom_approvers = ActivityApprover::getApproverByRole($activity->id,'GCOM APPROVER');
 						if(count($gcom_approvers) > 0){
 							$comment_status = "SUBMITTED TO GCOM";
-							$activity->status_id = 5;
+							$activity_status = 5;
 						}else{
-							$cdops_approvers = ActivityApprover::getApproverByRole($id,'CD OPS APPROVER');
+							$cdops_approvers = ActivityApprover::getApproverByRole($activity->id,'CD OPS APPROVER');
 							if(count($cdops_approvers) > 0){
 								$comment_status = "SUBMITTED TO CD OPS";
-								$activity->status_id = 6;
+								$activity_status = 6;
 							}else{
-								$cmd_approvers = ActivityApprover::getApproverByRole($id,'CMD DIRECTOR');
+								$cmd_approvers = ActivityApprover::getApproverByRole($activity->id,'CMD DIRECTOR');
 								if(count($cmd_approvers) > 0){
 									$comment_status = "SUBMITTED TO CMD";
-									$activity->status_id = 7;
+									$activity_status = 7;
 								}else{
 									$comment_status = "APPROVED FOR FIELD";
-									$activity->status_id = 8;
+									$activity_status = 8;
 								}
 							}
 						}
 						$class = "text-success";
-					}elseif($status_id == 3){
+					}elseif($status == 3){
+						$comment_status = "RECALLED ACTIVITY";
+						$class = "text-warning";
+						$pro_recall = 1;
+						$pmog_recall = 0;
+						$activity_status = 4;
+						ActivityApprover::resetAll($activity->id);
+					}else{
 						$comment_status = "DENIED ACTIVITY";
 						$class = "text-danger";
-						$activity->status_id = 2;
+						ActivityApprover::resetAll($activity->id);
 					}
-					$activity->update();
 
-					
+					$activity->status_id = $activity_status;
+					$activity->pro_recall = $pro_recall;
+					$activity->pmog_recall = $pmog_recall;
+					$activity->update();
 
 					$comment = new ActivityComment;
 					$comment->created_by = Auth::id();
@@ -215,7 +171,7 @@ class DownloadedActivityController extends \BaseController {
 		$nobudgets = ActivityNobudget::with('budgettype')
 			->where('activity_id', $id)
 			->get();
-		$schemes = Scheme::sorted($id);
+		$schemes = Scheme::getList($id);
 
 		$skuinvolves = array();
 		foreach ($schemes as $scheme) {
@@ -234,7 +190,7 @@ class DownloadedActivityController extends \BaseController {
 
 		$fdapermit = ActivityFdapermit::where('activity_id', $activity->id)->first();
 		$networks = ActivityTiming::getTimings($activity->id);
-		$artworks = ActivityArtwork::getArtworks($activity->id);
+		$artworks = ActivityArtwork::getList($activity->id);
 
 		$scheme_customers = SchemeAllocation::getCustomers($activity->id);
 		

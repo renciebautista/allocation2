@@ -101,7 +101,7 @@ class SubmittedActivityController extends \BaseController {
 		$nobudgets = ActivityNobudget::with('budgettype')
 			->where('activity_id', $id)
 			->get();
-		$schemes = Scheme::sorted($id);
+		$schemes = Scheme::getList($id);
 
 		$skuinvolves = array();
 		foreach ($schemes as $scheme) {
@@ -120,7 +120,7 @@ class SubmittedActivityController extends \BaseController {
 
 		$fdapermit = ActivityFdapermit::where('activity_id', $activity->id)->first();
 		$networks = ActivityTiming::getTimings($activity->id);
-		$artworks = ActivityArtwork::getArtworks($activity->id);
+		$artworks = ActivityArtwork::getList($activity->id);
 
 		$scheme_customers = SchemeAllocation::getCustomers($activity->id);
 		

@@ -12,18 +12,16 @@ class Scheme extends \Eloquent {
 		'skus' => 'required',
 	);
 
-	public static function getList($id){
-		return self::where('activity_id',$id)->get();
-	}
-
 	public function activity()
     {
         return $this->belongsTo('Activity','activity_id','id');
     }
 
-    public static function sorted($id){
-    	return self::where('activity_id',$id)
-			->orderBy('created_at', 'desc')
-			->get();
-    }
+
+    public static function getList($activity_id){
+		return self::where('activity_id', $activity_id)
+				->orderBy('created_at', 'desc')
+				->get();
+	}
+
 }

@@ -20,4 +20,10 @@ class ActivityNobudget extends \Eloquent {
     		return 0;
     	}
     }
+
+     public static function getBudgets($activity_id){
+        return self::with('budgettype')
+                ->where('activity_id', $activity_id)
+                ->get();
+    }
 }

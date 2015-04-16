@@ -15,7 +15,7 @@
 <div class="row">
 	<div class="col-lg-12">
 		<div class="form-group">
-			{{ HTML::linkRoute('activity.index', 'Back To Activity List', array(), array('class' => 'btn btn-default')) }}
+			{{ HTML::linkRoute('downloadedactivity.index', 'Back To Activity List', array(), array('class' => 'btn btn-default')) }}
 
 			<!-- Button trigger modal -->
 			<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#mySubmit">
@@ -43,7 +43,7 @@
 	          	</div>
 	          	<div class="form-group">
 	            	{{ Form::label('submitremarks', 'Comments:', array('class' => 'control-label')) }}
-	            	{{ Form::textarea('submitremarks','',array('class' => 'form-control', 'placeholder' => 'Comments')) }}
+	            	{{ Form::textarea('submitremarks','',array('class' => 'form-control', 'placeholder' => 'Comments', 'size' => '30x5')) }}
 	          	</div>
 	      	</div>
 	      	<div class="modal-footer">

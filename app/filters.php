@@ -22,6 +22,8 @@ App::after(function($request, $response)
 	//
 });
 
+
+
 /*
 |--------------------------------------------------------------------------
 | Authentication Filters
@@ -90,6 +92,9 @@ Route::filter('csrf', function()
 });
 
 
+
 // Only owners will have access to routes within admin/advanced
 Entrust::routeNeedsRole( 'group*', 'ADMINISTRATOR',Redirect::to('/') );
 Entrust::routeNeedsRole( 'users', 'ADMINISTRATOR',Redirect::to('/') );
+Entrust::routeNeedsRole( 'activity*', 'PROPONENT',Redirect::to('/') );
+Entrust::routeNeedsRole( 'downloadedactivity*', 'PMOG PLANNER',Redirect::to('/') );

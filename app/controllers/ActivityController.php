@@ -11,14 +11,13 @@ class ActivityController extends \BaseController {
 	public function index()
 	{
 		Input::flash();
-		$statuses = ActivityStatus::orderBy('status')->lists('status', 'id');
+		$statuses = ActivityStatus::availableStatus();
 		$activities = Activity::search(Auth::id(),Input::get('status'),Input::get('cycle'),Input::get('scope'),
 			Input::get('type'),Input::get('pmog'),Input::get('title'));
 		$cycles = Activity::availableCycles(Auth::id());
 		$scopes = Activity::availableScopes(Auth::id());
 		$types = Activity::availableTypes(Auth::id());
 		$planners = Activity::availablePlanners(Auth::id());
-		// Helper::print_array($planners);
 		return View::make('activity.index',compact('statuses', 'activities', 'cycles', 'scopes', 'types', 'planners'));
 	}
 
@@ -33,16 +32,10 @@ class ActivityController extends \BaseController {
 		$scope_types = ScopeType::getLists();
 		$planners = User::getApprovers(['PMOG PLANNER']);
 		$approvers = User::getApprovers(['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']);
-		
 		$activity_types = ActivityType::getLists();
 		$cycles = Cycle::getLists();
-		
-		$divisions = Sku::select('division_code', 'division_desc')
-			->groupBy('division_code')
-			->orderBy('division_desc')->lists('division_desc', 'division_code');
-
-		$objectives = Objective::orderBy('objective')->lists('objective', 'id');
-		
+		$divisions = Sku::divisions();
+		$objectives = Objective::getLists();
 		return View::make('activity.create', compact('scope_types', 'planners', 'approvers', 'cycles',
 		 'activity_types', 'divisions' , 'objectives',  'users'));
 	}
@@ -55,10 +48,7 @@ class ActivityController extends \BaseController {
 	 */
 	public function store()
 	{
-
-		// dd(Input::all());
 		$validation = Validator::make(Input::all(), Activity::$rules);
-		
 		if($validation->passes())
 		{
 			$id =  DB::transaction(function()   {
@@ -199,7 +189,7 @@ class ActivityController extends \BaseController {
 
 			return Redirect::route('activity.edit',$id)
 				->with('class', 'alert-success')
-				->with('message', 'Activity was successfuly created.');
+				->with('message', 'Activity "'.strtoupper(Input::get('activity_title')).'" was successfuly created.');
 			
 		}
 
@@ -231,57 +221,41 @@ class ActivityController extends \BaseController {
 	 */
 	public function edit($id)
 	{
-		$activity = Activity::find($id);
+		$activity = Activity::findOrFail($id);
+		if(!Activity::myActivity($activity)){
+			return Response::make(View::make('shared/404'), 404);
+		}
+
+		$sel_planner = ActivityPlanner::getPlanner($activity->id);
+		$sel_approver = ActivityApprover::getList($activity->id);
+		$sel_objectives = ActivityObjective::getList($activity->id);
+		$sel_channels = ActivityChannel::getList($activity->id);
+		$approvers = User::getApprovers(['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']);
+		$channels = Channel::getList();
+		$objectives = Objective::getLists();
+		$budgets = ActivityBudget::getBudgets($activity->id);
+		$nobudgets = ActivityNobudget::getBudgets($activity->id);
+		$schemes = Scheme::getList($activity->id);
+		$scheme_customers = SchemeAllocation::getCustomers($activity->id);
+		$force_allocs = ForceAllocation::getlist($activity->id);
+		$scheme_allcations = SchemeAllocation::getAllocation($activity->id);
+		$materials = ActivityMaterial::getList($activity->id);
+		// attachments
+		$fdapermits = ActivityFdapermit::getList($activity->id);
+		$fis = ActivityFis::getList($activity->id);
+		$artworks = ActivityArtwork::getList($activity->id);
+		$backgrounds = ActivityBackground::getList($activity->id);
+		$bandings = ActivityBanding::getList($activity->id);
+		// comments
+		$comments = ActivityComment::getList($activity->id);
+
 		if($activity->status_id < 4){
-			$submitstatus = array('4' => 'SUBMIT TO PMOG');
-
-			$sel_planner = ActivityPlanner::where('activity_id',$id)->first();
-			$sel_approver = ActivityApprover::getList($id);
-			$sel_objectives = ActivityObjective::getList($id);
-			$sel_channels = ActivityChannel::getList($id);
-
-			$scope_types = ScopeType::orderBy('scope_name')->lists('scope_name', 'id');
+			$submitstatus = array('1' => 'SUBMIT ACTIVITY');
+			$scope_types = ScopeType::getLists($activity->id);
 			$planners = User::getApprovers(['PMOG PLANNER']);
-			$approvers = User::getApprovers(['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']);
-			$channels = Channel::orderBy('channel_name')->lists('channel_name', 'id');
-
-			$activity_types = ActivityType::orderBy('activity_type')->lists('activity_type', 'id');
-			$cycles = Cycle::orderBy('cycle_name')->lists('cycle_name', 'id');
-			
-			$divisions = Sku::select('division_code', 'division_desc')
-				->groupBy('division_code')
-				->orderBy('division_desc')->lists('division_desc', 'division_code');
-
-			$objectives = Objective::orderBy('objective')->lists('objective', 'id');
-
-			$budgets = ActivityBudget::with('budgettype')
-				->where('activity_id', $id)
-				->get();
-
-			$nobudgets = ActivityNobudget::with('budgettype')
-				->where('activity_id', $id)
-				->get();
-
-			$schemes = Scheme::where('activity_id', $activity->id)
-				->orderBy('created_at', 'desc')
-				->get();
-
-			$scheme_customers = SchemeAllocation::getCustomers($activity->id);
-			$force_allocs = ForceAllocation::getlist($activity->id);
-
-			// $attachments = ActivityAttachment::where('activity_id', $activity->id)->get();
-
-			$scheme_allcations = SchemeAllocation::getAllocation($activity->id);
-			$materials = ActivityMaterial::where('activity_id', $activity->id)->get();
-
-			$fdapermits = ActivityFdapermit::where('activity_id', $activity->id)->get();
-			$fis = ActivityFis::where('activity_id', $activity->id)->get();
-			$artworks = ActivityArtwork::getArtworks($activity->id);
-			$backgrounds = ActivityBackground::where('activity_id', $activity->id)->get();
-			$bandings = ActivityBanding::where('activity_id', $activity->id)->get();
-
-			// comments
-			$comments = ActivityComment::where('activity_id', $activity->id)->orderBy('created_at','desc')->get();
+			$activity_types = ActivityType::getLists();
+			$cycles = Cycle::getLists();
+			$divisions = Sku::getDivisionLists();
 
 			return View::make('activity.edit', compact('activity', 'scope_types', 'planners', 'approvers', 'cycles',
 			 'activity_types', 'divisions' , 'objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
@@ -291,47 +265,16 @@ class ActivityController extends \BaseController {
 		}
 
 		if($activity->status_id > 3){
-			$submitstatus = array('3' => 'RECALL ACTIVITY');
-			// details
-			$sel_planner = ActivityPlanner::where('activity_id',$id)->first();
-			$sel_approver = ActivityApprover::getList($id);
-			$approvers = User::getApprovers(['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']);
+			$submitstatus = array('2' => 'RECALL ACTIVITY');
 			$division = Sku::division($activity->division_code);
-
-			$sel_objectives = ActivityObjective::getList($id);
-
-			$sel_channels = ActivityChannel::getList($id);
-			$channels = Channel::orderBy('channel_name')->lists('channel_name', 'id');
-			$objectives = Objective::orderBy('objective')->lists('objective', 'id');
-			$budgets = ActivityBudget::with('budgettype')
-				->where('activity_id', $id)
-				->get();
-			$nobudgets = ActivityNobudget::with('budgettype')
-				->where('activity_id', $id)
-				->get();
-			$schemes = Scheme::where('activity_id', $activity->id)
-				->orderBy('created_at', 'desc')
-				->get();
-			$scheme_customers = SchemeAllocation::getCustomers($activity->id);
-			$force_allocs = ForceAllocation::getlist($activity->id);
-			$scheme_allcations = SchemeAllocation::getAllocation($activity->id);
-			$materials = ActivityMaterial::where('activity_id', $activity->id)->get();
-
-			// attachments
-			$fdapermits = ActivityFdapermit::where('activity_id', $activity->id)->get();
-			$fis = ActivityFis::where('activity_id', $activity->id)->get();
-			$artworks = ActivityArtwork::where('activity_id', $activity->id)->get();
-			$backgrounds = ActivityBackground::where('activity_id', $activity->id)->get();
-			$bandings = ActivityBanding::where('activity_id', $activity->id)->get();
-
-			// comments
-			$comments = ActivityComment::where('activity_id', $activity->id)->orderBy('created_at','desc')->get();
-
+			$route = 'activity.index';
+			$recall = $activity->pro_recall;
+			$submit_action = 'ActivityController@updateactivity';
 			return View::make('shared.activity_readonly', compact('activity', 'sel_planner', 'approvers', 'division',
 			 'objectives',  'users', 'budgets', 'nobudgets','sel_approver',
 			 'sel_objectives', 'channels', 'sel_channels', 'schemes', 'networks',
 			 'scheme_customers', 'scheme_allcations', 'materials', 'force_allocs',
-			 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings', 'comments' ,'submitstatus'));
+			 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings', 'comments' ,'submitstatus', 'route', 'recall', 'submit_action'));
 		}
 
 	}
@@ -347,7 +290,7 @@ class ActivityController extends \BaseController {
 	{
 		if(Request::ajax()){
 			$activity = Activity::find($id);
-			if(empty($activity)){
+			if((empty($activity)) || (!Activity::myActivity($activity))){
 				$arr['success'] = 0;
 			}else{
 				$validation = Validator::make(Input::all(), Activity::$rules);
@@ -355,8 +298,6 @@ class ActivityController extends \BaseController {
 				if($validation->passes())
 				{
 					DB::transaction(function() use ($activity)  {
-						
-
 						$scope_id = Input::get('scope');
 						$cycle_id = Input::get('cycle');
 						$activity_type_id = Input::get('activity_type');
@@ -364,7 +305,6 @@ class ActivityController extends \BaseController {
 						$category_code = Input::get('category');
 						$brand_code = Input::get('brand');
 
-						
 						$scope = ScopeType::find($scope_id);
 						$cycle = Cycle::find($cycle_id);
 						$activity_type = ActivityType::find($activity_type_id);
@@ -524,19 +464,41 @@ class ActivityController extends \BaseController {
 					$arr['error'] = $validation['message'];
 				}else{
 					$status_id = (int) Input::get('submitstatus');
-					$activity->status_id =$status_id;
-					$activity->update();
-
-					if($status_id == 4){
-						$comment_status = "SUBMITTED TO PMOG";
+					$activity_status = 3;
+					$pro_recall = 0;
+					$pmog_recall = 0;
+					if($status_id == 1){
+						$pro_recall = 1;
+						$planner = ActivityPlanner::getPlanner($activity->id);
+						if(count($planner) > 0){
+							$comment_status = "SUBMITTED TO PMOG PLANNER";
+							$activity_status = 4;
+						}else{
+							$gcom_approvers = ActivityApprover::getApproverByRole($activity->id,'GCOM APPROVER');
+							if(count($gcom_approvers) > 0){
+								$comment_status = "SUBMITTED TO GCOM";
+								$activity_status = 5;
+							}else{
+								$cdops_approvers = ActivityApprover::getApproverByRole($activity->id,'CD OPS APPROVER');
+								if(count($cdops_approvers) > 0){
+									$comment_status = "SUBMITTED TO CD OPS";
+									$activity_status = 6;
+								}else{
+									$cmd_approvers = ActivityApprover::getApproverByRole($activity->id,'CMD DIRECTOR');
+									if(count($cmd_approvers) > 0){
+										$comment_status = "SUBMITTED TO CMD";
+										$activity_status = 7;
+									}
+								}
+							}
+						}
 						$class = "text-success";
 					}
 
-					if($status_id == 3){
+					if($status_id == 2){
 						$comment_status = "RECALLED ACTIVITY";
 						$class = "text-warning";
-
-						ActivityApprover::where('activity_id',$id)->update(array('status_id' => 0));
+						ActivityApprover::resetAll($activity->id);
 					}
 
 					$comment = new ActivityComment;
@@ -546,6 +508,11 @@ class ActivityController extends \BaseController {
 					$comment->comment_status = $comment_status;
 					$comment->class = $class;
 					$comment->save();
+
+					$activity->status_id = $activity_status;
+					$activity->pro_recall = $pro_recall;
+					$activity->pmog_recall = $pmog_recall;
+					$activity->update();
 
 					$arr['success'] = 1;
 					Session::flash('class', 'alert-success');
@@ -558,15 +525,6 @@ class ActivityController extends \BaseController {
 
 	}
 
-	public function recall($id){
-		$activity = Activity::findOrFail($id);
-		$activity->status_id = 3;
-		$activity->update();
-
-		return Redirect::route('activity.edit',$id)
-				->with('class', 'alert-success')
-				->with('message', 'Activity was successfuly recalled from PMOG');
-	}
 
 	// ajax function
 	// Activity Materials

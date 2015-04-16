@@ -108,4 +108,8 @@ class ActivityApprover extends \Eloquent {
 			self::where('id',$approver->id)->update(array('status_id' => 0));
 		}
 	}
+
+	public static function resetAll($activity_id){
+		self::where('activity_id',$activity_id)->update(array('status_id' => 0));
+	}
 }

@@ -89,3 +89,13 @@ DB::listen(function($sql, $bindings, $time)
                       "      bindinds: ".json_encode($bindings)."\n");
 });
 
+
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+
+App::error(function(ModelNotFoundException $e)
+{
+    return Response::make(View::make('shared/404'), 404);
+});
+
+
+

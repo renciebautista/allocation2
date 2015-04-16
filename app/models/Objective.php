@@ -7,4 +7,8 @@ class Objective extends \Eloquent {
     {
         return $this->belongsToMany('Activity');
     }
+
+    public static function getLists(){
+    	return self::orderBy('objective')->lists('objective', 'id');;
+    }
 }

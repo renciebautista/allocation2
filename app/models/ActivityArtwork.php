@@ -3,7 +3,7 @@
 class ActivityArtwork extends \Eloquent {
 	protected $fillable = [];
 
-	public static function getArtworks($id){
-		return self::where('activity_id', $id)->get();
+	public static function getList($activity_id){
+		return self::where('activity_id', $activity_id)->get();
 	}
 }

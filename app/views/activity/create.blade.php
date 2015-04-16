@@ -289,7 +289,6 @@ $("#myform").validate({
 	errorClass : "has-error",
 	rules: {
 		activity_title: "required",
-		planner: "is_natural_no_zero",
 		scope: "is_natural_no_zero",
 		activity_type: "is_natural_no_zero",
 		cycle: "is_natural_no_zero",
@@ -369,10 +368,6 @@ $('select#objective').multiselect({
 	enableCaseInsensitiveFiltering: true,
 	enableFiltering: true
 });
-
- 
-
-
 @stop
 
 
