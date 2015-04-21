@@ -15,9 +15,11 @@
 <div class="row">
 	<div class="col-lg-12">
 		<div class="form-group">
-			{{ HTML::linkRoute('activity.index', 'Back To Activity List', array(), array('class' => 'btn btn-default')) }}
-			<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myAction">
-			  	Actions
+			{{ HTML::linkRoute('downloadedactivity.index', 'Back To Activity List', array(), array('class' => 'btn btn-default')) }}
+
+			<!-- Button trigger modal -->
+			<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#mySubmit">
+			  Action
 			</button>
 			<a class="btn btn-info" target="_blank" href="{{ URL::action('ReportController@preview', $activity->id ) }}">Preview</a>
 		</div>
@@ -26,18 +28,15 @@
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="myAction" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal fade" id="mySubmit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   	<div class="modal-dialog">
-  		<div class="modal-content">
-  			
-	    	{{ Form::open(array('action' => array('ActivityController@updateactivity', $activity->id), 'class' => 'bs-component','id' => 'submitactivity')) }}
+	    <div class="modal-content">
+	    	{{ Form::open(array('action' => array('DownloadedActivityController@submittogcm', $activity->id), 'class' => 'bs-component','id' => 'submittogcm')) }}
 	      	<div class="modal-header">
 	        	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-	        	<h4 class="modal-title" id="myModalLabel">Activity Actions</h4>
+	        	<h4 class="modal-title" id="myModalLabel">Submit To GCOM</h4>
 	      	</div>
 	      	<div class="modal-body">
-	      		<div id="error"></div>
-	      		
 	          	<div class="form-group">
 	            	{{ Form::label('submitstatus', 'Status:', array('class' => 'control-label')) }}
 	            	{{ Form::select('submitstatus', array('0' => 'PLEASE SELECT') + $submitstatus, null, array('id' => 'submitstatus', 'class' => 'form-control')) }}
@@ -55,6 +54,8 @@
 	    </div>
   	</div>
 </div>
+
+
 
 
 <ul class="nav nav-tabs">
@@ -264,7 +265,7 @@
 						<div class="row">
 							<div class="col-lg-12">
 								{{ Form::label('instruction', 'Special Instruction', array('class' => 'control-label')) }}
-									{{ Form::textarea('instruction',$activity->instruction ,array('class' => 'form-control', 'placeholder' => 'Special Instruction')) }}
+								{{ Form::textarea('instruction',$activity->instruction ,array('class' => 'form-control', 'placeholder' => 'Special Instruction')) }}
 							</div>
 						</div>
 					</div>
@@ -327,13 +328,16 @@
 					</div>
 				</div>
 			</div>
+
+
 		</div>
 		{{ Form::close() }}
 	</div>
 
 	<!-- customer details -->
 	<div class="tab-pane fade" id="customer">
-		<br>	
+		<br>
+		
 		<div class="well">
 			{{ Form::open(array('action' => array('ActivityController@updatecustomer', $activity->id), 'method' => 'PUT', 'class' => 'bs-component','id' => 'updateCustomer')) }}
 			<div class="row">
@@ -384,7 +388,6 @@
 					<table id="force_alloc" class="table table-striped table-hover ">
 					  	<thead>
 						    <tr>
-						    	<th>Group</th>
 						      	<th>Area</th>
 						      	<th class="multiplier">Force Percentage</th>
 				      			<th class="action">Action</th>
@@ -393,7 +396,6 @@
 					  	<tbody>
 					  		@foreach($force_allocs as $force)
 					  		<tr data-link="{{ $force->id }}">
-					  			<td>{{ $force->group_name }}</td>
 					  			<td>{{ $force->area_name }}</td>
 				  				<td class="multiplier">{{ $force->multi }}</td>
 					  			<td class="action">
@@ -921,7 +923,7 @@
 											{{ HTML::linkAction('ActivityController@backgrounddownload','Download', $background->id, array('class' => 'btn btn-info btn-xs')) }}
 										</td>
 								      	<td class="action">
-											{{ Form::open(array('method' => 'DELETE', 'action' => array('ActivityController@backgrounddelete', $background->id))) }}  
+											{{ Form::open(array('method' => 'DELETE', 'action' => array('ActivityController@backgrounddelete', $artwork->id))) }}  
 											{{ Form::hidden('activity_id', $activity->id) }}                     
 											{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}
 											{{ Form::close() }}
@@ -981,6 +983,16 @@
 				  	</div>
 		  	</div>
 		</div>
+
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="form-group">
+					<button class="btn btn-default btn-style" type="submit">Back</button>
+					<button class="btn btn-primary btn-style" type="submit">Next</button>
+				</div>
+			</div>
+		</div>
+
 	</div>
 
 		<!-- attachment details -->
@@ -1007,6 +1019,14 @@
 	                @endforeach
 	            </ul>
 		  	</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="form-group">
+					<button class="btn btn-default btn-style" type="submit">Back</button>
+				</div>
+			</div>
 		</div>
 	</div>
 
@@ -1278,6 +1298,7 @@ $("#updateActivity").validate({
 	errorClass : "has-error",
 	rules: {
 		activity_title: "required",
+		planner: "is_natural_no_zero",
 		scope: "is_natural_no_zero",
 		activity_type: "is_natural_no_zero",
 		cycle: "is_natural_no_zero",
@@ -1404,6 +1425,7 @@ $("#force_alloc").on('click',"button",function() {
 });
 
 $("form[id='updateforcealloc']").on("submit",function(e){
+
 	var form = $(this);
 	var method = form.find('input[name="_method"]').val() || 'POST';
 	var url = form.prop('action');
@@ -1461,11 +1483,9 @@ var table = $('#scheme_summary').DataTable( {
 		"defaultContent": ""
 	} ],
 } );
-@if(count($scheme_customers)> 0)
 new $.fn.dataTable.FixedColumns( table, {
 	leftColumns: 6
 } );
-@endif
 <!-- Budget details -->
 
 $('#billing_deadline').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
@@ -1577,9 +1597,8 @@ $('#activity_timings').bootstrapTable({
 });
 
 
-<!-- update activty -->
-
-$("form[id='submitactivity']").on("submit",function(e){
+<!-- submit activity -->
+$("form[id='submittogcm']").on("submit",function(e){
 	var form = $(this);
 	var method = form.find('input[name="_method"]').val() || 'POST';
 	var url = form.prop('action');
@@ -1591,22 +1610,18 @@ $("form[id='submitactivity']").on("submit",function(e){
 			dataType: "json",
 			success: function(data){
 				if(data.success == "1"){
-					location.reload();
+					window.location.href="{{ URL::action('downloadedactivity.index' ) }}";			
 				}else{
-					var obj = data.error,  
-			        ul = $("<ul>");                    
-			        for (var i = 0, l = obj.length; i < l; ++i) {
-			            ul.append("<li>" + obj[i] + "</li>");
-			        }
-			        $("#error").append(ul);
+					bootbox.alert("An error occured while updating."); 
 				}
 			}
 		});
 	}
+	
 	e.preventDefault();
 });
 
-$("#submitactivity").validate({
+$("#submittogcm").validate({
 	errorElement: "span", 
 	errorClass : "has-error",
 	rules: {
@@ -1624,14 +1639,6 @@ $("#submitactivity").validate({
     	$(element).closest('div').removeClass(errorClass).addClass(validClass);
   	}
 });
-
-$("#myAction" ).on('show.bs.modal', function(){
-    $("#submitstatus").val(0);
-    $("#submitremarks").val('');
-     $("#error").empty();
-    $('.form-group').removeClass('has-error');
-});
-
 @stop
 
 

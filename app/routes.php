@@ -461,6 +461,8 @@ Route::group(array('before' => 'auth'), function()
 	Route::delete('activity/{id}/bandingdelete', 'ActivityController@bandingdelete');
 	Route::get('activity/{id}/bandingdownload', 'ActivityController@bandingdownload');
 
+	Route::post('activity/{id}/submittogcm', 'ActivityController@submittogcm');
+
 	Route::resource('activity', 'ActivityController');
 	
 
@@ -471,14 +473,16 @@ Route::group(array('before' => 'auth'), function()
 	Route::put('scheme/{id}', 'SchemeController@update');
 	Route::put('scheme/updatealloc', 'SchemeController@updateallocation');
 
-	Route::get('downloadedactivity/{id}/preview', 'DownloadedActivityController@preview');
-	Route::post('downloadedactivity/{id}/submittogcm', 'DownloadedActivityController@submittogcm');
-	
-	Route::resource('downloadedactivity', 'DownloadedActivityController');
+	// Route::post('downloadedactivity/{id}/submittogcm', 'DownloadedActivityController@submittogcm');
+	// Route::resource('downloadedactivity', 'DownloadedActivityController');
+
 
 	Route::post('submittedactivity/{id}/updateactivity', 'SubmittedActivityController@updateactivity');
 	Route::resource('submittedactivity', 'SubmittedActivityController');
-	
+
+	Route::get('downloads/cycles', 'DownloadsController@cycles');
+	Route::get('downloads/{id}/download', 'DownloadsController@download');
+
 	Route::resource('group', 'GroupController');
 	Route::resource('dashboard', 'DashboardController');
 	Route::get('profile','ProfileController@index');
@@ -506,8 +510,11 @@ Route::group(array('before' => 'auth'), function()
 
 	Route::get('reports/activities', 'ReportController@activities');
 	Route::get('reports/{id}/preview', 'ReportController@preview');
+	Route::get('reports/{id}/download', 'ReportController@download');
 
 	Route::resource('activitytype', 'ActivityTypeController');
+
+	Route::resource('holidays', 'HolidaysController');
 
 	Route::get('images/{folder}/{image}', function($folder = null,$image = null)
 	{

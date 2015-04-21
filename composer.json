@@ -12,11 +12,12 @@
 		"zizaco/entrust": "1.2.*@dev",
 		"barryvdh/laravel-debugbar": "~1.8",
 		"rencie/cpm": "1.0",
-		"dinesh/barcode": "dev-master",
+		"dinesh/barcode": "4.0.*@dev",
 		"bllim/datatables": "*",
 		"maxxscho/laravel-tcpdf": "0.*",
 		"nesbot/carbon": "~1.14",
-		"intervention/image": "~2.1"
+		"intervention/image": "~2.1",
+		"alchemy/zippy": "0.2.1"
 		
 	},
 	"autoload": {

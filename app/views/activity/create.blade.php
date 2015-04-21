@@ -142,7 +142,7 @@
 						<div class="row">
 							<div class="col-lg-12">
 								{{ Form::label('activity_title', 'Activity Title', array('class' => 'control-label')) }}
-								{{ Form::text('activity_title','',array('id' => 'activity_title', 'class' => 'form-control', 'placeholder' => 'Activity Title')) }}
+								{{ Form::text('activity_title','',array('id' => 'activity_title', 'class' => 'form-control', 'placeholder' => 'Activity Title' ,'maxlength' => 80)) }}
 							</div>
 						</div>
 					</div>
@@ -288,7 +288,10 @@ $("#myform").validate({
 	errorElement: "span", 
 	errorClass : "has-error",
 	rules: {
-		activity_title: "required",
+		activity_title: {
+			required: true,
+			maxlength: 80
+			},
 		scope: "is_natural_no_zero",
 		activity_type: "is_natural_no_zero",
 		cycle: "is_natural_no_zero",

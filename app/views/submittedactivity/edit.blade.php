@@ -44,7 +44,7 @@
 	      	<div class="modal-body">
 	          	<div class="form-group">
 	            	{{ Form::label('submitremarks', 'Comments:', array('class' => 'control-label')) }}
-	            	{{ Form::textarea('submitremarks','',array('class' => 'form-control', 'placeholder' => 'Comments')) }}
+	            	{{ Form::textarea('submitremarks','',array('class' => 'form-control', 'placeholder' => 'Comments', 'size' => '30x5')) }}
 	          	</div>
 	      	</div>
 	      	<div class="modal-footer">
@@ -68,7 +68,7 @@
 		<div class="panel panel-default">
 		  	<div class="panel-heading">Activity Preview</div>
 		  	<div class="panel-body" style="height:600px;">
-				<iframe src="{{ URL::action('DownloadedActivityController@preview', $activity->id) }}" id="view1" name="view1" scrolling="auto" frameborder="0" height="100%" width="100%"></iframe>
+				<iframe src="{{ URL::action('ReportController@preview', $activity->id) }}" id="view1" name="view1" scrolling="auto" frameborder="0" height="100%" width="100%"></iframe>
 		  	</div>
 		</div>
 		

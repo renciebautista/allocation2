@@ -45,15 +45,12 @@
 				</div>
 				<div class="navbar-collapse collapse" id="navbar-main">
 					<ul class="nav navbar-nav">
-						@if(!Auth::user()->hasRole("ADMINISTRATOR"))
+						@if(Auth::user()->inRoles(['PROPONENT','PMOG PLANNER','GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']))
 						<li class="dropdown">
 							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="transaction">Transactions <span class="caret"></span></a>
 							<ul class="dropdown-menu" aria-labelledby="transaction">
-								@if(Auth::user()->hasRole("PROPONENT"))
+								@if(Auth::user()->inRoles(['PROPONENT','PMOG PLANNER']))
 								<li>{{ HTML::linkRoute('activity.index', 'Activity') }}</li>   
-								@endif
-								@if(Auth::user()->hasRole("PMOG PLANNER"))
-								<li>{{ HTML::linkRoute('downloadedactivity.index', 'Downloaded Activity') }}</li>  
 								@endif
 								@if(Auth::user()->inRoles(['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']))
 								<li>{{ HTML::linkAction('submittedactivity.index' , 'Submitted Activity') }}</li>  
@@ -71,6 +68,7 @@
 
 								<li>{{ HTML::linkRoute('cycle.index', 'Cycle') }}</li>  
 								<li>{{ HTML::linkRoute('activitytype.index', 'Activity Type') }}</li>  
+								<li>{{ HTML::linkRoute('holidays.index', 'Holidays') }}</li>  
 							</ul>
 						</li>
 						@endif
@@ -82,6 +80,12 @@
 							</ul>
 						</li>
 
+						<li class="dropdown">
+							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="report">Exports <span class="caret"></span></a>
+							<ul class="dropdown-menu" aria-labelledby="report">
+								<li>{{ HTML::linkAction('DownloadsController@cycles' , 'Download by Cycle') }}</li>  
+							</ul>
+						</li>
 						<li>
 							<a href="../help/">Help</a>
 						</li>

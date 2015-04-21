@@ -135,10 +135,10 @@
 						<td>{{ date_format(date_create($activity->eimplementation_date),'m/d/Y') }}</td>
 						<td>{{ date_format(date_create($activity->billing_date),'m/d/Y') }}</td>
 						<td class="action">
-							{{ HTML::linkAction('DownloadedActivityController@edit','View', $activity->id, array('class' => 'btn btn-success btn-xs')) }}
+							{{ HTML::linkAction('ActivityController@edit','View', $activity->id, array('class' => 'btn btn-success btn-xs')) }}
 						</td>
 						<td class="action">
-							<a class="btn btn-info btn-xs" target="_blank" href="{{ URL::action('DownloadedActivityController@preview', $activity->id ) }}">Preview</a>							
+							<a class="btn btn-info btn-xs" target="_blank" href="{{ URL::action('ReportController@preview', $activity->id ) }}">Preview</a>							
 						</td>
 					</tr>
 					@endforeach

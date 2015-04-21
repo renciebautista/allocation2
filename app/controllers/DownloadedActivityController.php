@@ -160,43 +160,4 @@ class DownloadedActivityController extends \BaseController {
 		}
 	}
 
-
-	public function preview($id){
-		$activity = Activity::find($id);
-		$planner = ActivityPlanner::where('activity_id', $activity->id)->first();
-		$budgets = ActivityBudget::with('budgettype')
-				->where('activity_id', $id)
-				->get();
-
-		$nobudgets = ActivityNobudget::with('budgettype')
-			->where('activity_id', $id)
-			->get();
-		$schemes = Scheme::getList($id);
-
-		$skuinvolves = array();
-		foreach ($schemes as $scheme) {
-			$involves = SchemeHostSku::where('scheme_id',$scheme->id)
-				->join('pricelists', 'scheme_host_skus.sap_code', '=', 'pricelists.sap_code')
-				->get();
-			foreach ($involves as $value) {
-				$skuinvolves[] = $value;
-			}
-			
-		}
-
-		$materials = ActivityMaterial::where('activity_id', $activity->id)
-			->with('source')
-			->get();
-
-		$fdapermit = ActivityFdapermit::where('activity_id', $activity->id)->first();
-		$networks = ActivityTiming::getTimings($activity->id);
-		$artworks = ActivityArtwork::getList($activity->id);
-
-		$scheme_customers = SchemeAllocation::getCustomers($activity->id);
-		
-		$pis = Excel::selectSheets('Output')->load(storage_path().'/uploads/fisupload/i1U6YvxiUjCuTXswyUGW.xlsx')->get();
-		return View::make('shared.preview', compact('activity' ,'planner','budgets','nobudgets','schemes','skuinvolves','materials',
-			'fdapermit', 'networks','artworks' ,'scheme_customers', 'pis'));
-	}
-
 }

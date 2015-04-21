@@ -82,7 +82,6 @@ $('#vetting_deadline, #replyback_deadline, #submission_deadline, #release_date, 
 
 $('#vetting_deadline, #replyback_deadline, #submission_deadline, #release_date, #emergency_deadline, #emergency_release_date, #implemintation_date').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
 
-;
 @stop
 
 

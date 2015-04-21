@@ -40,7 +40,12 @@ class SchemeAllocRepository
             }
             $scheme_alloc->sold_to_gsv_p = $sold_to_gsv_p;
             $_sold_to_alloc = 0;
-            $c_multi = $customer->gsv/$total_sales;
+
+            $c_multi = 0;
+            if(($customer->gsv > 0) && ($total_sales > 0)){
+               $c_multi = $customer->gsv/$total_sales;
+            }
+
             if($total_sales > 0){
                 $_sold_to_alloc = round($c_multi * $scheme->quantity);
             }
@@ -55,6 +60,9 @@ class SchemeAllocRepository
                     if($area->area_code == $customer->area_code){
                         $area_alloc = round(($scheme->quantity * $area->multi)/100);
                         $area_multiplier = 0;
+                        if(!isset($_areasales[$customer->area_code])){
+                            $_areasales[$customer->area_code] = 0;
+                        }
                         if($_areasales[$customer->area_code] > 0){
                             $area_multiplier = $customer->gsv/$_areasales[$customer->area_code];
                         }

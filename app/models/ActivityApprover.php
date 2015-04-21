@@ -15,11 +15,6 @@ class ActivityApprover extends \Eloquent {
 		return $list;
 	}
 
-	public static function getApprover($id,$user_id){
-		return self::where('activity_id',$id)
-			->where('user_id',$user_id)->first();
-	}
-
 	public static function getApproverByRole($activity_id,$role_name){
 		return self::select('activity_approvers.user_id')
 			->join('users', 'activity_approvers.user_id', '=', 'users.id')
@@ -90,26 +85,39 @@ class ActivityApprover extends \Eloquent {
 
 		if($approved){
 			$activity2 = Activity::find($activity_id);
+			// $activity2->pro_recall = 0;
+			// $activity2->pmog_recall = 0;
 			$activity2->status_id = $status_id;
 			$activity2->update();
 		}
 	}
 
-	public static function resetApprover($id,$role_id){
-		$approvers = self::select('activity_approvers.id')
-			->where('activity_id',$id)
-			->where('assigned_roles.role_id','>',$role_id)
-			->join('users', 'activity_approvers.user_id', '=', 'users.id')
-			->join('assigned_roles', 'activity_approvers.user_id', '=', 'assigned_roles.user_id')
-			->join('roles', 'assigned_roles.role_id', '=', 'roles.id')->get();
-
-		// Helper::print_array($approvers);
-		foreach ($approvers as $approver) {
-			self::where('id',$approver->id)->update(array('status_id' => 0));
-		}
-	}
 
 	public static function resetAll($activity_id){
 		self::where('activity_id',$activity_id)->update(array('status_id' => 0));
 	}
+
+	public static function getActivities($user_id){
+		$list = array();
+		$data = self::where('user_id',$user_id)->get();
+		if(!empty($data)){
+			foreach ($data as $row) {
+				$list[] = $row->activity_id;
+			}
+		}
+		return $list;
+	}
+
+	public static function getApprover($id,$user_id){
+		return self::where('activity_id',$id)
+			->where('user_id',$user_id)->first();
+	}
+
+	public static function myActivity($activity_id){
+		$activities = self::getActivities(Auth::id());
+		if(in_array($activity_id, $activities)){
+			return true;
+		}
+    	return false;
+    }
 }

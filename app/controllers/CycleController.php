@@ -66,6 +66,14 @@ class CycleController extends \BaseController {
 				$cycle->emergency_release_date = $emergency_release_date;
 				$cycle->implemintation_date = date('Y-m-d',strtotime(Input::get('implemintation_date')));
 				$cycle->save();
+
+				// $types = ActivityType::all();
+				$path = storage_path().'/uploads/'.$cycle->id;
+				if(!File::exists($path)) {
+				    // path does not exist
+				    File::makeDirectory($path);
+				}
+				
 			});
 			return Redirect::route('cycle.index')
 				->with('class', 'alert-success')
@@ -119,6 +127,7 @@ class CycleController extends \BaseController {
 		if ($validation->passes())
 		{
 			$cycle = Cycle::find($id);
+			$old_name = $cycle->cycle_name;
 			if (is_null($cycle))
 			{
 				return Redirect::route('cycle.index')
@@ -147,6 +156,10 @@ class CycleController extends \BaseController {
 			$cycle->emergency_release_date = $emergency_release_date;
 			$cycle->implemintation_date = date('Y-m-d',strtotime(Input::get('implemintation_date')));
 			$cycle->save();
+
+			// $old_path = storage_path().'/uploads/'.$old_name;
+			// $new_path = storage_path().'/uploads/'.$cycle->cycle_name;
+			// rename($old_path, $new_path);
 
 			return Redirect::route('cycle.index')
 				->with('class', 'alert-success')

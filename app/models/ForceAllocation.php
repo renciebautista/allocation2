@@ -5,9 +5,10 @@ class ForceAllocation extends \Eloquent {
 	public $timestamps = false;
 	
 	public static function getlist($id){
-		return self::select('force_allocations.*', 'areas.area_name')
+		return self::select('force_allocations.*', 'areas.area_name', 'groups.group_name')
 			->where('activity_id',$id)
 			->join('areas', 'force_allocations.area_code', '=', 'areas.area_code')
+			->join('groups', 'areas.group_code', '=', 'groups.group_code')
 			->get();
 		;
 	}

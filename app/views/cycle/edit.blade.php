@@ -64,7 +64,7 @@
 		</div>
 
 		<div class="form-group">
-			{{ Form::submit('Submit', array('class' => 'btn btn-primary')) }}
+			{{ Form::submit('Update', array('class' => 'btn btn-primary')) }}
 			{{ HTML::linkAction('CycleController@index', 'Back', array(), array('class' => 'btn btn-default')) }}
 		</div>
 	{{ Form::close() }}

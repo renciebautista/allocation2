@@ -15,13 +15,13 @@
 <div class="row">
 	<div class="col-lg-12">
 		<div class="form-group">
-			{{ HTML::linkRoute('downloadedactivity.index', 'Back To Activity List', array(), array('class' => 'btn btn-default')) }}
+			{{ HTML::linkRoute('activity.index', 'Back To Activity List', array(), array('class' => 'btn btn-default')) }}
 
 			<!-- Button trigger modal -->
 			<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#mySubmit">
 			  Action
 			</button>
-			<a class="btn btn-info" target="_blank" href="{{ URL::action('DownloadedActivityController@preview', $activity->id ) }}">Preview</a>
+			<a class="btn btn-info" target="_blank" href="{{ URL::action('ReportController@preview', $activity->id ) }}">Preview</a>
 		</div>
 	</div>
 
@@ -31,7 +31,7 @@
 <div class="modal fade" id="mySubmit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   	<div class="modal-dialog">
 	    <div class="modal-content">
-	    	{{ Form::open(array('action' => array('DownloadedActivityController@submittogcm', $activity->id), 'class' => 'bs-component','id' => 'submittogcm')) }}
+	    	{{ Form::open(array('action' => array('ActivityController@submittogcm', $activity->id), 'class' => 'bs-component','id' => 'submittogcm')) }}
 	      	<div class="modal-header">
 	        	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 	        	<h4 class="modal-title" id="myModalLabel">Submit To GCOM</h4>
@@ -107,7 +107,7 @@
 						<div class="row">
 							<div class="col-lg-12">
 								{{ Form::label('planner', 'PMOG Planner', array('class' => 'control-label')) }}
-								{{ Form::select('planner', array('0' => 'PLEASE SELECT') + $planners, (!is_null($sel_planner)) ? $sel_planner->user_id : 0, array('class' => 'form-control')) }}
+								{{ Form::text('planner',(count($sel_planner) > 0) ? $sel_planner->planner->getFullname() : '', array('class' => 'form-control','readonly' => '')) }}
 							</div>
 						</div>
 					</div>
@@ -1298,7 +1298,6 @@ $("#updateActivity").validate({
 	errorClass : "has-error",
 	rules: {
 		activity_title: "required",
-		planner: "is_natural_no_zero",
 		scope: "is_natural_no_zero",
 		activity_type: "is_natural_no_zero",
 		cycle: "is_natural_no_zero",
@@ -1610,7 +1609,7 @@ $("form[id='submittogcm']").on("submit",function(e){
 			dataType: "json",
 			success: function(data){
 				if(data.success == "1"){
-					window.location.href="{{ URL::action('downloadedactivity.index' ) }}";			
+					window.location.href="{{ URL::action('activity.index' ) }}";			
 				}else{
 					bootbox.alert("An error occured while updating."); 
 				}

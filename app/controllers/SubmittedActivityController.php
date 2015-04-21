@@ -10,8 +10,6 @@ class SubmittedActivityController extends \BaseController {
 	 */
 	public function index()
 	{
-		// show gcom
-		// echo Auth::user()->roles()->first()->id;
 		Input::flash();
 		if(Auth::user()->hasRole("GCOM APPROVER")){
 			$status_id = 5;
@@ -22,46 +20,16 @@ class SubmittedActivityController extends \BaseController {
 		if(Auth::user()->hasRole("CMD DIRECTOR")){
 			$status_id = 7;
 		}
-		$activities = Activity::select('activities.*')
-			->join('activity_approvers', 'activities.id', '=', 'activity_approvers.activity_id')
-			->where('activities.status_id',$status_id)
-			->where('activity_approvers.user_id',Auth::id())
-			->get();
-		return View::make('submittedactivity.index',compact('activities'));
-	}
 
-	/**
-	 * Show the form for creating a new resource.
-	 * GET /submittedactivity/create
-	 *
-	 * @return Response
-	 */
-	public function create()
-	{
-		//
-	}
-
-	/**
-	 * Store a newly created resource in storage.
-	 * POST /submittedactivity
-	 *
-	 * @return Response
-	 */
-	public function store()
-	{
-		//
-	}
-
-	/**
-	 * Display the specified resource.
-	 * GET /submittedactivity/{id}
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function show($id)
-	{
-		// ActivityApprover::resetApprover($id,4);
+		Input::flash();
+		$statuses = ActivityStatus::availableStatus(1);
+		$activities = Activity::searchSubmitted(Input::get('proponent'),Input::get('status'),Input::get('cycle'),Input::get('scope'),
+			Input::get('type'),Input::get('title'));
+		$cycles = Cycle::getLists();
+		$scopes = ScopeType::getLists();
+		$types = ActivityType::getLists();
+		$proponents = User::getApprovers(['PROPONENT']);
+		return View::make('submittedactivity.index',compact('statuses', 'activities', 'cycles', 'scopes', 'types', 'proponents'));
 	}
 
 	/**
@@ -73,9 +41,12 @@ class SubmittedActivityController extends \BaseController {
 	 */
 	public function edit($id)
 	{
-		// edit gcom
+		$activity = Activity::findOrFail($id);
+		if(!ActivityApprover::myActivity($activity->id)){
+			return Response::make(View::make('shared/404'), 404);
+		}
+
 		$approver = ActivityApprover::getApprover($id,Auth::id());
-		$activity = Activity::find($id);
 		$valid = false;
 		if(Auth::user()->hasRole("GCOM APPROVER")){
 			if($activity->status_id == 5){
@@ -93,69 +64,8 @@ class SubmittedActivityController extends \BaseController {
 			}
 		}
 
-		$planner = ActivityPlanner::where('activity_id', $activity->id)->first();
-		$budgets = ActivityBudget::with('budgettype')
-				->where('activity_id', $id)
-				->get();
-
-		$nobudgets = ActivityNobudget::with('budgettype')
-			->where('activity_id', $id)
-			->get();
-		$schemes = Scheme::getList($id);
-
-		$skuinvolves = array();
-		foreach ($schemes as $scheme) {
-			$involves = SchemeHostSku::where('scheme_id',$scheme->id)
-				->join('pricelists', 'scheme_host_skus.sap_code', '=', 'pricelists.sap_code')
-				->get();
-			foreach ($involves as $value) {
-				$skuinvolves[] = $value;
-			}
-			
-		}
-
-		$materials = ActivityMaterial::where('activity_id', $activity->id)
-			->with('source')
-			->get();
-
-		$fdapermit = ActivityFdapermit::where('activity_id', $activity->id)->first();
-		$networks = ActivityTiming::getTimings($activity->id);
-		$artworks = ActivityArtwork::getList($activity->id);
-
-		$scheme_customers = SchemeAllocation::getCustomers($activity->id);
-		
-		$pis = Excel::selectSheets('Output')->load(storage_path().'/uploads/fisupload/i1U6YvxiUjCuTXswyUGW.xlsx')->get();
-
-		$comments = ActivityComment::where('activity_id', $activity->id)->orderBy('created_at','desc')->get();
-		return View::make('submittedactivity.edit',compact('activity', 'planner','budgets','nobudgets','schemes','skuinvolves','materials',
-			'fdapermit', 'networks','artworks' ,'scheme_customers', 'pis','comments','approver', 'valid'));
-
-		// $approver = ActivityApprover::allApproverByRole($id,"GCOM APPROVER");
-		// print_r($approver);
-	}
-
-	/**
-	 * Update the specified resource in storage.
-	 * PUT /submittedactivity/{id}
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function update($id)
-	{
-		//
-	}
-
-	/**
-	 * Remove the specified resource from storage.
-	 * DELETE /submittedactivity/{id}
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function destroy($id)
-	{
-		//
+		$comments = ActivityComment::getList($activity->id);
+		return View::make('submittedactivity.edit',compact('activity','comments','approver', 'valid'));
 	}
 
 	public function updateactivity($id)
@@ -164,12 +74,11 @@ class SubmittedActivityController extends \BaseController {
 			$arr = DB::transaction(function() use ($id)  {
 				$activity = Activity::find($id);
 
-				if(empty($activity)){
+				if((empty($activity)) || (!ActivityApprover::myActivity($activity->id))){
 					$arr['success'] = 0;
 					Session::flash('class', 'alert-danger');
 					Session::flash('message', 'An error occured while updating activity.'); 
 				}else{
-
 					$comment_status = "DENIED";
 					$class = "text-danger";
 					$status = Input::get('status');
@@ -180,13 +89,13 @@ class SubmittedActivityController extends \BaseController {
 					if($status == 1){
 						$approver_status = 2;
 					}
-					
+					// update per approver
 					$approver = ActivityApprover::getApprover($id,Auth::id());
 					$approver->status_id = $approver_status;
 					$approver->update();
+					// end update per approver
 
-
-					if($status == 1){
+					if($status == 1){  // approved
 						$cdops_approvers = ActivityApprover::getApproverByRole($id,'CD OPS APPROVER');
 						if(count($cdops_approvers) > 0){
 							$comment_status = "SUBMITTED TO CD OPS";
@@ -205,35 +114,27 @@ class SubmittedActivityController extends \BaseController {
 							}
 						}
 						$class = "text-success";
-
-					}else{
-						// deny
-						$cdops_approvers = ActivityApprover::getAllApproverByRole($id,'CD OPS APPROVER');
-						if(count($cdops_approvers) == 0){
-							$gcom_approvers = ActivityApprover::getAllApproverByRole($id,'GCOM APPROVER');
-							if(count($gcom_approvers) == 0){
-								$last_status = 4;
-								$last_role = 2;
-							}else{
-								$last_status = 5;
-								$last_role = 3;
-							}
-						}else{
-							$last_status = 6;
-							$last_role = 4;
-						}
-
-
+					}else{ // denied
 						$comment_status = "DENIED";
 						$class = "text-danger";
+						$pro_recall = 0;
+						$pmog_recall = 0;
+						$planner = ActivityPlanner::getPlanner($activity->id);
+						if(count($planner) > 0){
+							$last_status = 4;
+							$pro_recall = 1;
+							$pmog_recall = 0;
+						}else{
+							$last_status = 2;
+						}
 
+						$activity->pro_recall = $pro_recall;
+						$activity->pmog_recall = $pmog_recall;
 						$activity->status_id = $last_status;
-						$activity->update();
+						$activity->update();	
 
-						
+						ActivityApprover::resetAll($activity->id);		
 					}
-
-					
 
 					$comment = new ActivityComment;
 					$comment->created_by = Auth::id();
@@ -247,8 +148,6 @@ class SubmittedActivityController extends \BaseController {
 						ActivityApprover::updateActivity($id,$role,$activity_status);
 					}
 
-					ActivityApprover::resetApprover($id,$last_role);
-
 					$arr['success'] = 1;
 					Session::flash('class', 'alert-success');
 					Session::flash('message', 'Activity successfully updated.'); 
@@ -259,5 +158,7 @@ class SubmittedActivityController extends \BaseController {
 			return json_encode($arr);
 		}
 	}
+
+	
 
 }

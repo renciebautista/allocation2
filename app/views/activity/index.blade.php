@@ -136,7 +136,7 @@
 						<td>{{ date_format(date_create($activity->eimplementation_date),'m/d/Y') }}</td>
 						<td>{{ date_format(date_create($activity->billing_date),'m/d/Y') }}</td>
 						<td class="action">
-							@if($activity->status_id == 1)
+							@if($activity->status_id < 4)
 							{{ Form::open(array('method' => 'DELETE', 'action' => array('ActivityController@destroy', $activity->id))) }}                       
 							{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}
 							{{ Form::close() }}

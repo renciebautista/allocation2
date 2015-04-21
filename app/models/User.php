@@ -7,7 +7,7 @@ use Zizaco\Entrust\HasRole;
 class User extends Eloquent implements ConfideUserInterface {
     use HasRole;
     use ConfideUser;
-
+    
     public static $rules = array(
     	'username' => 'required|unique:users',
     	'password' => 'required|min:6|confirmed',
@@ -42,11 +42,6 @@ class User extends Eloquent implements ConfideUserInterface {
 	    return $this->attributes['first_name'] .' '.$this->attributes['last_name'];
 	}
 
-
-	public function roles()
-	{
-		return $this->belongsToMany('Role','assigned_roles');
-	}
 
 	public function scopeIsRole($query, $role) {
 	    return $query->whereHas(

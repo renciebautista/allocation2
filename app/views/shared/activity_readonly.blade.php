@@ -17,7 +17,7 @@
 		<div class="form-group">
 			{{ HTML::linkRoute($route, 'Back To Activity List', array(), array('class' => 'btn btn-default')) }}
 
-			@if($recall)
+			@if(($recall) && ($activity->cycle->submission_deadline > Carbon::now()))
 			<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myAction">
 			  	Actions
 			</button>
@@ -105,7 +105,7 @@
 						<div class="row">
 							<div class="col-lg-12">
 								{{ Form::label('planner', 'PMOG Planner', array('class' => 'control-label')) }}
-								{{ Form::text('planner',(!empty($sel_planner->planner)?$sel_planner->planner->getFullname : ''), array('class' => 'form-control','readonly' => '')) }}
+								{{ Form::text('planner',(count($sel_planner) > 0) ? $sel_planner->planner->getFullname() : '', array('class' => 'form-control','readonly' => '')) }}
 							</div>
 						</div>
 					</div>

@@ -12,49 +12,23 @@ class DashboardController extends \BaseController {
 	 */
 	public function index()
 	{
-		// $activity_1 = new  CpmActivity;
-		// $activity_1->id = 'A';
-		// $activity_1->description = 'Market Analysis';
-		// $activity_1->duration = 1;
-		// // $activity_2->predecessors = array();
-		// $activities[] = $activity_1;
+		if(Auth::user()->hasRole("FIELD SALES")){
+			Input::flash();
+			$activities = Activity::searchField(Input::get('cycle'),Input::get('type'),Input::get('title'));
+			$cycles = Cycle::getLists();
+			$types = ActivityType::getLists();
+			return View::make('dashboard.field',compact('activities', 'cycles','types'));
+		}
 
-		// $activity_2 = new  CpmActivity;;
-		// $activity_2->id = 'B';
-		// $activity_2->description = 'Product Design';
-		// $activity_2->duration = 3;
-		// $activity_2->predecessors = array('A');
-		// $activities[] = $activity_2;
-
-		// $activity_3 = new CpmActivity;
-		// $activity_3->id = 'C';
-		// $activity_3->description = 'Manufacturing Study';
-		// $activity_3->duration = 1;
-		// $activity_3->predecessors = array('A');
-		// $activities[] = $activity_3;
-
-		// $activity_4 = new CpmActivity;
-		// $activity_4->id = 'D';
-		// $activity_4->description = 'Select best product design';
-		// $activity_4->duration = 1;
-		// $activity_4->predecessors = array('B','C');
-		// $activities[] = $activity_4;
-
-		// $activity_5 = new CpmActivity;
-		// $activity_5->id = 'E';
-		// $activity_5->description = 'Detailed Marketing Plans';
-		// $activity_5->duration = 1;
-		// $activity_5->predecessors = array('D');
-		// $activities[] = $activity_5;
+		if(Auth::user()->hasRole("ADMINISTRATOR")){
+			return View::make('dashboard.admin');
+		}
 
 
-		// $cpm = new Cpm($activities);
-		// echo $cpm->TotalDuration();
-		// $user =  Auth::user();
-		// echo '<pre>';
-		// print_r(Auth::user()->roles->first()->name);
-		// echo '</pre>';
-		return View::make('dashboard.index');
+		$ongoings = Activity::summary(8,'ongoing');
+		$upcommings = Activity::summary(8,'nextmonth');
+		$lastmonths = Activity::summary(8,'lastmonth');
+		return View::make('dashboard.index',compact('ongoings', 'upcommings', 'lastmonths'));
 	}
 
 	/**

@@ -202,7 +202,11 @@
 					</tr>
 					<tr>
 						<td>PMOG Partner</td>
-						<td>: {{ $planner->planner->getFullname() }} / {{ $planner->planner->contact_no }}</td>
+						<td>: 
+							@if(!empty($planner->planner))
+							{{ $planner->planner->getFullname() }} / {{ $planner->planner->contact_no }}
+							@endif
+						</td>
 					</tr>
 					<tr>
 						<td>TOP Cycle</td>
@@ -373,7 +377,11 @@
 					</tr>
 					<tr>
 						<td>FDA Permit No.</td>
-						<td>{{ $fdapermit->permit_no }}</td>
+						<td>
+							@if(!empty($fdapermit))
+							{{ $fdapermit->permit_no }}
+							@endif
+						</td>
 					</tr>
 					<tr>
 						<td>Billing Requirements</td>

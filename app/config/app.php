@@ -130,7 +130,7 @@ return array(
 		'Dinesh\Barcode\BarcodeServiceProvider',
 		'Bllim\Datatables\DatatablesServiceProvider',
 		'Maxxscho\LaravelTcpdf\LaravelTcpdfServiceProvider',
-		'Intervention\Image\ImageServiceProvider'
+		'Intervention\Image\ImageServiceProvider',
 
 
 	),
@@ -207,7 +207,7 @@ return array(
 		'DNS2D' 			=> 'Dinesh\Barcode\Facades\DNS2DFacade',
 		'Datatables'      	=> 'Bllim\Datatables\Facade\Datatables',
 		'Carbon'            => 'Carbon\Carbon',
-		'Image' 			=> 'Intervention\Image\Facades\Image'
+		'Image' 			=> 'Intervention\Image\Facades\Image',
 	),
 
 );

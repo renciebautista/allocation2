@@ -1,5 +1,5 @@
 <?php
-
+use Alchemy\Zippy\Zippy;
 class ReportController extends \BaseController {
 
 	/**
@@ -53,7 +53,7 @@ class ReportController extends \BaseController {
 
 			$fdapermit = ActivityFdapermit::where('activity_id', $activity->id)->first();
 			$networks = ActivityTiming::getTimings($activity->id);
-			$artworks = ActivityArtwork::getArtworks($activity->id);
+			$artworks = ActivityArtwork::getList($activity->id);
 
 			$scheme_customers = SchemeAllocation::getCustomers($activity->id);
 			
@@ -64,6 +64,25 @@ class ReportController extends \BaseController {
 		
 	}
 
+	public function download($id){
+		$zippy = Zippy::load();
+		$activity = Activity::findOrFail($id);
+		$folders = array();
+		$zip_path = storage_path().'/zipped/activities/'.$activity->id.'_'.strtoupper(Helper::sanitize($activity->circular_name)).'.zip';
+		File::delete($zip_path);
+		$nofile = 'public/nofile/robots.txt';
+		$path = '/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
+		$distination = storage_path().$path ;
+		$files = File::files($distination);
+		if(count($files)>0){
+			$folder = 'app/storage/'.$path.'/';
+		}else{
+			$folder = $nofile;
+		}
 
+		$archive = $zippy->create($zip_path,$folder);
+
+		return Response::download($zip_path);
+	}
 
 }
