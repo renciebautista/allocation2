@@ -16,7 +16,6 @@
 		"bllim/datatables": "*",
 		"maxxscho/laravel-tcpdf": "0.*",
 		"nesbot/carbon": "~1.14",
-		"intervention/image": "~2.1",
 		"alchemy/zippy": "0.2.1"
 		
 	},
