@@ -27,9 +27,10 @@ class DownloadsController extends \BaseController {
 
 		foreach ($activity_types as $type) {
 			$activities = Activity::where('activity_type_id',$type->id)
+				->where('cycle_id',$cycle->id)
 				->where('status_id',8)
 				->get();
-			$nofile = 'public/nofile/robots.txt';
+			$nofile = 'public/nofile/';
 			if(count($activities) > 0){
 				foreach ($activities as $activity) {
 					$path = '/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
@@ -48,7 +49,6 @@ class DownloadsController extends \BaseController {
 		}
 		// Helper::print_array($folders);
 		$archive = $zippy->create($zip_path,$folders, true);
-
 		return Response::download($zip_path);
 	}
 }
