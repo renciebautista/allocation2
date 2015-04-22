@@ -30,32 +30,26 @@ class DownloadsController extends \BaseController {
 				->where('cycle_id',$cycle->id)
 				->where('status_id',8)
 				->get();
-			$nofile = 'public/nofile/';
-			if(count($activities) > 0){
-				foreach ($activities as $activity) {
-					$path = '/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
-					$distination = storage_path().$path ;
-					$files = File::files($distination);
-					if(count($files)>0){
-						if (App::isLocal())
-						{
-							$folder = 'app/storage/'.$path.'/';
-						}else{
-							$folder = storage_path().$path.'/';
-						}
-						
-					}else{
-						$folder = $nofile;
-					}
-					
-					$folders[strtoupper(Helper::sanitize($type->activity_type)).'/'.$activity->id.'_'.strtoupper(Helper::sanitize($activity->circular_name))] = $folder;
-				}
-			}else{
-				$folders[strtoupper(Helper::sanitize($type->activity_type))] = $nofile;
-			}
+			$nofile = 'public/nofile/robots.txt';
+			// if(count($activities) > 0){
+			// 	// foreach ($activities as $activity) {
+			// 	// 	$path = '/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
+			// 	// 	$distination = storage_path().$path ;
+			// 	// 	$files = File::files($distination);
+			// 	// 	if(count($files)>0){
+			// 	// 		$folder = 'app/storage/'.$path.'/';
+			// 	// 	}else{
+			// 	// 		$folder = $nofile;
+			// 	// 	}
+			// 	// 	$folders[strtoupper(Helper::sanitize($type->activity_type)).'/'.$activity->id.'_'.strtoupper(Helper::sanitize($activity->circular_name))] = $folder;
+			// 	// }
+			// }else{
+			// 	$folders[strtoupper(Helper::sanitize($type->activity_type)).'/robots.txt'] = $nofile;
+			// }
+			$folders[strtoupper(Helper::sanitize($type->activity_type)).'/robots.txt'] = $nofile;
 		}
-		Helper::print_array($folders);
-		// $archive = $zippy->create($zip_path,$folders, true);
-		// return Response::download($zip_path);
+		// Helper::print_array($folders);
+		$archive = $zippy->create($zip_path,$folders, true);
+		return Response::download($zip_path);
 	}
 }
