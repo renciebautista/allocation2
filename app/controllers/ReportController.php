@@ -75,7 +75,7 @@ class ReportController extends \BaseController {
 		$distination = storage_path().$path ;
 		$files = File::files($distination);
 		if(count($files)>0){
-			$folder = 'app/storage/'.$path.'/';
+			$folder = storage_path().$path.'/';
 		}else{
 			$folder = $nofile;
 		}
