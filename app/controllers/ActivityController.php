@@ -206,7 +206,15 @@ class ActivityController extends \BaseController {
 						ActivityObjective::insert($activity_objective);
 					}
 
-					$result = File::makeDirectory(storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id);
+					$path = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id;
+					if(!File::exists($path)) {
+					    File::makeDirectory($path);
+					}
+					$path2 = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
+					if(!File::exists($path)) {
+					    File::makeDirectory($path2);
+					}
+
 					return $activity->id;
 
 					

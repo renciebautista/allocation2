@@ -80,8 +80,8 @@ class ReportController extends \BaseController {
 			$folder = $nofile;
 		}
 
+		// Helper::print_array($folder);
 		$archive = $zippy->create($zip_path,$folder);
-
 		return Response::download($zip_path);
 	}
 
