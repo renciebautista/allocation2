@@ -48,7 +48,7 @@ class DownloadsController extends \BaseController {
 			}
 		}
 		Helper::print_array($folders);
-		$archive = $zippy->create($zip_path,$folders, true);
-		return Response::download($zip_path);
+		// $archive = $zippy->create($zip_path,$folders, true);
+		// return Response::download($zip_path);
 	}
 }
