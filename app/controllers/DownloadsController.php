@@ -42,7 +42,13 @@ class DownloadsController extends \BaseController {
 					$distination = storage_path().$path ;
 					$files = File::files($distination);
 					if(count($files)>0){
-						$folder = 'app/storage/'.$path.'/';
+						if (App::isLocal())
+						{
+						    $folder = 'app/storage/'.$path.'/';
+						}else{
+							$folder = storage_path().$path.'/';
+						}
+						
 					}else{
 						$folder = $nofile;
 					}
