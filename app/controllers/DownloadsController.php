@@ -47,14 +47,15 @@ class DownloadsController extends \BaseController {
 					}else{
 						$folder = $nofile;
 					}
+					
 					$folders[strtoupper(Helper::sanitize($type->activity_type)).'/'.$activity->id.'_'.strtoupper(Helper::sanitize($activity->circular_name))] = $folder;
 				}
 			}else{
 				$folders[strtoupper(Helper::sanitize($type->activity_type))] = $nofile;
 			}
 		}
-		// Helper::print_array($folders);
-		$archive = $zippy->create($zip_path,$folders, true);
-		return Response::download($zip_path);
+		Helper::print_array($folders);
+		// $archive = $zippy->create($zip_path,$folders, true);
+		// return Response::download($zip_path);
 	}
 }
