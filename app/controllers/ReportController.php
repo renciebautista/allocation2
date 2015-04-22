@@ -75,13 +75,19 @@ class ReportController extends \BaseController {
 		$distination = storage_path().$path ;
 		$files = File::files($distination);
 		if(count($files)>0){
-			$folder = storage_path().$path.'/';
+			if (App::isLocal())
+			{
+			    $folder[Helper::sanitize($activity->circular_name)] = 'app/storage'.$path.'/';
+			}else{
+				$folder = storage_path().$path.'/';
+			}
+			
 		}else{
 			$folder = $nofile;
 		}
 
 		// Helper::print_array($folder);
-		$archive = $zippy->create($zip_path,$folder);
+		$archive = $zippy->create($zip_path,$folder,true);
 		return Response::download($zip_path);
 	}
 
