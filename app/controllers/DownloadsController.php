@@ -21,7 +21,6 @@ class DownloadsController extends \BaseController {
 		$zippy = Zippy::load();
 		$cycle = Cycle::where('id',$id)->first();
 		$activity_types = ActivityType::all();
-		$folders = array();
 		$zip_path = storage_path().'/zipped/cycles/'.$cycle->cycle_name.'.zip';
 		File::delete($zip_path);
 
@@ -30,7 +29,13 @@ class DownloadsController extends \BaseController {
 				->where('cycle_id',$cycle->id)
 				->where('status_id',8)
 				->get();
-			$nofile = 'public/nofile';
+			if (App::isLocal())
+			{
+			    $nofile = 'public/nofile';
+			}else{
+				$nofile = storage_path().'/nofile';
+			}
+			
 			// if(count($activities) > 0){
 			// 	// foreach ($activities as $activity) {
 			// 	// 	$path = '/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
@@ -48,7 +53,7 @@ class DownloadsController extends \BaseController {
 			// }
 			$folders[strtoupper(Helper::sanitize($type->activity_type))] = $nofile;
 		}
-		// Helper::print_array($folders);
+		// Helper::print_array($folders);	
 		$archive = $zippy->create($zip_path,$folders, true);
 		return Response::download($zip_path);
 	}
