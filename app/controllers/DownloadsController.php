@@ -27,7 +27,7 @@ class DownloadsController extends \BaseController {
 		foreach ($activity_types as $type) {
 			$activities = Activity::where('activity_type_id',$type->id)
 				->where('cycle_id',$cycle->id)
-				// ->where('status_id',8)
+				->where('status_id',8)
 				->get();
 			if (App::isLocal())
 			{
