@@ -79,7 +79,7 @@ class ReportController extends \BaseController {
 			{
 			    $folder[Helper::sanitize($activity->circular_name)] = 'app/storage'.$path.'/';
 			}else{
-				$folder = storage_path().$path.'/';
+				$folder[Helper::sanitize($activity->circular_name)] = storage_path().$path.'/';
 			}
 			
 		}else{
