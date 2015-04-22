@@ -36,22 +36,22 @@ class DownloadsController extends \BaseController {
 				$nofile = storage_path().'/nofile';
 			}
 			
-			// if(count($activities) > 0){
-			// 	// foreach ($activities as $activity) {
-			// 	// 	$path = '/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
-			// 	// 	$distination = storage_path().$path ;
-			// 	// 	$files = File::files($distination);
-			// 	// 	if(count($files)>0){
-			// 	// 		$folder = 'app/storage/'.$path.'/';
-			// 	// 	}else{
-			// 	// 		$folder = $nofile;
-			// 	// 	}
-			// 	// 	$folders[strtoupper(Helper::sanitize($type->activity_type)).'/'.$activity->id.'_'.strtoupper(Helper::sanitize($activity->circular_name))] = $folder;
-			// 	// }
-			// }else{
-			// 	$folders[strtoupper(Helper::sanitize($type->activity_type)).'/robots.txt'] = $nofile;
-			// }
-			$folders[strtoupper(Helper::sanitize($type->activity_type))] = $nofile;
+			if(count($activities) > 0){
+				foreach ($activities as $activity) {
+					$path = '/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
+					$distination = storage_path().$path ;
+					$files = File::files($distination);
+					if(count($files)>0){
+						$folder = 'app/storage/'.$path.'/';
+					}else{
+						$folder = $nofile;
+					}
+					$folders[strtoupper(Helper::sanitize($type->activity_type)).'/'.$activity->id.'_'.strtoupper(Helper::sanitize($activity->circular_name))] = $folder;
+				}
+			}else{
+				$folders[strtoupper(Helper::sanitize($type->activity_type))] = $nofile;
+			}
+			
 		}
 		// Helper::print_array($folders);	
 		$archive = $zippy->create($zip_path,$folders, true);
