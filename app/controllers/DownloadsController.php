@@ -47,8 +47,8 @@ class DownloadsController extends \BaseController {
 				$folders[strtoupper(Helper::sanitize($type->activity_type))] = $nofile;
 			}
 		}
-		Helper::print_array($folders);
-		// $archive = $zippy->create($zip_path,$folders, true);
-		// return Response::download($zip_path);
+		// Helper::print_array($folders);
+		$archive = $zippy->create($zip_path,$folders);
+		return Response::download($zip_path);
 	}
 }
