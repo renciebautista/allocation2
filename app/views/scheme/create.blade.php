@@ -42,6 +42,18 @@
 			</div>
 		</div>
 	</div>
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="form-group">
+				<div class="row">
+					<div class="col-lg-6">
+						{{ Form::label('premuim', 'Premuim SKU', array('class' => 'control-label')) }}
+						{{ Form::select('premuim[]', array('0' => '') + $involves, '', array('data-placeholder' => 'Select Premuim SKU','id' => 'premuim', 'class' => 'form-control')) }}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 
 	<div class="row">
 		<div class="col-lg-12">
@@ -240,7 +252,7 @@ $("form").validate({
 });
 
 
-$("#skus,#involve").chosen({
+$("#skus,#involve,#premuim").chosen({
 	search_contains: true,
 	allow_single_deselect: true
 });

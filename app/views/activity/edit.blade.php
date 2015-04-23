@@ -782,7 +782,7 @@
 						      	<td>{{ $permit->file_name }}</td>
 						      	<td>{{ date_format(date_create($permit->created_at),'m/d/Y H:m:s') }}</td>
 						      	<td class="action">
-									{{ HTML::linkAction('ActivityController@fdadownload','Download', $permit->id, array('class' => 'btn btn-info btn-xs')) }}
+									{{ HTML::linkAction('ActivityController@fdadownload','Download', $permit->id, array('class' => 'btn btn-success btn-xs')) }}
 								</td>
 						      	<td class="action">
 									{{ Form::open(array('method' => 'DELETE', 'action' => array('ActivityController@fdadelete', $permit->id))) }}  
@@ -827,12 +827,12 @@
 						      	<td>{{ $fi->file_name }}</td>
 						      	<td>{{ date_format(date_create($fi->created_at),'m/d/Y H:m:s') }}</td>
 						      	<td class="action">
-									{{ HTML::linkAction('ActivityController@fisdownload','Download', $fi->id, array('class' => 'btn btn-info btn-xs')) }}
+									{{ HTML::linkAction('ActivityController@fisdownload','Download', $fi->id, array('class' => 'btn btn-success btn-xs')) }}
 								</td>
 						      	<td class="action">
 									{{ Form::open(array('method' => 'DELETE', 'action' => array('ActivityController@fisdelete', $fi->id))) }}  
 									{{ Form::hidden('activity_id', $activity->id) }}                     
-									{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}
+									{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to delete btn btn-success btn-xsthis record?')){return false;};")) }}
 									{{ Form::close() }}
 								</td>
 						    </tr>
@@ -872,7 +872,7 @@
 								      	<td>{{ $artwork->file_name }}</td>
 								      	<td>{{ date_format(date_create($artwork->created_at),'m/d/Y H:m:s') }}</td>
 								      	<td class="action">
-											{{ HTML::linkAction('ActivityController@artworkdownload','Download', $artwork->id, array('class' => 'btn btn-info btn-xs')) }}
+											{{ HTML::linkAction('ActivityController@artworkdownload','Download', $artwork->id, array('class' => 'btn btn-success btn-xs')) }}
 										</td>
 								      	<td class="action">
 											{{ Form::open(array('method' => 'DELETE', 'action' => array('ActivityController@artworkdelete', $artwork->id))) }}  
@@ -918,7 +918,7 @@
 								      	<td>{{ $background->file_name }}</td>
 								      	<td>{{ date_format(date_create($background->created_at),'m/d/Y H:m:s') }}</td>
 								      	<td class="action">
-											{{ HTML::linkAction('ActivityController@backgrounddownload','Download', $background->id, array('class' => 'btn btn-info btn-xs')) }}
+											{{ HTML::linkAction('ActivityController@backgrounddownload','Download', $background->id, array('class' => 'btn btn-success btn-xs')) }}
 										</td>
 								      	<td class="action">
 											{{ Form::open(array('method' => 'DELETE', 'action' => array('ActivityController@backgrounddelete', $background->id))) }}  
@@ -965,7 +965,7 @@
 								      	<td>{{ $banding->file_name }}</td>
 								      	<td>{{ date_format(date_create($banding->created_at),'m/d/Y H:m:s') }}</td>
 										<td class="action">
-											{{ HTML::linkAction('ActivityController@bandingdownload','Download', $banding->id, array('class' => 'btn btn-info btn-xs')) }}
+											{{ HTML::linkAction('ActivityController@bandingdownload','Download', $banding->id, array('class' => 'btn btn-success btn-xs')) }}
 										</td>
 								      	<td class="action">
 											{{ Form::open(array('method' => 'DELETE', 'action' => array('ActivityController@bandingdelete', $banding->id))) }}  

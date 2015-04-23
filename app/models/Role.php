@@ -15,5 +15,18 @@ class Role extends EntrustRole
 			->get();
 	}
 
+	public static function getLists(){
+		return self::orderBy('name')->lists('name', 'id');
+	}
+
+	public static function withUsers($id){
+		$users = DB::table('assigned_roles')
+			->where('role_id',$id)
+			->get();
+		if(count($users) > 0){
+			return true;
+		}
+		return false;
+	}
 
 }

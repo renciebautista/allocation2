@@ -35,15 +35,15 @@
 				<div class="modal-body">
 					<div class="form-group">
 						{{ Form::label('milestone', 'Milestone', array('class' => 'control-label')) }}
-						{{ Form::text('milestone','',array('class' => 'form-control', 'placeholder' => 'Milestone')) }}
+						{{ Form::text('milestone','',array('id' => 'milestone', 'class' => 'form-control', 'placeholder' => 'Milestone')) }}
 					</div>
 					<div class="form-group">
 						{{ Form::label('task', 'Task', array('class' => 'control-label')) }}
-						{{ Form::text('task','',array('class' => 'form-control', 'placeholder' => 'Task')) }}
+						{{ Form::text('task','',array('id' => 'task', 'class' => 'form-control', 'placeholder' => 'Task')) }}
 					</div>
 					<div class="form-group">
 						{{ Form::label('responsible', 'Team Responsible', array('class' => 'control-label')) }}
-						{{ Form::text('responsible','',array('class' => 'form-control', 'placeholder' => 'Team Responsible')) }}
+						{{ Form::text('responsible','', array('id' => 'responsible','class' => 'form-control', 'placeholder' => 'Team Responsible')) }}
 					</div>
 					<div class="form-group">
 						{{ Form::label('depend_on', 'Depends On', array('class' => 'control-label')) }}
@@ -51,12 +51,12 @@
 					</div>
 					<div class="form-group">
 						{{ Form::label('duration', 'Duration (days)', array('class' => 'control-label')) }}
-						{{ Form::text('duration','',array('class' => 'form-control', 'placeholder' => 'Duration (days)')) }}
+						{{ Form::text('duration','',array('id' => 'duration','class' => 'form-control', 'placeholder' => 'Duration (days)')) }}
 					</div>
 					<div class="form-group">
 						<div class="checkbox">
 					        <label>
-					        	{{ Form::checkbox('show') }} Show in Activity Preview
+					        	{{ Form::checkbox('show',null,array('id' => 'show')) }} Show in Activity Preview
 					        </label>
 					    </div>
 					</div>
@@ -82,8 +82,8 @@
 				        <th data-field="responsible">Team Responsible</th>
 				        <th data-field="duration">Duration (days)</th>
 				        <th data-field="depend_on">Depends On</th>
-				        <th data-field="show">Show On Preview</th>
-				        <th data-field="action" data-formatter="actionFormatter" data-events="actionEvents">Action</th>
+				        <th data-field="show" data-formatter="showFormatter">Show</th>
+				        <th data-field="action">Action</th>
 				    </tr>
 				</thead>
 			</table> 
@@ -101,7 +101,9 @@
 
 @section('page-script')
 
-
+function showFormatter(value) {
+    console.log(value);
+}
 
 function duration(){
 	$.ajax({
@@ -122,7 +124,6 @@ duration();
 $('#myModal').on('show.bs.modal', function (event) {
 
 	var modal = $(this)
-	console.log(modal)
 	modal.find('.modal-title').text('New Network')
 
 	$.ajax({
@@ -136,23 +137,40 @@ $('#myModal').on('show.bs.modal', function (event) {
 		$('select#depend_on').multiselect('rebuild');
 	   }
 	});
+
+	$("#milestone").val('');
+    $("#task").val('');
+    $("#responsible").val('');
+    $("#duration").val('');
+    $("#error").empty();
+    $('.form-group').removeClass('has-error');
 });
 
 $('button#submit').click(function(){
-	$.ajax({
-		type: "POST",
-		url: "network/create",
-		data: $('form#activity').serialize(),
-		success: function(msg){
-			$('#activity_table').bootstrapTable("refresh");
-		    $('#myModal').modal('hide');
-		    duration();
-		},
-		error: function(){
-			alert("failure");
-		}
-	});
+	if($("#activity").valid()){
+		$.ajax({
+			type: "POST",
+			url: "network/create",
+			data: $('form#activity').serialize(),
+			success: function(msg){
+				$('#activity_table').bootstrapTable("refresh");
+			    $('#myModal').modal('hide');
+			    duration();
+			},
+			error: function(){
+				alert("failure");
+			}
+		});
+	}
+	
 });
+
+
+function showFormatter(value, row) {
+    var icon = row.id % 2 === 0 ? 'glyphicon-star' : 'glyphicon-star-empty'
+
+    return '<i class="glyphicon ' + icon + '"></i> ' + value;
+}
 
 $('#activity_table').bootstrapTable({
     url: 'network/list'
@@ -166,6 +184,37 @@ $('select#depend_on').multiselect({
 });
 
 
+$("#activity").validate({
+	errorElement: "span", 
+	errorClass : "has-error",
+	rules: {
+		milestone: {
+			required: true,
+			maxlength: 80
+			},
+		task: {
+			required: true,
+			maxlength: 80
+			},
+		responsible: {
+			required: true,
+			maxlength: 80
+			},
+		duration: {
+			required: true,
+			maxlength: 80
+			}
+	},
+	errorPlacement: function(error, element) {               
+		
+	},
+	highlight: function( element, errorClass, validClass ) {
+    	$(element).closest('div').addClass(errorClass).removeClass(validClass);
+  	},
+  	unhighlight: function( element, errorClass, validClass ) {
+    	$(element).closest('div').removeClass(errorClass).addClass(validClass);
+  	}
+});
 
 
 @stop

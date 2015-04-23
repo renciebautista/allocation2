@@ -65,7 +65,7 @@ class GroupController extends \BaseController {
 	 */
 	public function show($id)
 	{
-		//
+		return Redirect::route('group.edit',$id);
 	}
 
 	/**
@@ -77,7 +77,7 @@ class GroupController extends \BaseController {
 	 */
 	public function edit($id)
 	{
-		$group = Role::find($id);
+		$group = Role::findOrFail($id);
 		if (is_null($group))
 		{
 			return Redirect::route('group.index')
@@ -103,7 +103,7 @@ class GroupController extends \BaseController {
 		$validation = Validator::make($input,$rules);
 		if ($validation->passes())
 		{
-			$group = Role::find($id);
+			$group = Role::findOrFail($id);
 			if (is_null($group))
 			{
 				return Redirect::route('group.index')
@@ -133,14 +133,21 @@ class GroupController extends \BaseController {
 	 */
 	public function destroy($id)
 	{
-		$role = Role::find($id)->delete();
+		$role = Role::findOrFail($id);
 		if (is_null($role))
 		{
 			$class = 'alert-danger';
-			$message = 'Record does not exist.';
+			$message = 'Role does not exist.';
 		}else{
-			$class = 'alert-success';
-			$message = 'Record successfully deleted.';
+			if(!Role::withUsers($role->id)){
+				$role->delete();
+				$class = 'alert-success';
+				$message = 'Role successfully deleted.';
+			}else{
+				$class = 'alert-danger';
+				$message = 'Role is already attached to a user.';
+			}
+			
 		}
 		return Redirect::route('group.index')
 				->with('class', $class )

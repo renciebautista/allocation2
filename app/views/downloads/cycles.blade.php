@@ -65,7 +65,7 @@
 					<tr>
 						<td>{{ $cycle->cycle_name }}</td>
 						<td class="action">
-							{{ HTML::linkAction('DownloadsController@download','Download Zip', $cycle->id, array('class' => 'btn btn-info btn-xs')) }}						
+							{{ HTML::linkAction('DownloadsController@download','Download Zip', $cycle->id, array('class' => 'btn btn-success btn-xs')) }}						
 						</td>
 					</tr>
 					@endforeach

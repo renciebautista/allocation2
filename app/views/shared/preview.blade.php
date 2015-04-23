@@ -402,7 +402,7 @@
 				<h2>Artworks</h2>
 				<ul>
 					@foreach($artworks as $artwork)
-					<li>{{ HTML::image('images/artworkupload/'.$artwork->hash_name ,$artwork->file_desc) }}</li>
+					<li>{{ HTML::image('images/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/'.$artwork->hash_name ,$artwork->file_desc) }}</li>
 					@endforeach
 				</ul>
 			</div>
@@ -431,6 +431,7 @@
 				</table>
 			</div>
 
+			@if(isset($pis))
 			<div id="product">
 				<h2>Product Information Sheet</h2>
 				<table class="p-head bordered">
@@ -583,10 +584,8 @@
 						</td>
 					</tr>
 				</table>
-
-
 			</div>
-
+			@endif
 
 			<div id="allocations">
 				<h2>Allocations</h2>

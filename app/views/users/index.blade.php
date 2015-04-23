@@ -5,34 +5,72 @@
 <div class="page-header" id="banner">
 	<div class="row">
 	  	<div class="col-lg-8 col-md-7 col-sm-6">
-			<h1>User List</h1>
+			<h1>Users List</h1>
 	  	</div>
 	</div>
 </div>
 
-<div class="row">
-	<div class="col-lg-12">
-		{{ Form::open(array('method' => 'get','class' => 'form-inline')) }}
-		  	<div class="filter">
-		  		<label class="radio-inline">
-		  			<input type="radio" name="status" value="1" <?php echo Helper::oldRadio('status', '1', true); ?>> Active
-				</label>
-	  	  		<label class="radio-inline">
-	  	  			<input type="radio" name="status" value="2" <?php echo Helper::oldRadio('status', '2'); ?>> In Active
-				</label>
-				<label class="radio-inline">
-			  		<input type="radio" name="status" value="3" <?php echo Helper::oldRadio('status', '3'); ?>> All
-				</label>
+<div class="panel panel-default">
+	<div class="panel-heading">Filters</div>
+	<div class="panel-body">
+		{{ Form::open(array('method' => 'get','class' => 'bs-component')) }}
+		<div class="row">
+			<div class="col-lg-6">
+				<div class="form-group">
+					<div class="row">
+						<div class="col-lg-12">
+						{{ Form::label('status', 'Status', array('class' => 'control-label')) }}
+						{{ Form::select('status', array('0' => 'ALL STATUSES') + $status , null, array('id' => 'status','class' => 'form-control')) }}
+						</div>
+					</div>
+				</div>
 			</div>
-		 	<div class="form-group">
-		 		<label class="sr-only" for="s">Search</label>
-		 		{{ Form::text('s',Input::old('s'),array('class' => 'form-control', 'placeholder' => 'Search')) }}
-		  	</div>
-		  	<button type="submit" class="btn btn-success"><i class="fa fa-search"></i> Search</button>
-		  	<a href="{{ URL::action('UsersController@create') }}" class="btn btn-primary"><i class="fa fa-plus"></i> User</a>
+			<div class="col-lg-6">
+				<div class="form-group">
+					<div class="row">
+						<div class="col-lg-12">
+						{{ Form::label('group', 'TOP Cycle', array('class' => 'control-label')) }}
+						{{ Form::select('group', array('0' => 'ALL GROUP') + $groups, null, array('id' => 'cycle','class' => 'form-control')) }}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-6">
+				<div class="form-group">
+					<div class="row">
+						<div class="col-lg-12">
+						{{ Form::label('search', 'Full Name', array('class' => 'control-label')) }}
+						{{ Form::text('search',Input::old('search'),array('class' => 'form-control', 'placeholder' => 'Full Name')) }}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			
+			<div class="col-lg-6">
+				<div class="form-group">
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="search">
+								<button type="submit" class="btn btn-success"><i class="fa fa-search"></i> Search</button>
+								<a href="{{ URL::action('UsersController@create') }}" class="btn btn-primary"><i class="fa fa-plus"></i> User</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 		{{ Form::close() }}
 	</div>
 </div>
+
+<hr>
+
 
 <div class="row">
 	<div class="col-lg-12">
@@ -49,14 +87,14 @@
 				<tbody>
 					@if(count($users) == 0)
 					<tr>
-						<td colspan="4">No record found!</td>
+						<td colspan="5">No record found!</td>
 					</tr>
 					@else
 					@foreach($users as $user)
 					<tr>
-						<td>{{ $user->first_name .' ' .$user->middle_initial .' ' .$user->last_name }}</td>
+						<td>{{ $user->getFullname(	) }}</td>
 						<td>
-							
+							{{ $user->roles[0]->name }}
 						</td>
 						<td>{{ (($user->active == 1) ? 'Active':'In Active') }}</td>
 						<td class="action">

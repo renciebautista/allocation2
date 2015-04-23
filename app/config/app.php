@@ -129,7 +129,8 @@ return array(
 		'Rencie\Cpm\CpmServiceProvider',
 		'Dinesh\Barcode\BarcodeServiceProvider',
 		'Bllim\Datatables\DatatablesServiceProvider',
-		'Maxxscho\LaravelTcpdf\LaravelTcpdfServiceProvider'
+		'Maxxscho\LaravelTcpdf\LaravelTcpdfServiceProvider',
+		'KevBaldwyn\Image\Providers\Laravel\ImageServiceProvider'
 
 	),
 
@@ -204,7 +205,8 @@ return array(
 		'DNS1D' 			=> 'Dinesh\Barcode\Facades\DNS1DFacade',
 		'DNS2D' 			=> 'Dinesh\Barcode\Facades\DNS2DFacade',
 		'Datatables'      	=> 'Bllim\Datatables\Facade\Datatables',
-		'Carbon'            => 'Carbon\Carbon'
+		'Carbon'            => 'Carbon\Carbon',
+		'Image' 			=> 'KevBaldwyn\Image\Providers\Laravel\Facades\Image'
 	),
 
 );

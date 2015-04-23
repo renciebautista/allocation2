@@ -16,7 +16,7 @@
 <div class="row">
 
 	<div class="col-lg-6">
-	{{ Form::open(array('action' => 'GroupController@store','class' => 'bs-component')) }}
+	{{ Form::open(array('action' => 'GroupController@store','class' => 'bs-component' , 'id' => 'myform')) }}
 		<div class="form-group">
 			{{ Form::label('name', 'Group Name', array('class' => 'control-label')) }}
 			{{ Form::text('name','',array('class' => 'form-control', 'placeholder' => 'Group Name')) }}
@@ -35,6 +35,25 @@
 
 @section('page-script')
 
+$("#myform").validate({
+	errorElement: "span", 
+	errorClass : "has-error",
+	rules: {
+		name: {
+			required: true,
+			maxlength: 80
+			}
+	},
+	errorPlacement: function(error, element) {               
+		
+	},
+	highlight: function( element, errorClass, validClass ) {
+    	$(element).closest('div').addClass(errorClass).removeClass(validClass);
+  	},
+  	unhighlight: function( element, errorClass, validClass ) {
+    	$(element).closest('div').removeClass(errorClass).addClass(validClass);
+  	}
+});
 
 
 @stop

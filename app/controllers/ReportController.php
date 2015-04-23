@@ -52,12 +52,13 @@ class ReportController extends \BaseController {
 				->get();
 
 			$fdapermit = ActivityFdapermit::where('activity_id', $activity->id)->first();
-			$networks = ActivityTiming::getTimings($activity->id);
+			$networks = ActivityTiming::getTimings($activity->id,true);
 			$artworks = ActivityArtwork::getList($activity->id);
 
 			$scheme_customers = SchemeAllocation::getCustomers($activity->id);
 			
-			$pis = Excel::selectSheets('Output')->load(storage_path().'/uploads/fisupload/i1U6YvxiUjCuTXswyUGW.xlsx')->get();
+			// $pis = Excel::selectSheets('Output')->load(storage_path().'/uploads/fisupload/i1U6YvxiUjCuTXswyUGW.xlsx')->get();
+			// $pis = array();
 			return View::make('shared.preview', compact('activity' ,'planner','budgets','nobudgets','schemes','skuinvolves','materials',
 				'fdapermit', 'networks','artworks' ,'scheme_customers', 'pis'));
 		}

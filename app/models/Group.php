@@ -15,4 +15,7 @@ class Group extends \Eloquent {
 			
 		});
 	}
+
+	
+	
 }

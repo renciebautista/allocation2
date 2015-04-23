@@ -1,5 +1,5 @@
 <?php
-
+use Imagecow\Image;
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -516,13 +516,18 @@ Route::group(array('before' => 'auth'), function()
 
 	Route::resource('holidays', 'HolidaysController');
 
-	Route::get('images/{folder}/{image}', function($folder = null,$image = null)
+	Route::get('images/{cycle_id}/{type_id}/{activity_id}/{name}', function($cycle_id = null,$type_id = null,$activity_id = null,$name = null)
 	{
-	    $path = storage_path().'/uploads/'.$folder.'/' . $image;
+		
+	    $path = storage_path().'/uploads/'.$cycle_id.'/'. $type_id.'/'. $activity_id.'/'. $name;
 	    // echo $path;
 	    if (file_exists($path)) { 
-	    	$img = Image::make($path)->resize(300, 200);
-	    	return $img->response();
+
+	    	$image = Image::create($path);
+	    	$image->resize(300, 200, 1);
+	    	return $image->show();
+	    	// $img = Image::make($path)->resize(300, 200);
+	    	// return $img->response();
 	        // return Response::download($path);
 	    }
 	});

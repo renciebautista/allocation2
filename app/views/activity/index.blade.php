@@ -136,6 +136,10 @@
 						<td>{{ date_format(date_create($activity->eimplementation_date),'m/d/Y') }}</td>
 						<td>{{ date_format(date_create($activity->billing_date),'m/d/Y') }}</td>
 						<td class="action">
+							{{ HTML::linkAction('ActivityController@edit','View', $activity->id, array('class' => 'btn btn-success btn-xs')) }}
+							
+						</td>
+						<td class="action">
 							@if($activity->status_id < 4)
 							{{ Form::open(array('method' => 'DELETE', 'action' => array('ActivityController@destroy', $activity->id))) }}                       
 							{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}
@@ -144,14 +148,7 @@
 							<button class="btn btn-danger btn-xs disabled">DELETE</button>
 							@endif
 						</td>
-						<td class="action">
-							@if($activity->status_id == 1)
-							{{ HTML::linkAction('ActivityController@edit','Edit', $activity->id, array('class' => 'btn btn-info btn-xs')) }}
-							@else
-							{{ HTML::linkAction('ActivityController@edit','View', $activity->id, array('class' => 'btn btn-info btn-xs')) }}
-							@endif
-							
-						</td>
+						
 					</tr>
 					@endforeach
 					@endif

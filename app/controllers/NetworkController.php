@@ -36,6 +36,10 @@ class NetworkController extends \BaseController {
 	public function store($id)
 	{
 		if(Request::ajax()){
+			$activitytype = ActivityType::findOrFail($id);
+			if(empty($activitytype)){
+				return 0;
+			}
 
 			$rules = array(
 				'milestone' => 'required',
@@ -55,6 +59,7 @@ class NetworkController extends \BaseController {
 					$milestone->task = strtoupper(Input::get('task'));
 					$milestone->responsible = strtoupper(Input::get('responsible'));
 					$milestone->duration = Input::get('duration');
+					$milestone->show = (Input::has('show')) ? true : false;
 					$milestone->save();
 					$depend_on = Input::get('depend_on');
 					if($depend_on !== null){

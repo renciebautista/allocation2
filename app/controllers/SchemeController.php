@@ -115,6 +115,12 @@ class SchemeController extends \BaseController {
 				}
 				SchemeHostSku::insert($hosts);
 
+				$premuim = array();
+				foreach (Input::get('premuim') as $sap_code){
+					$premuim[] = array('scheme_id' => $scheme->id, 'sap_code' => $sap_code);
+				}
+				SchemePremuimSku::insert($hosts);
+
 				// create allocation
 				SchemeAllocRepository::insertAlllocation($scheme);
 
@@ -142,35 +148,35 @@ class SchemeController extends \BaseController {
 	 */
 	public function show($id)
 	{	
+		return Redirect::action('SchemeController@edit',$id);
+		// $scheme = Scheme::find($id);
+		// $skus = SchemeSku::getSkus($id);
+		// $customers = ActivityCustomer::customers($scheme->activity_id);
+
+		// // $channels = array('C1', 'C2', 'C3');
+
+		// $_channels = ActivityChannel::channels($scheme->activity_id);
+
+		// $qty = $scheme->quantity;
+
+		// $_allocation = new AllocationRepository;
+		// $allocations = $_allocation->customers($skus, $_channels, $customers);
 		
-		$scheme = Scheme::find($id);
-		$skus = SchemeSku::getSkus($id);
-		$customers = ActivityCustomer::customers($scheme->activity_id);
+		// $total_sales = $_allocation->total_sales();
 
-		// $channels = array('C1', 'C2', 'C3');
-
-		$_channels = ActivityChannel::channels($scheme->activity_id);
-
-		$qty = $scheme->quantity;
-
-		$_allocation = new AllocationRepository;
-		$allocations = $_allocation->customers($skus, $_channels, $customers);
-		
-		$total_sales = $_allocation->total_sales();
-
-		$summary = $_allocation->allocation_summary();
-		$big10 = $_allocation->account_group("AG4");
-		$gaisanos = $_allocation->account_group("AG5");
-		$nccc = $_allocation->account_group("AG6");
-		// echo '<pre>';
-		// print_r($big10);
-		// echo '</pre>';
-		// $channels = array();
-		// $groups = $_allocation->groups();
-		// $areas = $_allocation->areas();
-		// $soldtos = $_allocation->soldtos();
-		return View::make('scheme.show', compact('allocations','total_sales',
-			'qty','id', 'summary', 'big10', 'gaisanos', 'nccc'));
+		// $summary = $_allocation->allocation_summary();
+		// $big10 = $_allocation->account_group("AG4");
+		// $gaisanos = $_allocation->account_group("AG5");
+		// $nccc = $_allocation->account_group("AG6");
+		// // echo '<pre>';
+		// // print_r($big10);
+		// // echo '</pre>';
+		// // $channels = array();
+		// // $groups = $_allocation->groups();
+		// // $areas = $_allocation->areas();
+		// // $soldtos = $_allocation->soldtos();
+		// return View::make('scheme.show', compact('allocations','total_sales',
+		// 	'qty','id', 'summary', 'big10', 'gaisanos', 'nccc'));
 	}
 
 	/**
@@ -192,6 +198,7 @@ class SchemeController extends \BaseController {
 		$sel_skus =  SchemeSku::getSkus($scheme->id);
 
 		$sel_hosts = SchemeHostSku::getHosts($scheme->id);
+		$sel_premuim = SchemePremuimSku::getPremuim($scheme->id);
 		// print_r($sel_skus);
 		$customers = ActivityCustomer::customers($scheme->activity_id);
 		// print_r($customers);
@@ -217,7 +224,9 @@ class SchemeController extends \BaseController {
 		// print_r($scheme_customers);
 		// echo "</pre>";
 		return View::make('scheme.edit',compact('scheme', 'activity', 'skus', 'involves', 'sel_skus', 'sel_hosts',
-			'allocations', 'total_sales', 'qty','id', 'summary', 'big10', 'gaisanos', 'nccc', 'scheme_customers', 'total_gsv'));
+			'sel_premuim',
+			'allocations', 'total_sales', 'qty','id', 'summary', 'big10', 'gaisanos', 'nccc', 'scheme_customers',
+			 'total_gsv'));
 	}
 
 	/**
@@ -274,6 +283,13 @@ class SchemeController extends \BaseController {
 					$hosts[] = array('scheme_id' => $scheme->id, 'sap_code' => $sap_code);
 				}
 				SchemeHostSku::insert($hosts);
+
+				$premuim = array();
+				SchemePremuimSku::where('scheme_id',$scheme->id)->delete();
+				foreach (Input::get('premuim') as $sap_code){
+					$premuim[] = array('scheme_id' => $scheme->id, 'sap_code' => $sap_code);
+				}
+				SchemePremuimSku::insert($premuim);
 
 				SchemeAllocRepository::updateAllocation($scheme);
 				

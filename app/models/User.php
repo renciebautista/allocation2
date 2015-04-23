@@ -18,21 +18,28 @@ class User extends Eloquent implements ConfideUserInterface {
 		'group' => 'required|integer|min:1'
 	);
 
-	public static function search($status,$filter){
-		return self::where(function($query) use ($status){
-				if($status ==  1){
-					$query->where('active',1);
-				}elseif($status ==  2){
-					$query->where('active',0);
-				}else{
-
-				}
+	public static function search($status,$type,$search){
+		return self::join('assigned_roles', 'users.id', '=', 'assigned_roles.user_id')
+			->where(function($query) use ($search){
+				$query->where('first_name', 'LIKE' ,"%$search%")
+					->orwhere('last_name', 'LIKE' ,"%$search%")
+					->orwhere('middle_initial', 'LIKE' ,"%$search%");
 			})
-			->where(function($query) use ($filter){
-				$query->where('first_name', 'LIKE' ,"%$filter%")
-					->orwhere('last_name', 'LIKE' ,"%$filter%")
-					->orwhere('middle_initial', 'LIKE' ,"%$filter%")
-					->orwhere('email', 'LIKE' ,"%$filter%");
+			->where(function($query) use ($status){
+				if($status == 1){
+					$query->where('active', 1);
+				}
+				if($status == 2){
+					$query->where('active', 0);
+				}
+				
+					
+			})
+			->where(function($query) use ($type){
+				if($type > 0){
+					$query->where('role_id', $type);
+				}
+					
 			})
 			->get();
 	}
