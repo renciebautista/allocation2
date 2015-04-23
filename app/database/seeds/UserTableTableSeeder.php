@@ -180,11 +180,11 @@ class UserTableTableSeeder extends Seeder {
 		$field_role = Role::find(7);
 
 		$field_role1_user = new User;
-		$field_role1_user->username = 'filed1';
+		$field_role1_user->username = 'field1';
 		$field_role1_user->first_name = 'FIELD';
 		$field_role1_user->middle_initial = 'A';
 		$field_role1_user->last_name = 'ONE';
-		$field_role1_user->email = 'filed1@yahoo.com';
+		$field_role1_user->email = 'field1@yahoo.com';
 		$field_role1_user->password = 'password';
 		$field_role1_user->password_confirmation = 'password';
 		$field_role1_user->confirmation_code = md5(uniqid(mt_rand(), true));
@@ -195,11 +195,11 @@ class UserTableTableSeeder extends Seeder {
 		$field_role1_user->roles()->attach($field_role->id); // id only
 
 		$field_role2_user = new User;
-		$field_role2_user->username = 'filed2';
+		$field_role2_user->username = 'field2';
 		$field_role2_user->first_name = 'FIELD';
 		$field_role2_user->middle_initial = 'A';
 		$field_role2_user->last_name = 'TWO';
-		$field_role2_user->email = 'filed2@yahoo.com';
+		$field_role2_user->email = 'field2@yahoo.com';
 		$field_role2_user->password = 'password';
 		$field_role2_user->password_confirmation = 'password';
 		$field_role2_user->confirmation_code = md5(uniqid(mt_rand(), true));
