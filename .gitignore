@@ -2,7 +2,7 @@
 /vendor
 /app/storage/uploads/*
 /app/storage/zipped/*
-/app/database/seed/seed_files
+/app/database/seed/seed_files/*
 composer.phar
 composer.lock
 .env.*.php
