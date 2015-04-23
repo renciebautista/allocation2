@@ -1,6 +1,0 @@
-admin
-	admin / 123456
-proponet
-	proponent / 031988
-pmog 
-	pmog / 031988

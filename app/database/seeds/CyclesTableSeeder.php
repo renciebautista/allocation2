@@ -7,11 +7,11 @@ class CyclesTableSeeder extends Seeder {
 
 	public function run()
 	{
-		DB::table('cycles')->truncate();
+		// DB::table('cycles')->truncate();
 
-		DB::statement("INSERT INTO cycles (id, cycle_name) VALUES
-			(1, 'TEST CYCLE'),
-			(2, 'CUSTOME CYCLE');");
+		// DB::statement("INSERT INTO cycles (id, cycle_name) VALUES
+		// 	(1, 'TEST CYCLE'),
+		// 	(2, 'CUSTOME CYCLE');");
 	}
 
 }

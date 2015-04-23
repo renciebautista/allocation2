@@ -7,6 +7,7 @@ class ObjectivesTableSeeder extends Seeder {
 
 	public function run()
 	{
+		DB::statement('SET FOREIGN_KEY_CHECKS=0;');
 		DB::table('objectives')->truncate();
 		
 		DB::statement("INSERT INTO objectives (id, objective) VALUES
@@ -15,6 +16,7 @@ class ObjectivesTableSeeder extends Seeder {
 			(3, 'UPGRADATION'),
 			(4, 'INCREASE VISIBILITY'),
 			(5, 'OTHERS');");
+		DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 	}
 
 }

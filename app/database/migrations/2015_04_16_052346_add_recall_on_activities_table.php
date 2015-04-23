@@ -29,7 +29,7 @@ class AddRecallOnActivitiesTable extends Migration {
 	{
 		Schema::table('activities', function(Blueprint $table)
 		{
-			$table->dropColumn(array('recall', 'pmog_recall'));
+			$table->dropColumn(array('pro_recall', 'pmog_recall'));
 		});
 	}
 

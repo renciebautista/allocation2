@@ -29,7 +29,7 @@ class AddMultiplierOnCustomersTable extends Migration {
 
 		Schema::table('customers', function(Blueprint $table)
 		{
-			$table->dropColumn('multiplier');
+			$table->dropColumn(array('multiplier'));
 		});
 	}
 

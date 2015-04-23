@@ -14,9 +14,14 @@ class UpdateActivitiesTable extends Migration {
 	{
 		Schema::table('activities', function(Blueprint $table)
 		{
-			$table->foreign('scope_type_id')->references('id')->on('scope_types');
-			$table->foreign('cycle_id')->references('id')->on('cycles');
-			$table->foreign('activity_type_id')->references('id')->on('activity_types');
+			// $table->dropColumn(array('scope_type_id','cycle_id','activity_type_id'));
+			
+			// $table->integer('scope_type_id')->unsigned()->after('circular_name');
+			// $table->foreign('scope_type_id')->references('id')->on('scope_types');
+			// $table->integer('cycle_id')->unsigned()->after('eimplementation_date');
+			// $table->foreign('cycle_id')->references('id')->on('cycles');
+			// $table->integer('activity_type_id')->unsigned()->after('cycle_id');
+			// $table->foreign('activity_type_id')->references('id')->on('activity_types');
 
 		});
 	}
@@ -31,9 +36,11 @@ class UpdateActivitiesTable extends Migration {
 
 		Schema::table('activities', function(Blueprint $table)
 		{
-			$table->dropForeign('activities_scope_type_id_foreign');
-			$table->dropForeign('activities_cycle_id_foreign');
-			$table->dropForeign('activities_activity_type_id_foreign');
+			// $table->dropColumn(array('scope_type_id','cycle_id','activity_type_id'));
+			// $table->integer('scope_type_id')->unsigned()->after('circular_name');
+			// $table->integer('cycle_id')->unsigned()->after('eimplementation_date');
+			// $table->integer('activity_type_id')->unsigned()->after('cycle_id');
+
 		});
 	}
 
