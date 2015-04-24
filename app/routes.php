@@ -465,14 +465,8 @@ Route::group(array('before' => 'auth'), function()
 
 	Route::post('activity/{id}/submittogcm', 'ActivityController@submittogcm');
 
-	// Route::resource('activity', 'ActivityController');
-	// Route::resource('activity', 'ActivityController', ['only'=> ['index','create','store','edit','update','destroy']]);
-	Route::get('activity', 'ActivityController@index');
-	Route::get('activity/create', 'ActivityController@create');
-	Route::get('activity/{id}/edit', 'ActivityController@edit');
-	Route::post('activity', 'ActivityController@store');
-	Route::put('activity/{id}', 'ActivityController@update');
-	Route::delete('activity/{id}', 'ActivityController@destroy');
+	Route::resource('activity', 'ActivityController');
+	
 
 	Route::get('scheme/{id}/allocation', 'SchemeController@allocation');
 	Route::get('scheme/{id}', 'SchemeController@show');
@@ -483,7 +477,7 @@ Route::group(array('before' => 'auth'), function()
 
 	// Route::post('downloadedactivity/{id}/submittogcm', 'DownloadedActivityController@submittogcm');
 	// Route::resource('downloadedactivity', 'DownloadedActivityController');
-// 
+
 
 	Route::post('submittedactivity/{id}/updateactivity', 'SubmittedActivityController@updateactivity');
 	Route::resource('submittedactivity', 'SubmittedActivityController');

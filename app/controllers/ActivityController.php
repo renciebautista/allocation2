@@ -237,6 +237,18 @@ class ActivityController extends \BaseController {
 	}
 
 	/**
+	 * Display the specified resource.
+	 * GET /group/{id}
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function show($id)
+	{
+		return Redirect::route('activity.edit',$id);
+	}
+
+	/**
 	 * Show the form for editing the specified resource.
 	 * GET /activity/{id}/edit
 	 *
