@@ -1392,12 +1392,11 @@ function updatechannel(){
 
 $("form[id='updateCustomer']").on("submit",function(e){
 	var form = $(this);
-	var method = form.find('input[name="_method"]').val() || 'POST';
 	var url = form.prop('action');
 	$.ajax({
 		url: url,
 		data: form.serialize(),
-		method: method,
+		method: 'POST',
 		dataType: "json",
 		success: function(data){
 			if(data.success == "1"){
@@ -1427,13 +1426,12 @@ $("#force_alloc").on('click',"button",function() {
 
 $("form[id='updateforcealloc']").on("submit",function(e){
 	var form = $(this);
-	var method = form.find('input[name="_method"]').val() || 'POST';
 	var url = form.prop('action');
 	if(form.valid()){
 		$.ajax({
 			url: url,
 			data: form.serialize(),
-			method: method,
+			method: 'POST',
 			dataType: "json",
 			success: function(data){
 				if(data.success == "1"){
@@ -1499,12 +1497,11 @@ $('#billing_deadline').datetimepicker({
 
 $("form[id='updateBilling']").on("submit",function(e){
 	var form = $(this);
-	var method = form.find('input[name="_method"]').val() || 'POST';
 	var url = form.prop('action');
 	$.ajax({
 		url: url,
 		data: form.serialize(),
-		method: method,
+		method: 'POST',
 		dataType: "json",
 		success: function(data){
 			if(data.success == "1"){
@@ -1603,13 +1600,12 @@ $('#activity_timings').bootstrapTable({
 
 $("form[id='submitactivity']").on("submit",function(e){
 	var form = $(this);
-	var method = form.find('input[name="_method"]').val() || 'POST';
 	var url = form.prop('action');
 	if(form.valid()){
 		$.ajax({
 			url: url,
 			data: form.serialize(),
-			method: method,
+			method: 'POST',
 			dataType: "json",
 			success: function(data){
 				if(data.success == "1"){
