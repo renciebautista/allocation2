@@ -465,7 +465,8 @@ Route::group(array('before' => 'auth'), function()
 
 	Route::post('activity/{id}/submittogcm', 'ActivityController@submittogcm');
 
-	Route::resource('activity', 'ActivityController');
+	// Route::resource('activity', 'ActivityController');
+	Route::resource('activity', 'ActivityController', ['only'=> ['index','create','store','edit','update','destroy']]);
 	
 
 	Route::get('scheme/{id}/allocation', 'SchemeController@allocation');
