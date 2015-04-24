@@ -220,9 +220,7 @@ class SchemeController extends \BaseController {
 		$scheme_customers = SchemeAllocation::getCustomerAllocation($id);
 
 		$total_gsv = SchemeAllocation::totalgsv($id);
-		// echo "<pre>";
-		// print_r($scheme_customers);
-		// echo "</pre>";
+
 		return View::make('scheme.edit',compact('scheme', 'activity', 'skus', 'involves', 'sel_skus', 'sel_hosts',
 			'sel_premuim',
 			'allocations', 'total_sales', 'qty','id', 'summary', 'big10', 'gaisanos', 'nccc', 'scheme_customers',

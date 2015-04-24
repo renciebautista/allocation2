@@ -44,7 +44,7 @@
 
 <div class="col-lg-12">
 	<div class="page-header">
-	  	<h1 id="tables">Upcomming Activity</h1>
+	  	<h1 id="tables">Upcoming Activity</h1>
 	</div>
 
 	<div class="table-responsive">	
@@ -58,19 +58,19 @@
 				</tr>
 			</thead>
 			<tbody>
-				@if(count($upcommings) == 0)
+				@if(count($upcomings) == 0)
 				<tr>
 					<td colspan="4">No record found!</td>
 				</tr>
 				@else
-				@foreach($upcommings as $upcomming)
+				@foreach($upcomings as $upcoming)
 				<tr>
-					<td>{{ $upcomming->circular_name }}</td>
-					<td>{{ $upcomming->activity_type }}</td>
-					<td>{{ $upcomming->cycle_name }}</td>
+					<td>{{ $upcoming->circular_name }}</td>
+					<td>{{ $upcoming->activity_type }}</td>
+					<td>{{ $upcoming->cycle_name }}</td>
 					<td class="action">
-						{{ HTML::linkAction('ReportController@download','Download', $upcomming->id, array('class' => 'btn btn-success btn-xs')) }}
-						<a class="btn btn-info btn-xs" target="_blank" href="{{ URL::action('ReportController@preview', $upcomming->id ) }}">Preview</a>		
+						{{ HTML::linkAction('ReportController@download','Download', $upcoming->id, array('class' => 'btn btn-success btn-xs')) }}
+						<a class="btn btn-info btn-xs" target="_blank" href="{{ URL::action('ReportController@preview', $upcoming->id ) }}">Preview</a>		
 					</td>
 				</tr>
 				@endforeach
@@ -107,7 +107,7 @@
 					<td>{{ $lastmonth->cycle_name }}</td>
 					<td class="action">
 						{{ HTML::linkAction('ReportController@download','Download', $lastmonth->id, array('class' => 'btn btn-success btn-xs')) }}
-						<a class="btn btn-info btn-xs" target="_blank" href="{{ URL::action('ReportController@preview', $upcomming->id ) }}">Preview</a>		
+						<a class="btn btn-info btn-xs" target="_blank" href="{{ URL::action('ReportController@preview', $upcoming->id ) }}">Preview</a>		
 					</td>
 				</tr>
 				@endforeach

@@ -20,15 +20,15 @@ class DashboardController extends \BaseController {
 			return View::make('dashboard.field',compact('activities', 'cycles','types'));
 		}
 
-		if(Auth::user()->hasRole("ADMINISTRATOR")){
-			return View::make('dashboard.admin');
-		}
+		// if(Auth::user()->hasRole("ADMINISTRATOR")){
+		// 	return View::make('dashboard.admin');
+		// }
 
 
 		$ongoings = Activity::summary(8,'ongoing');
-		$upcommings = Activity::summary(8,'nextmonth');
+		$upcomings = Activity::summary(8,'nextmonth');
 		$lastmonths = Activity::summary(8,'lastmonth');
-		return View::make('dashboard.index',compact('ongoings', 'upcommings', 'lastmonths'));
+		return View::make('dashboard.index',compact('ongoings', 'upcomings', 'lastmonths'));
 	}
 
 	/**

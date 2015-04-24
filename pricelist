@@ -1,0 +1,17 @@
+pricelist
+	- barcode / case_code 
+		should be special
+	- price_case	price_case_tax	price	srp
+		should be number 2 digit placeholder 000.00
+
+masterfile
+	- ship_to
+		- remove multiplier if dont have split
+
+shiptosales
+	- gsv shoud be number 3 digits
+	- - should be 0
+
+mtprimarysales
+	- gsv shoud be number 3 digits
+

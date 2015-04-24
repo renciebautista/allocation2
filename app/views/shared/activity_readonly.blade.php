@@ -343,7 +343,7 @@
 						<div class="row">
 							<div class="col-lg-12">
 								{{ Form::label('channel', 'Select DT Channels Involved', array('class' => 'control-label' )) }}
-								{{ Form::select('channel[]', $channels, $sel_channels, array('id' => 'channel', 'class' => 'form-control', 'multiple' => 'multiple')) }}
+								<select class="form-control" data-placeholder="SELECT CHANNEL" id="channel" name="channel[]" multiple="multiple" ></select>
 							</div>
 						</div>
 					</div>
@@ -371,7 +371,6 @@
 						    <tr>
 						      	<th>Area</th>
 						      	<th class="multiplier">Force Percentage</th>
-				      			<th class="action">Action</th>
 						    </tr>
 					  	</thead>
 					  	<tbody>
@@ -379,9 +378,6 @@
 					  		<tr data-link="{{ $force->id }}">
 					  			<td>{{ $force->area_name }}</td>
 				  				<td class="multiplier">{{ $force->multi }}</td>
-					  			<td class="action">
-					  				<button class="btn btn-primary btn-xs">Update</button>
-					  			</td>
 					  		</tr>
 					  		@endforeach
 					  	</tbody>
@@ -1135,6 +1131,7 @@ $("#tree3").fancytree({
 		// console.log(keys);
 		if($.inArray('E1397', keys) != -1){
 			$('select#channel').multiselect('enable');
+			updatechannel();
 		}else{
 			$('select#channel').multiselect('deselectAll', false);
 			$('select#channel').multiselect('updateButtonText')
@@ -1144,6 +1141,29 @@ $("#tree3").fancytree({
 		$("#customers").val(selRootKeys.join(", "));
 	},
 });
+
+function updatechannel(){
+	$.ajax({
+		type: "GET",
+		url: "{{ URL::action('ActivityController@channels', $activity->id ) }}",
+		success: function(data){
+			$('select#channel').empty();
+			$.each(data.selection, function(i, text) {
+				var sel_class = '';
+				if(data.selected.length > 0){
+					if($.inArray( i,data.selected ) > -1){
+						sel_class = 'selected="selected"';
+					}
+				}else{
+					sel_class = 'selected="selected"';
+				}
+				
+				$('<option '+sel_class+' value="'+i+'">'+text+'</option>').appendTo($('select#channel')); 
+			});
+		$('select#channel').multiselect('rebuild');
+	   }
+	});
+}
 
 
 $("form[id='updateCustomer']").on("submit",function(e){

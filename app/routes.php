@@ -461,6 +461,8 @@ Route::group(array('before' => 'auth'), function()
 	Route::delete('activity/{id}/bandingdelete', 'ActivityController@bandingdelete');
 	Route::get('activity/{id}/bandingdownload', 'ActivityController@bandingdownload');
 
+	Route::get('activity/{id}/channels', 'ActivityController@channels');
+
 	Route::post('activity/{id}/submittogcm', 'ActivityController@submittogcm');
 
 	Route::resource('activity', 'ActivityController');

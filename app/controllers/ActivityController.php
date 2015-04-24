@@ -254,9 +254,10 @@ class ActivityController extends \BaseController {
 			$sel_planner = ActivityPlanner::getPlanner($activity->id);
 			$sel_approver = ActivityApprover::getList($activity->id);
 			$sel_objectives = ActivityObjective::getList($activity->id);
-			$sel_channels = ActivityChannel::getList($activity->id);
+			// $sel_channels = ActivityChannel::getList($activity->id);
+			// Helper::print_array($sel_channels);
 			$approvers = User::getApprovers(['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']);
-			$channels = Channel::getList();
+			// $channels = Channel::getList();
 			$objectives = Objective::getLists();
 			$budgets = ActivityBudget::getBudgets($activity->id);
 			$nobudgets = ActivityNobudget::getBudgets($activity->id);
@@ -284,7 +285,7 @@ class ActivityController extends \BaseController {
 
 				return View::make('activity.edit', compact('activity', 'scope_types', 'planners', 'approvers', 'cycles',
 				 'activity_types', 'divisions' , 'objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
-				 'sel_objectives', 'channels', 'sel_channels', 'schemes', 'networks',
+				 'sel_objectives',  'schemes', 'networks',
 				 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings',
 				 'force_allocs', 'comments' ,'submitstatus'));
 			}
@@ -297,7 +298,7 @@ class ActivityController extends \BaseController {
 				$submit_action = 'ActivityController@updateactivity';
 				return View::make('shared.activity_readonly', compact('activity', 'sel_planner', 'approvers', 'division',
 				 'objectives',  'users', 'budgets', 'nobudgets','sel_approver',
-				 'sel_objectives', 'channels', 'sel_channels', 'schemes', 'networks',
+				 'sel_objectives',  'schemes', 'networks',
 				 'scheme_customers', 'scheme_allcations', 'materials', 'force_allocs',
 				 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings', 'comments' ,'submitstatus', 'route', 'recall', 'submit_action'));
 			}
@@ -312,9 +313,9 @@ class ActivityController extends \BaseController {
 			$sel_planner = ActivityPlanner::getPlanner($activity->id);
 			$sel_approver = ActivityApprover::getList($activity->id);
 			$sel_objectives = ActivityObjective::getList($activity->id);
-			$sel_channels = ActivityChannel::getList($activity->id);
+			// $sel_channels = ActivityChannel::getList($activity->id);
 			$approvers = User::getApprovers(['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']);
-			$channels = Channel::getList();
+			// $channels = Channel::getList();
 			$objectives = Objective::getLists();
 			$budgets = ActivityBudget::getBudgets($activity->id);
 			$nobudgets = ActivityNobudget::getBudgets($activity->id);
@@ -344,7 +345,7 @@ class ActivityController extends \BaseController {
 
 				return View::make('downloadedactivity.edit', compact('activity', 'scope_types', 'planners', 'approvers', 'cycles',
 				 'activity_types', 'divisions' , 'objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
-				 'sel_objectives', 'channels', 'sel_channels', 'schemes', 'networks',
+				 'sel_objectives',  'schemes', 'networks',
 				 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings',
 				 'force_allocs','submitstatus', 'comments'));
 			}else{
@@ -355,7 +356,7 @@ class ActivityController extends \BaseController {
 				$submit_action = 'ActivityController@submittogcm';
 				return View::make('shared.activity_readonly', compact('activity', 'sel_planner', 'approvers', 'division',
 				 'objectives',  'users', 'budgets', 'nobudgets','sel_approver',
-				 'sel_objectives', 'channels', 'sel_channels', 'schemes', 'networks',
+				 'sel_objectives',  'schemes', 'networks',
 				 'scheme_customers', 'scheme_allcations', 'materials', 'force_allocs',
 				 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings', 'comments' ,'submitstatus', 'route', 'recall', 'submit_action'));
 			}
@@ -1460,5 +1461,17 @@ class ActivityController extends \BaseController {
 		$activity = Activity::find($banding->activity_id);
 		$path = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/';
 		return Response::download($path.$banding->hash_name, $banding->hash_name);
+	}
+
+	public function channels($id){
+
+		$sel = ActivityChannel::getList($id);
+		$selected = array();
+		foreach ($sel as $value) {
+			$selected[] = (string)$value;
+		}
+		$data['selection'] = Channel::getList();
+		$data['selected'] = $selected;
+		return Response::json($data,200);
 	}
 }
