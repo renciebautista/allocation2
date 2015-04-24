@@ -122,7 +122,7 @@ $(document).ready(function(){
 			});
 			// console.log($inputs);
 			if(validation == 1){
-				ajax("POST",option.update_url,$inputs.serialize() + "&id=" + id+ '&_method="PUT"',table,option,effect,inputs);				
+				ajax("POST",option.update_url,$inputs.serialize() + "&id=" + id+ '&_method=PUT',table,option,effect,inputs);				
 			}
 
 			// clear editing flag
