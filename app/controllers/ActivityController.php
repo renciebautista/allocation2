@@ -1,6 +1,6 @@
 <?php
 
-class ActivityController extends \BaseController {
+class ActivityController extends BaseController {
 
 	/**
 	 * Display a listing of the resource.
