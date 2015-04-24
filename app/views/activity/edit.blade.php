@@ -1252,13 +1252,12 @@ $('select#objective').multiselect({
 
 $("form[id='updateActivity']").on("submit",function(e){
 	var form = $(this);
-	var method = form.find('input[name="_method"]').val() || 'POST';
 	var url = form.prop('action');
 	if(form.valid()){
 		$.ajax({
 			url: url,
 			data: form.serialize(),
-			method: method,
+			method: 'POST',
 			dataType: "json",
 			success: function(data){
 				if(data.success == "1"){
