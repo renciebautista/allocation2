@@ -122,7 +122,7 @@ $(document).ready(function(){
 			});
 			// console.log($inputs);
 			if(validation == 1){
-				ajax("POST",option.update_url,$inputs.serialize() + "&id=" + id+ '&_method=PUT',table,option,effect,inputs);				
+				ajax("PUT",option.update_url,$inputs.serialize() + "&id=" + id,table,option,effect,inputs);				
 			}
 
 			// clear editing flag
@@ -188,9 +188,9 @@ $(document).ready(function(){
 
 ajax = function (type,url,params,table,option,effect,inputs){
 	$.ajax({
-		type: type, 
+		type: 'POST', 
 		url: url, 
-		data : params,
+		data : params + "&_method=" + type,
 		dataType: "json",
 		success: function(response){
 		  switch(type){
