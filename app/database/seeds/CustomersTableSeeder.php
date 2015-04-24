@@ -10,7 +10,7 @@ class CustomersTableSeeder extends Seeder {
 		DB::table('customers')->truncate();
 
 		Excel::selectSheets('customer')->load(app_path().'/database/seeds/seed_files/masterfile.xlsx', function($reader) {
-			Customer::batchInsert($reader->get());
+			Customer::batchInsert($reader->ignoreEmpty());
 		});
 	}
 
