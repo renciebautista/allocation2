@@ -134,7 +134,7 @@ $(document).ready(function(){
 			var id = $(this).attr("id");
 			if(id){
 				if(confirm("Do you really want to delete record ?")){
-					ajax("DELETE",option.delete_url,{ d_id: id },table,option,effect,inputs);
+					ajax("DELETE",option.delete_url,"d_id="+id,table,option,effect,inputs);
 				}
 			}
 		});
