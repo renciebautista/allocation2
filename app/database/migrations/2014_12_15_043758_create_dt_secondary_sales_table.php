@@ -18,7 +18,7 @@ class CreateDtSecondarySalesTable extends Migration {
 			$table->string('area_code');
 			$table->string('customer_code');
 			$table->string('child_sku_code');
-			$table->decimal('gsv',15,2);
+			$table->decimal('gsv',15,3);
 
 			$table->index('area_code');
 			$table->index('customer_code');

@@ -88,7 +88,7 @@ class AllocationRepository  {
 		if(in_array("E1398", $_grps)){
 			$this->_mt_primary_sales = DB::table('mt_primary_sales')
 					->select(DB::raw("mt_primary_sales.area_code,mt_primary_sales.customer_code, SUM(gsv) as gsv"))
-					->join('customers', 'mt_primary_sales.customer_code', '=', 'customers.customer_code')
+					->join(DB::raw("(SELECT DISTINCT(customer_code) FROM customers) customers"), 'mt_primary_sales.customer_code', '=', 'customers.customer_code')
 					->whereIn('child_sku_code', $child_skus)
 					->where(function($query) use ($_areas) {
 						if(!empty($_areas)){
@@ -107,16 +107,14 @@ class AllocationRepository  {
 		$this->_dt_secondary_sales =DB::table('dt_secondary_sales')
 					->select(DB::raw("dt_secondary_sales.area_code,dt_secondary_sales.customer_code, SUM(gsv) as gsv"))
 					->join('sub_channels', 'dt_secondary_sales.coc_03_code', '=', 'sub_channels.coc_03_code')
-					->join('customers', 'dt_secondary_sales.customer_code', '=', 'customers.customer_code')
+					->join(DB::raw("(SELECT DISTINCT(customer_code) FROM customers) customers"), 'dt_secondary_sales.customer_code', '=', 'customers.customer_code')
 					->whereIn('child_sku_code', $child_skus)
 					->whereIn('channel_code', $channels)
 					->where(function($query) use ($_areas) {
 						if(!empty($_areas)){
 							$query->whereIn('dt_secondary_sales.area_code', $_areas['E1397']);
-						}
-						
+						}		
 					})
-
 					->groupBy(array('dt_secondary_sales.area_code','dt_secondary_sales.customer_code'))
 					->get();
 		}

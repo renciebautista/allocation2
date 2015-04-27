@@ -986,7 +986,7 @@ $("form").validate({
 	}
 });
 
-var table = $("#customer-allocation").dataTable({
+var table = $("#customer-allocation1").dataTable({
 		"scrollY": "300px",
 		"scrollX": true,
 		"scrollCollapse": true,
@@ -1050,9 +1050,9 @@ var table = $("#customer-allocation").dataTable({
 			}); 
 		}
 	});
-new $.fn.dataTable.FixedColumns( table, {
-	leftColumns: 6
-} );
+//new $.fn.dataTable.FixedColumns( table, {
+//	leftColumns: 6
+//} );
 
 table.on('dblclick',"tr[data-link]",function() {
 	$(this).find('td').each (function() {

@@ -333,7 +333,7 @@
 									<td>{{ ($scheme->item_code == '') ? 'N/A' :  $scheme->item_code }}</td>
 									<td>{{ number_format($scheme->ulp,2) }}</td>
 									<td>{{ number_format($scheme->srp_p,2) }}</td>
-									<td>1{{ number_format($scheme->pr,2) }}</td>
+									<td>{{ number_format($scheme->pr,2) }}</td>
 								</tr>
 								@endforeach
 							</table>

@@ -7,6 +7,7 @@ class OutletsTableSeeder extends Seeder {
 
 	public function run()
 	{
+		DB::table('outlets')->truncate();
 		Excel::selectSheets('outlet')->load(app_path().'/database/seeds/seed_files/masterfile.xlsx', function($reader) {
 			Outlet::batchInsert($reader->ignoreEmpty());
 		});

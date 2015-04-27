@@ -7,6 +7,7 @@ class GroupsTableSeeder extends Seeder {
 
 	public function run()
 	{
+		DB::table('groups')->truncate();
 		Excel::selectSheets('group')->load(app_path().'/database/seeds/seed_files/masterfile.xlsx', function($reader) {
 			Group::batchInsert($reader->get());
 		});

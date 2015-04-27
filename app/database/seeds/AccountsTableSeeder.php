@@ -7,6 +7,7 @@ class AccountsTableSeeder extends Seeder {
 
 	public function run()
 	{
+		DB::table('accounts')->truncate();
 		Excel::selectSheets('account')->load(app_path().'/database/seeds/seed_files/masterfile.xlsx', function($reader) {
 			Account::batchInsert($reader->ignoreEmpty());
 		});
