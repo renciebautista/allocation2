@@ -1306,8 +1306,8 @@ $('#materials').ajax_table({
 	delete_url: "{{ URL::action('ActivityController@deletematerial') }}",
 	update_url: "{{ URL::action('ActivityController@updatematerial') }}",
 	columns: [
-		{ type: "select", id: "source", ajax_url: "{{ URL::action('api\MaterialController@getsource') }}" },
-		{ type: "text", id: "material", placeholder: "Remarks" }
+		{ type: "select", id: "source", ajax_url: "{{ URL::action('api\MaterialController@getsource') }}",validation: { required :true} },
+		{ type: "text", id: "material", placeholder: "Remarks",validation: { required :true} }
 	],onError: function (){
 		bootbox.alert("Unexpected error, Please try again"); 
 	}
@@ -1519,12 +1519,12 @@ $('#budget_table').ajax_table({
 	delete_url: "{{ URL::action('ActivityController@deletebudget') }}",
 	update_url: "{{ URL::action('ActivityController@updatebudget') }}",
 	columns: [
-		{ type: "select", id: "io_ttstype" , ajax_url: "{{ URL::action('api\BudgetTypeController@gettype') }}"},
-		{ type: "text", id: "io_no", placeholder: "IO Number" },
-		{ type: "text", id: "io_amount", placeholder: "Amount" },
-		{ type: "text", id: "io_startdate", placeholder: "mm/dd/yyyy" },
-		{ type: "text", id: "io_enddate", placeholder: "mm/dd/yyyy" },
-		{ type: "text", id: "io_remarks", placeholder: "Remarks" },
+		{ type: "select", id: "io_ttstype" , ajax_url: "{{ URL::action('api\BudgetTypeController@gettype') }}", validation: { required :true} },
+		{ type: "text", id: "io_no", placeholder: "IO Number", validation: { required :true} },
+		{ type: "text", id: "io_amount", placeholder: "Amount", validation: { required :true}},
+		{ type: "text", id: "io_startdate", placeholder: "mm/dd/yyyy", validation: { required :true} },
+		{ type: "text", id: "io_enddate", placeholder: "mm/dd/yyyy",validation: { required :true} },
+		{ type: "text", id: "io_remarks", placeholder: "Remarks"},
 	],
 	onError: function (){
 		bootbox.alert("Unexpected error, Please try again"); 
@@ -1559,12 +1559,12 @@ $('#no_budget_table').ajax_table({
 	delete_url: "{{ URL::action('ActivityController@deletenobudget') }}",
 	update_url: "{{ URL::action('ActivityController@updatenobudget') }}",
 	columns: [
-		{ type: "select", id: "budget_ttstype" , ajax_url: "{{ URL::action('api\BudgetTypeController@gettype') }}"},
-		{ type: "text", id: "budget_no", placeholder: "Budget Number" },
-		{ type: "text", id: "budget_name", placeholder: "Budget Name" },
-		{ type: "text", id: "budget_amount", placeholder: "Amount" },
-		{ type: "text", id: "budget_startdate", placeholder: "mm/dd/yyyy" },
-		{ type: "text", id: "budget_enddate", placeholder: "mm/dd/yyyy" },
+		{ type: "select", id: "budget_ttstype" , ajax_url: "{{ URL::action('api\BudgetTypeController@gettype') }}", validation: { required :true}},
+		{ type: "text", id: "budget_no", placeholder: "Budget Number", validation: { required :true} },
+		{ type: "text", id: "budget_name", placeholder: "Budget Name",validation: { required :true} },
+		{ type: "text", id: "budget_amount", placeholder: "Amount",validation: { required :true} },
+		{ type: "text", id: "budget_startdate", placeholder: "mm/dd/yyyy",validation: { required :true} },
+		{ type: "text", id: "budget_enddate", placeholder: "mm/dd/yyyy",validation: { required :true} },
 		{ type: "text", id: "budget_remarks", placeholder: "Remarks" },
 	],
 	onInitRow: function() {

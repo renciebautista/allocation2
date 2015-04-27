@@ -57,7 +57,8 @@ class ReportController extends \BaseController {
 
 			$scheme_customers = SchemeAllocation::getCustomers($activity->id);
 			
-			// $pis = Excel::selectSheets('Output')->load(storage_path().'/uploads/fisupload/i1U6YvxiUjCuTXswyUGW.xlsx')->get();
+			$path = '/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
+			$pis = Excel::selectSheets('Output')->load(storage_path().$path."/".$fdapermit->hash_name)->get();
 			// $pis = array();
 			return View::make('shared.preview', compact('activity' ,'planner','budgets','nobudgets','schemes','skuinvolves','materials',
 				'fdapermit', 'networks','artworks' ,'scheme_customers', 'pis'));

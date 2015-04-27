@@ -47,12 +47,24 @@ $(document).ready(function(){
 			var $inputs =
 			$(this).closest("table").find(inputs).filter(function() {
 				// check if input element is blank ??
-				if($.trim( this.value ) == ""){
-					$(this).parent().addClass("has-error");
-					validation = 0;
-				}else{
-					$(this).parent().removeClass("has-error");
+				// console.log(this.id);
+				var req = false;
+				for(i=0;i<option.columns.length;i++){
+					if(option.columns[i].id == this.id){
+						if(option.columns[i].hasOwnProperty("validation")){
+						    req = option.columns[i].validation.required;	
+						}				
+					}
 				}
+				if(req){
+					if($.trim( this.value ) == ""){
+						$(this).parent().addClass("has-error");
+						validation = 0;
+					}else{
+						$(this).parent().removeClass("has-error");
+					}
+				}
+				
 				return $.trim( this.value );
 			});
 
@@ -111,12 +123,23 @@ $(document).ready(function(){
 			var $inputs =
 			$("#"+table.attr('id')+" tr[id='"+id+"']").find(inputs).filter(function() {
 				// check if input element is blank ??
-				if($.trim( this.value ) == ""){
-					$(this).parent().addClass("has-error");
-					validation = 0;
-				}else{
-					$(this).parent().removeClass("has-error");
+				var req = false;
+				for(i=0;i<option.columns.length;i++){
+					if(option.columns[i].id == this.id){
+						if(option.columns[i].hasOwnProperty("validation")){
+						    req = option.columns[i].validation.required;	
+						}				
+					}
 				}
+				if(req){
+					if($.trim( this.value ) == ""){
+						$(this).parent().addClass("has-error");
+						validation = 0;
+					}else{
+						$(this).parent().removeClass("has-error");
+					}
+				}
+				
 
 				return $.trim( this.value );
 			});

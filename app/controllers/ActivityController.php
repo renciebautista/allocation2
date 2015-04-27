@@ -884,6 +884,11 @@ class ActivityController extends BaseController {
 				$arr['io_no'] = strtoupper(Input::get('io_no'));
 				$arr['io_ttstype'] = $budget_type->budget_type;
 				$arr['success'] = 1;
+				$arr['io_remarks']  = "";
+				if(Input::has('io_remarks')){
+					$arr['io_remarks'] =  Input::get('io_remarks');
+				}
+				 
 			}
 			
 			return json_encode($arr);

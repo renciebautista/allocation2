@@ -385,7 +385,7 @@
 					</tr>
 					<tr>
 						<td>Billing Requirements</td>
-						<td>{{ $activity->billing_remarks }}</td>
+						<td>{{ nl2br($activity->billing_remarks) }}</td>
 					</tr>
 					<tr>
 						<td>Billing Deadline</td>
@@ -393,11 +393,11 @@
 					</tr>
 					<tr>
 						<td>Special Instructions</td>
-						<td>{{ $activity->instruction }}</td>
+						<td>{{ nl2br($activity->instruction) }}</td>
 					</tr>
 				</table>
 			</div>
-
+			
 			<div id="artworks">
 				<h2>Artworks</h2>
 				<ul>
