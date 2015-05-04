@@ -64,7 +64,12 @@ class ReportController extends \BaseController {
 			
 			// // Product Information Sheet
 			$path = '/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
-			$pis = Excel::selectSheets('Output')->load(storage_path().$path."/".$fdapermit->hash_name)->get();
+			if(!empty($fdapermi)){
+				$pis = Excel::selectSheets('Output')->load(storage_path().$path."/".$fdapermit->hash_name)->get();
+			}else{
+				$pis = array();
+			}
+			
 			return View::make('shared.preview', compact('activity' ,'planner','budgets','nobudgets','schemes','skuinvolves','materials',
 				'fdapermit', 'networks','artworks' ,'scheme_customers', 'pis' , 'areas','channels'));
 		}
