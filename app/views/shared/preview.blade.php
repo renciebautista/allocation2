@@ -417,7 +417,7 @@
 				</table>
 			</div>
 
-			@if(isset($pis))
+			@if(count($pis) > 0)
 			<div id="product">
 				<h2>Product Information Sheet</h2>
 				<table class="p-head bordered">
