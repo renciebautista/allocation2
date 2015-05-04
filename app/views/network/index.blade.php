@@ -111,7 +111,7 @@ function duration(){
 		url: "network/totalduration",
 		success: function(msg){
 			$("#totalduration").empty();
-			$("#totalduration").append( " <strong>Total Duration : "+msg+" days</strong>" );
+			$("#totalduration").append( " <strong>Total Duration : "+msg.days+" days</strong>" );
 		},
 		error: function(){
 			alert("failure");

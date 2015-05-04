@@ -423,4 +423,21 @@
 }
 .has-error span {
 	color: #f04124;
+}	
+
+#allocation .blue {
+	color: #ffffff;
+  	background-color: #008cba;
+  	border-color: #0079a1
+}
+
+#allocation .white {
+	color: #000;
+  	background-color: #FFF;
+  	border-color: #0079a1
+}
+#allocation .orange {
+	color: #ffffff;
+  	background-color: #e99002;
+  	border-color: #d08002;
 }

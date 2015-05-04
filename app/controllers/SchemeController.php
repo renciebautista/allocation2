@@ -124,6 +124,10 @@ class SchemeController extends \BaseController {
 				// create allocation
 				SchemeAllocRepository::insertAlllocation($scheme);
 
+				$scheme2 = Scheme::find($scheme->id);
+				$scheme2->final_alloc = SchemeAllocation::finalallocation($scheme->id);
+				$scheme2->update();
+
 				return $scheme->id;
 			});
 			return Redirect::to(URL::action('SchemeController@edit', array('id' => $insert_id)))
