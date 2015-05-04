@@ -142,7 +142,7 @@
 					<div class="form-group">
 						<div class="row">
 							<div class="col-lg-12">
-								{{ Form::label('lead_time', 'Activity Leadtime (days)', array('class' => 'control-label')) }}
+								{{ Form::label('lead_time', 'Activity Leadtime (working days)', array('class' => 'control-label')) }}
 								{{ Form::text('lead_time', $activity->duration,array('class' => 'form-control', 'readonly' => '')) }}
 							</div>
 						</div>

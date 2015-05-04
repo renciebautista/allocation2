@@ -5,6 +5,50 @@ class ActivityTypeNetwork extends \Eloquent {
 	protected $fillable = [];
 	public $timestamps = false;
 
+	public static function getDownloadDate($endDate,$holidays,$wDays){
+		// using - weekdays excludes weekends
+	    $new_date = date('Y-m-d', strtotime("{$endDate} -{$wDays} weekdays"));
+
+	    foreach ($holidays as $holiday) {
+	    	$holiday_ts = strtotime($holiday);
+
+		    // if holiday falls between start date and new date, then account for it
+		    if ($holiday_ts <= strtotime($endDate) && $holiday_ts >= strtotime($new_date)) {
+
+		        // check if the holiday falls on a working day
+		        $h = date('w', $holiday_ts);
+		            if ($h != 0 && $h != 6 ) {
+		            // holiday falls on a working day, subtract an extra working day
+		            $new_date = date('Y-m-d', strtotime("{$new_date} - 1 weekdays"));
+		        }
+		    }
+	    }
+	    
+	    return date('m/d/Y', strtotime($new_date));
+	}
+
+	public static function getImplemetationDate($startDate,$holidays,$wDays){
+		// using + weekdays excludes weekends
+	    $new_date = date('Y-m-d', strtotime("{$startDate} +{$wDays} weekdays"));
+
+	    foreach ($holidays as $holiday) {
+	    	$holiday_ts = strtotime($holiday);
+
+		    // if holiday falls between start date and new date, then account for it
+		    if ($holiday_ts >= strtotime($startDate) && $holiday_ts <= strtotime($new_date)) {
+
+		        // check if the holiday falls on a working day
+		        $h = date('w', $holiday_ts);
+		            if ($h != 0 && $h != 6 ) {
+		            // holiday falls on a working day, add an extra working day
+		            $new_date = date('Y-m-d', strtotime("{$new_date} + 1 weekdays"));
+		        }
+		    }
+	    }
+	    
+	    return date('m/d/Y', strtotime($new_date));
+	}
+
 	public static function activities($id){
 		$activities = array();
 		$_activities = self::where('activitytype_id', $id)->get();

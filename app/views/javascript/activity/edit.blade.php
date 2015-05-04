@@ -120,17 +120,36 @@ $("a[href='#timings']").on('shown.bs.tab', function(e) {
 
 
 <!-- activity details -->
+function holidays(){
+	var arr 
+	$.ajax({
+		type: "GET",
+		dataType: "json",
+		async: false,
+		url: "../../holidays/getlist",
+		success: function(msg){
+			arr = $.map(msg, function(el) { return el; });
+		},
+		error: function(){
+			alert("failure");
+		}
+	});
+	return arr;
+}
 function duration(value){
 	$.ajax({
 		type: "GET",
 		url: "../../activitytype/"+value+"/network/totalduration",
 		success: function(msg){
-			$('#lead_time').val(msg);
+			$('#lead_time').val(msg.days);
 
-			$('#implementation_date').val(moment().add(msg,'days').format('MM/DD/YYYY'));
-			$('#download_date').val(moment().format('MM/DD/YYYY'))
+			//$('#implementation_date').val(moment().add(msg,'days').format('MM/DD/YYYY'));
+			$('#implementation_date').val(msg.end_date);
 
-			$('#implementation_date').data("DateTimePicker").setMinDate(moment().add(msg,'days').format('MM/DD/YYYY'));
+			//$('#download_date').val(moment().format('MM/DD/YYYY'))
+			$('#download_date').val(msg.start_date)
+
+			$('#implementation_date').data("DateTimePicker").setMinDate(moment(msg.min_date).format('MM/DD/YYYY'));
 		},
 		error: function(){
 			alert("failure");
@@ -153,12 +172,25 @@ $('select#activity_type').on("change",function(){
 $('#implementation_date').datetimepicker({
 	pickTime: false,
 	calendarWeeks: true,
-	minDate: moment()
+	minDate: moment(),
+	daysOfWeekDisabled: [0, 6],
+	disabledDates: holidays()
 });
 
 $("#implementation_date").on("dp.change",function (e) {
-	// console.log(moment(e.date).subtract($('#lead_time').val(),'days').format('MM/DD/YYYY'));
-	$('#download_date').val(moment(e.date).subtract($('#lead_time').val(),'days').format('MM/DD/YYYY'));
+	$.ajax({
+		type: "GET",
+		url: "../../activitytype/"+$('#activity_type').val()+"/network/totalduration?sd="+moment($('#implementation_date').val()).format('DD-MM-YYYY'),
+		success: function(msg){
+			$('#lead_time').val(msg.days);
+			$('#implementation_date').val(msg.end_date);
+			$('#download_date').val(msg.start_date)
+			$('#implementation_date').data("DateTimePicker").setMinDate(moment(msg.min_date).format('MM/DD/YYYY'));
+		},
+		error: function(){
+			alert("failure");
+		}
+	});
 });
 
 $('#implementation_date').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});

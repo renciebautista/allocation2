@@ -510,13 +510,17 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('activitytype/{id}/network/totalduration', 'NetworkController@totalduration');
 	Route::post('activitytype/{id}/network/create', 'NetworkController@store');
 
+
+
 	Route::get('reports/activities', 'ReportController@activities');
 	Route::get('reports/{id}/preview', 'ReportController@preview');
 	Route::get('reports/{id}/download', 'ReportController@download');
 
 	Route::resource('activitytype', 'ActivityTypeController');
 
+	Route::get('holidays/getlist', 'HolidaysController@getlist');
 	Route::resource('holidays', 'HolidaysController');
+
 
 	Route::get('images/{cycle_id}/{type_id}/{activity_id}/{name}', function($cycle_id = null,$type_id = null,$activity_id = null,$name = null)
 	{

@@ -2,6 +2,19 @@
 
 class HolidaysController extends \BaseController {
 
+	public function getList()
+	{
+		if(Request::ajax()){
+			$data = array();
+			$holidays = Holiday::allHoliday();
+			foreach ($holidays as $holiday) {
+				$data[] = date_format(date_create($holiday),'m/d/Y');
+			}
+			
+			return Response::json($data,200);
+		}
+	}
+
 	/**
 	 * Display a listing of the resource.
 	 * GET /holidays
@@ -11,7 +24,10 @@ class HolidaysController extends \BaseController {
 	public function index()
 	{
 		Input::flash();
-		$holidays = Holiday::where('date', '>=', date("Y-m-d"))->get();
+		$filter = Input::get('s');
+		$holidays = Holiday::where('date', '>=', date("Y-m-d"))
+			->where('description', 'LIKE' ,"%$filter%")
+			->get();
 		return View::make('holidays.index',compact('holidays'));
 	}
 

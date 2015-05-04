@@ -124,18 +124,31 @@ class NetworkController extends \BaseController {
 
 	public function totalduration($id){
 		if(Request::ajax()){
-
+			$data = array();
 			$activities = ActivityTypeNetwork::activities($id);
+			$data['days'] = 0;
+			$data['start_date'] = date('m/d/Y');
+			$holidays = Holiday::allHoliday();
 			if(count($activities)>0){
 				$cpm = new Cpm($activities);
-				return $cpm->TotalDuration();
+				$data['days'] = $cpm->TotalDuration();
 			}
-			return 0;
+			$data['min_date'] = ActivityTypeNetwork::getImplemetationDate($data['start_date'],$holidays,$data['days']);
+			if (Input::has('sd'))
+			{
+			    $data['end_date'] = date('m/d/Y',strtotime(Input::get('sd')));
+			   	$data['start_date'] = ActivityTypeNetwork::getDownloadDate($data['end_date'],$holidays,$data['days']);
+			}else{
+				$data['min_date'] = ActivityTypeNetwork::getImplemetationDate($data['start_date'],$holidays,$data['days']);
+				$data['end_date'] = ActivityTypeNetwork::getImplemetationDate($data['start_date'],$holidays,$data['days']);
+			}
+
 			
+			
+			return Response::json($data,200);
 		}
 	}
 
-	
 
 	/**
 	 * Show the form for editing the specified resource.
