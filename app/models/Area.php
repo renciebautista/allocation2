@@ -16,4 +16,6 @@ class Area extends \Eloquent {
 			
 		});
 	}
+
+	
 }

@@ -185,16 +185,19 @@
 
 	{{ HTML::script('assets/plugins/bootstrap3-editable/js/bootstrap-editable.min.js') }}
 
-
+	{{ HTML::script('assets/plugins/jquery.AreYouSure-1.9.0/jquery.are-you-sure.js') }}
+	
 	{{ HTML::script('assets/js/function.js') }}
 
-	<script type="text/javascript">
-		
 
+
+	<script type="text/javascript">
 		$(document).ready(function() {
-			
 			$("#page").show();
 			$("#pageloading").hide();
+
+			@yield('scripts')
+			
 			@section('page-script')
 
 			@show

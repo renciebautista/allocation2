@@ -286,16 +286,9 @@
 						<td>Area/s Involved</td>
 						<td>
 							<ul>
-								<li>MAG EC</li>
-								<li>MAG RTM</li>
-								<li>DT-MAG</li>
-								<li>DRUG BIG 10</li>
-								<li>MT GOLD - SM GROUP</li>
-								<li>MT GOLD - PUREGOLD</li>
-								<li>MT GOLD - RSC</li>
-								<li>MT GOLD - SHOPWISE / RUSTANS</li>
-								<li>MT GOLD - MERCURY DRUG</li>
-								<li>MT GOLD - WATSONS</li>
+								@foreach($areas as $area)
+								<li>{{ $area}}</li>
+								@endforeach
 							</ul>
 						</td>
 					</tr>
@@ -303,16 +296,9 @@
 						<td>DT Channel/s Involved</td>
 						<td>
 							<ul>
-								<li>MAG EC</li>
-								<li>MAG RTM</li>
-								<li>DT-MAG</li>
-								<li>DRUG BIG 10</li>
-								<li>MT GOLD - SM GROUP</li>
-								<li>MT GOLD - PUREGOLD</li>
-								<li>MT GOLD - RSC</li>
-								<li>MT GOLD - SHOPWISE / RUSTANS</li>
-								<li>MT GOLD - MERCURY DRUG</li>
-								<li>MT GOLD - WATSONS</li>
+								@foreach($channels as $channel)
+								<li>{{ $channel->channel_name }}</li>
+								@endforeach
 							</ul>
 						</td>
 					</tr>

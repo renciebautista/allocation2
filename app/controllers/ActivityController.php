@@ -1060,6 +1060,10 @@ class ActivityController extends BaseController {
 							}
 							ActivityCustomer::insert($activity_customers);
 						}
+					}else{
+						ForceAllocation::where('activity_id',$id)->delete();
+						$activity->allow_force = false;
+						$activity->update();
 					}
 
 

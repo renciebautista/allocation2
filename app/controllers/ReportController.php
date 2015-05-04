@@ -56,12 +56,17 @@ class ReportController extends \BaseController {
 			$artworks = ActivityArtwork::getList($activity->id);
 
 			$scheme_customers = SchemeAllocation::getCustomers($activity->id);
+
+			//Involved Area
+			$areas = ActivityCustomer::getSelectedAreas($activity->id);
+			$channels = ActivityChannel::getSelectecdChannels($activity->id);
+			// Helper::print_array($areas);
 			
+			// // Product Information Sheet
 			$path = '/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
 			$pis = Excel::selectSheets('Output')->load(storage_path().$path."/".$fdapermit->hash_name)->get();
-			// $pis = array();
 			return View::make('shared.preview', compact('activity' ,'planner','budgets','nobudgets','schemes','skuinvolves','materials',
-				'fdapermit', 'networks','artworks' ,'scheme_customers', 'pis'));
+				'fdapermit', 'networks','artworks' ,'scheme_customers', 'pis' , 'areas','channels'));
 		}
 		
 	}

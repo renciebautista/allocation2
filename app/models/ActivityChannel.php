@@ -26,4 +26,10 @@ class ActivityChannel extends \Eloquent {
 		}
 		return $list;
 	}
+
+	public static function getSelectecdChannels($activity_id){
+		return self::where('activity_id',$activity_id)
+			->join('channels', 'activity_channels.channel_id', '=', 'channels.id')
+			->get();
+	}
 }
