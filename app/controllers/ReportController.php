@@ -64,7 +64,7 @@ class ReportController extends \BaseController {
 			
 			// // Product Information Sheet
 			$path = '/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
-			if(!empty($fdapermi)){
+			if(!empty($fdapermit)){
 				$pis = Excel::selectSheets('Output')->load(storage_path().$path."/".$fdapermit->hash_name)->get();
 			}else{
 				$pis = array();
