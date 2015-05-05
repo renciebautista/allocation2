@@ -7,44 +7,86 @@ class ActivityTypeNetwork extends \Eloquent {
 
 	public static function getDownloadDate($endDate,$holidays,$wDays){
 		// using - weekdays excludes weekends
-	    $new_date = date('Y-m-d', strtotime("{$endDate} -{$wDays} weekdays"));
+		//Helper::print_array($holidays);
+		$new_date = $endDate;
+		//echo date("Y-m-d", strtotime($new_date));
+		for ($i=0; $i < $wDays; $i++) { 
+			$new_date = date('Y-m-d', strtotime("{$new_date} - 1 weekdays"));
+			
+			while (true) {
+			  	if (in_array(date("Y-m-d", strtotime($new_date)), $holidays)) { // is initial condition true
+			    	$new_date = date('Y-m-d', strtotime("{$new_date} - 1 weekdays"));
+			  	}else { // condition failed
+			    	break; // leave loop
+			  	}
+			}
 
-	    foreach ($holidays as $holiday) {
-	    	$holiday_ts = strtotime($holiday);
+			// echo $new_date .'<br>';
+		}
+	    while (true) {
+		  	if (in_array(date("Y-m-d", strtotime($new_date)), $holidays)) { // is initial condition true
+		    	$new_date = date('Y-m-d', strtotime("{$new_date} - 1 weekdays"));
+		  	}else { // condition failed
+		    	break; // leave loop
+		  	}
+		}
 
-		    // if holiday falls between start date and new date, then account for it
-		    if ($holiday_ts <= strtotime($endDate) && $holiday_ts >= strtotime($new_date)) {
+	    // foreach ($holidays as $holiday) {
+	    // 	$holiday_ts = strtotime($holiday);
 
-		        // check if the holiday falls on a working day
-		        $h = date('w', $holiday_ts);
-		            if ($h != 0 && $h != 6 ) {
-		            // holiday falls on a working day, subtract an extra working day
-		            $new_date = date('Y-m-d', strtotime("{$new_date} - 1 weekdays"));
-		        }
-		    }
-	    }
+		   //  // if holiday falls between start date and new date, then account for it
+		   //  if ($holiday_ts <= strtotime($endDate) && $holiday_ts >= strtotime($new_date)) {
+
+		   //      // check if the holiday falls on a working day
+		   //      $h = date('w', $holiday_ts);
+		   //          if ($h != 0 && $h != 6 ) {
+		   //          // holiday falls on a working day, subtract an extra working day
+		   //          $new_date = date('Y-m-d', strtotime("{$new_date} - 1 weekdays"));
+		   //      }
+		   //  }
+	    // }
 	    
 	    return date('m/d/Y', strtotime($new_date));
 	}
 
 	public static function getImplemetationDate($startDate,$holidays,$wDays){
 		// using + weekdays excludes weekends
-	    $new_date = date('Y-m-d', strtotime("{$startDate} +{$wDays} weekdays"));
+	    // $new_date = date('Y-m-d', strtotime("{$startDate} +{$wDays} weekdays"));
 
-	    foreach ($holidays as $holiday) {
-	    	$holiday_ts = strtotime($holiday);
+	    // foreach ($holidays as $holiday) {
+	    // 	$holiday_ts = strtotime($holiday);
 
-		    // if holiday falls between start date and new date, then account for it
-		    if ($holiday_ts >= strtotime($startDate) && $holiday_ts <= strtotime($new_date)) {
+		   //  // if holiday falls between start date and new date, then account for it
+		   //  if ($holiday_ts >= strtotime($startDate) && $holiday_ts <= strtotime($new_date)) {
 
-		        // check if the holiday falls on a working day
-		        $h = date('w', $holiday_ts);
-		            if ($h != 0 && $h != 6 ) {
-		            // holiday falls on a working day, add an extra working day
-		            $new_date = date('Y-m-d', strtotime("{$new_date} + 1 weekdays"));
-		        }
-		    }
-	    }
+		   //      // check if the holiday falls on a working day
+		   //      $h = date('w', $holiday_ts);
+		   //          if ($h != 0 && $h != 6 ) {
+		   //          // holiday falls on a working day, add an extra working day
+		   //          $new_date = date('Y-m-d', strtotime("{$new_date} + 1 weekdays"));
+		   //      }
+		   //  }
+	    // }
+
+	    $new_date = $startDate;
+		for ($i=0; $i < $wDays; $i++) { 
+			$new_date = date('Y-m-d', strtotime("{$new_date} + 1 weekdays"));
+			
+			while (true) {
+			  	if (in_array(date("Y-m-d", strtotime($new_date)), $holidays)) { // is initial condition true
+			    	$new_date = date('Y-m-d', strtotime("{$new_date} + 1 weekdays"));
+			  	}else { // condition failed
+			    	break; // leave loop
+			  	}
+			}
+		}
+		while (true) {
+		  	if (in_array(date("Y-m-d", strtotime($new_date)), $holidays)) { // is initial condition true
+		    	$new_date = date('Y-m-d', strtotime("{$new_date} + 1 weekdays"));
+		  	}else { // condition failed
+		    	break; // leave loop
+		  	}
+		}
 	    
 	    return date('m/d/Y', strtotime($new_date));
 	}
@@ -88,6 +130,7 @@ class ActivityTypeNetwork extends \Eloquent {
 	} 
 
 	public static function timings($id,$start_date){
+		$holidays = Holiday::allHoliday();
 
 		$activities = self::where('activitytype_id', $id)->get();
 		foreach ($activities as $key => $value) {
@@ -98,7 +141,8 @@ class ActivityTypeNetwork extends \Eloquent {
 				$var_end_date ='';
 			if($value->task_id == 1){
 				$activities[$key]->start_date = date_format(date_create($start_date),'m/d/Y');
-				$activities[$key]->end_date =  date('m/d/Y',strtotime($activities[$key]->start_date.' +'.$value->duration.' days'));
+				// $activities[$key]->end_date =  date('m/d/Y',strtotime($activities[$key]->start_date.' +'.$value->duration.' days'));
+				$activities[$key]->end_date = ActivityTypeNetwork::getImplemetationDate($activities[$key]->start_date,$holidays,$value->duration - 1);
 				$var_end_date = $activities[$key]->end_date;
 			}else{
 				
@@ -113,8 +157,10 @@ class ActivityTypeNetwork extends \Eloquent {
 						}
 					}
 				}
-				$activities[$key]->start_date = date_format(date_create($var_end_date),'m/d/Y');
-				$activities[$key]->end_date =  date('m/d/Y',strtotime($activities[$key]->start_date.' +'.$value->duration.' days'));
+				$activities[$key]->start_date = date('m/d/Y',strtotime($var_end_date.' + 1 days'));
+				// $activities[$key]->start_date = date_format(date_create($var_end_date),'m/d/Y');
+				// $activities[$key]->end_date =  date('m/d/Y',strtotime($activities[$key]->start_date.' +'.$value->duration.' days'));
+				$activities[$key]->end_date =  ActivityTypeNetwork::getImplemetationDate($activities[$key]->start_date,$holidays,$value->duration - 1);
 			}
 		}
 		// echo '<pre>';

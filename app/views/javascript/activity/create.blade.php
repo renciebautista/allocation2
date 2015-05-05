@@ -1,0 +1,167 @@
+@section('scripts')
+
+<!-- activity details -->
+
+function holidays(){
+	var arr 
+	$.ajax({
+		type: "GET",
+		dataType: "json",
+		async: false,
+		url: "../../holidays/getlist",
+		success: function(msg){
+			arr = $.map(msg, function(el) { return el; });
+		},
+		error: function(){
+			alert("failure");
+		}
+	});
+	return arr;
+}
+function duration(value){
+	$.ajax({
+		type: "GET",
+		url: "../../activitytype/"+value+"/network/totalduration",
+		success: function(msg){
+			$('#lead_time').val(msg.days);
+
+			//$('#implementation_date').val(moment().add(msg,'days').format('MM/DD/YYYY'));
+			$('#implementation_date').val(msg.end_date);
+
+			//$('#download_date').val(moment().format('MM/DD/YYYY'))
+			$('#download_date').val(msg.start_date)
+
+			$('#implementation_date').data("DateTimePicker").setMinDate(moment(msg.min_date).format('MM/DD/YYYY'));
+		},
+		error: function(){
+			alert("failure");
+		}
+	});
+}
+
+$('select#approver').multiselect({
+	maxHeight: 200,
+	includeSelectAllOption: true,
+	enableCaseInsensitiveFiltering: true,
+	enableFiltering: true
+});
+
+$('select#activity_type').on("change",function(){
+	duration($(this).val());
+});
+
+$('#implementation_date').datetimepicker({
+	pickTime: false,
+	calendarWeeks: true,
+	minDate: moment(),
+	daysOfWeekDisabled: [0, 6],
+	disabledDates: holidays()
+});
+
+$("#implementation_date").on("dp.change",function (e) {
+	$.ajax({
+		type: "GET",
+		url: "../../activitytype/"+$('#activity_type').val()+"/network/totalduration?sd="+moment($('#implementation_date').val()).format('DD-MM-YYYY'),
+		success: function(msg){
+			$('#lead_time').val(msg.days);
+			$('#implementation_date').val(msg.end_date);
+			$('#download_date').val(msg.start_date)
+			$('#implementation_date').data("DateTimePicker").setMinDate(moment(msg.min_date).format('MM/DD/YYYY'));
+		},
+		error: function(){
+			alert("failure");
+		}
+	});
+});
+
+$('#implementation_date').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
+
+$("#myform").validate({
+	errorElement: "span", 
+	errorClass : "has-error",
+	rules: {
+		activity_title: {
+			required: true,
+			maxlength: 80
+			},
+		scope: "is_natural_no_zero",
+		activity_type: "is_natural_no_zero",
+		cycle: "is_natural_no_zero",
+		implementation_date: {
+			required: true,
+			greaterdate : true
+		}
+
+	},
+	errorPlacement: function(error, element) {               
+		
+	},
+	highlight: function( element, errorClass, validClass ) {
+    	$(element).closest('div').addClass(errorClass).removeClass(validClass);
+  	},
+  	unhighlight: function( element, errorClass, validClass ) {
+    	$(element).closest('div').removeClass(errorClass).addClass(validClass);
+  	}
+});
+
+$.validator.addMethod("greaterdate", function(value, element) {
+	return this.optional(element) || (moment(value).isAfter(moment().format('MM/DD/YYYY')) || moment(value).isSame(moment().format('MM/DD/YYYY')));
+}, "Please select from the list.");
+
+
+$('select#division').on("change",function(){
+	$.ajax({
+			type: "POST",
+			data: {q: $(this).val()},
+			url: "../api/category",
+			success: function(data){
+				$('select#category').empty();
+				$.each(data, function(i, text) {
+					$('<option />', {value: i, text: text}).appendTo($('select#category')); 
+				});
+			$('select#category').multiselect('rebuild');
+		   }
+		});
+});
+
+
+$('select#category').multiselect({
+	maxHeight: 200,
+	includeSelectAllOption: true,
+	enableCaseInsensitiveFiltering: true,
+	enableFiltering: true,
+	onDropdownHide: function(event) {
+		$.ajax({
+			type: "POST",
+			data: {categories: GetSelectValues($('select#category :selected'))},
+			url: "../api/brand",
+			success: function(data){
+				$('select#brand').empty();
+				$.each(data, function(i, text) {
+					$('<option />', {value: i, text: text}).appendTo($('select#brand')); 
+				});
+			$('select#brand').multiselect('rebuild');
+		   }
+		});
+	}
+});
+
+$('select#brand').multiselect({
+	maxHeight: 200,
+	includeSelectAllOption: true,
+	enableCaseInsensitiveFiltering: true,
+	enableFiltering: true,
+	onDropdownHide: function(event) {
+	}
+});
+
+$("#involve").chosen();
+
+$('select#objective').multiselect({
+	maxHeight: 200,
+	includeSelectAllOption: true,
+	enableCaseInsensitiveFiltering: true,
+	enableFiltering: true
+});
+
+@stop

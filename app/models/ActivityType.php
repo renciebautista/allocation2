@@ -29,4 +29,14 @@ class ActivityType extends \Eloquent {
 	public static function getLists(){
 		return self::orderBy('activity_type')->lists('activity_type', 'id');
 	}
+
+	public static function getWithNetworks(){
+		return self::whereIn('id', function($query){
+		    $query->select('activitytype_id')
+		    ->from('activity_type_networks')
+		    ->groupBy('activitytype_id')
+		    ->get();
+		})
+		->orderBy('activity_type')->lists('activity_type', 'id');
+	}
 }

@@ -11,7 +11,6 @@ class InitDatabaseTableSeeder extends Seeder {
 		
 		$this->call('PricelistTableSeeder');
 		$this->call('SkusTableSeeder');
-		$this->call('ActivityTypesTableSeeder');
 
 		$this->call('GroupsTableSeeder');
 		$this->call('AreasTableSeeder');

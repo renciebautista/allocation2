@@ -13,24 +13,25 @@ class ActivityController extends BaseController {
 		if(Auth::user()->hasRole("PROPONENT")){
 			Input::flash();
 			$statuses = ActivityStatus::availableStatus();
-			$activities = Activity::search(Auth::id(),Input::get('status'),Input::get('cycle'),Input::get('scope'),
-				Input::get('type'),Input::get('pmog'),Input::get('title'));
 			$cycles = Activity::availableCycles(Auth::id());
 			$scopes = Activity::availableScopes(Auth::id());
 			$types = Activity::availableTypes(Auth::id());
 			$planners = Activity::availablePlanners(Auth::id());
+			$activities = Activity::search(Auth::id(),Input::get('st'),Input::get('cy'),Input::get('sc'),
+				Input::get('ty'),Input::get('pm'),Input::get('title'));
+
 			return View::make('activity.index',compact('statuses', 'activities', 'cycles', 'scopes', 'types', 'planners'));
 		}
 
 		if(Auth::user()->hasRole("PMOG PLANNER")){
 			Input::flash();
 			$statuses = ActivityStatus::availableStatus(1);
-			$activities = Activity::searchDownloaded(Auth::id(),Input::get('proponent'),Input::get('status'),Input::get('cycle'),Input::get('scope'),
-				Input::get('type'),Input::get('title'));
 			$cycles = Cycle::getLists();
 			$scopes = ScopeType::getLists();
 			$types = ActivityType::getLists();
 			$proponents = User::getApprovers(['PROPONENT']);
+			$activities = Activity::searchDownloaded(Auth::id(),Input::get('pr'),Input::get('st'),Input::get('cy'),Input::get('sc'),
+				Input::get('ty'),Input::get('title'));
 			return View::make('downloadedactivity.index',compact('statuses', 'activities', 'cycles', 'scopes', 'types', 'proponents'));
 		}
 
@@ -48,7 +49,7 @@ class ActivityController extends BaseController {
 			$scope_types = ScopeType::getLists();
 			$planners = User::getApprovers(['PMOG PLANNER']);
 			$approvers = User::getApprovers(['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']);
-			$activity_types = ActivityType::getLists();
+			$activity_types = ActivityType::getWithNetworks();
 			$cycles = Cycle::getLists();
 			$divisions = Sku::divisions();
 			$objectives = Objective::getLists();
@@ -211,7 +212,7 @@ class ActivityController extends BaseController {
 					    File::makeDirectory($path);
 					}
 					$path2 = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
-					if(!File::exists($path)) {
+					if(!File::exists($path2)) {
 					    File::makeDirectory($path2);
 					}
 
@@ -291,7 +292,7 @@ class ActivityController extends BaseController {
 				$submitstatus = array('1' => 'SUBMIT ACTIVITY');
 				$scope_types = ScopeType::getLists($activity->id);
 				$planners = User::getApprovers(['PMOG PLANNER']);
-				$activity_types = ActivityType::getLists();
+				$activity_types = ActivityType::getWithNetworks();
 				$cycles = Cycle::getLists();
 				$divisions = Sku::getDivisionLists();
 
@@ -351,7 +352,7 @@ class ActivityController extends BaseController {
 				$submitstatus = array('1' => 'SUBMIT ACTIVITY','2' => 'DENY ACTIVITY');
 				$scope_types = ScopeType::getLists($activity->id);
 				$planners = User::getApprovers(['PMOG PLANNER']);
-				$activity_types = ActivityType::getLists();
+				$activity_types = ActivityType::getWithNetworks();
 				$cycles = Cycle::getLists();
 				$divisions = Sku::getDivisionLists();
 
@@ -397,7 +398,9 @@ class ActivityController extends BaseController {
 					$arr['success'] = 0;
 					if($validation->passes())
 					{
-						DB::transaction(function() use ($activity)  {
+						$old_cycle = $activity->cycle_id;
+						$old_type = $activity->activity_type_id;
+						DB::transaction(function() use ($activity,$old_cycle,$old_type)  {
 							$scope_id = Input::get('scope');
 							$cycle_id = Input::get('cycle');
 							$activity_type_id = Input::get('activity_type');
@@ -533,6 +536,25 @@ class ActivityController extends BaseController {
 								ActivityObjective::insert($activity_objective);
 							}
 						});
+						
+						$path = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id;
+						if(!File::exists($path)) {
+						    File::makeDirectory($path);
+						}
+						$path2 = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
+						if(!File::exists($path2)) {
+						    File::makeDirectory($path2);
+
+						    $old_path = storage_path().'/uploads/'.$old_cycle.'/'.$old_type.'/'.$activity->id;
+						    File::copyDirectory($old_path, $path2);
+
+						    File::deleteDirectory($old_path);
+
+						    $list = File::directories(storage_path().'/uploads/'.$old_cycle.'/'.$old_type);
+						    if(count($list) == 0){
+						    	File::deleteDirectory(storage_path().'/uploads/'.$old_cycle.'/'.$old_type);
+						    }
+						}
 
 						$arr['success'] = 1;
 					}

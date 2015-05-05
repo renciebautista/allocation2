@@ -59,18 +59,18 @@
 
 
 <ul class="nav nav-tabs">
-	<li class="active"><a aria-expanded="true" href="#activty">Activity Details</a></li>
-	<li class=""><a aria-expanded="false" href="#customer">Customer Details</a></li>
-	<li class=""><a aria-expanded="false" href="#schemes">Schemes</a></li>
-	<li class=""><a aria-expanded="false" href="#budget">Budget Details</a></li>
-	<li class=""><a aria-expanded="false" href="#timings">Timings Details</a></li>
-	<li class=""><a aria-expanded="false" href="#attachment">Attachments</a></li>
-	<li class=""><a aria-expanded="false" href="#comments">Comments</a></li>
+	<li class="active"><a id="tab-activity" aria-expanded="true" href="#activity">Activity Details</a></li>
+	<li class=""><a id="tab-customer" aria-expanded="false" href="#customer">Customer Details</a></li>
+	<li class=""><a id="tab-schemes" aria-expanded="false" href="#schemes">Schemes</a></li>
+	<li class=""><a id="tab-budget" aria-expanded="false" href="#budget">Budget Details</a></li>
+	<li class=""><a id="tab-timings" aria-expanded="false" href="#timings">Timings Details</a></li>
+	<li class=""><a id="tab-attachments" aria-expanded="false" href="#attachment">Attachments</a></li>
+	<li class=""><a id="tab-comments" aria-expanded="false" href="#comments">Comments</a></li>
 </ul>
 <div id="myTabContent" class="tab-content">
 
 	<!-- activity details -->
-	<div class="tab-pane fade active in" id="activty">
+	<div class="tab-pane fade active in" id="activity">
 		<br>
 		{{ Form::open(array('route' => array('activity.update', $activity->id), 'method' => 'PUT', 'class' => 'bs-component','id' => 'updateActivity')) }}
 		<div class="well">
@@ -368,8 +368,6 @@
 					</div>
 				</div>
 			</div>
-
-			{{ Form::close() }}
 			@if($activity->allow_force)
 			<hr>
 
@@ -379,6 +377,7 @@
 					<table id="force_alloc" class="table table-striped table-hover ">
 					  	<thead>
 						    <tr>
+						    	<th>Group</th>
 						      	<th>Area</th>
 						      	<th class="multiplier">Force Percentage</th>
 				      			<th class="action">Action</th>
@@ -387,6 +386,7 @@
 					  	<tbody>
 					  		@foreach($force_allocs as $force)
 					  		<tr data-link="{{ $force->id }}">
+					  			<td>{{ $force->group_name }}</td>
 					  			<td>{{ $force->area_name }}</td>
 				  				<td class="multiplier">{{ $force->multi }}</td>
 					  			<td class="action">
@@ -409,6 +409,7 @@
 					</div>
 				</div>
 			</div>
+			{{ Form::close() }}
 		</div>
 	</div>
 
@@ -560,6 +561,7 @@
 	<!-- budget details -->
 	<div class="tab-pane fade" id="budget">
 		<br>
+			{{ Form::open(array('action' => array('ActivityController@updatebilling', $activity->id), 'method' => 'PUT', 'class' => 'bs-component','id' => 'updateBilling')) }}
 			<div class="panel panel-default">
 				<div class="panel-heading">
 					<h3 class="panel-title">With Existing Budget IO</h3>
@@ -606,7 +608,7 @@
 						</div>
 					</div>
 				</div>
-				{{ Form::open(array('action' => array('ActivityController@updatebilling', $activity->id), 'method' => 'PUT', 'class' => 'bs-component','id' => 'updateBilling')) }}
+				
 				<div class="row">
 					<div class="col-lg-6">
 						<div class="form-group">
@@ -634,15 +636,7 @@
 					</div>
 				</div>
 
-				<div class="row">
-					<div class="col-lg-12">
-						<div class="form-group">
-							<button class="btn btn-primary">Update</button>
-						</div>
-					</div>
-				</div>
-
-				{{ Form::close() }}
+				
 
 			</div>
 				</div>
@@ -707,10 +701,12 @@
 					<div class="col-lg-12">
 						<div class="form-group">
 							<button class="btn btn-default btn-style" type="submit">Back</button>
+							<button class="btn btn-primary">Update</button>
 							<button class="btn btn-primary btn-style" type="submit">Next</button>
 						</div>
 					</div>
 				</div>
+			{{ Form::close() }}
 	</div>
 
 	<!-- timings details -->
@@ -1069,601 +1065,12 @@
 </div>
 
 
+@include('javascript.downloadedactivity.edit')
+
 @stop
 
 @section('page-script')
 
-function sumOfColumns(table, columnIndex) {
-    var tot = 0;
-    table.find("tr").children("td:nth-child(" + columnIndex + ")")
-    .each(function() {
-        $this = $(this);
-        if (!$this.hasClass("sum") && $this.html() != "") {
-            tot += parseInt($this.html());
-        }
-    });
-    return tot;
-}
-
-$('.nav-tabs a').click(function (e) {
-	// No e.preventDefault() here
-	var target = e.target.attributes.href.value;
-	if(target == '#customer'){
-		getCustomer();
-	}
-
-	if(target == '#timings'){
-		$('#activity_timings').bootstrapTable("refresh");
-	}
-	$(this).tab('show');
-});
-
-function getCustomer(){
-	$.ajax({
-		type: "GET",
-		url: "../../api/customerselected?id={{$activity->id}}",
-		success: function(data){
-			$.each(data, function(i, node) {
-				 $("#tree3").fancytree("getTree").getNodeByKey(node).setSelected(true);
-				// console.log(node);
-				$("#tree3").fancytree("getTree").visit(function(node){
-					///if(node.key == node.text){
-						///console.log(node);
-						//node.setSelected(true);
-					//}        
-				});
-			});
-		}
-	});
-}
-
-$(".btn-style").click(function (e) {
-	e.preventDefault();
-	var target = $(".nav-tabs li.active");
-	var sibbling;
-	if ($(this).text() === "Next") {
-		sibbling = target.next();
-	} else {
-		sibbling = target.prev();
-	}
-
-	if (sibbling.is("li")) {
-		sibbling.children("a").tab("show");
-	}
-});
-
-if(location.hash.length > 0){
-	var activeTab = $('[href=' + location.hash + ']');
-	activeTab && activeTab.tab('show');
-}
-
-$("a[href='#customer']").on('shown.bs.tab', function(e) {
-    getCustomer();
-});
-
-$("a[href='#schemes']").on('shown.bs.tab', function(e) {
-    $( $.fn.dataTable.tables( true ) ).DataTable().columns.adjust();
-});
-
-
-
-
-<!-- activity details -->
-function duration(value){
-	$.ajax({
-		type: "GET",
-		url: "../../activitytype/"+value+"/network/totalduration",
-		success: function(msg){
-			$('#lead_time').val(msg);
-
-			$('#implementation_date').val(moment().add(msg,'days').format('MM/DD/YYYY'));
-			$('#download_date').val(moment().format('MM/DD/YYYY'))
-
-			$('#implementation_date').data("DateTimePicker").setMinDate(moment().add(msg,'days').format('MM/DD/YYYY'));
-		},
-		error: function(){
-			alert("failure");
-		}
-	});
-}
-
-
-$('select#approver').multiselect({
-	maxHeight: 200,
-	includeSelectAllOption: true,
-	enableCaseInsensitiveFiltering: true,
-	enableFiltering: true
-});
-
-$('select#activity_type').on("change",function(){
-	duration($(this).val());
-});
-
-$('#implementation_date').datetimepicker({
-	pickTime: false,
-	calendarWeeks: true,
-	minDate: moment()
-});
-
-$("#implementation_date").on("dp.change",function (e) {
-	// console.log(moment(e.date).subtract($('#lead_time').val(),'days').format('MM/DD/YYYY'));
-	$('#download_date').val(moment(e.date).subtract($('#lead_time').val(),'days').format('MM/DD/YYYY'));
-});
-
-$('#implementation_date').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
-
-function updatecategory(id){
-	$.ajax({
-		type: "POST",
-		data: {q: id, id: {{ $activity->id }}},
-		url: "../../api/category/getselected",
-		success: function(data){
-			$('select#category').empty();
-			$.each(data.selection, function(i, text) {
-				var sel_class = '';
-				if($.inArray( i,data.selected ) > -1){
-					sel_class = 'selected="selected"';
-				}
-				$('<option '+sel_class+' value="'+i+'">'+text+'</option>').appendTo($('select#category')); 
-			});
-		$('select#category').multiselect('rebuild');
-		updatebrand();
-	   }
-	});
-}
-
-function updatebrand(){
-	$.ajax({
-			type: "POST",
-			data: {categories: GetSelectValues($('select#category :selected')),id: {{ $activity->id }}},
-			url: "../../api/brand/getselected",
-			success: function(data){
-				$('select#brand').empty();
-				$.each(data.selection, function(i, text) {
-					var sel_class = '';
-					if($.inArray( i,data.selected ) > -1){
-						sel_class = 'selected="selected"';
-					}
-					$('<option '+sel_class+' value="'+i+'">'+text+'</option>').appendTo($('select#brand'));
-				});
-			$('select#brand').multiselect('rebuild');
-		   }
-		});
-}
-
-
-var div = $("select#division").val();
-if(parseInt(div) > 0) {
-   updatecategory(div);
-}
-
-
-$('select#division').on("change",function(){
-	updatecategory($(this).val());
-});
-
-
-$('select#category').multiselect({
-	maxHeight: 200,
-	includeSelectAllOption: true,
-	enableCaseInsensitiveFiltering: true,
-	enableFiltering: true,
-	onDropdownHide: function(event) {
-		updatebrand();
-	}
-});
-
-$('select#brand').multiselect({
-	maxHeight: 200,
-	includeSelectAllOption: true,
-	enableCaseInsensitiveFiltering: true,
-	enableFiltering: true,
-	onDropdownHide: function(event) {
-	}
-});
-
-
-$('select#objective').multiselect({
-	maxHeight: 200,
-	includeSelectAllOption: true,
-	enableCaseInsensitiveFiltering: true,
-	enableFiltering: true
-});
-
-
-$("form[id='updateActivity']").on("submit",function(e){
-	var form = $(this);
-	var method = form.find('input[name="_method"]').val() || 'POST';
-	var url = form.prop('action');
-	if(form.valid()){
-		$.ajax({
-			url: url,
-			data: form.serialize(),
-			method: method,
-			dataType: "json",
-			success: function(data){
-				if(data.success == "1"){
-					bootbox.alert("Activity details was successfully updated."); 
-				}else{
-					bootbox.alert("An error occured while updating."); 
-				}
-			}
-		});
-	}
-	
-	e.preventDefault();
-});
-
-$("#updateActivity").validate({
-	errorElement: "span", 
-	errorClass : "has-error",
-	rules: {
-		activity_title: "required",
-		scope: "is_natural_no_zero",
-		activity_type: "is_natural_no_zero",
-		cycle: "is_natural_no_zero",
-		implementation_date: {
-			required: true,
-			greaterdate : true
-		}
-
-	},
-	errorPlacement: function(error, element) {               
-		
-	},
-	highlight: function( element, errorClass, validClass ) {
-    	$(element).closest('div').addClass(errorClass).removeClass(validClass);
-  	},
-  	unhighlight: function( element, errorClass, validClass ) {
-    	$(element).closest('div').removeClass(errorClass).addClass(validClass);
-  	}
-});
-
-$.validator.addMethod("greaterdate", function(value, element) {
-	return this.optional(element) || (moment(value).isAfter(moment().format('MM/DD/YYYY')) || moment(value).isSame(moment().format('MM/DD/YYYY')));
-}, "Please select from the list.");
-
-$('#materials').ajax_table({
-	add_url: "{{ URL::action('ActivityController@addmaterial', $activity->id ) }}",
-	delete_url: "{{ URL::action('ActivityController@deletematerial') }}",
-	update_url: "{{ URL::action('ActivityController@updatematerial') }}",
-	columns: [
-		{ type: "select", id: "source", ajax_url: "{{ URL::action('api\MaterialController@getsource') }}" },
-		{ type: "text", id: "material", placeholder: "Remarks" }
-	],onError: function (){
-		bootbox.alert("Unexpected error, Please try again"); 
-	}
-});
-
-
-
-<!-- Customer details -->
-
-$('select#channel').multiselect({
-	maxHeight: 200,
-	includeSelectAllOption: true,
-	enableCaseInsensitiveFiltering: true,
-	enableFiltering: true
-});
-
-$('select#channel').multiselect('disable');
- 
-// fancy tree
-$("#tree3").fancytree({
-	extensions: [],
-	checkbox: true,
-	selectMode: 3,
-	source: {
-		url: "../../api/customers?id={{$activity->id}}"
-	},
-	select: function(event, data) {
-		// Get a list of all selected nodes, and convert to a key array:
-		// var selKeys = $.map(data.tree.getSelectedNodes(), function(node){
-		//  return node.key;
-		// });
-		// $("#echoSelection3").text(selKeys.join(", "));
-
-
-		// Get a list of all selected TOP nodes
-		var selRootNodes = data.tree.getSelectedNodes(true);
-		// ... and convert to a key array:
-		var selRootKeys = $.map(selRootNodes, function(node){
-		  return node.key;
-		});
-
-		// $("#echoSelectionRootKeys3").text(selRootKeys.join("."));
-		// $("#echoSelectionRootKeys3").text(selRootKeys.join(", "));
-
-		var keys = selRootKeys.join(".").split(".");
-		// console.log(keys);
-		if($.inArray('E1397', keys) != -1){
-			$('select#channel').multiselect('enable');
-			updatechannel();
-		}else{
-			$('select#channel').multiselect('deselectAll', false);
-			$('select#channel').multiselect('updateButtonText')
-			$('select#channel').multiselect('disable');
-		}
-
-		$("#customers").val(selRootKeys.join(", "));
-	},
-});
-
-function updatechannel(){
-	$.ajax({
-		type: "GET",
-		url: "{{ URL::action('ActivityController@channels', $activity->id ) }}",
-		success: function(data){
-			$('select#channel').empty();
-			$.each(data.selection, function(i, text) {
-				var sel_class = '';
-				if(data.selected.length > 0){
-					if($.inArray( i,data.selected ) > -1){
-						sel_class = 'selected="selected"';
-					}
-				}else{
-					sel_class = 'selected="selected"';
-				}
-				
-				$('<option '+sel_class+' value="'+i+'">'+text+'</option>').appendTo($('select#channel')); 
-			});
-		$('select#channel').multiselect('rebuild');
-	   }
-	});
-}
-
-
-$("form[id='updateCustomer']").on("submit",function(e){
-	var form = $(this);
-	var method = form.find('input[name="_method"]').val() || 'POST';
-	var url = form.prop('action');
-	$.ajax({
-		url: url,
-		data: form.serialize(),
-		method: method,
-		dataType: "json",
-		success: function(data){
-			if(data.success == "1"){
-				 location.reload();
-				// bootbox.alert("Activity customers was successfully updated."); 
-			}else{
-				bootbox.alert("An error occured while updating."); 
-			}
-		}
-	});
-	e.preventDefault();
-});
-
-$("#force_alloc").on('click',"button",function() {
-	var id = $(this).closest("tr").attr('data-link');
-	var percent = $(this).closest("tr").find('td:eq(1)').text();
-	$('#forcealloc td[field="area_name"]').text($(this).closest("tr").find('td:eq(0)').text());
-
-	$('#f_id').val(id); 
-	$("#f_percent").val($(this).closest("tr").find('td:eq(1)').text());
-	$('#myForceAlloc').modal('show');
-
-	$('#f_percent').rules('remove', 'max');
-    $('#f_percent').rules('add', { required: true, min:0, max: function() { return 100 - sumOfColumns($('#force_alloc'), 2) + parseInt(percent) } } );
-
-});
-
-$("form[id='updateforcealloc']").on("submit",function(e){
-
-	var form = $(this);
-	var method = form.find('input[name="_method"]').val() || 'POST';
-	var url = form.prop('action');
-	if(form.valid()){
-		$.ajax({
-			url: url,
-			data: form.serialize(),
-			method: method,
-			dataType: "json",
-			success: function(data){
-				if(data.success == "1"){
-					$('#force_alloc tr[data-link="'+data.id+'"]').find('td:eq(1)').text(data.f_percent);
-					bootbox.alert("Allocation was successfully updated."); 
-					$('#myForceAlloc').modal('hide');
-					
-				}else{
-					bootbox.alert("An error occured while updating."); 
-				}
-			}
-		});
-	}
-	
-
-	e.preventDefault();
-});
-
-
-$("#updateforcealloc").validate({
-	errorElement: "span", 
-	errorClass : "has-error",
-	errorPlacement: function(error, element) {               
-		
-	},
-	highlight: function( element, errorClass, validClass ) {
-    	$(element).closest('div').addClass(errorClass).removeClass(validClass);
-  	},
-  	unhighlight: function( element, errorClass, validClass ) {
-    	$(element).closest('div').removeClass(errorClass).addClass(validClass);
-  	}
-});
-
-$('#f_percent').inputNumber();
-<!-- schemes -->
-
-		
-
-var table = $('#scheme_summary').DataTable( {
-	"scrollY": "300px",
-	"scrollX": true,
-	"scrollCollapse": true,
-	"paging": false,
-	"bSort": false,
-	"columnDefs": [ { //this prevents errors if the data is null
-		"targets": "_all",
-		"defaultContent": ""
-	} ],
-} );
-new $.fn.dataTable.FixedColumns( table, {
-	leftColumns: 6
-} );
-<!-- Budget details -->
-
-$('#billing_deadline').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
-$('#billing_deadline').datetimepicker({
-	pickTime: false,
-	calendarWeeks: true,
-	minDate: moment()
-});
-
-$("form[id='updateBilling']").on("submit",function(e){
-	var form = $(this);
-	var method = form.find('input[name="_method"]').val() || 'POST';
-	var url = form.prop('action');
-	$.ajax({
-		url: url,
-		data: form.serialize(),
-		method: method,
-		dataType: "json",
-		success: function(data){
-			if(data.success == "1"){
-				bootbox.alert("Billling details was successfully updated."); 
-			}else{
-				bootbox.alert("An error occured while updating."); 
-			}
-		}
-	});
-	e.preventDefault();
-});
-
-$('#budget_table').ajax_table({
-	add_url: "{{ URL::action('ActivityController@addbudget', $activity->id ) }}",
-	delete_url: "{{ URL::action('ActivityController@deletebudget') }}",
-	update_url: "{{ URL::action('ActivityController@updatebudget') }}",
-	columns: [
-		{ type: "select", id: "io_ttstype" , ajax_url: "{{ URL::action('api\BudgetTypeController@gettype') }}"},
-		{ type: "text", id: "io_no", placeholder: "IO Number" },
-		{ type: "text", id: "io_amount", placeholder: "Amount" },
-		{ type: "text", id: "io_startdate", placeholder: "mm/dd/yyyy" },
-		{ type: "text", id: "io_enddate", placeholder: "mm/dd/yyyy" },
-		{ type: "text", id: "io_remarks", placeholder: "Remarks" },
-	],
-	onError: function (){
-		bootbox.alert("Unexpected error, Please try again"); 
-	},onInitRow: function() {
-		$('#io_startdate, #io_enddate').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
-		$('#io_startdate, #io_enddate').datetimepicker({
-			pickTime: false,
-			calendarWeeks: true,
-			minDate: moment()
-		});
-		$('#io_amount').inputNumber();
-		$("#io_no").mask("aa99999999");
-	},onEditRow : function(){
-		$('#io_startdate, #io_enddate').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
-		$('#io_startdate, #io_enddate').datetimepicker({
-			pickTime: false,
-			calendarWeeks: true,
-			minDate: moment()
-		});
-		$('#io_amount').inputNumber();
-		$("#io_no").mask("aa99999999");
-	},onError: function (){
-		bootbox.alert("Unexpected error, Please try again"); 
-	}
-});
-
-
-
-
-$('#no_budget_table').ajax_table({
-	add_url: "{{ URL::action('ActivityController@addnobudget', $activity->id ) }}",
-	delete_url: "{{ URL::action('ActivityController@deletenobudget') }}",
-	update_url: "{{ URL::action('ActivityController@updatenobudget') }}",
-	columns: [
-		{ type: "select", id: "budget_ttstype" , ajax_url: "{{ URL::action('api\BudgetTypeController@gettype') }}"},
-		{ type: "text", id: "budget_no", placeholder: "Budget Number" },
-		{ type: "text", id: "budget_name", placeholder: "Budget Name" },
-		{ type: "text", id: "budget_amount", placeholder: "Amount" },
-		{ type: "text", id: "budget_startdate", placeholder: "mm/dd/yyyy" },
-		{ type: "text", id: "budget_enddate", placeholder: "mm/dd/yyyy" },
-		{ type: "text", id: "budget_remarks", placeholder: "Remarks" },
-	],
-	onInitRow: function() {
-		$('#budget_startdate, #budget_enddate').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
-		$('#budget_startdate, #budget_enddate').datetimepicker({
-			pickTime: false,
-			calendarWeeks: true,
-			minDate: moment()
-		});
-		$('#budget_amount').inputNumber();
-	},onEditRow : function(){
-		$('#budget_startdate, #budget_enddate').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
-		$('#budget_startdate, #budget_enddate').datetimepicker({
-			pickTime: false,
-			calendarWeeks: true,
-			minDate: moment()
-		});
-		$('#budget_amount').inputNumber();
-	},onError: function (){
-		bootbox.alert("Unexpected error, Please try again"); 
-	}
-
-});
-
-
-<!-- activity timings -->
-$('#activity_timings').bootstrapTable({
-    url: '{{ URL::action('ActivityController@timings', $activity->id ) }}'
-});
-
-
-<!-- submit activity -->
-$("form[id='submittogcm']").on("submit",function(e){
-	var form = $(this);
-	var method = form.find('input[name="_method"]').val() || 'POST';
-	var url = form.prop('action');
-	if(form.valid()){
-		$.ajax({
-			url: url,
-			data: form.serialize(),
-			method: method,
-			dataType: "json",
-			success: function(data){
-				if(data.success == "1"){
-					window.location.href="{{ URL::action('activity.index' ) }}";			
-				}else{
-					bootbox.alert("An error occured while updating."); 
-				}
-			}
-		});
-	}
-	
-	e.preventDefault();
-});
-
-$("#submittogcm").validate({
-	errorElement: "span", 
-	errorClass : "has-error",
-	rules: {
-		submitstatus: "is_natural_no_zero",
-		submitremarks: "required"
-
-	},
-	errorPlacement: function(error, element) {               
-		
-	},
-	highlight: function( element, errorClass, validClass ) {
-    	$(element).closest('div').addClass(errorClass).removeClass(validClass);
-  	},
-  	unhighlight: function( element, errorClass, validClass ) {
-    	$(element).closest('div').removeClass(errorClass).addClass(validClass);
-  	}
-});
 @stop
-
 
 

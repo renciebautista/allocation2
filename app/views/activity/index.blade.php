@@ -19,8 +19,8 @@
 				<div class="form-group">
 					<div class="row">
 						<div class="col-lg-12">
-						{{ Form::label('status', 'Status', array('class' => 'control-label')) }}
-						{{ Form::select('status', array('0' => 'ALL STATUSES') + $statuses, null, array('id' => 'status','class' => 'form-control')) }}
+						{{ Form::label('st', 'Status', array('class' => 'control-label')) }}
+						{{ Form::select('st[]', $statuses, null, array('id' => 'st','class' => 'form-control', 'multiple' => 'multiple')) }}
 						</div>
 					</div>
 				</div>
@@ -29,30 +29,8 @@
 				<div class="form-group">
 					<div class="row">
 						<div class="col-lg-12">
-						{{ Form::label('cycle', 'TOP Cycle', array('class' => 'control-label')) }}
-						{{ Form::select('cycle', array('0' => 'ALL CYCLES') + $cycles, null, array('id' => 'cycle','class' => 'form-control')) }}
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-lg-6">
-				<div class="form-group">
-					<div class="row">
-						<div class="col-lg-12">
-						{{ Form::label('scope', 'Scope', array('class' => 'control-label')) }}
-						{{ Form::select('scope', array('0' => 'ALL SCOPES') + $scopes, null, array('id' => 'scope','class' => 'form-control')) }}
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="col-lg-6">
-				<div class="form-group">
-					<div class="row">
-						<div class="col-lg-12">
-						{{ Form::label('type', 'Activity Type', array('class' => 'control-label')) }}
-						{{ Form::select('type', array('0' => 'ALL ACTIVITY TYPES') + $types, null, array('id' => 'type','class' => 'form-control')) }}
+						{{ Form::label('cy', 'TOP Cycle', array('class' => 'control-label')) }}
+						{{ Form::select('cy[]', $cycles, null, array('id' => 'cy','class' => 'form-control', 'multiple' => 'multiple')) }}
 						</div>
 					</div>
 				</div>
@@ -63,8 +41,30 @@
 				<div class="form-group">
 					<div class="row">
 						<div class="col-lg-12">
-						{{ Form::label('pmog', 'PMOG Partner', array('class' => 'control-label')) }}
-						{{ Form::select('pmog', array('0' => 'ALL PMOG PLANNERS') + $planners, null, array('id' => 'pmog','class' => 'form-control')) }}
+						{{ Form::label('sc', 'Scope', array('class' => 'control-label')) }}
+						{{ Form::select('sc[]', $scopes, null, array('id' => 'sc','class' => 'form-control', 'multiple' => 'multiple')) }}
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-6">
+				<div class="form-group">
+					<div class="row">
+						<div class="col-lg-12">
+						{{ Form::label('ty', 'Activity Type', array('class' => 'control-label')) }}
+						{{ Form::select('ty[]', $types, null, array('id' => 'ty','class' => 'form-control', 'multiple' => 'multiple')) }}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-lg-6">
+				<div class="form-group">
+					<div class="row">
+						<div class="col-lg-12">
+						{{ Form::label('pm', 'PMOG Partner', array('class' => 'control-label')) }}
+						{{ Form::select('pm[]', $planners, null, array('id' => 'pm','class' => 'form-control', 'multiple' => 'multiple')) }}
 						</div>
 					</div>
 				</div>
@@ -157,5 +157,11 @@
 		</div>
 	</div>
 </div>
+
+@include('javascript.activity.index')
+
+@stop
+
+@section('page-script')
 
 @stop

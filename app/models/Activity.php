@@ -172,27 +172,27 @@ class Activity extends \Eloquent {
 			})
 			->where(function($query) use ($status){
 				if($status > 0){
-					$query->where('activities.status_id', $status);
+					$query->whereIn('activities.status_id', $status);
 				}
 			})
 			->where(function($query) use ($cycle){
 				if($cycle > 0){
-					$query->where('activities.cycle_id', $cycle);
+					$query->whereIn('activities.cycle_id', $cycle);
 				}
 			})
 			->where(function($query) use ($scope){
 				if($scope > 0){
-					$query->where('activities.scope_type_id', $scope);
+					$query->whereIn('activities.scope_type_id', $scope);
 				}
 			})
 			->where(function($query) use ($type){
 				if($type > 0){
-					$query->where('activities.activity_type_id', $type);
+					$query->whereIn('activities.activity_type_id', $type);
 				}
 			})
 			->where(function($query) use ($pmog){
 				if($pmog > 0){
-					$query->where('activity_planners.user_id', $pmog);
+					$query->whereIn('activity_planners.user_id', $pmog);
 				}
 			})
 			->orderBy('activities.created_at', 'desc')
@@ -216,7 +216,7 @@ class Activity extends \Eloquent {
 			->where('activities.status_id','>',1)
 			->where(function($query) use ($proponent_id){
 				if($proponent_id > 0){
-					$query->where('activities.created_by', $proponent_id);
+					$query->whereIn('activities.created_by', $proponent_id);
 				}
 			})
 			->where(function($query) use ($title){
@@ -224,22 +224,22 @@ class Activity extends \Eloquent {
 			})
 			->where(function($query) use ($status){
 				if($status > 0){
-					$query->where('activities.status_id', $status);
+					$query->whereIn('activities.status_id', $status);
 				}
 			})
 			->where(function($query) use ($cycle){
 				if($cycle > 0){
-					$query->where('activities.cycle_id', $cycle);
+					$query->whereIn('activities.cycle_id', $cycle);
 				}
 			})
 			->where(function($query) use ($scope){
 				if($scope > 0){
-					$query->where('activities.scope_type_id', $scope);
+					$query->whereIn('activities.scope_type_id', $scope);
 				}
 			})
 			->where(function($query) use ($type){
 				if($type > 0){
-					$query->where('activities.activity_type_id', $type);
+					$query->whereIn('activities.activity_type_id', $type);
 				}
 			})
 			->orderBy('activities.created_at', 'desc')
@@ -373,7 +373,7 @@ class Activity extends \Eloquent {
 			->lists('scope_name','id');
 	}
 
-	public static function availableTypes($user_id  = null){
+	public static function availableTypes($user_id = null){
 		return self::select('activity_types.activity_type','activity_types.id')
 			->where(function($query) use ($user_id){
 				if(!is_null($user_id)){

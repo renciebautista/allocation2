@@ -12,14 +12,13 @@ class ReportController extends \BaseController {
 	{
 		Input::flash();
 		$statuses = ActivityStatus::orderBy('status')->lists('status', 'id');
-		$activities = Activity::search(Input::get('proponent'),Input::get('status'),Input::get('cycle'),Input::get('scope'),
-			Input::get('type'),Input::get('pmog'),Input::get('title'));
 		$cycles = Cycle::getLists();
 		$scopes = ScopeType::getLists();
 		$types = ActivityType::getLists();
 		$planners = User::getApprovers(['PMOG PLANNER']);
 		$proponents = User::getApprovers(['PROPONENT']);
-		// Helper::print_array($planners);
+		$activities = Activity::search(Input::get('pr'),Input::get('st'),Input::get('cy'),Input::get('sc'),
+			Input::get('ty'),Input::get('pm'),Input::get('title'));
 		return View::make('report.activities',compact('statuses', 'activities', 'cycles', 'scopes', 'types', 'planners', 'proponents'));
 	}
 

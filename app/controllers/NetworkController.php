@@ -126,24 +126,23 @@ class NetworkController extends \BaseController {
 		if(Request::ajax()){
 			$data = array();
 			$activities = ActivityTypeNetwork::activities($id);
-			$data['days'] = 0;
-			$data['start_date'] = date('m/d/Y');
 			$holidays = Holiday::allHoliday();
+			$data['days'] = 1;
+			$data['start_date'] = ActivityTypeNetwork::getImplemetationDate( date('m/d/Y'),$holidays,0);
 			if(count($activities)>0){
 				$cpm = new Cpm($activities);
 				$data['days'] = $cpm->TotalDuration();
 			}
-			$data['min_date'] = ActivityTypeNetwork::getImplemetationDate($data['start_date'],$holidays,$data['days']);
+
+			$data['min_date'] = ActivityTypeNetwork::getImplemetationDate($data['start_date'],$holidays,$data['days'] - 1);
 			if (Input::has('sd'))
 			{
 			    $data['end_date'] = date('m/d/Y',strtotime(Input::get('sd')));
-			   	$data['start_date'] = ActivityTypeNetwork::getDownloadDate($data['end_date'],$holidays,$data['days']);
+			   	$data['start_date'] = ActivityTypeNetwork::getDownloadDate($data['end_date'],$holidays,$data['days'] - 1);
 			}else{
-				$data['min_date'] = ActivityTypeNetwork::getImplemetationDate($data['start_date'],$holidays,$data['days']);
-				$data['end_date'] = ActivityTypeNetwork::getImplemetationDate($data['start_date'],$holidays,$data['days']);
+				$data['min_date'] = ActivityTypeNetwork::getImplemetationDate($data['start_date'],$holidays,$data['days'] - 1);
+				$data['end_date'] = ActivityTypeNetwork::getImplemetationDate($data['start_date'],$holidays,$data['days'] - 1);
 			}
-
-			
 			
 			return Response::json($data,200);
 		}
