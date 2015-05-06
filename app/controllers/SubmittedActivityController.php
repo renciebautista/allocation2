@@ -11,24 +11,13 @@ class SubmittedActivityController extends \BaseController {
 	public function index()
 	{
 		Input::flash();
-		if(Auth::user()->hasRole("GCOM APPROVER")){
-			$status_id = 5;
-		}
-		if(Auth::user()->hasRole("CD OPS APPROVER")){
-			$status_id = 6;
-		}
-		if(Auth::user()->hasRole("CMD DIRECTOR")){
-			$status_id = 7;
-		}
-
-		Input::flash();
 		$statuses = ActivityStatus::availableStatus(1);
-		$activities = Activity::searchSubmitted(Input::get('proponent'),Input::get('status'),Input::get('cycle'),Input::get('scope'),
-			Input::get('type'),Input::get('title'));
 		$cycles = Cycle::getLists();
 		$scopes = ScopeType::getLists();
 		$types = ActivityType::getLists();
 		$proponents = User::getApprovers(['PROPONENT']);
+		$activities = Activity::searchSubmitted(Input::get('pr'),Input::get('st'),Input::get('cy'),Input::get('sc'),
+			Input::get('ty'),Input::get('title'));
 		return View::make('submittedactivity.index',compact('statuses', 'activities', 'cycles', 'scopes', 'types', 'proponents'));
 	}
 
@@ -101,12 +90,24 @@ class SubmittedActivityController extends \BaseController {
 							$comment_status = "SUBMITTED TO CD OPS";
 							$role = "GCOM APPROVER";
 							$activity_status = 6;
+
+							foreach ($cdops_approvers as $cdops_approver) {
+								$approver = ActivityApprover::find($cdops_approver->id);
+								$approver->show = 1;
+								$approver->update();
+							}
 						}else{
 							$cmd_approvers = ActivityApprover::getApproverByRole($id,'CMD DIRECTOR');
 							if(count($cmd_approvers) > 0){
 								$comment_status = "SUBMITTED TO CMD";
 								$role = "CD OPS APPROVER";
 								$activity_status = 7;
+
+								foreach ($cmd_approvers as $cmd_approver) {
+									$approver = ActivityApprover::find($cmd_approver->id);
+									$approver->show = 1;
+									$approver->update();
+								}
 							}else{
 								$comment_status = "APPROVED FOR FIELD";
 								$role = "CMD DIRECTOR";

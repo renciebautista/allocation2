@@ -16,7 +16,7 @@ class ActivityApprover extends \Eloquent {
 	}
 
 	public static function getApproverByRole($activity_id,$role_name){
-		return self::select('activity_approvers.user_id')
+		return self::select('activity_approvers.id','activity_approvers.user_id')
 			->join('users', 'activity_approvers.user_id', '=', 'users.id')
 			->join('assigned_roles', 'activity_approvers.user_id', '=', 'assigned_roles.user_id')
 			->join('roles', 'assigned_roles.role_id', '=', 'roles.id')
@@ -99,7 +99,9 @@ class ActivityApprover extends \Eloquent {
 
 	public static function getActivities($user_id){
 		$list = array();
-		$data = self::where('user_id',$user_id)->get();
+		$data = self::where('user_id',$user_id)
+		->where('show',1)
+		->get();
 		if(!empty($data)){
 			foreach ($data as $row) {
 				$list[] = $row->activity_id;

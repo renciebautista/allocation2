@@ -14,9 +14,9 @@ class DashboardController extends \BaseController {
 	{
 		if(Auth::user()->hasRole("FIELD SALES")){
 			Input::flash();
-			$activities = Activity::searchField(Input::get('cycle'),Input::get('type'),Input::get('title'));
 			$cycles = Cycle::getLists();
 			$types = ActivityType::getLists();
+			$activities = Activity::searchField(Input::get('cy'),Input::get('ty'),Input::get('title'));
 			return View::make('dashboard.field',compact('activities', 'cycles','types'));
 		}
 

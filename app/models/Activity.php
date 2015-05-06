@@ -248,6 +248,7 @@ class Activity extends \Eloquent {
 
 	public static function searchSubmitted($proponent_id,$status,$cycle,$scope,$type,$title){
 		$activities = ActivityApprover::getActivities(Auth::id());
+		
 		return self::select('activities.id','activities.circular_name','activities.edownload_date',
 			'activities.eimplementation_date','activities.billing_date',
 			'activity_statuses.status','cycles.cycle_name',
@@ -264,7 +265,7 @@ class Activity extends \Eloquent {
 			->whereIn('activities.id',$activities)
 			->where(function($query) use ($proponent_id){
 				if($proponent_id > 0){
-					$query->where('activities.created_by', $proponent_id);
+					$query->whereIn('activities.created_by', $proponent_id);
 				}
 			})
 			->where(function($query) use ($title){
@@ -272,22 +273,22 @@ class Activity extends \Eloquent {
 			})
 			->where(function($query) use ($status){
 				if($status > 0){
-					$query->where('activities.status_id', $status);
+					$query->whereIn('activities.status_id', $status);
 				}
 			})
 			->where(function($query) use ($cycle){
 				if($cycle > 0){
-					$query->where('activities.cycle_id', $cycle);
+					$query->whereIn('activities.cycle_id', $cycle);
 				}
 			})
 			->where(function($query) use ($scope){
 				if($scope > 0){
-					$query->where('activities.scope_type_id', $scope);
+					$query->whereIn('activities.scope_type_id', $scope);
 				}
 			})
 			->where(function($query) use ($type){
 				if($type > 0){
-					$query->where('activities.activity_type_id', $type);
+					$query->whereIn('activities.activity_type_id', $type);
 				}
 			})
 			->orderBy('activities.created_at', 'desc')
@@ -306,12 +307,12 @@ class Activity extends \Eloquent {
 			})
 			->where(function($query) use ($cycle){
 				if($cycle > 0){
-					$query->where('activities.cycle_id', $cycle);
+					$query->whereIn('activities.cycle_id', $cycle);
 				}
 			})
 			->where(function($query) use ($type){
 				if($type > 0){
-					$query->where('activities.activity_type_id', $type);
+					$query->whereIn('activities.activity_type_id', $type);
 				}
 			})
 			->orderBy('activities.created_at', 'desc')

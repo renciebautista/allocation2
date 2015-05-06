@@ -32,19 +32,18 @@
 				<thead>
 					<tr>
 						<th>Group</th>
-						<th colspan="3" style="text-align:center;">Action</th>
+						<th colspan="2" style="text-align:center;">Action</th>
 					</tr>
 				</thead>
 				<tbody>
 					@if(count($groups) == 0)
 					<tr>
-						<td colspan="4">No record found!</td>
+						<td colspan="3">No record found!</td>
 					</tr>
 					@else
 					@foreach($groups as $group)
 					<tr>
 						<td>{{ $group->name }}</td>
-						<td class="action">{{ HTML::linkAction('GroupController@show','Manage Privilleges', $group->id, array('class' => 'btn btn-primary btn-xs')) }}</td>
 						<td class="action">
 							{{ HTML::linkAction('GroupController@edit','Edit', $group->id, array('class' => 'btn btn-info btn-xs')) }}
 						</td>

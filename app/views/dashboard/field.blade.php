@@ -19,8 +19,8 @@
 				<div class="form-group">
 					<div class="row">
 						<div class="col-lg-12">
-						{{ Form::label('cycle', 'TOP Cycle', array('class' => 'control-label')) }}
-						{{ Form::select('cycle', array('0' => 'ALL CYCLES') + $cycles, null, array('id' => 'cycle','class' => 'form-control')) }}
+						{{ Form::label('cy', 'TOP Cycle', array('class' => 'control-label')) }}
+						{{ Form::select('cy[]', $cycles, null, array('id' => 'cy','class' => 'form-control', 'multiple' => 'multiple')) }}
 						</div>
 					</div>
 				</div>
@@ -29,8 +29,8 @@
 				<div class="form-group">
 					<div class="row">
 						<div class="col-lg-12">
-						{{ Form::label('type', 'Activity Type', array('class' => 'control-label')) }}
-						{{ Form::select('type', array('0' => 'ALL ACTIVITY TYPES') + $types, null, array('id' => 'type','class' => 'form-control')) }}
+						{{ Form::label('ty', 'Activity Type', array('class' => 'control-label')) }}
+						{{ Form::select('ty[]', $types, null, array('id' => 'ty','class' => 'form-control', 'multiple' => 'multiple')) }}
 						</div>
 					</div>
 				</div>
@@ -102,5 +102,11 @@
 		</div>
 	</div>
 </div>
+
+@include('javascript.dashboard.field')
+
+@stop
+
+@section('page-script')
 
 @stop
