@@ -51,7 +51,7 @@ use Imagecow\Image;
 
 
 Route::get('print', function (){
-	$activity = Activity::find(68);
+	$activity = Activity::find(2);
 	$scheme_customers = SchemeAllocation::getCustomers($activity->id);
 	$schemes = Scheme::where('activity_id', $activity->id)
 				->orderBy('created_at', 'desc')
