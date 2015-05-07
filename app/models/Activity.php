@@ -55,92 +55,135 @@ class Activity extends \Eloquent {
 
 
     // static function
-	public static function validForDownload($activity){
+	public static function validForDownload($activity,$required_array){
 		$return = array();
-		$required_budget_type = ActivityTypeBudgetRequired::required($activity->activity_type_id);
-		$valid_types = array();
 		$required = array();
-		if(!empty($required_budget_type)){
-			foreach ($required_budget_type as $value) {
-				$status = 0;
-				if(ActivityBudget::hasType($activity->id,$value) || ActivityNobudget::hasType($activity->id,$value)){
-					$status = 1;
-				}
-				$valid_types[$value] = $status;
-			}
-		}
 
-		if(!empty($valid_types)){
+		if(in_array("budget", $required_array)){
+			$required_budget_type = ActivityTypeBudgetRequired::required($activity->activity_type_id);
+			$valid_types = array();
+
+			if(!empty($required_budget_type)){
+				foreach ($required_budget_type as $value) {
+					$status = 0;
+					if(ActivityBudget::hasType($activity->id,$value) || ActivityNobudget::hasType($activity->id,$value)){
+						$status = 1;
+					}
+					$valid_types[$value] = $status;
+				}
+			}
+
+			if(!empty($valid_types)){
 			
-			$_valid = 1;
-			foreach ($valid_types as $key => $value) {
-				if($value == 0){
-					$budget_type = BudgetType::find($key);
-					$required[] = 'Budget Type '.$budget_type->budget_type. ' is required.';
+				$_valid = 1;
+				foreach ($valid_types as $key => $value) {
+					if($value == 0){
+						$budget_type = BudgetType::find($key);
+						$required[] = 'Budget Type '.$budget_type->budget_type. ' is required.';
+					}
+					$_valid &= $value;
 				}
-				$_valid &= $value;
+				$return['status'] = $_valid;
+			}else{
+				$return['status'] = 1;
 			}
-			$return['status'] = $_valid;
-		}else{
-			$return['status'] = 1;
+		}
+		
+
+		if(in_array("approver", $required_array)){
+			$approver = ActivityApprover::getList($activity->id);
+			if(count($approver)  == 0){
+				$required[] = 'Activity approver is required.';
+				$return['status'] = 0;
+			}
 		}
 
-		$approver = ActivityApprover::getList($activity->id);
-		if(count($approver)  == 0){
-			$required[] = 'Activity approver is required.';
-			$return['status'] = 0;
+		if(in_array("cycle", $required_array)){
+			if($activity->cycle_id == 0){
+				$required[] = 'Activity cycle is required.';
+				$return['status'] = 0;
+			}
 		}
 
-		if($activity->cycle_id == 0){
-			$required[] = 'Activity cycle is required.';
-			$return['status'] = 0;
+		if(in_array("activity", $required_array)){
+			if($activity->division_code == 0){
+				$required[] = 'Activity division is required.';
+				$return['status'] = 0;
+			}
 		}
 
-		if($activity->division_code == 0){
-			$required[] = 'Activity division is required.';
-			$return['status'] = 0;
+		if(in_array("category", $required_array)){
+			$category = ActivityCategory::selected_category($activity->id);
+			if(count($category)  == 0){
+				$required[] = 'Activity category is required.';
+				$return['status'] = 0;
+			}
 		}
 
-		$category = ActivityCategory::selected_category($activity->id);
-		if(count($category)  == 0){
-			$required[] = 'Activity category is required.';
-			$return['status'] = 0;
+		if(in_array("brand", $required_array)){
+			$brand = ActivityBrand::selected_brand($activity->id);
+			if(count($brand) == 0){
+				$required[] = 'Activity brand is required.';
+				$return['status'] = 0;
+			}
 		}
 
-		$brand = ActivityBrand::selected_brand($activity->id);
-		if(count($brand) == 0){
-			$required[] = 'Activity brand is required.';
-			$return['status'] = 0;
-		}
+		
 
 		// $skus = ActivitySku::getList($activity->id);
 		// if(count($skus) == 0){
 		// 	$required[] = 'Activity skus involved is required.';
 		// 	$return['status'] = 0;
 		// }
-
-		$objective = ActivityObjective::getList($activity->id);
-		if(count($objective) == 0){
-			$required[] = 'Activity objective is required.';
-			$return['status'] = 0;
+		if(in_array("objective", $required_array)){
+			$objective = ActivityObjective::getList($activity->id);
+			if(count($objective) == 0){
+				$required[] = 'Activity objective is required.';
+				$return['status'] = 0;
+			}
+		}
+		
+		if(in_array("background", $required_array)){
+			if($activity->background ==''){
+				$required[] = 'Activity background is required.';
+				$return['status'] = 0;
+			}
+		}
+		
+		if(in_array("customer", $required_array)){
+			$customer = ActivityCustomer::customers($activity->id);
+			if(count($customer) == 0){
+				$required[] = 'Activity customer is required.';
+				$return['status'] = 0;
+			}
+		}
+		
+		if(in_array("scheme", $required_array)){
+			$scheme = Scheme::getList($activity->id);
+			if(count($scheme) == 0){
+				$required[] = 'Activity scheme is required.';
+				$return['status'] = 0;
+			}
+		}
+		
+		if(in_array("fdapermit", $required_array)){
+			$fdaPermit = ActivityFdapermit::getList($activity->id);
+			if(count($fdaPermit) == 0){
+				$required[] = 'FDA Permit No. is required.';
+				$return['status'] = 0;
+			}
+		}
+		
+		if(in_array("artwork", $required_array)){
+			$artworks = ActivityArtwork::getList($activity->id);
+			if(count($artworks) == 0){
+				$required[] = 'Artwork Packshots is required.';
+				$return['status'] = 0;
+			}
 		}
 
-		if($activity->background ==''){
-			$required[] = 'Activity background is required.';
-			$return['status'] = 0;
-		}
+		
 
-		$customer = ActivityCustomer::customers($activity->id);
-		if(count($customer) == 0){
-			$required[] = 'Activity customer is required.';
-			$return['status'] = 0;
-		}
-
-		$scheme = Scheme::getList($activity->id);
-		if(count($scheme) == 0){
-			$required[] = 'Activity scheme is required.';
-			$return['status'] = 0;
-		}
 
 		$return['message'] = $required;
 		return $return;;
@@ -338,7 +381,6 @@ class Activity extends \Eloquent {
 				if($type == 'lastmonth'){
 					$query->where('cycles.release_date','>=',Carbon::now()->startOfMonth()->subMonths(1))
 						->where('cycles.release_date','<',Carbon::now()->startOfMonth());
-					
 				}
 				
 			})

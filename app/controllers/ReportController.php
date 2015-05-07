@@ -53,6 +53,7 @@ class ReportController extends \BaseController {
 			$fdapermit = ActivityFdapermit::where('activity_id', $activity->id)->first();
 			$networks = ActivityTiming::getTimings($activity->id,true);
 			$artworks = ActivityArtwork::getList($activity->id);
+			$pispermit = ActivityFis::where('activity_id', $activity->id)->first();
 
 			$scheme_customers = SchemeAllocation::getCustomers($activity->id);
 
@@ -63,8 +64,8 @@ class ReportController extends \BaseController {
 			
 			// // Product Information Sheet
 			$path = '/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
-			if(!empty($fdapermit)){
-				$pis = Excel::selectSheets('Output')->load(storage_path().$path."/".$fdapermit->hash_name)->get();
+			if(!empty($pispermit)){
+				$pis = Excel::selectSheets('Output')->load(storage_path().$path."/".$pispermit->hash_name)->get();
 			}else{
 				$pis = array();
 			}

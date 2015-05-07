@@ -652,6 +652,7 @@ $("form[id='submitactivity']").on("submit",function(e){
 				if(data.success == "1"){
 					location.reload();
 				}else{
+				 	$("#error").text('');
 					var obj = data.error,  
 			        ul = $("<ul>");                    
 			        for (var i = 0, l = obj.length; i < l; ++i) {

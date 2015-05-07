@@ -633,6 +633,13 @@ $('#activity_timings').bootstrapTable({
 
 
 <!-- submit activity -->
+$("#mySubmit").on("hidden.bs.modal", function(){
+    $('.form-group').removeClass("has-error");
+    $('#submitremarks').val('');
+    $('#submitstatus').val(0);
+    $('#error').text('');
+});
+
 $("form[id='submittogcm']").on("submit",function(e){
 	var form = $(this);
 	var method = form.find('input[name="_method"]').val() || 'POST';
@@ -645,9 +652,15 @@ $("form[id='submittogcm']").on("submit",function(e){
 			dataType: "json",
 			success: function(data){
 				if(data.success == "1"){
-					window.location.href="{{ URL::action('activity.index' ) }}";			
+					location.reload();
 				}else{
-					bootbox.alert("An error occured while updating."); 
+					$('#error').text('');
+					var obj = data.error,  
+			        ul = $("<ul>");                    
+			        for (var i = 0, l = obj.length; i < l; ++i) {
+			            ul.append("<li>" + obj[i] + "</li>");
+			        }
+			        $("#error").append(ul);
 				}
 			}
 		});

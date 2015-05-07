@@ -37,6 +37,7 @@
 	        	<h4 class="modal-title" id="myModalLabel">Submit To GCOM</h4>
 	      	</div>
 	      	<div class="modal-body">
+	      		<div id="error"></div>
 	          	<div class="form-group">
 	            	{{ Form::label('submitstatus', 'Status:', array('class' => 'control-label')) }}
 	            	{{ Form::select('submitstatus', array('0' => 'PLEASE SELECT') + $submitstatus, null, array('id' => 'submitstatus', 'class' => 'form-control')) }}

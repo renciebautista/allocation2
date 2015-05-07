@@ -26,8 +26,11 @@ class DashboardController extends \BaseController {
 
 
 		$ongoings = Activity::summary(8,'ongoing');
+		// Helper::print_array($ongoings);
 		$upcomings = Activity::summary(8,'nextmonth');
+		// Helper::print_array($upcomings);
 		$lastmonths = Activity::summary(8,'lastmonth');
+		// Helper::print_array($lastmonths);
 		return View::make('dashboard.index',compact('ongoings', 'upcomings', 'lastmonths'));
 	}
 

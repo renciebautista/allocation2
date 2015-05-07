@@ -732,65 +732,78 @@ class ActivityController extends BaseController {
 			if(Auth::user()->hasRole("PROPONENT")){
 				$arr = DB::transaction(function() use ($id)  {
 					$activity = Activity::findOrFail($id);
-					$validation = Activity::validForDownload($activity);
-					if(empty($activity) || ($validation['status'] == 0)){
+
+					
+					if(empty($activity)){
 						$arr['success'] = 0;
 						$arr['error'] = $validation['message'];
 					}else{
-						$status_id = (int) Input::get('submitstatus');
-						$activity_status = 3;
-						$pro_recall = 0;
-						$pmog_recall = 0;
-						if($status_id == 1){
-							$pro_recall = 1;
-							$planner = ActivityPlanner::getPlanner($activity->id);
-							if(count($planner) > 0){
-								$comment_status = "SUBMITTED TO PMOG PLANNER";
-								$activity_status = 4;
-							}else{
-								$gcom_approvers = ActivityApprover::getApproverByRole($activity->id,'GCOM APPROVER');
-								if(count($gcom_approvers) > 0){
-									$comment_status = "SUBMITTED TO GCOM";
-									$activity_status = 5;
+						$required_rules = array('budget','approver','cycle','activity','category','brand','objective','background','customer','scheme');
+						$validation = Activity::validForDownload($activity,$required_rules);
+						// $planner = ActivityPlanner::getPlanner($activity->id);
+						// if(count($planner) > 0){
+						// 	$validation['status'] = 1;
+						// }
+
+						if($validation['status'] == 0){
+							$arr['success'] = 0;
+							$arr['error'] = $validation['message'];
+						}else{
+							$status_id = (int) Input::get('submitstatus');
+							$activity_status = 3;
+							$pro_recall = 0;
+							$pmog_recall = 0;
+							if($status_id == 1){
+								$pro_recall = 1;
+								if(count($planner) > 0){
+									$comment_status = "SUBMITTED TO PMOG PLANNER";
+									$activity_status = 4;
 								}else{
-									$cdops_approvers = ActivityApprover::getApproverByRole($activity->id,'CD OPS APPROVER');
-									if(count($cdops_approvers) > 0){
-										$comment_status = "SUBMITTED TO CD OPS";
-										$activity_status = 6;
+									$gcom_approvers = ActivityApprover::getApproverByRole($activity->id,'GCOM APPROVER');
+									if(count($gcom_approvers) > 0){
+										$comment_status = "SUBMITTED TO GCOM";
+										$activity_status = 5;
 									}else{
-										$cmd_approvers = ActivityApprover::getApproverByRole($activity->id,'CMD DIRECTOR');
-										if(count($cmd_approvers) > 0){
-											$comment_status = "SUBMITTED TO CMD";
-											$activity_status = 7;
+										$cdops_approvers = ActivityApprover::getApproverByRole($activity->id,'CD OPS APPROVER');
+										if(count($cdops_approvers) > 0){
+											$comment_status = "SUBMITTED TO CD OPS";
+											$activity_status = 6;
+										}else{
+											$cmd_approvers = ActivityApprover::getApproverByRole($activity->id,'CMD DIRECTOR');
+											if(count($cmd_approvers) > 0){
+												$comment_status = "SUBMITTED TO CMD";
+												$activity_status = 7;
+											}
 										}
 									}
 								}
+								$class = "text-success";
 							}
-							$class = "text-success";
+
+							if($status_id == 2){
+								$comment_status = "RECALLED ACTIVITY";
+								$class = "text-warning";
+								ActivityApprover::resetAll($activity->id);
+							}
+
+							$comment = new ActivityComment;
+							$comment->created_by = Auth::id();
+							$comment->activity_id = $id;
+							$comment->comment = Input::get('submitremarks');
+							$comment->comment_status = $comment_status;
+							$comment->class = $class;
+							$comment->save();
+
+							$activity->status_id = $activity_status;
+							$activity->pro_recall = $pro_recall;
+							$activity->pmog_recall = $pmog_recall;
+							$activity->update();
+
+							$arr['success'] = 1;
+							Session::flash('class', 'alert-success');
+							Session::flash('message', 'Activity successfully updated.'); 
 						}
-
-						if($status_id == 2){
-							$comment_status = "RECALLED ACTIVITY";
-							$class = "text-warning";
-							ActivityApprover::resetAll($activity->id);
-						}
-
-						$comment = new ActivityComment;
-						$comment->created_by = Auth::id();
-						$comment->activity_id = $id;
-						$comment->comment = Input::get('submitremarks');
-						$comment->comment_status = $comment_status;
-						$comment->class = $class;
-						$comment->save();
-
-						$activity->status_id = $activity_status;
-						$activity->pro_recall = $pro_recall;
-						$activity->pmog_recall = $pmog_recall;
-						$activity->update();
-
-						$arr['success'] = 1;
-						Session::flash('class', 'alert-success');
-						Session::flash('message', 'Activity successfully updated.'); 
+						
 					}
 					return $arr;
 				});
@@ -812,52 +825,64 @@ class ActivityController extends BaseController {
 			if(Auth::user()->hasRole("PMOG PLANNER")){
 				$arr = DB::transaction(function() use ($id)  {
 					$activity = Activity::find($id);
-					if((empty($activity)) || (!ActivityPlanner::myActivity($activity->id))){
+					
+					if((empty($activity)) || (!ActivityPlanner::myActivity($activity->id)) ){
 						$arr['success'] = 0;
+						$arr['error'] = $validation['message'];
 					}else{
 						$status = (int) Input::get('submitstatus');
 						$activity_status = 2;
 						$pro_recall = 0;
 						$pmog_recall = 0;
 						if($status == 1){
-							//check next approver
-							$pmog_recall = 1;
-							$gcom_approvers = ActivityApprover::getApproverByRole($activity->id,'GCOM APPROVER');
-							if(count($gcom_approvers) > 0){
-								$comment_status = "SUBMITTED TO GCOM";
-								$activity_status = 5;
-								foreach ($gcom_approvers as $gcom_approver) {
-									$approver = ActivityApprover::find($gcom_approver->id);
-									$approver->show = 1;
-									$approver->update();
-								}
+							// check valdiation
+							$required_rules = array('budget','approver','cycle','activity','category','brand','objective','background','customer','scheme','fdapermit','artwork');
+							$validation = Activity::validForDownload($activity,$required_rules);
+							if($validation['status'] == 0){
+								$arr['success'] = 0;
+								$arr['error'] = $validation['message'];
+								return $arr;
 							}else{
-								$cdops_approvers = ActivityApprover::getApproverByRole($activity->id,'CD OPS APPROVER');
-								if(count($cdops_approvers) > 0){
-									$comment_status = "SUBMITTED TO CD OPS";
-									$activity_status = 6;
-									foreach ($cdops_approvers as $cdops_approver) {
-										$approver = ActivityApprover::find($cdops_approver->id);
+								//check next approver
+								$pmog_recall = 1;
+								$gcom_approvers = ActivityApprover::getApproverByRole($activity->id,'GCOM APPROVER');
+								if(count($gcom_approvers) > 0){
+									$comment_status = "SUBMITTED TO GCOM";
+									$activity_status = 5;
+									foreach ($gcom_approvers as $gcom_approver) {
+										$approver = ActivityApprover::find($gcom_approver->id);
 										$approver->show = 1;
 										$approver->update();
 									}
 								}else{
-									$cmd_approvers = ActivityApprover::getApproverByRole($activity->id,'CMD DIRECTOR');
-									if(count($cmd_approvers) > 0){
-										$comment_status = "SUBMITTED TO CMD";
-										$activity_status = 7;
-										foreach ($cmd_approvers as $cmd_approver) {
-											$approver = ActivityApprover::find($cmd_approver->id);
+									$cdops_approvers = ActivityApprover::getApproverByRole($activity->id,'CD OPS APPROVER');
+									if(count($cdops_approvers) > 0){
+										$comment_status = "SUBMITTED TO CD OPS";
+										$activity_status = 6;
+										foreach ($cdops_approvers as $cdops_approver) {
+											$approver = ActivityApprover::find($cdops_approver->id);
 											$approver->show = 1;
 											$approver->update();
 										}
 									}else{
-										$comment_status = "APPROVED FOR FIELD";
-										$activity_status = 8;
+										$cmd_approvers = ActivityApprover::getApproverByRole($activity->id,'CMD DIRECTOR');
+										if(count($cmd_approvers) > 0){
+											$comment_status = "SUBMITTED TO CMD";
+											$activity_status = 7;
+											foreach ($cmd_approvers as $cmd_approver) {
+												$approver = ActivityApprover::find($cmd_approver->id);
+												$approver->show = 1;
+												$approver->update();
+											}
+										}else{
+											$comment_status = "APPROVED FOR FIELD";
+											$activity_status = 8;
+										}
 									}
 								}
+								$class = "text-success";
 							}
-							$class = "text-success";
+							
 						}elseif($status == 3){
 							$comment_status = "RECALLED ACTIVITY";
 							$class = "text-warning";

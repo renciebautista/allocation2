@@ -48,9 +48,11 @@ use Imagecow\Image;
 // 	return View::make('customer',compact('data'));
 // });
 
+Route::get('print', function(){
 
+});
 
-Route::get('print', function (){
+Route::get('print1', function (){
 	$activity = Activity::find(2);
 	$scheme_customers = SchemeAllocation::getCustomers($activity->id);
 	$schemes = Scheme::where('activity_id', $activity->id)

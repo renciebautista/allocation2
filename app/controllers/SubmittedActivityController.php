@@ -112,6 +112,10 @@ class SubmittedActivityController extends \BaseController {
 								$comment_status = "APPROVED FOR FIELD";
 								$role = "CMD DIRECTOR";
 								$activity_status = 8;
+
+								$activity->pro_recall = 0;
+								$activity->pmog_recall = 0;
+								$activity->update();	
 							}
 						}
 						$class = "text-success";

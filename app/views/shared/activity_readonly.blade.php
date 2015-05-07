@@ -21,7 +21,10 @@
 			<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myAction">
 			  	Actions
 			</button>
+			@else
+			<button type="button" class="btn btn-primary disabled" >Actions</button>
 			@endif
+			<a class="btn btn-info" target="_blank" href="{{ URL::action('ReportController@preview', $activity->id ) }}">Preview</a>
 		</div>
 	</div>
 

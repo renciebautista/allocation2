@@ -107,7 +107,7 @@
 					<td>{{ $lastmonth->cycle_name }}</td>
 					<td class="action">
 						{{ HTML::linkAction('ReportController@download','Download', $lastmonth->id, array('class' => 'btn btn-success btn-xs')) }}
-						<a class="btn btn-info btn-xs" target="_blank" href="{{ URL::action('ReportController@preview', $upcoming->id ) }}">Preview</a>		
+						<a class="btn btn-info btn-xs" target="_blank" href="{{ URL::action('ReportController@preview', $lastmonth->id ) }}">Preview</a>		
 					</td>
 				</tr>
 				@endforeach
