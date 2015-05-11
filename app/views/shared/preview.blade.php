@@ -227,7 +227,7 @@
 					</tr>
 					<tr>
 						<td>Background</td>
-						<td>{{ $activity->background }}</td>
+						<td>{{ nl2br($activity->background) }}</td>
 					</tr>
 					<tr>
 						<td>Objectives</td>

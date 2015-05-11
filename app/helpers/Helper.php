@@ -7,7 +7,7 @@ class Helper {
         return null !== Input::old($name) ? (Input::old($name) == $value ? 'checked' : '') : ($default ? 'checked' : '');
     }
 
-    public static function print_array($array){
+    public static function print_r($array){
     	echo '<pre>';
 		print_r($array);
 		echo '</pre>';

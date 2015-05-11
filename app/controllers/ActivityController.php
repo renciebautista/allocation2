@@ -738,12 +738,15 @@ class ActivityController extends BaseController {
 						$arr['success'] = 0;
 						$arr['error'] = $validation['message'];
 					}else{
-						$required_rules = array('budget','approver','cycle','activity','category','brand','objective','background','customer','scheme');
+						$planner = ActivityPlanner::getPlanner($activity->id);
+						if(count($planner) > 0){
+							$required_rules = array('budget','approver','cycle','activity','category','brand','objective','background','customer','scheme');
+						}else{
+							$required_rules = array('budget','approver','cycle','activity','category','brand','objective','background','customer','scheme');
+						}
+						
 						$validation = Activity::validForDownload($activity,$required_rules);
-						// $planner = ActivityPlanner::getPlanner($activity->id);
-						// if(count($planner) > 0){
-						// 	$validation['status'] = 1;
-						// }
+						
 
 						if($validation['status'] == 0){
 							$arr['success'] = 0;

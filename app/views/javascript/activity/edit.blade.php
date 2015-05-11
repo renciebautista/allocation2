@@ -77,7 +77,7 @@ $(".btn-style").click(function (e) {
 
 function checkDirty(target_id,callback) {
   	if ($('#'+target_id).hasClass('dirty')) {
-		bootbox.confirm("You have unsaved changes! <br> Are you sure you want to leave?", function(result) {
+		bootbox.confirm("Do you want to save changes?", function(result) {
 		  	if(result){
 		  		if($( "#"+target_id).valid()){
 		  			$( "#"+target_id).submit();

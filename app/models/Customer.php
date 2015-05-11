@@ -1,7 +1,7 @@
 <?php
 
 class Customer extends \Eloquent {
-	protected $fillable = ['area_code', 'customer_code', 'customer_name', 'active', 'multiplier'];
+	protected $fillable = ['area_code', 'area_code_two','customer_code', 'customer_name', 'active', 'multiplier'];
 	public $timestamps = false;
 
 	public static function batchInsert($records){
@@ -9,6 +9,7 @@ class Customer extends \Eloquent {
 			if(!is_null($row->area_code)){
 				$attributes = array(
 					'area_code' => $row->area_code,
+					'area_code_two' => $row->area_code_two,
 					'customer_code' => $row->customer_code,
 					'customer_name' => $row->customer_name,
 					'active' => ($row->active == 'Y') ? 1 : 0,

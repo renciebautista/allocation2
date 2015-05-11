@@ -9,6 +9,7 @@ class AreasTableSeeder extends Seeder {
 	{
 		DB::table('areas')->truncate();
 		Excel::selectSheets('area')->load(app_path().'/database/seeds/seed_files/masterfile.xlsx', function($reader) {
+			//print_r($reader);
 			Area::batchInsert($reader->get());
 		});
 	}
