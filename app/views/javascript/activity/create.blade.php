@@ -32,6 +32,8 @@ function duration(value){
 			$('#download_date').val(msg.start_date)
 
 			$('#implementation_date').data("DateTimePicker").setMinDate(moment(msg.min_date).format('MM/DD/YYYY'));
+
+			getCycle(msg.end_date);
 		},
 		error: function(){
 			alert("failure");
@@ -67,12 +69,31 @@ $("#implementation_date").on("dp.change",function (e) {
 			$('#implementation_date').val(msg.end_date);
 			$('#download_date').val(msg.start_date)
 			$('#implementation_date').data("DateTimePicker").setMinDate(moment(msg.min_date).format('MM/DD/YYYY'));
+			getCycle(msg.end_date);
 		},
 		error: function(){
 			alert("failure");
 		}
 	});
+
+	
+	
 });
+
+function getCycle(date){
+	$.ajax({
+		type: "GET",
+		data: {date: date},
+		url: "{{ URL::action('CycleController@availableCycle') }}",
+		success: function(data){
+			$('select#cycle').empty();
+			$('<option value="0">PLEASE SELECT</option>').appendTo($('select#cycle')); 
+			$.each(data, function(i, text) {
+				$('<option />', {value: i, text: text}).appendTo($('select#cycle')); 
+			});
+	   }
+	});
+}
 
 $('#implementation_date').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
 
@@ -86,7 +107,10 @@ $("#myform").validate({
 			},
 		scope: "is_natural_no_zero",
 		activity_type: "is_natural_no_zero",
-		cycle: "is_natural_no_zero",
+		cycle: {
+			is_natural_no_zero: true,
+			required: true
+		},
 		implementation_date: {
 			required: true,
 			greaterdate : true

@@ -7,7 +7,7 @@ class Cycle extends \Eloquent {
 
 	public static $rules = array(
 		'cycle_name' => 'required',
-		'month' => 'required|integer|min:1',
+		'month_year' => 'required',
 		'vetting_deadline' => 'required|date',
 		'replyback_deadline' => 'required|date',
 		'submission_deadline' => 'required|date',
@@ -16,10 +16,7 @@ class Cycle extends \Eloquent {
 	);
 
 	public static function search($filter){
-		return DB::table('cycles')
-			->select('cycles.*','months.month')
-			->join('months', 'months.id', '=', 'cycles.month_id')
-			->where('cycles.cycle_name', 'LIKE' ,"%$filter%")
+		return self::where('cycles.cycle_name', 'LIKE' ,"%$filter%")
 			->get();
 	}
 

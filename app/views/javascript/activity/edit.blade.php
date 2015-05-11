@@ -77,24 +77,39 @@ $(".btn-style").click(function (e) {
 
 function checkDirty(target_id,callback) {
   	if ($('#'+target_id).hasClass('dirty')) {
-		bootbox.confirm("Do you want to save changes?", function(result) {
-		  	if(result){
-		  		if($( "#"+target_id).valid()){
-		  			$( "#"+target_id).submit();
-		  			$('form').areYouSure( {'silent':true} );
-		  			callback();
-		  		}else{
-		  			$('html, body').animate({
-				         scrollTop: ($('.has-error').offset().top - 300)
-				    }, 500);
-		  		}
-		  		
-		  	}else{
-		  		$('form').areYouSure( {'silent':true} );
-		  		callback();
-		  	}
-		  	
-		}); 
+
+  		bootbox.confirm({
+		    buttons: {
+		        confirm: {
+		            label: 'Yes',
+		            className: 'btn btn-default'
+		        },
+		        cancel: {
+		            label: 'No',
+		            className: 'btn btn-primary'
+		        }
+		    },
+		    message: 'Do you want to save changes?',
+		    callback: function(result) {
+		        if(result){
+			  		if($( "#"+target_id).valid()){
+			  			$( "#"+target_id).submit();
+			  			$('form').areYouSure( {'silent':true} );
+			  			callback();
+			  		}else{
+			  			$('html, body').animate({
+					         scrollTop: ($('.has-error').offset().top - 300)
+					    }, 500);
+			  		}
+			  		
+			  	}else{
+			  		$('form').areYouSure( {'silent':true} );
+			  		callback();
+			  	}
+		    }
+		});
+
+		//bootbox.confirm("Do you want to save changes?", function(result) {}); 
 	}else{
 		callback();
 	}
@@ -150,6 +165,7 @@ function duration(value){
 			$('#download_date').val(msg.start_date)
 
 			$('#implementation_date').data("DateTimePicker").setMinDate(moment(msg.min_date).format('MM/DD/YYYY'));
+			getCycle(msg.end_date,{{$activity->id}});
 		},
 		error: function(){
 			alert("failure");
@@ -186,12 +202,33 @@ $("#implementation_date").on("dp.change",function (e) {
 			$('#implementation_date').val(msg.end_date);
 			$('#download_date').val(msg.start_date)
 			$('#implementation_date').data("DateTimePicker").setMinDate(moment(msg.min_date).format('MM/DD/YYYY'));
+			getCycle(msg.end_date,{{$activity->id}});
 		},
 		error: function(){
 			alert("failure");
 		}
 	});
 });
+getCycle("{{ date_format(date_create($activity->eimplementation_date),'m/d/Y') }}",{{$activity->id}});
+
+function getCycle(date,id){
+	$.ajax({
+		type: "GET",
+		data: {date: date,id:id },
+		url: "{{ URL::action('CycleController@availableCycle') }}",
+		success: function(data){
+			$('select#cycle').empty();
+			$('<option value="0">PLEASE SELECT</option>').appendTo($('select#cycle')); 
+			$.each(data.cycles, function(i, text) {
+				var sel_class = '';
+				if( i == data.sel){
+					sel_class = 'selected="selected"';
+				}
+				$('<option '+sel_class+' value="'+i+'">'+text+'</option>').appendTo($('select#cycle')); 
+			});
+	   }
+	});
+}
 
 $('#implementation_date').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
 

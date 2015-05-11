@@ -2,6 +2,27 @@
 
 class CycleController extends \BaseController {
 
+	public function availableCycle(){
+		if(Request::ajax()){
+			$date = date('Y-m-d',strtotime(Input::get('date')));
+			$month = date("m", strtotime($date));
+			$year =  date("Y", strtotime($date));
+			if(Input::has('id')){
+				$activity = Activity::find(Input::get('id'));
+				$data['cycles'] = Cycle::select('id', 'cycle_name')
+				->where('month_year',$month."/".$year)
+				->orderBy('cycle_name')->lists('cycle_name', 'id');
+				$data['sel'] = $activity->cycle_id;
+			}else{
+				$data['cycles'] = Cycle::select('id', 'cycle_name')
+				->where('month_year',$month."/".$year)
+				->orderBy('cycle_name')->lists('cycle_name', 'id');
+			}
+			
+			return \Response::json($data,200);
+		}
+	}
+
 	/**
 	 * Display a listing of the resource.
 	 * GET /cycle
@@ -23,8 +44,7 @@ class CycleController extends \BaseController {
 	 */
 	public function create()
 	{
-		$months = Month::orderBy('id')->lists('month', 'id');
-		return View::make('cycle.create', compact('months'));
+		return View::make('cycle.create');
 	}
 
 	/**
@@ -57,7 +77,7 @@ class CycleController extends \BaseController {
 	
 				$cycle = new Cycle;
 				$cycle->cycle_name = strtoupper(Input::get('cycle_name'));
-				$cycle->month_id = Input::get('month');
+				$cycle->month_year = Input::get('month_year');
 				$cycle->vetting_deadline = date('Y-m-d',strtotime(Input::get('vetting_deadline')));
 				$cycle->replyback_deadline = date('Y-m-d',strtotime(Input::get('replyback_deadline')));
 				$cycle->submission_deadline = date('Y-m-d',strtotime(Input::get('submission_deadline')));
@@ -109,8 +129,7 @@ class CycleController extends \BaseController {
 	public function edit($id)
 	{
 		$cycle = Cycle::find($id);
-		$months = Month::orderBy('id')->lists('month', 'id');
-		return View::make('cycle.edit', compact('cycle', 'months'));
+		return View::make('cycle.edit',compact('cycle'));
 	}
 
 	/**
@@ -147,7 +166,7 @@ class CycleController extends \BaseController {
 			}
 
 			$cycle->cycle_name = strtoupper(Input::get('cycle_name'));
-			$cycle->month_id = Input::get('month');
+			$cycle->month_year = Input::get('month_year');
 			$cycle->vetting_deadline = date('Y-m-d',strtotime(Input::get('vetting_deadline')));
 			$cycle->replyback_deadline = date('Y-m-d',strtotime(Input::get('replyback_deadline')));
 			$cycle->submission_deadline = date('Y-m-d',strtotime(Input::get('submission_deadline')));

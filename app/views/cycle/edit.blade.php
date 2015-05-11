@@ -23,9 +23,10 @@
 			{{ Form::text('cycle_name', $cycle->cycle_name, array('class' => 'form-control', 'placeholder' => 'Cycle Name')) }}
 		</div>
 
+		
 		<div class="form-group">
-			{{ Form::label('month', 'Month', array('class' => 'control-label')) }}
-			{{ Form::select('month', array('0' => 'Please Select') + $months, $cycle->month_id, array('class' => 'form-control')) }}
+			{{ Form::label('month_year', 'Month/Year', array('class' => 'control-label')) }}
+			{{ Form::text('month_year',$cycle->month_year,array('class' => 'form-control', 'placeholder' => 'Month/Year')) }}
 		</div>
 
 		<div class="form-group">
@@ -72,17 +73,15 @@
 </div>
 
 
+
+@include('javascript.cycle.edit')
+
 @stop
 
 @section('page-script')
 
-$('#vetting_deadline, #replyback_deadline, #submission_deadline, #release_date, #emergency_deadline, #emergency_release_date, #implemintation_date').datetimepicker({
-		pickTime: false
-	});
-
-$('#vetting_deadline, #replyback_deadline, #submission_deadline, #release_date, #emergency_deadline, #emergency_release_date, #implemintation_date').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
-
-;
 @stop
+
+
 
 

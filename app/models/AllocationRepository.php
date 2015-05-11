@@ -140,6 +140,7 @@
 			$data = array();
 			foreach ($customers as $customer) {
 				$ado_total = 0;
+				$total_account_gsv = 0;
 				foreach ($_shiptos as $_shipto) {
 					if($customer->customer_code == $_shipto->customer_code){
 						if(!is_null($_shipto->ship_to_code)){
@@ -196,6 +197,7 @@
 										}
 									}
 									$_account->gsv = $gsv;
+									$total_account_gsv += $gsv;
 									// Helper::print_r($_account);
 									$_shipto->accounts[] = (array) $_account;
 								}
@@ -252,10 +254,23 @@
 				if($customer->group_code == 'E1397'){
 					$abort = false;
 					$customer->gsv = 0;
-					foreach ($this->_dt_secondary_sales as $_dt_secondary_sale) {
-						// check if selected
-						if(!empty($_cust[$customer->area_code])){
-							if(in_array($customer->customer_code, $_cust[$customer->area_code])){
+					if(empty($customer->area_code_two)){
+						foreach ($this->_dt_secondary_sales as $_dt_secondary_sale) {
+							// check if selected
+							if(!empty($_cust[$customer->area_code])){
+								if(in_array($customer->customer_code, $_cust[$customer->area_code])){
+									$_c_gsv = self::customer_gsv($abort, $customer, $_dt_secondary_sale, $salescources, $this->_dt_secondary_sales);
+									$customer->gsv =  ($_c_gsv['customer_gsv'] * $customer->multiplier ) / 100;
+									if ($_c_gsv['abort'] === true) 
+									{
+										if($customer->gsv > 0){
+											$this->dt_total_sales += $customer->gsv;
+										}
+										break;
+									}
+								}
+								
+							}else{
 								$_c_gsv = self::customer_gsv($abort, $customer, $_dt_secondary_sale, $salescources, $this->_dt_secondary_sales);
 								$customer->gsv =  ($_c_gsv['customer_gsv'] * $customer->multiplier ) / 100;
 								if ($_c_gsv['abort'] === true) 
@@ -266,34 +281,40 @@
 									break;
 								}
 							}
-							
-						}else{
-							$_c_gsv = self::customer_gsv($abort, $customer, $_dt_secondary_sale, $salescources, $this->_dt_secondary_sales);
-							$customer->gsv =  ($_c_gsv['customer_gsv'] * $customer->multiplier ) / 100;
-							if ($_c_gsv['abort'] === true) 
-							{
-								if($customer->gsv > 0){
-									$this->dt_total_sales += $customer->gsv;
-								}
-								break;
+							if(!isset($this->area_sales[$customer->area_code])){
+								$this->area_sales[$customer->area_code] = 0;
 							}
+							$this->area_sales[$customer->area_code] += $customer->gsv;
 						}
-						if(!isset($this->area_sales[$customer->area_code])){
-							$this->area_sales[$customer->area_code] = 0;
-						}
-						$this->area_sales[$customer->area_code] += $customer->gsv;
+					}else{
+						$customer->gsv = $total_account_gsv;
 					}
+					
 
 				}else{
 					$abort = false;
 					$customer->gsv = 0;
-					foreach ($this->_mt_primary_sales as $_mt_primary_sale) {
-						// check if selected
-						if(!empty($_cust[$customer->area_code])){
-							if(in_array($customer->customer_code, $_cust[$customer->area_code])){
+					if(empty($customer->area_code_two)){
+						foreach ($this->_mt_primary_sales as $_mt_primary_sale) {
+							// check if selected
+							if(!empty($_cust[$customer->area_code])){
+								if(in_array($customer->customer_code, $_cust[$customer->area_code])){
+									$_c_gsv = self::customer_gsv($abort, $customer, $_mt_primary_sale, $salescources, $this->_mt_primary_sales);
+								
+									$customer->gsv = ($_c_gsv['customer_gsv'] * $customer->multiplier ) / 100;
+									if ($_c_gsv['abort'] === true) 
+									{
+										if($customer->gsv > 0){
+											$this->mt_total_sales += $customer->gsv;
+										}
+										break;
+									}
+								}
+								
+							}else{
 								$_c_gsv = self::customer_gsv($abort, $customer, $_mt_primary_sale, $salescources, $this->_mt_primary_sales);
-							
-								$customer->gsv = ($_c_gsv['customer_gsv'] * $customer->multiplier ) / 100;
+
+								$customer->gsv =  ($_c_gsv['customer_gsv'] * $customer->multiplier ) / 100;
 								if ($_c_gsv['abort'] === true) 
 								{
 									if($customer->gsv > 0){
@@ -302,25 +323,16 @@
 									break;
 								}
 							}
-							
-						}else{
-							$_c_gsv = self::customer_gsv($abort, $customer, $_mt_primary_sale, $salescources, $this->_mt_primary_sales);
-
-							$customer->gsv =  ($_c_gsv['customer_gsv'] * $customer->multiplier ) / 100;
-							if ($_c_gsv['abort'] === true) 
-							{
-								if($customer->gsv > 0){
-									$this->mt_total_sales += $customer->gsv;
-								}
-								break;
-							}
+							// end check if selected
 						}
-						// end check if selected
+						if(!isset($this->area_sales[$customer->area_code])){
+							$this->area_sales[$customer->area_code] = 0;
+						}
+						$this->area_sales[$customer->area_code] += $customer->gsv;
+					}else{
+						$customer->gsv = $total_account_gsv;
 					}
-					if(!isset($this->area_sales[$customer->area_code])){
-						$this->area_sales[$customer->area_code] = 0;
-					}
-					$this->area_sales[$customer->area_code] += $customer->gsv;
+					
 				}
 				$data[] = (array)$customer;
 			}

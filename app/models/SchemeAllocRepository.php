@@ -143,7 +143,7 @@ class SchemeAllocRepository
                             $account_alloc->outlet_to_gsv = $account['gsv'];
                             $p = 0;
                             if($customer->gsv > 0){
-                                $p = round($account['gsv']/$customer->gsv * 100,2);
+                                $p = round($account['gsv']/$customer->gsv * 100,5);
                             }
                             $account_alloc->outlet_to_gsv_p = $p;
                             $_account_alloc = round(($p * $shipto_alloc->ship_to_alloc)/100);
@@ -168,44 +168,47 @@ class SchemeAllocRepository
                             $account_alloc->save();
                         }
 
-                        $_others_alloc = 0;
-                        $f_others_alloc = 0;
-                        $others_alloc = new SchemeAllocation;
-                        $others_alloc->scheme_id = $scheme->id;
-                        $others_alloc->customer_id = $scheme_alloc->id;
-                        $others_alloc->shipto_id = $shipto_alloc->id;
-                        $others_alloc->group = $customer->group_name;
-                        $others_alloc->area = $customer->area_name;
-                        $others_alloc->sold_to = $customer->customer_name;
-                        $others_alloc->ship_to = $shipto['ship_to_name'];
-                        $others_alloc->outlet = 'OTHERS';
-                        $others_alloc->outlet_to_gsv = $account['gsv'];
+                        if(empty($customer->area_code_two)){
+                            $_others_alloc = 0;
+                            $f_others_alloc = 0;
+                            $others_alloc = new SchemeAllocation;
+                            $others_alloc->scheme_id = $scheme->id;
+                            $others_alloc->customer_id = $scheme_alloc->id;
+                            $others_alloc->shipto_id = $shipto_alloc->id;
+                            $others_alloc->group = $customer->group_name;
+                            $others_alloc->area = $customer->area_name;
+                            $others_alloc->sold_to = $customer->customer_name;
+                            $others_alloc->ship_to = $shipto['ship_to_name'];
+                            $others_alloc->outlet = 'OTHERS';
+                            $others_alloc->outlet_to_gsv = $account['gsv'];
 
-                        if($others > 0){
-                            $_others_alloc = $others;
-                        }
-                        $others_alloc->outlet_to_alloc = $_others_alloc;
-
-                        if(($_others_alloc > 0) && ($account_alloc->final_alloc > 0)){
-                            $others_alloc->multi = $_others_alloc/$account_alloc->final_alloc;
-                        }else{
-                            $others_alloc->multi = 0;
-                        }
-                        $others_alloc->computed_alloc = $_others_alloc;
-                        if(!$activity->allow_force){
-                            $others_alloc->force_alloc = 0;
-                            $others_alloc->final_alloc = $_others_alloc;
-                        }else{
-                            if($fothers > 0){
-                                $f_others_alloc = $fothers;
+                            if($others > 0){
+                                $_others_alloc = $others;
                             }
+                            $others_alloc->outlet_to_alloc = $_others_alloc;
 
-                            $others_alloc->force_alloc = $f_others_alloc;
-                            $others_alloc->final_alloc = $f_others_alloc;
+                            if(($_others_alloc > 0) && ($account_alloc->final_alloc > 0)){
+                                $others_alloc->multi = $_others_alloc/$account_alloc->final_alloc;
+                            }else{
+                                $others_alloc->multi = 0;
+                            }
+                            $others_alloc->computed_alloc = $_others_alloc;
+                            if(!$activity->allow_force){
+                                $others_alloc->force_alloc = 0;
+                                $others_alloc->final_alloc = $_others_alloc;
+                            }else{
+                                if($fothers > 0){
+                                    $f_others_alloc = $fothers;
+                                }
+
+                                $others_alloc->force_alloc = $f_others_alloc;
+                                $others_alloc->final_alloc = $f_others_alloc;
+                                
+                            }
                             
+                            $others_alloc->save();
                         }
                         
-                        $others_alloc->save();
                     }
                 }
             }
