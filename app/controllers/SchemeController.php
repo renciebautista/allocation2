@@ -393,7 +393,8 @@ class SchemeController extends \BaseController {
 			'allocations.sold_to_gsv_p', 'allocations.sold_to_alloc', 'allocations.ship_to_gsv',
 			'allocations.ship_to_alloc' ,'allocations.outlet_to_gsv', 'allocations.outlet_to_gsv_p', 'allocations.outlet_to_alloc',
 			'allocations.final_alloc' ,'allocations.customer_id', 'multi','allocations.shipto_id','allocations.computed_alloc', 'allocations.force_alloc')
-		->where('scheme_id', $id);
+		->where('scheme_id', $id)
+		->orderBy('allocations.id');
 
 		// echo '<pre>';
 		// echo print_r($result);
