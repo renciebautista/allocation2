@@ -150,6 +150,7 @@ function duration(value){
 			$('#download_date').val(msg.start_date)
 
 			$('#implementation_date').data("DateTimePicker").setMinDate(moment(msg.min_date).format('MM/DD/YYYY'));
+			getCycle(msg.end_date,{{$activity->id}});
 		},
 		error: function(){
 			alert("failure");
@@ -176,6 +177,27 @@ $('#implementation_date').datetimepicker({
 	disabledDates: holidays()
 });
 
+getCycle("{{ date_format(date_create($activity->eimplementation_date),'m/d/Y') }}",{{$activity->id}});
+
+function getCycle(date,id){
+	$.ajax({
+		type: "GET",
+		data: {date: date,id:id },
+		url: "{{ URL::action('CycleController@availableCycle') }}",
+		success: function(data){
+			$('select#cycle').empty();
+			$('<option value="0">PLEASE SELECT</option>').appendTo($('select#cycle')); 
+			$.each(data.cycles, function(i, text) {
+				var sel_class = '';
+				if( i == data.sel){
+					sel_class = 'selected="selected"';
+				}
+				$('<option '+sel_class+' value="'+i+'">'+text+'</option>').appendTo($('select#cycle')); 
+			});
+	   }
+	});
+}
+
 $("#implementation_date").on("dp.change",function (e) {
 	$.ajax({
 		type: "GET",
@@ -185,6 +207,7 @@ $("#implementation_date").on("dp.change",function (e) {
 			$('#implementation_date').val(msg.end_date);
 			$('#download_date').val(msg.start_date)
 			$('#implementation_date').data("DateTimePicker").setMinDate(moment(msg.min_date).format('MM/DD/YYYY'));
+			getCycle(msg.end_date,{{$activity->id}});
 		},
 		error: function(){
 			alert("failure");

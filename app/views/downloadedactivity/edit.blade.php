@@ -180,7 +180,7 @@
 						<div class="row">
 							<div class="col-lg-6">
 								{{ Form::label('cycle', 'TOP Cycle', array('class' => 'control-label')) }}
-								{{ Form::select('cycle', array('0' => 'PLEASE SELECT') + $cycles, $activity->cycle_id, array('class' => 'form-control')) }}
+								<select class="form-control" data-placeholder="SELECT CYCLE" id="cycle" name="cycle"></select>
 							</div>
 						</div>
 					</div>
