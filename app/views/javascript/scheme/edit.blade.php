@@ -1,4 +1,7 @@
 @section('scripts')
+
+$('#updatescheme').areYouSure();
+
 // calculator
 $('#calculate').on( "click", function() {
 	var avg_wk_sales = accounting.unformat($('#weekly_sales').val()) || 0;

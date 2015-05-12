@@ -27,7 +27,7 @@
 	<div class="panel-heading">Scheme Details</div>
 	<div class="panel-body">
 
-			{{ Form::open(array('action' => array('SchemeController@update', $scheme->id), 'method' => 'PUT', 'class' => 'bs-component')) }}
+			{{ Form::open(array('action' => array('SchemeController@update', $scheme->id), 'method' => 'PUT', 'id' => 'updatescheme', 'class' => 'bs-component')) }}
 			<div class="row">
 				<div class="col-lg-12">
 					<div class="form-group">
