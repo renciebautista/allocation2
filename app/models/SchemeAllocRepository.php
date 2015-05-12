@@ -96,10 +96,15 @@ class SchemeAllocRepository
                         }
                     }else{
                         if($shipto['gsv'] >0){
-                            $s_multi = round($shipto['gsv'] / $customer->ado_total,2);
+                            if(empty($customer->area_code_two)){
+                                $s_multi = round($shipto['gsv'] / $customer->ado_total,2);
+                            }else{
+                                $s_multi = 1;
+                            }
                         }
                     }
                     $_shipto_alloc = round($s_multi  * $scheme_alloc->sold_to_alloc);
+
                     $shipto_alloc->ship_to_alloc = $_shipto_alloc;
                     $shipto_alloc->multi = $s_multi;
                     $shipto_alloc->computed_alloc = $_shipto_alloc;

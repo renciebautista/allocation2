@@ -213,7 +213,7 @@ class SchemeController extends \BaseController {
 		$_allocation = new AllocationRepository;
 		
 		$allocations = $_allocation->customers($sel_skus, $_channels, $customers);
-		// print_r($allocations);
+		// Helper::print_r($allocations);
 		$total_sales = $_allocation->total_sales();
 
 		$summary = $_allocation->allocation_summary();

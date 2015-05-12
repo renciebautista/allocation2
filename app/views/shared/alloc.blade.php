@@ -110,7 +110,7 @@
 									<td></td>
 									<td></td>
 									<td></td>
-									<td>{{ $shipto['gsv'] }}</td>
+									<td>{{ number_format((double)$shipto['gsv'],2)}}</td>
 									<td>
 										@if(!is_null($shipto['split']))
 											@if($alloc > 0)
@@ -121,7 +121,12 @@
 										@else
 											@if($shipto['gsv'] >0)
 												<?php 
-													$shipto_alloc = round(round($shipto['gsv'] / $customer->ado_total,2) * $alloc);
+													if(empty($customer->area_code_two)){
+														$shipto_alloc = round(round($shipto['gsv'] / $customer->ado_total,2) * $alloc);
+													}else{
+														$shipto_alloc = $alloc;
+													}
+													
 												 ?>
 												{{ number_format($shipto_alloc) }}
 											@endif
