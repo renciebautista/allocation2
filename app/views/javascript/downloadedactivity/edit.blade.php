@@ -77,24 +77,37 @@ $(".btn-style").click(function (e) {
 
 function checkDirty(target_id,callback) {
   	if ($('#'+target_id).hasClass('dirty')) {
-		bootbox.confirm("You have unsaved changes! <br> Are you sure you want to leave?", function(result) {
-		  	if(result){
-		  		if($( "#"+target_id).valid()){
-		  			$( "#"+target_id).submit();
-		  			$('form').areYouSure( {'silent':true} );
-		  			callback();
-		  		}else{
-		  			$('html, body').animate({
-				         scrollTop: ($('.has-error').offset().top - 300)
-				    }, 500);
-		  		}
-		  		
-		  	}else{
-		  		$('form').areYouSure( {'silent':true} );
-		  		callback();
-		  	}
-		  	
-		}); 
+
+  		bootbox.confirm({
+		    buttons: {
+		        confirm: {
+		            label: 'Yes',
+		            className: 'btn btn-default'
+		        },
+		        cancel: {
+		            label: 'No',
+		            className: 'btn btn-primary'
+		        }
+		    },
+		    message: 'Do you want to save changes?',
+		    callback: function(result) {
+		        if(result){
+			  		if($( "#"+target_id).valid()){
+			  			$( "#"+target_id).submit();
+			  			$('form').areYouSure( {'silent':true} );
+			  			callback();
+			  		}else{
+			  			$('html, body').animate({
+					         scrollTop: ($('.has-error').offset().top - 300)
+					    }, 500);
+			  		}
+			  		
+			  	}else{
+			  		$('form').areYouSure( {'silent':true} );
+			  		callback();
+			  	}
+		    }
+		});
 	}else{
 		callback();
 	}

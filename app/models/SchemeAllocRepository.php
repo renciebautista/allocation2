@@ -22,7 +22,8 @@ class SchemeAllocRepository
         $_allocation = new AllocationRepository;
         $allocations = $_allocation->customers(Input::get('skus'), $_channels, $customers);
         $_areasales =  $_allocation->area_sales();
-        $total_sales = $_allocation->total_sales();
+        // $total_sales = $_allocation->total_sales();
+        $total_sales = $_allocation->total_gsv();
 
         foreach ($allocations as $customer) {
             $scheme_alloc = new SchemeAllocation;
@@ -97,7 +98,7 @@ class SchemeAllocRepository
                     }else{
                         if($shipto['gsv'] >0){
                             if(empty($customer->area_code_two)){
-                                $s_multi = round($shipto['gsv'] / $customer->ado_total,2);
+                                $s_multi = $shipto['gsv'] / $customer->ado_total;
                             }else{
                                 $s_multi = 1;
                             }

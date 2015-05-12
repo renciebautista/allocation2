@@ -162,7 +162,7 @@
 												<?php $p = 0; ?>
 												@if($customer->gsv > 0)
 												<?php 
-													$p = round($account['gsv']/$customer->gsv * 100,4)
+													$p = round($account['gsv']/$customer->gsv * 100,2)
 												 ?>
 												 {{ number_format($p,2) }} %
 												 @else

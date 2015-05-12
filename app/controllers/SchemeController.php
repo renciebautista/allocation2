@@ -214,7 +214,8 @@ class SchemeController extends \BaseController {
 		
 		$allocations = $_allocation->customers($sel_skus, $_channels, $customers);
 		// Helper::print_r($allocations);
-		$total_sales = $_allocation->total_sales();
+		// $total_sales = $_allocation->total_sales();
+		$total_sales = $_allocation->total_gsv();
 
 		$summary = $_allocation->allocation_summary();
 		$big10 = $_allocation->account_group("AG4");

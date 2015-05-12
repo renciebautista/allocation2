@@ -3,6 +3,7 @@
 class AllocationRepository  {
 	private $mt_total_sales = 0;
 	private $dt_total_sales = 0;
+	private $total_gsv = 0;
 	private $_mt_primary_sales = array();
 	private $_dt_secondary_sales = array();
 
@@ -151,6 +152,7 @@ class AllocationRepository  {
 								$outlets = array();
 								$gsv = 0;
 								foreach ($_outlets as $_outlet) {
+
 									$account_area_code = $_account->area_code;
 									if(!empty($customer->area_code_two)){
 										$account_area_code = $customer->area_code_two;		
@@ -295,7 +297,7 @@ class AllocationRepository  {
 				}else{
 					$customer->gsv = $total_account_gsv;
 				}
-				
+				$this->total_gsv += $customer->gsv;
 
 			}else{
 				$abort = false;
@@ -337,8 +339,9 @@ class AllocationRepository  {
 					$this->area_sales[$customer->area_code] += $customer->gsv;
 				}else{
 					$customer->gsv = $total_account_gsv;
+
 				}
-				
+				$this->total_gsv += $customer->gsv;
 			}
 			$data[] = (array)$customer;
 		}
@@ -362,6 +365,10 @@ class AllocationRepository  {
 
 	public function total_sales(){
 		return $this->dt_total_sales + $this->mt_total_sales;
+	}
+
+	public function total_gsv(){
+		return $this->total_gsv;
 	}
 
 	public function additonal_sales($salescources,$customer_code,$sales){

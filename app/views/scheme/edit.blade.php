@@ -3,7 +3,7 @@
 @section('content')
 <div class="page-header" id="banner">
 	<div class="row">
-		<div class="col-lg-8 col-md-7 col-sm-6">
+		<div class="col-lg-12 col-md-7 col-sm-6">
 			<h1>Edit {{ $scheme->name }} </h1>
 			<h2>Activty : {{ $scheme->activity->circular_name }}</h2>
 		</div>
