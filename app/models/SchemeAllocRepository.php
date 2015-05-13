@@ -161,7 +161,7 @@ class SchemeAllocRepository
                             $account_alloc->computed_alloc = $_account_alloc;
 
                             if(!$activity->allow_force){
-                                $account_alloc->force_alloc = $_account_alloc;
+                                $account_alloc->force_alloc = 0;
                             }else{
                                 $f_account_alloc = round(($p * $shipto_alloc->force_alloc)/100);
                                 $account_alloc->force_alloc = $f_account_alloc;
@@ -206,7 +206,6 @@ class SchemeAllocRepository
                                 if($fothers > 0){
                                     $f_others_alloc = $fothers;
                                 }
-
                                 $others_alloc->force_alloc = $f_others_alloc;
                                 $others_alloc->final_alloc = $f_others_alloc;
                                 

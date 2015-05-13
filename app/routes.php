@@ -470,6 +470,7 @@ Route::group(array('before' => 'auth'), function()
 	Route::resource('activity', 'ActivityController');
 	
 
+	Route::get('scheme/{id}/export', 'SchemeController@export');
 	Route::get('scheme/{id}/allocation', 'SchemeController@allocation');
 	Route::get('scheme/{id}', 'SchemeController@show');
 	Route::get('scheme/{id}/edit', 'SchemeController@edit');

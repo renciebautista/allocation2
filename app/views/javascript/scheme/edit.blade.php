@@ -112,7 +112,7 @@ $("form").validate({
 });
 
 var table = $("#customer-allocation").dataTable({
-		"scrollY": "300px",
+		"scrollY": "500px",
 		"scrollX": true,
 		"scrollCollapse": true,
 		"paging": false,

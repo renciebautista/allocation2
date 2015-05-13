@@ -18,6 +18,17 @@ class SchemeAllocation extends \Eloquent {
 			->get();
 	}
 
+	public static function getAllocations($id){
+		return self::select('allocations.group','allocations.area','allocations.sold_to',
+			'allocations.ship_to', 'allocations.channel', 'allocations.outlet', 'allocations.sold_to_gsv', 
+			'allocations.sold_to_gsv_p', 'allocations.sold_to_alloc', 'allocations.ship_to_gsv',
+			'allocations.ship_to_alloc' ,'allocations.outlet_to_gsv', 'allocations.outlet_to_gsv_p', 'allocations.outlet_to_alloc',
+			'multi','allocations.computed_alloc', 'allocations.force_alloc','allocations.final_alloc')
+		->where('scheme_id', $id)
+		->orderBy('allocations.id')
+		->get();
+	}
+
 	public static function getAllocation($id){
 		$data = array();
 		$schemes = Scheme::where('activity_id', $id)

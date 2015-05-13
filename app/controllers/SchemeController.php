@@ -449,4 +449,23 @@ class SchemeController extends \BaseController {
 		    })
 			->make(true);
 	}
+
+	public function export($id){
+		$allocations = SchemeAllocation::getAllocations($id);
+		$scheme = Scheme::find($id);
+		Excel::create($scheme->name, function($excel) use($allocations){
+			$excel->sheet('Attendee', function($sheet) use($allocations) {
+				// $sheet->fromModel($allocations);
+				$sheet->fromArray($allocations, null, 'A1', false, false);
+				$sheet->row(1, array(
+     				'Group', 'Area', 'Sold To', 'Ship To', 'Channel', 'Outlet', 'Sold To GSV', 'Sold To GSV %',
+     				'Sold To Alloc', 'Ship To GSV', 'Ship To Alloc', 'Outlet GSV', 'Outlet Alloc %', 'Outlet Alloc',
+     				'Multiplier', 'Computed Alloc', 'Forced Alloc', 'Final Alloc'
+     			));
+			});
+
+		})->export('xls');
+
+
+	}
 }
