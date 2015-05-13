@@ -133,7 +133,6 @@
 			}
 			#allocations table {
 				margin-top: 5px;
-				margin-bottom: 10px;
 			}
 
 			#allocations table  tr > th {
@@ -142,8 +141,6 @@
 			 	background-color: #000000;
   				color: #FFFFFF;
   				text-align: left;
-  				font-size: 11px;
-  				text-align: center;
 			}
 			#allocations table  tr > td {
 			  	border: 1px solid #000000;
@@ -581,10 +578,8 @@
 
 			<div id="allocations">
 				<h2>Allocations</h2>
-				@foreach($schemes as $scheme)
-
 				<?php 
-					$count = count($scheme->allocations);
+					$count = count($scheme_customers);
 					$loops = (int) ($count / 29);
 					$scheme_count  = count($schemes);
 					$scheme_loops = (int) ($scheme_count / 3);
@@ -607,26 +602,26 @@
 						$num = $x + 1;
 						$body .='<tr>
 							<td>'.$num.'</td>
-							<td style="width:40px;border: 1px solid #000000">'.$scheme->allocations[$x]->group.'</td>
-							<td style="width:120px;border: 1px solid #000000">'.$scheme->allocations[$x]->area.'</td>
-							<td style="width:150px;border: 1px solid #000000">'.$scheme->allocations[$x]->sold_to.'</td>
-							<td style="width:150px;border: 1px solid #000000">'.$scheme->allocations[$x]->ship_to.'</td>
-							<td style="width:60px;border: 1px solid #000000">'.$scheme->allocations[$x]->channel.'</td>
-							<td style="width:200px;border: 1px solid #000000">'.$scheme->allocations[$x]->outlet.'</td>
+							<td style="width:40px;border: 1px solid #000000">'.$scheme_customers[$x]->group.'</td>
+							<td style="width:120px;border: 1px solid #000000">'.$scheme_customers[$x]->area.'</td>
+							<td style="width:150px;border: 1px solid #000000">'.$scheme_customers[$x]->sold_to.'</td>
+							<td style="width:150px;border: 1px solid #000000">'.$scheme_customers[$x]->ship_to.'</td>
+							<td style="width:60px;border: 1px solid #000000">'.$scheme_customers[$x]->channel.'</td>
+							<td style="width:200px;border: 1px solid #000000">'.$scheme_customers[$x]->outlet.'</td>
 							<td></td>
-							<td style="text-align:right;">'.number_format($scheme->allocations[$x]->final_alloc).'</td>
+							<td></td>
 							<td></td>
 							<td></td>
 						</tr>';
 						$cnt++;
 						?>
 					@endfor
-					@if(!empty($body))
-					<h2 class="alloc-header" style="float:left;">{{ $scheme->name }}</h2>
-					<h2 class="alloc-header" style="float:right;">{{$i+1}} of {{$loops}}</h2>
 					<table width="100%" style="padding:2px;">
-						
+						<h2 class="alloc-header">{{ $schemes[0]->name }}</h2>
 						<thead>
+<!-- 							<tr>
+								<th style="width:720px;border: 1px solid #000000" colspan="7">Customers</th>
+							</tr> -->
 							<tr>
 								<th>#</th>
 								<th style="width:40px;border: 1px solid #000000">GROUP</th>
@@ -645,9 +640,20 @@
 					  		{{ $body }}
 					  	</tbody>
 					</table> 
-					@endif
+
+					<table>
+						<thead>
+							<tr>
+								
+							</tr>
+							<tr>
+								
+							</tr>
+						</thead>
+					  	<tbody>
+					  	</tbody>
+					</table> 
 				@endfor
-				@endforeach
 			</div>
 		</div>
 		

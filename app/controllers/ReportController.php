@@ -33,6 +33,7 @@ class ReportController extends \BaseController {
 			$nobudgets = ActivityNobudget::with('budgettype')
 				->where('activity_id', $id)
 				->get();
+
 			$schemes = Scheme::getList($id);
 
 			$skuinvolves = array();
@@ -43,8 +44,12 @@ class ReportController extends \BaseController {
 				foreach ($involves as $value) {
 					$skuinvolves[] = $value;
 				}
+
+				$scheme->allocations = SchemeAllocation::getAllocations($scheme->id);
 				
 			}
+
+			// Helper::print_r($schemes);
 
 			$materials = ActivityMaterial::where('activity_id', $activity->id)
 				->with('source')
@@ -55,7 +60,7 @@ class ReportController extends \BaseController {
 			$artworks = ActivityArtwork::getList($activity->id);
 			$pispermit = ActivityFis::where('activity_id', $activity->id)->first();
 
-			$scheme_customers = SchemeAllocation::getCustomers($activity->id);
+			// $scheme_customers = SchemeAllocation::getCustomers($activity->id);
 
 			//Involved Area
 			$areas = ActivityCustomer::getSelectedAreas($activity->id);
@@ -71,7 +76,7 @@ class ReportController extends \BaseController {
 			}
 			
 			return View::make('shared.preview', compact('activity' ,'planner','budgets','nobudgets','schemes','skuinvolves','materials',
-				'fdapermit', 'networks','artworks' ,'scheme_customers', 'pis' , 'areas','channels'));
+				'fdapermit', 'networks','artworks', 'pis' , 'areas','channels'));
 		}
 		
 	}
