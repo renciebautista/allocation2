@@ -618,8 +618,15 @@
 							}
 							
 						}
-						$body .='<tr>
-							<td>'.$num.'</td>
+						$class = '';
+						if((empty($scheme->allocations[$x]->customer_id)) && (empty($scheme->allocations[$x]->shipto_id))){
+							$class = 'style="background-color: #d9edf7;"';
+						}
+						if((!empty($scheme->allocations[$x]->customer_id)) && (!empty($scheme->allocations[$x]->shipto_id))){
+							$class = 'style="background-color: #fcf8e3;"';
+						}
+						$body .='<tr '.$class.'>
+							<td style="text-align:right;">'.$num.'</td>
 							<td style="width:40px;border: 1px solid #000000">'.$scheme->allocations[$x]->group.'</td>
 							<td style="width:120px;border: 1px solid #000000">'.$scheme->allocations[$x]->area.'</td>
 							<td style="width:150px;border: 1px solid #000000">'.$scheme->allocations[$x]->sold_to.'</td>
@@ -641,7 +648,7 @@
 						
 						<thead>
 							<tr>
-								<th>#</th>
+								<th style="width:20px;">#</th>
 								<th style="width:40px;border: 1px solid #000000">GROUP</th>
 								<th style="width:120px;border: 1px solid #000000">AREA NAME</th>
 								<th style="width:150px;border: 1px solid #000000">CUSTOMER SOLD TO</th>

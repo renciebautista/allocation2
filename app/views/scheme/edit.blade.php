@@ -354,7 +354,7 @@
 	</div>
 </div>
 
-
+@include('shared.alloc')
 
 
 <!-- Modal -->
