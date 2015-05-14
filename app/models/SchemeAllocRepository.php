@@ -186,8 +186,8 @@ class SchemeAllocRepository
                             $others_alloc->sold_to = $customer->customer_name;
                             $others_alloc->ship_to = $shipto['ship_to_name'];
                             $others_alloc->outlet = 'OTHERS';
-                            $others_alloc->outlet_to_gsv = $account['gsv'];
-
+                            // $others_alloc->outlet_to_gsv = $account['gsv'];
+                            $others_alloc->outlet_to_gsv = 0;
                             if($others > 0){
                                 $_others_alloc = $others;
                             }

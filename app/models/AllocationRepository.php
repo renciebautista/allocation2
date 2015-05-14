@@ -235,8 +235,39 @@ class AllocationRepository  {
 									}
 									$_account->gsv = $gsv;
 									
+									if(in_array($customer->group_code, $_grps)){
+										if(!empty($_areas[$customer->group_code])){
+											if(in_array($customer->area_code, $_areas[$customer->group_code])){
+												if(!empty($_cust[$customer->area_code])){
+													if(in_array($customer->customer_code, $_cust[$customer->area_code])){
+														if(!empty($_shp[$customer->customer_code])){
+															if(in_array($_shipto->ship_to_code, $_shp[$customer->customer_code])){
+																if(!empty($_otlts[$_shipto->ship_to_code])){
+																	if(in_array($_account->id, $_otlts[$_shipto->ship_to_code])){
+																		$additional_gsv = self::additonal_outlet_sales($salescources,$customers_list,$customer->customer_code,$_shiptos_list,$_accounts_list,$_outlets,$_outlet_sales,$_account->account_name);
+																		
+																	}
+																}else{
+																	$additional_gsv = self::additonal_outlet_sales($salescources,$customers_list,$customer->customer_code,$_shiptos_list,$_accounts_list,$_outlets,$_outlet_sales,$_account->account_name);
+																	
+																}
+															}
+														}else{
+															$additional_gsv = self::additonal_outlet_sales($salescources,$customers_list,$customer->customer_code,$_shiptos_list,$_accounts_list,$_outlets,$_outlet_sales,$_account->account_name);
+															
+														}
+													}
+												}else{
+													$additional_gsv = self::additonal_outlet_sales($salescources,$customers_list,$customer->customer_code,$_shiptos_list,$_accounts_list,$_outlets,$_outlet_sales,$_account->account_name);
+													
+												}
+											}
+										}else{
+											$additional_gsv = self::additonal_outlet_sales($salescources,$customers_list,$customer->customer_code,$_shiptos_list,$_accounts_list,$_outlets,$_outlet_sales,$_account->account_name);
+										}
+									}
 									// if($customer->customer_code == 'E53617'){
-										$additional_gsv = self::additonal_outlet_sales($salescources,$customers_list,$customer->customer_code,$_shiptos_list,$_accounts_list,$_outlets,$_outlet_sales,$_account->account_name);
+										// $additional_gsv = self::additonal_outlet_sales($salescources,$customers_list,$customer->customer_code,$_shiptos_list,$_accounts_list,$_outlets,$_outlet_sales,$_account->account_name);
 										// echo $customer->customer_code. '<br>';
 										// echo $customer->customer_name. ' => '.$_account->account_name .' => '.$_account->gsv. ' + '.$additional_gsv.'<br>';
 									// }
