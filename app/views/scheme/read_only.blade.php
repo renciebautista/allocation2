@@ -27,14 +27,13 @@
 	<div class="panel-heading">Scheme Details</div>
 	<div class="panel-body">
 
-			{{ Form::open(array('action' => array('SchemeController@update', $scheme->id), 'method' => 'PUT', 'id' => 'updatescheme', 'class' => 'bs-component')) }}
 			<div class="row">
 				<div class="col-lg-12">
 					<div class="form-group">
 						<div class="row">
 							<div class="col-lg-12">
 								{{ Form::label('scheme_name', 'Scheme Name', array('class' => 'control-label')) }}
-								{{ Form::text('scheme_name', $scheme->name, array('id' => 'scheme_name', 'class' => 'form-control', 'placeholder' => 'Scheme Name')) }}
+								{{ Form::text('scheme_name', $scheme->name, array('id' => 'scheme_name', 'class' => 'form-control', 'placeholder' => 'Scheme Name','readonly' => '')) }}
 							</div>
 						</div>
 					</div>
@@ -46,13 +45,13 @@
 					<div class="form-group">
 						<div class="row">
 							<div class="col-lg-6">
-						{{ Form::label('skus', 'Reference Sales SKU', array('class' => 'control-label')) }}
-						{{ Form::select('skus[]', array('0' => '') + $skus, $sel_skus, array('data-placeholder' => 'Select Reference Sales SKU','id' => 'skus', 'class' => 'form-control')) }}
-					</div>
-					<div class="col-lg-6">
-						{{ Form::label('involve', 'Host SKU', array('class' => 'control-label')) }}
-						{{ Form::select('involve[]', array('0' => '') + $involves, $sel_hosts, array('data-placeholder' => 'Select Host SKU','id' => 'skus', 'class' => 'form-control')) }}
-					</div>
+								{{ Form::label('skus', 'Reference Sales SKU', array('class' => 'control-label')) }}
+								{{ Form::text('skus',$sku->sku_desc.' - '.$sku->sku_code, array('id' => 'skus', 'class' => 'form-control', 'placeholder' => 'Reference Sales SKU','readonly' => '')) }}
+							</div>
+							<div class="col-lg-6">
+								{{ Form::label('involve', 'Host SKU', array('class' => 'control-label')) }}
+								{{ Form::text('involve',$host->sap_desc.' - '.$host->sap_code, array('id' => 'involve', 'class' => 'form-control', 'placeholder' => 'Host SKU','readonly' => '')) }}
+							</div>
 						</div>
 					</div>
 				</div>
@@ -64,7 +63,7 @@
 						<div class="row">
 							<div class="col-lg-6">
 								{{ Form::label('premuim', 'Premuim SKU', array('class' => 'control-label')) }}
-								{{ Form::select('premuim[]', array('0' => '') + $involves, $sel_premuim, array('data-placeholder' => 'Select Premuim SKU','id' => 'premuim', 'class' => 'form-control')) }}
+								{{ Form::text('premuim',$premuim->sap_desc.' - '.$premuim->sap_code, array('id' => 'premuim', 'class' => 'form-control', 'placeholder' => 'Premuim SKU','readonly' => '')) }}
 							</div>
 						</div>
 					</div>
@@ -79,15 +78,15 @@
 						<div class="row">
 							<div class="col-lg-4">
 								{{ Form::label('item_code', 'Item Code', array('class' => 'control-label')) }}
-								{{ Form::text('item_code',$scheme->item_code, array('class' => 'form-control', 'placeholder' => 'Item Code')) }}
+								{{ Form::text('item_code',$scheme->item_code, array('class' => 'form-control', 'placeholder' => 'Item Code','readonly' => '')) }}
 							</div>
 							<div class="col-lg-4">
 								{{ Form::label('item_barcode', 'Item Barcode', array('class' => 'control-label')) }}
-								{{ Form::text('item_barcode',$scheme->item_barcode, array('class' => 'form-control', 'placeholder' => 'Item Barcode')) }}
+								{{ Form::text('item_barcode',$scheme->item_barcode, array('class' => 'form-control', 'placeholder' => 'Item Barcode','readonly' => '')) }}
 							</div>
 							<div class="col-lg-4">
 								{{ Form::label('item_casecode', 'Item Casecode', array('class' => 'control-label')) }}
-								{{ Form::text('item_casecode',$scheme->item_casecode,array('class' => 'form-control', 'placeholder' => 'Item Casecode')) }}
+								{{ Form::text('item_casecode',$scheme->item_casecode,array('class' => 'form-control', 'placeholder' => 'Item Casecode','readonly' => '')) }}
 							</div>
 						</div>
 					</div>
@@ -100,7 +99,7 @@
 						<div class="row">
 							<div class="col-lg-12">
 								{{ Form::label('srp_p', 'SRP of Premium (Php)', array('class' => 'control-label')) }}
-								{{ Form::text('srp_p',number_format($scheme->srp_p,2), array('id' => 'srp_p', 'class' => 'form-control', 'placeholder' => 'SRP of Premium (Php)')) }}
+								{{ Form::text('srp_p',number_format($scheme->srp_p,2), array('id' => 'srp_p', 'class' => 'form-control', 'placeholder' => 'SRP of Premium (Php)','readonly' => '')) }}
 							</div>
 						</div>
 					</div>
@@ -110,7 +109,7 @@
 						<div class="row">
 							<div class="col-lg-12">
 								{{ Form::label('other_cost', 'Other Cost Per Deal (Php)', array('class' => 'control-label')) }}
-								{{ Form::text('other_cost',number_format($scheme->other_cost,2), array('class' => 'form-control', 'placeholder' => 'Other Cost Per Deal (Php)')) }}
+								{{ Form::text('other_cost',number_format($scheme->other_cost,2), array('class' => 'form-control', 'placeholder' => 'Other Cost Per Deal (Php)','readonly' => '')) }}
 							</div>
 						</div>
 					</div>
@@ -133,7 +132,7 @@
 						<div class="row">
 							<div class="col-lg-12">
 								{{ Form::label('pr', 'Purchase Requirement (Php)', array('class' => 'control-label')) }}
-								{{ Form::text('pr', number_format($scheme->pr,2), array('id' => 'pr', 'class' => 'form-control', 'placeholder' => 'Purchase Requirement (Php)')) }}
+								{{ Form::text('pr', number_format($scheme->pr,2), array('id' => 'pr', 'class' => 'form-control', 'placeholder' => 'Purchase Requirement (Php)','readonly' => '')) }}
 							</div>
 						</div>
 					</div>
@@ -161,7 +160,7 @@
 							</div>
 							<div class="col-lg-6">
 								{{ Form::label('total_alloc', 'Total Allocation', array('class' => 'control-label')) }}
-								{{ Form::text('total_alloc',number_format($scheme->quantity), array('class' => 'form-control', 'placeholder' => 'Total Allocation')) }}
+								{{ Form::text('total_alloc',number_format($scheme->quantity), array('class' => 'form-control', 'placeholder' => 'Total Allocation','readonly' => '')) }}
 							</div>
 						</div>
 					</div>
@@ -171,7 +170,7 @@
 						<div class="row">
 							<div class="col-lg-3">
 								{{ Form::label('deals', 'Deals Per Case', array('class' => 'control-label')) }}
-								{{ Form::text('deals', number_format($scheme->deals), array('class' => 'form-control', 'placeholder' => 'Deals Per Case')) }}
+								{{ Form::text('deals', number_format($scheme->deals), array('class' => 'form-control', 'placeholder' => 'Deals Per Case','readonly' => '')) }}
 							</div>
 							<div class="col-lg-3">
 								{{ Form::label('total_deals', 'Total No. of Deals', array('class' => 'control-label')) }}
@@ -228,14 +227,12 @@
 					<div class="form-group">
 						<div class="row">
 							<div class="col-lg-12">
-								{{ Form::submit('Update', array('class' => 'btn btn-primary')) }}
 								<button type="button" class="btn btn-info" data-toggle="modal" data-target="#myCalculator">Deal Calculator</button>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-			{{ Form::close() }}
 
 	</div>
 </div>
@@ -356,63 +353,6 @@
 
 
 
-
-<!-- Modal -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
-		{{ Form::open(array('action' => array('SchemeController@updateallocation'), 'method' => 'PUT', 'class' => 'bs-component','id' => 'updateAlloc')) }}
-		{{ Form::hidden('scheme_id', '', array('id' => 'scheme_id')) }}
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<h4 class="modal-title" id="myModalLabel">Update Allocation</h4>
-			</div>
-			<div class="modal-body">
-				<table id="alloc_table" class="table table-bordered">
-					<tbody>
-						<tr>
-							<td>Group</td>
-							<td field="group"></td>
-						</tr>
-						<tr>
-							<td>Area</td>
-							<td field="area"></td>
-						</tr>
-						<tr>
-							<td>Sold To</td>
-							<td field="soldto"></td>
-						</tr>
-						<tr>
-							<td>Ship To</td>
-							<td field="shipto"></td>
-						</tr>
-						<tr>
-							<td>Channel</td>
-							<td field="channel"></td>
-						</tr>
-						<tr>
-							<td>Outlet</td>
-							<td field="outlet"></td>
-						</tr>
-						<tr>
-							<td>Allocation</td>
-							<td>
-								<input class="form-control" placeholder="Allocation" name="new_alloc" type="text" value="" id="new_alloc">
-							</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				<button class="btn btn-primary">Update</button>
-			</div>
-		</div>
-		{{ Form::close() }}
-	</div>
-</div>
-
-
 <!-- Modal -->
 <div class="modal fade" id="myCalculator" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
@@ -454,7 +394,7 @@
 	</div>
 </div>
 
-@include('javascript.scheme.edit')
+@include('javascript.scheme.read_only')
 
 @stop
 

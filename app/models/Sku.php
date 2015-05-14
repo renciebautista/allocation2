@@ -72,4 +72,8 @@ class Sku extends \Eloquent {
 			->groupBy('division_code')
 			->orderBy('division_desc')->lists('division_desc', 'division_code');
 	}
+
+	public static function getSku($sku_code){
+		return self::where('sku_code',$sku_code)->first();
+	}
 }

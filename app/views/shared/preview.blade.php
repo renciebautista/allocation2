@@ -605,6 +605,19 @@
 							break;
 						} 
 						$num = $x + 1;
+						$final_alloc = $scheme->allocations[$x]->final_alloc;
+						$case = 0;
+						$deals = 0;
+						if($activity->activitytype->uom == "CASES"){
+							$case = $final_alloc;
+							$deals = $final_alloc * $scheme->deals;
+						}else{
+							if($final_alloc > 0){
+								$case = round($final_alloc / $scheme->deals);
+								$deals = $final_alloc;
+							}
+							
+						}
 						$body .='<tr>
 							<td>'.$num.'</td>
 							<td style="width:40px;border: 1px solid #000000">'.$scheme->allocations[$x]->group.'</td>
@@ -613,8 +626,8 @@
 							<td style="width:150px;border: 1px solid #000000">'.$scheme->allocations[$x]->ship_to.'</td>
 							<td style="width:60px;border: 1px solid #000000">'.$scheme->allocations[$x]->channel.'</td>
 							<td style="width:200px;border: 1px solid #000000">'.$scheme->allocations[$x]->outlet.'</td>
-							<td></td>
-							<td style="text-align:right;">'.number_format($scheme->allocations[$x]->final_alloc).'</td>
+							<td style="text-align:right;">'.number_format($deals).'</td>
+							<td style="text-align:right;">'.number_format($case).'</td>
 							<td></td>
 							<td></td>
 						</tr>';

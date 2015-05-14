@@ -200,9 +200,13 @@ class SchemeController extends \BaseController {
 		$involves = Pricelist::items();
 
 		$sel_skus =  SchemeSku::getSkus($scheme->id);
-
 		$sel_hosts = SchemeHostSku::getHosts($scheme->id);
 		$sel_premuim = SchemePremuimSku::getPremuim($scheme->id);
+
+		$sku = Sku::getSku($sel_skus[0]);
+		$host = Pricelist::getSku($sel_hosts[0]);
+		$premuim = Pricelist::getSku($sel_premuim[0]);
+
 		// print_r($sel_skus);
 		$customers = ActivityCustomer::customers($scheme->activity_id);
 		// print_r($customers);
@@ -214,7 +218,6 @@ class SchemeController extends \BaseController {
 		
 		$allocations = $_allocation->customers($sel_skus, $_channels, $customers);
 		// Helper::print_r($allocations);
-		// $total_sales = $_allocation->total_sales();
 		$total_sales = $_allocation->total_gsv();
 
 		$summary = $_allocation->allocation_summary();
@@ -222,14 +225,37 @@ class SchemeController extends \BaseController {
 		$gaisanos = $_allocation->account_group("AG5");
 		$nccc = $_allocation->account_group("AG6");
 
-		$scheme_customers = SchemeAllocation::getCustomerAllocation($id);
-
 		$total_gsv = SchemeAllocation::totalgsv($id);
 
-		return View::make('scheme.edit',compact('scheme', 'activity', 'skus', 'involves', 'sel_skus', 'sel_hosts',
-			'sel_premuim',
-			'allocations', 'total_sales', 'qty','id', 'summary', 'big10', 'gaisanos', 'nccc', 'scheme_customers',
-			 'total_gsv'));
+		if(Auth::user()->hasRole("PROPONENT")){
+			if($activity->status_id < 4){
+				return View::make('scheme.edit',compact('scheme', 'activity', 'skus', 'involves', 'sel_skus', 'sel_hosts',
+					'sel_premuim',
+					'allocations', 'total_sales', 'qty','id', 'summary', 'big10', 'gaisanos', 'nccc', 'scheme_customers',
+					 'total_gsv'));
+			}else{
+				return View::make('scheme.read_only',compact('scheme', 'activity', 'skus', 'involves', 'sel_skus', 'sel_hosts',
+					'sel_premuim',
+					'allocations', 'total_sales', 'qty','id', 'summary', 'big10', 'gaisanos', 'nccc', 'scheme_customers',
+					 'total_gsv'));
+			}
+		}
+
+		if(Auth::user()->hasRole("PMOG PLANNER")){
+			if($activity->status_id == 4){
+				return View::make('scheme.edit',compact('scheme', 'activity', 'skus', 'involves', 'sel_skus', 'sel_hosts',
+					'sel_premuim',
+					'allocations', 'total_sales', 'qty','id', 'summary', 'big10', 'gaisanos', 'nccc', 'scheme_customers',
+					 'total_gsv'));
+			}else{
+				return View::make('scheme.read_only',compact('scheme', 'activity', 'skus', 'involves', 'sel_skus', 'sel_hosts',
+					'sel_premuim',
+					'allocations', 'total_sales', 'qty','id', 'summary', 'big10', 'gaisanos', 'nccc', 'scheme_customers',
+					 'total_gsv','sku', 'host', 'premuim'));
+			}
+		}
+
+		
 	}
 
 	/**
@@ -296,10 +322,34 @@ class SchemeController extends \BaseController {
 
 				SchemeAllocRepository::updateAllocation($scheme);
 				
-
+				// update final alloc
 				$scheme2 = Scheme::find($id);
-				$scheme2->final_alloc = SchemeAllocation::finalallocation($scheme->id);
+				$final_alloc = SchemeAllocation::finalallocation($scheme->id);
+				$total_cases = 0;
+				$total_deals = 0;
+				if($scheme->activity->activitytype->uom == 'CASES'){
+					$total_deals = $final_alloc * $scheme->deals;
+					$total_cases = $final_alloc;
+					$final_tts = $final_alloc * $scheme->deals * $scheme->srp_p; 
+				}else{
+					
+					if($final_alloc > 0){
+						$total_cases = round($final_alloc/$scheme->deals);
+						$total_deals = $final_alloc;
+					}
+					$final_tts = $final_alloc * $scheme->srp_p; 
+				}
+				
+				$final_pe = $final_alloc *  $scheme->other_cost;
+				
+				$scheme2->final_alloc = $final_alloc;
+				$scheme2->final_total_deals = $total_deals;
+				$scheme2->final_total_cases = $total_cases;
+				$scheme2->final_tts_r = $final_tts;
+				$scheme2->final_pe_r = $final_pe;
+				$scheme2->final_total_cost = $final_tts+$final_pe;
 				$scheme2->update();
+
 				
 			});
 			// #schemes
