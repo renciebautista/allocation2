@@ -501,7 +501,7 @@ class SchemeController extends \BaseController {
 	}
 
 	public function export($id){
-		$allocations = SchemeAllocation::getAllocations($id);
+		$allocations = SchemeAllocation::getExportAllocations($id);
 		$scheme = Scheme::find($id);
 		Excel::create($scheme->name, function($excel) use($allocations){
 			$excel->sheet('Attendee', function($sheet) use($allocations) {

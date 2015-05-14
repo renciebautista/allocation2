@@ -79,6 +79,8 @@ class ReportController extends \BaseController {
 				'fdapermit', 'networks','artworks', 'pis' , 'areas','channels'));
 		}
 		
+
+		
 	}
 
 	public function download($id){
