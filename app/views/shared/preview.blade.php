@@ -276,11 +276,15 @@
 						<td>
 							<table class="sub-table">
 								<tr>
-									<th>Material Code</th>
-									<th>Material Description</th>
+									<th>Host SKU Code</th>
+									<th>Host SKU Description</th>
+									<th>Premuim SKU Code</th>
+									<th>Premuim SKU Description</th>
 								</tr>
 								@foreach($skuinvolves as $involve)
 								<tr>
+									<td>{{ $involve->sap_code }}</td>
+									<td>{{ $involve->sap_desc }}</td>
 									<td>{{ $involve->sap_code }}</td>
 									<td>{{ $involve->sap_desc }}</td>
 								</tr>
