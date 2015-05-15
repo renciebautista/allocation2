@@ -88,8 +88,12 @@ function getCycle(date){
 		success: function(data){
 			$('select#cycle').empty();
 			$('<option value="0">PLEASE SELECT</option>').appendTo($('select#cycle')); 
-			$.each(data, function(i, text) {
-				$('<option />', {value: i, text: text}).appendTo($('select#cycle')); 
+			$.each(data.cycles, function(i, text) {
+				var sel_class = '';
+				if( i == data.sel){
+					sel_class = 'selected="selected"';
+				}
+				$('<option '+sel_class+' value="'+i+'">'+text+'</option>').appendTo($('select#cycle')); 
 			});
 	   }
 	});
