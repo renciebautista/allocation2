@@ -111,7 +111,7 @@ class AllocationRepository  {
 			}
 		}
 		
-		// print_r($areas);
+		// // Helper::print_r($_areas)
 		// get all MT Primary Sales
 		if(in_array("E1398", $_grps)){
 			$this->_mt_primary_sales = DB::table('mt_primary_sales')
@@ -119,7 +119,7 @@ class AllocationRepository  {
 					->join(DB::raw("(SELECT DISTINCT(customer_code) FROM customers) customers"), 'mt_primary_sales.customer_code', '=', 'customers.customer_code')
 					->whereIn('child_sku_code', $child_skus)
 					->where(function($query) use ($_areas) {
-						if(!empty($_areas)){
+						if(!empty($_areas['E1398'])){
 							$query->whereIn('mt_primary_sales.area_code', $_areas['E1398']);
 						}
 						
@@ -139,7 +139,7 @@ class AllocationRepository  {
 					->whereIn('child_sku_code', $child_skus)
 					->whereIn('channel_code', $channels)
 					->where(function($query) use ($_areas) {
-						if(!empty($_areas)){
+						if(!empty($_areas['E1397'])){
 							$query->whereIn('dt_secondary_sales.area_code', $_areas['E1397']);
 						}		
 					})
