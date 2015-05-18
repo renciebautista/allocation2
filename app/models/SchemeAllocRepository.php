@@ -74,6 +74,21 @@ class SchemeAllocRepository
                     }
                 }
             }
+            $in_deals = 0;
+            $in_cases = 0;
+            if($scheme->activity->activitytype->uom == 'CASES'){
+                $in_deals = $scheme_alloc->final_alloc * $scheme->deals;
+                $in_cases = $scheme_alloc->final_alloc;
+            }else{
+                if($scheme_alloc->final_alloc > 0){
+                    $in_cases = round($scheme_alloc->final_alloc/$scheme->deals);
+                    $in_deals =  $scheme_alloc->final_alloc;
+                }
+            }
+
+            $scheme_alloc->in_deals = $in_deals;
+            $scheme_alloc->in_cases = $in_cases;
+
             
             
             $scheme_alloc->save();
@@ -127,8 +142,21 @@ class SchemeAllocRepository
                         $shipto_alloc->force_alloc = $f_shipto_alloc;
                         $shipto_alloc->final_alloc = $f_shipto_alloc;
                     }
+
+                    $in_deals = 0;
+                    $in_cases = 0;
+                    if($scheme->activity->activitytype->uom == 'CASES'){
+                        $in_deals = $shipto_alloc->final_alloc * $scheme->deals;
+                        $in_cases = $shipto_alloc->final_alloc;
+                    }else{
+                        if($shipto_alloc->final_alloc > 0){
+                            $in_cases = round($shipto_alloc->final_alloc/$scheme->deals);
+                            $in_deals =  $shipto_alloc->final_alloc;
+                        }
+                    }
                   
-                    
+                    $shipto_alloc->in_deals = $in_deals;
+                    $shipto_alloc->in_cases = $in_cases;
                    
                     $shipto_alloc->save();  
 
@@ -171,6 +199,22 @@ class SchemeAllocRepository
                             }
                             
                             $account_alloc->final_alloc = $_account_alloc;
+
+                            $in_deals = 0;
+                            $in_cases = 0;
+                            if($scheme->activity->activitytype->uom == 'CASES'){
+                                $in_deals = $account_alloc->final_alloc * $scheme->deals;
+                                $in_cases = $account_alloc->final_alloc;
+                            }else{
+                                if($account_alloc->final_alloc > 0){
+                                    $in_cases = round($account_alloc->final_alloc/$scheme->deals);
+                                    $in_deals =  $account_alloc->final_alloc;
+                                }
+                            }
+
+                            $account_alloc->in_deals = $in_deals;
+                            $account_alloc->in_cases = $in_cases;
+
                             $account_alloc->save();
                         }
 

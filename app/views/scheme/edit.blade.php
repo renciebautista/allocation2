@@ -13,7 +13,7 @@
 <div class="row">
 	<div class="col-lg-12">
 		<div class="form-group">
-			<a class="btn btn-default" href="{{action('ActivityController@edit', $activity->id);}}#schemes">Back to Activity Details</a>
+			<a id="scheme_back" class="btn btn-default" href="{{action('ActivityController@edit', $activity->id);}}#schemes">Back to Activity Details</a>
 		</div>
 	</div>
 
@@ -322,7 +322,7 @@
 		<h2>Alocation Summary</h2>
 		<a class="btn btn-success" target="_blank" href="{{ URL::action('SchemeController@export', $scheme->id ) }}">Export To Excel</a>
 		<div id="allocation" class="table-responsive">
-			<table id="customer-allocation" class="table table-condensed table-bordered display compact ">
+				<table id="customer-allocation" class="table table-condensed table-bordered display compact ">
 					<tr>
 						<th>Group</th>
 						<th>Area</th>
@@ -354,7 +354,6 @@
 	</div>
 </div>
 
-@include('shared.alloc')
 
 
 <!-- Modal -->

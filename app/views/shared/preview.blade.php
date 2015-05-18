@@ -110,6 +110,14 @@
 			}
 			#artworks ul li { display: inline; }
 			#artworks ul li a { text-decoration: none; padding: .2em 1em;}
+
+			#fdapermit ul {
+				margin: 0;
+				padding: 0;
+				list-style-type: none; 
+			}
+			#fdapermit ul li { display: inline; }
+			#fdapermit ul li a { text-decoration: none; padding: .2em 1em;}
 			#codes{
 				margin-top: 20px;
 			}
@@ -400,6 +408,13 @@
 					@foreach($artworks as $artwork)
 					<li>{{ HTML::image('images/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/'.$artwork->hash_name ,$artwork->file_desc) }}</li>
 					@endforeach
+				</ul>
+			</div>
+
+			<div id="fdapermit">
+				<h2>FDA Permit</h2>
+				<ul>
+					<li>{{ HTML::image('fdapermit/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/'.$fdapermit->hash_name ,$fdapermit->file_desc) }}</li>
 				</ul>
 			</div>
 

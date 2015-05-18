@@ -41,6 +41,16 @@
 				<div class="form-group">
 					<div class="row">
 						<div class="col-lg-12">
+						{{ Form::label('sc', 'Scope', array('class' => 'control-label')) }}
+						{{ Form::select('sc[]', $scopes, null, array('id' => 'sc','class' => 'form-control', 'multiple' => 'multiple')) }}
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-6">
+				<div class="form-group">
+					<div class="row">
+						<div class="col-lg-12">
 						{{ Form::label('title', 'Activity Title', array('class' => 'control-label')) }}
 						{{ Form::text('title',Input::old('title'),array('class' => 'form-control', 'placeholder' => 'Activity Title')) }}
 						</div>

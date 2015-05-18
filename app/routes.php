@@ -832,7 +832,10 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('activity/{id}/channels', 'ActivityController@channels');
 
 	Route::post('activity/{id}/submittogcm', 'ActivityController@submittogcm');
-
+	
+	Route::get('activity/{id}/allocsummary', 'ActivityController@allocsummary');
+	Route::get('activity/pistemplate', 'ActivityController@pistemplate');
+	
 	Route::resource('activity', 'ActivityController');
 	
 
@@ -904,6 +907,18 @@ Route::group(array('before' => 'auth'), function()
 	    	// $img = Image::make($path)->resize(300, 200);
 	    	// return $img->response();
 	        // return Response::download($path);
+	    }
+	});
+
+	Route::get('fdapermit/{cycle_id}/{type_id}/{activity_id}/{name}', function($cycle_id = null,$type_id = null,$activity_id = null,$name = null)
+	{
+		
+	    $path = storage_path().'/uploads/'.$cycle_id.'/'. $type_id.'/'. $activity_id.'/'. $name;
+	    // echo $path;
+	    if (file_exists($path)) { 
+	    	$image = Image::create($path);
+	    	$image->resize(1000);
+	    	return $image->show();
 	    }
 	});
 

@@ -456,77 +456,15 @@
 				</div>
 			</div>
 
+			<hr>
 			<div class="row">
 				<div class="col-lg-12">
 					<h2>Alocation Summary</h2>
-					<div id="allocation" class="table-responsive">
-						<table id="scheme_summary" class="table table-condensed table-bordered display compact ">
-							<thead>
-								<tr>
-									<th colspan="6">Customers</th>
-									@foreach($schemes as $scheme)
-										<th class="text-center" colspan="4">{{ $scheme->name }}</th>
-									@endforeach
-								</tr>
-								
-								<tr>
-									<th>Group</th>
-									<th>Area</th>
-									<th>Sold To</th>
-									<th>Ship To</th>
-									<th>Channel</th>
-									<th>Outlet</th>
-									@foreach($schemes as $scheme)
-										<th class="rotate-45"><div><span>Deals</span></th>
-										<th class="rotate-45"><div><span>Cases</span></th>
-										<th class="rotate-45"><div><span>TTS Budget</span></th>
-										<th class="rotate-45"><div><span>PE Budget</span></th>
-									@endforeach
-								</tr>
-							</thead>
-						  	<tbody>
-						  		@if(count($scheme_customers) == 0)
-						  		<tr>
-						  			<td colspan="15">No record found!</td>
-						  		</tr>
-						  		@endif
-
-								@foreach($scheme_customers as $scheme_customer)
-								<tr>
-									<td>{{ $scheme_customer->group }}</td>
-									<td>{{ $scheme_customer->area }}</td>
-									<td>{{ $scheme_customer->sold_to }}</td>
-									<td>{{ $scheme_customer->ship_to }}</td>
-									<td>{{ $scheme_customer->channel }}</td>
-									<td>{{ $scheme_customer->outlet }}</td>
-									@foreach($schemes as $scheme)
-										@if($activity->activitytype->uom == "CASES")
-										<td class="text-right">0</td>
-										<td class="text-right">
-											@if(isset($scheme_allcations[$scheme->id][md5($scheme_customer->group.'.'.$scheme_customer->area.'.'.$scheme_customer->sold_to.'.'.$scheme_customer->ship_to.'.'.$scheme_customer->channel.'.'.$scheme_customer->outlet)]))
-											{{ number_format($scheme_allcations[$scheme->id][md5($scheme_customer->group.'.'.$scheme_customer->area.'.'.$scheme_customer->sold_to.'.'.$scheme_customer->ship_to.'.'.$scheme_customer->channel.'.'.$scheme_customer->outlet)]) }}
-											@endif
-										</td>
-										@else
-										<td class="text-right">
-											@if(isset($scheme_allcations[$scheme->id][md5($scheme_customer->group.'.'.$scheme_customer->area.'.'.$scheme_customer->sold_to.'.'.$scheme_customer->ship_to.'.'.$scheme_customer->channel.'.'.$scheme_customer->outlet)]))
-											{{ number_format($scheme_allcations[$scheme->id][md5($scheme_customer->group.'.'.$scheme_customer->area.'.'.$scheme_customer->sold_to.'.'.$scheme_customer->ship_to.'.'.$scheme_customer->channel.'.'.$scheme_customer->outlet)]) }}
-											@endif
-										</td>
-										<td class="text-right">0</td>
-										@endif
-										
-										<td class="text-right">1</td>
-										<td class="text-right">1</td>
-									@endforeach
-								</tr>
-								@endforeach
-						  	</tbody>
-						</table> 
-					</div>
+					<a class="btn btn-success" target="_blank" href="{{ URL::action('ActivityController@allocsummary', $activity->id ) }}">Download Summary</a>		
 
 				</div>
 			</div>
+			<br>
 
 
 			<div class="row">
@@ -756,6 +694,16 @@
 		<div class="panel panel-default">
 		  	<div class="panel-heading">Product Information Sheet</div>
 		  	<div class="panel-body">
+		  		<div class="row">
+					<div class="col-lg-6">
+					  	<div class="form-group">
+					    	<a class="btn btn-success" target="_blank" href="{{ URL::action('ActivityController@pistemplate') }}">Download Template</a>		
+					  	</div>
+			  		</div>
+			  	</div>
+
+		  		<hr>
+		  		
 				<table class="table table-striped table-hover ">
 				  	<thead>
 					    <tr>

@@ -5,7 +5,7 @@ class SchemeAllocation extends \Eloquent {
 	protected $fillable = [];
 
 	public static function getCustomers($id){
-		return self::select('group', 'area', 'sold_to', 'ship_to', 'channel', 'outlet')
+		return self::select('group', 'area', 'sold_to', 'ship_to', 'channel', 'outlet', 'customer_id','shipto_id')
 			->join('schemes','allocations.scheme_id', '=', 'schemes.id')
 			->where('schemes.activity_id', $id)
 			->groupBy(array('group', 'area', 'sold_to', 'ship_to', 'channel', 'outlet'))
@@ -29,12 +29,24 @@ class SchemeAllocation extends \Eloquent {
 		->get();
 	}
 
-	public static function getExportAllocations($id){
-		return self::select('allocations.group','allocations.area','allocations.sold_to',
+	public static function getAllocationsForExport($id){
+		return self::select('allocations.customer_id','allocations.shipto_id','allocations.group','allocations.area','allocations.sold_to',
 			'allocations.ship_to', 'allocations.channel', 'allocations.outlet', 'allocations.sold_to_gsv', 
 			'allocations.sold_to_gsv_p', 'allocations.sold_to_alloc', 'allocations.ship_to_gsv',
 			'allocations.ship_to_alloc' ,'allocations.outlet_to_gsv', 'allocations.outlet_to_gsv_p', 'allocations.outlet_to_alloc',
 			'multi','allocations.computed_alloc', 'allocations.force_alloc','allocations.final_alloc')
+		->where('scheme_id', $id)
+		->orderBy('allocations.id')
+		->get();
+	}
+
+	public static function getExportAllocations($id){
+		return self::select('schemes.name','allocations.group','allocations.area','allocations.sold_to',
+			'allocations.ship_to', 'allocations.channel', 'allocations.outlet', 'allocations.sold_to_gsv', 
+			'allocations.sold_to_gsv_p', 'allocations.sold_to_alloc', 'allocations.ship_to_gsv',
+			'allocations.ship_to_alloc' ,'allocations.outlet_to_gsv', 'allocations.outlet_to_gsv_p', 'allocations.outlet_to_alloc',
+			'multi','allocations.computed_alloc', 'allocations.force_alloc','allocations.final_alloc')
+		->join('schemes', 'allocations.scheme_id','=','schemes.id')
 		->where('scheme_id', $id)
 		->orderBy('allocations.id')
 		->get();

@@ -10,6 +10,17 @@ class ActivityController extends BaseController {
 	 */
 	public function index()
 	{
+
+		if(Auth::user()->hasRole("FIELD SALES")){
+			Input::flash();
+			$cycles = Cycle::getLists();
+			$types = ActivityType::getLists();
+			$scopes = ScopeType::getLists();
+			$activities = Activity::searchField(Input::get('cy'),Input::get('ty'),Input::get('sc'),Input::get('title'));
+			return View::make('dashboard.field',compact('activities', 'cycles','types','scopes'));
+		}
+
+
 		if(Auth::user()->hasRole("PROPONENT")){
 			Input::flash();
 			$statuses = ActivityStatus::availableStatus();
@@ -1559,5 +1570,29 @@ class ActivityController extends BaseController {
 		$data['selection'] = Channel::getList();
 		$data['selected'] = $selected;
 		return Response::json($data,200);
+	}
+
+	public function allocsummary($id){
+		$filepath = storage_path().'/uploads/tempfiles/Allocation Summary.xls';
+		$scheme_allcations = SchemeAllocation::getExportAllocations($id);
+		// Helper::print_r($scheme_allcations);
+
+		Excel::load($filepath, function($excel) use($scheme_allcations)
+		{
+		    $excel->sheet('data', function($sheet) use($scheme_allcations) {
+				$sheet->fromModel($scheme_allcations);
+				// $sheet->setColumnFormat(array(
+				// 	'C' => '0%'
+				// ));
+			});
+		}) -> download('xls');
+
+		
+		// return Response::download($filepath);
+	}
+
+	public function pistemplate(){
+		$filepath = storage_path().'/uploads/tempfiles/PIS Template.xlsx';		
+		return Response::download($filepath);
 	}
 }

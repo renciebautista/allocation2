@@ -1,6 +1,6 @@
 @section('scripts')
 
-$('#updatescheme').areYouSure();
+
 
 // calculator
 $('#calculate').on( "click", function() {
@@ -44,6 +44,55 @@ $('#pr, #srp_p, #other_cost').blur(function() {
 	}
 	compute_budget();
 });
+
+
+$('#updatescheme').areYouSure();
+$('#scheme_back').click(function(e) {
+    e.preventDefault();
+    console.log(this.href);
+    checkDirty("updatescheme",function(){
+			var url = "{{action('ActivityController@edit', $activity->id);}}#schemes";    
+			$(location).attr('href',url);
+		});
+});
+
+function checkDirty(target_id,callback) {
+  	if ($('#'+target_id).hasClass('dirty')) {
+  		bootbox.confirm({
+		    buttons: {
+		        confirm: {
+		            label: 'Yes',
+		            className: 'btn btn-primary'
+		        },
+		        cancel: {
+		            label: 'No',
+		            className: 'btn btn-default pull-right margin-left-5'
+		        }
+		    },
+		    message: 'Do you want to save changes?',
+		    callback: function(result) {
+		        if(result){
+			  		if($( "#"+target_id).valid()){
+			  			$( "#"+target_id).submit();
+			  			$('form').areYouSure( {'silent':true} );
+			  			//callback();
+			  		}else{
+			  			$('html, body').animate({
+					         scrollTop: ($('.has-error').offset().top - 300)
+					    }, 500);
+			  		}
+			  		
+			  	}else{
+			  		$('form').areYouSure( {'silent':true} );
+			  		callback();
+			  	}
+		    }
+		});
+
+	}else{
+		callback();
+	}
+};
 
 
 
@@ -150,7 +199,7 @@ var table = $("#customer-allocation").dataTable({
 			}
 
 			if((data.customer_id === null) && (data.shipto_id === null)){
-				$(row).addClass("blue");
+				$(row).addClass("light-blue");
 			}
 
 			if((data.customer_id !== null) && (data.shipto_id === null)){
@@ -158,7 +207,7 @@ var table = $("#customer-allocation").dataTable({
 			}
 
 			if((data.customer_id !== null) && (data.shipto_id !== null)){
-				$(row).addClass("orange");
+				$(row).addClass("light-orange");
 			}
 			
 

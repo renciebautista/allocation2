@@ -74,8 +74,19 @@
 #allocation .info, .warning{
 	color: #000;
 }
-#allocation table th, td {
-	white-space:nowrap;
+
+#customer-allocation th, #customer-allocation td {
+	white-space: nowrap;
+}
+
+/* Ensure that the demo table scrolls */
+/*.nowrap th, td {
+    white-space: nowrap;
+    padding-left: 40px !important;
+    padding-right: 40px !important;
+}*/
+#scheme_summary {
+	/*font-size: 10px;*/
 }
 
 .allocation_total {
@@ -431,6 +442,12 @@
   	border-color: #0079a1
 }
 
+#allocation .light-blue {
+	color: #000;
+  	background-color: #d9edf7;
+  	border: 1px solid #dddddd;
+}
+
 #allocation .white {
 	color: #000;
   	background-color: #FFF;
@@ -440,4 +457,13 @@
 	color: #ffffff;
   	background-color: #e99002;
   	border-color: #d08002;
+}
+#allocation .light-orange {
+	color: #000;
+  	background-color: #fcf8e3;
+  	border: 1px solid #dddddd;
+}
+
+.margin-left-5 {
+	margin-left: 5px;
 }

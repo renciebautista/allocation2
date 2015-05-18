@@ -10,13 +10,13 @@
 		{{ HTML::style('assets/plugins/font-awesome-4.2.0/css/font-awesome.min.css') }}
 		{{ HTML::style('assets/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css') }}
 		{{ HTML::style('assets/plugins/chosen_v1.4.1/bootstrap-chosen.css') }}
-		{{ HTML::style('assets/plugins/DataTables-1.10.4/css/jquery.dataTables.min.css') }}
-		{{ HTML::style('assets/plugins/FixedColumns-3.0.2/css/dataTables.fixedColumns.min.css') }}
+		{{ HTML::style('assets/plugins/DataTables-1.10.7/css/jquery.dataTables.min.css') }}
+		{{ HTML::style('assets/plugins/FixedColumns-3.0.4/css/dataTables.fixedColumns.min.css') }}
 		{{ HTML::style('assets/plugins/ColVis-1.1.1/css/dataTables.colVis.min.css') }}
 		{{ HTML::style('assets/plugins/fancytree-2.6.0/skin-xp/ui.fancytree.min.css') }}
 		{{ HTML::style('assets/plugins/bootstrap-datetimepicker-3.1.3/css/bootstrap-datetimepicker.min.css') }}
 		{{ HTML::style('assets/plugins/bootstrap3-editable/css/bootstrap-editable.css') }}
-		
+
 		{{ HTML::style('assets/css/styles.css') }}
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
@@ -45,11 +45,11 @@
 				</div>
 				<div class="navbar-collapse collapse" id="navbar-main">
 					<ul class="nav navbar-nav">
-						@if(Auth::user()->inRoles(['PROPONENT','PMOG PLANNER','GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']))
+						@if(Auth::user()->inRoles(['PROPONENT','PMOG PLANNER','GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR','FIELD SALES']))
 						<li class="dropdown">
 							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="transaction">Transactions <span class="caret"></span></a>
 							<ul class="dropdown-menu" aria-labelledby="transaction">
-								@if(Auth::user()->inRoles(['PROPONENT','PMOG PLANNER']))
+								@if(Auth::user()->inRoles(['PROPONENT','PMOG PLANNER','FIELD SALES']))
 								<li>{{ HTML::linkRoute('activity.index', 'Activity') }}</li>   
 								@endif
 								@if(Auth::user()->inRoles(['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']))
@@ -153,8 +153,8 @@
 	{{ HTML::script('assets/plugins/chosen_v1.4.1/chosen.jquery.min.js') }}
 	
 
-	{{ HTML::script('assets/plugins/DataTables-1.10.4/js/jquery.dataTables.min.js') }}
-	{{ HTML::script('assets/plugins/FixedColumns-3.0.2/js/dataTables.fixedColumns.min.js') }}
+	{{ HTML::script('assets/plugins/DataTables-1.10.7/js/jquery.dataTables.min.js') }}
+	{{ HTML::script('assets/plugins/FixedColumns-3.0.4/js/dataTables.fixedColumns.min.js') }}
 	{{ HTML::script('assets/plugins/ColVis-1.1.1/js/dataTables.colVis.min.js') }}
 
 	{{ HTML::script('assets/js/selectchain.js') }}

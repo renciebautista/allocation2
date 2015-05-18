@@ -82,11 +82,11 @@ function checkDirty(target_id,callback) {
 		    buttons: {
 		        confirm: {
 		            label: 'Yes',
-		            className: 'btn btn-default'
+		            className: 'btn btn-primary'
 		        },
 		        cancel: {
 		            label: 'No',
-		            className: 'btn btn-primary'
+		            className: 'btn btn-default pull-right margin-left-5'
 		        }
 		    },
 		    message: 'Do you want to save changes?',
@@ -109,7 +109,6 @@ function checkDirty(target_id,callback) {
 		    }
 		});
 
-		//bootbox.confirm("Do you want to save changes?", function(result) {}); 
 	}else{
 		callback();
 	}
@@ -549,21 +548,26 @@ $('#f_percent').inputNumber();
 		
 
 var table = $('#scheme_summary').DataTable( {
-	"scrollY": "300px",
+	"scrollY": "400px",
 	"scrollX": true,
-	"scrollCollapse": true,
 	"paging": false,
-	"bSort": false,
+	"ordering": false,
+	"searching": false,
 	"columnDefs": [ { //this prevents errors if the data is null
 		"targets": "_all",
-		"defaultContent": ""
+		"defaultContent": "",
 	} ],
+
 } );
+
+
 @if(count($scheme_customers)> 0)
-new $.fn.dataTable.FixedColumns( table, {
-	leftColumns: 6
-} );
+/*new $.fn.dataTable.FixedColumns( table, {
+	"leftColumns": 6
+} );*/
 @endif
+
+
 <!-- Budget details -->
 
 $('#billing_deadline').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});

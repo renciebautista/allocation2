@@ -338,7 +338,7 @@ class Activity extends \Eloquent {
 			->get();
 	}
 
-	public static function searchField($cycle,$type,$title){
+	public static function searchField($cycle,$type,$scope,$title){
 		return self::select('activities.id','activities.circular_name','cycles.cycle_name',
 			'scope_types.scope_name','activity_types.activity_type')
 			->join('cycles', 'activities.cycle_id','=','cycles.id')
@@ -356,6 +356,11 @@ class Activity extends \Eloquent {
 			->where(function($query) use ($type){
 				if($type > 0){
 					$query->whereIn('activities.activity_type_id', $type);
+				}
+			})
+			->where(function($query) use ($scope){
+				if($scope > 0){
+					$query->whereIn('activities.scope_type_id', $scope);
 				}
 			})
 			->orderBy('activities.created_at', 'desc')
