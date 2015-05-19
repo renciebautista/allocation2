@@ -256,6 +256,7 @@
 					<tr>
 						<td>Budget IO TTS</td>
 						<td>
+							@if(!empty($budgets))
 							<ul>
 							@foreach($budgets as $budget)
 							@if($budget->budget_type_id == 1)
@@ -264,11 +265,13 @@
 							@endforeach
 							
 							</ul>
+							@endif
 						</td>
 					</tr>
 					<tr>
 						<td>Budget IO PE</td>
 						<td>
+							@if(!empty($budgets))
 							<ul>
 							@foreach($budgets as $budget)
 							@if($budget->budget_type_id == 2)
@@ -277,11 +280,13 @@
 							@endforeach
 							
 							</ul>
+							@endif
 						</td>
 					</tr>
 					<tr>
 						<td>SKU/s Involved</td>
 						<td>
+							@if(!empty($skuinvolves))
 							<table class="sub-table">
 								<tr>
 									<th>Host SKU Code</th>
@@ -298,31 +303,37 @@
 								</tr>
 								@endforeach
 							</table>
+							@endif
 						</td>
 					</tr>
 					<tr>
 						<td>Area/s Involved</td>
 						<td>
+							@if(!empty($areas))
 							<ul>
 								@foreach($areas as $area)
 								<li>{{ $area}}</li>
 								@endforeach
 							</ul>
+							@endif
 						</td>
 					</tr>
 					<tr>
 						<td>DT Channel/s Involved</td>
 						<td>
+							@if(!empty($areas))
 							<ul>
 								@foreach($channels as $channel)
 								<li>{{ $channel->channel_name }}</li>
 								@endforeach
 							</ul>
+							@endif
 						</td>
 					</tr>
 					<tr>
 						<td>Schemes</td>
 						<td>
+							@if(count($schemes)> 0)
 							<table class="sub-table">
 								<tr>
 									<th>Scheme Desc.</th>
@@ -341,11 +352,13 @@
 								</tr>
 								@endforeach
 							</table>
+							@endif
 						</td>
 					</tr>
 					<tr>
 						<td>Timings</td>
 						<td>
+							@if(count($networks)> 0)
 							<table class="sub-table timing">
 								<tr>
 									<th>Activity</th>
@@ -360,11 +373,13 @@
 								</tr>
 								@endforeach
 							</table>
+							@endif
 						</td>
 					</tr>
 					<tr>
 						<td>Material Sourcing</td>
 						<td>
+							@if(count($materials)> 0)
 							<table class="sub-table source">
 								<tr>
 									<th>Source</th>
@@ -377,6 +392,7 @@
 								</tr>
 								@endforeach
 							</table>
+							@endif
 						</td>
 					</tr>
 					<tr>
@@ -404,22 +420,27 @@
 			
 			<div id="artworks">
 				<h2>Artworks</h2>
+				@if(!empty($artworks))
 				<ul>
 					@foreach($artworks as $artwork)
 					<li>{{ HTML::image('images/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/'.$artwork->hash_name ,$artwork->file_desc) }}</li>
 					@endforeach
 				</ul>
+				@endif
 			</div>
 
 			<div id="fdapermit">
 				<h2>FDA Permit</h2>
+				@if(!empty($fdapermit))
 				<ul>
 					<li>{{ HTML::image('fdapermit/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/'.$fdapermit->hash_name ,$fdapermit->file_desc) }}</li>
 				</ul>
+				@endif
 			</div>
 
 			<div id="codes">
 				<h2>Schemes Case Codes / Bar Codes</h2>
+				@if(!empty($Schemes))
 				<table>
 					<tr>
 						<th>Case Code</th>
@@ -440,6 +461,7 @@
 					</tr>
 					@endforeach
 				</table>
+				@endif
 			</div>
 
 			@if(count($pis) > 0)

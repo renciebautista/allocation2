@@ -777,16 +777,34 @@ class ActivityController extends BaseController {
 									if(count($gcom_approvers) > 0){
 										$comment_status = "SUBMITTED TO GCOM";
 										$activity_status = 5;
+
+										foreach ($gcom_approvers as $gcom_approver) {
+											$approver = ActivityApprover::find($gcom_approver->id);
+											$approver->show = 1;
+											$approver->update();
+										}
 									}else{
 										$cdops_approvers = ActivityApprover::getApproverByRole($activity->id,'CD OPS APPROVER');
 										if(count($cdops_approvers) > 0){
 											$comment_status = "SUBMITTED TO CD OPS";
 											$activity_status = 6;
+
+											foreach ($cdops_approvers as $cdops_approver) {
+												$approver = ActivityApprover::find($cdops_approver->id);
+												$approver->show = 1;
+												$approver->update();
+											}
 										}else{
 											$cmd_approvers = ActivityApprover::getApproverByRole($activity->id,'CMD DIRECTOR');
 											if(count($cmd_approvers) > 0){
 												$comment_status = "SUBMITTED TO CMD";
 												$activity_status = 7;
+
+												foreach ($cmd_approvers as $cmd_approver) {
+													$approver = ActivityApprover::find($cmd_approver->id);
+													$approver->show = 1;
+													$approver->update();
+												}
 											}
 										}
 									}
