@@ -403,9 +403,9 @@
 		  	<div class="row">
 				<div class="col-lg-12">
 					<div class="form-group">
-						<button class="btn btn-default btn-style" type="submit">Back</button>
 						<button class="btn btn-primary">Update</button>
 						<button class="btn btn-primary btn-style" type="submit">Next</button>
+						<button class="btn btn-default btn-style" type="submit">Back</button>
 					</div>
 				</div>
 			</div>
@@ -427,16 +427,16 @@
 							<thead>
 								<tr>
 									<th>#</th>
-									<th>Scheme Name</th>
-									<th>Item Code</th>
-									<th>Purchase Req't</th>
-									<th>Total Unilever Cost</th>
-									<th>Cost to Sales % </th>
-									<th>Total Deals</th>
-									<th>Total Cases</th>
-									<th>Total TTS</th>
-									<th>Total PE</th>
-									<th>Total Cost</th>
+									<th class="text-center">Scheme Name</th>
+									<th class="text-center">Item Code</th>
+									<th class="text-center">Purchase Req't</th>
+									<th class="text-center">Total Unilever Cost</th>
+									<th class="text-center">Cost to Sales % </th>
+									<th class="text-center">Total Deals</th>
+									<th class="text-center">Total Cases</th>
+									<th class="text-center">Total TTS</th>
+									<th class="text-center">Total PE</th>
+									<th class="text-center">Total Cost</th>
 									<th class="text-center">Action</th>
 								</tr>
 							</thead>
@@ -490,8 +490,8 @@
 			<div class="row">
 				<div class="col-lg-12">
 					<div class="form-group">
-						<button class="btn btn-default btn-style" type="submit">Back</button>
 						<button class="btn btn-primary btn-style" type="submit">Next</button>
+						<button class="btn btn-default btn-style" type="submit">Back</button>
 					</div>
 				</div>
 			</div>
@@ -639,9 +639,9 @@
 			<div class="row">
 					<div class="col-lg-12">
 						<div class="form-group">
-							<button class="btn btn-default btn-style" type="submit">Back</button>
 							<button class="btn btn-primary">Update</button>
 							<button class="btn btn-primary btn-style" type="submit">Next</button>
+							<button class="btn btn-default btn-style" type="submit">Back</button>
 						</div>
 					</div>
 				</div>
@@ -674,8 +674,8 @@
 			<div class="row">
 				<div class="col-lg-12">
 					<div class="form-group">
-						<button class="btn btn-default btn-style" type="submit">Back</button>
 						<button class="btn btn-primary btn-style" type="submit">Next</button>
+						<button class="btn btn-default btn-style" type="submit">Back</button>
 					</div>
 				</div>
 			</div>
@@ -932,8 +932,8 @@
 		<div class="row">
 			<div class="col-lg-12">
 				<div class="form-group">
-					<button class="btn btn-default btn-style" type="submit">Back</button>
 					<button class="btn btn-primary btn-style" type="submit">Next</button>
+					<button class="btn btn-default btn-style" type="submit">Back</button>
 				</div>
 			</div>
 		</div>

@@ -79,16 +79,19 @@ class SchemeAllocRepository
             if($scheme->activity->activitytype->uom == 'CASES'){
                 $in_deals = $scheme_alloc->final_alloc * $scheme->deals;
                 $in_cases = $scheme_alloc->final_alloc;
+                $tts_budget = $scheme_alloc->final_alloc * $scheme->deals * $scheme->srp_p; 
             }else{
                 if($scheme_alloc->final_alloc > 0){
                     $in_cases = round($scheme_alloc->final_alloc/$scheme->deals);
                     $in_deals =  $scheme_alloc->final_alloc;
                 }
+                $tts_budget = $scheme_alloc->final_alloc * $scheme->srp_p;
             }
 
             $scheme_alloc->in_deals = $in_deals;
             $scheme_alloc->in_cases = $in_cases;
-
+            $scheme_alloc->tts_budget = $tts_budget;
+            $scheme_alloc->pe_budget = $scheme_alloc->final_alloc *  $scheme->other_cost;
             
             
             $scheme_alloc->save();
@@ -148,15 +151,19 @@ class SchemeAllocRepository
                     if($scheme->activity->activitytype->uom == 'CASES'){
                         $in_deals = $shipto_alloc->final_alloc * $scheme->deals;
                         $in_cases = $shipto_alloc->final_alloc;
+                        $tts_budget = $shipto_alloc->final_alloc * $scheme->deals * $scheme->srp_p; 
                     }else{
                         if($shipto_alloc->final_alloc > 0){
                             $in_cases = round($shipto_alloc->final_alloc/$scheme->deals);
                             $in_deals =  $shipto_alloc->final_alloc;
                         }
+                        $tts_budget = $shipto_alloc->final_alloc * $scheme->srp_p; 
                     }
                   
                     $shipto_alloc->in_deals = $in_deals;
                     $shipto_alloc->in_cases = $in_cases;
+                    $shipto_alloc->tts_budget = $tts_budget;
+                    $shipto_alloc->pe_budget = $shipto_alloc->final_alloc *  $scheme->other_cost;
                    
                     $shipto_alloc->save();  
 
@@ -205,16 +212,19 @@ class SchemeAllocRepository
                             if($scheme->activity->activitytype->uom == 'CASES'){
                                 $in_deals = $account_alloc->final_alloc * $scheme->deals;
                                 $in_cases = $account_alloc->final_alloc;
+                                $tts_budget = $account_alloc->final_alloc * $scheme->deals * $scheme->srp_p; 
                             }else{
                                 if($account_alloc->final_alloc > 0){
                                     $in_cases = round($account_alloc->final_alloc/$scheme->deals);
                                     $in_deals =  $account_alloc->final_alloc;
                                 }
+                                $tts_budget = $account_alloc->final_alloc * $scheme->srp_p; 
                             }
 
                             $account_alloc->in_deals = $in_deals;
                             $account_alloc->in_cases = $in_cases;
-
+                            $account_alloc->tts_budget = $tts_budget;
+                            $account_alloc->pe_budget = $account_alloc->final_alloc *  $scheme->other_cost;   
                             $account_alloc->save();
                         }
 
@@ -254,6 +264,24 @@ class SchemeAllocRepository
                                 $others_alloc->final_alloc = $f_others_alloc;
                                 
                             }
+
+                            $in_deals = 0;
+                            $in_cases = 0;
+                            if($scheme->activity->activitytype->uom == 'CASES'){
+                                $in_deals = $others_alloc->final_alloc * $scheme->deals;
+                                $in_cases = $others_alloc->final_alloc;
+                                $tts_budget = $others_alloc->final_alloc * $scheme->deals * $scheme->srp_p; 
+                            }else{
+                                if($others_alloc->final_alloc > 0){
+                                    $in_cases = round($others_alloc->final_alloc/$scheme->deals);
+                                    $in_deals =  $others_alloc->final_alloc;
+                                }
+                                $tts_budget = $others_alloc->final_alloc * $scheme->srp_p; 
+                            }
+                            $others_alloc->in_deals = $in_deals;
+                            $others_alloc->in_cases = $in_cases;
+                            $others_alloc->tts_budget = $tts_budget;
+                            $others_alloc->pe_budget = $others_alloc->final_alloc *  $scheme->other_cost; 
                             
                             $others_alloc->save();
                         }

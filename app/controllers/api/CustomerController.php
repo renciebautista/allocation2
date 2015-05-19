@@ -91,9 +91,6 @@ class CustomerController extends \BaseController {
 	}
 	public function index(){
 		$id = \Input::get('id');
-
-
-
 		$channels = \DB::table('channels')->get();
 		$groups = \DB::table('groups')
 			->get();
@@ -197,4 +194,5 @@ class CustomerController extends \BaseController {
 		}
 		return \Response::json($data,200);
 	}
+
 }

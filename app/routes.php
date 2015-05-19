@@ -47,6 +47,41 @@ use Imagecow\Image;
 // 	}
 // 	return View::make('customer',compact('data'));
 // });
+Route::get('update', function(){
+	$schemes = Scheme::where('activity_id',1)->get();
+	if(count($schemes) > 0){
+		foreach ($schemes as $scheme) {
+			SchemeAllocRepository::updateAllocation($scheme);
+		// 	$scheme2 = Scheme::find($scheme->id);
+		// 	$final_alloc = SchemeAllocation::finalallocation($scheme->id);
+		// 	$total_cases = 0;
+		// 	$total_deals = 0;
+		// 	if($scheme->activity->activitytype->uom == 'CASES'){
+		// 		$total_deals = $final_alloc * $scheme->deals;
+		// 		$total_cases = $final_alloc;
+		// 		$final_tts = $final_alloc * $scheme->deals * $scheme->srp_p; 
+		// 	}else{
+				
+		// 		if($final_alloc > 0){
+		// 			$total_cases = round($final_alloc/$scheme->deals);
+		// 			$total_deals = $final_alloc;
+		// 		}
+		// 		$final_tts = $final_alloc * $scheme->srp_p; 
+		// 	}
+			
+		// 	$final_pe = $final_alloc *  $scheme->other_cost;
+			
+		// 	$scheme2->final_alloc = $final_alloc;
+		// 	$scheme2->final_total_deals = $total_deals;
+		// 	$scheme2->final_total_cases = $total_cases;
+		// 	$scheme2->final_tts_r = $final_tts;
+		// 	$scheme2->final_pe_r = $final_pe;
+		// 	$scheme2->final_total_cost = $final_tts+$final_pe;
+		// 	$scheme2->update();
+		}
+	}
+});
+
 
 Route::get('print', function(){
 	$activity = Activity::find(1);
@@ -835,7 +870,7 @@ Route::group(array('before' => 'auth'), function()
 	
 	Route::get('activity/{id}/allocsummary', 'ActivityController@allocsummary');
 	Route::get('activity/pistemplate', 'ActivityController@pistemplate');
-	
+
 	Route::resource('activity', 'ActivityController');
 	
 
@@ -858,7 +893,9 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('downloads/{id}/download', 'DownloadsController@download');
 
 	Route::resource('group', 'GroupController');
-	Route::resource('dashboard', 'DashboardController');
+
+	Route::get('dashboard', 'DashboardController@index');
+	Route::get('dashboard/filters', 'DashboardController@filters');
 	Route::get('profile','ProfileController@index');
 
 	// Confide routes
@@ -930,6 +967,7 @@ Route::group(array('before' => 'auth'), function()
 
 		Route::post('category/getselected', 'api\SkuController@categoryselected');
 		Route::post('category', 'api\SkuController@category');
+		Route::post('categories', 'api\SkuController@categories');
 		Route::post('brand', 'api\SkuController@brand');
 		Route::post('brand/getselected', 'api\SkuController@brandselected');
 		Route::resource('network', 'api\NetworkController');

@@ -5,9 +5,23 @@ class SkuController extends \BaseController {
 	public function category()
 	{
 		if(\Request::ajax()){
-
 			$data = \Sku::select('category_code', 'category_desc')
 			->where('division_code',\Input::get('q'))
+			// ->whereIn('division_code',$q)
+			->groupBy('category_code')
+			->orderBy('category_desc')->lists('category_desc', 'category_code');
+
+			return \Response::json($data,200);
+		}
+	}
+
+	public function categories()
+	{
+		if(\Request::ajax()){
+			$q = \Input::get('q');
+			$data = \Sku::select('category_code', 'category_desc')
+			// ->where('division_code',\Input::get('q'))
+			->whereIn('division_code',$q)
 			->groupBy('category_code')
 			->orderBy('category_desc')->lists('category_desc', 'category_code');
 

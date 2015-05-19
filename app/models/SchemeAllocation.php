@@ -23,7 +23,8 @@ class SchemeAllocation extends \Eloquent {
 			'allocations.ship_to', 'allocations.channel', 'allocations.outlet', 'allocations.sold_to_gsv', 
 			'allocations.sold_to_gsv_p', 'allocations.sold_to_alloc', 'allocations.ship_to_gsv',
 			'allocations.ship_to_alloc' ,'allocations.outlet_to_gsv', 'allocations.outlet_to_gsv_p', 'allocations.outlet_to_alloc',
-			'multi','allocations.computed_alloc', 'allocations.force_alloc','allocations.final_alloc')
+			'multi','allocations.computed_alloc', 'allocations.force_alloc','allocations.final_alloc','allocations.in_deals',
+			'allocations.in_cases','allocations.tts_budget','allocations.pe_budget')
 		->where('scheme_id', $id)
 		->orderBy('allocations.id')
 		->get();
@@ -41,11 +42,7 @@ class SchemeAllocation extends \Eloquent {
 	}
 
 	public static function getExportAllocations($id){
-		return self::select('schemes.name','allocations.group','allocations.area','allocations.sold_to',
-			'allocations.ship_to', 'allocations.channel', 'allocations.outlet', 'allocations.sold_to_gsv', 
-			'allocations.sold_to_gsv_p', 'allocations.sold_to_alloc', 'allocations.ship_to_gsv',
-			'allocations.ship_to_alloc' ,'allocations.outlet_to_gsv', 'allocations.outlet_to_gsv_p', 'allocations.outlet_to_alloc',
-			'multi','allocations.computed_alloc', 'allocations.force_alloc','allocations.final_alloc')
+		return self::select('schemes.name','allocations.*')
 		->join('schemes', 'allocations.scheme_id','=','schemes.id')
 		->where('scheme_id', $id)
 		->orderBy('allocations.id')

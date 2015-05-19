@@ -5,6 +5,19 @@
 @include('partials.notification')
 
 <div class="col-lg-12">
+	<div class="row">
+			<div class="col-lg-12">
+				<div class="form-group">
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="pull-right">
+								<a href="{{ URL::action('DashboardController@filters') }}" class="btn btn-info">Filter Settings</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 	<div class="page-header">
 	  	<h1 id="tables">Ongoing Activities</h1>
 	</div>

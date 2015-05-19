@@ -652,10 +652,10 @@
 							<td style="width:150px;border: 1px solid #000000">'.$scheme->allocations[$x]->ship_to.'</td>
 							<td style="width:60px;border: 1px solid #000000">'.$scheme->allocations[$x]->channel.'</td>
 							<td style="width:200px;border: 1px solid #000000">'.$scheme->allocations[$x]->outlet.'</td>
-							<td style="text-align:right;">'.number_format($deals).'</td>
-							<td style="text-align:right;">'.number_format($case).'</td>
-							<td></td>
-							<td></td>
+							<td style="text-align:right;">'.number_format($scheme->allocations[$x]->in_deals).'</td>
+							<td style="text-align:right;">'.number_format($scheme->allocations[$x]->in_cases).'</td>
+							<td style="text-align:right;">'.number_format($scheme->allocations[$x]->tts_budget,2).'</td>
+							<td style="text-align:right;">'.number_format($scheme->allocations[$x]->pe_budget,2).'</td>
 						</tr>';
 						$cnt++;
 						?>

@@ -82,7 +82,12 @@ class AllocationRepository  {
 				$data[] = $value->child_sku;
 			}
 		}
-		$child_skus = array_merge($data, $skus);
+		if(!empty($skus)){
+			$child_skus = array_merge($data, $skus);
+		}else{
+			$child_skus = $data;
+		}
+		
 
 		$_grps = array();
 		$_areas = array();

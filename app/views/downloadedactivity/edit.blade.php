@@ -404,9 +404,9 @@
 		  	<div class="row">
 				<div class="col-lg-12">
 					<div class="form-group">
-						<button class="btn btn-default btn-style" type="submit">Back</button>
 						<button class="btn btn-primary">Update</button>
 						<button class="btn btn-primary btn-style" type="submit">Next</button>
+						<button class="btn btn-default btn-style" type="submit">Back</button>
 					</div>
 				</div>
 			</div>
@@ -489,8 +489,8 @@
 			<div class="row">
 				<div class="col-lg-12">
 					<div class="form-group">
-						<button class="btn btn-default btn-style" type="submit">Back</button>
 						<button class="btn btn-primary btn-style" type="submit">Next</button>
+						<button class="btn btn-default btn-style" type="submit">Back</button>
 					</div>
 				</div>
 			</div>
@@ -639,9 +639,9 @@
 			<div class="row">
 					<div class="col-lg-12">
 						<div class="form-group">
-							<button class="btn btn-default btn-style" type="submit">Back</button>
 							<button class="btn btn-primary">Update</button>
 							<button class="btn btn-primary btn-style" type="submit">Next</button>
+							<button class="btn btn-default btn-style" type="submit">Back</button>
 						</div>
 					</div>
 				</div>
@@ -674,8 +674,8 @@
 			<div class="row">
 				<div class="col-lg-12">
 					<div class="form-group">
-						<button class="btn btn-default btn-style" type="submit">Back</button>
 						<button class="btn btn-primary btn-style" type="submit">Next</button>
+						<button class="btn btn-default btn-style" type="submit">Back</button>
 					</div>
 				</div>
 			</div>
@@ -933,8 +933,8 @@
 		<div class="row">
 			<div class="col-lg-12">
 				<div class="form-group">
-					<button class="btn btn-default btn-style" type="submit">Back</button>
 					<button class="btn btn-primary btn-style" type="submit">Next</button>
+					<button class="btn btn-default btn-style" type="submit">Back</button>
 				</div>
 			</div>
 		</div>
