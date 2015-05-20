@@ -896,6 +896,12 @@ Route::group(array('before' => 'auth'), function()
 
 	Route::get('dashboard', 'DashboardController@index');
 	Route::get('dashboard/filters', 'DashboardController@filters');
+	Route::post('dashboard/filters', 'DashboardController@savefilters');
+
+	Route::get('dashboard/categoryselected', 'DashboardController@categoryselected');
+	Route::get('dashboard/brandselected', 'DashboardController@brandselected');
+	Route::get('dashboard/customerselected', 'DashboardController@customerselected');
+
 	Route::get('profile','ProfileController@index');
 
 	// Confide routes

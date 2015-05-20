@@ -126,9 +126,6 @@ $("a[href='#schemes']").on('shown.bs.tab', function(e) {
     $( $.fn.dataTable.tables( true ) ).DataTable().columns.adjust();
 });
 
-$("a[href='#timings']").on('shown.bs.tab', function(e) {
-    $('#activity_timings').bootstrapTable("refresh");
-});
 
 
 
@@ -545,27 +542,6 @@ $("#updateforcealloc").validate({
 $('#f_percent').inputNumber();
 <!-- schemes -->
 
-		
-
-var table = $('#scheme_summary').DataTable( {
-	"scrollY": "400px",
-	"scrollX": true,
-	"paging": false,
-	"ordering": false,
-	"searching": false,
-	"columnDefs": [ { //this prevents errors if the data is null
-		"targets": "_all",
-		"defaultContent": "",
-	} ],
-
-} );
-
-
-@if(count($scheme_customers)> 0)
-/*new $.fn.dataTable.FixedColumns( table, {
-	"leftColumns": 6
-} );*/
-@endif
 
 
 <!-- Budget details -->
@@ -587,7 +563,7 @@ $("form[id='updateBilling']").on("submit",function(e){
 		dataType: "json",
 		success: function(data){
 			if(data.success == "1"){
-				bootbox.alert("Billling details was successfully updated."); 
+				bootbox.alert("Budget details was successfully updated."); 
 			}else{
 				bootbox.alert("An error occured while updating."); 
 			}

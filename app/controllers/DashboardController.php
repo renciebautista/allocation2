@@ -38,7 +38,105 @@ class DashboardController extends \BaseController {
 	
 	public function filters(){
 		$divisions = Sku::divisions();
-		return View::make('dashboard.filters', compact('divisions'));
+		$sel_divisions = UserDivisionFilter::getList(Auth::id());
+		return View::make('dashboard.filters', compact('divisions','sel_divisions'));
+	}
+
+	public function savefilters(){
+
+		UserDivisionFilter::where('user_id',Auth::id())->delete();
+		if (Input::has('division'))
+		{
+		   	$divisions = array();
+			foreach (Input::get('division') as $division) {
+				$divisions[] = array('user_id' => Auth::id(), 'division_code' => $division);
+			}
+			UserDivisionFilter::insert($divisions);
+		}
+
+		UserCategoryFilter::where('user_id',Auth::id())->delete();
+		if (Input::has('category'))
+		{
+		   	$categories = array();
+			foreach (Input::get('category') as $category) {
+				$categories[] = array('user_id' => Auth::id(), 'category_code' => $category);
+			}
+			UserCategoryFilter::insert($categories);
+		}
+
+		UserBrandFilter::where('user_id',Auth::id())->delete();
+		if (Input::has('brand'))
+		{
+		   	$brands = array();
+			foreach (Input::get('brand') as $brand) {
+				$brands[] = array('user_id' => Auth::id(), 'brand_code' => $brand);
+			}
+			UserBrandFilter::insert($brands);
+		}
+
+		UserCustomerFilter::where('user_id',Auth::id())->delete();
+		$_customers = Input::get('customers');
+		if(!empty($_customers)){
+			$customers = explode(",", $_customers);
+			if(!empty($customers)){
+				$activity_customers = array();
+				$area_list = array();
+				foreach ($customers as $customer_node){
+					$activity_customers[] = array('user_id' => Auth::id(), 'customer_node' => trim($customer_node));	
+				}
+				UserCustomerFilter::insert($activity_customers);
+			}
+		}
+
+		return Redirect::back()
+			->with('class', 'alert-success')
+			->with('message', 'Activity filters successfully updated.');
+	}
+
+	public function categoryselected()
+	{
+		if(Request::ajax()){
+			$q = Input::get('d');
+			$data['selection'] = Sku::select('category_code', 'category_desc')
+			->whereIn('division_code',$q)
+			->groupBy('category_code')
+			->orderBy('category_desc')->lists('category_desc', 'category_code');
+
+			$data['selected'] = UserCategoryFilter::selected_category();
+
+
+			return Response::json($data,200);
+		}
+	}
+
+	public function brandselected()
+	{
+		if(Request::ajax()){
+			$filter = Input::get('b');
+			$data = array();
+			$data['selection']= array();
+			if($filter != ''){
+				$data['selection'] = Sku::select('brand_code', 'brand_desc')
+				->whereIn('category_code',$filter)
+				->groupBy('brand_code')
+				->orderBy('brand_desc')->lists('brand_desc', 'brand_code');
+			}
+
+			$data['selected'] = UserBrandFilter::selected_brand();
+
+			return Response::json($data,200);
+		}
+	}
+
+	public function customerselected(){
+		$data = array();
+		$sel = UserCustomerFilter::where('user_id',Auth::id())->get();
+		if(!empty($sel)){
+			foreach ($sel as $row) {
+				$data[] = $row->customer_node;
+			}
+		}
+		return Response::json($data,200);
 	}
 
 }

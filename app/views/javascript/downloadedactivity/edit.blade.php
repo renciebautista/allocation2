@@ -82,11 +82,11 @@ function checkDirty(target_id,callback) {
 		    buttons: {
 		        confirm: {
 		            label: 'Yes',
-		            className: 'btn btn-default'
+		            className: 'btn btn-primary'
 		        },
 		        cancel: {
 		            label: 'No',
-		            className: 'btn btn-primary'
+		            className: 'btn btn-default pull-right margin-left-5'
 		        }
 		    },
 		    message: 'Do you want to save changes?',
@@ -120,15 +120,6 @@ $('#updateActivity,#updateCustomer,#updateBilling').areYouSure();
 $("a[href='#customer']").on('shown.bs.tab', function(e) {
     getCustomer();
 });
-
-$("a[href='#schemes']").on('shown.bs.tab', function(e) {
-    $( $.fn.dataTable.tables( true ) ).DataTable().columns.adjust();
-});
-
-$("a[href='#timings']").on('shown.bs.tab', function(e) {
-    $('#activity_timings').bootstrapTable("refresh");
-});
-
 
 
 
@@ -543,20 +534,6 @@ $("#updateforcealloc").validate({
 $('#f_percent').inputNumber();
 <!-- schemes -->
 
-var table = $('#scheme_summary').DataTable( {
-	"scrollY": "300px",
-	"scrollX": true,
-	"scrollCollapse": true,
-	"paging": false,
-	"bSort": false,
-	"columnDefs": [ { //this prevents errors if the data is null
-		"targets": "_all",
-		"defaultContent": ""
-	} ],
-} );
-new $.fn.dataTable.FixedColumns( table, {
-	leftColumns: 6
-} );
 <!-- Budget details -->
 
 $('#billing_deadline').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
@@ -577,7 +554,7 @@ $("form[id='updateBilling']").on("submit",function(e){
 		dataType: "json",
 		success: function(data){
 			if(data.success == "1"){
-				bootbox.alert("Billling details was successfully updated."); 
+				bootbox.alert("Budget details was successfully updated."); 
 			}else{
 				bootbox.alert("An error occured while updating."); 
 			}

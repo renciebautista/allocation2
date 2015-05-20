@@ -74,427 +74,444 @@
 	<div class="tab-pane fade active in" id="activity">
 		<br>
 		{{ Form::open(array('route' => array('activity.update', $activity->id), 'method' => 'PUT', 'class' => 'bs-component','id' => 'updateActivity')) }}
-		<div class="well">
-			<div class="row">
-				<div class="col-lg-6">
-					<div class="form-group">
-						<div class="row">
-							<div class="col-lg-12">
-								{{ Form::label('status', 'Status', array('class' => 'control-label')) }}
-								{{ Form::text('status',$activity->status->status, array('class' => 'form-control','readonly' => '')) }}
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div class="row">
-				<div class="col-lg-6">
-					<div class="form-group">
-						<div class="row">
-							<div class="col-lg-12">
-								{{ Form::label('scope', 'Scope', array('class' => 'control-label')) }}
-								{{ Form::select('scope', array('0' => 'PLEASE SELECT') + $scope_types, $activity->scope_type_id, array('class' => 'form-control')) }}
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<!-- Approver -->
-			<div class="row">
-				<div class="col-lg-6">
-					<div class="form-group">
-						<div class="row">
-							<div class="col-lg-12">
-								{{ Form::label('planner', 'PMOG Planner', array('class' => 'control-label')) }}
-								{{ Form::text('planner',(count($sel_planner) > 0) ? $sel_planner->planner->getFullname() : '', array('class' => 'form-control','readonly' => '')) }}
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="col-lg-6">
-					<div class="form-group">
-						<div class="row">
-							<div class="col-lg-12">
-								
-								{{ Form::label('approver', 'Activity Approver', array('class' => 'control-label')) }}
-								{{ Form::select('approver[]', $approvers, $sel_approver , array('id' => 'approver', 'class' => 'form-control', 'multiple' => 'multiple')) }}
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<!-- End Approver -->
-
-			<!-- Cycle -->
-			<div class="row">
-				<div class="col-lg-3">
-					<div class="form-group">
-						<div class="row">
-							<div id="multiselect" class="col-lg-12">
-								{{ Form::label('activity_type', 'Activity Type', array('class' => 'control-label')) }}
-								{{ Form::select('activity_type',array('0' => 'PLEASE SELECT') + $activity_types, $activity->activity_type_id, array('class' => 'form-control')) }}
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="col-lg-3">
-					<div class="form-group">
-						<div class="row">
-							<div class="col-lg-12">
-								{{ Form::label('lead_time', 'Activity Leadtime (days)', array('class' => 'control-label')) }}
-								{{ Form::text('lead_time', $activity->duration,array('class' => 'form-control', 'readonly' => '')) }}
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="col-lg-3">
-					<div class="form-group">
-						<div class="row">
-							<div class="col-lg-12">
-								{{ Form::label('download_date', 'Target Download Date ', array('class' => 'control-label')) }}
-								{{ Form::text('download_date',date_format(date_create($activity->edownload_date),'m/d/Y'),array('class' => 'form-control', 'placeholder' => 'mm/dd/yyyy', 'readonly' => '')) }}								
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="col-lg-3">
-					<div class="form-group">
-						<div class="row">
-							<div class="col-lg-12">
-								{{ Form::label('implementation_date', 'Target Implementation Date', array('class' => 'control-label')) }}
-								{{ Form::text('implementation_date',date_format(date_create($activity->eimplementation_date),'m/d/Y'),array('class' => 'form-control', 'placeholder' => 'mm/dd/yyyy')) }}
-							</div>
-						</div>
-					</div>
-				</div>
-				
-				
-			</div>
-			<!-- End Cycle -->
-
-			<div class="row">
-				<div class="col-lg-12">
-					<div class="form-group">
-						<div class="row">
-							<div class="col-lg-6">
-								{{ Form::label('cycle', 'TOP Cycle', array('class' => 'control-label')) }}
-								<select class="form-control" data-placeholder="SELECT CYCLE" id="cycle" name="cycle"></select>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div class="row">
-				<div class="col-lg-12">
-					<div class="form-group">
-						<div class="row">
-							<div class="col-lg-12">
-								{{ Form::label('activity_title', 'Activity Title', array('class' => 'control-label')) }}
-								{{ Form::text('activity_title',$activity->circular_name	,array('class' => 'form-control', 'placeholder' => 'Activity Title')) }}
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div class="row">
-				<div class="col-lg-4">
-					<div class="form-group">
-						<div class="row">
-							<div class="col-lg-12">
-								{{ Form::label('division', 'Division', array('class' => 'control-label')) }}
-								{{ Form::select('division',  array('0' => 'PLEASE SELECT') + $divisions, $activity->division_code, array('class' => 'form-control')) }}
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="col-lg-4">
-					<div class="form-group">
-						<div class="row">
-							<div id="multiselect" class="col-lg-12">
-								{{ Form::label('category', 'Category', array('class' => 'control-label')) }}
-								<select class="form-control" data-placeholder="SELECT CATEGORY" id="category" name="category[]" multiple="multiple" ></select>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="col-lg-4">
-					<div class="form-group">
-						<div class="row">
-							<div class="col-lg-12">
-								{{ Form::label('brand', 'Brand', array('class' => 'control-label')) }}
-								<select class="form-control" data-placeholder="SELECT BRAND" id="brand" name="brand[]" multiple="multiple" ></select>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div class="row">
-				<div class="col-lg-6">
-					<div class="form-group">
-						<div class="row">
-							<div class="col-lg-12">
-								{{ Form::label('objective', 'Objectives', array('class' => 'control-label' )) }}
-								{{ Form::select('objective[]', $objectives, $sel_objectives, array('id' => 'objective', 'class' => 'form-control', 'multiple' => 'multiple')) }}
-							</div>
-						</div>
-					</div>
-					
-				</div>
-			</div>
-
-			<div class="row">
-				<div class="col-lg-12">
-					<div class="form-group">
-						<div class="row">
-							<div class="col-lg-12">
-								{{ Form::label('background', 'Background and Rationale', array('class' => 'control-label')) }}
-								{{ Form::textarea('background',$activity->background,array('class' => 'form-control', 'placeholder' => 'Background and Rationale')) }}
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div class="row">
-  				<div class="col-lg-12">
-					<div class="form-group">
-						<div class="row">
-							<div class="col-lg-12">
-								{{ Form::label('instruction', 'Special Instruction', array('class' => 'control-label')) }}
-								{{ Form::textarea('instruction',$activity->instruction ,array('class' => 'form-control', 'placeholder' => 'Special Instruction')) }}
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div class="row">
-				<div class="col-lg-12">
-					<div class="form-group">
-						<div class="row">
-							<div class="col-lg-12">
-								<div class="panel panel-default">
-									<div class="panel-heading">
-										{{ Form::label('materials', 'Material Sourcing', array('class' => 'control-label')) }}
-									</div>
-									<div class="panel-body">
-										<table id="materials" class="table table-striped table-hover ">
-										  	<thead>
-												<tr>
-											  		<th style="width:20%;">Source</th>
-											  		<th style="width:65%;">Material</th>
-											  		<th colspan="2">Action</th>
-												</tr>
-										 	 </thead>
-										 	 <tbody>
-												@foreach ($materials as $material)
-												<tr id="{{ $material->id }}">
-													<td class="source">{{ $material->source->source }}</td>
-													<td class="material">{{ $material->material }}</td>
-													<td>
-														<a href="javascript:;" id="{{ $material->id }}" class="ajaxEdit btn btn-primary btn-xs">Edit</a>
-													</td>
-													<td>
-														<a href="javascript:;" id="{{ $material->id }}" class="ajaxDelete btn btn-danger btn-xs">Delete</a>
-													</td>
-												</tr>
-												@endforeach
-												</tbody>
-										</table> 
-									</div>
-
+		<div class="panel panel-default">
+		  	<div class="panel-heading">Activity Details</div>
+		  	<div class="panel-body">
+				<div class="row">
+					<div class="col-lg-6">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('status', 'Status', array('class' => 'control-label')) }}
+									{{ Form::text('status',$activity->status->status, array('class' => 'form-control','readonly' => '')) }}
 								</div>
-								
-								
-								
 							</div>
 						</div>
 					</div>
-					
 				</div>
+
+				<div class="row">
+					<div class="col-lg-6">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('scope', 'Scope', array('class' => 'control-label')) }}
+									{{ Form::select('scope', array('0' => 'PLEASE SELECT') + $scope_types, $activity->scope_type_id, array('class' => 'form-control')) }}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Approver -->
+				<div class="row">
+					<div class="col-lg-6">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('planner', 'PMOG Planner', array('class' => 'control-label')) }}
+									{{ Form::select('planner', array('0' => 'PLEASE SELECT') + $planners, (!is_null($sel_planner)) ? $sel_planner->user_id : 0, array('class' => 'form-control')) }}
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-6">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									
+									{{ Form::label('approver', 'Activity Approver', array('class' => 'control-label')) }}
+									{{ Form::select('approver[]', $approvers, $sel_approver , array('id' => 'approver', 'class' => 'form-control', 'multiple' => 'multiple')) }}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- End Approver -->
+
+				<!-- Cycle -->
+				<div class="row">
+					<div class="col-lg-3">
+						<div class="form-group">
+							<div class="row">
+								<div id="multiselect" class="col-lg-12">
+									{{ Form::label('activity_type', 'Activity Type', array('class' => 'control-label')) }}
+									{{ Form::select('activity_type',array('0' => 'PLEASE SELECT') + $activity_types, $activity->activity_type_id, array('class' => 'form-control')) }}
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-3">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('lead_time', 'Activity Leadtime (working days)', array('class' => 'control-label')) }}
+									{{ Form::text('lead_time', $activity->duration,array('class' => 'form-control', 'readonly' => '')) }}
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-3">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('download_date', 'Target Download Date ', array('class' => 'control-label')) }}
+									{{ Form::text('download_date',date_format(date_create($activity->edownload_date),'m/d/Y'),array('class' => 'form-control', 'placeholder' => 'mm/dd/yyyy', 'readonly' => '')) }}								
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-3">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('implementation_date', 'Target Implementation Date', array('class' => 'control-label')) }}
+									{{ Form::text('implementation_date',date_format(date_create($activity->eimplementation_date),'m/d/Y'),array('class' => 'form-control', 'placeholder' => 'mm/dd/yyyy')) }}
+								</div>
+							</div>
+						</div>
+					</div>	
+				</div>
+				<!-- End Cycle -->
+
+				<div class="row">
+					<div class="col-lg-12">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-6">
+									{{ Form::label('cycle', 'TOP Cycle', array('class' => 'control-label')) }}
+									<select class="form-control" data-placeholder="SELECT CYCLE" id="cycle" name="cycle"></select>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-lg-12">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('activity_title', 'Activity Title', array('class' => 'control-label')) }}
+									{{ Form::text('activity_title',$activity->circular_name	,array('class' => 'form-control', 'placeholder' => 'Activity Title')) }}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-lg-4">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('division', 'Division', array('class' => 'control-label')) }}
+									{{ Form::select('division',  array('0' => 'PLEASE SELECT') + $divisions, $activity->division_code, array('class' => 'form-control')) }}
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-4">
+						<div class="form-group">
+							<div class="row">
+								<div id="multiselect" class="col-lg-12">
+									{{ Form::label('category', 'Category', array('class' => 'control-label')) }}
+									<select class="form-control" data-placeholder="SELECT CATEGORY" id="category" name="category[]" multiple="multiple" ></select>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-4">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('brand', 'Brand', array('class' => 'control-label')) }}
+									<select class="form-control" data-placeholder="SELECT BRAND" id="brand" name="brand[]" multiple="multiple" ></select>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-lg-6">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('objective', 'Objectives', array('class' => 'control-label' )) }}
+									{{ Form::select('objective[]', $objectives, $sel_objectives, array('id' => 'objective', 'class' => 'form-control', 'multiple' => 'multiple')) }}
+								</div>
+							</div>
+						</div>
+						
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-lg-12">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('background', 'Background and Rationale', array('class' => 'control-label')) }}
+									{{ Form::textarea('background',$activity->background,array('class' => 'form-control', 'placeholder' => 'Background and Rationale')) }}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+	  				<div class="col-lg-12">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('instruction', 'Special Instruction', array('class' => 'control-label')) }}
+										{{ Form::textarea('instruction',$activity->instruction ,array('class' => 'form-control', 'placeholder' => 'Special Instruction')) }}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+		  	</div>
+		</div>
+
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				{{ Form::label('materials', 'Material Sourcing', array('class' => 'control-label')) }}
+			</div>
+			<div class="panel-body">
+				<table id="materials" class="table table-striped table-hover ">
+				  	<thead>
+						<tr>
+					  		<th style="width:20%;">Source</th>
+					  		<th style="width:65%;">Material</th>
+					  		<th colspan="2">Action</th>
+						</tr>
+				 	 </thead>
+				 	 <tbody>
+						@foreach ($materials as $material)
+						<tr id="{{ $material->id }}">
+							<td class="source">{{ $material->source->source }}</td>
+							<td class="material">{{ $material->material }}</td>
+							<td>
+								<a href="javascript:;" id="{{ $material->id }}" class="ajaxEdit btn btn-primary btn-xs">Edit</a>
+							</td>
+							<td>
+								<a href="javascript:;" id="{{ $material->id }}" class="ajaxDelete btn btn-danger btn-xs">Delete</a>
+							</td>
+						</tr>
+						@endforeach
+						</tbody>
+				</table> 
 			</div>
 
+		</div>
 
-
-			<div class="row">
+		<div class="row">
 				<div class="col-lg-12">
 					<div class="form-group">
 						<button class="btn btn-primary">Update</button>
 						<button class="btn btn-primary btn-style" type="submit">Next</button>
 					</div>
 				</div>
-			</div>
-
-
-		</div>
-		{{ Form::close() }}
+			</div><br>
+			{{ Form::close() }}
 	</div>
 
 	<!-- customer details -->
 	<div class="tab-pane fade" id="customer">
+
 		<br>
-		
-		<div class="well">
-			{{ Form::open(array('action' => array('ActivityController@updatecustomer', $activity->id), 'method' => 'PUT', 'class' => 'bs-component','id' => 'updateCustomer')) }}
-			<div class="row">
-				<div class="col-lg-6">
-					{{ Form::label('tree3', 'Select Customers', array('class' => 'control-label' )) }}
-					<div id="tree3"></div>
-					{{ Form::hidden('customers', null, array('id' => 'customers')) }}
-				</div>
-				<div class="col-lg-6">
-					<div class="form-group">
-						<div class="row">
-							<div class="col-lg-12">
-								{{ Form::label('channel', 'Select DT Channels Involved', array('class' => 'control-label' )) }}
-								<select class="form-control" data-placeholder="SELECT CHANNEL" id="channel" name="channel[]" multiple="multiple" ></select>
+		{{ Form::open(array('action' => array('ActivityController@updatecustomer', $activity->id), 'method' => 'PUT', 'class' => 'bs-component','id' => 'updateCustomer')) }}
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Customer Details</h3>
+			</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-lg-12">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-6">
+									{{ Form::label('tree3', 'Select Customers', array('class' => 'control-label' )) }}
+									<div id="tree3"></div>
+									{{ Form::hidden('customers', null, array('id' => 'customers')) }}
+								</div>
+								<div class="col-lg-6">
+									<div class="form-group">
+										<div class="row">
+											<div class="col-lg-12">
+												{{ Form::label('channel', 'Select DT Channels Involved', array('class' => 'control-label' )) }}
+												<select class="form-control" data-placeholder="SELECT CHANNEL" id="channel" name="channel[]" multiple="multiple" ></select>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>	
+							<div class="row">
+								<div class="col-lg-6">
+									<div class="form-group">
+										<div class="checkbox">
+									        <label>
+									        	{{ Form::checkbox('allow_force', 1,$activity->allow_force) }} Enable Force Allocation
+									        </label>
+									    </div>
+									</div>
+								</div>
 							</div>
+							<br>
+							@if($activity->allow_force)
+							<hr>
+
+							<div class="row">
+								<div  class="col-lg-12">
+									<caption>Force Allocation</caption>
+									<table id="force_alloc" class="table table-striped table-hover ">
+									  	<thead>
+										    <tr>
+										    	<th>Group</th>
+										      	<th>Area</th>
+										      	<th class="multiplier">Force Percentage</th>
+								      			<th class="action">Action</th>
+										    </tr>
+									  	</thead>
+									  	<tbody>
+									  		@foreach($force_allocs as $force)
+									  		<tr data-link="{{ $force->id }}">
+									  			<td>{{ $force->group_name }}</td>
+									  			<td>{{ $force->area_name }}</td>
+								  				<td class="multiplier">{{ $force->multi }}</td>
+									  			<td class="action">
+									  				<button class="btn btn-primary btn-xs">Update</button>
+									  			</td>
+									  		</tr>
+									  		@endforeach
+									  	</tbody>
+									</table> 
+								</div>
+						  	</div>
+						  	@endif
+							
 						</div>
 					</div>
 				</div>
-			</div>	
-			<div class="row">
-				<div class="col-lg-6">
-					<div class="form-group">
-						<div class="checkbox">
-					        <label>
-					        	{{ Form::checkbox('allow_force', 1,$activity->allow_force) }} Enable Force Allocation
-					        </label>
-					    </div>
-					</div>
-				</div>
 			</div>
-			@if($activity->allow_force)
-			<hr>
-
-			<div class="row">
-				<div  class="col-lg-12">
-					<caption>Force Allocation</caption>
-					<table id="force_alloc" class="table table-striped table-hover ">
-					  	<thead>
-						    <tr>
-						    	<th>Group</th>
-						      	<th>Area</th>
-						      	<th class="multiplier">Force Percentage</th>
-				      			<th class="action">Action</th>
-						    </tr>
-					  	</thead>
-					  	<tbody>
-					  		@foreach($force_allocs as $force)
-					  		<tr data-link="{{ $force->id }}">
-					  			<td>{{ $force->group_name }}</td>
-					  			<td>{{ $force->area_name }}</td>
-				  				<td class="multiplier">{{ $force->multi }}</td>
-					  			<td class="action">
-					  				<button class="btn btn-primary btn-xs">Update</button>
-					  			</td>
-					  		</tr>
-					  		@endforeach
-					  	</tbody>
-					</table> 
-				</div>
-		  	</div>
-		  	@endif
-
-		  	<div class="row">
-				<div class="col-lg-12">
-					<div class="form-group">
-						<button class="btn btn-primary">Update</button>
-						<button class="btn btn-default btn-style" type="submit">Back</button>
-						<button class="btn btn-primary btn-style" type="submit">Next</button>
-					</div>
-				</div>
-			</div>
-			{{ Form::close() }}
 		</div>
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="form-group">
+					<button class="btn btn-primary">Update</button>
+					<button class="btn btn-default btn-style" type="submit">Back</button>
+					<button class="btn btn-primary btn-style" type="submit">Next</button>
+				</div>
+			</div>
+		</div>
+		{{ Form::close() }}
+		<br>
 	</div>
 
 	<!-- scheme details -->
 	<div class="tab-pane fade" id="schemes">
 		<br>
-		<div class="well">
-			<a href="{{ URL::action('SchemeController@create', $activity->id) }}" class="btn btn-primary"><i class="fa fa-plus"></i> Scheme</a>
-			<div class="row">
-				<div class="col-lg-12">
-
-					<div class="table-responsive tableScroll">
-						<table class="table table-striped table-hover ">
-							<thead>
-								<tr>
-									<th>Scheme Name</th>
-									<th>Item Code</th>
-									<th>Purchase Req't</th>
-									<th>Total Unilever Cost</th>
-									<th>Cost to Sales % </th>
-									<th>Total Deals</th>
-									<th>Total Cases</th>
-									<th>Total TTS</th>
-									<th>Total PE</th>
-									<th>Total Cost</th>
-									<th class="text-center">Action</th>
-								</tr>
-							</thead>
-						  	<tbody>
-						  		@if(count($schemes) == 0)
-						  		<tr>
-						  			<td colspan="15">No record found!</td>
-						  		</tr>
-						  		@endif
-
-								@foreach($schemes as $scheme)
-								<tr>
-								  	<td>{{ $scheme->name }}</td>
-								  	<td>{{ $scheme->item_code }}</td>
-								  	<td class="text-right">{{ number_format($scheme->pr,2) }}</td>
-								  	<!-- <td class="text-right">{{ number_format($scheme->srp_p,2) }}</td>
-								  	<td class="text-right">{{ number_format($scheme->other_cost,2) }}</td> -->
-								  	<td class="text-right">{{ number_format($scheme->ulp,2) }}</td>
-								  	<td class="text-right">{{ number_format($scheme->cost_sale,2) }}</td>
-								  	<td class="text-right">{{ number_format($scheme->quantity) }}</td>
-								  	<td class="text-right">{{ number_format($scheme->quantity) }}</td>
-								  	<!-- <td>{{ $activity->activitytype->uom }}</td> -->
-								  	<!-- <td class="text-right">{{ number_format($scheme->deals) }}</td> -->
-								  	<td class="text-right">{{ number_format($scheme->tts_r,2) }}</td>
-								  	<td class="text-right">{{ number_format($scheme->pe_r,2) }}</td>
-								  	<td class="text-right">{{ number_format($scheme->total_cost,2) }}</td>
-								  	<td>
-								  		{{ HTML::linkAction('SchemeController@edit','View', $scheme->id, array('class' => 'btn btn-primary btn-xs')) }}
-								  		<a class="btn btn-danger btn-xs" href="#">Delete</a>
-								  	</td>
-								</tr>
-								@endforeach
-						  	</tbody>
-						</table> 
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Scheme Lists</h3>
+			</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-lg-12">
+						<a href="{{ URL::action('SchemeController@create', $activity->id) }}" class="btn btn-primary"><i class="fa fa-plus"></i> Scheme</a>
 					</div>
-
 				</div>
-			</div>
+				<br>
+				<div class="row">
+					<div class="col-lg-12">
+						<div class="table-responsive">
+							<table class="table table-condensed table-hover">
+								<thead>
+									<tr>
+										<th>#</th>
+										<th class="text-center">Scheme Name</th>
+										<th class="text-center">Item Code</th>
+										<th class="text-center">Purchase Req't</th>
+										<th class="text-center">Total Unilever Cost</th>
+										<th class="text-center">Cost to Sales % </th>
+										<th class="text-center">Total Deals</th>
+										<th class="text-center">Total Cases</th>
+										<th class="text-center">Total TTS</th>
+										<th class="text-center">Total PE</th>
+										<th class="text-center">Total Cost</th>
+										<th class="text-center">Action</th>
+									</tr>
+								</thead>
+							  	<tbody>
+							  		@if(count($schemes) == 0)
+							  		<tr>
+							  			<td colspan="12">No record found!</td>
+							  		</tr>
+							  		@endif
+							  		<?php $i = 0; ?>
+									@foreach($schemes as $scheme)
+									<?php $i += 1; ?>
+									<tr>
+										<td>{{ $i }}</td>
+									  	<td>{{ $scheme->name }}</td>
+									  	<td>{{ $scheme->item_code }}</td>
+									  	<td class="text-right">{{ number_format($scheme->pr,2) }}</td>
+									  	<!-- <td class="text-right">{{ number_format($scheme->srp_p,2) }}</td>
+									  	<td class="text-right">{{ number_format($scheme->other_cost,2) }}</td> -->
+									  	<td class="text-right">{{ number_format($scheme->ulp,2) }}</td>
+									  	<td class="text-right">{{ number_format($scheme->cost_sale,2) }}</td>
+									  	<td class="text-right">{{ number_format($scheme->quantity) }}</td>
+									  	<td class="text-right">{{ number_format($scheme->quantity) }}</td>
+									  	<!-- <td>{{ $activity->activitytype->uom }}</td> -->
+									  	<!-- <td class="text-right">{{ number_format($scheme->deals) }}</td> -->
+									  	<td class="text-right">{{ number_format($scheme->tts_r,2) }}</td>
+									  	<td class="text-right">{{ number_format($scheme->pe_r,2) }}</td>
+									  	<td class="text-right">{{ number_format($scheme->total_cost,2) }}</td>
+									  	<td style="width:10%;">
+									  		{{ HTML::linkAction('SchemeController@edit','View', $scheme->id, array('class' => 'btn btn-primary btn-xs')) }}
+									  		<a class="btn btn-danger btn-xs" href="#">Delete</a>
+									  	</td>
+									</tr>
+									@endforeach
+							  	</tbody>
+							</table> 
+						</div>
 
-			<hr>
-			<div class="row">
-				<div class="col-lg-12">
-					<h2>Alocation Summary</h2>
-					<a class="btn btn-success" target="_blank" href="{{ URL::action('ActivityController@allocsummary', $activity->id ) }}">Download Summary</a>		
-
-				</div>
-			</div>
-			<br>
-
-
-			<div class="row">
-				<div class="col-lg-12">
-					<div class="form-group">
-						<button class="btn btn-default btn-style" type="submit">Back</button>
-						<button class="btn btn-primary btn-style" type="submit">Next</button>
 					</div>
 				</div>
 			</div>
 		</div>
+
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Allocation Summary</h3>
+			</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-lg-12">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									<a class="btn btn-success" target="_blank" href="{{ URL::action('ActivityController@allocsummary', $activity->id ) }}">Download Summary</a>		
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="form-group">
+					<button class="btn btn-default btn-style" type="submit">Back</button>
+					<button class="btn btn-primary btn-style" type="submit">Next</button>
+				</div>
+			</div>
+		</div>
+		<br>
 	</div>
 
 	<!-- budget details -->
@@ -575,7 +592,6 @@
 					</div>
 				</div>
 
-				
 
 			</div>
 				</div>
@@ -642,44 +658,51 @@
 							<button class="btn btn-primary">Update</button>
 							<button class="btn btn-default btn-style" type="submit">Back</button>
 							<button class="btn btn-primary btn-style" type="submit">Next</button>
+
 						</div>
 					</div>
 				</div>
-			{{ Form::close() }}
+						{{ Form::close() }}
 	</div>
 
 	<!-- timings details -->
 	<div class="tab-pane fade" id="timings">
 		<br>
-		<div class="well">
-			<div class="row">
-				<div class="col-lg-12">
-					<table id="activity_timings" class="table table-striped table-hover ">
-					  	<thead>
-							<tr>
-						  		<th data-field="task_id">Task ID</th>
-						        <th data-field="milestone">Milestone</th>
-						        <th data-field="task">Task</th>
-						        <th data-field="responsible">Team Responsible</th>
-						        <th data-field="duration">Duration (days)</th>
-						        <th data-field="depend_on">Depends On</th>
-						  		<th data-field="start_date">Start Date</th>
-						  		<th data-field="end_date">End Date</th>
-							</tr>
-					  	</thead>
-					</table> 
-				</div>
+		<div class="panel panel-default">
+		  	<div class="panel-heading">
+				<h3 class="panel-title">Timings Details</h3>
 			</div>
-
-			<div class="row">
-				<div class="col-lg-12">
-					<div class="form-group">
-						<button class="btn btn-default btn-style" type="submit">Back</button>
-						<button class="btn btn-primary btn-style" type="submit">Next</button>
+		  	<div class="panel-body">
+				<div class="row">
+					<div class="col-lg-12">
+						<table id="activity_timings" class="table table-striped table-hover ">
+						  	<thead>
+								<tr>
+							  		<th data-field="task_id">Task ID</th>
+							        <th data-field="milestone">Milestone</th>
+							        <th data-field="task">Task</th>
+							        <th data-field="responsible">Team Responsible</th>
+							        <th data-field="duration">Duration (days)</th>
+							        <th data-field="depend_on">Depends On</th>
+							  		<th data-field="start_date">Start Date</th>
+							  		<th data-field="end_date">End Date</th>
+								</tr>
+						  	</thead>
+						</table> 
 					</div>
+				</div>
+		  	</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="form-group">
+					<button class="btn btn-default btn-style" type="submit">Back</button>
+					<button class="btn btn-primary btn-style" type="submit">Next</button>
 				</div>
 			</div>
 		</div>
+		<br>
 	</div>
 
 	<!-- attachment details -->
@@ -933,11 +956,12 @@
 		<div class="row">
 			<div class="col-lg-12">
 				<div class="form-group">
-					<button class="btn btn-primary btn-style" type="submit">Next</button>
 					<button class="btn btn-default btn-style" type="submit">Back</button>
+					<button class="btn btn-primary btn-style" type="submit">Next</button>
 				</div>
 			</div>
 		</div>
+		<br>
 
 	</div>
 
@@ -974,6 +998,7 @@
 				</div>
 			</div>
 		</div>
+		<br>
 	</div>
 
 	<!-- Modal -->
