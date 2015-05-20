@@ -1627,20 +1627,29 @@ class ActivityController extends BaseController {
 
 	public function allocsummary($id){
 		$filepath = storage_path().'/uploads/tempfiles/Allocation Summary.xls';
-		$scheme_allcations = SchemeAllocation::getExportAllocations($id);
-		// Helper::print_r($scheme_allcations);
+		// $scheme_allcations = SchemeAllocation::getExportAllocations($id);
+		// // Helper::print_r($scheme_allcations);
 
-		Excel::load($filepath, function($excel) use($scheme_allcations)
+		// Excel::load($filepath, function($excel) use($scheme_allcations)
+		// {
+		//  //    $excel->sheet('data', function($sheet) use($scheme_allcations) {
+		// 	// 	$sheet->fromModel($scheme_allcations);
+		// 	// 	// $sheet->setColumnFormat(array(
+		// 	// 	// 	'C' => '0%'
+		// 	// 	// ));
+		// 	// });
+		// }) -> download('xls');
+
+		Excel::load($filepath, function($reader) 
 		{
-		    $excel->sheet('data', function($sheet) use($scheme_allcations) {
-				$sheet->fromModel($scheme_allcations);
-				// $sheet->setColumnFormat(array(
-				// 	'C' => '0%'
-				// ));
-			});
-		}) -> download('xls');
+		    $reader->sheet('data',function($sheet) 
+		    {
+		        $sheet->appendRow([
+		             'test1', 'test2',
+		         ]);
+		    });
+		})->download('xls');
 
-		
 		// return Response::download($filepath);
 	}
 

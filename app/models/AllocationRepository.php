@@ -239,7 +239,7 @@ class AllocationRepository  {
 										// $gsv +=  100;
 									}
 									$_account->gsv = $gsv;
-									
+									$additional_gsv = 0;
 									if(in_array($customer->group_code, $_grps)){
 										if(!empty($_areas[$customer->group_code])){
 											if(in_array($customer->area_code, $_areas[$customer->group_code])){

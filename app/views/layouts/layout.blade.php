@@ -53,7 +53,7 @@
 								<li>{{ HTML::linkRoute('activity.index', 'Activity') }}</li>   
 								@endif
 								@if(Auth::user()->inRoles(['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']))
-								<li>{{ HTML::linkAction('submittedactivity.index' , 'Submitted Activity') }}</li>  
+								<li>{{ HTML::linkAction('submittedactivity.index' , 'Activities For Approval') }}</li>  
 								@endif  
 							</ul>
 						</li>
