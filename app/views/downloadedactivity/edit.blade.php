@@ -458,17 +458,13 @@
 									  	<td>{{ $scheme->name }}</td>
 									  	<td>{{ $scheme->item_code }}</td>
 									  	<td class="text-right">{{ number_format($scheme->pr,2) }}</td>
-									  	<!-- <td class="text-right">{{ number_format($scheme->srp_p,2) }}</td>
-									  	<td class="text-right">{{ number_format($scheme->other_cost,2) }}</td> -->
 									  	<td class="text-right">{{ number_format($scheme->ulp,2) }}</td>
 									  	<td class="text-right">{{ number_format($scheme->cost_sale,2) }}</td>
-									  	<td class="text-right">{{ number_format($scheme->quantity) }}</td>
-									  	<td class="text-right">{{ number_format($scheme->quantity) }}</td>
-									  	<!-- <td>{{ $activity->activitytype->uom }}</td> -->
-									  	<!-- <td class="text-right">{{ number_format($scheme->deals) }}</td> -->
-									  	<td class="text-right">{{ number_format($scheme->tts_r,2) }}</td>
-									  	<td class="text-right">{{ number_format($scheme->pe_r,2) }}</td>
-									  	<td class="text-right">{{ number_format($scheme->total_cost,2) }}</td>
+									  	<td class="text-right">{{ number_format($scheme->final_total_deals) }}</td>
+									  	<td class="text-right">{{ number_format($scheme->final_total_cases) }}</td>
+									  	<td class="text-right">{{ number_format($scheme->final_tts_r,2) }}</td>
+									  	<td class="text-right">{{ number_format($scheme->final_pe_r,2) }}</td>
+									  	<td class="text-right">{{ number_format($scheme->final_total_cost,2) }}</td>
 									  	<td style="width:10%;">
 									  		{{ HTML::linkAction('SchemeController@edit','View', $scheme->id, array('class' => 'btn btn-primary btn-xs')) }}
 									  		<a class="btn btn-danger btn-xs" href="#">Delete</a>

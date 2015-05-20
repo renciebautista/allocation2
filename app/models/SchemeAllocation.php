@@ -44,7 +44,7 @@ class SchemeAllocation extends \Eloquent {
 	public static function getExportAllocations($id){
 		return self::select('schemes.name','allocations.*')
 		->join('schemes', 'allocations.scheme_id','=','schemes.id')
-		->where('scheme_id', $id)
+		->where('activity_id', $id)
 		->orderBy('allocations.id')
 		->get();
 	}

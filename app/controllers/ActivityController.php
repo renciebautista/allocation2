@@ -1644,9 +1644,7 @@ class ActivityController extends BaseController {
 		{
 		    $reader->sheet('data',function($sheet) 
 		    {
-		        $sheet->appendRow([
-		             'test1', 'test2',
-		         ]);
+		        
 		    });
 		})->download('xls');
 

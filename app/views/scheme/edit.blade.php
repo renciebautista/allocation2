@@ -329,18 +329,7 @@
 						<th>Sold To</th>
 						<th>Ship To</th>
 						<th>Channel</th>
-
 						<th>Outlet</th>
-						<th>SOLD TO GSV</th>
-						<th>SOLD TO GSV %</th>
-						<th>SOLD TO ALLOC</th>
-
-						<th>SHIP TO GSV</th>
-						<th>SHIP TO ALLOC</th>
-						<th>OUTLET GSV</th>
-						<th>OUTLET ALLOC %</th>
-						<th>OUTLET ALLOC</th>
-						<th>MULTI</th>
 						<th>COMPUTED ALLOC</th>
 						<th>FORCED ALLOC</th>
 						<th>FINAL ALLOC</th>

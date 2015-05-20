@@ -40,7 +40,7 @@ var table = $("#customer-allocation").dataTable({
 			{ "data" : "ship_to",     "title" : "Ship To", "searchable": true },
 			{ "data" : "channel",     "title" : "Channel", "searchable": true },
 			{ "data" : "outlet",     "title" : "Outlet", "searchable": true },
-			{ "data" : "sold_to_gsv",     "title" : "SOLD TO GSV", "searchable": true },
+			/*{ "data" : "sold_to_gsv",     "title" : "SOLD TO GSV", "searchable": true },
 			{ "data" : "sold_to_gsv_p",     "title" : "SOLD TO GSV %", "searchable": true },
 			{ "data" : "sold_to_alloc",     "title" : "SOLD TO ALLOC", "searchable": true },
 			{ "data" : "ship_to_gsv",     "title" : "SHIP TO GSV", "searchable": true },
@@ -48,7 +48,7 @@ var table = $("#customer-allocation").dataTable({
 			{ "data" : "outlet_to_gsv",     "title" : "OUTLET GSV", "searchable": true },
 			{ "data" : "outlet_to_gsv_p",     "title" : "OUTLET ALLOC %", "searchable": true },
 			{ "data" : "outlet_to_alloc",     "title" : "OUTLET ALLOC", "searchable": true },
-			{ "data" : "multi",     "title" : "MULTI", "searchable": false },
+			{ "data" : "multi",     "title" : "MULTI", "searchable": false },*/
 			{ "data" : "computed_alloc",     "title" : "COMPUTED ALLOC", "searchable": false },
 			{ "data" : "force_alloc",     "title" : "FORCED ALLOC", "searchable": false },
 			{ "data" : "final_alloc",     "title" : "FINAL ALLOC", "searchable": false }
