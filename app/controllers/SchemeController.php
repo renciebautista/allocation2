@@ -49,7 +49,6 @@ class SchemeController extends \BaseController {
 
 				$scheme = new Scheme;
 				$scheme->activity_id = $activity->id;
-
 				$scheme->name = strtoupper(Input::get('scheme_name'));
 				$scheme->item_code = Input::get('item_code');
 				$scheme->item_barcode = Input::get('item_barcode');
