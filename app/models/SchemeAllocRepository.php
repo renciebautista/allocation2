@@ -56,7 +56,7 @@ class SchemeAllocRepository
             if($_sold_to_alloc > 0){
                 $scheme_alloc->computed_alloc = $_sold_to_alloc;
             }
-            
+            $scheme_alloc->final_alloc = 0;
             if(!$activity->allow_force){
                 $scheme_alloc->force_alloc = 0;
                 $scheme_alloc->final_alloc = $_sold_to_alloc;

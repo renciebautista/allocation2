@@ -1660,19 +1660,22 @@ class ActivityController extends BaseController {
 		return Response::json($data,200);
 	}
 
+	public function allocsummary($id){
+		$filepath = storage_path().'/uploads/tempfiles/Allocation Summary.xls';
+		$scheme_allcations = SchemeAllocation::getExportAllocations($id);
+		// // Helper::print_r($scheme_allcations);
+
+		Excel::load($filepath, function($excel) use($scheme_allcations)
+		{
+		    $excel->sheet('data', function($sheet) use($scheme_allcations) {
+				$sheet->fromModel($scheme_allcations);
+			});
+		}) -> download('xls');
+	}
+
 	public function pistemplate(){
 		$filepath = storage_path().'/uploads/tempfiles/PIS Template.xlsx';		
 		return Response::download($filepath);
-	}
-
-	public function allocsummary($id){
-		$filepath = storage_path().'/uploads/tempfiles/Allocation Summary.xml';
-		echo $filepath;
-		$contents = File::get($filepath);
-		print_r($contents);
-		// header( 'Content-type: application/excel' );
-		// header( 'Content-Disposition: attachment; filename="pivot.xml"' );
-		// print_file($contents);
 	}
 
 }

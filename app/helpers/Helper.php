@@ -26,4 +26,8 @@ class Helper {
 	            strtolower($clean) :
 	        $clean;
 	}
+
+	public static function replace_content_inside_delimiters($start, $end, $new, $source) {
+		return preg_replace('#('.preg_quote($start).')(.*?)('.preg_quote($end).')#si', '$1'.$new.'$3', $source);
+	}
 }
