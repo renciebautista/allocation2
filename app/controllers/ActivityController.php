@@ -1339,35 +1339,54 @@ class ActivityController extends BaseController {
 
 	private function doupload($path){
 		$distination = storage_path().'/uploads/'.$path.'/';
-		$file = Input::file('file');
+		
+		if (Input::hasFile('file'))
+		{
+			$file = Input::file('file');
+		    $original_file_name = $file->getClientOriginalName();
 
+			$file_name = pathinfo($original_file_name, PATHINFO_FILENAME);
 
-		$original_file_name = $file->getClientOriginalName();
-
-		$file_name = pathinfo($original_file_name, PATHINFO_FILENAME);
-
-		$extension = File::extension($original_file_name);
-		$actual_name = $file_name.'.'.$extension;
-		$file_path = $distination.$actual_name;
-		// //Alter the file name until it's unique to prevent overwriting
-		$count = 1;
-		while(File::exists($file_path)) {
-			$actual_name = $file_name.'_'.$count.'.'.$extension;
+			$extension = File::extension($original_file_name);
+			$actual_name = $file_name.'.'.$extension;
 			$file_path = $distination.$actual_name;
-			$count++;
-			echo $count;
-		}
-		$file->move($distination,$actual_name);
+			// //Alter the file name until it's unique to prevent overwriting
+			$count = 1;
+			while(File::exists($file_path)) {
+				$actual_name = $file_name.'_'.$count.'.'.$extension;
+				$file_path = $distination.$actual_name;
+				$count++;
+				echo $count;
+			}
+			$file->move($distination,$actual_name);
 
-		return (object) array('file_name' => $actual_name,
-		 'original_file_name' => $actual_name,
-		 'status' => 1);
+			return (object) array('file_name' => $actual_name,
+			 'original_file_name' => $actual_name,
+			 'status' => 1);
+		}else{
+
+		}
+		
 	}
 
 	public function fdaupload($id){
+
 		$activity = Activity::findOrFail($id);
-		if(Input::hasFile('file')){
-			$path = $activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
+
+		$input = array('file' => Input::file('file'));
+		$rules = array(
+	        'file' => 'image'
+	    );
+	    // Now pass the input and rules into the validator
+    	$validator = Validator::make($input, $rules);
+
+    	if ($validator->fails())
+    	{
+        	return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
+				->with('class', 'alert-danger')
+				->with('message', 'Error uploading file.');
+    	} else{
+        	$path = $activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
 
 			$upload = self::doupload($path);
 
@@ -1380,16 +1399,10 @@ class ActivityController extends BaseController {
 			$docu->file_desc = (Input::get('file_desc') =='') ? $upload->original_file_name : Input::get('file_desc');
 			$docu->save();
 
-			
-
 			return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
 				->with('class', 'alert-success')
 				->with('message', 'FDA Permits is successfuly uploaded!');
-		}else{
-			return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
-				->with('class', 'alert-danger')
-				->with('message', 'Error uploading file.');
-		}
+    	}
 	}
 
 	public function fdadelete($id){
@@ -1419,8 +1432,22 @@ class ActivityController extends BaseController {
 
 	public function fisupload($id){
 		$activity = Activity::findOrFail($id);
-		if(Input::hasFile('file')){
-			$path = $activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
+
+		$input = array('file' => Input::file('file'));
+		$rules = array(
+	        'file' => 'mimes:xlsx,xls,csv'
+	    );
+
+	    // Now pass the input and rules into the validator
+    	$validator = Validator::make($input, $rules);
+
+    	if ($validator->fails())
+    	{
+        	return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
+					->with('class', 'alert-danger')
+					->with('message', 'Error uploading file.');
+    	} else{
+        	$path = $activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
 			$upload = self::doupload($path);
 
 			$docu = new ActivityFis;
@@ -1434,11 +1461,9 @@ class ActivityController extends BaseController {
 			return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
 				->with('class', 'alert-success')
 				->with('message', 'Product information Sheet is successfuly uploaded!');
-		}else{
-			return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
-				->with('class', 'alert-danger')
-				->with('message', 'Error uploading file.');
-		}
+    	}
+
+		
 	}
 
 	public function fisdelete($id){
@@ -1467,9 +1492,23 @@ class ActivityController extends BaseController {
 	}
 
 	public function artworkupload($id){
+
 		$activity = Activity::findOrFail($id);
-		if(Input::hasFile('file')){
-			$path = $activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
+
+		$input = array('file' => Input::file('file'));
+		$rules = array(
+	        'file' => 'image'
+	    );
+	    // Now pass the input and rules into the validator
+    	$validator = Validator::make($input, $rules);
+
+    	if ($validator->fails())
+    	{
+        	return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
+				->with('class', 'alert-danger')
+				->with('message', 'Error uploading file.');
+    	} else{
+        	$path = $activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
 			$upload = self::doupload($path);
 
 			$docu = new ActivityArtwork;
@@ -1483,11 +1522,7 @@ class ActivityController extends BaseController {
 			return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
 				->with('class', 'alert-success')
 				->with('message', 'Product artwork is successfuly uploaded!');
-		}else{
-			return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
-				->with('class', 'alert-danger')
-				->with('message', 'Error uploading file.');
-		}
+    	}
 	}
 
 	public function artworkdelete($id){

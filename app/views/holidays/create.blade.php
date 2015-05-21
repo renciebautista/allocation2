@@ -21,12 +21,16 @@
 			{{ Form::label('desc', 'Description', array('class' => 'control-label')) }}
 			{{ Form::text('desc','',array('class' => 'form-control', 'placeholder' => 'Description')) }}
 		</div>
-
+		<div class="checkbox">
+	        <label>
+	          	<input type="checkbox"> Annually
+	        </label>
+      	</div>
 		<div class="form-group">
 			{{ Form::label('date', 'Date', array('class' => 'control-label')) }}
 			{{ Form::text('date','',array('class' => 'form-control', 'placeholder' => 'Date')) }}
 		</div>
-
+		
 		<div class="form-group">
 			{{ Form::submit('Submit', array('class' => 'btn btn-primary')) }}
 			{{ HTML::linkAction('HolidaysController@index', 'Back', array(), array('class' => 'btn btn-default')) }}

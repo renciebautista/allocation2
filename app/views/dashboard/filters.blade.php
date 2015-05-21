@@ -77,6 +77,8 @@
 
 $("#myform").on("submit", function () {
     $(this).find(":submit").prop("disabled", true);
+    $("#page").hide();
+	$("#pageloading").show();
 });
 
 var div = $("select#division").val();

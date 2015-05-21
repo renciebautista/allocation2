@@ -1,6 +1,6 @@
 @section('scripts')
 
-
+$("#updatescheme").disableButton();
 
 // calculator
 $('#calculate').on( "click", function() {
@@ -17,7 +17,7 @@ $('#myCalculator').on('show.bs.modal', function (e) {
 function getWeeks(){
 	var avg_wk_sales = accounting.unformat($('#weekly_sales').val()) || 0;
 	var allocs_in_cases = accounting.unformat($('#total_cases').val()) || 0;
-	$('#weeks_alloc').val(accounting.formatNumber(allocs_in_cases/avg_wk_sales));
+	$('#weeks_alloc').val(accounting.formatNumber(allocs_in_cases/avg_wk_sales,2) || 0);
 }
 
 getWeeks();
@@ -141,6 +141,9 @@ $("form").validate({
 	errorClass : "has-error",
 	rules: {
 		scheme_name: "required",
+		item_code: "required",
+		item_barcode: "required",
+		item_casecode: "required",
 		pr: "required",
 		srp_p: "required",
 		total_alloc: "required",
@@ -172,26 +175,15 @@ var table = $("#customer-allocation").dataTable({
 			"defaultContent": ""
 		} ],
 		"columns": [
-			//title will auto-generate th columns
-		   // { "data" : "id",               "title" : "Id", "searchable": false },
-			{ "data" : "group",         "title" : "Group", "searchable": true },
+			{ "data" : "group",         "title" : "Group", "searchable": true ,},
 			{ "data" : "area",         "title" : "Area", "searchable": true },
 			{ "data" : "sold_to",            "title" : "Sold To", "searchable": true },
 			{ "data" : "ship_to",     "title" : "Ship To", "searchable": true },
 			{ "data" : "channel",     "title" : "Channel", "searchable": true },
 			{ "data" : "outlet",     "title" : "Outlet", "searchable": true },
-			/*{ "data" : "sold_to_gsv",     "title" : "SOLD TO GSV", "searchable": true },
-			{ "data" : "sold_to_gsv_p",     "title" : "SOLD TO GSV %", "searchable": true },
-			{ "data" : "sold_to_alloc",     "title" : "SOLD TO ALLOC", "searchable": true },
-			{ "data" : "ship_to_gsv",     "title" : "SHIP TO GSV", "searchable": true },
-			{ "data" : "ship_to_alloc",     "title" : "SHIP TO ALLOC", "searchable": true },
-			{ "data" : "outlet_to_gsv",     "title" : "OUTLET GSV", "searchable": true },
-			{ "data" : "outlet_to_gsv_p",     "title" : "OUTLET ALLOC %", "searchable": true },
-			{ "data" : "outlet_to_alloc",     "title" : "OUTLET ALLOC", "searchable": true },
-			{ "data" : "multi",     "title" : "MULTI", "searchable": false },*/
-			{ "data" : "computed_alloc",     "title" : "COMPUTED ALLOC", "searchable": false },
-			{ "data" : "force_alloc",     "title" : "FORCED ALLOC", "searchable": false },
-			{ "data" : "final_alloc",     "title" : "FINAL ALLOC", "searchable": false }
+			{ "data" : "computed_alloc",     "title" : "COMPUTED ALLOC", "searchable": false,"className": "right"},
+			{ "data" : "force_alloc",     "title" : "FORCED ALLOC", "searchable": false,"className": "right"},
+			{ "data" : "final_alloc",     "title" : "FINAL ALLOC", "searchable": false,"className": "right"}
 		],
 		"createdRow" : function( row, data, index ) {
 			if(((data.customer_id === null) && (data.shipto_id === null)) || ((data.customer_id !== null) && (data.shipto_id === null))){
@@ -230,12 +222,13 @@ var table = $("#customer-allocation").dataTable({
 				if(index == 5){
 					$(this).attr('field', 'outlet');
 				}
-				if(index == 17){
+				if(index == 8){
 					$(this).attr('field', 'alloc');
 				}
 			}); 
 		}
 	});
+
 new $.fn.dataTable.FixedColumns( table, {
 	leftColumns: 6
 } );

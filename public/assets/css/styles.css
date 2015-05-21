@@ -100,7 +100,9 @@
 .allocation_total .table > tbody > tr > td:last-child {
 	text-align: right;
 }
-
+.right{
+	text-align: right;
+}
 
 
 /*multi select*/

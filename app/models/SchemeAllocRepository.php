@@ -52,7 +52,11 @@ class SchemeAllocRepository
             }
             $scheme_alloc->sold_to_alloc = $_sold_to_alloc;
             $scheme_alloc->multi = $c_multi;
-            $scheme_alloc->computed_alloc = $_sold_to_alloc;
+            $scheme_alloc->computed_alloc = 0;
+            if($_sold_to_alloc > 0){
+                $scheme_alloc->computed_alloc = $_sold_to_alloc;
+            }
+            
             if(!$activity->allow_force){
                 $scheme_alloc->force_alloc = 0;
                 $scheme_alloc->final_alloc = $_sold_to_alloc;
@@ -126,7 +130,11 @@ class SchemeAllocRepository
 
                     $shipto_alloc->ship_to_alloc = $_shipto_alloc;
                     $shipto_alloc->multi = $s_multi;
-                    $shipto_alloc->computed_alloc = $_shipto_alloc;
+                    $shipto_alloc->computed_alloc = 0;
+                    if($_shipto_alloc > 0){
+                        $shipto_alloc->computed_alloc = $_shipto_alloc;
+                    }
+                    
                     if(!$activity->allow_force){
                         $shipto_alloc->force_alloc = 0;
                         $shipto_alloc->final_alloc = $_shipto_alloc;
@@ -193,7 +201,11 @@ class SchemeAllocRepository
                                 $others -= $_account_alloc;
                             }
                             $account_alloc->multi = $p/100;
-                            $account_alloc->computed_alloc = $_account_alloc;
+                            $account_alloc->computed_alloc = 0;
+                            if($_account_alloc > 0){
+                                $account_alloc->computed_alloc = $_account_alloc;
+                            }
+                            
 
                             if(!$activity->allow_force){
                                 $account_alloc->force_alloc = 0;
@@ -245,7 +257,11 @@ class SchemeAllocRepository
                             if($others > 0){
                                 $_others_alloc = $others;
                             }
-                            $others_alloc->outlet_to_alloc = $_others_alloc;
+                            $others_alloc->outlet_to_alloc = 0;
+                            if($_others_alloc > 0){
+                                $others_alloc->outlet_to_alloc = $_others_alloc;
+                            }
+                            
 
                             if(($_others_alloc > 0) && ($account_alloc->final_alloc > 0)){
                                 $others_alloc->multi = $_others_alloc/$account_alloc->final_alloc;

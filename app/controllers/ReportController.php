@@ -70,13 +70,20 @@ class ReportController extends \BaseController {
 			// // Product Information Sheet
 			$path = '/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
 			if(!empty($pispermit)){
-				$pis = Excel::selectSheets('Output')->load(storage_path().$path."/".$pispermit->hash_name)->get();
+				try {
+					$pis = Excel::selectSheets('Output')->load(storage_path().$path."/".$pispermit->hash_name)->get();
+				} catch (Exception $e) {
+					return View::make('shared.invalidpis');
+				}
+
 			}else{
 				$pis = array();
 			}
-			
+
 			return View::make('shared.preview', compact('activity' ,'planner','budgets','nobudgets','schemes','skuinvolves','materials',
-				'fdapermit', 'networks','artworks', 'pis' , 'areas','channels'));
+					'fdapermit', 'networks','artworks', 'pis' , 'areas','channels'));
+			
+			
 		}
 		
 

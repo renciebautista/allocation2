@@ -61,19 +61,12 @@ class SchemeController extends \BaseController {
 				$other_cost = str_replace(",", "", Input::get('other_cost'));
 				$scheme->other_cost = $other_cost;
 
-				// $scheme->ulp =  str_replace(",", "", Input::get('ulp'));
 				$ulp = $srp_p + $other_cost;
 				$scheme->ulp = $ulp;
-				// $scheme->cost_sale = str_replace(",", "", Input::get('cost_sale'));
 				$scheme->cost_sale = ($ulp/$pr) * 100;
-
 				$scheme->quantity = str_replace(",", "", Input::get('total_alloc'));
-
 				$activitytype = ActivityType::find($activity->activity_type_id);
-
 				$scheme->deals = str_replace(",", "", Input::get('deals'));
-				// $scheme->total_deals = str_replace(",", "", Input::get('total_deals'));
-				// $scheme->total_cases = str_replace(",", "", Input::get('total_cases'));
 
 				if($activitytype->uom == "CASES"){
 					$scheme->total_deals = $scheme->quantity * $scheme->deals;
@@ -88,7 +81,7 @@ class SchemeController extends \BaseController {
 				$tts_r = $scheme->quantity * $scheme->deals * $srp_p;;
 				$scheme->tts_r =  $tts_r;
 				// $scheme->pe_r = str_replace(",", "", Input::get('pe_r'));
-				$pe_r = $scheme->quantity * $other_cost;;
+				$pe_r = $scheme->total_deals * $other_cost;;
 				$scheme->pe_r = $pe_r;
 				// $scheme->total_cost = str_replace(",", "", Input::get('total_cost'));
 				$scheme->total_cost = $tts_r + $pe_r;
@@ -274,28 +267,47 @@ class SchemeController extends \BaseController {
 			DB::transaction(function() use ($id)  {
 
 				$scheme = Scheme::find($id);
-
+				$activity = Activity::find($scheme->activity_id);
 				$scheme->name = strtoupper(Input::get('scheme_name'));
 				$scheme->item_code = Input::get('item_code');
 				$scheme->item_barcode = Input::get('item_barcode');
 				$scheme->item_casecode = Input::get('item_casecode');
+				$pr = str_replace(",", "", Input::get('pr'));
+				$scheme->pr = $pr;
+				$srp_p = str_replace(",", "", Input::get('srp_p'));
+				$scheme->srp_p = $srp_p;
+				$other_cost = str_replace(",", "", Input::get('other_cost'));
+				$scheme->other_cost = $other_cost;
 
-				$scheme->pr =  str_replace(",", "", Input::get('pr'));
-				$scheme->srp_p = str_replace(",", "", Input::get('srp_p'));
-				$scheme->other_cost =str_replace(",", "", Input::get('other_cost'));
-
-				$scheme->ulp =  str_replace(",", "", Input::get('ulp'));
-				$scheme->cost_sale = str_replace(",", "", Input::get('cost_sale'));
-
+				$ulp = $srp_p + $other_cost;
+				$scheme->ulp = $ulp;
+				$scheme->cost_sale = ($ulp/$pr) * 100;
 				$scheme->quantity = str_replace(",", "", Input::get('total_alloc'));
-				$scheme->deals = str_replace(",", "", Input::get('deals'));
-				$scheme->total_deals = str_replace(",", "", Input::get('total_deals'));
-				$scheme->total_cases = str_replace(",", "", Input::get('total_cases'));
+				$activitytype = ActivityType::find($activity->activity_type_id);
 
-				$scheme->tts_r =  str_replace(",", "", Input::get('tts_r'));
-				$scheme->pe_r = str_replace(",", "", Input::get('pe_r'));
-				$scheme->total_cost = str_replace(",", "", Input::get('total_cost'));
-				$scheme->user_id = Auth::id();
+				$scheme->deals = str_replace(",", "", Input::get('deals'));
+				if($activitytype->uom == "CASES"){
+					$scheme->total_deals = $scheme->quantity * $scheme->deals;
+					$scheme->total_cases = $scheme->quantity;
+				}else{
+					$scheme->total_deals = $scheme->quantity;
+					$scheme->total_cases = round($scheme->quantity/ $scheme->deals);
+				}
+				
+				// $scheme->tts_r =  str_replace(",", "", Input::get('tts_r'));
+				$tts_r = $scheme->quantity * $scheme->deals * $srp_p;;
+				$scheme->tts_r =  $tts_r;
+				// $scheme->pe_r = str_replace(",", "", Input::get('pe_r'));
+				$pe_r = $scheme->total_deals * $other_cost;;
+				$scheme->pe_r = $pe_r;
+				// $scheme->total_cost = str_replace(",", "", Input::get('total_cost'));
+				$scheme->total_cost = $tts_r + $pe_r;
+
+				$scheme->final_total_deals = $scheme->total_deal;
+				$scheme->final_total_cases = $scheme->total_cases;
+				$scheme->final_tts_r =$scheme->tts_r;
+				$scheme->final_pe_r = $scheme->pe_r;
+				$scheme->final_total_cost = $scheme->total_cost;
 
 				$scheme->update();
 
@@ -340,7 +352,7 @@ class SchemeController extends \BaseController {
 					$final_tts = $final_alloc * $scheme->srp_p; 
 				}
 				
-				$final_pe = $final_alloc *  $scheme->other_cost;
+				$final_pe = $total_deals *  $scheme->other_cost;
 				
 				$scheme2->final_alloc = $final_alloc;
 				$scheme2->final_total_deals = $total_deals;
@@ -409,7 +421,7 @@ class SchemeController extends \BaseController {
 					$final_tts = $final_alloc * $scheme->srp_p; 
 				}
 				
-				$final_pe = $final_alloc *  $scheme->other_cost;
+				$final_pe = $total_deals *  $scheme->other_cost;
 				
 				$scheme->final_alloc = $final_alloc;
 				$scheme->final_total_deals = $total_deals;
@@ -490,6 +502,16 @@ class SchemeController extends \BaseController {
 		    ->edit_column('outlet_to_alloc', function($row) {
 				if($row->outlet_to_alloc != 0){
 					return number_format($row->outlet_to_alloc);
+				}
+		    })
+		    ->edit_column('computed_alloc', function($row) {
+				if($row->computed_alloc > -1){
+					return number_format($row->computed_alloc);
+				}
+		    })
+		    ->edit_column('forced_alloc', function($row) {
+				if($row->force_alloc > -1){
+					return number_format($row->force_alloc);
 				}
 		    })
 		    ->edit_column('final_alloc', function($row) {

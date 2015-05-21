@@ -137,7 +137,7 @@ Route::get('print', function(){
 	// set document information
 	$pdf->SetMargins(13, 35,13);
 
-	$pdf->AddPage();
+	// $pdf->AddPage();
 	$header = '<div style="border-bottom: .5px solid black;padding-bottom:10px;">
 				<table >
 					<tr>

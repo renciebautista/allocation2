@@ -106,7 +106,7 @@ class SchemeAllocation extends \Eloquent {
 
 			if(!empty($childs)){
 				foreach ($childs as $child) {
-					$child->final_alloc = $customer_alloc * $child->multi;
+					$child->final_alloc = $alloc->final_alloc * $child->multi;
 					$child->update();
 
 					$outlets = self::where('customer_id',$customer_id)
