@@ -237,7 +237,7 @@ class SchemeController extends \BaseController {
 				return View::make('scheme.read_only',compact('scheme', 'activity', 'skus', 'involves', 'sel_skus', 'sel_hosts',
 					'sel_premuim',
 					'allocations', 'total_sales', 'qty','id', 'summary', 'big10', 'gaisanos', 'nccc', 'scheme_customers',
-					 'total_gsv'));
+					 'total_gsv','sku', 'host', 'premuim'));
 			}
 		}
 

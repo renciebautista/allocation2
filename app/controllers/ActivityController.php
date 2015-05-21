@@ -286,9 +286,9 @@ class ActivityController extends BaseController {
 			$budgets = ActivityBudget::getBudgets($activity->id);
 			$nobudgets = ActivityNobudget::getBudgets($activity->id);
 			$schemes = Scheme::getList($activity->id);
-			$scheme_customers = SchemeAllocation::getCustomers($activity->id);
+			// $scheme_customers = SchemeAllocation::getCustomers($activity->id);
 			$force_allocs = ForceAllocation::getlist($activity->id);
-			$scheme_allcations = SchemeAllocation::getAllocation($activity->id);
+			// $scheme_allcations = SchemeAllocation::getAllocation($activity->id);
 			$materials = ActivityMaterial::getList($activity->id);
 			// attachments
 			$fdapermits = ActivityFdapermit::getList($activity->id);
@@ -344,11 +344,11 @@ class ActivityController extends BaseController {
 			$budgets = ActivityBudget::getBudgets($activity->id);
 			$nobudgets = ActivityNobudget::getBudgets($activity->id);
 			$schemes = Scheme::getList($activity->id);
-			$scheme_customers = SchemeAllocation::getCustomers($activity->id);
+			// $scheme_customers = SchemeAllocation::getCustomers($activity->id);
 			$force_allocs = ForceAllocation::getlist($activity->id);
-			$scheme_customers = SchemeAllocation::getCustomers($activity->id);
+			// $scheme_customers = SchemeAllocation::getCustomers($activity->id);
 			$force_allocs = ForceAllocation::getlist($activity->id);
-			$scheme_allcations = SchemeAllocation::getAllocation($activity->id);
+			// $scheme_allcations = SchemeAllocation::getAllocation($activity->id);
 			$materials = ActivityMaterial::getList($activity->id);
 			// attachments
 			$fdapermits = ActivityFdapermit::getList($activity->id);
@@ -1627,6 +1627,12 @@ class ActivityController extends BaseController {
 
 	public function allocsummary($id){
 		$filepath = storage_path().'/uploads/tempfiles/Allocation Summary.xls';
+		Excel::create('Users', function($excel) {
+	      	$excel->sheet('Users', function($sheet) {
+	      	  	$sheet->loadView('activity.alloc_summary',compact(varname));
+	      	});
+	    })->download('xls');
+
 		// $scheme_allcations = SchemeAllocation::getExportAllocations($id);
 		// // Helper::print_r($scheme_allcations);
 
@@ -1640,13 +1646,13 @@ class ActivityController extends BaseController {
 		// 	// });
 		// }) -> download('xls');
 
-		Excel::load($filepath, function($reader) 
-		{
-		    $reader->sheet('data',function($sheet) 
-		    {
+		// Excel::load($filepath, function($reader) 
+		// {
+		//     $reader->sheet('data',function($sheet) 
+		//     {
 		        
-		    });
-		})->download('xls');
+		//     });
+		// })->download('xls');
 
 		// return Response::download($filepath);
 	}
