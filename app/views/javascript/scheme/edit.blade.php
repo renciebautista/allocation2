@@ -255,7 +255,7 @@ $("form[id='updateAlloc']").on("submit",function(e){
 	$.ajax({
 		url: url,
 		data: form.serialize(),
-		method: method,
+		method: "POST",
 		dataType: "json",
 		success: function(data){
 			if(data.success == "1"){
