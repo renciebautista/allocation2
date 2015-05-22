@@ -1,4 +1,17 @@
+
+
 $(document).ready(function(){
+
+	$.fn.disableButton = function() {
+      	$(this).on("submit", function () {
+			if($(this).valid()){
+				$(this).find(":submit").prop("disabled", true);
+				$("#page").hide();
+				$("#pageloading").show();
+			}
+		});
+   }; 
+   
 	$.fn.select_chain = function(option)
 	{	
 		option.chosen = option.chosen || false;

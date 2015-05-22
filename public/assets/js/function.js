@@ -26,14 +26,3 @@ function GetSelectText(select) {
 	return foo;
 }
 
-(function( $ ){
-   $.fn.disableButton = function() {
-      	$(this).on("submit", function () {
-			if($(this).valid()){
-				$(this).find(":submit").prop("disabled", true);
-				$("#page").hide();
-				$("#pageloading").show();
-			}
-		});
-   }; 
-})( jQuery );
