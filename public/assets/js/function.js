@@ -32,7 +32,6 @@ function GetSelectText(select) {
 			if($(this).valid()){
 				$(this).find(":submit").prop("disabled", true);
 				$("#page").hide();
-				$("#pageloading").find("h3").text("Please wait while page is submitting....");
 				$("#pageloading").show();
 			}
 		});
