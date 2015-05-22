@@ -165,7 +165,6 @@ $("form").validate({
 
 var table = $("#customer-allocation").dataTable({
 		"scrollY": "500px",
-		"scrollX": true,
 		"scrollCollapse": true,
 		"paging": false,
 		"bSort": false,
@@ -175,12 +174,12 @@ var table = $("#customer-allocation").dataTable({
 			"defaultContent": ""
 		} ],
 		"columns": [
-			{ "data" : "group",         "title" : "Group", "searchable": true ,},
-			{ "data" : "area",         "title" : "Area", "searchable": true },
-			{ "data" : "sold_to",            "title" : "Sold To", "searchable": true },
-			{ "data" : "ship_to",     "title" : "Ship To", "searchable": true },
-			{ "data" : "channel",     "title" : "Channel", "searchable": true },
-			{ "data" : "outlet",     "title" : "Outlet", "searchable": true },
+			{ "data" : "group",         "title" : "GROUP", "searchable": true ,},
+			{ "data" : "area",         "title" : "AREA", "searchable": true },
+			{ "data" : "sold_to",            "title" : "SOLD TO", "searchable": true },
+			{ "data" : "ship_to",     "title" : "SHIP TO", "searchable": true },
+			{ "data" : "channel",     "title" : "CHANNEL", "searchable": true },
+			{ "data" : "outlet",     "title" : "OUTLET", "searchable": true },
 			{ "data" : "computed_alloc",     "title" : "COMPUTED ALLOC", "searchable": false,"className": "right"},
 			{ "data" : "force_alloc",     "title" : "FORCED ALLOC", "searchable": false,"className": "right"},
 			{ "data" : "final_alloc",     "title" : "FINAL ALLOC", "searchable": false,"className": "right"}
@@ -229,9 +228,9 @@ var table = $("#customer-allocation").dataTable({
 		}
 	});
 
-new $.fn.dataTable.FixedColumns( table, {
+/*new $.fn.dataTable.FixedColumns( table, {
 	leftColumns: 6
-} );
+} );*/
 
 table.on('dblclick',"tr[data-link]",function() {
 	$(this).find('td').each (function() {
