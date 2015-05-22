@@ -34,7 +34,7 @@ class AllocationRepository  {
 		$customers =  DB::table('customers')
 			->select('areas.group_code as group_code','group_name','area_name',
 				'customer_name','customer_code','customers.area_code as area_code',
-				'customers.area_code_two as area_code_two','multiplier','active')
+				'customers.area_code_two as area_code_two','multiplier','active', 'from_dt')
 			->join('areas', 'customers.area_code', '=', 'areas.area_code')
 			->join('groups', 'areas.group_code', '=', 'groups.group_code')
 			->where('customers.active', 1)
@@ -54,7 +54,7 @@ class AllocationRepository  {
 
 		// get all account
 		$_accounts = DB::table('accounts')
-			->select('accounts.id','ship_to_code','area_code', 'account_name', 'channel_name','accounts.account_group_code')
+			->select('accounts.id','ship_to_code','area_code', 'account_name', 'channel_name','accounts.account_group_code','channels.channel_code')
 			->join('channels', 'accounts.channel_code', '=', 'channels.channel_code')
 			->join('account_groups', 'accounts.account_group_code', '=', 'account_groups.account_group_code')
 			->where('active',1)
@@ -164,7 +164,7 @@ class AllocationRepository  {
 					->select('area_code','customer_code','account_name','outlet_code','gsv')
 					->join('sub_channels', 'outlet_sales.coc_03_code', '=', 'sub_channels.coc_03_code')
 					->whereIn('child_sku_code', $child_skus)
-					->whereIn('channel_code', $channels)
+					// ->whereIn('channel_code', $channels)
 					->get();	
 
 		$data = array();
@@ -202,37 +202,67 @@ class AllocationRepository  {
 													($_outlet_sale->account_name == $_outlet->account_name) &&
 													($_outlet_sale->customer_code == $_outlet->customer_code)){
 
-													if(in_array($customer->group_code, $_grps)){
-														if(!empty($_areas[$customer->group_code])){
-															if(in_array($customer->area_code, $_areas[$customer->group_code])){
-																if(!empty($_cust[$customer->area_code])){
-																	if(in_array($customer->customer_code, $_cust[$customer->area_code])){
-																		if(!empty($_shp[$customer->customer_code])){
-																			if(in_array($_shipto->ship_to_code, $_shp[$customer->customer_code])){
-																				if(!empty($_otlts[$_shipto->ship_to_code])){
-																					if(in_array($_account->id, $_otlts[$_shipto->ship_to_code])){
+													if($customer->from_dt == 1){
+														if(in_array($customer->group_code, $_grps)){
+															if(!empty($_areas[$customer->group_code])){
+																if(in_array($customer->area_code, $_areas[$customer->group_code])){
+																	if(!empty($_cust[$customer->area_code])){
+																		if(in_array($customer->customer_code, $_cust[$customer->area_code])){
+																			if(!empty($_shp[$customer->customer_code])){
+																				if(in_array($_shipto->ship_to_code, $_shp[$customer->customer_code])){
+																					if(!empty($_otlts[$_shipto->ship_to_code])){
+																						if(in_array($_account->id, $_otlts[$_shipto->ship_to_code])){
+																							$gsv +=  $_outlet_sale->gsv;
+																						}
+																					}else{
 																						$gsv +=  $_outlet_sale->gsv;
-																						
+																					}
+																				}
+																			}else{
+																				$gsv +=  $_outlet_sale->gsv;
+																			}
+																		}
+																	}else{
+																		$gsv +=  $_outlet_sale->gsv;
+																	}
+																}
+															}else{
+																$gsv +=  $_outlet_sale->gsv;
+															}
+														}
+													}else{
+														if(in_array($_account->channel_code, $channels)){
+															if(in_array($customer->group_code, $_grps)){
+																if(!empty($_areas[$customer->group_code])){
+																	if(in_array($customer->area_code, $_areas[$customer->group_code])){
+																		if(!empty($_cust[$customer->area_code])){
+																			if(in_array($customer->customer_code, $_cust[$customer->area_code])){
+																				if(!empty($_shp[$customer->customer_code])){
+																					if(in_array($_shipto->ship_to_code, $_shp[$customer->customer_code])){
+																						if(!empty($_otlts[$_shipto->ship_to_code])){
+																							if(in_array($_account->id, $_otlts[$_shipto->ship_to_code])){
+																								$gsv +=  $_outlet_sale->gsv;
+																							}
+																						}else{
+																							$gsv +=  $_outlet_sale->gsv;
+																						}
 																					}
 																				}else{
 																					$gsv +=  $_outlet_sale->gsv;
-																					
 																				}
 																			}
 																		}else{
 																			$gsv +=  $_outlet_sale->gsv;
-																			
 																		}
 																	}
 																}else{
 																	$gsv +=  $_outlet_sale->gsv;
-																	
 																}
 															}
-														}else{
-															$gsv +=  $_outlet_sale->gsv;
 														}
+														
 													}
+													
 												}
 											}
 										}
