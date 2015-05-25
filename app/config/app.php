@@ -130,7 +130,7 @@ return array(
 		'Dinesh\Barcode\BarcodeServiceProvider',
 		'Bllim\Datatables\DatatablesServiceProvider',
 		'KevBaldwyn\Image\Providers\Laravel\ImageServiceProvider',
-		'Barryvdh\Snappy\ServiceProvider',
+		'Maxxscho\LaravelTcpdf\LaravelTcpdfServiceProvider',
 	),
 
 	/*
@@ -206,7 +206,6 @@ return array(
 		'Datatables'      	=> 'Bllim\Datatables\Facade\Datatables',
 		'Carbon'            => 'Carbon\Carbon',
 		'Image' 			=> 'KevBaldwyn\Image\Providers\Laravel\Facades\Image',
-		'PDF' => 'Barryvdh\Snappy\Facades\SnappyPdf'
 	),
 
 );

@@ -54,7 +54,7 @@ Route::get('snappy', function(){
 
 
 Route::get('print', function(){
-	$activity = Activity::find(1);
+	$activity = Activity::find(2);
 	if(!empty($activity)){
 		$planner = ActivityPlanner::where('activity_id', $activity->id)->first();
 		$budgets = ActivityBudget::with('budgettype')
