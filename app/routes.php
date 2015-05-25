@@ -47,39 +47,9 @@ use Imagecow\Image;
 // 	}
 // 	return View::make('customer',compact('data'));
 // });
-Route::get('update', function(){
-	$schemes = Scheme::where('activity_id',1)->get();
-	if(count($schemes) > 0){
-		foreach ($schemes as $scheme) {
-			SchemeAllocRepository::updateAllocation($scheme);
-		// 	$scheme2 = Scheme::find($scheme->id);
-		// 	$final_alloc = SchemeAllocation::finalallocation($scheme->id);
-		// 	$total_cases = 0;
-		// 	$total_deals = 0;
-		// 	if($scheme->activity->activitytype->uom == 'CASES'){
-		// 		$total_deals = $final_alloc * $scheme->deals;
-		// 		$total_cases = $final_alloc;
-		// 		$final_tts = $final_alloc * $scheme->deals * $scheme->srp_p; 
-		// 	}else{
-				
-		// 		if($final_alloc > 0){
-		// 			$total_cases = round($final_alloc/$scheme->deals);
-		// 			$total_deals = $final_alloc;
-		// 		}
-		// 		$final_tts = $final_alloc * $scheme->srp_p; 
-		// 	}
-			
-		// 	$final_pe = $final_alloc *  $scheme->other_cost;
-			
-		// 	$scheme2->final_alloc = $final_alloc;
-		// 	$scheme2->final_total_deals = $total_deals;
-		// 	$scheme2->final_total_cases = $total_cases;
-		// 	$scheme2->final_tts_r = $final_tts;
-		// 	$scheme2->final_pe_r = $final_pe;
-		// 	$scheme2->final_total_cost = $final_tts+$final_pe;
-		// 	$scheme2->update();
-		}
-	}
+Route::get('snappy', function(){
+	$pdf = PDF::loadView('pdf.invoice');
+	return $pdf->download('invoice.pdf');
 });
 
 
@@ -96,6 +66,7 @@ Route::get('print', function(){
 			->get();
 
 		$schemes = Scheme::getList($activity->id);
+		$schemes = Scheme::where('id', 1)->get();
 
 		$skuinvolves = array();
 		foreach ($schemes as $scheme) {
@@ -133,7 +104,7 @@ Route::get('print', function(){
 
 		// start of pdf
 		// create new PDF document
-	$pdf = new ActivityPDF($orientation='P', $unit='mm', $format='LETTER', $unicode=true, $encoding='UTF-8', $diskcache=false, $pdfa=false);	
+	$pdf = new ActivityPDF($orientation='P', $unit='mm', $format='LETTER', $unicode=false, $encoding='ISO-8859-1', $diskcache=false, $pdfa=false);	
 	// set document information
 	$pdf->SetMargins(13, 35,13);
 
