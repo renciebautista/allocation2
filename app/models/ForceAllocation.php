@@ -10,6 +10,7 @@ class ForceAllocation extends \Eloquent {
 			->join('areas', 'force_allocations.area_code', '=', 'areas.area_code')
 			->join('groups', 'areas.group_code', '=', 'groups.group_code')
 			->orderBy('groups.id')
+			->orderBy('areas.id')
 			->get();
 		;
 	}
