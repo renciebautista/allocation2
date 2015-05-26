@@ -9,6 +9,7 @@ class ForceAllocation extends \Eloquent {
 			->where('activity_id',$id)
 			->join('areas', 'force_allocations.area_code', '=', 'areas.area_code')
 			->join('groups', 'areas.group_code', '=', 'groups.group_code')
+			->orderBy('groups.id')
 			->get();
 		;
 	}

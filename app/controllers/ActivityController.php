@@ -347,7 +347,6 @@ class ActivityController extends BaseController {
 			// $scheme_customers = SchemeAllocation::getCustomers($activity->id);
 			$force_allocs = ForceAllocation::getlist($activity->id);
 			// $scheme_customers = SchemeAllocation::getCustomers($activity->id);
-			$force_allocs = ForceAllocation::getlist($activity->id);
 			// $scheme_allcations = SchemeAllocation::getAllocation($activity->id);
 			$materials = ActivityMaterial::getList($activity->id);
 			// attachments
