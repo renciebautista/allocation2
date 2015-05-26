@@ -212,38 +212,32 @@ class SchemeController extends \BaseController {
 		// Helper::print_r($allocations);
 		$total_sales = $_allocation->total_gsv();
 
-		$summary = $_allocation->allocation_summary();
-		$big10 = $_allocation->account_group("AG4");
-		$gaisanos = $_allocation->account_group("AG5");
-		$nccc = $_allocation->account_group("AG6");
+		// $summary = $_allocation->allocation_summary();
+		// $big10 = $_allocation->account_group("AG4");
+		// $gaisanos = $_allocation->account_group("AG5");
+		// $nccc = $_allocation->account_group("AG6");
+
+		$ac_groups = AccountGroup::where('show_in_summary',1)->get();
 
 		$total_gsv = SchemeAllocation::totalgsv($id);
 
 		if(Auth::user()->hasRole("PROPONENT")){
 			if($activity->status_id < 4){
 				return View::make('scheme.edit',compact('scheme', 'activity', 'skus', 'involves', 'sel_skus', 'sel_hosts',
-					'sel_premuim',
-					'allocations', 'total_sales', 'qty','id', 'summary', 'big10', 'gaisanos', 'nccc', 'scheme_customers',
-					 'total_gsv'));
+					'sel_premuim','allocations', 'total_sales', 'qty','id','total_gsv', 'ac_groups'));
 			}else{
 				return View::make('scheme.read_only',compact('scheme', 'activity', 'skus', 'involves', 'sel_skus', 'sel_hosts',
-					'sel_premuim',
-					'allocations', 'total_sales', 'qty','id', 'summary', 'big10', 'gaisanos', 'nccc', 'scheme_customers',
-					 'total_gsv','sku', 'host', 'premuim'));
+					'sel_premuim','allocations', 'total_sales', 'qty','id', 'summary', 'total_gsv','sku', 'host', 'premuim','ac_groups'));
 			}
 		}
 
 		if(Auth::user()->hasRole("PMOG PLANNER")){
 			if($activity->status_id == 4){
 				return View::make('scheme.edit',compact('scheme', 'activity', 'skus', 'involves', 'sel_skus', 'sel_hosts',
-					'sel_premuim',
-					'allocations', 'total_sales', 'qty','id', 'summary', 'big10', 'gaisanos', 'nccc', 'scheme_customers',
-					 'total_gsv'));
+					'sel_premuim','allocations', 'total_sales', 'qty','id', 'summary', 'total_gsv','ac_groups'));
 			}else{
 				return View::make('scheme.read_only',compact('scheme', 'activity', 'skus', 'involves', 'sel_skus', 'sel_hosts',
-					'sel_premuim',
-					'allocations', 'total_sales', 'qty','id', 'summary', 'big10', 'gaisanos', 'nccc', 'scheme_customers',
-					 'total_gsv','sku', 'host', 'premuim'));
+					'sel_premuim','allocations', 'total_sales', 'qty','id', 'summary', 'total_gsv','sku', 'host', 'premuim','ac_groups'));
 			}
 		}
 

@@ -21,11 +21,19 @@ class JobController extends \BaseController {
 	 */
 	public function create()
 	{
-		// $job_id = Queue::push('JobController@run',array('string' => 'Hello World '));
-		$date = Carbon::now()->addMinutes(15);
-		$job_id = Queue::later($date, Artisan::call('make:pdf'), array('string' => 'Hello World '));
+		$job_id = Queue::push('JobController@run',array('string' => 'Hello World '));
     	Job::create(array('job_id' => $job_id));
     	return Redirect::route('job.index');
+		// $placeId = 1;
+		// Queue::push(function($job) use ($placeId)
+		// {
+		//     Artisan::call('make:pdf', [$placeId]);
+
+		//     $job->delete();
+		// });
+
+		// Job::create(array('job_id' => $job_id));
+  //   	return Redirect::route('job.index');
 	}
 
 
@@ -98,7 +106,8 @@ class JobController extends \BaseController {
 
 	    $ejob->save();
 
-	    File::append('public/queue.txt',$data['string'].$job_id.PHP_EOL); //Add content to file
+	    // File::append('public/queue.txt',$data['string'].$job_id.PHP_EOL); //Add content to file
+	    Artisan::call('make:pdf');
 
 	    $ejob->status = 'finished'; //Set job status to finished
 
