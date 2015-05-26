@@ -1,5 +1,6 @@
 <?php
 use Imagecow\Image;
+// Queue::getIron()->ssl_verifypeer = false;
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -47,14 +48,28 @@ use Imagecow\Image;
 // 	}
 // 	return View::make('customer',compact('data'));
 // });
-Route::get('snappy', function(){
-	$pdf = PDF::loadView('pdf.invoice');
-	return $pdf->download('invoice.pdf');
-});
+// Route::get('/', function(){
+// 	$placeId = 1;
+// 	Queue::push(function($job) use ($placeId)
+// 	{
+// 	    Artisan::call('make:pdf', [$placeId]);
+// 	    $job->delete();
+// 	});
 
+// });
+
+// Route::get("test", function(){
+// 	Artisan::queue('make:pdf', array('message' => 'Hello World'));
+// });
+
+
+// Route::post('queue/receive', function()
+// {
+//     return Queue::marshal();
+// });
 
 Route::get('print', function(){
-	$activity = Activity::find(2);
+	$activity = Activity::find(1);
 	if(!empty($activity)){
 		$planner = ActivityPlanner::where('activity_id', $activity->id)->first();
 		$budgets = ActivityBudget::with('budgettype')
@@ -907,6 +922,7 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('holidays/getlist', 'HolidaysController@getlist');
 	Route::resource('holidays', 'HolidaysController');
 
+	Route::resource('job','JobController');
 
 	Route::get('images/{cycle_id}/{type_id}/{activity_id}/{name}', function($cycle_id = null,$type_id = null,$activity_id = null,$name = null)
 	{

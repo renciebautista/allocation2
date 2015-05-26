@@ -1,5 +1,5 @@
 <div class="panel panel-primary">
-	<div class="panel-heading">Allocation Summary</div>
+	<div class="panel-heading">Allocation Details</div>
 	<div class="panel-body">
 		<?php 
 			$groups_alloc = array();
@@ -9,10 +9,60 @@
 			$nc = array();
 			$total_gsv = 0;
 		 ?>
-
+		<div class="row mytable">
+			<div class="col-lg-12">
+				<div id="allocation" class="table-responsive">
+					<table id="customer-allocation" class="table table-condensed table-bordered display compact ">
+						<thead>
+							<tr>
+								<th>Group</th>
+								<th>Area</th>
+								<th>Sold To</th>
+								<th>Ship To</th>
+								<th>Channel</th>
+								<th>Outlet</th>
+								<th class="rotate-45"><div><span>SOLD TO GSV</span></div></th>
+								<th class="rotate-45"><div><span>SOLD TO GSV %</span></div></th>
+								<th class="rotate-45"><div><span>SOLD TO ALLOC</span></div></th>
+								<th class="rotate-45"><div><span>SHIP TO GSV</span></div></th>
+								<th class="rotate-45"><div><span>SHIP TO ALLOC</span></div></th>
+								<th class="rotate-45"><div><span>OUTLET GSV</span></div></th>
+								<th class="rotate-45"><div><span>OUTLET ALLOC %</span></div></th>
+								<th class="rotate-45"><div><span>OUTLET ALLOC</span></div></th>
+								<th class="rotate-45"><div><span>ALLOCATION</span></div></th>
+								<th class="rotate-45"><div><span>COMPUTED ALLOCATION</span></div></th>
+								<th class="rotate-45"><div><span>VETTED ALLOCATION</span></div></th>
+								<th class="rotate-45"><div><span>FINAL ALLOCATION</span></div></th>
+							</tr>
+						</thead>
+						<tbody>
+							
+							@if(count($allocations) == 0)
+							<tr>
+								<td colspan="16">No record found!</td>
+							</tr>
+							@else
 							<?php $total_alloc = 0; ?>
 							@foreach($allocations as $customer)
 							<?php $alloc = 0; ?>
+							<tr class="info">
+								<td>{{ $customer->group_name }}</td>
+								<td>{{ $customer->area_name }}</td>
+								<td>{{ $customer->customer_name }}</td>
+								<td>{{ $customer->customer_name }} TOTAL</td>
+								<td></td>
+								<td></td>
+								<td>
+									<?php 
+									if($customer->gsv > 0){
+										$total_gsv += $customer->gsv;
+									}
+									?>
+									{{ number_format($customer->gsv,2) }}
+								</td>
+								@if( $customer->gsv > 0)
+								<td> {{ round(($customer->gsv/$total_sales) * 100,2) }} %</td>
+								<td>
 									<?php 
 										$alloc = round(($customer->gsv/$total_sales) * $qty);
 										$total_alloc += $alloc;
@@ -30,12 +80,42 @@
 										}
 										
 									 ?>
+									{{ number_format($alloc) }}
+								</td>
+								@else
+								<td> 0.00 %</td>
+								<td> 0 </td>
+								@endif
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+							</tr>
+								
 								@if(!empty($customer->shiptos))
 								@foreach($customer->shiptos as $shipto)
 								<?php $shipto_alloc = 0; ?>
+								<tr>
+									<td>{{ $customer->group_name }}</td>
+									<td>{{ $customer->area_name }}</td>
+									<td>{{ $customer->customer_name }}</td>
+									<td>{{ $shipto['ship_to_name'] }}</td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td>{{ number_format((double)$shipto['gsv'],2)}}</td>
+									<td>
 										@if(!is_null($shipto['split']))
 											@if($alloc > 0)
 											<?php $shipto_alloc = round(($alloc * $shipto['split']) / 100) ?>
+												{{ number_format($shipto_alloc) }}
 											@endif
 											
 										@else
@@ -48,27 +128,55 @@
 													}
 													
 												 ?>
+												{{ number_format($shipto_alloc) }}
 											@endif
 										@endif
+									</td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+								</tr>
 									@if(!empty($shipto['accounts'] ))
 										<?php $others = $shipto_alloc; ?>
 										
 										@foreach($shipto['accounts'] as $account)
 										<?php $account_alloc = 0; ?>
-										
+										<tr class="warning">
+											<td>{{ $customer->group_name }}</td>
+											<td>{{ $customer->area_name }}</td>
+											<td>{{ $customer->customer_name }}</td>
+											<td>{{ $shipto['ship_to_name'] }}</td>
+											<td>{{ $account['channel_name'] }}</td>
+											<td>{{ $account['account_name'] }}</td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td>{{ number_format($account['gsv'],2) }}</td>
+											<td>
 												<?php $p = 0; ?>
 												@if($customer->gsv > 0)
 												<?php 
 													$p = round($account['gsv']/$customer->gsv * 100,2)
 												 ?>
+												 {{ number_format($p,2) }} %
+												 @else
+												 0.00 %
 												 @endif
+											</td>
+											<td>
 												<?php 
 													$account_alloc = round(($p * $shipto_alloc)/100);
 													if($account_alloc > 0){
 														$others -= $account_alloc;
 													}
 													
-													if($account['account_group_code'] == 'AG1'){
+													if($account['account_group_code'] == 'AG4'){
 														if (array_key_exists($account['account_name'], $big_10)) {
 														    $big_10[$account['account_name']] += $account_alloc;
 														}else{
@@ -94,13 +202,53 @@
 
 													
 												 ?>
-			
+												{{ number_format($account_alloc) }}
+											</td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+										</tr>
 										@endforeach	
-										
+										@if(empty($customer->area_code_two))
+										<tr class="warning">
+											<td>{{ $customer->group_name }}</td>
+											<td>{{ $customer->area_name }}</td>
+											<td>{{ $customer->customer_name }}</td>
+											<td>{{ $shipto['ship_to_name'] }}</td>
+											<td></td>
+											<td>OTHERS</td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td>{{ number_format(($others > 0) ? $others: 0) }}</td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+										</tr>
+										@endif
 									@endif
 								@endforeach	
 								@endif
 							@endforeach
+							@endif
+						</tbody>
+					</table> 
+				</div>
+			</div>
+		</div>
+
+		<div>
+			<!-- <label>Minimum Limit</label> : 10 <br> -->
+			<label>Total Sales GSV</label> : {{ number_format($total_gsv,2)}}<br>
+			<label>Total Sales</label> : {{ number_format($total_sales,2)}}<br>
+			<label>Total Allocattion</label> : {{ number_format($total_alloc)}}
+		</div>
 
 		<div class="row mytable">
 			<div class="col-lg-12">
@@ -109,9 +257,7 @@
 						<tbody>
 							<tr class="blue">
 								<td>MT/DT Breakdown </td>
-								<td>Computed Allocated</td>
-								<td>Forced Allocated</td>
-								<td>Final Allocated</td>
+								<td>Allocated</td>
 							</tr>
 							<?php $total_group = 0; ?>
 							@foreach($summary as $grp)
@@ -146,9 +292,7 @@
 						<tbody>
 							<tr class="blue">
 								<td colspan="2">Area Breakdown </td>
-								<td>Computed Allocated</td>
-								<td>Forced Allocated</td>
-								<td>Final Allocated</td>
+								<td>Allocated</td>
 							</tr>
 							
 							@foreach($summary as $grp)
@@ -186,9 +330,7 @@
 						<tbody>
 							<tr class="blue">
 								<td colspan="2">BIG 10 Breakdown</td>
-								<td>Computed Allocated</td>
-								<td>Forced Allocated</td>
-								<td>Final Allocated</td>
+								<td>Allocated</td>
 							</tr>
 							<?php $total_10 = 0; ?>
 							@foreach($big10 as $row)
@@ -222,9 +364,7 @@
 						<tbody>
 							<tr class="blue">
 								<td colspan="2">GAISANO Breakdown</td>
-								<td>Computed Allocated</td>
-								<td>Forced Allocated</td>
-								<td>Final Allocated</td>
+								<td>Allocated</td>
 							</tr>
 							<?php $total_g = 0; ?>
 							@foreach($gaisanos as $row)
