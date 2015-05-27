@@ -63,8 +63,7 @@ Queue::getIron()->ssl_verifypeer = false;
 // });
 
 Route::get('queue/send', function(){
-	File::append(storage_path().'/queue.txt',"hello_world".PHP_EOL);
-	// Queue::push('Writefile', array('string' => 'Hello world'));
+	Queue::push('Writefile', array('string' => 'Hello world'));
 	return 'Ok';
 });
 
@@ -75,7 +74,7 @@ Route::post('queue/push', function()
 
 class Writefile{
 	public function fire($job, $data){
-		File::append(app_path().'/queue.txt',$data['string'].PHP_EOL);
+		File::append(storage_path().'/queue.txt',"hello_world".PHP_EOL);
 		$job->delete();
 	}
 }
