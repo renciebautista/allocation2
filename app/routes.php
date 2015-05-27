@@ -63,8 +63,9 @@ Queue::getIron()->ssl_verifypeer = false;
 // });
 
 Route::get('queue/send', function(){
-	Queue::push('Writefile', array('string' => 'Hello world'));
-	return 'Ok';
+	$job_id = Queue::push('Writefile', array('string' => 'Hello world'));
+	Job::create(array('job_id' => $job_id));
+	return $job_id;
 });
 
 Route::post('queue/push', function()
@@ -74,8 +75,22 @@ Route::post('queue/push', function()
 
 class Writefile{
 	public function fire($job, $data){
-		File::append(storage_path().'/queue.txt',"hello_world".PHP_EOL);
-		Artisan::call('make:pdf');
+		$job_id = $job->getJobId(); // Get job id
+
+	    $ejob = Job::where('job_id',$job_id)->first(); // Find the job in database
+
+	    $ejob->status = 'running'; //Set job status to running
+
+	    $ejob->save();
+
+	    Artisan::call('make:pdf');
+	    File::append(storage_path().'/queue.txt',$data['string'].$job_id.PHP_EOL); //Add content to file
+
+	    $ejob->status = 'finished'; //Set job status to finished
+
+	    $ejob->save();
+
+	    return true;
 		$job->delete();
 	}
 }

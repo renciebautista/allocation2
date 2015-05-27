@@ -90,7 +90,7 @@ class JobController extends \BaseController {
 	public function run($job,$data)
 	{
 
-	   $job_id = $job->getJobId(); // Get job id
+	   	$job_id = $job->getJobId(); // Get job id
 
 	    $ejob = Job::where('job_id',$job_id)->first(); // Find the job in database
 
