@@ -62,6 +62,16 @@ Queue::getIron()->ssl_verifypeer = false;
 // 	Artisan::queue('make:pdf', array('message' => 'Hello World'));
 // });
 
+Route::get('queue/send', function(){
+	Queue::push('Writefile', array('string' => 'Hello world'));
+	return 'Ok';
+});
+
+Route::post('queue/push', function()
+{
+    return Queue::marshal();
+});
+
 
 Route::post('queue/receive', function()
 {
