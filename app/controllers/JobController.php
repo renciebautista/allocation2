@@ -106,8 +106,8 @@ class JobController extends \BaseController {
 
 	    $ejob->save();
 
-	    // File::append('public/queue.txt',$data['string'].$job_id.PHP_EOL); //Add content to file
-	    Artisan::call('make:pdf');
+	    File::append('public/queue.txt',$data['string'].$job_id.PHP_EOL); //Add content to file
+	    // Artisan::call('make:pdf');
 
 	    $ejob->status = 'finished'; //Set job status to finished
 

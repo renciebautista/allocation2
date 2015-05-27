@@ -1,6 +1,6 @@
 <?php
 use Imagecow\Image;
-// Queue::getIron()->ssl_verifypeer = false;
+Queue::getIron()->ssl_verifypeer = false;
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -63,10 +63,10 @@ use Imagecow\Image;
 // });
 
 
-// Route::post('queue/receive', function()
-// {
-//     return Queue::marshal();
-// });
+Route::post('queue/receive', function()
+{
+    return Queue::marshal();
+});
 
 Route::get('print', function(){
 	$activity = Activity::find(1);

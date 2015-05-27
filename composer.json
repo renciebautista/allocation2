@@ -17,7 +17,8 @@
 		"nesbot/carbon": "~1.14",
 		"alchemy/zippy": "0.2.1",
 		"kevbaldwyn/image":"dev-master",
-		"maxxscho/laravel-tcpdf": "0.*"
+		"maxxscho/laravel-tcpdf": "0.*",
+		"iron-io/iron_mq": "1.*"
 		
 	},
 	"autoload": {
