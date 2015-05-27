@@ -63,7 +63,8 @@ Queue::getIron()->ssl_verifypeer = false;
 // });
 
 Route::get('queue/send', function(){
-	Queue::push('Writefile', array('string' => 'Hello world'));
+	File::append('public/queue.txt',"hello_world".PHP_EOL);
+	// Queue::push('Writefile', array('string' => 'Hello world'));
 	return 'Ok';
 });
 
