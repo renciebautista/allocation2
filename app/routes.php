@@ -72,6 +72,13 @@ Route::post('queue/push', function()
     return Queue::marshal();
 });
 
+class Writefile{
+	public function fire($job, $data){
+		File::append(__DIR__.'/queue.txt',$data['string'].PHP_EOL);
+		$job->delete();
+	}
+}
+
 
 Route::post('queue/receive', function()
 {
