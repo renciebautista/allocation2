@@ -52,9 +52,9 @@ return array(
 		'iron' => array(
 			'driver'  => 'iron',
 			'host'    => 'mq-aws-us-east-1.iron.io',
-			'token'   => 'wt3B2EL69YEnrkHM-7gpsfunuEA',
-			'project' => '55633f7c5f6776000a00004c',
-			'queue'   => 'laravel',
+			'token'   => 'Qgol2SuOMdg4m9lKU_6dtAd0pR4',
+			'project' => '556545f963ab970008000006',
+			'queue'   => 'Etop',
 			'encrypt' => true,
 		),
 
