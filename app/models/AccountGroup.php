@@ -16,4 +16,6 @@ class AccountGroup extends \Eloquent {
 			
 		});
 	}
+
+	
 }

@@ -214,4 +214,15 @@ class Allocation extends \Eloquent {
 		return $_mt_primary_total_sales + $_dt_secondary_total_sales;
 	}
 
+	public static function schemeAllocations($id){
+		return DB::table('allocations')
+		->select('allocations.id','allocations.group','allocations.area','allocations.sold_to',
+			'allocations.ship_to', 'allocations.channel', 'allocations.account_group_name', 'allocations.outlet', 'allocations.sold_to_gsv', 
+			'allocations.sold_to_gsv_p', 'allocations.sold_to_alloc', 'allocations.ship_to_gsv',
+			'allocations.ship_to_alloc' ,'allocations.outlet_to_gsv', 'allocations.outlet_to_gsv_p', 'allocations.outlet_to_alloc',
+			'allocations.final_alloc' ,'allocations.customer_id', 'multi','allocations.shipto_id','allocations.computed_alloc', 'allocations.force_alloc')
+		->where('scheme_id', $id)
+		->orderBy('allocations.id')->get();
+	}
+
 }

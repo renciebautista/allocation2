@@ -188,6 +188,7 @@ class SchemeAllocRepository
                             $account_alloc->sold_to = $customer->customer_name;
                             $account_alloc->ship_to = $shipto['ship_to_name'];
                             $account_alloc->channel = $account['channel_name'];
+                            $account_alloc->account_group_name = $account['account_group_name'];
                             $account_alloc->outlet = $account['account_name'];
                             $account_alloc->outlet_to_gsv = $account['gsv'];
                             $p = 0;

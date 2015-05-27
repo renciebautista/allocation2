@@ -54,7 +54,7 @@ class AllocationRepository  {
 
 		// get all account
 		$_accounts = DB::table('accounts')
-			->select('accounts.id','ship_to_code','area_code', 'account_name', 'channel_name','accounts.account_group_code','channels.channel_code')
+			->select('accounts.id','ship_to_code','area_code', 'account_name', 'channel_name','accounts.account_group_code','channels.channel_code','account_groups.account_group_name')
 			->join('channels', 'accounts.channel_code', '=', 'channels.channel_code')
 			->join('account_groups', 'accounts.account_group_code', '=', 'account_groups.account_group_code')
 			->where('active',1)

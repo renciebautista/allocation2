@@ -199,25 +199,52 @@ class SchemeController extends \BaseController {
 		$host = Pricelist::getSku($sel_hosts[0]);
 		$premuim = Pricelist::getSku($sel_premuim[0]);
 
-		// print_r($sel_skus);
 		$customers = ActivityCustomer::customers($scheme->activity_id);
-		// print_r($customers);
 		$_channels = ActivityChannel::channels($scheme->activity_id);
-		// print_r($_channels);
 		$qty = $scheme->quantity;
-		// print_r($qty);
-		$_allocation = new AllocationRepository;
+		// $_allocation = new AllocationRepository;
 		
-		$allocations = $_allocation->customers($sel_skus, $_channels, $customers);
-		// Helper::print_r($allocations);
-		$total_sales = $_allocation->total_gsv();
+		// $allocations = $_allocation->customers($sel_skus, $_channels, $customers);
+		// // Helper::print_r($allocations);
+		// $total_sales = $_allocation->total_gsv();
 
 		// $summary = $_allocation->allocation_summary();
 		// $big10 = $_allocation->account_group("AG4");
 		// $gaisanos = $_allocation->account_group("AG5");
 		// $nccc = $_allocation->account_group("AG6");
 
+		$allocations = Allocation::schemeAllocations($id);
+
 		$ac_groups = AccountGroup::where('show_in_summary',1)->get();
+
+		if(!empty($ac_groups)){
+			foreach ($ac_groups as $ac_group) {
+				$customer = array();
+				foreach ($allocations  as $allocation) {
+					if(!empty($allocation->account_group_name)){
+						if($ac_group->account_group_name == $allocation->account_group_name){
+							if(array_key_exists($allocation->outlet, $customer)){
+								$customer[$allocation->outlet]->computed_alloc +=  $allocation->computed_alloc;
+								$customer[$allocation->outlet]->force_alloc +=  $allocation->force_alloc;
+								$customer[$allocation->outlet]->final_alloc +=  $allocation->final_alloc;
+							}else{
+								$object = new StdClass;
+								$object->account_name = $allocation->outlet;
+								$object->computed_alloc = $allocation->computed_alloc;
+								$object->force_alloc = $allocation->force_alloc;
+								$object->final_alloc = $allocation->final_alloc;
+								$customer[$allocation->outlet] = $object;
+							}
+							
+						}
+					}
+					
+				}
+				$ac_group->customers = $customer;
+
+				// Helper::print_r($ac_group);
+			}
+		}
 
 		$total_gsv = SchemeAllocation::totalgsv($id);
 
@@ -445,7 +472,7 @@ class SchemeController extends \BaseController {
 		// $scheme_customers = SchemeAllocation::where('scheme_id', $id)->get();
 		$result = DB::table('allocations')
 		->select('allocations.id','allocations.group','allocations.area','allocations.sold_to',
-			'allocations.ship_to', 'allocations.channel', 'allocations.outlet', 'allocations.sold_to_gsv', 
+			'allocations.ship_to', 'allocations.channel', 'allocations.account_group_name', 'allocations.outlet', 'allocations.sold_to_gsv', 
 			'allocations.sold_to_gsv_p', 'allocations.sold_to_alloc', 'allocations.ship_to_gsv',
 			'allocations.ship_to_alloc' ,'allocations.outlet_to_gsv', 'allocations.outlet_to_gsv_p', 'allocations.outlet_to_alloc',
 			'allocations.final_alloc' ,'allocations.customer_id', 'multi','allocations.shipto_id','allocations.computed_alloc', 'allocations.force_alloc')

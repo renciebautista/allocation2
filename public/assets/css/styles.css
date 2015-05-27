@@ -473,3 +473,8 @@
 .width-50{
 	width: 50px;
 }
+
+.summary-alloc{
+	width:12%;
+	text-align:center;
+}
