@@ -74,7 +74,7 @@ Route::post('queue/push', function()
 
 class Writefile{
 	public function fire($job, $data){
-		File::append('public/queue.txt',$data['string'].$job_id.PHP_EOL); //Add content to file
+		File::append(app_path().'/queue.txt',$data['string'].PHP_EOL);
 		$job->delete();
 	}
 }
