@@ -75,6 +75,7 @@ Route::post('queue/push', function()
 class Writefile{
 	public function fire($job, $data){
 		File::append(storage_path().'/queue.txt',"hello_world".PHP_EOL);
+		Artisan::call('make:pdf');
 		$job->delete();
 	}
 }
