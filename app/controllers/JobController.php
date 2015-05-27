@@ -25,7 +25,7 @@ class JobController extends \BaseController {
 
 	    Job::create(array('job_id' => $job_id));
 
-	    return Redirect::route('job.index')
+	    return Redirect::route('job.index');
 	}
 
 
