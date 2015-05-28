@@ -33,7 +33,7 @@ class SchemeAllocation extends \Eloquent {
 	public static function getAllocationsForExport($id){
 		return self::select('allocations.group','allocations.area','allocations.sold_to',
 			'allocations.ship_to', 'allocations.channel', 'allocations.outlet', 'allocations.sold_to_gsv', 
-			'allocations.sold_to_gsv_p', 'allocations.sold_to_alloc', 'allocations.ship_to_gsv',
+			'allocations.sold_to_gsv_p', 'allocations.sold_to_alloc', 'allocations.ship_to_gsv','allocations.ship_to_gsv_p',
 			'allocations.ship_to_alloc' ,'allocations.outlet_to_gsv', 'allocations.outlet_to_gsv_p', 'allocations.outlet_to_alloc',
 			'multi','allocations.computed_alloc', 'allocations.force_alloc','allocations.final_alloc')
 		->where('scheme_id', $id)

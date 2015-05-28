@@ -872,15 +872,15 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('activity/{id}/fisdownload', 'ActivityController@fisdownload');
 	
 	Route::post('activity/{id}/artworkupload', 'ActivityController@artworkupload');
-	Route::delete('activity/{id}/artworkdelete', 'ActivityController@artworkdelete');
+	Route::post('activity/artworkdelete', 'ActivityController@artworkdelete');
 	Route::get('activity/{id}/artworkdownload', 'ActivityController@artworkdownload');
 
 	Route::post('activity/{id}/backgroundupload', 'ActivityController@backgroundupload');
-	Route::delete('activity/{id}/backgrounddelete', 'ActivityController@backgrounddelete');
+	Route::post('activity/backgrounddelete', 'ActivityController@backgrounddelete');
 	Route::get('activity/{id}/backgrounddownload', 'ActivityController@backgrounddownload');
 
 	Route::post('activity/{id}/bandingupload', 'ActivityController@bandingupload');
-	Route::delete('activity/{id}/bandingdelete', 'ActivityController@bandingdelete');
+	Route::post('activity/bandingdelete', 'ActivityController@bandingdelete');
 	Route::get('activity/{id}/bandingdownload', 'ActivityController@bandingdownload');
 
 	Route::get('activity/{id}/channels', 'ActivityController@channels');

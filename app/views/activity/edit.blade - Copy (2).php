@@ -811,35 +811,56 @@
 		<div class="panel panel-default">
 		  	<div class="panel-heading">Artwork Packshots</div>
 		  	<div class="panel-body">
-		  		<div id="artworkupload">
-		  		{{ Form::open(array('action' => array('ActivityController@artworkupload', $activity->id),'id' => 'artworkupload_form', 'class' => 'bs-component','files'=>true)) }}
+
+		  		<!-- The fileinput-button span is used to style the file input field as button -->
+			    <span class="btn btn-success fileinput-button">
+			        <i class="glyphicon glyphicon-plus"></i>
+			        <span>Select files...</span>
+			        <!-- The file input field used as target for the file upload widget -->
+			        <input id="file" type="file" name="file[]" multiple>
+			    </span>
+			    <br>
+			    <br>
+			    <!-- The global progress bar -->
+			    <div id="progress" class="progress">
+			        <div class="progress-bar progress-bar-success"></div>
+			    </div>
+			    <!-- The container for the uploaded files -->
+			    <div id="files" class="files"></div>
+
+		  		{{ Form::open(array('action' => array('ActivityController@artworkupload', $activity->id),  'class' => 'bs-component','id' => 'artworkupload', 'files'=>true)) }}
 		  			<div class="row">
 						<div class="col-lg-6">
 						  	<div class="form-group">
 						    	{{ Form::file('file','',array('id'=>'','class'=>'')) }}
 						  	</div>
-						  	{{ Form::submit('Upload', array('class' => 'btn btn-primary')) }}
 				  		</div>
 				  	</div>
 				{{ Form::close() }}
+				
 					<div class="row">
 						<div class="col-lg-12">
 							<table class="table table-striped table-hover ">
 							  	<thead>
 								    <tr>
 								      	<th>File Name</th>
-								      	<th class="upload_date">Uploaded Date</th>
-						      			<th class="att_action">Action</th>
+								      	<th class="update">Uploaded Date</th>
+						      			<th colspan="2" class="action">Action</th>
 								    </tr>
 							  	</thead>
 							  	<tbody>
 							  		@foreach($artworks as $artwork)
 								    <tr>
 								      	<td>{{ $artwork->file_name }}</td>
-								      	<td class="upload_date">{{ date_format(date_create($artwork->created_at),'m/d/Y') }}</td>
-								      	<td class="att_action">
+								      	<td>{{ date_format(date_create($artwork->created_at),'m/d/Y H:m:s') }}</td>
+								      	<td class="action">
 											{{ HTML::linkAction('ActivityController@artworkdownload','Download', $artwork->id, array('class' => 'btn btn-success btn-xs')) }}
-											{{ HTML::linkAction('ActivityController@artworkdelete','Delete', null, array('class' => 'ajax_delete btn btn-danger btn-xs', 'id' => $artwork->id)) }}
+										</td>
+								      	<td class="action">
+											{{ Form::open(array('method' => 'DELETE', 'action' => array('ActivityController@artworkdelete', $artwork->id))) }}  
+											{{ Form::hidden('activity_id', $activity->id) }}                     
+											{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}
+											{{ Form::close() }}
 										</td>
 								    </tr>
 								    @endforeach
@@ -847,15 +868,13 @@
 							</table> 
 						</div>
 				  	</div>
-				</div>
 		  	</div>
 		</div>	
 
 		<div class="panel panel-default">
 		  	<div class="panel-heading">Marketing Backgrounds</div>
 		  	<div class="panel-body">
-		  		<div id="backgroundupload">
-		  		{{ Form::open(array('action' => array('ActivityController@backgroundupload', $activity->id),'id' => 'backgroundupload_form',  'class' => 'bs-component','files'=>true)) }}
+		  		{{ Form::open(array('action' => array('ActivityController@backgroundupload', $activity->id),  'class' => 'bs-component','id' => 'backgroundupload', 'files'=>true)) }}
 		  			<div class="row">
 						<div class="col-lg-6">
 						  	<div class="form-group">
@@ -871,34 +890,38 @@
 							  	<thead>
 								    <tr>
 								      	<th>File Name</th>
-								      	<th class="upload_date">Uploaded Date</th>
-						      			<th class="att_action">Action</th>
+								      	<th class="update">Uploaded Date</th>
+						      			<th colspan="2" class="action">Action</th>
 								    </tr>
 							  	</thead>
 							  	<tbody>
 							  		@foreach($backgrounds as $background)
 								    <tr>
 								      	<td>{{ $background->file_name }}</td>
-								      	<td class="upload_date">{{ date_format(date_create($background->created_at),'m/d/Y') }}</td>
-								      	<td class="att_action">
+								      	<td>{{ date_format(date_create($background->created_at),'m/d/Y H:m:s') }}</td>
+								      	<td class="action">
 											{{ HTML::linkAction('ActivityController@backgrounddownload','Download', $background->id, array('class' => 'btn btn-success btn-xs')) }}
-											{{ HTML::linkAction('ActivityController@backgrounddelete','Delete', null, array('class' => 'ajax_delete btn btn-danger btn-xs', 'id' => $background->id)) }}
 										</td>
+								      	<td class="action">
+											{{ Form::open(array('method' => 'DELETE', 'action' => array('ActivityController@backgrounddelete', $background->id))) }}  
+											{{ Form::hidden('activity_id', $activity->id) }}                     
+											{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}
+											{{ Form::close() }}
+										</td>
+
 								    </tr>
 								    @endforeach
 							  	</tbody>
 							</table> 
 						</div>
 				  	</div>
-				</div>
 		  	</div>
 		</div>
 
 		<div class="panel panel-default">
 		  	<div class="panel-heading">Banding Guidelines / Activation Mechanics</div>
 		  	<div class="panel-body">
-		  		<div id="bandingupload">
-		  		{{ Form::open(array('action' => array('ActivityController@bandingupload', $activity->id),'id' => 'bandingupload_form',  'class' => 'bs-component','files'=>true)) }}
+		  		{{ Form::open(array('action' => array('ActivityController@bandingupload', $activity->id),  'class' => 'bs-component','id' => 'fisupload', 'files'=>true)) }}
 		  			<div class="row">
 						<div class="col-lg-6">
 						  	<div class="form-group">
@@ -914,18 +937,23 @@
 							  	<thead>
 								    <tr>
 								      	<th>File Name</th>
-								      	<th class="upload_date">Uploaded Date</th>
-						      			<th class="att_action">Action</th>
+								      	<th class="update">Uploaded Date</th>
+						      			<th colspan="2" class="action">Action</th>
 								    </tr>
 							  	</thead>
 							  	<tbody>
 							  		@foreach($bandings as $banding)
 								    <tr>
 								      	<td>{{ $banding->file_name }}</td>
-								      	<td class="upload_date">{{ date_format(date_create($banding->created_at),'m/d/Y') }}</td>
-								      	<td class="att_action">
+								      	<td>{{ date_format(date_create($banding->created_at),'m/d/Y H:m:s') }}</td>
+										<td class="action">
 											{{ HTML::linkAction('ActivityController@bandingdownload','Download', $banding->id, array('class' => 'btn btn-success btn-xs')) }}
-											{{ HTML::linkAction('ActivityController@bandingdelete','Delete', null, array('class' => 'ajax_delete btn btn-danger btn-xs', 'id' => $banding->id)) }}
+										</td>
+								      	<td class="action">
+											{{ Form::open(array('method' => 'DELETE', 'action' => array('ActivityController@bandingdelete', $banding->id))) }}  
+											{{ Form::hidden('activity_id', $activity->id) }}                     
+											{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}
+											{{ Form::close() }}
 										</td>
 								    </tr>
 								    @endforeach
@@ -933,7 +961,6 @@
 							</table> 
 						</div>
 				  	</div>
-				</div>
 		  	</div>
 		</div>
 
@@ -1027,15 +1054,23 @@
 
 @section('page-script')
 
-$("#artworkupload").uploadifyTable({
-	'fileTypeExts' : '*.gif; *.jpg; *.png'
-});
-$("#backgroundupload").uploadifyTable({
-	'fileTypeExts' : '*.*'
-});
-$("#bandingupload").uploadifyTable({
-	'fileTypeExts' : '*.*'
-});
+$('#artworkupload').fileupload({
+        url: '{{ URL::action('ActivityController@artworkupload', $activity->id ) }}',
+        dataType: 'json',
+        done: function (e, data) {
+            $.each(data.result.files, function (index, file) {
+                $('<p/>').text(file.name).appendTo('#files');
+            });
+        },
+        progressall: function (e, data) {
+            var progress = parseInt(data.loaded / data.total * 100, 10);
+            $('#progress .progress-bar').css(
+                'width',
+                progress + '%'
+            );
+        }
+    }).prop('disabled', !$.support.fileInput)
+        .parent().addClass($.support.fileInput ? undefined : 'disabled');
 @stop
 
 

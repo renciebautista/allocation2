@@ -10,6 +10,14 @@
 	width: 10px;
 	text-align: center;
 }
+.upload_date{
+	width:  100px;
+	text-align: center;
+}
+.att_action{
+	width:  150px;
+	text-align: center;
+}
 .action-submit {
 	min-width: 150px;
 	text-align: center;

@@ -181,7 +181,7 @@ class ActivityController extends BaseController {
 					// add approver
 					if (Input::has('approver'))
 					{
-					   	$activity_approver = array();
+						$activity_approver = array();
 						foreach (Input::get('approver') as $approver) {
 							$activity_approver[] = array('activity_id' => $activity->id, 'user_id' => $approver);
 						}
@@ -220,11 +220,11 @@ class ActivityController extends BaseController {
 
 					$path = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id;
 					if(!File::exists($path)) {
-					    File::makeDirectory($path);
+						File::makeDirectory($path);
 					}
 					$path2 = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
 					if(!File::exists($path2)) {
-					    File::makeDirectory($path2);
+						File::makeDirectory($path2);
 					}
 
 					return $activity->id;
@@ -506,7 +506,7 @@ class ActivityController extends BaseController {
 							ActivityApprover::where('activity_id',$activity->id)->delete();
 							if (Input::has('approver'))
 							{
-							   	$activity_approver = array();
+								$activity_approver = array();
 								foreach (Input::get('approver') as $approver) {
 									$activity_approver[] = array('activity_id' => $activity->id, 'user_id' => $approver);
 								}
@@ -549,21 +549,21 @@ class ActivityController extends BaseController {
 						
 						$path = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id;
 						if(!File::exists($path)) {
-						    File::makeDirectory($path);
+							File::makeDirectory($path);
 						}
 						$path2 = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
 						if(!File::exists($path2)) {
-						    File::makeDirectory($path2);
+							File::makeDirectory($path2);
 
-						    $old_path = storage_path().'/uploads/'.$old_cycle.'/'.$old_type.'/'.$activity->id;
-						    File::copyDirectory($old_path, $path2);
+							$old_path = storage_path().'/uploads/'.$old_cycle.'/'.$old_type.'/'.$activity->id;
+							File::copyDirectory($old_path, $path2);
 
-						    File::deleteDirectory($old_path);
+							File::deleteDirectory($old_path);
 
-						    $list = File::directories(storage_path().'/uploads/'.$old_cycle.'/'.$old_type);
-						    if(count($list) == 0){
-						    	File::deleteDirectory(storage_path().'/uploads/'.$old_cycle.'/'.$old_type);
-						    }
+							$list = File::directories(storage_path().'/uploads/'.$old_cycle.'/'.$old_type);
+							if(count($list) == 0){
+								File::deleteDirectory(storage_path().'/uploads/'.$old_cycle.'/'.$old_type);
+							}
 						}
 
 						$arr['success'] = 1;
@@ -672,7 +672,7 @@ class ActivityController extends BaseController {
 							ActivityApprover::where('activity_id',$activity->id)->delete();
 							if (Input::has('approver'))
 							{
-							   	$activity_approver = array();
+								$activity_approver = array();
 								foreach (Input::get('approver') as $approver) {
 									$activity_approver[] = array('activity_id' => $activity->id, 'user_id' => $approver);
 								}
@@ -1339,10 +1339,10 @@ class ActivityController extends BaseController {
 	private function doupload($path){
 		$distination = storage_path().'/uploads/'.$path.'/';
 		
-		if (Input::hasFile('file'))
+		if (Input::hasFile('Filedata'))
 		{
-			$file = Input::file('file');
-		    $original_file_name = $file->getClientOriginalName();
+			$file = Input::file('Filedata');
+			$original_file_name = $file->getClientOriginalName();
 
 			$file_name = pathinfo($original_file_name, PATHINFO_FILENAME);
 
@@ -1355,7 +1355,37 @@ class ActivityController extends BaseController {
 				$actual_name = $file_name.'_'.$count.'.'.$extension;
 				$file_path = $distination.$actual_name;
 				$count++;
-				echo $count;
+			}
+			$file->move($distination,$actual_name);
+
+			return (object) array('file_name' => $actual_name,
+			 'original_file_name' => $actual_name,
+			 'status' => 1);
+		}else{
+
+		}
+		
+	}
+
+	private function doupload_2($path){
+		$distination = storage_path().'/uploads/'.$path.'/';
+		
+		if (Input::hasFile('file'))
+		{
+			$file = Input::file('file');
+			$original_file_name = $file->getClientOriginalName();
+
+			$file_name = pathinfo($original_file_name, PATHINFO_FILENAME);
+
+			$extension = File::extension($original_file_name);
+			$actual_name = $file_name.'.'.$extension;
+			$file_path = $distination.$actual_name;
+			// //Alter the file name until it's unique to prevent overwriting
+			$count = 1;
+			while(File::exists($file_path)) {
+				$actual_name = $file_name.'_'.$count.'.'.$extension;
+				$file_path = $distination.$actual_name;
+				$count++;
 			}
 			$file->move($distination,$actual_name);
 
@@ -1374,20 +1404,20 @@ class ActivityController extends BaseController {
 
 		$input = array('file' => Input::file('file'));
 		$rules = array(
-	        'file' => 'image'
-	    );
-	    // Now pass the input and rules into the validator
-    	$validator = Validator::make($input, $rules);
+			'file' => 'image'
+		);
+		// Now pass the input and rules into the validator
+		$validator = Validator::make($input, $rules);
 
-    	if ($validator->fails())
-    	{
-        	return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
+		if ($validator->fails())
+		{
+			return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
 				->with('class', 'alert-danger')
 				->with('message', 'Error uploading file.');
-    	} else{
-        	$path = $activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
+		} else{
+			$path = $activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
 
-			$upload = self::doupload($path);
+			$upload = self::doupload_2($path);
 
 			$docu = new ActivityFdapermit;
 			$docu->created_by = Auth::id();
@@ -1401,7 +1431,7 @@ class ActivityController extends BaseController {
 			return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
 				->with('class', 'alert-success')
 				->with('message', 'FDA Permits is successfuly uploaded!');
-    	}
+		}
 	}
 
 	public function fdadelete($id){
@@ -1434,20 +1464,20 @@ class ActivityController extends BaseController {
 
 		$input = array('file' => Input::file('file'));
 		$rules = array(
-	        'file' => 'mimes:xlsx,xls,csv'
-	    );
+			'file' => 'mimes:xlsx,xls,csv'
+		);
 
-	    // Now pass the input and rules into the validator
-    	$validator = Validator::make($input, $rules);
+		// Now pass the input and rules into the validator
+		$validator = Validator::make($input, $rules);
 
-    	if ($validator->fails())
-    	{
-        	return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
+		if ($validator->fails())
+		{
+			return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
 					->with('class', 'alert-danger')
 					->with('message', 'Error uploading file.');
-    	} else{
-        	$path = $activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
-			$upload = self::doupload($path);
+		} else{
+			$path = $activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
+			$upload = self::doupload_2($path);
 
 			$docu = new ActivityFis;
 			$docu->created_by = Auth::id();
@@ -1460,7 +1490,7 @@ class ActivityController extends BaseController {
 			return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
 				->with('class', 'alert-success')
 				->with('message', 'Product information Sheet is successfuly uploaded!');
-    	}
+		}
 
 		
 	}
@@ -1491,23 +1521,21 @@ class ActivityController extends BaseController {
 	}
 
 	public function artworkupload($id){
-
+		
 		$activity = Activity::findOrFail($id);
 
-		$input = array('file' => Input::file('file'));
+		$input = array('file' => Input::file('Filedata'));
 		$rules = array(
-	        'file' => 'image'
-	    );
-	    // Now pass the input and rules into the validator
-    	$validator = Validator::make($input, $rules);
+			'file' => 'image'
+		);
+		// Now pass the input and rules into the validator
+		$validator = Validator::make($input, $rules);
 
-    	if ($validator->fails())
-    	{
-        	return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
-				->with('class', 'alert-danger')
-				->with('message', 'Error uploading file.');
-    	} else{
-        	$path = $activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
+		if ($validator->fails())
+		{
+			$arr['success'] = 0;
+		} else{
+			$path = $activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
 			$upload = self::doupload($path);
 
 			$docu = new ActivityArtwork;
@@ -1518,28 +1546,35 @@ class ActivityController extends BaseController {
 			$docu->file_desc = (Input::get('file_desc') =='') ? $upload->original_file_name : Input::get('file_desc');
 			$docu->save();
 
-			return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
-				->with('class', 'alert-success')
-				->with('message', 'Product artwork is successfuly uploaded!');
-    	}
+			$arr['id'] = $docu->id; 
+			$arr['div_sel'] = Input::get('div_sel');
+			$arr['download'] = action('ActivityController@artworkdownload', $docu->id);
+			$arr['remove'] = action('ActivityController@artworkdelete');
+			$arr['file_name'] = $docu->file_name; 
+			$arr['date'] = date('m/d/Y');
+			$arr['success'] = 1;
+		}
+		return json_encode($arr);
 	}
 
-	public function artworkdelete($id){
-		$artwork = ActivityArtwork::find($id);
-		$activity_id = Input::get('activity_id');
-		$activity = Activity::find($artwork->activity_id);
-		if(empty($artwork)){
-			return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity_id)) . "#attachment")
-				->with('class', 'alert-danger')
-				->with('message', 'Error deleting file.');
-		}else{
-			$artwork->delete();
-			$path = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/';
-			File::delete($path.$artwork->hash_name);
-			return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity_id)) . "#attachment")
-				->with('class', 'alert-success')
-				->with('message', 'Product artwork is successfuly deleted!');
+	public function artworkdelete(){
+		if(Request::ajax()){
+			$id = Input::get('id');
+			$artwork = ActivityArtwork::find($id);
+			if(empty($artwork)){
+				$arr['success'] = 0;
+				return json_encode($arr);
+			}else{
+				$activity_id = Input::get('activity_id');
+				$activity = Activity::find($artwork->activity_id);
+				$artwork->delete();
+				$path = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/';
+				File::delete($path.$artwork->hash_name);
+				$arr['success'] = 1;
+			}
+			return json_encode($arr);
 		}
+		
 	}
 
 	public function artworkdownload($id){
@@ -1551,7 +1586,7 @@ class ActivityController extends BaseController {
 
 	public function backgroundupload($id){
 		$activity = Activity::findOrFail($id);
-		if(Input::hasFile('file')){
+		if(Input::hasFile('Filedata')){
 			$path = $activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
 			$upload = self::doupload($path);
 
@@ -1563,31 +1598,36 @@ class ActivityController extends BaseController {
 			$docu->file_desc = (Input::get('file_desc') =='') ? $upload->original_file_name : Input::get('file_desc');
 			$docu->save();
 
-			return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
-				->with('class', 'alert-success')
-				->with('message', 'Marketing Background is successfuly uploaded!');
+			$arr['id'] = $docu->id; 
+			$arr['div_sel'] = Input::get('div_sel');
+			$arr['download'] = action('ActivityController@backgrounddownload', $docu->id);
+			$arr['remove'] = action('ActivityController@backgrounddelete');
+			$arr['file_name'] = $docu->file_name; 
+			$arr['date'] = date('m/d/Y');
+			$arr['success'] = 1;
 		}else{
-			return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
-				->with('class', 'alert-danger')
-				->with('message', 'Error uploading file.');
+			$arr['success'] = 0;
 		}
+		return json_encode($arr);
 	}
 
-	public function backgrounddelete($id){
-		$background = ActivityBackground::find($id);
-		$activity_id = Input::get('activity_id');
-		$activity = Activity::find($background->activity_id);
-		if(empty($background)){
-			return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity_id)) . "#attachment")
-				->with('class', 'alert-danger')
-				->with('message', 'Error deleting file.');
-		}else{
-			$background->delete();
-			$path = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/';
-			File::delete($path.$background->hash_name);
-			return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity_id)) . "#attachment")
-				->with('class', 'alert-success')
-				->with('message', 'Marketing Background is successfuly deleted!');
+	public function backgrounddelete(){
+
+		if(Request::ajax()){
+			$id = Input::get('id');
+			$background = ActivityBackground::find($id);
+			if(empty($background)){
+				$arr['success'] = 0;
+				return json_encode($arr);
+			}else{
+				$activity_id = Input::get('activity_id');
+				$activity = Activity::find($background->activity_id);
+				$background->delete();
+				$path = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/';
+				File::delete($path.$background->hash_name);
+				$arr['success'] = 1;
+			}
+			return json_encode($arr);
 		}
 	}
 
@@ -1600,7 +1640,7 @@ class ActivityController extends BaseController {
 
 	public function bandingupload($id){
 		$activity = Activity::findOrFail($id);
-		if(Input::hasFile('file')){
+		if(Input::hasFile('Filedata')){
 			$path = $activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
 			$upload = self::doupload($path);
 
@@ -1612,32 +1652,38 @@ class ActivityController extends BaseController {
 			$docu->file_desc = (Input::get('file_desc') =='') ? $upload->original_file_name : Input::get('file_desc');
 			$docu->save();
 
-			return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
-				->with('class', 'alert-success')
-				->with('message', 'Banding Guideline / Activation Mechanic is successfuly uploaded!');
+			$arr['id'] = $docu->id; 
+			$arr['div_sel'] = Input::get('div_sel');
+			$arr['download'] = action('ActivityController@bandingdownload', $docu->id);
+			$arr['remove'] = action('ActivityController@bandingdelete');
+			$arr['file_name'] = $docu->file_name; 
+			$arr['date'] = date('m/d/Y');
+			$arr['success'] = 1;
 		}else{
-			return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
-				->with('class', 'alert-danger')
-				->with('message', 'Error uploading file.');
+			$arr['success'] = 0;
 		}
+		return json_encode($arr);
 	}
 
-	public function bandingdelete($id){
-		$banding = ActivityBanding::find($id);
-		$activity_id = Input::get('activity_id');
-		$activity = Activity::find($banding->activity_id);
-		if(empty($banding)){
-			return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity_id)) . "#attachment")
-				->with('class', 'alert-danger')
-				->with('message', 'Error deleting file.');
-		}else{
-			$banding->delete();
-			$path = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/';
-			File::delete($path.$banding->hash_name);
-			return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity_id)) . "#attachment")
-				->with('class', 'alert-success')
-				->with('message', 'Banding Guideline / Activation Mechanic is successfuly deleted!');
+	public function bandingdelete(){
+
+		if(Request::ajax()){
+			$id = Input::get('id');
+			$banding = ActivityBanding::find($id);
+			if(empty($banding)){
+				$arr['success'] = 0;
+				return json_encode($arr);
+			}else{
+				$activity_id = Input::get('activity_id');
+				$activity = Activity::find($banding->activity_id);
+				$banding->delete();
+				$path = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/';
+				File::delete($path.$banding->hash_name);
+				$arr['success'] = 1;
+			}
+			return json_encode($arr);
 		}
+
 	}
 
 	public function bandingdownload($id){
@@ -1666,7 +1712,7 @@ class ActivityController extends BaseController {
 
 		Excel::load($filepath, function($excel) use($scheme_allcations)
 		{
-		    $excel->sheet('data', function($sheet) use($scheme_allcations) {
+			$excel->sheet('data', function($sheet) use($scheme_allcations) {
 				$sheet->fromModel($scheme_allcations);
 			});
 		}) -> download('xls');

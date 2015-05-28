@@ -17,6 +17,9 @@
 		{{ HTML::style('assets/plugins/bootstrap-datetimepicker-3.1.3/css/bootstrap-datetimepicker.min.css') }}
 		{{ HTML::style('assets/plugins/bootstrap3-editable/css/bootstrap-editable.css') }}
 
+		{{ HTML::style('assets/plugins/uploadify/uploadify.css') }}
+
+
 		{{ HTML::style('assets/css/styles.css') }}
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
@@ -165,6 +168,8 @@
 
 	{{ HTML::script('assets/plugins/jquery.AreYouSure-1.9.0/jquery.are-you-sure.js') }}
 	
+	{{ HTML::script('assets/plugins/uploadify/jquery.uploadify.min.js') }}
+
 	{{ HTML::script('assets/js/function.js') }}
 
 
