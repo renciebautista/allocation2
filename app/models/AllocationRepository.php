@@ -28,6 +28,7 @@ class AllocationRepository  {
 			->join('areas', 'customers.area_code', '=', 'areas.area_code')
 			->join('groups', 'areas.group_code', '=', 'groups.group_code')
 			// ->where('customers.active', 1)
+			->orderBy('areas.id')
 			->orderBy('customers.id')
 			->get();
 
@@ -38,6 +39,7 @@ class AllocationRepository  {
 			->join('areas', 'customers.area_code', '=', 'areas.area_code')
 			->join('groups', 'areas.group_code', '=', 'groups.group_code')
 			->where('customers.active', 1)
+			->orderBy('areas.id')
 			->orderBy('customers.id')
 			->get();
 

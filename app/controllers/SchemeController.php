@@ -241,30 +241,73 @@ class SchemeController extends \BaseController {
 					
 				}
 				$ac_group->customers = $customer;
-
-				// Helper::print_r($ac_group);
 			}
 		}
 
+		$groups = array();
+		foreach ($allocations  as $allocation) {
+			if((empty($allocation->customer_id)) && (empty($allocation->shipto_id))){
+				if(array_key_exists($allocation->group, $groups)){
+					if(array_key_exists($allocation->area, $groups[$allocation->group]->area)){
+						$groups[$allocation->group]->area[$allocation->area]->computed_alloc +=  $allocation->computed_alloc;
+						$groups[$allocation->group]->area[$allocation->area]->force_alloc +=  $allocation->force_alloc;
+						$groups[$allocation->group]->area[$allocation->area]->final_alloc +=  $allocation->final_alloc;
+					}else{
+						$area_object = new StdClass;
+						$area_object->group = $allocation->group;
+						$area_object->area_name = $allocation->area;
+						$area_object->computed_alloc = $allocation->computed_alloc;
+						$area_object->force_alloc = $allocation->force_alloc;
+						$area_object->final_alloc = $allocation->final_alloc;
+					}
+
+					$groups[$allocation->group]->area[$allocation->area] =  $area_object;
+					$groups[$allocation->group]->computed_alloc +=  $allocation->computed_alloc;
+					$groups[$allocation->group]->force_alloc +=  $allocation->force_alloc;
+					$groups[$allocation->group]->final_alloc +=  $allocation->final_alloc;
+				}else{
+					
+
+					$area_object = new StdClass;
+					$area_object->group = $allocation->group;
+					$area_object->area_name = $allocation->area;
+					$area_object->computed_alloc = $allocation->computed_alloc;
+					$area_object->force_alloc = $allocation->force_alloc;
+					$area_object->final_alloc = $allocation->final_alloc;
+					
+
+					$object = new StdClass;
+					$object->group_name = $allocation->group;
+					$object->computed_alloc = $allocation->computed_alloc;
+					$object->force_alloc = $allocation->force_alloc;
+					$object->final_alloc = $allocation->final_alloc;
+					$object->area[$allocation->area] = $area_object;
+					$groups[$allocation->group] = $object;
+				}
+
+			}
+		}
+
+		// Helper::print_r($groups);
 		$total_gsv = SchemeAllocation::totalgsv($id);
 
 		if(Auth::user()->hasRole("PROPONENT")){
 			if($activity->status_id < 4){
 				return View::make('scheme.edit',compact('scheme', 'activity', 'skus', 'involves', 'sel_skus', 'sel_hosts',
-					'sel_premuim','allocations', 'total_sales', 'qty','id','total_gsv', 'ac_groups'));
+					'sel_premuim','allocations', 'total_sales', 'qty','id','total_gsv', 'ac_groups', 'groups'));
 			}else{
 				return View::make('scheme.read_only',compact('scheme', 'activity', 'skus', 'involves', 'sel_skus', 'sel_hosts',
-					'sel_premuim','allocations', 'total_sales', 'qty','id', 'summary', 'total_gsv','sku', 'host', 'premuim','ac_groups'));
+					'sel_premuim','allocations', 'total_sales', 'qty','id', 'summary', 'total_gsv','sku', 'host', 'premuim','ac_groups','groups'));
 			}
 		}
 
 		if(Auth::user()->hasRole("PMOG PLANNER")){
 			if($activity->status_id == 4){
 				return View::make('scheme.edit',compact('scheme', 'activity', 'skus', 'involves', 'sel_skus', 'sel_hosts',
-					'sel_premuim','allocations', 'total_sales', 'qty','id', 'summary', 'total_gsv','ac_groups'));
+					'sel_premuim','allocations', 'total_sales', 'qty','id', 'summary', 'total_gsv','ac_groups', 'groups'));
 			}else{
 				return View::make('scheme.read_only',compact('scheme', 'activity', 'skus', 'involves', 'sel_skus', 'sel_hosts',
-					'sel_premuim','allocations', 'total_sales', 'qty','id', 'summary', 'total_gsv','sku', 'host', 'premuim','ac_groups'));
+					'sel_premuim','allocations', 'total_sales', 'qty','id', 'summary', 'total_gsv','sku', 'host', 'premuim','ac_groups','groups'));
 			}
 		}
 
