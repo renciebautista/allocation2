@@ -1464,7 +1464,7 @@ class ActivityController extends BaseController {
 
 		$input = array('file' => Input::file('file'));
 		$rules = array(
-			'file' => 'mimes:xlsx,xls,csv'
+			'file' => 'mimes:xls'
 		);
 
 		// Now pass the input and rules into the validator
@@ -1719,7 +1719,7 @@ class ActivityController extends BaseController {
 	}
 
 	public function pistemplate(){
-		$filepath = storage_path().'/uploads/tempfiles/PIS Template.xlsx';		
+		$filepath = storage_path().'/uploads/tempfiles/PIS Template.xls';		
 		return Response::download($filepath);
 	}
 
