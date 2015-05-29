@@ -240,6 +240,7 @@ class SchemeController extends \BaseController {
 					}
 					
 				}
+				sort($customer);
 				$ac_group->customers = $customer;
 			}
 		}
@@ -288,7 +289,7 @@ class SchemeController extends \BaseController {
 			}
 		}
 
-		// Helper::print_r($groups);
+		// Helper::print_r($ac_groups);
 		$total_gsv = SchemeAllocation::totalgsv($id);
 
 		if(Auth::user()->hasRole("PROPONENT")){
@@ -310,8 +311,6 @@ class SchemeController extends \BaseController {
 					'sel_premuim','allocations', 'total_sales', 'qty','id', 'summary', 'total_gsv','sku', 'host', 'premuim','ac_groups','groups'));
 			}
 		}
-
-		
 	}
 
 	/**

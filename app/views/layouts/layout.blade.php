@@ -50,10 +50,10 @@
 					<ul class="nav navbar-nav">
 						@if(Auth::user()->inRoles(['PROPONENT','PMOG PLANNER','GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR','FIELD SALES']))
 						<li class="dropdown">
-							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="transaction">Transactions <span class="caret"></span></a>
+							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="transaction">Activities <span class="caret"></span></a>
 							<ul class="dropdown-menu" aria-labelledby="transaction">
 								@if(Auth::user()->inRoles(['PROPONENT','PMOG PLANNER','FIELD SALES']))
-								<li>{{ HTML::linkRoute('activity.index', 'Activity') }}</li>   
+								<li>{{ HTML::linkRoute('activity.index', 'Activity List') }}</li>   
 								@endif
 								@if(Auth::user()->inRoles(['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']))
 								<li>{{ HTML::linkAction('submittedactivity.index' , 'Activities For Approval') }}</li>  

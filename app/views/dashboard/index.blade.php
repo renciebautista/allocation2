@@ -19,7 +19,7 @@
 			</div>
 		</div>
 	<div class="page-header">
-	  	<h1 id="tables">Ongoing Activities</h1>
+	  	<h3 id="tables">Current Month's Activities</h3>
 	</div>
 
 	<div class="table-responsive">	
@@ -35,7 +35,7 @@
 					<th>Start Date</th>
 					<th>End Date</th>
 					<th>Billing Deadline</th>
-					<th colspan="2" style="text-align:center;">Action</th>
+					<th colspan="2" class="dash-action">Action</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -69,7 +69,7 @@
 
 <div class="col-lg-12">
 	<div class="page-header">
-	  	<h1 id="tables">Upcoming Activity</h1>
+	  	<h3 id="tables">Next Month's Activities</h3>
 	</div>
 
 	<div class="table-responsive">	
@@ -85,7 +85,7 @@
 					<th>Start Date</th>
 					<th>End Date</th>
 					<th>Billing Deadline</th>
-					<th colspan="2" style="text-align:center;">Action</th>
+					<th colspan="2" class="dash-action">Action</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -118,7 +118,7 @@
 
 <div class="col-lg-12">
 	<div class="page-header">
-	  	<h1 id="tables">Last Month Activity</h1>
+	  	<h3 id="tables">Last Month's Activities</h3>
 	</div>
 
 	<div class="table-responsive">	
@@ -134,7 +134,7 @@
 					<th>Start Date</th>
 					<th>End Date</th>
 					<th>Billing Deadline</th>
-					<th colspan="2" style="text-align:center;">Action</th>
+					<th colspan="2" class="dash-action">Action</th>
 				</tr>
 			</thead>
 			<tbody>

@@ -1464,7 +1464,7 @@ class ActivityController extends BaseController {
 
 		$input = array('file' => Input::file('file'));
 		$rules = array(
-			'file' => 'mimes:xls'
+			'file' => 'mimes:xls,xlsx'
 		);
 
 		// Now pass the input and rules into the validator
