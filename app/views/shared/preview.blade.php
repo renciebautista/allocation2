@@ -440,7 +440,7 @@
 
 			<div id="codes">
 				<h2>Schemes Case Codes / Bar Codes</h2>
-				@if(!empty($Schemes))
+				@if(!empty($schemes))
 				<table>
 					<tr>
 						<th>Case Code</th>

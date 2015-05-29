@@ -9,10 +9,10 @@ class ActivityPDF extends \TCPDF {
 		$image_file = storage_path().'/uploads/tempfiles/logo.png';
 	    $this->Image($image_file, 0, 5, 30, '', 'PNG', '', 'T', false, 300, 'R', false, false, 0, false, false, false);
 
-		$this->SetFont('helvetica', 'B', 13);
-		$this->MultiCell(0, 14,'', 0, 'L', 0, 1, '', '', true);
+		$this->SetFont('helvetica', 'B', 12);
+		$this->MultiCell(0, 10,'', 0, 'L', 0, 1, '', '', true);
 		$this->MultiCell(0, 0,'Unilever Philippines, Inc.', 0, 'L', 0, 1, '', '', true);
-		$this->SetFont('helvetica', '', 10);
+		$this->SetFont('helvetica', '', 9);
 		$this->MultiCell(0, 0,'Customer Marketing Department', 0, 'L', 0, 1, '', '', true);
 		
 	}
