@@ -499,7 +499,7 @@
 					<?php 
 						$x = 0; 
 						for ($i=8; $i < count($pis); $i++) { 
-							if($pis[$i][6] == "Case Dimensions (MM)"){
+							if($pis[$i][7] == "Case Dimensions (MM)"){
 								$x = $i+2;
 								break;
 							}
@@ -566,7 +566,7 @@
 								</tr>
 								<?php $x = $x+3; ?>
 								@for($x2 = $x; $x2 < count($pis); $x2++)
-									<?php if($pis[$x2][4] == "Trade margins"){
+									<?php if($pis[$x2][8] == "Trade margins"){
 										break;
 										$x = $x2;
 									} ?>

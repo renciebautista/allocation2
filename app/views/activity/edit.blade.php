@@ -736,7 +736,7 @@
 						    <tr>
 						      	<td>{{ $permit->permit_no }}</td>
 						      	<td>{{ $permit->file_name }}</td>
-						      	<td>{{ date_format(date_create($permit->created_at),'m/d/Y H:m:s') }}</td>
+						      	<td>{{ date_format(date_create($permit->created_at),'m/d/Y') }}</td>
 						      	<td class="action">
 									{{ HTML::linkAction('ActivityController@fdadownload','Download', $permit->id, array('class' => 'btn btn-success btn-xs')) }}
 								</td>
@@ -790,7 +790,7 @@
 					  		@foreach($fis as $fi)
 						    <tr>
 						      	<td>{{ $fi->file_name }}</td>
-						      	<td>{{ date_format(date_create($fi->created_at),'m/d/Y H:m:s') }}</td>
+						      	<td>{{ date_format(date_create($fi->created_at),'m/d/Y') }}</td>
 						      	<td class="action">
 									{{ HTML::linkAction('ActivityController@fisdownload','Download', $fi->id, array('class' => 'btn btn-success btn-xs')) }}
 								</td>
