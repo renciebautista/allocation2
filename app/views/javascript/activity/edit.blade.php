@@ -78,21 +78,15 @@ $(".btn-style").click(function (e) {
 function checkDirty(target_id,callback) {
   	if ($('#'+target_id).hasClass('dirty')) {
 
-  		bootbox.confirm({
-		    buttons: {
-		        confirm: {
-		            label: 'Yes',
-		            className: 'btn btn-primary'
-		        },
-		        cancel: {
-		            label: 'No',
-		            className: 'btn btn-default pull-right margin-left-5'
-		        }
-		    },
-		    message: 'Do you want to save changes?',
-		    callback: function(result) {
-		        if(result){
-			  		if($( "#"+target_id).valid()){
+  		bootbox.dialog({
+		  message: "Do you want to save changes?",
+		  title: "ETOP",
+		  buttons: {
+		    success: {
+		      	label: "Yes",
+		      	className: "btn btn-primary",
+		      	callback: function() {
+		        	if($( "#"+target_id).valid()){
 			  			$( "#"+target_id).submit();
 			  			$('form').areYouSure( {'silent':true} );
 			  			callback();
@@ -101,12 +95,17 @@ function checkDirty(target_id,callback) {
 					         scrollTop: ($('.has-error').offset().top - 300)
 					    }, 500);
 			  		}
-			  		
-			  	}else{
-			  		$('form').areYouSure( {'silent':true} );
+		      }
+		    },
+		    danger: {
+		      	label: "No",
+		      	className: "btn btn-default",
+		      	callback: function() {
+		        	$('form').areYouSure( {'silent':true} );
 			  		callback();
-			  	}
-		    }
+		      }
+		    },
+		  }
 		});
 
 	}else{
