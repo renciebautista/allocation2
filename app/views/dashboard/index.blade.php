@@ -55,7 +55,7 @@
 					<td>{{ date_format(date_create($ongoing->edownload_date),'m/d/Y') }}</td>
 					<td>{{ date_format(date_create($ongoing->eimplementation_date),'m/d/Y') }}</td>
 					<td>{{ date_format(date_create($ongoing->billing_date),'m/d/Y') }}</td>
-					<td class="action">
+					<td>
 						{{ HTML::linkAction('ReportController@download','Download', $ongoing->id, array('class' => 'btn btn-success btn-xs')) }}
 						<a class="btn btn-info btn-xs" target="_blank" href="{{ URL::action('ReportController@preview', $ongoing->id ) }}">Preview</a>							
 					</td>
@@ -105,7 +105,7 @@
 					<td>{{ date_format(date_create($upcoming->edownload_date),'m/d/Y') }}</td>
 					<td>{{ date_format(date_create($upcoming->eimplementation_date),'m/d/Y') }}</td>
 					<td>{{ date_format(date_create($upcoming->billing_date),'m/d/Y') }}</td>
-					<td class="action">
+					<td >
 						{{ HTML::linkAction('ReportController@download','Download', $upcoming->id, array('class' => 'btn btn-success btn-xs')) }}
 						<a class="btn btn-info btn-xs" target="_blank" href="{{ URL::action('ReportController@preview', $upcoming->id ) }}">Preview</a>		
 					</td>
@@ -154,7 +154,7 @@
 					<td>{{ date_format(date_create($lastmonth->edownload_date),'m/d/Y') }}</td>
 					<td>{{ date_format(date_create($lastmonth->eimplementation_date),'m/d/Y') }}</td>
 					<td>{{ date_format(date_create($lastmonth->billing_date),'m/d/Y') }}</td>
-					<td class="action">
+					<td>
 						{{ HTML::linkAction('ReportController@download','Download', $lastmonth->id, array('class' => 'btn btn-success btn-xs')) }}
 						<a class="btn btn-info btn-xs" target="_blank" href="{{ URL::action('ReportController@preview', $lastmonth->id ) }}">Preview</a>		
 					</td>
