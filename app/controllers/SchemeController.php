@@ -455,22 +455,35 @@ class SchemeController extends \BaseController {
 			$class = 'alert-danger';
 			$message = 'Scheme does not exist.';
 		}else{
-			DB::transaction(function() use ($scheme) {
-				SchemeSku::where('scheme_id',$scheme->id)->delete();
-				SchemeHostSku::where('scheme_id',$scheme->id)->delete();
-				SchemePremuimSku::where('scheme_id',$scheme->id)->delete();
-				SchemeAllocation::where('scheme_id',$scheme->id)->delete();
-				$scheme->delete();
+			DB::beginTransaction();
 
-				$class = 'alert-success';
-				$message = 'Scheme successfully deleted.';
+			try {
+				DB::transaction(function() use ($scheme) {
+					SchemeSku::where('scheme_id',$scheme->id)->delete();
+					SchemeHostSku::where('scheme_id',$scheme->id)->delete();
+					SchemePremuimSku::where('scheme_id',$scheme->id)->delete();
+					SchemeAllocation::where('scheme_id',$scheme->id)->delete();
+					$scheme->delete();
+
+					$class = 'alert-success';
+					$message = 'Scheme successfully deleted.';
+
+					return Redirect::to(URL::action('ActivityController@edit', array('id' => $scheme->activity_id)) . "#schemes")
+					->with('class', $class )
+					->with('message', $message);
+				});
+			} catch (\Exception $e) {
+			    DB::rollback();
+			    $class = 'alert-danger';
+				$message = 'Scheme does not exist.';
 
 				return Redirect::to(URL::action('ActivityController@edit', array('id' => $scheme->activity_id)) . "#schemes")
 				->with('class', $class )
 				->with('message', $message);
-			});
-			$class = 'alert-danger';
-			$message = 'Scheme does not exist.';
+			    // something went wrong
+			}		
+			
+			
 			
 		}
 
