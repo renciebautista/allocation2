@@ -117,7 +117,7 @@
 						<th class="center">Start Date</th>
 						<th class="center">End Date</th>
 						<th class="center">Billing Deadline</th>
-						<th colspan="2" class="dash-action">Action</th>
+						<th colspan="3" class="dash-action">Action</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -142,12 +142,17 @@
 							
 						</td>
 						<td class="action">
+							{{ Form::open(array('method' => 'POST', 'action' => array('ActivityController@destroy', $activity->id))) }}                       
+							{{ Form::submit('Duplicate', array('class'=> 'btn btn-primary btn-xs','onclick' => "if(!confirm('Are you sure to duplicate this record?')){return false;};")) }}
+							{{ Form::close() }}
+						</td>
+						<td class="action">
 							@if($activity->status_id < 4)
 							{{ Form::open(array('method' => 'DELETE', 'action' => array('ActivityController@destroy', $activity->id))) }}                       
 							{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}
 							{{ Form::close() }}
 							@else
-							<button class="btn btn-danger btn-xs disabled">DELETE</button>
+							<button class="btn btn-danger btn-xs disabled">Delete</button>
 							@endif
 						</td>
 						
