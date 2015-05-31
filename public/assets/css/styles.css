@@ -488,5 +488,8 @@
 }
 .dash-action {
 	text-align: center;
-	width: 150px;
+	width: 120px;
+}
+.center{
+	text-align: center;
 }

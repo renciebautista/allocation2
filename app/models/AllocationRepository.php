@@ -398,15 +398,17 @@ class AllocationRepository  {
 									break;
 								}
 							}
-							if(!isset($this->area_sales[$customer->area_code])){
-								$this->area_sales[$customer->area_code] = 0;
-							}
-							$this->area_sales[$customer->area_code] += $customer->gsv;
 						}
 					}else{
 						$customer->gsv = $total_account_gsv;
 					}
 					$this->total_gsv += $customer->gsv;
+
+					if(!isset($this->area_sales[$customer->area_code])){
+						$this->area_sales[$customer->area_code] = 0;
+					}
+
+					$this->area_sales[$customer->area_code] += $customer->gsv;
 
 				}else{
 					$abort = false;

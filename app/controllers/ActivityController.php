@@ -733,7 +733,78 @@ class ActivityController extends BaseController {
 	 */
 	public function destroy($id)
 	{
-		//
+		$activity = Activity::findOrFail($id);
+		if (is_null($activity))
+		{
+			$class = 'alert-danger';
+			$message = 'Activity does not exist.';
+		}else{
+
+			DB::beginTransaction();
+
+			try {
+			    ActivityTiming::where('activity_id',$activity->id)->delete();
+				ActivityPlanner::where('activity_id',$activity->id)->delete();
+				ActivityApprover::where('activity_id',$activity->id)->delete();
+				ActivityCategory::where('activity_id',$activity->id)->delete();
+				ActivityBrand::where('activity_id',$activity->id)->delete();
+				ActivityObjective::where('activity_id',$activity->id)->delete();
+
+				ActivityMaterial::where('activity_id',$activity->id)->delete();
+				ActivityCustomer::where('activity_id',$activity->id)->delete();
+				ActivityChannel::where('activity_id',$activity->id)->delete();
+				ForceAllocation::where('activity_id',$activity->id)->delete();
+				// loop schemes
+				$schemes = Scheme::getList($activity->id);
+				if(!empty($schemes)){
+					foreach ($schemes as $scheme) {
+						SchemeSku::where('scheme_id',$scheme->id)->delete();
+						SchemeHostSku::where('scheme_id',$scheme->id)->delete();
+						SchemePremuimSku::where('scheme_id',$scheme->id)->delete();
+						SchemeAllocation::where('scheme_id',$scheme->id)->delete();
+						$scheme->delete();
+					}
+				}
+				
+
+				ActivityBudget::where('activity_id',$activity->id)->delete();
+				ActivityNobudget::where('activity_id',$activity->id)->delete();
+				ActivityFdapermit::where('activity_id',$activity->id)->delete();
+				ActivityFis::where('activity_id',$activity->id)->delete();
+				ActivityArtwork::where('activity_id',$activity->id)->delete();
+				ActivityBackground::where('activity_id',$activity->id)->delete();
+				ActivityBanding::where('activity_id',$activity->id)->delete();
+				ActivityComment::where('activity_id',$activity->id)->delete();
+				$activity->delete();
+
+				DB::commit();
+				$path = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
+				File::deleteDirectory($path);
+
+				$class = 'alert-success';
+				$message = 'Activity successfully deleted.';
+
+				return Redirect::to(URL::action('ActivityController@index'))
+				->with('class', $class )
+				->with('message', $message);
+			    
+			    // all good
+			} catch (\Exception $e) {
+			    DB::rollback();
+			    $class = 'alert-danger';
+				$message = 'Cannot delete activity.';
+
+				return Redirect::to(URL::action('ActivityController@index'))
+				->with('class', $class )
+				->with('message', $message);
+			    // something went wrong
+			}			
+			
+		}
+
+		return Redirect::to(URL::action('ActivityController@index'))
+				->with('class', $class )
+				->with('message', $message);
 	}
 
 

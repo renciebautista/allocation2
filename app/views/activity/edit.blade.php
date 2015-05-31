@@ -440,7 +440,7 @@
 										<th class="text-center">Total TTS</th>
 										<th class="text-center">Total PE</th>
 										<th class="text-center">Total Cost</th>
-										<th class="text-center">Action</th>
+										<th colspan="2" class="text-center">Action</th>
 									</tr>
 								</thead>
 							  	<tbody>
@@ -464,9 +464,14 @@
 									  	<td class="text-right">{{ number_format($scheme->final_tts_r,2) }}</td>
 									  	<td class="text-right">{{ number_format($scheme->final_pe_r,2) }}</td>
 									  	<td class="text-right">{{ number_format($scheme->final_total_cost,2) }}</td>
-									  	<td style="width:10%;">
+									  	<td class="action">
 									  		{{ HTML::linkAction('SchemeController@edit','View', $scheme->id, array('class' => 'btn btn-primary btn-xs')) }}
-									  		<a class="btn btn-danger btn-xs" href="#">Delete</a>
+									  	</td>
+
+									  	<td class="action">
+									  		{{ Form::open(array('method' => 'DELETE', 'action' => array('SchemeController@destroy', $scheme->id))) }}                       
+												{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}
+											{{ Form::close() }}
 									  	</td>
 									</tr>
 									@endforeach

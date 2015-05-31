@@ -23,19 +23,19 @@
 	</div>
 
 	<div class="table-responsive">	
-		<table class="table table-condensed table-hover table-bordered">
+		<table class="table table-striped table-condensed table-hover table-bordered">
 			<thead>
 				<tr>
-					<th>Status</th>
-					<th>TOP Cycle</th>
-					<th>Scope</th>
-					<th>Activity Type</th>
-					<th>Activity Title</th>
-					<th>PMOG Partner</th>
-					<th>Start Date</th>
-					<th>End Date</th>
-					<th>Billing Deadline</th>
-					<th colspan="2" class="dash-action">Action</th>
+					<th class="center">Status</th>
+					<th class="center">TOP Cycle</th>
+					<th class="center">Scope</th>
+					<th class="center">Activity Type</th>
+					<th class="center">Activity Title</th>
+					<th class="center">PMOG Partner</th>
+					<th class="center">Start Date</th>
+					<th class="center">End Date</th>
+					<th class="center">Billing Deadline</th>
+					<th class="dash-action">Action</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -73,19 +73,19 @@
 	</div>
 
 	<div class="table-responsive">	
-		<table class="table table-condensed table-hover table-bordered">
+		<table class="table table-striped table-condensed table-hover table-bordered">
 			<thead>
 				<tr>
-					<th>Status</th>
-					<th>TOP Cycle</th>
-					<th>Scope</th>
-					<th>Activity Type</th>
-					<th>Activity Title</th>
-					<th>PMOG Partner</th>
-					<th>Start Date</th>
-					<th>End Date</th>
-					<th>Billing Deadline</th>
-					<th colspan="2" class="dash-action">Action</th>
+					<th class="center">Status</th>
+					<th class="center">TOP Cycle</th>
+					<th class="center">Scope</th>
+					<th class="center">Activity Type</th>
+					<th class="center">Activity Title</th>
+					<th class="center">PMOG Partner</th>
+					<th class="center">Start Date</th>
+					<th class="center">End Date</th>
+					<th class="center">Billing Deadline</th>
+					<th class="dash-action">Action</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -122,19 +122,19 @@
 	</div>
 
 	<div class="table-responsive">	
-		<table class="table table-condensed table-hover table-bordered">
+		<table class="table table-striped table-condensed table-hover table-bordered">
 			<thead>
 				<tr>
-					<th>Status</th>
-					<th>TOP Cycle</th>
-					<th>Scope</th>
-					<th>Activity Type</th>
-					<th>Activity Title</th>
-					<th>PMOG Partner</th>
-					<th>Start Date</th>
-					<th>End Date</th>
-					<th>Billing Deadline</th>
-					<th colspan="2" class="dash-action">Action</th>
+					<th class="center">Status</th>
+					<th class="center">TOP Cycle</th>
+					<th class="center">Scope</th>
+					<th class="center">Activity Type</th>
+					<th class="center">Activity Title</th>
+					<th class="center">PMOG Partner</th>
+					<th class="center">Start Date</th>
+					<th class="center">End Date</th>
+					<th class="center">Billing Deadline</th>
+					<th class="dash-action">Action</th>
 				</tr>
 			</thead>
 			<tbody>

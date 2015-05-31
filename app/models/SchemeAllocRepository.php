@@ -22,6 +22,7 @@ class SchemeAllocRepository
         $_allocation = new AllocationRepository;
         $allocations = $_allocation->customers(Input::get('skus'), $_channels, $customers);
         $_areasales =  $_allocation->area_sales();
+        // Helper::print_r($_areasales);
         // $total_sales = $_allocation->total_sales();
         $total_sales = $_allocation->total_gsv();
 
@@ -63,6 +64,7 @@ class SchemeAllocRepository
             }else{
                 foreach ($areas as $area) {
                     if($area->area_code == $customer->area_code){
+                        $area_alloc = 0;
                         $area_alloc = round(($scheme->quantity * $area->multi)/100);
                         $area_multiplier = 0;
                         if(!isset($_areasales[$customer->area_code])){
@@ -96,7 +98,6 @@ class SchemeAllocRepository
             $scheme_alloc->in_cases = $in_cases;
             $scheme_alloc->tts_budget = $tts_budget;
             $scheme_alloc->pe_budget = $scheme_alloc->final_alloc *  $scheme->other_cost;
-            
             
             $scheme_alloc->save();
 

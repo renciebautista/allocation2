@@ -344,7 +344,17 @@
 </div>
 
 
+
 @include('shared.alloc')
+
+<div class="row">
+	<div class="col-lg-12">
+		<div class="form-group">
+			<a id="scheme_back" class="btn btn-default" href="{{action('ActivityController@edit', $activity->id);}}#schemes">Back to Activity Details</a>
+		</div>
+	</div>
+
+</div>
 
 <!-- Modal -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
