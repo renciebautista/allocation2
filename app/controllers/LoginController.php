@@ -19,7 +19,7 @@ class LoginController extends \BaseController {
 		if (Auth::attempt(array($field => $usernameinput, 'password' => $password), false)) {
 			Session::flash('message', '<h4>Welcome to E-TOP,</h4><p> '.ucwords(strtolower(Auth::user()->getFullname())).'</p>');
 			Session::flash('class', 'alert alert-success');
-			return Redirect::intended('DashboardController@index');
+			return Redirect::intended('/dashboard');
 		    // return Redirect::action('DashboardController@index');
 		}
 

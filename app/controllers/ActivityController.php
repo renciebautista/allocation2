@@ -2218,13 +2218,13 @@ class ActivityController extends BaseController {
 				
 			} catch (\Exception $e) {
 				DB::rollback();
-				echo $e;
-			 //    $class = 'alert-danger';
-				// $message = 'Cannot duplicate activity.';
+				// echo $e;
+			    $class = 'alert-danger';
+				$message = 'Cannot duplicate activity.';
 
-				// return Redirect::to(URL::action('ActivityController@index'))
-				// ->with('class', $class )
-				// ->with('message', $message);
+				return Redirect::to(URL::action('ActivityController@index'))
+				->with('class', $class )
+				->with('message', $message);
 				// something went wrong
 			}			
 			
