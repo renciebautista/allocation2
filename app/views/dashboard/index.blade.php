@@ -26,16 +26,16 @@
 		<table class="table table-striped table-condensed table-hover table-bordered">
 			<thead>
 				<tr>
-					<th class="center">Status</th>
 					<th class="center">TOP Cycle</th>
 					<th class="center">Scope</th>
 					<th class="center">Activity Type</th>
 					<th class="center">Activity Title</th>
+					<th class="center">Proponent</th>
 					<th class="center">PMOG Partner</th>
 					<th class="center">Start Date</th>
 					<th class="center">End Date</th>
 					<th class="center">Billing Deadline</th>
-					<th class="dash-action">Action</th>
+					<th colspan="2" class="dash-action">Action</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -46,17 +46,19 @@
 				@else
 				@foreach($ongoings as $ongoing)
 				<tr>
-					<td>{{ $ongoing->status }}</td>
 					<td>{{ $ongoing->cycle_name }}</td>
 					<td>{{ $ongoing->scope_name }}</td>
 					<td>{{ $ongoing->activity_type }}</td>
 					<td>{{ $ongoing->circular_name }}</td>
+					<td>{{ $ongoing->proponent }}</td>
 					<td>{{ $ongoing->planner }}</td>
 					<td>{{ date_format(date_create($ongoing->edownload_date),'m/d/Y') }}</td>
 					<td>{{ date_format(date_create($ongoing->eimplementation_date),'m/d/Y') }}</td>
 					<td>{{ date_format(date_create($ongoing->billing_date),'m/d/Y') }}</td>
-					<td>
+					<td class="action">
 						{{ HTML::linkAction('ReportController@download','Download', $ongoing->id, array('class' => 'btn btn-success btn-xs')) }}
+					</td>
+					<td class="action">
 						<a class="btn btn-info btn-xs" target="_blank" href="{{ URL::action('ReportController@preview', $ongoing->id ) }}">Preview</a>							
 					</td>
 				</tr>
@@ -76,16 +78,16 @@
 		<table class="table table-striped table-condensed table-hover table-bordered">
 			<thead>
 				<tr>
-					<th class="center">Status</th>
 					<th class="center">TOP Cycle</th>
 					<th class="center">Scope</th>
 					<th class="center">Activity Type</th>
 					<th class="center">Activity Title</th>
+					<th class="center">Proponent</th>
 					<th class="center">PMOG Partner</th>
 					<th class="center">Start Date</th>
 					<th class="center">End Date</th>
 					<th class="center">Billing Deadline</th>
-					<th class="dash-action">Action</th>
+					<th colspan="2" class="dash-action">Action</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -101,12 +103,15 @@
 					<td>{{ $upcoming->scope_name }}</td>
 					<td>{{ $upcoming->activity_type }}</td>
 					<td>{{ $upcoming->circular_name }}</td>
+					<td>{{ $upcoming->proponent }}</td>
 					<td>{{ $upcoming->planner }}</td>
 					<td>{{ date_format(date_create($upcoming->edownload_date),'m/d/Y') }}</td>
 					<td>{{ date_format(date_create($upcoming->eimplementation_date),'m/d/Y') }}</td>
 					<td>{{ date_format(date_create($upcoming->billing_date),'m/d/Y') }}</td>
-					<td >
+					<td class="action">
 						{{ HTML::linkAction('ReportController@download','Download', $upcoming->id, array('class' => 'btn btn-success btn-xs')) }}
+					</td>
+					<td class="action">
 						<a class="btn btn-info btn-xs" target="_blank" href="{{ URL::action('ReportController@preview', $upcoming->id ) }}">Preview</a>		
 					</td>
 				</tr>
@@ -125,16 +130,16 @@
 		<table class="table table-striped table-condensed table-hover table-bordered">
 			<thead>
 				<tr>
-					<th class="center">Status</th>
 					<th class="center">TOP Cycle</th>
 					<th class="center">Scope</th>
 					<th class="center">Activity Type</th>
 					<th class="center">Activity Title</th>
+					<th class="center">Proponent</th>
 					<th class="center">PMOG Partner</th>
 					<th class="center">Start Date</th>
 					<th class="center">End Date</th>
 					<th class="center">Billing Deadline</th>
-					<th class="dash-action">Action</th>
+					<th colspan="2" class="dash-action">Action</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -150,12 +155,15 @@
 					<td>{{ $lastmonth->scope_name }}</td>
 					<td>{{ $lastmonth->activity_type }}</td>
 					<td>{{ $lastmonth->circular_name }}</td>
+					<td>{{ $lastmonth->proponent }}</td>
 					<td>{{ $lastmonth->planner }}</td>
 					<td>{{ date_format(date_create($lastmonth->edownload_date),'m/d/Y') }}</td>
 					<td>{{ date_format(date_create($lastmonth->eimplementation_date),'m/d/Y') }}</td>
 					<td>{{ date_format(date_create($lastmonth->billing_date),'m/d/Y') }}</td>
-					<td>
+					<td class="action">
 						{{ HTML::linkAction('ReportController@download','Download', $lastmonth->id, array('class' => 'btn btn-success btn-xs')) }}
+					</td>
+					<td class="action">
 						<a class="btn btn-info btn-xs" target="_blank" href="{{ URL::action('ReportController@preview', $lastmonth->id ) }}">Preview</a>		
 					</td>
 				</tr>
