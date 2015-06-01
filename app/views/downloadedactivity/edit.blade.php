@@ -110,7 +110,7 @@
 							<div class="row">
 								<div class="col-lg-12">
 									{{ Form::label('planner', 'PMOG Planner', array('class' => 'control-label')) }}
-									{{ Form::select('planner', array('0' => 'PLEASE SELECT') + $planners, (!is_null($sel_planner)) ? $sel_planner->user_id : 0, array('class' => 'form-control')) }}
+									{{ Form::text('planner',(count($sel_planner) > 0) ? $sel_planner->planner->getFullname() : '', array('class' => 'form-control','readonly' => '')) }}
 								</div>
 							</div>
 						</div>
@@ -813,7 +813,8 @@
 		<div class="panel panel-default">
 		  	<div class="panel-heading">Artwork Packshots</div>
 		  	<div class="panel-body">
-		  		{{ Form::open(array('action' => array('ActivityController@artworkupload', $activity->id),  'class' => 'bs-component','id' => 'fisupload', 'files'=>true)) }}
+		  		<div id="artworkupload">
+		  		{{ Form::open(array('action' => array('ActivityController@artworkupload', $activity->id),  'class' => 'bs-component','id' => 'artworkupload_form', 'files'=>true)) }}
 		  			<div class="row">
 						<div class="col-lg-6">
 						  	<div class="form-group">
@@ -853,13 +854,15 @@
 							</table> 
 						</div>
 				  	</div>
+				</div>
 		  	</div>
 		</div>	
 
 		<div class="panel panel-default">
 		  	<div class="panel-heading">Marketing Backgrounds</div>
 		  	<div class="panel-body">
-		  		{{ Form::open(array('action' => array('ActivityController@backgroundupload', $activity->id),  'class' => 'bs-component','id' => 'backgroundupload', 'files'=>true)) }}
+		  		<div id="backgroundupload">
+		  		{{ Form::open(array('action' => array('ActivityController@backgroundupload', $activity->id),  'class' => 'bs-component','id' => 'backgroundupload_form', 'files'=>true)) }}
 		  			<div class="row">
 						<div class="col-lg-6">
 						  	<div class="form-group">
@@ -900,13 +903,15 @@
 							</table> 
 						</div>
 				  	</div>
+				</div>
 		  	</div>
 		</div>
 
 		<div class="panel panel-default">
 		  	<div class="panel-heading">Banding Guidelines / Activation Mechanics</div>
 		  	<div class="panel-body">
-		  		{{ Form::open(array('action' => array('ActivityController@bandingupload', $activity->id),  'class' => 'bs-component','id' => 'fisupload', 'files'=>true)) }}
+		  		<div id="bandingupload">
+		  		{{ Form::open(array('action' => array('ActivityController@bandingupload', $activity->id),  'class' => 'bs-component','id' => 'bandingupload_form', 'files'=>true)) }}
 		  			<div class="row">
 						<div class="col-lg-6">
 						  	<div class="form-group">
@@ -946,6 +951,7 @@
 							</table> 
 						</div>
 				  	</div>
+				</div>
 		  	</div>
 		</div>
 
@@ -1040,6 +1046,16 @@
 @stop
 
 @section('page-script')
+
+$("#artworkupload").uploadifyTable({
+	'fileTypeExts' : '*.gif; *.jpg; *.png'
+});
+$("#backgroundupload").uploadifyTable({
+	'fileTypeExts' : '*.*'
+});
+$("#bandingupload").uploadifyTable({
+	'fileTypeExts' : '*.*'
+});
 
 @stop
 

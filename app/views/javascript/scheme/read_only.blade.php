@@ -22,7 +22,6 @@ getWeeks();
 
 var table = $("#customer-allocation").dataTable({
 		"scrollY": "500px",
-		"scrollX": true,
 		"scrollCollapse": true,
 		"paging": false,
 		"bSort": false,
@@ -32,17 +31,15 @@ var table = $("#customer-allocation").dataTable({
 			"defaultContent": ""
 		} ],
 		"columns": [
-			//title will auto-generate th columns
-		   // { "data" : "id",               "title" : "Id", "searchable": false },
-			{ "data" : "group",         "title" : "Group", "searchable": true },
-			{ "data" : "area",         "title" : "Area", "searchable": true },
-			{ "data" : "sold_to",            "title" : "Sold To", "searchable": true },
-			{ "data" : "ship_to",     "title" : "Ship To", "searchable": true },
-			{ "data" : "channel",     "title" : "Channel", "searchable": true },
-			{ "data" : "outlet",     "title" : "Outlet", "searchable": true },
-			{ "data" : "computed_alloc",     "title" : "COMPUTED ALLOC", "searchable": false,"className": "right" },
-			{ "data" : "force_alloc",     "title" : "FORCED ALLOC", "searchable": false,"className": "right" },
-			{ "data" : "final_alloc",     "title" : "FINAL ALLOC", "searchable": false,"className": "right" }
+			{ "data" : "group",         "title" : "GROUP", "searchable": true ,},
+			{ "data" : "area",         "title" : "AREA", "searchable": true },
+			{ "data" : "sold_to",            "title" : "SOLD TO", "searchable": true },
+			{ "data" : "ship_to",     "title" : "SHIP TO", "searchable": true },
+			{ "data" : "channel",     "title" : "CHANNEL", "searchable": true },
+			{ "data" : "outlet",     "title" : "OUTLET", "searchable": true },
+			{ "data" : "computed_alloc",     "title" : "COMPUTED ALLOC", "searchable": false,"className": "right"},
+			{ "data" : "force_alloc",     "title" : "FORCED ALLOC", "searchable": false,"className": "right"},
+			{ "data" : "final_alloc",     "title" : "FINAL ALLOC", "searchable": false,"className": "right"}
 		],
 		"createdRow" : function( row, data, index ) {
 			if(((data.customer_id === null) && (data.shipto_id === null)) || ((data.customer_id !== null) && (data.shipto_id === null))){
@@ -50,7 +47,7 @@ var table = $("#customer-allocation").dataTable({
 			}
 
 			if((data.customer_id === null) && (data.shipto_id === null)){
-				$(row).addClass("blue");
+				$(row).addClass("light-blue");
 			}
 
 			if((data.customer_id !== null) && (data.shipto_id === null)){
@@ -58,7 +55,7 @@ var table = $("#customer-allocation").dataTable({
 			}
 
 			if((data.customer_id !== null) && (data.shipto_id !== null)){
-				$(row).addClass("orange");
+				$(row).addClass("light-orange");
 			}
 			
 
@@ -81,14 +78,14 @@ var table = $("#customer-allocation").dataTable({
 				if(index == 5){
 					$(this).attr('field', 'outlet');
 				}
-				if(index == 17){
+				if(index == 8){
 					$(this).attr('field', 'alloc');
 				}
 			}); 
 		}
 	});
-new $.fn.dataTable.FixedColumns( table, {
-	leftColumns: 6
-} );
 
+/*new $.fn.dataTable.FixedColumns( table, {
+	leftColumns: 6
+} );*/
 @stop

@@ -238,7 +238,8 @@ class Activity extends \Eloquent {
 					$query->whereIn('activity_planners.user_id', $pmog);
 				}
 			})
-			->orderBy('activities.created_at', 'desc')
+			->orderBy('activity_types.activity_type')
+			->orderBy('activities.edownload_date')
 			->get();
 	}
 
@@ -285,7 +286,8 @@ class Activity extends \Eloquent {
 					$query->whereIn('activities.activity_type_id', $type);
 				}
 			})
-			->orderBy('activities.created_at', 'desc')
+			->orderBy('activity_types.activity_type')
+			->orderBy('activities.edownload_date')
 			->get();
 	}
 

@@ -14,6 +14,6 @@ class ActivityTiming extends \Eloquent {
 					->where('activity_id', $id)
 					->get();;
 	}
-
+	
 
 }

@@ -734,7 +734,7 @@ class ActivityController extends BaseController {
 	public function destroy($id)
 	{
 		$activity = Activity::findOrFail($id);
-		if (is_null($activity))
+		if ((is_null($activity)) && ($activity->created_by != Auth::id()))
 		{
 			$class = 'alert-danger';
 			$message = 'Activity does not exist.';
@@ -743,7 +743,7 @@ class ActivityController extends BaseController {
 			DB::beginTransaction();
 
 			try {
-			    ActivityTiming::where('activity_id',$activity->id)->delete();
+				ActivityTiming::where('activity_id',$activity->id)->delete();
 				ActivityPlanner::where('activity_id',$activity->id)->delete();
 				ActivityApprover::where('activity_id',$activity->id)->delete();
 				ActivityCategory::where('activity_id',$activity->id)->delete();
@@ -787,17 +787,17 @@ class ActivityController extends BaseController {
 				return Redirect::to(URL::action('ActivityController@index'))
 				->with('class', $class )
 				->with('message', $message);
-			    
-			    // all good
+				
+				// all good
 			} catch (\Exception $e) {
-			    DB::rollback();
-			    $class = 'alert-danger';
+				DB::rollback();
+				$class = 'alert-danger';
 				$message = 'Cannot delete activity.';
 
 				return Redirect::to(URL::action('ActivityController@index'))
 				->with('class', $class )
 				->with('message', $message);
-			    // something went wrong
+				// something went wrong
 			}			
 			
 		}
@@ -1792,6 +1792,447 @@ class ActivityController extends BaseController {
 	public function pistemplate(){
 		$filepath = storage_path().'/uploads/tempfiles/PIS Template.xls';		
 		return Response::download($filepath);
+	}
+
+	public function duplicate($id){
+		$activity = Activity::findOrFail($id);
+
+		if ((is_null($activity)) && ($activity->created_by != Auth::id()))
+		{
+			$class = 'alert-danger';
+			$message = 'Activity does not exist.';
+		}else{
+
+			DB::beginTransaction();
+
+			try {
+				
+				$new_activity = new Activity;
+				$new_activity->created_by = Auth::id();
+				
+				$new_activity->scope_type_id = $activity->scope_type_id;
+				$new_activity->cycle_id = $activity->cycle_id;
+				$new_activity->activity_type_id = $activity->activity_type_id;
+				$new_activity->duration = $activity->duration;
+				$new_activity->edownload_date = $activity->edownload_date;
+				$new_activity->eimplementation_date = $activity->eimplementation_date;
+				$new_activity->circular_name = $activity->circular_name;
+				$new_activity->division_code = $activity->division_code;
+				$new_activity->background = $activity->background;
+				$new_activity->instruction = $activity->instruction;
+				$new_activity->status_id = 1;
+				$new_activity->activity_code =  $activity->activity_code;
+				$new_activity->allow_force =  $activity->allow_force;
+				$new_activity->save();
+
+				// add timings
+				$timings = ActivityTiming::where('activity_id',$activity->id)->get();
+				if(!empty($timings)){
+					$activity_timing = array();
+					foreach ($timings as $timing) {
+						$activity_timing[] = array('activity_id' => $new_activity->id, 'task_id' => $timing->task_id,
+								'milestone' => $timing->milestone, 'task' => $timing->task, 'responsible' => $timing->responsible,
+								'duration' => $timing->duration, 'depend_on' => $timing->depend_on,
+								'start_date' => date('Y-m-d',strtotime($timing->start_date)), 'end_date' => date('Y-m-d',strtotime($timing->end_date)));
+					}
+					if(!empty($activity_timing)){
+						ActivityTiming::insert($activity_timing);
+					}
+					
+				}
+
+				// add planner
+				$planners = ActivityPlanner::where('activity_id',$activity->id)->get();
+				if(!empty($planners)){
+					foreach ($planners as $planner) {
+						ActivityPlanner::insert(array('activity_id' => $new_activity->id, 'user_id' => $planner->user_id));
+					}
+				}
+				
+				// add approver
+				$approvers = ActivityApprover::where('activity_id',$activity->id)->get();
+				if(!empty($approvers)){
+					$activity_approver = array();
+					foreach ($approvers as $approver) {
+						$activity_approver[] = array('activity_id' => $new_activity->id, 'user_id' => $approver->user_id);
+					}
+					if(!empty($activity_approver)){
+						ActivityApprover::insert($activity_approver);
+					}
+					
+				}
+
+				// add category
+				$categories = ActivityCategory::where('activity_id',$activity->id)->get();
+				if(!empty($categories)){
+					$activity_category = array();
+					foreach ($categories as $category){
+						$activity_category[] = array('activity_id' => $new_activity->id, 'category_code' => $category->category_code);
+					}
+					if(!empty($activity_category)){
+						ActivityCategory::insert($activity_category);
+					}
+					
+				}
+
+				// add brand
+				$brands = ActivityBrand::where('activity_id',$activity->id)->get();
+				if(!empty($brands)){
+					$activity_brand = array();
+					foreach ($brands as $brand){
+						$activity_brand[] = array('activity_id' => $new_activity->id, 'brand_code' => $brand->brand_code);
+					}
+					if(!empty($activity_brand)){
+						ActivityBrand::insert($activity_brand);
+					}
+					
+				}
+
+				// add objective
+				$objectives = ActivityObjective::where('activity_id',$activity->id)->get();
+				if(!empty($objectives)){
+					$activity_objective = array();
+					foreach ($objectives as $objective){
+						$activity_objective[] = array('activity_id' => $new_activity->id, 'objective_id' => $objective->objective_id);
+					}
+					if(!empty($activity_objective)){
+						ActivityObjective::insert($activity_objective);
+					}
+					
+				}
+
+				// add materials
+				$materials = ActivityMaterial::where('activity_id',$activity->id)->get();
+				if(!empty($materials)){
+					$activity_materials = array();
+					foreach ($materials as $material){
+						$activity_materials[] = array('activity_id' => $new_activity->id, 'source_id' => $material->source_id, 'material' => $material->material);
+					}
+					if(!empty($activity_materials)){
+						ActivityMaterial::insert($activity_materials);
+					}
+					
+				}
+
+				// add customer
+				$customers = ActivityCustomer::where('activity_id',$activity->id)->get();
+				if(!empty($customers)){
+					$activity_customers = array();
+					foreach ($customers as $customer){
+						$activity_customers[] = array('activity_id' => $new_activity->id, 'customer_node' => $customer->customer_node);
+					}
+					if(!empty($activity_customers)){
+						ActivityCustomer::insert($activity_customers);
+					}
+					
+				}
+				// add force allocation
+				$force_allocations = ForceAllocation::where('activity_id',$activity->id)->get();
+				if(!empty($force_allocations)){
+					$activity_force_allocations = array();
+					foreach ($force_allocations as $force_allocation){
+						$activity_force_allocations[] = array('activity_id' => $new_activity->id, 'area_code' => $force_allocation->area_code, 'multi' => $force_allocation->multi);
+					}
+					if(!empty($activity_force_allocations)){
+						ForceAllocation::insert($activity_force_allocations);
+					}
+					
+				}
+
+				// add channels
+				$channels = ActivityChannel::where('activity_id',$activity->id)->get();
+				if(!empty($channels)){
+					$activity_channels = array();
+					foreach ($channels as $channel){
+						$activity_channels[] = array('activity_id' => $new_activity->id, 'channel_id' => $channel->channel_id);
+					}
+					if(!empty($activity_channels)){
+						ActivityChannel::insert($activity_channels);
+					}
+					
+				}
+
+				// add budget
+				$budgets = ActivityBudget::where('activity_id',$activity->id)->get();
+				if(!empty($budgets)){
+					$activity_budgets = array();
+					foreach ($budgets as $budget){
+						$activity_budgets[] = array('activity_id' => $new_activity->id,
+						 'budget_type_id' => $budget->budget_type_id,
+						 'io_number' => $budget->io_number,
+						 'amount' => $budget->amount,
+						 'start_date' => $budget->start_date,
+						 'end_date' => $budget->end_date,
+						 'remarks' => $budget->remarks);
+					}
+					if(!empty($activity_budgets)){
+						ActivityBudget::insert($activity_budgets);
+					}
+				}
+
+				// add no budget
+				$nobudgets = ActivityNobudget::where('activity_id',$activity->id)->get();
+				if(!empty($nobudgets)){
+					$activity_nobudgets = array();
+					foreach ($nobudgets as $budget){
+						$activity_nobudgets[] = array('activity_id' => $new_activity->id,
+						 'budget_type_id' => $budget->budget_type_id,
+						 'budget_no' => $budget->budget_no,
+						 'budget_name' => $budget->budget_name,
+						 'amount' => $budget->amount,
+						 'start_date' => $budget->start_date,
+						 'end_date' => $budget->end_date,
+						 'remarks' => $budget->remarks);
+					}
+					if(!empty($activity_nobudgets)){
+						ActivityNobudget::insert($activity_nobudgets);
+					}
+				}
+
+				// add fda permit
+				$fdapermits = ActivityFdapermit::where('activity_id',$activity->id)->get();
+				if(!empty($fdapermits)){
+					$activity_fdapermits = array();
+					foreach ($fdapermits as $fdapermit){
+						$activity_fdapermits[] = array('activity_id' => $new_activity->id,
+						 'created_by' => $fdapermit->created_by,
+						 'permit_no' => $fdapermit->permit_no,
+						 'hash_name' => $fdapermit->hash_name,
+						 'file_name' => $fdapermit->file_name,
+						 'file_desc' => $fdapermit->file_desc,
+						 'created_at' => date('Y-m-d H:m:s'),
+						 'updated_at' => date('Y-m-d H:m:s'));
+					}
+					if(!empty($activity_fdapermits)){
+						ActivityFdapermit::insert($activity_fdapermits);
+					}
+				}
+
+				// add pis
+				$pis = ActivityFis::where('activity_id',$activity->id)->get();
+				if(!empty($pis)){
+					$activity_pis = array();
+					foreach ($pis as $pi){
+						$activity_pis[] = array('activity_id' => $new_activity->id,
+						 'created_by' => $pi->created_by,
+						 'hash_name' => $pi->hash_name,
+						 'file_name' => $pi->file_name,
+						 'file_desc' => $pi->file_desc,
+						 'created_at' => date('Y-m-d H:m:s'),
+						 'updated_at' => date('Y-m-d H:m:s'));
+					}
+					if(!empty($activity_pis)){
+						ActivityFis::insert($activity_pis);
+					}
+				}
+
+				// add artworks
+				$artworks = ActivityArtwork::where('activity_id',$activity->id)->get();
+				if(!empty($artworks)){
+					$activity_artworks = array();
+					foreach ($artworks as $artwork){
+						$activity_artworks[] = array('activity_id' => $new_activity->id,
+						 'created_by' => $artwork->created_by,
+						 'hash_name' => $artwork->hash_name,
+						 'file_name' => $artwork->file_name,
+						 'file_desc' => $artwork->file_desc,
+						 'created_at' => date('Y-m-d H:m:s'),
+						 'updated_at' => date('Y-m-d H:m:s'));
+					}
+					if(!empty($activity_artworks)){
+						ActivityArtwork::insert($activity_artworks);
+					}
+				}
+
+				// add backgrounds
+				$backgrounds = ActivityBackground::where('activity_id',$activity->id)->get();
+				if(!empty($backgrounds)){
+					$activity_backgrounds = array();
+					foreach ($backgrounds as $background){
+						$activity_backgrounds[] = array('activity_id' => $new_activity->id,
+						 'created_by' => $background->created_by,
+						 'hash_name' => $background->hash_name,
+						 'file_name' => $background->file_name,
+						 'file_desc' => $background->file_desc,
+						 'created_at' => date('Y-m-d H:m:s'),
+						 'updated_at' => date('Y-m-d H:m:s'));
+					}
+					if(!empty($activity_backgrounds)){
+						ActivityBackground::insert($activity_backgrounds);
+					}
+				}
+
+				// add guidelines / banding
+				$guidelines = ActivityBanding::where('activity_id',$activity->id)->get();
+				if(!empty($guidelines)){
+					$activity_guidelines = array();
+					foreach ($guidelines as $guideline){
+						$activity_guidelines[] = array('activity_id' => $new_activity->id,
+						 'created_by' => $guideline->created_by,
+						 'hash_name' => $guideline->hash_name,
+						 'file_name' => $guideline->file_name,
+						 'file_desc' => $guideline->file_desc,
+						 'created_at' => date('Y-m-d H:m:s'),
+						 'updated_at' => date('Y-m-d H:m:s'));
+					}
+					if(!empty($activity_guidelines)){
+						ActivityBanding::insert($activity_guidelines);
+					}
+				}
+
+				// add schemes
+				$schemes = Scheme::where('activity_id',$activity->id)->get();
+				if(!empty($schemes)){
+					$activity_schemes = array();
+					foreach ($schemes as $scheme){
+						$new_scheme = new Scheme;
+						$new_scheme->activity_id = $new_activity->id;
+						$new_scheme->name = $scheme->name;
+						$new_scheme->item_code = $scheme->item_code;
+						$new_scheme->item_barcode = $scheme->item_barcode;
+						$new_scheme->item_casecode = $scheme->item_casecode;
+						$new_scheme->pr = $scheme->pr;
+						$new_scheme->srp_p = $scheme->srp_p;
+						$new_scheme->other_cost = $scheme->other_cost;
+						$new_scheme->ulp = $scheme->ulp;
+						$new_scheme->cost_sale = $scheme->cost_sale;
+						$new_scheme->quantity = $scheme->quantity;
+						$new_scheme->deals = $scheme->deals;
+						$new_scheme->total_deals = $scheme->total_deals;
+						$new_scheme->total_cases = $scheme->total_cases;
+						$new_scheme->tts_r = $scheme->tts_r;
+						$new_scheme->pe_r = $scheme->pe_r;
+						$new_scheme->total_cost = $scheme->total_cost;
+						$new_scheme->user_id = Auth::id();
+						$new_scheme->final_alloc = $scheme->final_alloc;
+						$new_scheme->final_total_deals = $scheme->final_total_deals;
+						$new_scheme->final_total_cases = $scheme->final_total_cases;
+						$new_scheme->final_tts_r = $scheme->final_tts_r;
+						$new_scheme->final_pe_r = $scheme->final_pe_r;
+						$new_scheme->final_total_cost = $scheme->final_total_cost;
+						$new_scheme->save();
+
+						// add skus
+						$scheme_skus = SchemeSku::where('scheme_id',$scheme->id)->get();
+						if(!empty($scheme_skus)){
+							foreach ($scheme_skus as $sku) {
+								SchemeSku::insert(array('scheme_id' => $new_scheme->id, 'sku' => $sku->sku));
+							}
+						}
+						// add host sku
+						$host_skus = SchemeHostSku::where('scheme_id',$scheme->id)->get();
+						if(!empty($host_skus)){
+							foreach ($host_skus as $sku) {
+								SchemeHostSku::insert(array('scheme_id' => $new_scheme->id, 'sap_code' => $sku->sap_code));
+							}
+						}
+
+						// add premuim sku
+						$premuim_skus = SchemePremuimSku::where('scheme_id',$scheme->id)->get();
+						if(!empty($premuim_skus)){
+							foreach ($premuim_skus as $sku) {
+								SchemePremuimSku::insert(array('scheme_id' => $new_scheme->id, 'sap_code' => $sku->sap_code));
+							}
+						}
+
+						$allocations = Allocation::schemeAllocations($scheme->id);
+						$last_area_id = 0;
+						$last_shipto_id = 0;
+						foreach ($allocations as $allocation) {
+							$scheme_alloc = new SchemeAllocation;
+
+							if((!empty($allocation->customer_id)) && (empty($allocation->shipto_id))){
+								$scheme_alloc->customer_id = $last_area_id;
+							}
+
+							if((!empty($allocation->customer_id)) && (!empty($allocation->shipto_id))){
+								$scheme_alloc->customer_id = $last_area_id;
+								$scheme_alloc->shipto_id = $last_shipto_id;
+							}
+							
+							$scheme_alloc->scheme_id = $new_scheme->id;
+							$scheme_alloc->group = $allocation->group;
+							$scheme_alloc->area = $allocation->area;
+							$scheme_alloc->sold_to = $allocation->sold_to;
+							$scheme_alloc->ship_to = $allocation->ship_to;
+							$scheme_alloc->channel = $allocation->channel;
+							$scheme_alloc->account_group_name = $allocation->account_group_name;
+							$scheme_alloc->outlet = $allocation->outlet;
+							$scheme_alloc->sold_to_gsv = $allocation->sold_to_gsv;
+							$scheme_alloc->sold_to_gsv_p = $allocation->sold_to_gsv_p;
+							$scheme_alloc->sold_to_alloc = $allocation->sold_to_alloc;
+							$scheme_alloc->ship_to_gsv = $allocation->ship_to_gsv;
+							$scheme_alloc->ship_to_gsv_p = $allocation->ship_to_gsv_p;
+							$scheme_alloc->ship_to_alloc = $allocation->ship_to_alloc;
+							$scheme_alloc->outlet_to_gsv = $allocation->outlet_to_gsv;
+							$scheme_alloc->outlet_to_gsv_p = $allocation->outlet_to_gsv_p;
+							$scheme_alloc->outlet_to_alloc = $allocation->outlet_to_alloc;
+							$scheme_alloc->multi = $allocation->multi;
+							$scheme_alloc->computed_alloc = $allocation->computed_alloc;
+							$scheme_alloc->force_alloc = $allocation->force_alloc;
+							$scheme_alloc->final_alloc = $allocation->final_alloc;
+							$scheme_alloc->in_deals = $allocation->in_deals;
+							$scheme_alloc->in_cases = $allocation->in_cases;
+							$scheme_alloc->tts_budget = $allocation->tts_budget;
+							$scheme_alloc->pe_budget = $allocation->pe_budget;
+							$scheme_alloc->save();
+
+							if((empty($allocation->customer_id)) && (empty($allocation->shipto_id))){
+								$last_area_id = $scheme_alloc->id;
+							}
+
+							if((!empty($allocation->customer_id)) && (!empty($allocation->shipto_id))){
+								$last_shipto_id = $scheme_alloc->id;
+							}
+						}
+					}
+				}
+				// copy all file
+				$path = storage_path().'/uploads/'.$new_activity->cycle_id.'/'.$new_activity->activity_type_id;
+				if(!File::exists($path)) {
+					File::makeDirectory($path);
+				}
+				$path2 = storage_path().'/uploads/'.$new_activity->cycle_id.'/'.$new_activity->activity_type_id.'/'.$new_activity->id;
+				if(!File::exists($path2)) {
+					File::makeDirectory($path2);
+
+					$old_path = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
+					File::copyDirectory($old_path, $path2);
+				}
+
+				$comment = new ActivityComment;
+				$comment->created_by = Auth::id();
+				$comment->activity_id = $new_activity->id;
+				$comment->comment = 'Activity duplicated from ' .$activity->circular_name;
+				$comment->comment_status = 'Activity Duplicated';
+				$comment->class = "text-warning";
+				$comment->save();
+
+				DB::commit();
+				$class = 'alert-success';
+				$message = 'Activity successfully duplicated.';
+
+				return Redirect::to(URL::action('ActivityController@index'))
+				->with('class', $class )
+				->with('message', $message);
+				
+			} catch (\Exception $e) {
+				DB::rollback();
+				echo $e;
+			 //    $class = 'alert-danger';
+				// $message = 'Cannot duplicate activity.';
+
+				// return Redirect::to(URL::action('ActivityController@index'))
+				// ->with('class', $class )
+				// ->with('message', $message);
+				// something went wrong
+			}			
+			
+		}
+
+		// return Redirect::to(URL::action('ActivityController@index'))
+		// 		->with('class', $class )
+		// 		->with('message', $message);
 	}
 
 }

@@ -108,6 +108,7 @@
 			<table class="table table-striped table-condensed table-hover table-bordered">
 				<thead>
 					<tr>
+						<th class="center">ID</th>
 						<th class="center">Status</th>
 						<th class="center">TOP Cycle</th>
 						<th class="center">Scope</th>
@@ -123,11 +124,12 @@
 				<tbody>
 					@if(count($activities) == 0)
 					<tr>
-						<td colspan="11">No record found!</td>
+						<td colspan="12">No record found!</td>
 					</tr>
 					@else
 					@foreach($activities as $activity)
 					<tr>
+						<td class="right">{{ $activity->id }}</td>
 						<td>{{ $activity->status }}</td>
 						<td>{{ $activity->cycle_name }}</td>
 						<td>{{ $activity->scope_name }}</td>
@@ -142,13 +144,13 @@
 							
 						</td>
 						<td class="action">
-							{{ Form::open(array('method' => 'POST', 'action' => array('ActivityController@destroy', $activity->id))) }}                       
+							{{ Form::open(array('method' => 'POST', 'action' => array('ActivityController@duplicate', $activity->id), 'class' => 'disable-button')) }}                       
 							{{ Form::submit('Duplicate', array('class'=> 'btn btn-primary btn-xs','onclick' => "if(!confirm('Are you sure to duplicate this record?')){return false;};")) }}
 							{{ Form::close() }}
 						</td>
 						<td class="action">
 							@if($activity->status_id < 4)
-							{{ Form::open(array('method' => 'DELETE', 'action' => array('ActivityController@destroy', $activity->id))) }}                       
+							{{ Form::open(array('method' => 'DELETE', 'action' => array('ActivityController@destroy', $activity->id), 'class' => 'disable-button')) }}                       
 							{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}
 							{{ Form::close() }}
 							@else

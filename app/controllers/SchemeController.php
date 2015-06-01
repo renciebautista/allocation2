@@ -463,7 +463,7 @@ class SchemeController extends \BaseController {
 				SchemeHostSku::where('scheme_id',$scheme->id)->delete();
 				SchemePremuimSku::where('scheme_id',$scheme->id)->delete();
 				SchemeAllocation::where('scheme_id',$scheme->id)->delete();
-				$scheme1->delete();
+				$scheme->delete();
 
 				DB::commit();
 				$class = 'alert-success';
@@ -633,11 +633,10 @@ class SchemeController extends \BaseController {
 				$sheet->setColumnFormat(array(
 				    'G' => '0.00'
 				));
-
 				$sheet->fromModel($allocations);
-			});
+			})->download('xls');
 
-		})->download('xls');
+		});
 
 
 	}

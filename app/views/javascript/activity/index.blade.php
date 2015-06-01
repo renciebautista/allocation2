@@ -7,4 +7,6 @@ $('#st,#cy,#sc,#ty,#pm').multiselect({
 	enableFiltering: true
 });
 
+$(".disable-button").disableButton();
+
 @stop

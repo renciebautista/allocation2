@@ -675,6 +675,8 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('activity/{id}/allocsummary', 'ActivityController@allocsummary');
 	Route::get('activity/pistemplate', 'ActivityController@pistemplate');
 
+	Route::post('activity/{id}/duplicate','ActivityController@duplicate');
+	
 	Route::resource('activity', 'ActivityController');
 	
 
