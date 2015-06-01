@@ -98,7 +98,6 @@
 				@else
 				@foreach($upcomings as $upcoming)
 				<tr>
-					<td>{{ $upcoming->status }}</td>
 					<td>{{ $upcoming->cycle_name }}</td>
 					<td>{{ $upcoming->scope_name }}</td>
 					<td>{{ $upcoming->activity_type }}</td>
@@ -150,7 +149,6 @@
 				@else
 				@foreach($lastmonths as $lastmonth)
 				<tr>
-					<td>{{ $lastmonth->status }}</td>
 					<td>{{ $lastmonth->cycle_name }}</td>
 					<td>{{ $lastmonth->scope_name }}</td>
 					<td>{{ $lastmonth->activity_type }}</td>
