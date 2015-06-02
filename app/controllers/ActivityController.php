@@ -1809,7 +1809,6 @@ class ActivityController extends BaseController {
 				
 				$new_activity = new Activity;
 				$new_activity->created_by = Auth::id();
-				
 				$new_activity->scope_type_id = $activity->scope_type_id;
 				$new_activity->cycle_id = $activity->cycle_id;
 				$new_activity->activity_type_id = $activity->activity_type_id;
@@ -1823,6 +1822,7 @@ class ActivityController extends BaseController {
 				$new_activity->status_id = 1;
 				$new_activity->activity_code =  $activity->activity_code;
 				$new_activity->allow_force =  $activity->allow_force;
+				$new_activity->billing_date =  $activity->billing_date;
 				$new_activity->save();
 
 				// add timings
