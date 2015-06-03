@@ -2198,6 +2198,11 @@ class ActivityController extends BaseController {
 
 					$old_path = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
 					File::copyDirectory($old_path, $path2);
+					$myfile = storage_path().'/uploads/'.$new_activity->cycle_id.'/'.$new_activity->activity_type_id.'/'.$new_activity->id.'/'.$activity->circular_name.'.pdf';
+					if (File::exists($myfile))
+					{
+					    File::delete($myfile);
+					}
 				}
 
 				$comment = new ActivityComment;

@@ -391,7 +391,8 @@ class Activity extends \Eloquent {
 				}
 				
 			})
-			->orderBy('activities.created_at', 'desc')
+			->orderBy('activity_types.activity_type')
+			->orderBy('activities.edownload_date')
 			->get();
 	}
 

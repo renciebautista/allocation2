@@ -217,9 +217,7 @@
 					<tr>
 						<td>PMOG Partner</td>
 						<td>: 
-							@if(!empty($planner->planner))
-							{{ $planner->planner->getFullname() }} / {{ $planner->planner->contact_no }}
-							@endif
+							
 						</td>
 					</tr>
 					<tr>
@@ -646,19 +644,19 @@
 							break;
 						} 
 						$num = $x + 1;
-						$final_alloc = $scheme->allocations[$x]->final_alloc;
-						$case = 0;
-						$deals = 0;
-						if($activity->activitytype->uom == "CASES"){
-							$case = $final_alloc;
-							$deals = $final_alloc * $scheme->deals;
-						}else{
-							if($final_alloc > 0){
-								$case = round($final_alloc / $scheme->deals);
-								$deals = $final_alloc;
-							}
+						// $final_alloc = $scheme->allocations[$x]->final_alloc;
+						// $case = 0;
+						// $deals = 0;
+						// if($activity->activitytype->uom == "CASES"){
+						// 	$case = $final_alloc;
+						// 	$deals = $final_alloc * $scheme->deals;
+						// }else{
+						// 	if($final_alloc > 0){
+						// 		$case = round($final_alloc / $scheme->deals);
+						// 		$deals = $final_alloc;
+						// 	}
 							
-						}
+						// }
 						$class = '';
 						if((empty($scheme->allocations[$x]->customer_id)) && (empty($scheme->allocations[$x]->shipto_id))){
 							$class = 'style="background-color: #d9edf7;"';
