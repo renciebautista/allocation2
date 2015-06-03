@@ -76,6 +76,7 @@ $(document).ready(function(){
 			// var serialized = $inputs.serialize();
 			// alert(serialized);
 			if(validation == 1){
+				$(this).addClass('disabled');
 				ajax("POST",option.add_url,$inputs.serialize(),table,option,effect,inputs);
 			}
 		});
@@ -157,6 +158,7 @@ $(document).ready(function(){
 			var id = $(this).attr("id");
 			if(id){
 				if(confirm("Do you really want to delete record ?")){
+					$(this).addClass('disabled');
 					ajax("DELETE",option.delete_url,"d_id="+id,table,option,effect,inputs);
 				}
 			}
@@ -252,13 +254,14 @@ ajax = function (type,url,params,table,option,effect,inputs){
 					// Blank input fields
 					table.find(inputs).filter(function() {
 						// check if input element is blank ??
-						// console.log(this);
 						if($(this).is( ":text" )){
 							this.value = "";
 						}
 						
 						$(this).removeClass("success").removeClass("error");
 					});
+
+					table.find('.ajaxSave').removeClass('disabled');
 
 					if (option.onSaveRow !== undefined) {
 						option.onSaveRow();
@@ -304,6 +307,7 @@ ajax = function (type,url,params,table,option,effect,inputs){
 					$("#"+table.attr('id')+" tr[id='"+response.id+"']").effect("highlight",{color: '#f4667b'},500,function(){
 						$("#"+table.attr('id')+" tr[id='"+response.id+"']").remove();
 					});
+					table.find('.ajaxDelete').removeClass('disabled');
 					if (option.onSuccess !== undefined) {
 						option.onSuccess();
 					}
