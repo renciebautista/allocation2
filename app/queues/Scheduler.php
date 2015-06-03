@@ -10,7 +10,7 @@ class Scheduler{
 
 		$ejob->save();
 
-		Artisan::call('make:pdf');
+		// Artisan::call('make:pdf');
 		// Artisan::call('make:pdf',array('id' => 48));
 		File::append(storage_path().'/queue.txt',$data['string'].$job_id.PHP_EOL); //Add content to file
 
