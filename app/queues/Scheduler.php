@@ -1,4 +1,4 @@
-<?php namespace queues;
+<?php
 
 class Scheduler{
 	public function fire($job, $data){
@@ -17,8 +17,10 @@ class Scheduler{
 		$ejob->status = 'finished'; //Set job status to finished
 
 		$ejob->save();
-
-		return true;
 		$job->delete();
+
+		$this->line("Generating PDF via comamnd line using TCPDF");
+		return true;
+		
 	}
 }
