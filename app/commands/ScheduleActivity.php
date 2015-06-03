@@ -46,14 +46,9 @@ class ScheduleActivity extends Command {
 			->where('pdf',0)
 			->where('scheduled',0)
 			->get();
-		foreach ($activities as $activity) {
-			// $activityObject = Activity::find($activity->id); 
-			// $activityObject->scheduled = 1;
-			// $activityObject->save();
-			$job_id = Queue::push('Writefile', array('string' => 'Hello world'));
+		foreach ($activities as $activity->id) {
+			$job_id = Queue::push('Scheduler', array('string' => "Scheduling ".$activity->circular_name, 'id' => $activity->id));
 			Job::create(array('job_id' => $job_id));
-
-			Artisan::call('make:pdf',array('id' => 48));
 
 			$this->line("Scheduling ".$activity->circular_name);
 		}

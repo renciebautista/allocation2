@@ -11,15 +11,13 @@ class Scheduler{
 		$ejob->save();
 
 		// Artisan::call('make:pdf');
-		// Artisan::call('make:pdf',array('id' => 48));
+		Artisan::call('make:pdf',array('id' => $data['id']));
 		File::append(storage_path().'/queue.txt',$data['string'].$job_id.PHP_EOL); //Add content to file
 
 		$ejob->status = 'finished'; //Set job status to finished
 
 		$ejob->save();
 		$job->delete();
-
-		$this->line("Generating PDF via comamnd line using TCPDF");
 		return true;
 		
 	}
