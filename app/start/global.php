@@ -20,6 +20,7 @@ ClassLoader::addDirectories(array(
 	app_path().'/helpers',
 	app_path().'/lib',
 	app_path().'/classes',
+	app_path().'/queues',
 
 ));
 

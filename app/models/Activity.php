@@ -378,16 +378,16 @@ class Activity extends \Eloquent {
 			->where('activities.status_id',$status)
 			->where(function($query) use ($type){
 				if($type == 'ongoing'){
-					$query->where('cycles.release_date','>=',Carbon::now()->startOfMonth())
-						->where('cycles.release_date','<',Carbon::now()->startOfMonth()->addMonths(1));
+					$query->where('activities.eimplementation_date','>=',Carbon::now()->startOfMonth())
+						->where('activities.eimplementation_date','<',Carbon::now()->startOfMonth()->addMonths(1));
 				}
 				if($type == 'nextmonth'){
-					$query->where('cycles.release_date','>=',Carbon::now()->startOfMonth()->addMonths(1))
-						->where('cycles.release_date','<',Carbon::now()->startOfMonth()->addMonths(2));
+					$query->where('activities.eimplementation_date','>=',Carbon::now()->startOfMonth()->addMonths(1))
+						->where('activities.eimplementation_date','<',Carbon::now()->startOfMonth()->addMonths(2));
 				}
 				if($type == 'lastmonth'){
-					$query->where('cycles.release_date','>=',Carbon::now()->startOfMonth()->subMonths(1))
-						->where('cycles.release_date','<',Carbon::now()->startOfMonth());
+					$query->where('activities.eimplementation_date','>=',Carbon::now()->startOfMonth()->subMonths(1))
+						->where('activities.eimplementation_date','<',Carbon::now()->startOfMonth());
 				}
 				
 			})

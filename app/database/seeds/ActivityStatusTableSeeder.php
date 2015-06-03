@@ -18,7 +18,8 @@ class ActivityStatusTableSeeder extends Seeder {
 			(5, 'SUBMITTED TO GCOM'),
 			(6, 'SUBMITTED TO CD OPS'),
 			(7, 'SUBMITTED TO CMD DIRECTOR'), 
-			(8, 'APPROVED');");
+			(8, 'APPROVED'),
+			(9, 'RELEASED');");
 		DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 	}
 

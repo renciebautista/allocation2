@@ -119,6 +119,7 @@
 			<table class="table table-striped table-condensed table-hover table-bordered">
 				<thead>
 					<tr>
+						<th class="center">ID</th>
 						<th class="center">Status</th>
 						<th class="center">TOP Cycle</th>
 						<th class="center">Scope</th>
@@ -140,6 +141,7 @@
 					@else
 					@foreach($activities as $activity)
 					<tr>
+						<td class="right">{{ $activity->id }}</td>
 						<td>{{ $activity->status }}</td>
 						<td>{{ $activity->cycle_name }}</td>
 						<td>{{ $activity->scope_name }}</td>
@@ -151,11 +153,7 @@
 						<td>{{ date_format(date_create($activity->eimplementation_date),'m/d/Y') }}</td>
 						<td>{{ date_format(date_create($activity->billing_date),'m/d/Y') }}</td>
 						<td class="action">
-							@if($activity->status_id == 8)
 							{{ HTML::linkAction('ReportController@download','Download', $activity->id, array('class' => 'btn btn-success btn-xs')) }}
-							@else
-							<button class="btn btn-success btn-xs disabled">Download</button>
-							@endif
 						</td>
 						<td class="action">
 							<a class="btn btn-info btn-xs" target="_blank" href="{{ URL::action('ReportController@preview', $activity->id ) }}">Preview</a>							

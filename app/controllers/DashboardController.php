@@ -12,19 +12,6 @@ class DashboardController extends \BaseController {
 	 */
 	public function index()
 	{
-		// if(Auth::user()->hasRole("FIELD SALES")){
-		// 	Input::flash();
-		// 	$cycles = Cycle::getLists();
-		// 	$types = ActivityType::getLists();
-		// 	$scopes = ScopeType::getLists();
-		// 	$activities = Activity::searchField(Input::get('cy'),Input::get('ty'),Input::get('sc'),Input::get('title'));
-		// 	return View::make('dashboard.field',compact('activities', 'cycles','types','scopes'));
-		// }
-
-		// if(Auth::user()->hasRole("ADMINISTRATOR")){
-		// 	return View::make('dashboard.admin');
-		// }
-
 
 		$ongoings = Activity::summary(8,'ongoing');
 		// Helper::print_array($ongoings);

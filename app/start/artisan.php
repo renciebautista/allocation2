@@ -13,3 +13,4 @@
 
 Artisan::add(new UploadSales);
 Artisan::add(new MakePdf);
+Artisan::add(new ScheduleActivity);

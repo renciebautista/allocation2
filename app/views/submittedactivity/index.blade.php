@@ -102,18 +102,19 @@
 <div class="row">
 	<div class="col-lg-12">
 		<div class="table-responsive">
-			<table class="table table-striped table-hover">
+			<table class="table table-striped table-condensed table-hover table-bordered">
 				<thead>
 					<tr>
-						<th>Status</th>
-						<th>TOP Cycle</th>
-						<th>Scope</th>
-						<th>Activity Type</th>
-						<th>Activity Title</th>
-						<th>Proponent</th>
-						<th>Start Date</th>
-						<th>End Date</th>
-						<th>Billing Deadline</th>
+						<th class="center">ID</th>
+						<th class="center">Status</th>
+						<th class="center">TOP Cycle</th>
+						<th class="center">Scope</th>
+						<th class="center">Activity Type</th>
+						<th class="center">Activity Title</th>
+						<th class="center">Proponent</th>
+						<th class="center">Start Date</th>
+						<th class="center">End Date</th>
+						<th class="center">Billing Deadline</th>
 						<th colspan="2" style="text-align:center;">Action</th>
 					</tr>
 				</thead>
@@ -125,6 +126,7 @@
 					@else
 					@foreach($activities as $activity)
 					<tr>
+						<td class="right">{{ $activity->id }}</td>
 						<td>{{ $activity->status }}</td>
 						<td>{{ $activity->cycle_name }}</td>
 						<td>{{ $activity->scope_name }}</td>

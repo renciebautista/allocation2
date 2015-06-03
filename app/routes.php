@@ -63,7 +63,7 @@ Queue::getIron()->ssl_verifypeer = false;
 // });
 
 Route::get('queue/send', function(){
-	$job_id = Queue::push('Writefile', array('string' => 'Hello world'));
+	$job_id = Queue::push('Scheduler', array('string' => 'Hello world'));
 	Job::create(array('job_id' => $job_id));
 	return $job_id;
 });
@@ -73,27 +73,28 @@ Route::post('queue/push', function()
 	return Queue::marshal();
 });
 
-class Writefile{
-	public function fire($job, $data){
-		$job_id = $job->getJobId(); // Get job id
+// class Writefile{
+// 	public function fire($job, $data){
+// 		$job_id = $job->getJobId(); // Get job id
 
-		$ejob = Job::where('job_id',$job_id)->first(); // Find the job in database
+// 		$ejob = Job::where('job_id',$job_id)->first(); // Find the job in database
 
-		$ejob->status = 'running'; //Set job status to running
+// 		$ejob->status = 'running'; //Set job status to running
 
-		$ejob->save();
+// 		$ejob->save();
 
-		Artisan::call('make:pdf');
-		File::append(storage_path().'/queue.txt',$data['string'].$job_id.PHP_EOL); //Add content to file
+// 		Artisan::call('make:pdf');
+// 		// Artisan::call('make:pdf',array('id' => 48));
+// 		File::append(storage_path().'/queue.txt',$data['string'].$job_id.PHP_EOL); //Add content to file
 
-		$ejob->status = 'finished'; //Set job status to finished
+// 		$ejob->status = 'finished'; //Set job status to finished
 
-		$ejob->save();
+// 		$ejob->save();
 
-		return true;
-		$job->delete();
-	}
-}
+// 		return true;
+// 		$job->delete();
+// 	}
+// }
 
 // Route::get('print', function(){
 // 	$activity = Activity::find(48);
