@@ -141,7 +141,6 @@
 						<td>{{ date_format(date_create($activity->billing_date),'m/d/Y') }}</td>
 						<td class="action">
 							{{ HTML::linkAction('ActivityController@edit','View', $activity->id, array('class' => 'btn btn-success btn-xs')) }}
-							
 						</td>
 						<td class="action">
 							{{ Form::open(array('method' => 'POST', 'action' => array('ActivityController@duplicate', $activity->id), 'class' => 'disable-button')) }}                       
@@ -154,7 +153,12 @@
 							{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}
 							{{ Form::close() }}
 							@else
-							<button class="btn btn-danger btn-xs disabled">Delete</button>
+							@if($activity->status_id == 9)
+								{{ HTML::linkAction('ReportController@download','Download', $activity->id, array('class' => 'btn btn-success btn-xs')) }}
+							@else
+								<button class="btn btn-danger btn-xs disabled">Delete</button>
+							@endif
+							
 							@endif
 						</td>
 						
