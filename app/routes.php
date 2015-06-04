@@ -404,6 +404,7 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('activity/pistemplate', 'ActivityController@pistemplate');
 
 	Route::post('activity/{id}/duplicate','ActivityController@duplicate');
+	Route::get('activity/{id}/summary','ActivityController@summary');
 	
 	Route::resource('activity', 'ActivityController');
 	

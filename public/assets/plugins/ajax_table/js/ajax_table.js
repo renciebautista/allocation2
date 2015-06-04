@@ -76,6 +76,7 @@ $(document).ready(function(){
 			// var serialized = $inputs.serialize();
 			// alert(serialized);
 			if(validation == 1){
+				// console.log($(this));
 				$(this).addClass('disabled');
 				ajax("POST",option.add_url,$inputs.serialize(),table,option,effect,inputs);
 			}
@@ -251,17 +252,15 @@ ajax = function (type,url,params,table,option,effect,inputs){
 					}else
 					   $("#"+table.attr('id')+" tr:nth-child("+seclastRow+")").effect("highlight",{color: '#acfdaa'},1000);
 
+					table.find('.ajaxSave').removeClass('disabled');
 					// Blank input fields
 					table.find(inputs).filter(function() {
 						// check if input element is blank ??
 						if($(this).is( ":text" )){
 							this.value = "";
 						}
-						
 						$(this).removeClass("success").removeClass("error");
 					});
-
-					table.find('.ajaxSave').removeClass('disabled');
 
 					if (option.onSaveRow !== undefined) {
 						option.onSaveRow();

@@ -146,7 +146,7 @@ class SchemeAllocRepository
                                 $fs_multi = $shipto['split'] / 100;
                             }
                         }else{
-                            if($shipto['gsv'] >0){
+                            if(($shipto['gsv'] >0) && ($customer->ado_total > 0)){
                                 $fs_multi = round($shipto['gsv'] / $customer->ado_total,2);
                             }
                         }
