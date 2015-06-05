@@ -440,13 +440,13 @@
 										<th class="text-center">Total TTS</th>
 										<th class="text-center">Total PE</th>
 										<th class="text-center">Total Cost</th>
-										<th colspan="2" class="text-center">Action</th>
+										<th colspan="3" class="text-center">Action</th>
 									</tr>
 								</thead>
 							  	<tbody>
 							  		@if(count($schemes) == 0)
 							  		<tr>
-							  			<td colspan="12">No record found!</td>
+							  			<td colspan="13">No record found!</td>
 							  		</tr>
 							  		@endif
 							  		<?php $i = 0; ?>
@@ -465,12 +465,17 @@
 									  	<td class="text-right">{{ number_format($scheme->final_pe_r,2) }}</td>
 									  	<td class="text-right">{{ number_format($scheme->final_total_cost,2) }}</td>
 									  	<td class="action">
-									  		{{ HTML::linkAction('SchemeController@edit','View', $scheme->id, array('class' => 'btn btn-primary btn-xs')) }}
+									  		{{ HTML::linkAction('SchemeController@edit','View', $scheme->id, array('class' => 'btn btn-success btn-xs')) }}
+									  	</td>
+									  	<td class="action">
+									  		{{ Form::open(array('method' => 'POST', 'action' => array('SchemeController@duplicate', $scheme->id), 'class' => 'disable-button')) }}                       
+											{{ Form::submit('Duplicate', array('class'=> 'btn btn-primary btn-xs disable-button','onclick' => "if(!confirm('Are you sure to duplicate this record?')){return false;};")) }}
+											{{ Form::close() }}
 									  	</td>
 
 									  	<td class="action">
 									  		{{ Form::open(array('method' => 'DELETE', 'action' => array('SchemeController@destroy', $scheme->id),'class' => 'disable-button')) }}                       
-												{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}
+												{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs disable-button','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}
 											{{ Form::close() }}
 									  	</td>
 									</tr>

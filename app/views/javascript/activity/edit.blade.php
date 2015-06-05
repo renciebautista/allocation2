@@ -1,5 +1,7 @@
 @section('scripts')
 
+$(".disable-button").disableButton();
+
 function sumOfColumns(table, columnIndex) {
     var tot = 0;
     table.find("tr").children("td:nth-child(" + columnIndex + ")")

@@ -630,14 +630,131 @@ class SchemeController extends \BaseController {
 
 		Excel::create($scheme->name, function($excel) use($allocations){
 			$excel->sheet('allocations', function($sheet) use($allocations) {
-				$sheet->setColumnFormat(array(
-				    'G' => '0.00'
-				));
 				$sheet->fromModel($allocations);
 			})->download('xls');
 
 		});
+	}
 
+	public function duplicate($id){
+		DB::beginTransaction();
 
+		try {
+			$scheme = Scheme::find($id);
+			$new_scheme = new Scheme;
+			$new_scheme->activity_id = $scheme->activity_id;
+			$new_scheme->name = $scheme->name;
+			$new_scheme->item_code = $scheme->item_code;
+			$new_scheme->item_barcode = $scheme->item_barcode;
+			$new_scheme->item_casecode = $scheme->item_casecode;
+			$new_scheme->pr = $scheme->pr;
+			$new_scheme->srp_p = $scheme->srp_p;
+			$new_scheme->other_cost = $scheme->other_cost;
+			$new_scheme->ulp = $scheme->ulp;
+			$new_scheme->cost_sale = $scheme->cost_sale;
+			$new_scheme->quantity = $scheme->quantity;
+			$new_scheme->deals = $scheme->deals;
+			$new_scheme->total_deals = $scheme->total_deals;
+			$new_scheme->total_cases = $scheme->total_cases;
+			$new_scheme->tts_r = $scheme->tts_r;
+			$new_scheme->pe_r = $scheme->pe_r;
+			$new_scheme->total_cost = $scheme->total_cost;
+			$new_scheme->user_id = Auth::id();
+			$new_scheme->final_alloc = $scheme->final_alloc;
+			$new_scheme->final_total_deals = $scheme->final_total_deals;
+			$new_scheme->final_total_cases = $scheme->final_total_cases;
+			$new_scheme->final_tts_r = $scheme->final_tts_r;
+			$new_scheme->final_pe_r = $scheme->final_pe_r;
+			$new_scheme->final_total_cost = $scheme->final_total_cost;
+			$new_scheme->save();
+
+			// add skus
+			$scheme_skus = SchemeSku::where('scheme_id',$scheme->id)->get();
+			if(!empty($scheme_skus)){
+				foreach ($scheme_skus as $sku) {
+					SchemeSku::insert(array('scheme_id' => $new_scheme->id, 'sku' => $sku->sku));
+				}
+			}
+			// add host sku
+			$host_skus = SchemeHostSku::where('scheme_id',$scheme->id)->get();
+			if(!empty($host_skus)){
+				foreach ($host_skus as $sku) {
+					SchemeHostSku::insert(array('scheme_id' => $new_scheme->id, 'sap_code' => $sku->sap_code));
+				}
+			}
+
+			// add premuim sku
+			$premuim_skus = SchemePremuimSku::where('scheme_id',$scheme->id)->get();
+			if(!empty($premuim_skus)){
+				foreach ($premuim_skus as $sku) {
+					SchemePremuimSku::insert(array('scheme_id' => $new_scheme->id, 'sap_code' => $sku->sap_code));
+				}
+			}
+
+			$allocations = Allocation::schemeAllocations($scheme->id);
+			$last_area_id = 0;
+			$last_shipto_id = 0;
+			foreach ($allocations as $allocation) {
+				$scheme_alloc = new SchemeAllocation;
+
+				if((!empty($allocation->customer_id)) && (empty($allocation->shipto_id))){
+					$scheme_alloc->customer_id = $last_area_id;
+				}
+
+				if((!empty($allocation->customer_id)) && (!empty($allocation->shipto_id))){
+					$scheme_alloc->customer_id = $last_area_id;
+					$scheme_alloc->shipto_id = $last_shipto_id;
+				}
+				
+				$scheme_alloc->scheme_id = $new_scheme->id;
+				$scheme_alloc->group = $allocation->group;
+				$scheme_alloc->area = $allocation->area;
+				$scheme_alloc->sold_to = $allocation->sold_to;
+				$scheme_alloc->ship_to = $allocation->ship_to;
+				$scheme_alloc->channel = $allocation->channel;
+				$scheme_alloc->account_group_name = $allocation->account_group_name;
+				$scheme_alloc->outlet = $allocation->outlet;
+				$scheme_alloc->sold_to_gsv = $allocation->sold_to_gsv;
+				$scheme_alloc->sold_to_gsv_p = $allocation->sold_to_gsv_p;
+				$scheme_alloc->sold_to_alloc = $allocation->sold_to_alloc;
+				$scheme_alloc->ship_to_gsv = $allocation->ship_to_gsv;
+				$scheme_alloc->ship_to_gsv_p = $allocation->ship_to_gsv_p;
+				$scheme_alloc->ship_to_alloc = $allocation->ship_to_alloc;
+				$scheme_alloc->outlet_to_gsv = $allocation->outlet_to_gsv;
+				$scheme_alloc->outlet_to_gsv_p = $allocation->outlet_to_gsv_p;
+				$scheme_alloc->outlet_to_alloc = $allocation->outlet_to_alloc;
+				$scheme_alloc->multi = $allocation->multi;
+				$scheme_alloc->computed_alloc = $allocation->computed_alloc;
+				$scheme_alloc->force_alloc = $allocation->force_alloc;
+				$scheme_alloc->final_alloc = $allocation->final_alloc;
+				$scheme_alloc->in_deals = $allocation->in_deals;
+				$scheme_alloc->in_cases = $allocation->in_cases;
+				$scheme_alloc->tts_budget = $allocation->tts_budget;
+				$scheme_alloc->pe_budget = $allocation->pe_budget;
+				$scheme_alloc->save();
+
+				if((empty($allocation->customer_id)) && (empty($allocation->shipto_id))){
+					$last_area_id = $scheme_alloc->id;
+				}
+
+				if((!empty($allocation->customer_id)) && (!empty($allocation->shipto_id))){
+					$last_shipto_id = $scheme_alloc->id;
+				}
+			}
+			DB::commit();
+			$class = 'alert-success';
+			$message = 'Scheme  successfully duplicated.';
+		} catch (\Exception $e) {
+				DB::rollback();
+				// echo $e;
+			    $class = 'alert-danger';
+				$message = 'Cannot duplicate activity.';
+				// something went wrong
+		}
+
+		return Redirect::to(URL::action('ActivityController@edit', array('id' => $scheme->activity_id)) . "#schemes")
+				->with('class', $class )
+				->with('message', $message);	
+		
 	}
 }

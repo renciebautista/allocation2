@@ -415,6 +415,7 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('scheme/{id}/edit', 'SchemeController@edit');
 	Route::delete('scheme/{id}', 'SchemeController@destroy');
 	Route::put('scheme/{id}', 'SchemeController@update');
+	Route::post('scheme/{id}/duplicate','SchemeController@duplicate');
 	Route::put('scheme/updatealloc', 'SchemeController@updateallocation');
 
 	// Route::post('downloadedactivity/{id}/submittogcm', 'DownloadedActivityController@submittogcm');

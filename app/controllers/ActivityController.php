@@ -819,6 +819,7 @@ class ActivityController extends BaseController {
 						$arr['success'] = 0;
 						$arr['error'] = $validation['message'];
 					}else{
+
 						$planner = ActivityPlanner::getPlanner($activity->id);
 						if(count($planner) > 0){
 							$required_rules = array('budget','approver','cycle','activity','category','brand','objective','background','customer','scheme');
@@ -839,10 +840,12 @@ class ActivityController extends BaseController {
 							$pmog_recall = 0;
 							if($status_id == 1){
 								$pro_recall = 1;
+								// check if there is a planner
 								if(count($planner) > 0){
 									$comment_status = "SUBMITTED TO PMOG PLANNER";
 									$activity_status = 4;
 								}else{
+									// check if there is GCOM Approver
 									$gcom_approvers = ActivityApprover::getApproverByRole($activity->id,'GCOM APPROVER');
 									if(count($gcom_approvers) > 0){
 										$comment_status = "SUBMITTED TO GCOM";
@@ -854,6 +857,7 @@ class ActivityController extends BaseController {
 											$approver->update();
 										}
 									}else{
+										// check if there is CD OPS Approver
 										$cdops_approvers = ActivityApprover::getApproverByRole($activity->id,'CD OPS APPROVER');
 										if(count($cdops_approvers) > 0){
 											$comment_status = "SUBMITTED TO CD OPS";
@@ -865,6 +869,7 @@ class ActivityController extends BaseController {
 												$approver->update();
 											}
 										}else{
+											// check if there is CMD DIRECTOR Approver
 											$cmd_approvers = ActivityApprover::getApproverByRole($activity->id,'CMD DIRECTOR');
 											if(count($cmd_approvers) > 0){
 												$comment_status = "SUBMITTED TO CMD";
@@ -945,7 +950,7 @@ class ActivityController extends BaseController {
 								$arr['error'] = $validation['message'];
 								return $arr;
 							}else{
-								//check next approver
+								// check if there is a gcom
 								$pmog_recall = 1;
 								$gcom_approvers = ActivityApprover::getApproverByRole($activity->id,'GCOM APPROVER');
 								if(count($gcom_approvers) > 0){

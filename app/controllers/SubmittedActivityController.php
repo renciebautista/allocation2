@@ -68,56 +68,82 @@ class SubmittedActivityController extends \BaseController {
 					Session::flash('class', 'alert-danger');
 					Session::flash('message', 'An error occured while updating activity.'); 
 				}else{
-					$comment_status = "DENIED";
-					$class = "text-danger";
 					$status = Input::get('status');
-					$approver_status = 3;
-					$role = "";
-					$activity_status = 0;
-
-					if($status == 1){
-						$approver_status = 2;
-					}
-					// update per approver
-					$approver = ActivityApprover::getApprover($id,Auth::id());
-					$approver->status_id = $approver_status;
-					$approver->update();
 					// end update per approver
+					$planner = ActivityPlanner::getPlanner($activity->id);
 
 					if($status == 1){  // approved
-						$cdops_approvers = ActivityApprover::getApproverByRole($id,'CD OPS APPROVER');
-						if(count($cdops_approvers) > 0){
-							$comment_status = "SUBMITTED TO CD OPS";
-							$role = "GCOM APPROVER";
-							$activity_status = 6;
+						if(Auth::user()->hasRole("GCOM APPROVER")){
+							$approver = ActivityApprover::getCurrentApprover($activity->id);
 
-							foreach ($cdops_approvers as $cdops_approver) {
-								$approver = ActivityApprover::find($cdops_approver->id);
-								$approver->show = 1;
+							if(count($approver) > 0 ){
+								$approver->status_id = 2;
 								$approver->update();
-							}
-						}else{
-							$cmd_approvers = ActivityApprover::getApproverByRole($id,'CMD DIRECTOR');
-							if(count($cmd_approvers) > 0){
-								$comment_status = "SUBMITTED TO CMD";
-								$role = "CD OPS APPROVER";
-								$activity_status = 7;
 
-								foreach ($cmd_approvers as $cmd_approver) {
-									$approver = ActivityApprover::find($cmd_approver->id);
-									$approver->show = 1;
-									$approver->update();
+								$comment_status = "APPROVED BY GCOM";
+
+								$gcom_approvers = ActivityApprover::getApproverByRole($activity->id,'GCOM APPROVER');
+
+								if(count($gcom_approvers) == 0){
+									$cd_approvers = ActivityApprover::getApproverByRole($activity->id,'CD OPS APPROVER');
+									if(count($cd_approvers) == 0){
+										$cmd_approvers = ActivityApprover::getApproverByRole($activity->id,'CMD DIRECTOR');
+										if(count($cmd_approvers) == 0){
+											$activity_status = 8;
+										}else{
+											ActivityApprover::updateNextApprover($activity->id,'CMD DIRECTOR');
+											$activity_status = 7;
+										}
+									}else{
+										ActivityApprover::updateNextApprover($activity->id,'CD OPS APPROVER');
+										$activity_status = 6;
+									}
 								}
-							}else{
-								$comment_status = "APPROVED FOR FIELD";
-								$role = "CMD DIRECTOR";
-								$activity_status = 8;
-
-								$activity->pro_recall = 0;
-								$activity->pmog_recall = 0;
-								$activity->update();	
 							}
 						}
+
+						if(Auth::user()->hasRole("CD OPS APPROVER")){
+							$approver = ActivityApprover::getCurrentApprover($activity->id);
+							if(count($approver) > 0 ){
+								$approver->status_id = 2;
+								$approver->update();
+
+								$comment_status = "APPROVED BY CD OPS";
+
+								$cd_approvers = ActivityApprover::getApproverByRole($activity->id,'CD OPS APPROVER');
+								if(count($cd_approvers) == 0){
+									$cmd_approvers = ActivityApprover::getApproverByRole($activity->id,'CMD DIRECTOR');
+									if(count($cmd_approvers) == 0){
+										$activity_status = 8;
+									}else{
+										ActivityApprover::updateNextApprover($activity->id,'CMD DIRECTOR');
+										$activity_status = 7;
+									}
+								}else{
+									ActivityApprover::updateNextApprover($activity->id,'CD OPS APPROVER');
+									$activity_status = 6;
+								}
+							}
+						}
+
+						if(Auth::user()->hasRole("CMD DIRECTOR")){
+							$approver = ActivityApprover::getCurrentApprover($activity->id);
+							if(count($approver) > 0 ){
+								$approver->status_id = 2;
+								$approver->update();
+
+								$comment_status = "APPROVED BY CMD DIRECTOR";
+
+								$cmd_approvers = ActivityApprover::getApproverByRole($activity->id,'CMD DIRECTOR');
+								if(count($cmd_approvers) == 0){
+									$activity_status = 8;
+								}else{
+									ActivityApprover::updateNextApprover($activity->id,'CMD DIRECTOR');
+									$activity_status = 7;
+								}
+							}
+						}
+
 						$class = "text-success";
 					}else{ // denied
 						$comment_status = "DENIED";
@@ -136,10 +162,12 @@ class SubmittedActivityController extends \BaseController {
 						$activity->pro_recall = $pro_recall;
 						$activity->pmog_recall = $pmog_recall;
 						$activity->status_id = $last_status;
-						$activity->update();	
+							
 
 						ActivityApprover::resetAll($activity->id);		
 					}
+					$activity->status_id = $activity_status;
+					$activity->update();
 
 					$comment = new ActivityComment;
 					$comment->created_by = Auth::id();
@@ -148,10 +176,6 @@ class SubmittedActivityController extends \BaseController {
 					$comment->comment_status = $comment_status;
 					$comment->class = $class;
 					$comment->save();
-
-					if($status == 1){
-						ActivityApprover::updateActivity($id,$role,$activity_status);
-					}
 
 					$arr['success'] = 1;
 					Session::flash('class', 'alert-success');

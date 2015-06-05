@@ -10,6 +10,16 @@
 	</div>
 </div>
 
+<div class="row">
+	<div class="col-lg-12">
+		<div class="form-group">
+			<a id="scheme_back" class="btn btn-default" href="{{action('ActivityController@edit', $activity->id);}}#schemes">Back to Activity Details</a>
+		</div>
+	</div>
+
+</div>
+
+
 @include('partials.notification')
 <div class="well">
 	{{ Form::open(array('action' => array('SchemeController@store', $activity->id) ,'class' => 'bs-component' ,'id' => 'myform')) }}

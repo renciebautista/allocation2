@@ -4,6 +4,21 @@ class ActivityApprover extends \Eloquent {
 	protected $fillable = [];
 	// public $timestamps = false;
 
+	public static function getCurrentApprover($activity_id){
+		return self::where('activity_id',$activity_id)
+			->where('user_id',Auth::id())
+			->where('status_id',0)
+			->first();
+	}
+	public static function updateNextApprover($activity_id,$role){
+		$approvers = self::getApproverByRole($activity_id,$role);
+		foreach ($approvers as $approver) {
+			$approver = self::find($approver->id);
+			$approver->show = 1;
+			$approver->update();
+		}
+	}
+
 	public static function getList($id){
 		$list = array();
 		$data = self::where('activity_id',$id)->get();

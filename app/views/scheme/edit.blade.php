@@ -14,6 +14,7 @@
 	<div class="col-lg-12">
 		<div class="form-group">
 			<a id="scheme_back" class="btn btn-default" href="{{action('ActivityController@edit', $activity->id);}}#schemes">Back to Activity Details</a>
+			<a href="{{ URL::action('SchemeController@create', $activity->id) }}" class="btn btn-primary"><i class="fa fa-plus"></i> Scheme</a>
 		</div>
 	</div>
 
