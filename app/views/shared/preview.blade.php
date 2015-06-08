@@ -443,21 +443,26 @@
 				@if(!empty($schemes))
 				<table>
 					<tr>
+						<th width="50%">Bar  Code</th>
 						<th>Case Code</th>
-						<th>Bar  Code</th>
 					</tr>
 					@foreach($schemes as $scheme)
 					<tr>
 						<td>
-							{{ $scheme->name }}<br>
-							{{ DNS1D::getBarcodeSVG($scheme->item_casecode, "I25",3,100) }} <br>
-							{{$scheme->item_casecode}}
-						</td>
-						<td>
+							@if(!empty($scheme->item_barcode))
 							{{ $scheme->name }}<br>
 							{{ DNS1D::getBarcodeSVG($scheme->item_barcode, "EAN13",2,100) }} <br>
 							{{$scheme->item_barcode}}
+							@endif
 						</td>
+						<td>
+							@if(!empty($scheme->item_casecode))
+							{{ $scheme->name }}<br>
+							{{ DNS1D::getBarcodeSVG($scheme->item_casecode, "I25",3,100) }} <br>
+							{{$scheme->item_casecode}}
+							@endif
+						</td>
+						
 					</tr>
 					@endforeach
 				</table>

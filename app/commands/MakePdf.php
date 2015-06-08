@@ -175,22 +175,36 @@ class MakePdf extends Command {
 				// $style['cellfitalign'] = 'C';
 				foreach ($schemes as $scheme) {
 					$y = $pdf->GetY();
-					$casecode[$cnt] = $pdf->serializeTCPDFtagParameters(array($scheme->item_casecode, 'I25', '', '', '', 18, 0.4, $style, '')); 
-					$barcode[$cnt] = $pdf->serializeTCPDFtagParameters(array($scheme->item_barcode, 'EAN13', '', '', '', 18, 0.4, $style, ''));       
-					$str .='<tr nobr="true"><td align="center">'.$scheme->name.'<br>
+					if(!empty($scheme->item_casecode)){
+						$casecode[$cnt] = $pdf->serializeTCPDFtagParameters(array($scheme->item_casecode, 'I25', '', '', '', 18, 0.4, $style, '')); 
+					}
+					if(!empty($scheme->item_barcode)){
+						$barcode[$cnt] = $pdf->serializeTCPDFtagParameters(array($scheme->item_barcode, 'EAN13', '', '', '', 18, 0.4, $style, ''));       
+					}
+					if(!empty($scheme->item_casecode)){
+						$str .='<tr nobr="true"><td align="center">'.$scheme->name.'<br>
 						<tcpdf method="write1DBarcode" params="'.$casecode[$cnt] .'" />
 						</td>';
-					$str .='<td align="center">'.$scheme->name.'<br>
+					}else{
+						$str .='<tr nobr="true"><td align="center"></td>';
+					}
+					if(!empty($scheme->item_barcode)){
+						$str .='<td align="center">'.$scheme->name.'<br>
 						<tcpdf method="write1DBarcode" params="'.$barcode[$cnt] .'" />
 						</td></tr>';
+					}else{
+						$str .='<tr nobr="true"><td align="center"></td>';
+					}
+					
+				
 					$cnt++;
 				}
 
 
 				$str_table='<table cellspacing="0" cellpadding="2" border="1">            
 				<tr nobr="true">
-					<td align="center" style="background-color: #000000;color: #FFFFFF;">Case Code</td>
 					<td align="center" style="background-color: #000000;color: #FFFFFF;">Bar Code</td>
+					<td align="center" style="background-color: #000000;color: #FFFFFF;">Case Code</td>
 				</tr>';
 				$str_table .= $str;
 				$str_table .='</table>';

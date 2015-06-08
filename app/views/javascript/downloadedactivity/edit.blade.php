@@ -585,8 +585,7 @@ $('#budget_table').ajax_table({
 		$('#io_startdate, #io_enddate').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
 		$('#io_startdate, #io_enddate').datetimepicker({
 			pickTime: false,
-			calendarWeeks: true,
-			minDate: moment()
+			calendarWeeks: true
 		});
 		$('#io_amount').inputNumber();
 		$("#io_no").mask("aa99999999");
@@ -594,8 +593,7 @@ $('#budget_table').ajax_table({
 		$('#io_startdate, #io_enddate').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
 		$('#io_startdate, #io_enddate').datetimepicker({
 			pickTime: false,
-			calendarWeeks: true,
-			minDate: moment()
+			calendarWeeks: true
 		});
 		$('#io_amount').inputNumber();
 		$("#io_no").mask("aa99999999");
@@ -624,16 +622,14 @@ $('#no_budget_table').ajax_table({
 		$('#budget_startdate, #budget_enddate').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
 		$('#budget_startdate, #budget_enddate').datetimepicker({
 			pickTime: false,
-			calendarWeeks: true,
-			minDate: moment()
+			calendarWeeks: true
 		});
 		$('#budget_amount').inputNumber();
 	},onEditRow : function(){
 		$('#budget_startdate, #budget_enddate').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
 		$('#budget_startdate, #budget_enddate').datetimepicker({
 			pickTime: false,
-			calendarWeeks: true,
-			minDate: moment()
+			calendarWeeks: true
 		});
 		$('#budget_amount').inputNumber();
 	},onError: function (){
