@@ -9,6 +9,6 @@ class Objective extends \Eloquent {
     }
 
     public static function getLists(){
-    	return self::orderBy('objective')->lists('objective', 'id');;
+    	return self::orderBy('id')->lists('objective', 'id');;
     }
 }

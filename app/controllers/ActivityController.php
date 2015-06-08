@@ -102,7 +102,7 @@ class ActivityController extends BaseController {
 					$activity->edownload_date = date('Y-m-d',strtotime(Input::get('download_date')));
 					$activity->eimplementation_date = date('Y-m-d',strtotime(Input::get('implementation_date')));
 					$activity->circular_name = strtoupper(Input::get('activity_title'));
-					$activity->division_code = $division_code;
+					// $activity->division_code = $division_code;
 					$activity->background = Input::get('background');
 					$activity->instruction = Input::get('instruction');
 					$activity->status_id = 1;
@@ -126,9 +126,8 @@ class ActivityController extends BaseController {
 					$scope = ScopeType::find($scope_id);
 					$cycle = Cycle::find($cycle_id);
 					$activity_type = ActivityType::find($activity_type_id);
-					$division = Sku::select('division_code', 'division_desc')
-										->where('division_code',$division_code)
-										->first();
+
+					
 
 					
 					$code = date('Y').$activity->id;
@@ -141,9 +140,18 @@ class ActivityController extends BaseController {
 					if(!empty($activity_type)){
 						$code .= '_'.$activity_type->activity_type;
 					}
-					if(!empty($division)){
-						$code .= '_'.$division->division_desc;
+
+					if(count($division_code) > 0){
+						$code .= '_MULTI';
+					}else{
+						$division = Sku::select('division_code', 'division_desc')
+										->where('division_code',$division_code)
+										->first();
+						if(!empty($division)){
+							$code .= '_'.$division->division_desc;
+						}
 					}
+					
 					if(!empty($category_code)){
 						if(count($category_code) > 1){
 							$code .= '_MULTI';
@@ -186,6 +194,16 @@ class ActivityController extends BaseController {
 							$activity_approver[] = array('activity_id' => $activity->id, 'user_id' => $approver);
 						}
 						ActivityApprover::insert($activity_approver);
+					}
+
+					// add division
+					if (Input::has('division'))
+					{
+						$activity_division = array();
+						foreach (Input::get('division') as $division){
+							$activity_division[] = array('activity_id' => $activity->id, 'division_code' => $division);
+						}
+						ActivityDivision::insert($activity_division);
 					}
 
 					// add category
@@ -278,6 +296,7 @@ class ActivityController extends BaseController {
 			$sel_planner = ActivityPlanner::getPlanner($activity->id);
 			$sel_approver = ActivityApprover::getList($activity->id);
 			$sel_objectives = ActivityObjective::getList($activity->id);
+			$sel_divisions = ActivityDivision::getList($activity->id);
 			// $sel_channels = ActivityChannel::getList($activity->id);
 			// Helper::print_array($sel_channels);
 			$approvers = User::getApprovers(['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']);
@@ -308,7 +327,7 @@ class ActivityController extends BaseController {
 				$divisions = Sku::getDivisionLists();
 
 				return View::make('activity.edit', compact('activity', 'scope_types', 'planners', 'approvers', 'cycles',
-				 'activity_types', 'divisions' , 'objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
+				 'activity_types', 'divisions' , 'sel_divisions','objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
 				 'sel_objectives',  'schemes', 'networks',
 				 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings',
 				 'force_allocs', 'comments' ,'submitstatus'));
@@ -316,11 +335,12 @@ class ActivityController extends BaseController {
 
 			if($activity->status_id > 3){
 				$submitstatus = array('2' => 'RECALL ACTIVITY');
-				$division = Sku::division($activity->division_code);
+				$divisions = Sku::getDivisionLists();
 				$route = 'activity.index';
 				$recall = $activity->pro_recall;
 				$submit_action = 'ActivityController@updateactivity';
-				return View::make('shared.activity_readonly', compact('activity', 'sel_planner', 'approvers', 'division',
+				return View::make('shared.activity_readonly', compact('activity', 'sel_planner', 'approvers', 
+				 'sel_divisions','divisions',
 				 'objectives',  'users', 'budgets', 'nobudgets','sel_approver',
 				 'sel_objectives',  'schemes', 'networks',
 				 'scheme_customers', 'scheme_allcations', 'materials', 'force_allocs',
@@ -337,6 +357,7 @@ class ActivityController extends BaseController {
 			$sel_planner = ActivityPlanner::getPlanner($activity->id);
 			$sel_approver = ActivityApprover::getList($activity->id);
 			$sel_objectives = ActivityObjective::getList($activity->id);
+			$sel_divisions = ActivityDivision::getList($activity->id);
 			// $sel_channels = ActivityChannel::getList($activity->id);
 			$approvers = User::getApprovers(['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']);
 			// $channels = Channel::getList();
@@ -367,17 +388,17 @@ class ActivityController extends BaseController {
 				$divisions = Sku::getDivisionLists();
 
 				return View::make('downloadedactivity.edit', compact('activity', 'scope_types', 'planners', 'approvers', 'cycles',
-				 'activity_types', 'divisions' , 'objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
+				 'activity_types', 'sel_divisions','divisions' , 'objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
 				 'sel_objectives',  'schemes', 'networks',
 				 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings',
 				 'force_allocs','submitstatus', 'comments'));
 			}else{
 				$submitstatus = array('3' => 'RECALL ACTIVITY');
-				$division = Sku::division($activity->division_code);
+				$divisions = Sku::getDivisionLists();
 				$route = 'activity.index';
 				$recall = $activity->pmog_recall;
 				$submit_action = 'ActivityController@submittogcm';
-				return View::make('shared.activity_readonly', compact('activity', 'sel_planner', 'approvers', 'division',
+				return View::make('shared.activity_readonly', compact('activity', 'sel_planner', 'approvers', 'sel_divisions','divisions' ,
 				 'objectives',  'users', 'budgets', 'nobudgets','sel_approver',
 				 'sel_objectives',  'schemes', 'networks',
 				 'scheme_customers', 'scheme_allcations', 'materials', 'force_allocs',
@@ -421,9 +442,7 @@ class ActivityController extends BaseController {
 							$scope = ScopeType::find($scope_id);
 							$cycle = Cycle::find($cycle_id);
 							$activity_type = ActivityType::find($activity_type_id);
-							$division = Sku::select('division_code', 'division_desc')
-												->where('division_code',$division_code)
-												->first();
+							
 
 							$code = date('Y').$activity->id;
 							if(!empty($scope)){
@@ -435,9 +454,18 @@ class ActivityController extends BaseController {
 							if(!empty($activity_type)){
 								$code .= '_'.$activity_type->activity_type;
 							}
-							if(!empty($division)){
-								$code .= '_'.$division->division_desc;
+
+							if(count($division_code)>0){
+								$code .= '_MULTI';
+							}else{
+								$division = Sku::select('division_code', 'division_desc')
+												->where('division_code',$division_code)
+												->first();
+								if(!empty($division)){
+									$code .= '_'.$division->division_desc;
+								}
 							}
+							
 							if(!empty($category_code)){
 								if(count($category_code) > 1){
 									$code .= '_MULTI';
@@ -466,7 +494,7 @@ class ActivityController extends BaseController {
 							$activity->scope_type_id = $scope_id;
 							$activity->cycle_id = $cycle_id;
 							$activity->activity_type_id = $activity_type_id;
-							$activity->division_code = $division_code;
+							// $activity->division_code = $division_code;
 
 							$activity->duration = (Input::get('lead_time') == '') ? 0 : Input::get('lead_time');
 							$activity->edownload_date = date('Y-m-d',strtotime(Input::get('download_date')));
@@ -512,6 +540,18 @@ class ActivityController extends BaseController {
 								}
 								ActivityApprover::insert($activity_approver);
 							}
+
+							// update division
+							ActivityDivision::where('activity_id',$activity->id)->delete();
+							if (Input::has('division'))
+							{
+								$activity_division = array();
+								foreach (Input::get('division') as $division){
+									$activity_division[] = array('activity_id' => $activity->id, 'division_code' => $division);
+								}
+								ActivityDivision::insert($activity_division);
+							}
+
 
 							// update category
 							ActivityCategory::where('activity_id',$activity->id)->delete();
@@ -822,9 +862,9 @@ class ActivityController extends BaseController {
 
 						$planner = ActivityPlanner::getPlanner($activity->id);
 						if(count($planner) > 0){
-							$required_rules = array('budget','approver','cycle','activity','category','brand','objective','background','customer','scheme');
+							$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme');
 						}else{
-							$required_rules = array('budget','approver','cycle','activity','category','brand','objective','background','customer','scheme');
+							$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme');
 						}
 						
 						$validation = Activity::validForDownload($activity,$required_rules);
@@ -1480,7 +1520,7 @@ class ActivityController extends BaseController {
 
 		$input = array('file' => Input::file('file'));
 		$rules = array(
-			'file' => 'image'
+			'file' => 'image|required'
 		);
 		// Now pass the input and rules into the validator
 		$validator = Validator::make($input, $rules);
@@ -1540,7 +1580,7 @@ class ActivityController extends BaseController {
 
 		$input = array('file' => Input::file('file'));
 		$rules = array(
-			'file' => 'mimes:xls,xlsx'
+			'file' => 'mimes:xls,xlsx|required'
 		);
 
 		// Now pass the input and rules into the validator

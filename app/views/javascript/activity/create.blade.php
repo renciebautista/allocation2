@@ -136,11 +136,18 @@ $.validator.addMethod("greaterdate", function(value, element) {
 	return this.optional(element) || (moment(value).isAfter(moment().format('MM/DD/YYYY')) || moment(value).isSame(moment().format('MM/DD/YYYY')));
 }, "Please select from the list.");
 
+$('select#division').multiselect({
+	maxHeight: 200,
+	includeSelectAllOption: true,
+	enableCaseInsensitiveFiltering: true,
+	enableFiltering: true
+});
+
 
 $('select#division').on("change",function(){
 	$.ajax({
 			type: "POST",
-			data: {q: $(this).val()},
+			data: {divisions: GetSelectValues($('select#division :selected'))},
 			url: "../api/category",
 			success: function(data){
 				$('select#category').empty();

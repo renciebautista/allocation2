@@ -206,7 +206,7 @@
 							<div class="row">
 								<div class="col-lg-12">
 									{{ Form::label('division', 'Division', array('class' => 'control-label')) }}
-									{{ Form::select('division',  array('0' => 'PLEASE SELECT') + $divisions, $activity->division_code, array('class' => 'form-control')) }}
+									{{ Form::select('division[]',  $divisions, $sel_divisions, array('id' => 'division', 'class' => 'form-control' ,'multiple' => 'multiple' ,'data-placeholder' => 'SELECT DIVISION')) }}
 								</div>
 							</div>
 						</div>

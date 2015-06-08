@@ -23,10 +23,10 @@ class SchemeController extends \BaseController {
 	public function create($id)
 	{
 		$activity = Activity::find($id);
-
+		$divisions = ActivityDivision::getList($id);
 		$categories = ActivityCategory::selected_category($id);
 		$brands = ActivityBrand::selected_brand($id);
-		$skus = Sku::items($activity->division_code,$categories,$brands);
+		$skus = Sku::items($divisions,$categories,$brands);
 		$involves = Pricelist::items();
 		return View::make('scheme.create', compact('activity','skus', 'involves'));
 	}

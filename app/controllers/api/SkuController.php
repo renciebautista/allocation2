@@ -5,12 +5,11 @@ class SkuController extends \BaseController {
 	public function category()
 	{
 		if(\Request::ajax()){
+			$filter = \Input::get('divisions');
 			$data = \Sku::select('category_code', 'category_desc')
-			->where('division_code',\Input::get('q'))
-			// ->whereIn('division_code',$q)
+			->whereIn('division_code',$filter)
 			->groupBy('category_code')
 			->orderBy('category_desc')->lists('category_desc', 'category_code');
-
 			return \Response::json($data,200);
 		}
 	}
@@ -32,10 +31,10 @@ class SkuController extends \BaseController {
 	public function categoryselected()
 	{
 		if(\Request::ajax()){
-			$q = \Input::get('q');
+			$divisions = \Input::get('divisions');
 			$id = \Input::get('id');
 			$data['selection'] = \Sku::select('category_code', 'category_desc')
-			->where('division_code',$q)
+			->whereIn('division_code',$divisions)
 			->groupBy('category_code')
 			->orderBy('category_desc')->lists('category_desc', 'category_code');
 
@@ -52,7 +51,7 @@ class SkuController extends \BaseController {
 			$filter = \Input::get('categories');
 			$data = array();
 			if($filter != ''){
-				$data = \Sku::select('brand_code', 'brand_desc')
+				$data = \Sku::select('brand_code', \DB::raw('CONCAT(brand_desc, "- ", cpg_desc) AS brand_desc'))
 				->whereIn('category_code',$filter)
 				->groupBy('brand_code')
 				->orderBy('brand_desc')->lists('brand_desc', 'brand_code');
@@ -70,7 +69,7 @@ class SkuController extends \BaseController {
 			$data = array();
 			$data['selection']= array();
 			if($filter != ''){
-				$data['selection'] = \Sku::select('brand_code', 'brand_desc')
+				$data['selection'] = \Sku::select('brand_code', \DB::raw('CONCAT(brand_desc, "- ", cpg_desc) AS brand_desc'))
 				->whereIn('category_code',$filter)
 				->groupBy('brand_code')
 				->orderBy('brand_desc')->lists('brand_desc', 'brand_code');

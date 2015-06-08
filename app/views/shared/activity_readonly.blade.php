@@ -209,7 +209,7 @@
 							<div class="row">
 								<div class="col-lg-12">
 									{{ Form::label('division', 'Division', array('class' => 'control-label')) }}
-									{{ Form::text('division',$division->division_desc, array('class' => 'form-control','readonly' => '')) }}
+									{{ Form::select('division[]',  $divisions, $sel_divisions, array('id' => 'division', 'class' => 'form-control' ,'multiple' => 'multiple' ,'data-placeholder' => 'SELECT DIVISION')) }}
 								</div>
 							</div>
 						</div>
@@ -990,10 +990,10 @@ $('select#approver').multiselect({
 	enableFiltering: true
 });
 
-function updatecategory(id){
+function updatecategory(){
 	$.ajax({
 		type: "POST",
-		data: {q: id, id: {{ $activity->id }}},
+		data: {divisions: GetSelectValues($('select#division :selected')),id: {{ $activity->id }}},
 		url: "../../api/category/getselected",
 		success: function(data){
 			$('select#category').empty();
@@ -1029,7 +1029,22 @@ function updatebrand(){
 		});
 }
 
-updatecategory("{{$activity->division_code}}");
+var div = $("select#division").val();
+if(parseInt(div) > 0) {
+  updatecategory();
+}
+
+
+$('select#division').multiselect({
+	maxHeight: 200,
+	includeSelectAllOption: true,
+	enableCaseInsensitiveFiltering: true,
+	enableFiltering: true,
+	onDropdownHide: function(event) {
+		updatecategory();
+	}
+});
+
 
 $('select#category').multiselect({
 	maxHeight: 200,

@@ -229,10 +229,10 @@ function getCycle(date,id){
 
 $('#implementation_date').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
 
-function updatecategory(id){
+function updatecategory(){
 	$.ajax({
 		type: "POST",
-		data: {q: id, id: {{ $activity->id }}},
+		data: {divisions: GetSelectValues($('select#division :selected')),id: {{ $activity->id }}},
 		url: "../../api/category/getselected",
 		success: function(data){
 			$('select#category').empty();
@@ -271,13 +271,20 @@ function updatebrand(){
 
 var div = $("select#division").val();
 if(parseInt(div) > 0) {
-   updatecategory(div);
+  updatecategory();
 }
 
 
-$('select#division').on("change",function(){
-	updatecategory($(this).val());
+$('select#division').multiselect({
+	maxHeight: 200,
+	includeSelectAllOption: true,
+	enableCaseInsensitiveFiltering: true,
+	enableFiltering: true,
+	onDropdownHide: function(event) {
+		updatecategory();
+	}
 });
+
 
 
 $('select#category').multiselect({

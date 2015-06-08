@@ -105,8 +105,9 @@ class Activity extends \Eloquent {
 			}
 		}
 
-		if(in_array("activity", $required_array)){
-			if($activity->division_code == 0){
+		if(in_array("division", $required_array)){
+			$division = ActivityDivision::getList($activity->id);
+			if(count($division)  == 0){
 				$required[] = 'Activity division is required.';
 				$return['status'] = 0;
 			}
@@ -433,7 +434,7 @@ class Activity extends \Eloquent {
 			})
 			->join('activity_types', 'activities.activity_type_id','=','activity_types.id')
 			->groupBy('activity_types.activity_type')
-			->orderBy('activity_types.activity_type')
+			->orderBy('activity_types.id')
 			->get()
 			->lists('activity_type','id');
 	}

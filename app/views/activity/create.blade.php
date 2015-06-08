@@ -157,7 +157,7 @@
 						<div class="row">
 							<div class="col-lg-12">
 								{{ Form::label('division', 'Division', array('class' => 'control-label')) }}
-								{{ Form::select('division',  array('0' => 'PLEASE SELECT') + $divisions, null, array('class' => 'form-control')) }}
+								{{ Form::select('division[]',  $divisions, null, array('id' => 'division', 'class' => 'form-control' ,'multiple' => 'multiple' ,'data-placeholder' => 'SELECT DIVISION')) }}
 							</div>
 						</div>
 					</div>
