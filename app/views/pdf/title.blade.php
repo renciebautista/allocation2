@@ -14,9 +14,11 @@
 		</tr>
 		<tr>
 			<td>PMOG Partner</td>
-			<td>: 
-				
-			</td>
+			@if(!empty($activity->pmog[0]))
+			<td>: {{ $activity->pmog[0]->getFullname() }} / {{ $activity->pmog[0]->contact_no }}</td>
+			@else
+			<td>:</td>
+			@endif
 		</tr>
 		<tr>
 			<td>TOP Cycle</td>
