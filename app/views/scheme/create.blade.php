@@ -30,7 +30,7 @@
 				<div class="row">
 					<div class="col-lg-12">
 						{{ Form::label('scheme_name', 'Scheme Name', array('class' => 'control-label')) }}
-						{{ Form::text('scheme_name','',array('id' => 'scheme_name', 'class' => 'form-control', 'placeholder' => 'Scheme Name')) }}
+						{{ Form::text('scheme_name','',array('id' => 'scheme_name', 'class' => 'form-control', 'placeholder' => 'Scheme Name','maxlength' => 80)) }}
 					</div>
 				</div>
 			</div>

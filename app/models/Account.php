@@ -19,4 +19,12 @@ class Account extends \Eloquent {
 			
 		});
 	}
+
+	public static function getChannelGroup($channel_code){
+		return self::select('accounts.account_group_code', 'account_groups.account_group_name')
+			->join('account_groups', 'account_groups.account_group_code', '=', 'accounts.account_group_code')
+			->where('channel_code',$channel_code)
+			->groupBy('account_group_code')
+			->get();
+	}
 }

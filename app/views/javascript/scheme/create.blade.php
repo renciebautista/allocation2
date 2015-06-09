@@ -7,7 +7,10 @@ $("form").validate({
 	errorElement: "span", 
 	errorClass : "has-error",
 	rules: {
-		scheme_name: "required",
+		scheme_name: {
+			required: true,
+			maxlength: 80
+			},
 		item_code: "required",
 		item_barcode: "required",
 		item_casecode: "required",
@@ -30,7 +33,13 @@ $("form").validate({
   	},
   	unhighlight: function( element, errorClass, validClass ) {
     	$(element).closest('div').removeClass(errorClass).addClass(validClass);
-  	}
+  	},
+  	invalidHandler: function(form, validator) {
+        var errors = validator.numberOfInvalids();
+        if (errors) {
+              $("html, body").animate({ scrollTop: 0 }, "fast");
+        }
+    }
 });
 
 
