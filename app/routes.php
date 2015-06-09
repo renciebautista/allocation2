@@ -197,6 +197,8 @@ Route::group(array('before' => 'auth'), function()
 		Route::get('customers', 'api\CustomerController@index');
 		Route::get('cycles', 'CycleController@availableCycle');
 
+		Route::get('channels', 'api\ChannelController@index');
+
 		Route::post('category/getselected', 'api\SkuController@categoryselected');
 		Route::post('category', 'api\SkuController@category');
 		Route::post('categories', 'api\SkuController@categories');

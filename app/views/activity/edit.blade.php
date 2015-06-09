@@ -346,7 +346,13 @@
 									<div id="tree3"></div>
 									{{ Form::hidden('customers', null, array('id' => 'customers')) }}
 								</div>
+
 								<div class="col-lg-6">
+									{{ Form::label('tree4', 'Select DT Channels Involved', array('class' => 'control-label' )) }}
+									<div id="tree4"></div>
+									{{ Form::hidden('channels_involved', null, array('id' => 'channels_involved')) }}
+								</div>
+								<!-- <div class="col-lg-6">
 									<div class="form-group">
 										<div class="row">
 											<div class="col-lg-12">
@@ -355,7 +361,7 @@
 											</div>
 										</div>
 									</div>
-								</div>
+								</div> -->
 							</div>	
 							<div class="row">
 								<div class="col-lg-6">

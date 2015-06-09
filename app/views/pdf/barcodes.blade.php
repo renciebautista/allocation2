@@ -1,3 +1,3 @@
 <div id="codes">
-	<h2>Schemes Case Codes / Bar Codes</h2>
+	<h2>Barcodes / Case Codes Per Scheme</h2>
 </div>

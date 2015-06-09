@@ -24,6 +24,7 @@ class Account extends \Eloquent {
 		return self::select('accounts.account_group_code', 'account_groups.account_group_name')
 			->join('account_groups', 'account_groups.account_group_code', '=', 'accounts.account_group_code')
 			->where('channel_code',$channel_code)
+			->where('account_groups.show_in_summary',1)
 			->groupBy('account_group_code')
 			->get();
 	}

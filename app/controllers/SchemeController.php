@@ -7,7 +7,7 @@ class SchemeController extends \BaseController {
 	 * GET /scheme
 	 *
 	 * @return Response
-	 */
+	 */			
 	public function index($id)
 	{
 		$schemes = Scheme::where('activity_id',$id)->get();
@@ -186,9 +186,10 @@ class SchemeController extends \BaseController {
 	{
 		$scheme = Scheme::find($id);
 		$activity = Activity::find($scheme->activity_id);
+		$divisions = ActivityDivision::getList($scheme->activity_id);
 		$categories = ActivityCategory::selected_category($scheme->activity_id);
 		$brands = ActivityBrand::selected_brand($scheme->activity_id);
-		$skus = Sku::items($activity->division_code,$categories,$brands);
+		$skus = Sku::items($divisions,$categories,$brands);
 		$involves = Pricelist::items();
 
 		$sel_skus =  SchemeSku::getSkus($scheme->id);
@@ -202,16 +203,7 @@ class SchemeController extends \BaseController {
 		$customers = ActivityCustomer::customers($scheme->activity_id);
 		$_channels = ActivityChannel::channels($scheme->activity_id);
 		$qty = $scheme->quantity;
-		// $_allocation = new AllocationRepository;
-		
-		// $allocations = $_allocation->customers($sel_skus, $_channels, $customers);
-		// // Helper::print_r($allocations);
-		// $total_sales = $_allocation->total_gsv();
 
-		// $summary = $_allocation->allocation_summary();
-		// $big10 = $_allocation->account_group("AG4");
-		// $gaisanos = $_allocation->account_group("AG5");
-		// $nccc = $_allocation->account_group("AG6");
 
 		$allocations = Allocation::schemeAllocations($id);
 

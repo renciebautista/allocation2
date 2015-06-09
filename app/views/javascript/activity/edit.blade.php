@@ -468,6 +468,38 @@ $("#tree3").fancytree({
     },
 });
 
+$("#tree4").fancytree({
+	extensions: [],
+	checkbox: true,
+	selectMode: 3,
+	source: {
+		url: "../../api/channels?id={{$activity->id}}"
+	},
+	select: function(event, data) {
+		// Get a list of all selected TOP nodes
+		var selRootNodes = data.tree.getSelectedNodes(true);
+		// ... and convert to a key array:
+		var selRootKeys = $.map(selRootNodes, function(node){
+		  return node.key;
+		});
+
+
+		var keys = selRootKeys.join(".").split(".");
+		if($.inArray('E1397', keys) != -1){
+			$('select#channel').multiselect('enable');
+			updatechannel();
+		}else{
+			$('select#channel').multiselect('deselectAll', false);
+			$('select#channel').multiselect('updateButtonText')
+			$('select#channel').multiselect('disable');
+		}
+		$("#customers").val(selRootKeys.join(", "));
+	},
+	click: function(event, data) {
+        $("#updateCustomer").addClass("dirty");
+    },
+});
+
 function updatechannel(){
 	$.ajax({
 		type: "GET",

@@ -71,7 +71,7 @@ class SubmittedActivityController extends \BaseController {
 					$status = Input::get('status');
 					// end update per approver
 					$planner = ActivityPlanner::getPlanner($activity->id);
-
+					$activity_status = $activity->status_id;
 					if($status == 1){  // approved
 						if(Auth::user()->hasRole("GCOM APPROVER")){
 							$approver = ActivityApprover::getCurrentApprover($activity->id);
@@ -146,6 +146,7 @@ class SubmittedActivityController extends \BaseController {
 
 						$class = "text-success";
 					}else{ // denied
+						$activity_status = 2;
 						$comment_status = "DENIED";
 						$class = "text-danger";
 						$pro_recall = 0;
@@ -163,7 +164,6 @@ class SubmittedActivityController extends \BaseController {
 						$activity->pmog_recall = $pmog_recall;
 						$activity->status_id = $last_status;
 							
-
 						ActivityApprover::resetAll($activity->id);		
 					}
 					$activity->status_id = $activity_status;

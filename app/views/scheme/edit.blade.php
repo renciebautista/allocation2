@@ -120,8 +120,8 @@
 					<div class="form-group">
 						<div class="row">
 							<div class="col-lg-12">
-								{{ Form::label('ulp', 'Total Unilever Cost (Php)', array('class' => 'control-label')) }}
-								{{ Form::text('ulp',number_format($scheme->ulp,2), array('class' => 'form-control', 'placeholder' => 'Total Unilever Cost (Php)', 'id' => 'ulp', 'readonly' => '')) }}
+								{{ Form::label('pr', 'Purchase Requirement (Php)', array('class' => 'control-label')) }}
+								{{ Form::text('pr', number_format($scheme->pr,2), array('id' => 'pr', 'class' => 'form-control', 'placeholder' => 'Purchase Requirement (Php)')) }}
 							</div>
 						</div>
 					</div>
@@ -133,8 +133,18 @@
 					<div class="form-group">
 						<div class="row">
 							<div class="col-lg-12">
-								{{ Form::label('pr', 'Purchase Requirement (Php)', array('class' => 'control-label')) }}
-								{{ Form::text('pr', number_format($scheme->pr,2), array('id' => 'pr', 'class' => 'form-control', 'placeholder' => 'Purchase Requirement (Php)')) }}
+								{{ Form::label('ulp', 'Total Unilever Cost (Php)', array('class' => 'control-label')) }}
+								{{ Form::text('ulp',number_format($scheme->ulp,2), array('class' => 'form-control', 'placeholder' => 'Total Unilever Cost (Php)', 'id' => 'ulp', 'readonly' => '')) }}
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-4">
+					<div class="form-group">
+						<div class="row">
+							<div class="col-lg-12">
+								{{ Form::label('lpat', 'List Price After Tax', array('class' => 'control-label')) }}
+								{{ Form::text('lpat','', array('id' => 'lpat', 'class' => 'form-control', 'placeholder' => 'List Price After Tax')) }}
 							</div>
 						</div>
 					</div>

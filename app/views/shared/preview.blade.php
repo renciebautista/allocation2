@@ -439,11 +439,11 @@
 			</div>
 
 			<div id="codes">
-				<h2>Schemes Case Codes / Bar Codes</h2>
+				<h2>Barcodes / Case Codes Per Scheme</h2>
 				@if(!empty($schemes))
 				<table>
 					<tr>
-						<th width="50%">Bar  Code</th>
+						<th width="50%">Barcode</th>
 						<th>Case Code</th>
 					</tr>
 					@foreach($schemes as $scheme)
