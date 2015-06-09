@@ -180,6 +180,14 @@ $('#implementation_date').datetimepicker({
 	disabledDates: holidays()
 });
 
+$('#end_date').datetimepicker({
+	pickTime: false,
+	calendarWeeks: true,
+	minDate: moment(),
+	daysOfWeekDisabled: [0, 6],
+	disabledDates: holidays()
+});
+
 getCycle("{{ date_format(date_create($activity->eimplementation_date),'m/d/Y') }}",{{$activity->id}});
 
 function getCycle(date,id){
@@ -327,17 +335,31 @@ $("form[id='updateActivity']").on("submit",function(e){
 });
 
 $("#updateActivity").validate({
+	ignore: ':hidden:not(".multiselect")',
 	errorElement: "span", 
 	errorClass : "has-error",
 	rules: {
-		activity_title: "required",
+		activity_title: {
+			required: true,
+			maxlength: 80
+			},
 		scope: "is_natural_no_zero",
 		activity_type: "is_natural_no_zero",
-		cycle: "is_natural_no_zero",
+		cycle: {
+			is_natural_no_zero: true,
+			required: true
+		},
 		implementation_date: {
 			required: true,
 			greaterdate : true
-		}
+		},
+		"approver[]": {
+			needsSelection: true
+		},
+		end_date: {
+			required: true,
+			greaterdate : true
+		},
 
 	},
 	errorPlacement: function(error, element) {               
@@ -348,7 +370,18 @@ $("#updateActivity").validate({
   	},
   	unhighlight: function( element, errorClass, validClass ) {
     	$(element).closest('div').removeClass(errorClass).addClass(validClass);
-  	}
+  	},
+  	invalidHandler: function(form, validator) {
+        var errors = validator.numberOfInvalids();
+        if (errors) {
+              $("html, body").animate({ scrollTop: 0 }, "fast");
+        }
+    }
+});
+
+$.validator.addMethod("needsSelection", function (value, element) {
+    var count = $(element).find('option:selected').length;
+    return count > 0;
 });
 
 $.validator.addMethod("greaterdate", function(value, element) {

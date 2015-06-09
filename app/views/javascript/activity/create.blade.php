@@ -60,6 +60,14 @@ $('#implementation_date').datetimepicker({
 	disabledDates: holidays()
 });
 
+$('#end_date').datetimepicker({
+	pickTime: false,
+	calendarWeeks: true,
+	minDate: moment(),
+	daysOfWeekDisabled: [0, 6],
+	disabledDates: holidays()
+});
+
 $("#implementation_date").on("dp.change",function (e) {
 	$.ajax({
 		type: "GET",
@@ -102,6 +110,7 @@ function getCycle(date){
 $('#implementation_date').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
 
 $("#myform").validate({
+	ignore: ':hidden:not(".multiselect")',
 	errorElement: "span", 
 	errorClass : "has-error",
 	rules: {
@@ -118,7 +127,14 @@ $("#myform").validate({
 		implementation_date: {
 			required: true,
 			greaterdate : true
-		}
+		},
+		"approver[]": {
+			needsSelection: true
+		},
+		end_date: {
+			required: true,
+			greaterdate : true
+		},
 
 	},
 	errorPlacement: function(error, element) {               
@@ -129,7 +145,18 @@ $("#myform").validate({
   	},
   	unhighlight: function( element, errorClass, validClass ) {
     	$(element).closest('div').removeClass(errorClass).addClass(validClass);
-  	}
+  	},
+  	invalidHandler: function(form, validator) {
+        var errors = validator.numberOfInvalids();
+        if (errors) {
+              $("html, body").animate({ scrollTop: 0 }, "fast");
+        }
+    }
+});
+
+$.validator.addMethod("needsSelection", function (value, element) {
+    var count = $(element).find('option:selected').length;
+    return count > 0;
 });
 
 $.validator.addMethod("greaterdate", function(value, element) {

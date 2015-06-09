@@ -193,7 +193,7 @@ class Activity extends \Eloquent {
 
 	public static function search($user_id = 0,$status,$cycle,$scope,$type,$pmog,$title){
 		return self::select('activities.id','activities.circular_name','activities.edownload_date',
-			'activities.eimplementation_date','activities.billing_date',
+			'activities.eimplementation_date','activities.end_date','activities.billing_date',
 			'activity_statuses.status','cycles.cycle_name',
 			'scope_types.scope_name','activity_types.activity_type',
 			DB::raw('CONCAT(users.first_name, " ", users.last_name) AS planner'),
@@ -240,13 +240,13 @@ class Activity extends \Eloquent {
 				}
 			})
 			->orderBy('activity_types.activity_type')
-			->orderBy('activities.edownload_date')
+			->orderBy('activities.eimplementation_date')
 			->get();
 	}
 
 	public static function searchDownloaded($user_id,$proponent_id,$status,$cycle,$scope,$type,$title){
 		return self::select('activities.id','activities.circular_name','activities.edownload_date',
-			'activities.eimplementation_date','activities.billing_date',
+			'activities.eimplementation_date','activities.end_date','activities.billing_date',
 			'activity_statuses.status','cycles.cycle_name',
 			'scope_types.scope_name','activity_types.activity_type',
 			DB::raw('CONCAT(propo.first_name, " ", propo.last_name) AS proponent'))
@@ -288,7 +288,7 @@ class Activity extends \Eloquent {
 				}
 			})
 			->orderBy('activity_types.activity_type')
-			->orderBy('activities.edownload_date')
+			->orderBy('activities.eimplementation_date')
 			->get();
 	}
 
@@ -337,13 +337,14 @@ class Activity extends \Eloquent {
 					$query->whereIn('activities.activity_type_id', $type);
 				}
 			})
-			->orderBy('activities.created_at', 'desc')
+			->orderBy('activity_types.activity_type')
+			->orderBy('activities.eimplementation_date')
 			->get();
 	}
 
 	public static function searchField($cycle,$type,$scope,$title){
 		return self::select('activities.id','activities.circular_name','cycles.cycle_name',
-			'scope_types.scope_name','activity_types.activity_type')
+			'scope_types.scope_name','activity_types.activity_type','activities.eimplementation_date','activities.end_date')
 			->join('cycles', 'activities.cycle_id','=','cycles.id')
 			->join('scope_types', 'activities.scope_type_id','=','scope_types.id')
 			->join('activity_types', 'activities.activity_type_id','=','activity_types.id')
@@ -366,7 +367,8 @@ class Activity extends \Eloquent {
 					$query->whereIn('activities.scope_type_id', $scope);
 				}
 			})
-			->orderBy('activities.created_at', 'desc')
+			->orderBy('activity_types.activity_type')
+			->orderBy('activities.eimplementation_date')
 			->get();
 	}
 
@@ -393,7 +395,7 @@ class Activity extends \Eloquent {
 				
 			})
 			->orderBy('activity_types.activity_type')
-			->orderBy('activities.edownload_date')
+			->orderBy('activities.eimplementation_date')
 			->get();
 	}
 

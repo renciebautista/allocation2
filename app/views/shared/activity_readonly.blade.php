@@ -154,7 +154,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-lg-3">
+					<div class="col-lg-2">
 						<div class="form-group">
 							<div class="row">
 								<div class="col-lg-12">
@@ -164,7 +164,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-lg-3">
+					<div class="col-lg-2">
 						<div class="form-group">
 							<div class="row">
 								<div class="col-lg-12">
@@ -174,6 +174,16 @@
 							</div>
 						</div>
 					</div>	
+					<div class="col-lg-2">
+					<div class="form-group">
+						<div class="row">
+							<div class="col-lg-12">
+								{{ Form::label('end_date', 'End Date', array('class' => 'control-label')) }}
+								{{ Form::text('end_date',date_format(date_create($activity->end_date),'m/d/Y'),array('class' => 'form-control', 'readonly' => '')) }}
+							</div>
+						</div>
+					</div>
+				</div>
 				</div>
 				<!-- End Cycle -->
 

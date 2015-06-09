@@ -64,9 +64,8 @@
 					<div class="form-group">
 						<div class="row">
 							<div class="col-lg-12">
-								
 								{{ Form::label('approver', 'Activity Approver', array('class' => 'control-label')) }}
-								{{ Form::select('approver[]', $approvers, null, array('id' => 'approver', 'class' => 'form-control', 'multiple' => 'multiple')) }}
+								{{ Form::select('approver[]', $approvers, null, array('id' => 'approver', 'class' => 'form-control multiselect', 'multiple' => 'multiple')) }}
 							</div>
 						</div>
 					</div>
@@ -96,7 +95,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="col-lg-3">
+				<div class="col-lg-2">
 					<div class="form-group">
 						<div class="row">
 							<div class="col-lg-12">
@@ -107,7 +106,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="col-lg-3">
+				<div class="col-lg-2">
 					<div class="form-group">
 						<div class="row">
 							<div class="col-lg-12">
@@ -118,7 +117,16 @@
 					</div>
 				</div>
 				
-				
+				<div class="col-lg-2">
+					<div class="form-group">
+						<div class="row">
+							<div class="col-lg-12">
+								{{ Form::label('end_date', 'End Date', array('class' => 'control-label')) }}
+								{{ Form::text('end_date','',array('class' => 'form-control', 'placeholder' => 'mm/dd/yyyy')) }}
+							</div>
+						</div>
+					</div>
+				</div>
 				
 			</div>
 			<!-- End Cycle -->

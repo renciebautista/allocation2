@@ -101,6 +101,7 @@ class ActivityController extends BaseController {
 					$activity->duration = (Input::get('lead_time') == '') ? 0 : Input::get('lead_time');
 					$activity->edownload_date = date('Y-m-d',strtotime(Input::get('download_date')));
 					$activity->eimplementation_date = date('Y-m-d',strtotime(Input::get('implementation_date')));
+					$activity->end_date = date('Y-m-d',strtotime(Input::get('end_date')));
 					$activity->circular_name = strtoupper(Input::get('activity_title'));
 					// $activity->division_code = $division_code;
 					$activity->background = Input::get('background');
@@ -499,6 +500,7 @@ class ActivityController extends BaseController {
 							$activity->duration = (Input::get('lead_time') == '') ? 0 : Input::get('lead_time');
 							$activity->edownload_date = date('Y-m-d',strtotime(Input::get('download_date')));
 							$activity->eimplementation_date = date('Y-m-d',strtotime(Input::get('implementation_date')));
+							$activity->end_date = date('Y-m-d',strtotime(Input::get('end_date')));
 							$activity->circular_name = strtoupper(Input::get('activity_title'));
 							$activity->background = Input::get('background');
 							$activity->instruction = Input::get('instruction');
@@ -1860,6 +1862,7 @@ class ActivityController extends BaseController {
 				$new_activity->duration = $activity->duration;
 				$new_activity->edownload_date = $activity->edownload_date;
 				$new_activity->eimplementation_date = $activity->eimplementation_date;
+				$new_activity->end_date = $activity->end_date;
 				$new_activity->circular_name = $activity->circular_name;
 				$new_activity->division_code = $activity->division_code;
 				$new_activity->background = $activity->background;
@@ -1903,6 +1906,19 @@ class ActivityController extends BaseController {
 					}
 					if(!empty($activity_approver)){
 						ActivityApprover::insert($activity_approver);
+					}
+					
+				}
+
+				// add division
+				$divisions = ActivityDivision::where('activity_id',$activity->id)->get();
+				if(!empty($divisions)){
+					$activity_division = array();
+					foreach ($categories as $division){
+						$activity_division[] = array('activity_id' => $new_activity->id, 'division_code' => $division->division_code);
+					}
+					if(!empty($activity_division)){
+						ActivityDivision::insert($activity_division);
 					}
 					
 				}

@@ -58,9 +58,9 @@ Queue::getIron()->ssl_verifypeer = false;
 
 // });
 
-// Route::get("test", function(){
-// 	Artisan::queue('make:pdf', array('message' => 'Hello World'));
-// });
+Route::get("channels", function(){
+	// $channel_group = 
+});
 
 Route::get('queue/send', function(){
 	$job_id = Queue::push('Scheduler', array('string' => 'Hello world'));

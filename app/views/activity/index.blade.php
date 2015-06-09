@@ -136,8 +136,8 @@
 						<td>{{ $activity->activity_type }}</td>
 						<td>{{ $activity->circular_name }}</td>
 						<td>{{ $activity->planner }}</td>
-						<td>{{ date_format(date_create($activity->edownload_date),'m/d/Y') }}</td>
 						<td>{{ date_format(date_create($activity->eimplementation_date),'m/d/Y') }}</td>
+						<td>{{ date_format(date_create($activity->end_date),'m/d/Y') }}</td>
 						<td>{{ date_format(date_create($activity->billing_date),'m/d/Y') }}</td>
 						<td class="action">
 							{{ HTML::linkAction('ActivityController@edit','View', $activity->id, array('class' => 'btn btn-success btn-xs')) }}

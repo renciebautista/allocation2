@@ -494,3 +494,19 @@
 .center{
 	text-align: center;
 }
+.has-error .full_button.open label.checkbox{
+	color: #555555;
+}
+.has-error .full_button.open input{
+	 border: 1px solid #cccccc;
+}
+.has-error .full_button.open span{
+  background-color: #eeeeee;
+  border: 1px solid #cccccc;
+}
+.has-error .full_button.open i{
+  color: #555555;
+}
+.has-error .multiselect.dropdown-toggle.btn-block.btn.btn-default{
+	  border-color: #f04124;
+}
