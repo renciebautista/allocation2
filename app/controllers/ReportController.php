@@ -11,7 +11,7 @@ class ReportController extends \BaseController {
 	public function activities()
 	{
 		Input::flash();
-		$statuses = ActivityStatus::orderBy('status')->lists('status', 'id');
+		$statuses = ActivityStatus::orderBy('id')->lists('status', 'id');
 		$cycles = Cycle::getLists();
 		$scopes = ScopeType::getLists();
 		$types = ActivityType::getLists();

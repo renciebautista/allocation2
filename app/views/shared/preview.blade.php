@@ -291,8 +291,8 @@
 								<tr>
 									<th>Host SKU Code</th>
 									<th>Host SKU Description</th>
-									<th>Premuim SKU Code</th>
-									<th>Premuim SKU Description</th>
+									<th>Premium SKU Code</th>
+									<th>Premium SKU Description</th>
 								</tr>
 								@foreach($skuinvolves as $involve)
 								<tr>

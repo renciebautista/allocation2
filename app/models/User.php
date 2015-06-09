@@ -74,7 +74,8 @@ class User extends Eloquent implements ConfideUserInterface {
 			->join('roles', 'assigned_roles.role_id', '=', 'roles.id')
 			->where('users.active',1)
 			->whereIn('roles.name',$roles)
-			->orderBy('first_name')
+			->orderBy('roles.id')
+			->orderBy('users.first_name')
 			->get();
 		$data = array();
 		foreach ($users as $user) {
