@@ -16,7 +16,7 @@ class AllocationRepository  {
     }
 
 
-	public function customers($skus, $channels, $selected_customers){
+	public function customers($skus, $selected_channels, $selected_customers){
 
 		$this->_customers = $selected_customers;
 		$salescources = DB::table('split_old_customers')->get();
@@ -117,8 +117,19 @@ class AllocationRepository  {
 				}
 			}
 		}
-		
-		// // Helper::print_r($_areas)
+
+		$channels = array();
+		$_chgrp = array();
+		if(!empty($selected_channels)){
+			foreach ($selected_channels as $channel_node) {
+				$_selected_node = explode(".", $channel_node);
+				$channels[] = $_selected_node[0];
+				if(!empty($_selected_node[1])){
+					$_chgrp[$_selected_node[0]][] = $_selected_node[1];
+				}
+			}
+		}
+		// Helper::print_r($_chgrp);
 		// get all MT Primary Sales
 		if(in_array("E1398", $_grps)){
 			$this->_mt_primary_sales = DB::table('mt_primary_sales')
@@ -205,62 +216,36 @@ class AllocationRepository  {
 													($_outlet_sale->customer_code == $_outlet->customer_code)){
 
 													if($customer->from_dt == 1){
-														if(in_array($customer->group_code, $_grps)){
-															if(!empty($_areas[$customer->group_code])){
-																if(in_array($customer->area_code, $_areas[$customer->group_code])){
-																	if(!empty($_cust[$customer->area_code])){
-																		if(in_array($customer->customer_code, $_cust[$customer->area_code])){
-																			if(!empty($_shp[$customer->customer_code])){
-																				if(in_array($_shipto->ship_to_code, $_shp[$customer->customer_code])){
-																					if(!empty($_otlts[$_shipto->ship_to_code])){
-																						if(in_array($_account->id, $_otlts[$_shipto->ship_to_code])){
-																							$gsv +=  $_outlet_sale->gsv;
-																						}
-																					}else{
-																						$gsv +=  $_outlet_sale->gsv;
-																					}
-																				}
-																			}else{
-																				$gsv +=  $_outlet_sale->gsv;
-																			}
-																		}
-																	}else{
-																		$gsv +=  $_outlet_sale->gsv;
-																	}
+														if(!empty($_chgrp)){
+															if((isset($_chgrp[$_account->channel_code])) && ($_chgrp[$_account->channel_code][0] == "OTHERS")){
+																if(($_account->account_group_code == 'AG1') || ($_account->account_group_code == 'AG6')){
+
+																}else{
+																	self::get_gsv($gsv,$customer,$_grps,$_areas,$_cust,$_shp,$_shipto,$_otlts,$_account,$_outlet_sale);
 																}
 															}else{
-																$gsv +=  $_outlet_sale->gsv;
+																self::get_gsv($gsv,$customer,$_grps,$_areas,$_cust,$_shp,$_shipto,$_otlts,$_account,$_outlet_sale);
 															}
+														}else{
+															self::get_gsv($gsv,$customer,$_grps,$_areas,$_cust,$_shp,$_shipto,$_otlts,$_account,$_outlet_sale);
 														}
+														
 													}else{
 														if(in_array($_account->channel_code, $channels)){
-															if(in_array($customer->group_code, $_grps)){
-																if(!empty($_areas[$customer->group_code])){
-																	if(in_array($customer->area_code, $_areas[$customer->group_code])){
-																		if(!empty($_cust[$customer->area_code])){
-																			if(in_array($customer->customer_code, $_cust[$customer->area_code])){
-																				if(!empty($_shp[$customer->customer_code])){
-																					if(in_array($_shipto->ship_to_code, $_shp[$customer->customer_code])){
-																						if(!empty($_otlts[$_shipto->ship_to_code])){
-																							if(in_array($_account->id, $_otlts[$_shipto->ship_to_code])){
-																								$gsv +=  $_outlet_sale->gsv;
-																							}
-																						}else{
-																							$gsv +=  $_outlet_sale->gsv;
-																						}
-																					}
-																				}else{
-																					$gsv +=  $_outlet_sale->gsv;
-																				}
-																			}
-																		}else{
-																			$gsv +=  $_outlet_sale->gsv;
-																		}
+															if(!empty($_chgrp)){
+																if((isset($_chgrp[$_account->channel_code])) && ($_chgrp[$_account->channel_code][0] == "OTHERS")){
+																	if(($_account->account_group_code == 'AG1') || ($_account->account_group_code == 'AG6')){
+
+																	}else{
+																		self::get_gsv($gsv,$customer,$_grps,$_areas,$_cust,$_shp,$_shipto,$_otlts,$_account,$_outlet_sale);
 																	}
-																}else{
-																	$gsv +=  $_outlet_sale->gsv;
+																}else{	
+																	self::get_gsv($gsv,$customer,$_grps,$_areas,$_cust,$_shp,$_shipto,$_otlts,$_account,$_outlet_sale);
 																}
+															}else{
+																self::get_gsv($gsv,$customer,$_grps,$_areas,$_cust,$_shp,$_shipto,$_otlts,$_account,$_outlet_sale);
 															}
+															
 														}
 														
 													}
@@ -272,42 +257,33 @@ class AllocationRepository  {
 									}
 									$_account->gsv = $gsv;
 									$additional_gsv = 0;
-									if(in_array($customer->group_code, $_grps)){
-										if(!empty($_areas[$customer->group_code])){
-											if(in_array($customer->area_code, $_areas[$customer->group_code])){
-												if(!empty($_cust[$customer->area_code])){
-													if(in_array($customer->customer_code, $_cust[$customer->area_code])){
-														if(!empty($_shp[$customer->customer_code])){
-															if(in_array($_shipto->ship_to_code, $_shp[$customer->customer_code])){
-																if(!empty($_otlts[$_shipto->ship_to_code])){
-																	if(in_array($_account->id, $_otlts[$_shipto->ship_to_code])){
-																		$additional_gsv = self::additonal_outlet_sales($salescources,$customers_list,$customer->customer_code,$_shiptos_list,$_accounts_list,$_outlets,$_outlet_sales,$_account->account_name);
-																		
-																	}
-																}else{
-																	$additional_gsv = self::additonal_outlet_sales($salescources,$customers_list,$customer->customer_code,$_shiptos_list,$_accounts_list,$_outlets,$_outlet_sales,$_account->account_name);
-																	
-																}
-															}
-														}else{
-															$additional_gsv = self::additonal_outlet_sales($salescources,$customers_list,$customer->customer_code,$_shiptos_list,$_accounts_list,$_outlets,$_outlet_sales,$_account->account_name);
-															
-														}
-													}
-												}else{
-													$additional_gsv = self::additonal_outlet_sales($salescources,$customers_list,$customer->customer_code,$_shiptos_list,$_accounts_list,$_outlets,$_outlet_sales,$_account->account_name);
-													
-												}
+
+									if(!empty($_chgrp)){
+										if((isset($_chgrp[$_account->channel_code])) && ($_chgrp[$_account->channel_code][0] == "OTHERS")){
+											if(($_account->account_group_code == 'AG1') || ($_account->account_group_code == 'AG6')){
+
+											}else{
+												self::get_additional_gsv($additional_gsv,$customer,$_grps,$_areas,$_cust,$_shp,$_shipto,$_otlts,$_account,$salescources,$customers_list,$_shiptos_list,$_accounts_list,$_outlets,$_outlet_sales);
 											}
-										}else{
-											$additional_gsv = self::additonal_outlet_sales($salescources,$customers_list,$customer->customer_code,$_shiptos_list,$_accounts_list,$_outlets,$_outlet_sales,$_account->account_name);
+											
+										}else{	
+											if((isset($_chgrp[$_account->channel_code])) && ($_chgrp[$_account->channel_code][0] == $_account->account_group_code)){
+												self::get_additional_gsv($additional_gsv,$customer,$_grps,$_areas,$_cust,$_shp,$_shipto,$_otlts,$_account,$salescources,$customers_list,$_shiptos_list,$_accounts_list,$_outlets,$_outlet_sales);
+											}
 										}
+									}else{
+										self::get_additional_gsv($additional_gsv,$customer,$_grps,$_areas,$_cust,$_shp,$_shipto,$_otlts,$_account,$salescources,$customers_list,$_shiptos_list,$_accounts_list,$_outlets,$_outlet_sales);
 									}
+
+									
+									
 									// if($customer->customer_code == 'E53617'){
 										// $additional_gsv = self::additonal_outlet_sales($salescources,$customers_list,$customer->customer_code,$_shiptos_list,$_accounts_list,$_outlets,$_outlet_sales,$_account->account_name);
 										// echo $customer->customer_code. '<br>';
 										// echo $customer->customer_name. ' => '.$_account->account_name .' => '.$_account->gsv. ' + '.$additional_gsv.'<br>';
 									// }
+									
+
 									$_account->gsv += $additional_gsv;
 									$total_account_gsv += $_account->gsv;
 									$_shipto->accounts[] = (array) $_account;
@@ -461,6 +437,99 @@ class AllocationRepository  {
 
 
 		return $customers;
+	}
+
+	public function get_additional_gsv(&$additional_gsv,$customer,$_grps,$_areas,$_cust,$_shp,$_shipto,$_otlts,$_account,$salescources,$customers_list,$_shiptos_list,$_accounts_list,$_outlets,$_outlet_sales){
+		if(in_array($customer->group_code, $_grps)){
+			if(!empty($_areas[$customer->group_code])){
+				if(in_array($customer->area_code, $_areas[$customer->group_code])){
+					if(!empty($_cust[$customer->area_code])){
+						if(in_array($customer->customer_code, $_cust[$customer->area_code])){
+							if(!empty($_shp[$customer->customer_code])){
+								if(in_array($_shipto->ship_to_code, $_shp[$customer->customer_code])){
+									if(!empty($_otlts[$_shipto->ship_to_code])){
+										if(in_array($_account->id, $_otlts[$_shipto->ship_to_code])){
+											$additional_gsv = self::additonal_outlet_sales($salescources,$customers_list,$customer->customer_code,$_shiptos_list,$_accounts_list,$_outlets,$_outlet_sales,$_account->account_name);
+											
+										}
+									}else{
+										$additional_gsv = self::additonal_outlet_sales($salescources,$customers_list,$customer->customer_code,$_shiptos_list,$_accounts_list,$_outlets,$_outlet_sales,$_account->account_name);
+										
+									}
+								}
+							}else{
+								$additional_gsv = self::additonal_outlet_sales($salescources,$customers_list,$customer->customer_code,$_shiptos_list,$_accounts_list,$_outlets,$_outlet_sales,$_account->account_name);
+								
+							}
+						}
+					}else{
+						$additional_gsv = self::additonal_outlet_sales($salescources,$customers_list,$customer->customer_code,$_shiptos_list,$_accounts_list,$_outlets,$_outlet_sales,$_account->account_name);
+						
+					}
+				}
+			}else{
+				$additional_gsv = self::additonal_outlet_sales($salescources,$customers_list,$customer->customer_code,$_shiptos_list,$_accounts_list,$_outlets,$_outlet_sales,$_account->account_name);
+			}
+		}
+	}
+
+	public function get_gsv(&$gsv,$customer,$_grps,$_areas,$_cust,$_shp,$_shipto,$_otlts,$_account,$_outlet_sale){
+		if(in_array($customer->group_code, $_grps)){
+			if(!empty($_areas[$customer->group_code])){
+				if(in_array($customer->area_code, $_areas[$customer->group_code])){
+					if(!empty($_cust[$customer->area_code])){
+						if(in_array($customer->customer_code, $_cust[$customer->area_code])){
+							if(!empty($_shp[$customer->customer_code])){
+								if(in_array($_shipto->ship_to_code, $_shp[$customer->customer_code])){
+									if(!empty($_otlts[$_shipto->ship_to_code])){
+										if(in_array($_account->id, $_otlts[$_shipto->ship_to_code])){
+											$gsv +=  $_outlet_sale->gsv;
+										}
+									}else{
+										$gsv +=  $_outlet_sale->gsv;
+									}
+								}
+							}else{
+								$gsv +=  $_outlet_sale->gsv;
+							}
+						}
+					}else{
+						$gsv +=  $_outlet_sale->gsv;
+					}
+				}
+			}else{
+				$gsv +=  $_outlet_sale->gsv;
+			}
+		}
+
+		// from with dt
+		// if(in_array($customer->group_code, $_grps)){
+		// 	if(!empty($_areas[$customer->group_code])){
+		// 		if(in_array($customer->area_code, $_areas[$customer->group_code])){
+		// 			if(!empty($_cust[$customer->area_code])){
+		// 				if(in_array($customer->customer_code, $_cust[$customer->area_code])){
+		// 					if(!empty($_shp[$customer->customer_code])){
+		// 						if(in_array($_shipto->ship_to_code, $_shp[$customer->customer_code])){
+		// 							if(!empty($_otlts[$_shipto->ship_to_code])){
+		// 								if(in_array($_account->id, $_otlts[$_shipto->ship_to_code])){
+		// 									$gsv +=  $_outlet_sale->gsv;
+		// 								}
+		// 							}else{
+		// 								$gsv +=  $_outlet_sale->gsv;
+		// 							}
+		// 						}
+		// 					}else{
+		// 						$gsv +=  $_outlet_sale->gsv;
+		// 					}
+		// 				}
+		// 			}else{
+		// 				$gsv +=  $_outlet_sale->gsv;
+		// 			}
+		// 		}
+		// 	}else{
+		// 		$gsv +=  $_outlet_sale->gsv;
+		// 	}
+		// }
 	}
 
 

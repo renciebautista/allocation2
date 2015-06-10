@@ -78,7 +78,8 @@ class MakePdf extends Command {
 
 			//Involved Area
 			$areas = ActivityCustomer::getSelectedAreas($activity->id);
-			$channels = ActivityChannel::getSelectecdChannels($activity->id);
+			// $channels = ActivityChannel::getSelectecdChannels($activity->id);
+			$channels = ActivityChannel2::getSelectecdChannels($activity->id);
 			
 			// // Product Information Sheet
 			$path = '/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;

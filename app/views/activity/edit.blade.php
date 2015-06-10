@@ -352,16 +352,6 @@
 									<div id="tree4"></div>
 									{{ Form::hidden('channels_involved', null, array('id' => 'channels_involved')) }}
 								</div>
-								<!-- <div class="col-lg-6">
-									<div class="form-group">
-										<div class="row">
-											<div class="col-lg-12">
-												{{ Form::label('channel', 'Select DT Channels Involved', array('class' => 'control-label' )) }}
-												<select class="form-control" data-placeholder="SELECT CHANNEL" id="channel" name="channel[]" multiple="multiple" ></select>
-											</div>
-										</div>
-									</div>
-								</div> -->
 							</div>	
 							<div class="row">
 								<div class="col-lg-6">

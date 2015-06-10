@@ -788,6 +788,7 @@ class ActivityController extends BaseController {
 				ActivityTiming::where('activity_id',$activity->id)->delete();
 				ActivityPlanner::where('activity_id',$activity->id)->delete();
 				ActivityApprover::where('activity_id',$activity->id)->delete();
+				ActivityDivision::where('activity_id',$activity->id)->delete();
 				ActivityCategory::where('activity_id',$activity->id)->delete();
 				ActivityBrand::where('activity_id',$activity->id)->delete();
 				ActivityObjective::where('activity_id',$activity->id)->delete();
@@ -795,6 +796,7 @@ class ActivityController extends BaseController {
 				ActivityMaterial::where('activity_id',$activity->id)->delete();
 				ActivityCustomer::where('activity_id',$activity->id)->delete();
 				ActivityChannel::where('activity_id',$activity->id)->delete();
+				ActivityChannel2::where('activity_id',$activity->id)->delete();
 				ForceAllocation::where('activity_id',$activity->id)->delete();
 				// loop schemes
 				$schemes = Scheme::getList($activity->id);
@@ -1277,19 +1279,32 @@ class ActivityController extends BaseController {
 						$activity->update();
 					}
 
+					$_channels = Input::get('channels_involved');
+					ActivityChannel2::where('activity_id',$id)->delete();
+					if(!empty($_channels)){
+						$channels = explode(",", $_channels);
 
-
-					$channels = Input::get('channel');
-					ActivityChannel::where('activity_id',$id)->delete();
-					if(!empty($channels)){
-						$activity_channels = array();
-						foreach ($channels as $channel){
-							$activity_channels[] = array('activity_id' => $id, 'channel_id' => $channel);
-						}
-						if(!empty($activity_channels)){
-							ActivityChannel::insert($activity_channels);
+						if(!empty($channels)){
+							$activity_channels = array();
+							$channel_group = array();
+							foreach ($channels as $channel_node){
+								$activity_channels[] = array('activity_id' => $id, 'channel_node' => trim($channel_node));
+							}
+							ActivityChannel2::insert($activity_channels);
 						}
 					}
+
+					// $channels = Input::get('channel');
+					// ActivityChannel::where('activity_id',$id)->delete();
+					// if(!empty($channels)){
+					// 	$activity_channels = array();
+					// 	foreach ($channels as $channel){
+					// 		$activity_channels[] = array('activity_id' => $id, 'channel_id' => $channel);
+					// 	}
+					// 	if(!empty($activity_channels)){
+					// 		ActivityChannel::insert($activity_channels);
+					// 	}
+					// }
 
 					//update schemes
 					// time limit expires
@@ -1914,7 +1929,7 @@ class ActivityController extends BaseController {
 				$divisions = ActivityDivision::where('activity_id',$activity->id)->get();
 				if(!empty($divisions)){
 					$activity_division = array();
-					foreach ($categories as $division){
+					foreach ($divisions as $division){
 						$activity_division[] = array('activity_id' => $new_activity->id, 'division_code' => $division->division_code);
 					}
 					if(!empty($activity_division)){
@@ -2001,14 +2016,14 @@ class ActivityController extends BaseController {
 				}
 
 				// add channels
-				$channels = ActivityChannel::where('activity_id',$activity->id)->get();
+				$channels = ActivityChannel2::where('activity_id',$activity->id)->get();
 				if(!empty($channels)){
 					$activity_channels = array();
 					foreach ($channels as $channel){
-						$activity_channels[] = array('activity_id' => $new_activity->id, 'channel_id' => $channel->channel_id);
+						$activity_channels[] = array('activity_id' => $new_activity->id, 'channel_node' => $channel->channel_node);
 					}
 					if(!empty($activity_channels)){
-						ActivityChannel::insert($activity_channels);
+						ActivityChannel2::insert($activity_channels);
 					}
 					
 				}
@@ -2284,13 +2299,13 @@ class ActivityController extends BaseController {
 				
 			} catch (\Exception $e) {
 				DB::rollback();
-				// echo $e;
-			    $class = 'alert-danger';
-				$message = 'Cannot duplicate activity.';
+				echo $e;
+			 //    $class = 'alert-danger';
+				// $message = 'Cannot duplicate activity.';
 
-				return Redirect::to(URL::action('ActivityController@index'))
-				->with('class', $class )
-				->with('message', $message);
+				// return Redirect::to(URL::action('ActivityController@index'))
+				// ->with('class', $class )
+				// ->with('message', $message);
 				// something went wrong
 			}			
 			

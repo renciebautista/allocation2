@@ -71,15 +71,15 @@
 				<div class="row">
 					<div class="col-lg-4">
 						{{ Form::label('item_code', 'Item Code', array('class' => 'control-label')) }}
-						{{ Form::text('item_code','',array('class' => 'form-control', 'placeholder' => 'Item Code')) }}
+						{{ Form::text('item_code','',array('class' => 'form-control', 'placeholder' => 'Item Code','maxlength' => 6)) }}
 					</div>
 					<div class="col-lg-4">
 						{{ Form::label('item_barcode', 'Item Barcode', array('class' => 'control-label')) }}
-						{{ Form::text('item_barcode','',array('class' => 'form-control', 'placeholder' => 'Item Barcode')) }}
+						{{ Form::text('item_barcode','',array('class' => 'form-control', 'placeholder' => 'Item Barcode','maxlength' => 13)) }}
 					</div>
 					<div class="col-lg-4">
 						{{ Form::label('item_casecode', 'Item Casecode', array('class' => 'control-label')) }}
-						{{ Form::text('item_casecode','',array('class' => 'form-control', 'placeholder' => 'Item Casecode')) }}
+						{{ Form::text('item_casecode','',array('class' => 'form-control', 'placeholder' => 'Item Casecode','maxlength' => 14)) }}
 					</div>
 				</div>
 			</div>
@@ -91,8 +91,8 @@
 			<div class="form-group">
 				<div class="row">
 					<div class="col-lg-12">
-						{{ Form::label('srp_p', 'SRP of Premium (Php)', array('class' => 'control-label')) }}
-						{{ Form::text('srp_p','', array('id' => 'srp_p', 'class' => 'form-control', 'placeholder' => 'SRP of Premium (Php)')) }}
+						{{ Form::label('srp_p', 'Cost of Premium (Php)', array('class' => 'control-label')) }}
+						{{ Form::text('srp_p','', array('id' => 'srp_p', 'class' => 'form-control', 'placeholder' => 'Cost of Premium (Php)')) }}
 					</div>
 				</div>
 			</div>

@@ -28,19 +28,20 @@ $("#skus,#involve,#premuim").chosen({
 });
 
 
-$('#pr, #srp_p, #other_cost,#total_alloc,#new_alloc,#no_weeks').inputNumber();
+$('#pr, #srp_p, #other_cost,#total_alloc,#new_alloc,#no_weeks,#lpat').inputNumber();
 
 
-$('#pr, #srp_p, #other_cost').blur(function() {
+$('#pr, #srp_p, #other_cost,#lpat').blur(function() {
 	var srp = accounting.unformat($('#srp_p').val()) || 0;
 	var others = accounting.unformat($('#other_cost').val()) || 0;
 	$('#ulp').val(accounting.formatNumber(srp+others, 2, ",","."));
 	var ulp = accounting.unformat($('#ulp').val()) || 0;
 	var pr = accounting.unformat($('#pr').val()) || 0;
-	if(pr == 0){
+	var lpat = accounting.unformat($('#lpat').val()) || 0;
+	if(lpat == 0){
 		$('#cost_sale').val(0);
 	}else{
-		$('#cost_sale').val(accounting.formatNumber((ulp/pr) * 100 ,2));
+		$('#cost_sale').val(accounting.formatNumber((ulp/lpat) * 100 ,2));
 	}
 	compute_budget();
 });
@@ -142,16 +143,30 @@ $("form").validate({
 			required: true,
 			maxlength: 80
 			},
-		item_code: "required",
-		item_barcode: "required",
-		item_casecode: "required",
+		item_code: {
+			minlength: 6,
+			maxlength: 6
+			},
+		item_barcode: {
+			required: true,
+			minlength: 13,
+			maxlength: 13
+			},
+		item_casecode: {
+			minlength: 14,
+			maxlength: 14
+			},
 		pr: "required",
+		lpat: "required",
 		srp_p: "required",
 		total_alloc: "required",
 		deals: "required",
 		'skus[]': {
-				required: true
-			}
+                is_natural_no_zero: true
+            },
+        'involve[]': {
+                is_natural_no_zero: true
+            }
 	},
 	errorPlacement: function(error, element) {               
 		

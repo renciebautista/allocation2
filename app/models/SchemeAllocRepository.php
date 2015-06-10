@@ -17,7 +17,9 @@ class SchemeAllocRepository
         $areas = ForceAllocation::where('activity_id',$scheme->activity_id)->get();
 
         $customers = ActivityCustomer::customers($scheme->activity_id);
-        $_channels = ActivityChannel::channels($scheme->activity_id);
+        // $_channels = ActivityChannel::channels($scheme->activity_id);
+        $_channels = ActivityChannel2::channels($scheme->activity_id);
+
 
         $_allocation = new AllocationRepository;
         $allocations = $_allocation->customers(Input::get('skus'), $_channels, $customers);
@@ -33,12 +35,16 @@ class SchemeAllocRepository
             $scheme_alloc->area = $customer->area_name;
             $scheme_alloc->sold_to = $customer->customer_name;
             $scheme_alloc->ship_to = $customer->customer_name . ' TOTAL';
-            $scheme_alloc->sold_to_gsv = $customer->gsv;    
+
+         
             $sold_to_gsv_p = 0;
             if($customer->gsv > 0){
                 if($total_sales > 0){
                     $sold_to_gsv_p = round(($customer->gsv/$total_sales) * 100,2);
                 }
+                $scheme_alloc->sold_to_gsv = $customer->gsv;    
+            }else{
+                $scheme_alloc->sold_to_gsv = 0;    
             }
             $scheme_alloc->sold_to_gsv_p = $sold_to_gsv_p;
             $_sold_to_alloc = 0;
@@ -111,7 +117,12 @@ class SchemeAllocRepository
                     $shipto_alloc->area = $customer->area_name;
                     $shipto_alloc->sold_to = $customer->customer_name;
                     $shipto_alloc->ship_to = $shipto['ship_to_name'];
-                    $shipto_alloc->ship_to_gsv = $shipto['gsv'];
+                    if($shipto['gsv'] >0){
+                        $shipto_alloc->ship_to_gsv = $shipto['gsv'];
+                    }else{
+                         $shipto_alloc->ship_to_gsv = 0;
+                    }
+                    
                     $_shipto_alloc = 0;
                     $s_multi = 0;
                     if(!is_null($shipto['split'])){
@@ -191,7 +202,12 @@ class SchemeAllocRepository
                             $account_alloc->channel = $account['channel_name'];
                             $account_alloc->account_group_name = $account['account_group_name'];
                             $account_alloc->outlet = $account['account_name'];
-                            $account_alloc->outlet_to_gsv = $account['gsv'];
+                            if($account['gsv'] > 0){
+                                $account_alloc->outlet_to_gsv = $account['gsv'];
+                            }else{
+                                $account_alloc->outlet_to_gsv = 0;
+                            }
+                           
                             $p = 0;
                             if($customer->gsv > 0){
                                 $p = round($account['gsv']/$customer->gsv * 100,5);

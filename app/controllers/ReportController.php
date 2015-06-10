@@ -64,7 +64,8 @@ class ReportController extends \BaseController {
 
 			//Involved Area
 			$areas = ActivityCustomer::getSelectedAreas($activity->id);
-			$channels = ActivityChannel::getSelectecdChannels($activity->id);
+			// $channels = ActivityChannel::getSelectecdChannels($activity->id);
+			$channels = ActivityChannel2::getSelectecdChannels($activity->id);
 			// Helper::print_array($areas);
 			
 			// // Product Information Sheet

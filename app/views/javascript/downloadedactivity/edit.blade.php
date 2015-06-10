@@ -31,6 +31,18 @@ function getCustomer(){
 	});
 }
 
+function getChannel(){
+	$.ajax({
+		type: "GET",
+		url: "../../api/channelselected?id={{$activity->id}}",
+		success: function(data){
+			$.each(data, function(i, node) {
+				$("#tree4").fancytree("getTree").getNodeByKey(node).setSelected(true);
+			});
+		}
+	});
+}
+
 if(location.hash.length > 0){
 	var activeTab = $('[href=' + location.hash + ']');
 	activeTab && activeTab.tab('show');
@@ -117,6 +129,7 @@ $('#updateActivity,#updateCustomer,#updateBilling').areYouSure();
 
 
 $("a[href='#customer']").on('shown.bs.tab', function(e) {
+   	$("#tree4").fancytree("disable");
     getCustomer();
 });
 
@@ -445,14 +458,40 @@ $("#tree3").fancytree({
 		var keys = selRootKeys.join(".").split(".");
 		// console.log(keys);
 		if($.inArray('E1397', keys) != -1){
-			$('select#channel').multiselect('enable');
-			updatechannel();
+			$("#tree4").fancytree("enable");
+			getChannel();
 		}else{
-			$('select#channel').multiselect('deselectAll', false);
-			$('select#channel').multiselect('updateButtonText')
-			$('select#channel').multiselect('disable');
+			$("#tree4").fancytree("getTree").visit(function(node){
+		        node.setSelected(false);
+		    });
+			$("#tree4").fancytree("disable");
+
 		}
 		$("#customers").val(selRootKeys.join(", "));
+	},
+	click: function(event, data) {
+        $("#updateCustomer").addClass("dirty");
+    },
+});
+
+$("#tree4").fancytree({
+	extensions: [],
+	checkbox: true,
+	selectMode: 3,
+	source: {
+		url: "../../api/channels?id={{$activity->id}}"
+	},
+	select: function(event, data) {
+		// Get a list of all selected TOP nodes
+		var selRootNodes = data.tree.getSelectedNodes(true);
+		// ... and convert to a key array:
+		var selRootKeys = $.map(selRootNodes, function(node){
+		  return node.key;
+		});
+
+
+		var keys = selRootKeys.join(".").split(".");
+		$("#channels_involved").val(selRootKeys.join(", "));
 	},
 	click: function(event, data) {
         $("#updateCustomer").addClass("dirty");

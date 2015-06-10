@@ -98,8 +98,8 @@
 					<div class="form-group">
 						<div class="row">
 							<div class="col-lg-12">
-								{{ Form::label('srp_p', 'SRP of Premium (Php)', array('class' => 'control-label')) }}
-								{{ Form::text('srp_p',number_format($scheme->srp_p,2), array('id' => 'srp_p', 'class' => 'form-control', 'placeholder' => 'SRP of Premium (Php)','readonly' => '')) }}
+								{{ Form::label('srp_p', 'Cost of Premium (Php)', array('class' => 'control-label')) }}
+								{{ Form::text('srp_p',number_format($scheme->srp_p,2), array('id' => 'srp_p', 'class' => 'form-control', 'placeholder' => 'Cost of Premium (Php)','readonly' => '')) }}
 							</div>
 						</div>
 					</div>

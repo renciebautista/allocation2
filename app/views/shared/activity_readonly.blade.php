@@ -348,14 +348,9 @@
 									{{ Form::hidden('customers', null, array('id' => 'customers')) }}
 								</div>
 								<div class="col-lg-6">
-									<div class="form-group">
-										<div class="row">
-											<div class="col-lg-12">
-												{{ Form::label('channel', 'Select DT Channels Involved', array('class' => 'control-label' )) }}
-												<select class="form-control" data-placeholder="SELECT CHANNEL" id="channel" name="channel[]" multiple="multiple" ></select>
-											</div>
-										</div>
-									</div>
+									{{ Form::label('tree4', 'Select DT Channels Involved', array('class' => 'control-label' )) }}
+									<div id="tree4"></div>
+									{{ Form::hidden('channels_involved', null, array('id' => 'channels_involved')) }}
 								</div>
 							</div>	
 							<div class="row">
@@ -922,6 +917,7 @@
 
 @section('page-script')
 
+
 function getCustomer(){
 	$.ajax({
 		type: "GET",
@@ -936,6 +932,18 @@ function getCustomer(){
 						//node.setSelected(true);
 					//}        
 				});
+			});
+		}
+	});
+}
+
+function getChannel(){
+	$.ajax({
+		type: "GET",
+		url: "../../api/channelselected?id={{$activity->id}}",
+		success: function(data){
+			$.each(data, function(i, node) {
+				$("#tree4").fancytree("getTree").getNodeByKey(node).setSelected(true);
 			});
 		}
 	});
@@ -1122,16 +1130,41 @@ $("#tree3").fancytree({
 		var keys = selRootKeys.join(".").split(".");
 		// console.log(keys);
 		if($.inArray('E1397', keys) != -1){
-			$('select#channel').multiselect('enable');
-			updatechannel();
+			$("#tree4").fancytree("enable");
+			getChannel();
 		}else{
-			$('select#channel').multiselect('deselectAll', false);
-			$('select#channel').multiselect('updateButtonText')
-			$('select#channel').multiselect('disable');
-		}
+			$("#tree4").fancytree("getTree").visit(function(node){
+		        node.setSelected(false);
+		    });
+			$("#tree4").fancytree("disable");
 
+		}
 		$("#customers").val(selRootKeys.join(", "));
 	},
+});
+
+$("#tree4").fancytree({
+	extensions: [],
+	checkbox: true,
+	selectMode: 3,
+	source: {
+		url: "../../api/channels?id={{$activity->id}}"
+	},
+	select: function(event, data) {
+		// Get a list of all selected TOP nodes
+		var selRootNodes = data.tree.getSelectedNodes(true);
+		// ... and convert to a key array:
+		var selRootKeys = $.map(selRootNodes, function(node){
+		  return node.key;
+		});
+
+
+		var keys = selRootKeys.join(".").split(".");
+		$("#channels_involved").val(selRootKeys.join(", "));
+	},
+	click: function(event, data) {
+        $("#updateCustomer").addClass("dirty");
+    },
 });
 
 function updatechannel(){

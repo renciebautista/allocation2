@@ -324,7 +324,7 @@
 							@if(!empty($areas))
 							<ul>
 								@foreach($channels as $channel)
-								<li>{{ $channel->channel_name }}</li>
+								<li>{{ $channel }}</li>
 								@endforeach
 							</ul>
 							@endif
