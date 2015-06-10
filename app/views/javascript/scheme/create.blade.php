@@ -11,9 +11,19 @@ $("form").validate({
 			required: true,
 			maxlength: 80
 			},
-		item_code: "required",
-		item_barcode: "required",
-		item_casecode: "required",
+		item_code: {
+			minlength: 6,
+			maxlength: 6
+			},
+		item_barcode: {
+			required: true,
+			minlength: 13,
+			maxlength: 13
+			},
+		item_casecode: {
+			minlength: 14,
+			maxlength: 14
+			},
 		pr: "required",
 		srp_p: "required",
 		total_alloc: "required",

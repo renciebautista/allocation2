@@ -62,8 +62,8 @@
 					<div class="form-group">
 						<div class="row">
 							<div class="col-lg-6">
-								{{ Form::label('premuim', 'Premuim SKU', array('class' => 'control-label')) }}
-								{{ Form::text('premuim',$premuim->sap_desc.' - '.$premuim->sap_code, array('id' => 'premuim', 'class' => 'form-control', 'placeholder' => 'Premuim SKU','readonly' => '')) }}
+								{{ Form::label('premuim', 'Premium SKU', array('class' => 'control-label')) }}
+								{{ Form::text('premuim',$premuim->sap_desc.' - '.$premuim->sap_code, array('id' => 'premuim', 'class' => 'form-control', 'placeholder' => 'Premium SKU','readonly' => '')) }}
 							</div>
 						</div>
 					</div>

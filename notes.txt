@@ -1,0 +1,7 @@
+change 
+Cost to Sales % = Total ULP Cost / Purchase  Requirement
+add emergency tick box on cycle if emergency cmd is added default
+
+itemcode = 6
+barcode = 13
+casecode = 14

@@ -13,8 +13,12 @@
 <div class="row">
 	<div class="col-lg-12">
 		<div class="form-group">
+			{{ Form::open(array('method' => 'POST', 'action' => array('SchemeController@duplicatescheme', $scheme->id), 'class' => 'disable-button')) }}                       
 			<a id="scheme_back" class="btn btn-default" href="{{action('ActivityController@edit', $activity->id);}}#schemes">Back to Activity Details</a>
-			<a href="{{ URL::action('SchemeController@create', $activity->id) }}" class="btn btn-primary"><i class="fa fa-plus"></i> Scheme</a>
+			<a href="{{ URL::action('SchemeController@create', $activity->id) }}" class="btn btn-primary">Add New Scheme</a>
+			
+			{{ Form::submit('Duplicate Scheme', array('class'=> 'btn btn-primary disable-button','onclick' => "if(!confirm('Are you sure to duplicate this record?')){return false;};")) }}
+			{{ Form::close() }}
 		</div>
 	</div>
 
@@ -64,8 +68,8 @@
 					<div class="form-group">
 						<div class="row">
 							<div class="col-lg-6">
-								{{ Form::label('premuim', 'Premuim SKU', array('class' => 'control-label')) }}
-								{{ Form::select('premuim[]', array('0' => '') + $involves, $sel_premuim, array('data-placeholder' => 'Select Premuim SKU','id' => 'premuim', 'class' => 'form-control')) }}
+								{{ Form::label('premuim', 'Premium SKU', array('class' => 'control-label')) }}
+								{{ Form::select('premuim[]', array('0' => '') + $involves, $sel_premuim, array('data-placeholder' => 'Select Premium SKU','id' => 'premuim', 'class' => 'form-control')) }}
 							</div>
 						</div>
 					</div>

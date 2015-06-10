@@ -109,6 +109,7 @@ Route::group(array('before' => 'auth'), function()
 	Route::put('scheme/{id}', 'SchemeController@update');
 	Route::post('scheme/{id}/duplicate','SchemeController@duplicate');
 	Route::put('scheme/updatealloc', 'SchemeController@updateallocation');
+	Route::post('scheme/{id}/duplicatescheme', 'SchemeController@duplicatescheme');
 
 	// Route::post('downloadedactivity/{id}/submittogcm', 'DownloadedActivityController@submittogcm');
 	// Route::resource('downloadedactivity', 'DownloadedActivityController');

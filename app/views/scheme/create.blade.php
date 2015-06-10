@@ -57,8 +57,8 @@
 			<div class="form-group">
 				<div class="row">
 					<div class="col-lg-6">
-						{{ Form::label('premuim', 'Premuim SKU', array('class' => 'control-label')) }}
-						{{ Form::select('premuim[]', array('0' => '') + $involves, '', array('data-placeholder' => 'Select Premuim SKU','id' => 'premuim', 'class' => 'form-control')) }}
+						{{ Form::label('premuim', 'Premium SKU', array('class' => 'control-label')) }}
+						{{ Form::select('premuim[]', array('0' => '') + $involves, '', array('data-placeholder' => 'Select Premium SKU','id' => 'premuim', 'class' => 'form-control')) }}
 					</div>
 				</div>
 			</div>
