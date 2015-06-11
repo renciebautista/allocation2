@@ -206,9 +206,7 @@ $('#implementation_date').datetimepicker({
 $('#end_date').datetimepicker({
 	pickTime: false,
 	calendarWeeks: true,
-	minDate: moment(),
-	daysOfWeekDisabled: [0, 6],
-	disabledDates: holidays()
+	minDate: moment()
 });
 
 $("#implementation_date").on("dp.change",function (e) {
