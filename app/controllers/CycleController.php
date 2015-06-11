@@ -73,8 +73,7 @@ class CycleController extends \BaseController {
 				}else{
 					$emergency_release_date = '0000-00-00';
 				}
-				
-	
+
 				$cycle = new Cycle;
 				$cycle->cycle_name = strtoupper(Input::get('cycle_name'));
 				$cycle->month_year = Input::get('month_year');
@@ -85,6 +84,7 @@ class CycleController extends \BaseController {
 				$cycle->emergency_deadline = $emergency_deadline;
 				$cycle->emergency_release_date = $emergency_release_date;
 				$cycle->implemintation_date = date('Y-m-d',strtotime(Input::get('implemintation_date')));
+				$cycle->emergency = (Input::has('emergency')) ? 1 : 0;
 				$cycle->save();
 
 				// $types = ActivityType::all();
@@ -174,6 +174,7 @@ class CycleController extends \BaseController {
 			$cycle->emergency_deadline = $emergency_deadline;
 			$cycle->emergency_release_date = $emergency_release_date;
 			$cycle->implemintation_date = date('Y-m-d',strtotime(Input::get('implemintation_date')));
+			$cycle->emergency = (Input::has('emergency')) ? 1 : 0;
 			$cycle->save();
 
 			// $old_path = storage_path().'/uploads/'.$old_name;

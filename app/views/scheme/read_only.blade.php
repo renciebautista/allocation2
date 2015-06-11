@@ -46,11 +46,19 @@
 						<div class="row">
 							<div class="col-lg-6">
 								{{ Form::label('skus', 'Reference Sales SKU', array('class' => 'control-label')) }}
+								@if(!empty($sku))
 								{{ Form::text('skus',$sku->sku_desc.' - '.$sku->sku_code, array('id' => 'skus', 'class' => 'form-control', 'placeholder' => 'Reference Sales SKU','readonly' => '')) }}
+								@else
+								{{ Form::text('skus',null, array('id' => 'skus', 'class' => 'form-control', 'placeholder' => 'Reference Sales SKU','readonly' => '')) }}
+								@endif
 							</div>
 							<div class="col-lg-6">
 								{{ Form::label('involve', 'Host SKU', array('class' => 'control-label')) }}
+								@if(!empty($host))
 								{{ Form::text('involve',$host->sap_desc.' - '.$host->sap_code, array('id' => 'involve', 'class' => 'form-control', 'placeholder' => 'Host SKU','readonly' => '')) }}
+								@else
+								{{ Form::text('involve',$host->sap_desc.' - '.$host->sap_code, array('id' => 'involve', 'class' => 'form-control', 'placeholder' => 'Host SKU','readonly' => '')) }}
+								@endif
 							</div>
 						</div>
 					</div>

@@ -65,6 +65,14 @@
 		</div>
 
 		<div class="form-group">
+			<div class="checkbox">
+				<label>
+					{{ Form::checkbox('emergency', 1,$cycle->emergency) }} Emergency
+				</label>
+			</div>
+		</div>
+
+		<div class="form-group">
 			{{ Form::submit('Update', array('class' => 'btn btn-primary')) }}
 			{{ HTML::linkAction('CycleController@index', 'Back', array(), array('class' => 'btn btn-default')) }}
 		</div>
