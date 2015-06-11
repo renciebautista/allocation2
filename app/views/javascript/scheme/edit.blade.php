@@ -144,8 +144,8 @@ $("form").validate({
 			maxlength: 80
 			},
 		item_code: {
-			minlength: 6,
-			maxlength: 6
+			minlength: 8,
+			maxlength: 8
 			},
 		item_barcode: {
 			required: true,

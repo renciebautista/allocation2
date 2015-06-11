@@ -71,7 +71,7 @@
 				<div class="row">
 					<div class="col-lg-4">
 						{{ Form::label('item_code', 'Item Code', array('class' => 'control-label')) }}
-						{{ Form::text('item_code','',array('class' => 'form-control', 'placeholder' => 'Item Code','maxlength' => 6)) }}
+						{{ Form::text('item_code','',array('class' => 'form-control', 'placeholder' => 'Item Code','maxlength' => 8)) }}
 					</div>
 					<div class="col-lg-4">
 						{{ Form::label('item_barcode', 'Item Barcode', array('class' => 'control-label')) }}

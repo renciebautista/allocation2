@@ -137,4 +137,16 @@ class ActivityApprover extends \Eloquent {
 		}
     	return false;
     }
+
+    public static function ApproverExist($activity_id,$user_id){
+    	$approver = self::where('activity_id',$activity_id)
+    	->where('user_id',$user_id)
+    	->first();
+
+    	if(count($approver) >0 ){
+    		return true;
+    	}else{
+    		return false;
+    	}
+    }
 }

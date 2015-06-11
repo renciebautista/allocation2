@@ -196,7 +196,7 @@ class ActivityController extends BaseController {
 						}
 						ActivityApprover::insert($activity_approver);
 					}
-
+					
 					if($cycle->emergency){
 						
 					}
