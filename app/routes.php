@@ -23,7 +23,7 @@ Route::get("mails", function(){
 	$data['user'] = "Rencie Bautista";
 	$data['activities'] = Activity::PmogForApproval(4);
 	// return View::make('emails.forapproval',compact('user','activities'));
-	Mail::send('memails.forapproval', $data, function($message) {
+	Mail::send('emails.forapproval', $data, function($message) {
 		$message->to('rbautista@chasetech.com', 'Rencie Bautista')->subject('For Approval Activities - Do Not Reply');
 	});
 });
