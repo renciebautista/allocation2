@@ -362,6 +362,27 @@ class Activity extends \Eloquent {
 			->get();
 	}
 
+	public static function ApproverForApproval($user_id,$status_id){
+		$activities = ActivityApprover::GetActivitiesForApproval($user_id);
+		
+		return self::select('activities.id','activities.circular_name','activities.edownload_date',
+			'activities.eimplementation_date','activities.billing_date',
+			'activity_statuses.status','cycles.cycle_name',
+			'scope_types.scope_name','activity_types.activity_type',
+			DB::raw('CONCAT(propo.first_name, " ", propo.last_name) AS proponent'))
+			->join('activity_statuses', 'activities.status_id','=','activity_statuses.id')
+			->join('cycles', 'activities.cycle_id','=','cycles.id')
+			->join('scope_types', 'activities.scope_type_id','=','scope_types.id')
+			->join('activity_types', 'activities.activity_type_id','=','activity_types.id')
+			->join('activity_planners', 'activities.id','=','activity_planners.activity_id','left')
+			->join('users', 'activity_planners.user_id','=','users.id','left')
+			->join('users as propo', 'activities.created_by','=','propo.id')
+			->where('activities.status_id',$status_id)
+			->orderBy('activity_types.activity_type')
+			->orderBy('activities.eimplementation_date')
+			->get();
+	}
+
 	public static function searchField($cycle,$type,$scope,$title){
 		return self::select('activities.id','activities.circular_name','cycles.cycle_name',
 			'scope_types.scope_name','activity_types.activity_type','activities.eimplementation_date','activities.end_date')

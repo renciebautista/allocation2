@@ -125,6 +125,20 @@ class ActivityApprover extends \Eloquent {
 		return $list;
 	}
 
+	public static function GetActivitiesForApproval($user_id){
+		$list = array();
+		$data = self::where('user_id',$user_id)
+		->where('show',1)
+		->where('status_id',0)
+		->get();
+		if(!empty($data)){
+			foreach ($data as $row) {
+				$list[] = $row->activity_id;
+			}
+		}
+		return $list;
+	}
+
 	public static function getApprover($id,$user_id){
 		return self::where('activity_id',$id)
 			->where('user_id',$user_id)->first();

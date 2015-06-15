@@ -84,4 +84,12 @@ class User extends Eloquent implements ConfideUserInterface {
 
 		return $data;
 	}
+
+	public static function GetPlanners($roles){
+		return self::join('assigned_roles', 'users.id', '=', 'assigned_roles.user_id')
+		->join('roles', 'assigned_roles.role_id', '=', 'roles.id')
+		->where('users.active',1)
+		->whereIn('roles.name',$roles)
+		->get();
+	}
 }

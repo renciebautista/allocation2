@@ -80,6 +80,7 @@
 					<tr>
 						<th>Full Name</th>
 						<th>Group</th>
+						<th>Email</th>
 						<th>Status</th>
 						<th colspan="2" style="text-align:center;">Action</th>
 					</tr>
@@ -96,6 +97,7 @@
 						<td>
 							{{ $user->roles[0]->name }}
 						</td>
+						<td>{{ $user->email }}</td>
 						<td>{{ (($user->active == 1) ? 'Active':'In Active') }}</td>
 						<td class="action">
 							{{ Form::open(array('method' => 'DELETE', 'action' => array('ActivityController@destroy', $user->id))) }}                       

@@ -14,18 +14,35 @@ Queue::getIron()->ssl_verifypeer = false;
 
 Route::get("mails", function(){
 
-	// $data['firstname'] = "Rencie Bautista";
-	// Mail::send('mail.test', $data, function($message) {
-	// 	$message->to('rbautista@chasetech.com', 'Rencie Bautista')->subject('Welcome to the Laravel 4 Auth App! - Do Not Reply');
-	// });
-
-	// send list of pending approval per day pmog
-	$data['user'] = "Rencie Bautista";
-	$data['activities'] = Activity::PmogForApproval(4);
-	// return View::make('emails.forapproval',compact('user','activities'));
-	Mail::send('emails.forapproval', $data, function($message) {
-		$message->to('rbautista@chasetech.com', 'Rencie Bautista')->subject('For Approval Activities - Do Not Reply');
-	});
+	// send list of pending approval per day planner
+	$planners = User::GetPlanners(['PMOG PLANNER']);
+	foreach ($planners as $planner) {
+		$data['user'] = $planner->getFullname();
+		$data['activities'] = Activity::PmogForApproval($planner->id);
+		Mail::send('emails.forapproval', $data, function($message) {
+			$message->to($planner->email, $planner->getFullname)->subject('For Approval Activities - Do Not Reply');
+		});
+	}
+	
+	// send list of pending approval per day approver
+	$approvers = User::GetPlanners(['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']);
+	foreach ($approvers as $approver) {
+		$data['user'] = $approver->getFullname();
+		if($approver->role_id == 4){
+			$status_id = 5;
+		}
+		if($approver->role_id == 5){
+			$status_id = 6;
+		}
+		if($approver->role_id == 6){
+			$status_id = 7;
+		}
+		$data['activities'] = Activity::ApproverForApproval($approver->id,$status_id);
+		Mail::send('emails.forapproval', $data, function($message) {
+			$message->to($approver->email, $approver->getFullname)->subject('For Approval Activities - Do Not Reply');
+		});
+		// return View::make('emails.forapproval',$data);
+	}
 });
 
 Route::get('queue/send', function(){
