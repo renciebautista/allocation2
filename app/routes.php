@@ -13,9 +13,18 @@ Queue::getIron()->ssl_verifypeer = false;
 */
 
 Route::get("mails", function(){
-    $data['firstname'] = "Rencie Bautista";
-	Mail::send('mail.test', $data, function($message) {
-	    $message->to('rbautista@chasetech.com', 'Rencie Bautista')->subject('Welcome to the Laravel 4 Auth App! - Do Not Reply');
+
+	// $data['firstname'] = "Rencie Bautista";
+	// Mail::send('mail.test', $data, function($message) {
+	// 	$message->to('rbautista@chasetech.com', 'Rencie Bautista')->subject('Welcome to the Laravel 4 Auth App! - Do Not Reply');
+	// });
+
+	// send list of pending approval per day pmog
+	$data['user'] = "Rencie Bautista";
+	$data['activities'] = Activity::PmogForApproval(4);
+	// return View::make('emails.forapproval',compact('user','activities'));
+	Mail::send('memails.forapproval', $data, function($message) {
+		$message->to('rbautista@chasetech.com', 'Rencie Bautista')->subject('For Approval Activities - Do Not Reply');
 	});
 });
 
