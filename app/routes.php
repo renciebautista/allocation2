@@ -12,12 +12,11 @@ Queue::getIron()->ssl_verifypeer = false;
 |
 */
 
-Route::get("channels", function(){
-	$channels = Channel::all();
-	foreach ($channels as $channel) {
-		$channel->subgroup = Account::getChannelGroup($channel->channel_code);
-	}
-	Helper::print_r($channels);
+Route::get("mails", function(){
+    $data['firstname'] = "Rencie Bautista";
+	Mail::send('mail.test', $data, function($message) {
+	    $message->to('rbautista@chasetech.com', 'Rencie Bautista')->subject('Welcome to the Laravel 4 Auth App! - Do Not Reply');
+	});
 });
 
 Route::get('queue/send', function(){
