@@ -54,7 +54,7 @@ return array(
 	|
 	*/
 
-	'from' => array('address' => "etop@uliniver.com", 'name' => "ETOP"),
+	'from' => array('address' => "test@chasetech.com", 'name' => "ETOP"),
 
 	/*
 	|--------------------------------------------------------------------------
@@ -67,7 +67,7 @@ return array(
 	|
 	*/
 
-	'encryption' => 'tls',
+	'encryption' => 'ssl',
 
 	/*
 	|--------------------------------------------------------------------------
