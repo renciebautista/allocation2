@@ -24,15 +24,9 @@ $app = new Illuminate\Foundation\Application;
 |
 */
 
-// $env = $app->detectEnvironment(array(
-// 	'local' => array('homestead','ULTRABOOK-PC'),
-// 	'staging1' => array('chasetech.com'),
-// 	'staging2' => array('ctcworkforce.com'),
-// ));
-
-$env = $app->detectEnvironment(function(){
-    return getenv('APP_ENV') ?: 'local'; 
-});
+$env = $app->detectEnvironment(array(
+	'local' => array('homestead','ULTRABOOK-PC'),
+));
 
 /*
 |--------------------------------------------------------------------------
