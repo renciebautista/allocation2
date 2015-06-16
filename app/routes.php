@@ -22,7 +22,7 @@ Route::get("mails", function(){
 		$data['email'] = $planner->email;
 		$data['fullname'] = $planner->getFullname();
 		Mail::send('emails.forapproval', $data, function($message) use ($data){
-			$message->to($data['email'], $data['fullname'])->subject('For Approval Activities - Do Not Reply');
+			$message->to($data['email'], $data['fullname'])->subject('For Approval Activities (test mail) - Do Not Reply');
 		});
 	}
 	
@@ -43,7 +43,7 @@ Route::get("mails", function(){
 		$data['email'] = $approver->email;
 		$data['fullname'] = $approver->getFullname();
 		Mail::send('emails.forapproval', $data, function($message)  use ($data) {
-			$message->to($data['email'], $data['fullname'])->subject('For Approval Activities - Do Not Reply');
+			$message->to($data['email'], $data['fullname'])->subject('For Approval Activities (test mail) - Do Not Reply');
 		});
 		// return View::make('emails.forapproval',$data);
 	}
