@@ -171,7 +171,7 @@
 	</div>
 </div>
 
-@include('javascript.activity.index')
+@include('javascript.activit.yindex')
 
 @stop
 

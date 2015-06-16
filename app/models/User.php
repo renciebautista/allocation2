@@ -19,7 +19,8 @@ class User extends Eloquent implements ConfideUserInterface {
 	);
 
 	public static function search($status,$type,$search){
-		return self::join('assigned_roles', 'users.id', '=', 'assigned_roles.user_id')
+		return self::select('users.id', 'users.first_name', 'users.last_name','users.email','users.active')
+			->join('assigned_roles', 'users.id', '=', 'assigned_roles.user_id')
 			->where(function($query) use ($search){
 				$query->where('first_name', 'LIKE' ,"%$search%")
 					->orwhere('last_name', 'LIKE' ,"%$search%")

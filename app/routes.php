@@ -18,7 +18,7 @@ Route::get("mails", function(){
 	$planners = User::GetPlanners(['PMOG PLANNER']);
 	foreach ($planners as $planner) {
 		$data['user'] = $planner->getFullname();
-		$data['activities'] = Activity::PmogForApproval($planner->id);
+		$data['activities'] = Activity::PmogForApproval($planner->user_id);
 		Mail::send('emails.forapproval', $data, function($message) {
 			$message->to($planner->email, $planner->getFullname)->subject('For Approval Activities - Do Not Reply');
 		});
@@ -37,7 +37,7 @@ Route::get("mails", function(){
 		if($approver->role_id == 6){
 			$status_id = 7;
 		}
-		$data['activities'] = Activity::ApproverForApproval($approver->id,$status_id);
+		$data['activities'] = Activity::ApproverForApproval($approver->user_id,$status_id);
 		Mail::send('emails.forapproval', $data, function($message) {
 			$message->to($approver->email, $approver->getFullname)->subject('For Approval Activities - Do Not Reply');
 		});
@@ -159,9 +159,12 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('profile','ProfileController@index');
 
 	// Confide routes
-	Route::get('users', 'UsersController@index');
-	Route::get('users/create', 'UsersController@create');
-	Route::post('users', 'UsersController@store');
+	// Route::get('users', 'UsersController@index');
+	// Route::get('users/create', 'UsersController@create');
+	// Route::get('users/{id}/edit', 'UsersController@edit');
+	// Route::put('users/{id}', 'UsersController@update');
+	// Route::post('users', 'UsersController@store');
+
 	Route::get('users/login', 'UsersController@login');
 	Route::post('users/login', 'UsersController@doLogin');
 	Route::get('users/confirm/{code}', 'UsersController@confirm');
@@ -170,6 +173,8 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('users/reset_password/{token}', 'UsersController@resetPassword');
 	Route::post('users/reset_password', 'UsersController@doResetPassword');
 	Route::get('users/logout', 'UsersController@logout');
+	Route::resource('users', 'UsersController');
+	
 
 	Route::resource('cycle', 'CycleController');
 

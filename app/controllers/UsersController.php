@@ -60,7 +60,7 @@ class UsersController extends Controller
 				$user->password_confirmation = Input::get('password_confirmation');
 				$user->confirmation_code = md5(uniqid(mt_rand(), true));
 				$user->confirmed = 1;
-				$user->active = 1;
+				$user->active = (Input::has('active')) ? 1 : 0;
 				$user->save();
 
 				$role = Role::find(Input::get('group'));
@@ -73,6 +73,82 @@ class UsersController extends Controller
 		}
 
 		return Redirect::action('UsersController@create')
+			->withInput(Input::except(array('password','password_confirmation')))
+			->withErrors($validation)
+			->with('class', 'alert-danger')
+			->with('message', 'There were validation errors.');
+	}
+
+	public function edit($id){
+		$user = User::findOrFail($id);
+		$user_group = 
+		$groups = Role::orderBy('name')->lists('name', 'id');
+		return View::make('users.edit',compact('groups','user'));
+	}
+
+	public function show($id){
+		return Redirect::route('users.edit',$id);
+	}
+
+	public function update($id){
+		$input = Input::all();
+		$user = User::findOrFail($id);
+
+		$rules = array(
+	    	'username' => 'required|unique:users,username,'.$id,
+			'email' => 'required|email|unique:users,email,'.$id,
+			'first_name' => 'required',
+			'last_name' => 'required',
+			'group' => 'required|integer|min:1'
+		);
+
+		$validation = Validator::make($input, $rules);
+
+		if($validation->passes())
+		{
+			DB::beginTransaction();
+			try {
+
+				$user->first_name = strtoupper(Input::get('first_name'));
+				$user->middle_initial = strtoupper(Input::get('middle_name'));
+				$user->last_name = strtoupper(Input::get('last_name'));
+				$user->username = Input::get('username');
+				$user->email = Input::get('email');
+				$user->contact_no = Input::get('contact_no');
+				$user->active = (Input::has('active')) ? 1 : 0;
+				$user->update();
+
+				$user->detachRoles($user->roles);
+
+				$role = Role::find(Input::get('group'));
+
+				$user->roles()->attach($role->id); // id only
+
+				DB::commit();
+
+				return Redirect::action('UsersController@index')
+				->with('class', 'alert-success')
+				->with('message', 'Record successfuly updated.');
+
+			} catch (\Exception $e) {
+				DB::rollback();
+				return Redirect::action('UsersController@edit',$user->id)
+				->withInput(Input::except(array('password','password_confirmation')))
+				->withErrors($validation)
+				->with('class', 'alert-danger')
+				->with('message', 'There were validation errors.');
+			 //    $class = 'alert-danger';
+				// $message = 'Cannot duplicate activity.';
+
+				// return Redirect::to(URL::action('ActivityController@index'))
+				// ->with('class', $class )
+				// ->with('message', $message);
+				// something went wrong
+			}		
+			
+		}
+
+		return Redirect::action('UsersController@edit',$user->id)
 			->withInput(Input::except(array('password','password_confirmation')))
 			->withErrors($validation)
 			->with('class', 'alert-danger')

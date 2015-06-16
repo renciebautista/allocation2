@@ -17,6 +17,15 @@
 
 	<div class="col-lg-6">
 	{{ Form::open(array('action' => 'ActivityTypeController@store','class' => 'bs-component')) }}
+
+		<div class="form-group">
+			<div class="checkbox">
+				<label>
+					{{ Form::checkbox('with_scheme', 1,true) }} With Scheme
+				</label>
+			</div>
+		</div>
+		
 		<div class="form-group">
 			{{ Form::label('activity_type', 'Activity Type', array('class' => 'control-label')) }}
 			{{ Form::text('activity_type','',array('class' => 'form-control', 'placeholder' => 'Activity Type')) }}
@@ -39,9 +48,12 @@
 			@endforeach
 		</div>
 
+		
+
 		<div class="form-group">
-			{{ HTML::linkAction('ActivityTypeController@index', 'Back', array(), array('class' => 'btn btn-default')) }}
 			{{ Form::submit('Submit', array('class' => 'btn btn-primary')) }}
+			{{ HTML::linkAction('ActivityTypeController@index', 'Back', array(), array('class' => 'btn btn-default')) }}
+			
 		</div>
 
 		
@@ -50,12 +62,17 @@
 </div>
 
 
+@include('javascript.activitytype.create')
+
 @stop
 
 @section('page-script')
 
-
-
 @stop
+
+
+
+
+
 
 

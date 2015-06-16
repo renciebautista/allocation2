@@ -63,6 +63,14 @@
 		</div>
 
 		<div class="form-group">
+			<div class="checkbox">
+				<label>
+					{{ Form::checkbox('active', 1,null) }} Active
+				</label>
+			</div>
+		</div>
+
+		<div class="form-group">
 			{{ Form::submit('Submit', array('class' => 'btn btn-primary')) }}
 			{{ HTML::linkAction('UsersController@index', 'Back', array(), array('class' => 'btn btn-default')) }}
 		</div>
@@ -71,12 +79,10 @@
 </div>
 
 
+@include('javascript.user.create')
+
 @stop
 
 @section('page-script')
 
-
-
 @stop
-
-

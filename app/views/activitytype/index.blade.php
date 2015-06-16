@@ -26,26 +26,30 @@
 		{{ Form::close() }}
 	</div>
 </div>
-
+<br>
 <div class="row">
 	<div class="col-lg-12">
 		<div class="table-responsive">
-			<table class="table table-striped table-hover">
+			<table class="table table-striped table-condensed table-hover table-bordered">
 				<thead>
 					<tr>
-						<th>Activity Type Name</th>
+						<th class="center">Activity Type Name</th>
+						<th class="center">With Scheme</th>
+						<th class="center">Unit of Measurement</th>
 						<th colspan="3" style="text-align:center;">Action</th>
 					</tr>
 				</thead>
 				<tbody>
 					@if(count($activitytypes) == 0)
 					<tr>
-						<td colspan="4">No record found!</td>
+						<td colspan="6">No record found!</td>
 					</tr>
 					@else
 					@foreach($activitytypes as $type)
 					<tr>
 						<td>{{ $type->activity_type }}</td>
+						<td class="center">{{ ($type->with_scheme) ? 'TRUE' : 'FALSE' }}</td>
+						<td class="center">{{ $type->uom }}</td>
 						<td class="action">
 							{{ HTML::linkAction('NetworkController@index','Manage Networks', $type->id, array('class' => 'btn btn-primary btn-xs')) }}
 						</td>

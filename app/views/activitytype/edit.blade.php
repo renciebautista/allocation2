@@ -17,6 +17,15 @@
 
 	<div class="col-lg-6">
 	{{ Form::open(array('route' => array('activitytype.update', $activitytype->id), 'method' => 'PUT', 'class' => 'bs-component')) }}
+
+		<div class="form-group">
+			<div class="checkbox">
+				<label>
+					{{ Form::checkbox('with_scheme', 1,$activitytype->with_scheme) }} With Scheme
+				</label>
+			</div>
+		</div>
+
 		<div class="form-group">
 			{{ Form::label('activity_type', 'Activity Type', array('class' => 'control-label')) }}
 			{{ Form::text('activity_type', $activitytype->activity_type, array('class' => 'form-control', 'placeholder' => 'Activity Type')) }}
@@ -40,8 +49,9 @@
 		</div>
 
 		<div class="form-group">
-			{{ HTML::linkAction('ActivityTypeController@index', 'Back', array(), array('class' => 'btn btn-default')) }}
 			{{ Form::submit('Update', array('class' => 'btn btn-primary')) }}
+			{{ HTML::linkAction('ActivityTypeController@index', 'Back', array(), array('class' => 'btn btn-default')) }}
+			
 		</div>
 
 		
@@ -50,11 +60,12 @@
 </div>
 
 
+
+@include('javascript.activitytype.edit')
+
 @stop
 
 @section('page-script')
-
-
 
 @stop
 

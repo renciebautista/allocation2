@@ -198,7 +198,10 @@ class ActivityController extends BaseController {
 					}
 					
 					if($cycle->emergency){
-						
+						$cmd = User::GetPlanners(['CMD DIRECTOR']);
+						if(!ActivityApprover::ApproverExist($activity->id,$cmd[0]->user_id)){
+							ActivityApprover::insert(array('activity_id' => $activity->id, 'user_id' => $cmd[0]->user_id));
+						}
 					}
 
 					// add division
@@ -546,6 +549,14 @@ class ActivityController extends BaseController {
 								}
 								ActivityApprover::insert($activity_approver);
 							}
+
+							if($cycle->emergency){
+								$cmd = User::GetPlanners(['CMD DIRECTOR']);
+								if(!ActivityApprover::ApproverExist($activity->id,$cmd[0]->user_id)){
+									ActivityApprover::insert(array('activity_id' => $activity->id, 'user_id' => $cmd[0]->user_id));
+								}
+							}
+
 
 							// update division
 							ActivityDivision::where('activity_id',$activity->id)->delete();

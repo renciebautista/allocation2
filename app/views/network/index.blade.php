@@ -69,41 +69,24 @@
 		</div>
 	</div>
 </div>
-
+<br>
 <div class="row">
 	<div class="col-lg-12">
 		<div class="table-responsive">
-			<table id="activity_table" class="table table-striped table-hover ">
-			  	<thead>
-				    <tr>
-				    	<th data-field="task_id">Task ID</th>
-				        <th data-field="milestone">Milestone</th>
-				        <th data-field="task">Task</th>
-				        <th data-field="responsible">Team Responsible</th>
-				        <th data-field="duration">Duration (days)</th>
-				        <th data-field="depend_on">Depends On</th>
-				        <th data-field="show" data-formatter="showFormatter">Show</th>
-				        <th data-field="action">Action</th>
-				    </tr>
-				</thead>
+			<div class="table-responsive">
+			<table id="activity_table" class="table table-striped table-condensed table-hover table-bordered">
 			</table> 
 		</div>
 	</div>
+
+	<p id="totalduration"></p>
 </div>
 
-<div class="row">
-	<div class="col-lg-12">
-		<p id="totalduration"></p>
-	</div>
-</div>
 
 @stop
 
 @section('page-script')
 
-function showFormatter(value) {
-    console.log(value);
-}
 
 function duration(){
 	$.ajax({
@@ -166,15 +149,63 @@ $('button#submit').click(function(){
 });
 
 
-function showFormatter(value, row) {
-    var icon = row.id % 2 === 0 ? 'glyphicon-star' : 'glyphicon-star-empty'
 
-    return '<i class="glyphicon ' + icon + '"></i> ' + value;
-}
+
+
 
 $('#activity_table').bootstrapTable({
-    url: 'network/list'
+    method: 'get',
+    url: 'network/list',
+    columns: [{
+       	field: 'task_id',
+        title: 'Task ID',
+        align: 'center',
+         width : 60,
+    }, {
+        field: 'milestone',
+        title: 'Milestone',
+        align: 'center'
+    }, {
+        field: 'task',
+        title: 'Task',
+        align: 'center'
+    }, {
+        field: 'responsible',
+        title: 'Team Responsible',
+        align: 'center'
+    }, {
+        field: 'duration',
+        title: 'Duration (days)',
+        align: 'center'
+    },{
+        field: 'depend_on',
+       	title: 'Depends On',
+        align: 'center'
+    },{
+        field: 'show',
+        title: 'Show',
+        align: 'center',
+        formatter: showFormatter,
+    },{
+        field: 'id',
+        title: 'Action',
+        align: 'center',
+        formatter: actionFormatter,
+        width : 100,
+    }]
 });
+
+function showFormatter(value) {
+    if(value){
+    	return 'TRUE';
+	}else{
+		return 'FALSE';
+	}
+}
+function actionFormatter(value) {
+    return '<a class="btn btn-info btn-xs" href="https://github.com/wenzhixin/' + value + '">Edit</a>   <a class="btn btn-danger btn-xs" href="https://github.com/wenzhixin/' + value + '">Delete</a>';
+}
+
 
 $('select#depend_on').multiselect({
 	maxHeight: 200,
