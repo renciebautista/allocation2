@@ -203,7 +203,7 @@ function showFormatter(value) {
 	}
 }
 function actionFormatter(value) {
-    return '<a class="btn btn-info btn-xs" href="https://github.com/wenzhixin/' + value + '">Edit</a>   <a class="btn btn-danger btn-xs" href="https://github.com/wenzhixin/' + value + '">Delete</a>';
+    return '<a class="btn btn-info btn-xs" href="https://github.com/wenzhixin/' + value + '">Edit</a>   <a id="'+value+'" class="netDelete btn btn-danger btn-xs" href="javascript:;">Delete</a>';
 }
 
 

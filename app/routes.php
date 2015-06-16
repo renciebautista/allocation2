@@ -19,8 +19,10 @@ Route::get("mails", function(){
 	foreach ($planners as $planner) {
 		$data['user'] = $planner->getFullname();
 		$data['activities'] = Activity::PmogForApproval($planner->user_id);
-		Mail::send('emails.forapproval', $data, function($message) {
-			$message->to($planner->email, $planner->getFullname)->subject('For Approval Activities - Do Not Reply');
+		$data['email'] = $planner->email;
+		$data['fullname'] = $planner->getFullname();
+		Mail::send('emails.forapproval', $data, function($message) use ($data){
+			$message->to($data['email'], $data['fullname'])->subject('For Approval Activities - Do Not Reply');
 		});
 	}
 	
@@ -38,8 +40,10 @@ Route::get("mails", function(){
 			$status_id = 7;
 		}
 		$data['activities'] = Activity::ApproverForApproval($approver->user_id,$status_id);
-		Mail::send('emails.forapproval', $data, function($message) {
-			$message->to($approver->email, $approver->getFullname)->subject('For Approval Activities - Do Not Reply');
+		$data['email'] = $approver->email;
+		$data['fullname'] = $approver->getFullname();
+		Mail::send('emails.forapproval', $data, function($message)  use ($data) {
+			$message->to($data['email'], $data['fullname'])->subject('For Approval Activities - Do Not Reply');
 		});
 		// return View::make('emails.forapproval',$data);
 	}
