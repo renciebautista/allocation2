@@ -41,8 +41,11 @@ return array(
 	| All database work in Laravel is done through the PHP PDO facilities
 	| so make sure you have the driver for your particular database of
 	| choice installed on your machine before you begin development.
+	chaset7_allocation
+	chaset7_alloc
 	|ctcwor5_allocation
 	|ctcwor5_alloc
+	alloc031988
 	*/
 
 	'connections' => array(
@@ -56,9 +59,9 @@ return array(
 		'mysql' => array(
 			'driver'    => 'mysql',
 			'host'      => 'localhost',
-			'database'  => 'chaset7_allocation',
-			'username'  => 'chaset7_alloc',
-			'password'  => 'alloc031988',
+			'database'  => $_ENV['DATABASE_NAME'],
+			'username'  => $_ENV['DATABASE_USER'],
+			'password'  => $_ENV['DATABASE_PASSWORD'],
 			'charset'   => 'utf8',
 			'collation' => 'utf8_unicode_ci',
 			'prefix'    => '',
