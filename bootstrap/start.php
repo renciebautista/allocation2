@@ -27,8 +27,8 @@ $app = new Illuminate\Foundation\Application;
 $env = $app->detectEnvironment(array(
 
 	'local' => array('homestead','ULTRABOOK-PC'),
-	'development1' => array('www.chasetech.com'),
-	'development2' => array('www.ctcworkforce.com'),
+	'staging1' => array('www.chasetech.com'),
+	'staging2' => array('www.ctcworkforce.com'),
 
 ));
 
