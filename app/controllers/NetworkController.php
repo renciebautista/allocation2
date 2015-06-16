@@ -36,9 +36,10 @@ class NetworkController extends \BaseController {
 	public function store($id)
 	{
 		if(Request::ajax()){
+			$data['success'] = 0;
 			$activitytype = ActivityType::findOrFail($id);
 			if(empty($activitytype)){
-				return 0;
+				$data['success']  = 0;
 			}
 
 			$rules = array(
@@ -84,12 +85,10 @@ class NetworkController extends \BaseController {
 				});
 				
 
-				return 0;
+				$data['success'] = 1;
 			}
-
-			return 1;
 		}
-		
+		return Response::json($data,200);
 	}
 
 	/**
@@ -156,9 +155,19 @@ class NetworkController extends \BaseController {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function edit($id)
+	public function edit()
 	{
-		//
+		if(Request::ajax()){
+			$id = Input::get("d_id");
+			$network = ActivityTypeNetwork::findOrFail($id);
+			$data['network'] = $network;
+			$data['selection'] = ActivityTypeNetwork::select('id', 'task_id')
+				->where('activitytype_id', $network->activitytype_id)
+				->where('id', '!=',$id)
+				->lists('task_id', 'id');
+			$data['selected'] = ActivityNetworkDependent::depend_on_task_array($network->id);
+			return Response::json($data,200);
+		}
 	}
 
 	/**
@@ -168,9 +177,52 @@ class NetworkController extends \BaseController {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function update($id)
+	public function update()
 	{
-		//
+		if(Request::ajax()){
+			$data['success'] = 0;
+			$id = Input::get("ed_id");
+			$milestone = ActivityTypeNetwork::findOrFail($id);
+			if(empty($milestone)){
+				$data['success']  = 0;
+			}
+
+			$rules = array(
+				'emilestone' => 'required',
+				'etask' => 'required',
+				'eresponsible' => 'required',
+				'eduration' => 'required'
+			);
+
+			$validation = Validator::make(Input::all(),$rules);
+
+			if($validation->passes())
+			{
+				DB::transaction(function() use ($milestone){
+					$milestone->milestone = strtoupper(Input::get('emilestone'));
+					$milestone->task = strtoupper(Input::get('etask'));
+					$milestone->responsible = strtoupper(Input::get('eresponsible'));
+					$milestone->duration = Input::get('eduration');
+					$milestone->show = (Input::has('eshow')) ? true : false;
+					$milestone->update();
+					$depend_on = Input::get('edepend_on');
+
+					ActivityNetworkDependent::where('child_id',$milestone->id)->delete();
+					if($depend_on !== null){
+						foreach (Input::get('edepend_on') as $parent) {
+							$depend_on = new ActivityNetworkDependent;
+							$depend_on->child_id = $milestone->id;
+							$depend_on->parent_id = $parent;
+							$depend_on->save();
+						}
+					}
+				});
+				
+
+				$data['success'] = 1;
+			}
+		}
+		return Response::json($data,200);
 	}
 
 	/**
@@ -180,9 +232,27 @@ class NetworkController extends \BaseController {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function destroy($id)
+	public function destroy()
 	{
-		//
+		if(Request::ajax()){
+			$id = Input::get('d_id');
+			$network = ActivityTypeNetwork::find($id);
+			if(empty($network)){
+				$arr['success'] = 0;
+			}else{
+				ActivityNetworkDependent::where('child_id',$network->id)
+					->delete();
+				ActivityNetworkDependent::where('parent_id',$network->id)
+					->delete();
+				$network->delete();
+
+
+				$arr['success'] = 1;
+				
+			}
+			$arr['id'] = $id;
+			return json_encode($arr);
+		}
 	}
 
 }

@@ -27,26 +27,26 @@ Route::get("mails", function(){
 	}
 	
 	// send list of pending approval per day approver
-	$approvers = User::GetPlanners(['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']);
-	foreach ($approvers as $approver) {
-		$data['user'] = $approver->getFullname();
-		if($approver->role_id == 4){
-			$status_id = 5;
-		}
-		if($approver->role_id == 5){
-			$status_id = 6;
-		}
-		if($approver->role_id == 6){
-			$status_id = 7;
-		}
-		$data['activities'] = Activity::ApproverForApproval($approver->user_id,$status_id);
-		$data['email'] = $approver->email;
-		$data['fullname'] = $approver->getFullname();
-		Mail::send('emails.forapproval', $data, function($message)  use ($data) {
-			$message->to($data['email'], $data['fullname'])->subject('For Approval Activities (test mail) - Do Not Reply');
-		});
-		// return View::make('emails.forapproval',$data);
-	}
+	// $approvers = User::GetPlanners(['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']);
+	// foreach ($approvers as $approver) {
+	// 	$data['user'] = $approver->getFullname();
+	// 	if($approver->role_id == 4){
+	// 		$status_id = 5;
+	// 	}
+	// 	if($approver->role_id == 5){
+	// 		$status_id = 6;
+	// 	}
+	// 	if($approver->role_id == 6){
+	// 		$status_id = 7;
+	// 	}
+	// 	$data['activities'] = Activity::ApproverForApproval($approver->user_id,$status_id);
+	// 	$data['email'] = $approver->email;
+	// 	$data['fullname'] = $approver->getFullname();
+	// 	Mail::send('emails.forapproval', $data, function($message)  use ($data) {
+	// 		$message->to($data['email'], $data['fullname'])->subject('For Approval Activities (test mail) - Do Not Reply');
+	// 	});
+	// 	// return View::make('emails.forapproval',$data);
+	// }
 });
 
 Route::get('queue/send', function(){
@@ -187,6 +187,9 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('activitytype/{id}/network/dependon', 'NetworkController@dependOn');
 	Route::get('activitytype/{id}/network/totalduration', 'NetworkController@totalduration');
 	Route::post('activitytype/{id}/network/create', 'NetworkController@store');
+	Route::post('network/delete', 'NetworkController@destroy');
+	Route::get('network/edit', 'NetworkController@edit');
+	Route::post('network/update', 'NetworkController@update');
 
 
 

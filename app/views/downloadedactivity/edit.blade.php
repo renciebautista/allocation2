@@ -62,7 +62,11 @@
 <ul class="nav nav-tabs">
 	<li class="active"><a id="tab-activity" aria-expanded="true" href="#activity">Activity Details</a></li>
 	<li class=""><a id="tab-customer" aria-expanded="false" href="#customer">Customer Details</a></li>
+	@if(!$activity->activitytype->with_scheme)
 	<li class=""><a id="tab-schemes" aria-expanded="false" href="#schemes">Schemes</a></li>
+	@else
+
+	@endif
 	<li class=""><a id="tab-budget" aria-expanded="false" href="#budget">Budget Details</a></li>
 	<li class=""><a id="tab-timings" aria-expanded="false" href="#timings">Timings Details</a></li>
 	<li class=""><a id="tab-attachments" aria-expanded="false" href="#attachment">Attachments</a></li>
@@ -414,6 +418,7 @@
 		<br>
 	</div>
 
+	@if(!$activity->activitytype->with_scheme)
 	<!-- scheme details -->
 	<div class="tab-pane fade" id="schemes">
 		<br>
@@ -513,7 +518,10 @@
 		</div>
 		<br>
 	</div>
+	@else
 
+	@endif
+	
 	<!-- budget details -->
 	<div class="tab-pane fade" id="budget">
 		<br>

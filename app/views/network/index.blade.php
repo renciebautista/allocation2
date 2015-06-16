@@ -69,6 +69,54 @@
 		</div>
 	</div>
 </div>
+
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="myModalLabel">Modal title</h4>
+			</div>
+			<form id="activity_update">
+				{{ Form::hidden('ed_id', null, array('id' => 'ed_id')) }}
+				<div class="modal-body">
+					<div class="form-group">
+						{{ Form::label('emilestone', 'Milestone', array('class' => 'control-label')) }}
+						{{ Form::text('emilestone','',array('id' => 'emilestone', 'class' => 'form-control', 'placeholder' => 'Milestone')) }}
+					</div>
+					<div class="form-group">
+						{{ Form::label('etask', 'Task', array('class' => 'control-label')) }}
+						{{ Form::text('etask','',array('id' => 'etask', 'class' => 'form-control', 'placeholder' => 'Task')) }}
+					</div>
+					<div class="form-group">
+						{{ Form::label('eresponsible', 'Team Responsible', array('class' => 'control-label')) }}
+						{{ Form::text('eresponsible','', array('id' => 'eresponsible','class' => 'form-control', 'placeholder' => 'Team Responsible')) }}
+					</div>
+					<div class="form-group">
+						{{ Form::label('edepend_on', 'Depends On', array('class' => 'control-label')) }}
+						<select class="form-control" data-placeholder="SELECT ACTIVITY" id="edepend_on" name="edepend_on[]" multiple="multiple" ></select>
+					</div>
+					<div class="form-group">
+						{{ Form::label('eduration', 'Duration (days)', array('class' => 'control-label')) }}
+						{{ Form::text('eduration','',array('id' => 'eduration','class' => 'form-control', 'placeholder' => 'Duration (days)')) }}
+					</div>
+					<div class="form-group">
+						<div class="checkbox">
+					        <label>
+					        	{{ Form::checkbox('eshow',null,null,['id' => 'eshow']) }} Show in Activity Preview
+					        </label>
+					    </div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<button id="update" type="button" class="btn btn-primary">Update</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
 <br>
 <div class="row">
 	<div class="col-lg-12">
@@ -136,9 +184,14 @@ $('button#submit').click(function(){
 			url: "network/create",
 			data: $('form#activity').serialize(),
 			success: function(msg){
-				$('#activity_table').bootstrapTable("refresh");
-			    $('#myModal').modal('hide');
-			    duration();
+				if(msg.success == 1){
+					$('#activity_table').bootstrapTable("refresh");
+				    $('#myModal').modal('hide');
+				    duration();
+				}else{
+					lert("failure");
+				}
+				
 			},
 			error: function(){
 				alert("failure");
@@ -203,11 +256,11 @@ function showFormatter(value) {
 	}
 }
 function actionFormatter(value) {
-    return '<a class="btn btn-info btn-xs" href="https://github.com/wenzhixin/' + value + '">Edit</a>   <a id="'+value+'" class="netDelete btn btn-danger btn-xs" href="javascript:;">Delete</a>';
+    return '<a id="'+value	+'" class="netEdit btn btn-info btn-xs" href="javascript:;">Edit</a>   <a id="'+value	+'" class="netDelete btn btn-danger btn-xs" href="javascript:;">Delete</a>';
 }
 
 
-$('select#depend_on').multiselect({
+$('select#depend_on,select#edepend_on').multiselect({
 	maxHeight: 200,
 	includeSelectAllOption: true,
 	enableCaseInsensitiveFiltering: true,
@@ -247,5 +300,140 @@ $("#activity").validate({
   	}
 });
 
+$('#activity_table').on("click",".netDelete",function(){
+	var id = $(this).attr("id");
+	if(id){
+		if(confirm("Do you really want to delete record ?")){
+			$(this).addClass('disabled');
+			$.ajax({
+				type: 'POST', 
+				url: "{{ URL::action('NetworkController@destroy') }}", 
+				data : {d_id:id},
+				dataType: "json",
+				success: function(response){
+					if(response.success == 1){
+						$('#activity_table').bootstrapTable("refresh");
+			    		duration();
+					}else{
+						if (option.onError !== undefined) {
+							option.onError();
+						}
+						// alert("Unexpected error, Please try again");
+					}
+				},error: function(){
+					if (option.onError !== undefined) {
+						option.onError();
+					}
+					// alert("Unexpected error, Please try again");
+				}
+			});
+		}
+	}
+});
+
+
+$('#activity_table').on("click",".netEdit",function(e){
+	var id = $(this).attr("id");
+	
+	$.ajax({
+		type: "GET",
+		url: "{{ URL::action('NetworkController@edit') }}",
+		data : {d_id:id},
+		datatype: "json",
+		success: function(msg){
+			var modal = $('#editModal');
+			modal.find('.modal-title').text('Edit Network')
+			modal.find('#emilestone').val(msg.network.milestone)
+			modal.find('#etask').val(msg.network.task)
+			modal.find('#eresponsible').val(msg.network.responsible)
+			modal.find('#eduration').val(msg.network.duration)
+			modal.find('#ed_id').val(id)
+			$('select#edepend_on').empty();
+
+			$.each(msg.selection, function(i, text) {
+				var sel_class = '';
+				if($.inArray(i,msg.selected ) > -1){
+					sel_class = 'selected="selected"';
+				}
+				$('<option '+sel_class+' value="'+i+'">'+text+'</option>').appendTo($('select#edepend_on')); 
+			});
+
+			$('select#edepend_on').multiselect('rebuild');
+
+			if (msg.network.show == 1)
+			{
+			    modal.find('#eshow').prop("checked", true);
+			}
+			else
+			{
+			    modal.find('#eshow').prop("checked",false);
+			}
+
+			
+			modal.modal();
+		},
+		error: function(){
+			alert("failure");
+		}
+	});
+	e.preventDefault();
+});
+
+$("#activity_update").validate({
+	errorElement: "span", 
+	errorClass : "has-error",
+	rules: {
+		milestone: {
+			required: true,
+			maxlength: 80
+			},
+		task: {
+			required: true,
+			maxlength: 80
+			},
+		responsible: {
+			required: true,
+			maxlength: 80
+			},
+		duration: {
+			required: true,
+			maxlength: 80
+			}
+	},
+	errorPlacement: function(error, element) {               
+		
+	},
+	highlight: function( element, errorClass, validClass ) {
+    	$(element).closest('div').addClass(errorClass).removeClass(validClass);
+  	},
+  	unhighlight: function( element, errorClass, validClass ) {
+    	$(element).closest('div').removeClass(errorClass).addClass(validClass);
+  	}
+});
+
+$('button#update').click(function(){
+	if($("#activity_update").valid()){
+		$.ajax({
+			type: "POST",
+			url: "{{ URL::action('NetworkController@update') }}",
+			data: $('form#activity_update').serialize(),
+			success: function(msg){
+				if(msg.success == 1){
+					$('#activity_table').bootstrapTable("refresh");
+				    $('#editModal').modal('hide');
+				    duration();
+				}else{
+					lert("failure");
+				}
+				
+				
+			},
+			error: function(){
+				alert("failure");
+			}
+		});
+	}
+	
+});
 
 @stop
