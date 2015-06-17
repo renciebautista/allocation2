@@ -24,9 +24,9 @@
 
 <ul class="nav nav-tabs">
 	<li class="active"><a aria-expanded="true" href="#activty" data-toggle="tab">Activity Details</a></li>
-	<li class="disabled"><a>Budget Details</a></li>
 	<li class="disabled"><a>Customer Details</a></li>
 	<li class="disabled"><a>Schemes</a></li>
+	<li class="disabled"><a>Budget Details</a></li>
 	<li class="disabled"><a>Timings Details</a></li>
 	<li class="disabled"><a>Attachment</a></li>
 </ul>

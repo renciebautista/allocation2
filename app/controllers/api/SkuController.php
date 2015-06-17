@@ -51,10 +51,10 @@ class SkuController extends \BaseController {
 			$filter = \Input::get('categories');
 			$data = array();
 			if($filter != ''){
-				$data = \Sku::select('brand_code', \DB::raw('CONCAT(brand_desc, "- ", cpg_desc) AS brand_desc'))
+				$data = \Sku::select('cpg_code', \DB::raw('CONCAT(brand_desc, "- ", cpg_desc) AS brand_desc'))
 				->whereIn('category_code',$filter)
-				->groupBy('brand_code')
-				->orderBy('brand_desc')->lists('brand_desc', 'brand_code');
+				->groupBy('cpg_code')
+				->orderBy('brand_desc')->lists('brand_desc', 'cpg_code');
 			}
 
 			return \Response::json($data,200);
@@ -69,10 +69,10 @@ class SkuController extends \BaseController {
 			$data = array();
 			$data['selection']= array();
 			if($filter != ''){
-				$data['selection'] = \Sku::select('brand_code', \DB::raw('CONCAT(brand_desc, "- ", cpg_desc) AS brand_desc'))
+				$data['selection'] = \Sku::select('cpg_code', \DB::raw('CONCAT(brand_desc, "- ", cpg_desc) AS brand_desc'))
 				->whereIn('category_code',$filter)
-				->groupBy('brand_code')
-				->orderBy('brand_desc')->lists('brand_desc', 'brand_code');
+				->groupBy('cpg_code')
+				->orderBy('brand_desc')->lists('brand_desc', 'cpg_code');
 			}
 
 			$data['selected'] = \ActivityBrand::selected_brand($id);

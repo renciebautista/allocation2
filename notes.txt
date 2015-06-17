@@ -1,9 +1,5 @@
-change 
-Cost to Sales % = Total ULP Cost / Purchase  Requirement
-add emergency tick box on cycle if emergency cmd is added default
-
-itemcode = 6
-barcode = 13
-casecode = 14
 
 SORT ACTIVITY
+add non ulp premuim add on scheme show on preveiw
+mpk and big 10 allocation
+change brand use cpg
