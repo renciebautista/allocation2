@@ -2,7 +2,12 @@
 /*.container {
   	width: 1200px;
 }*/
-
+h1, .h1 {
+  font-size: 20px;
+}
+h2, .h2 {
+  font-size: 19px;
+}
 .page-header{
 	margin: 10px 0 21px;
 	border-bottom: 1px solid #eee;

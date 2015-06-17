@@ -26,6 +26,7 @@ class SchemeController extends \BaseController {
 		$divisions = ActivityDivision::getList($id);
 		$categories = ActivityCategory::selected_category($id);
 		$brands = ActivityBrand::selected_brand($id);
+
 		$skus = Sku::items($divisions,$categories,$brands);
 		$involves = Pricelist::items();
 		return View::make('scheme.create', compact('activity','skus', 'involves'));
@@ -92,7 +93,7 @@ class SchemeController extends \BaseController {
 				$scheme->final_total_cost = $scheme->total_cost;
 
 				$scheme->user_id = Auth::id();
-
+				$scheme->ulp_premium = Input::get('ulp_premium');
 				$scheme->save();
 
 				$skus = array();
@@ -362,7 +363,7 @@ class SchemeController extends \BaseController {
 				$scheme->final_tts_r =$scheme->tts_r;
 				$scheme->final_pe_r = $scheme->pe_r;
 				$scheme->final_total_cost = $scheme->total_cost;
-
+				$scheme->ulp_premium = Input::get('ulp_premium');
 				$scheme->update();
 
 				$skus = array();

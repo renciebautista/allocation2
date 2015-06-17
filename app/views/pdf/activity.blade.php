@@ -74,6 +74,19 @@
 					@endforeach
 				</table>
 				@endif
+
+				@if(!empty($non_ulp))
+				<table class="sub-table" style="margin-top:5px;"> 
+					<tr>
+						<th>Non ULP Premium SKUs</th>
+					</tr>
+					@foreach($non_ulp as $ulp)
+					<tr>
+						<td>{{ $ulp }}</td>
+					</tr>
+					@endforeach
+				</table>
+				@endif
 			</td>
 		</tr>
 		<tr nobr="true">

@@ -1,5 +1,15 @@
 
 SORT ACTIVITY
+	- activity type
+	- activity title
+	- id
+	
 add non ulp premuim add on scheme show on preveiw
 mpk and big 10 allocation
 change brand use cpg
+passing of activity not working
+Activities
+	- All
+	- Unreleased
+	- Releaased
+add remarks per header in preview when approving put in remarks summary

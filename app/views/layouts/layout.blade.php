@@ -53,10 +53,14 @@
 							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="transaction">Activities <span class="caret"></span></a>
 							<ul class="dropdown-menu" aria-labelledby="transaction">
 								@if(Auth::user()->inRoles(['PROPONENT','PMOG PLANNER','FIELD SALES']))
-								<li>{{ HTML::linkRoute('activity.index', 'Activity List') }}</li>   
+								<li>{{ HTML::linkRoute('activity.index', 'All') }}</li> 
+								<li>{{ HTML::linkAction('activity.index' , 'Unreleased',array('st' => ['1','2','3','4','5','6','7','8'],'title' => '')) }}</li>  
+								<li>{{ HTML::linkAction('activity.index' , 'Releaased',array('st' => ['9'],'title' => '')) }}</li>  
 								@endif
 								@if(Auth::user()->inRoles(['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']))
-								<li>{{ HTML::linkAction('submittedactivity.index' , 'Activities For Approval') }}</li>  
+								<li>{{ HTML::linkRoute('submittedactivity.index', 'All') }}</li> 
+								<li>{{ HTML::linkAction('submittedactivity.index' , 'Unreleased',array('st' => ['1','2','3','4','5','6','7','8'],'title' => '')) }}</li>  
+								<li>{{ HTML::linkAction('submittedactivity.index' , 'Releaased',array('st' => ['9'],'title' => '')) }}</li>  
 								@endif  
 							</ul>
 						</li>

@@ -73,6 +73,10 @@
 								{{ Form::label('premuim', 'Premium SKU', array('class' => 'control-label')) }}
 								{{ Form::text('premuim',$premuim->sap_desc.' - '.$premuim->sap_code, array('id' => 'premuim', 'class' => 'form-control', 'placeholder' => 'Premium SKU','readonly' => '')) }}
 							</div>
+							<div class="col-lg-6">
+								{{ Form::label('ulp_premium', 'Non ULP Premium SKU', array('class' => 'control-label')) }}
+								{{ Form::text('ulp_premium',$scheme->ulp_premium,array('id' => 'ulp_premium', 'class' => 'form-control', 'placeholder' => 'Non ULP Premium SKU','maxlength' => 100,'readonly' => '')) }}
+							</div>
 						</div>
 					</div>
 				</div>

@@ -168,8 +168,8 @@ class ActivityController extends BaseController {
 						if(count($brand_code) > 1){
 							$code .= '_MULTI';
 						}else{
-							$brand = Sku::select('brand_code', 'brand_desc')
-										->where('brand_code',$brand_code[0])
+							$brand = Sku::select('cpg_code', 'brand_desc')
+										->where('cpg_code',$brand_code[0])
 										->first();
 							$code .= '_'.$brand->brand_desc;
 						}
@@ -489,8 +489,8 @@ class ActivityController extends BaseController {
 								if(count($brand_code) > 1){
 									$code .= '_MULTI';
 								}else{
-									$brand = Sku::select('brand_code', 'brand_desc')
-												->where('brand_code',$brand_code[0])
+									$brand = Sku::select('cpg_code', 'brand_desc')
+												->where('cpg_code',$brand_code[0])
 												->first();
 									$code .= '_'.$brand->brand_desc;
 								}
@@ -895,10 +895,10 @@ class ActivityController extends BaseController {
 						}else{
 							$status_id = (int) Input::get('submitstatus');
 							$activity_status = 3;
-							// $pro_recall = 0;
-							// $pmog_recall = 0;
+							$pro_recall = 0;
+							$pmog_recall = 0;
 							if($status_id == 1){
-								// $pro_recall = 1;
+								$pro_recall = 1;
 								// check if there is a planner
 								if(count($planner) > 0){
 									$comment_status = "SUBMITTED TO PMOG PLANNER";
@@ -944,22 +944,12 @@ class ActivityController extends BaseController {
 									}
 								}
 								$class = "text-success";
-
-								$activity->status_id = $activity_status;
-								$activity->pro_recall = 1;
-								$activity->pmog_recall = 0;
-								$activity->update();
 							}
 
 							if($status_id == 2){
 								$comment_status = "RECALLED ACTIVITY";
 								$class = "text-warning";
 								ActivityApprover::resetAll($activity->id);
-
-								$activity->status_id = $activity_status;
-								$activity->pro_recall = 0;
-								$activity->pmog_recall = 0;
-								$activity->update();
 							}
 
 							$comment = new ActivityComment;
@@ -970,7 +960,10 @@ class ActivityController extends BaseController {
 							$comment->class = $class;
 							$comment->save();
 
-							
+							$activity->status_id = $activity_status;
+							$activity->pro_recall = $pro_recall;
+							$activity->pmog_recall = $pmog_recall;
+							$activity->update();
 
 							$arr['success'] = 1;
 							Session::flash('class', 'alert-success');

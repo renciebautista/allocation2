@@ -60,6 +60,10 @@
 						{{ Form::label('premuim', 'Premium SKU', array('class' => 'control-label')) }}
 						{{ Form::select('premuim[]', array('0' => '') + $involves, '', array('data-placeholder' => 'Select Premium SKU','id' => 'premuim', 'class' => 'form-control')) }}
 					</div>
+					<div class="col-lg-6">
+						{{ Form::label('ulp_premium', 'Non ULP Premium SKU', array('class' => 'control-label')) }}
+						{{ Form::text('ulp_premium','',array('id' => 'ulp_premium', 'class' => 'form-control', 'placeholder' => 'Non ULP Premium SKU','maxlength' => 100)) }}
+					</div>
 				</div>
 			</div>
 		</div>

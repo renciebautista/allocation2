@@ -240,7 +240,8 @@ class Activity extends \Eloquent {
 				}
 			})
 			->orderBy('activity_types.activity_type')
-			->orderBy('activities.eimplementation_date')
+			->orderBy('activities.circular_name')
+			->orderBy('activities.id')
 			->get();
 	}
 
@@ -288,7 +289,8 @@ class Activity extends \Eloquent {
 				}
 			})
 			->orderBy('activity_types.activity_type')
-			->orderBy('activities.eimplementation_date')
+			->orderBy('activities.circular_name')
+			->orderBy('activities.id')
 			->get();
 	}
 
@@ -308,7 +310,8 @@ class Activity extends \Eloquent {
 			->where('activity_planners.user_id',$user_id)
 			->where('activities.status_id',4)
 			->orderBy('activity_types.activity_type')
-			->orderBy('activities.eimplementation_date')
+			->orderBy('activities.circular_name')
+			->orderBy('activities.id')
 			->get();
 	}
 
@@ -358,7 +361,8 @@ class Activity extends \Eloquent {
 				}
 			})
 			->orderBy('activity_types.activity_type')
-			->orderBy('activities.eimplementation_date')
+			->orderBy('activities.circular_name')
+			->orderBy('activities.id')
 			->get();
 	}
 
@@ -379,7 +383,8 @@ class Activity extends \Eloquent {
 			->join('users as propo', 'activities.created_by','=','propo.id')
 			->where('activities.status_id',$status_id)
 			->orderBy('activity_types.activity_type')
-			->orderBy('activities.eimplementation_date')
+			->orderBy('activities.circular_name')
+			->orderBy('activities.id')
 			->get();
 	}
 
@@ -409,7 +414,8 @@ class Activity extends \Eloquent {
 				}
 			})
 			->orderBy('activity_types.activity_type')
-			->orderBy('activities.eimplementation_date')
+			->orderBy('activities.circular_name')
+			->orderBy('activities.id')
 			->get();
 	}
 
@@ -436,7 +442,8 @@ class Activity extends \Eloquent {
 				
 			})
 			->orderBy('activity_types.activity_type')
-			->orderBy('activities.eimplementation_date')
+			->orderBy('activities.circular_name')
+			->orderBy('activities.id')
 			->get();
 	}
 

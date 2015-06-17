@@ -64,6 +64,7 @@ class MakePdf extends Command {
 				}
 
 				$scheme->allocations = SchemeAllocation::getAllocations($scheme->id);
+				$non_ulp = explode(",", $scheme->ulp_premium);
 				
 			}
 

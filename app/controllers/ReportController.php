@@ -46,6 +46,7 @@ class ReportController extends \BaseController {
 				}
 
 				$scheme->allocations = SchemeAllocation::getAllocations($scheme->id);
+				$non_ulp = explode(",", $scheme->ulp_premium);
 				
 			}
 
@@ -67,6 +68,8 @@ class ReportController extends \BaseController {
 			// $channels = ActivityChannel::getSelectecdChannels($activity->id);
 			$channels = ActivityChannel2::getSelectecdChannels($activity->id);
 			// Helper::print_array($areas);
+
+
 			
 			// // Product Information Sheet
 			$path = '/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
@@ -81,7 +84,8 @@ class ReportController extends \BaseController {
 				$pis = array();
 			}
 
-			return View::make('shared.preview', compact('activity' ,'planner','budgets','nobudgets','schemes','skuinvolves','materials',
+			return View::make('shared.preview', compact('activity' ,'planner','budgets','nobudgets','schemes','skuinvolves',
+					'materials','non_ulp',
 					'fdapermit', 'networks','artworks', 'pis' , 'areas','channels'));
 			
 			
