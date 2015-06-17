@@ -82,7 +82,7 @@ $("#implementation_date").on("dp.change",function (e) {
 			$('#end_date').val(msg.end_date);
 			$('#end_date').data("DateTimePicker").setMinDate(moment(msg.end_date).format('MM/DD/YYYY'));
 			
-			getCycle(msg.end_date,{{$activity->id}});
+			getCycle(msg.end_date);
 		},
 		error: function(){
 			alert("failure");
