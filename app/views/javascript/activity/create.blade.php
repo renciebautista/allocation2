@@ -32,10 +32,12 @@ function duration(value){
 			$('#download_date').val(msg.start_date)
 
 			$('#implementation_date').data("DateTimePicker").setMinDate(moment(msg.min_date).format('MM/DD/YYYY'));
-			$('#end_date').val(msg.end_date);
-			$('#end_date').data("DateTimePicker").setMinDate(moment(msg.end_date).format('MM/DD/YYYY'));
+			
 
 			getCycle(msg.end_date);
+
+			$('#end_date').val(msg.end_date);
+			$('#end_date').data("DateTimePicker").setMinDate(moment(msg.end_date).format('MM/DD/YYYY'));
 		},
 		error: function(){
 			alert("failure");
@@ -77,7 +79,10 @@ $("#implementation_date").on("dp.change",function (e) {
 			$('#implementation_date').val(msg.end_date);
 			$('#download_date').val(msg.start_date)
 			$('#implementation_date').data("DateTimePicker").setMinDate(moment(msg.min_date).format('MM/DD/YYYY'));
-			getCycle(msg.end_date);
+			$('#end_date').val(msg.end_date);
+			$('#end_date').data("DateTimePicker").setMinDate(moment(msg.end_date).format('MM/DD/YYYY'));
+			
+			getCycle(msg.end_date,{{$activity->id}});
 		},
 		error: function(){
 			alert("failure");
