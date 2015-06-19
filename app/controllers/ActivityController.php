@@ -881,9 +881,9 @@ class ActivityController extends BaseController {
 
 						$planner = ActivityPlanner::getPlanner($activity->id);
 						if(count($planner) > 0){
-							$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme');
+							$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme','submission_deadline');
 						}else{
-							$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme');
+							$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme','submission_deadline');
 						}
 						
 						$validation = Activity::validForDownload($activity,$required_rules);
