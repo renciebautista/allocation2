@@ -19,7 +19,7 @@
 
 			<!-- Button trigger modal -->
 			@if(($approver->status_id == 0) && ($valid))
-			<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#mySubmit" data-whatever="Approve">
+			<button type="button" class="btn btn-success" data-toggle="modal" data-target="#mySubmit" data-whatever="Approve">
 			  	Approve
 			</button>
 			<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#mySubmit" data-whatever="Deny">
