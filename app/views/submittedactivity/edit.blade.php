@@ -112,17 +112,17 @@
 							<tr>
 								<td>Activity Type</td>
 								<td>{{ $activity->activitytype-> activity_type }}</td>
-								<td>{{ Form::text('activity_type','') }}</td>
+								<td>{{ Form::textarea('activity_type','',array('rows' => 1)) }}</td>
 							</tr>
 							<tr>
 								<td>Activity Title</td>
 								<td>{{ $activity->circular_name }}</td>
-								<td>{{ Form::text('activity_title','') }}</td>
+								<td>{{ Form::textarea('activity_title','',array('rows' => 1)) }}</td>
 							</tr>
 							<tr>
 								<td>Background</td>
 								<td>{{ nl2br($activity->background) }}</td>
-								<td>{{ Form::text('activity_background','') }}</td>
+								<td>{{ Form::textarea('activity_background','',array('rows' => 1)) }}</td>
 							</tr>
 							<tr>
 								<td>Objectives</td>
@@ -133,7 +133,7 @@
 									@endforeach
 									</ul>
 								</td>
-								<td>{{ Form::text('activity_objective','') }}</td>
+								<td>{{ Form::textarea('activity_objective','',array('rows' => 1)) }}</td>
 							</tr>
 							<tr>
 								<td>Budget IO TTS</td>
@@ -149,7 +149,7 @@
 									</ul>
 									@endif
 								</td>
-								<td>{{ Form::text('activity_tts','') }}</td>
+								<td>{{ Form::textarea('activity_tts','',array('rows' => 1)) }}</td>
 							</tr>
 							<tr>
 								<td>Budget IO PE</td>
@@ -165,7 +165,7 @@
 									</ul>
 									@endif
 								</td>
-								<td>{{ Form::text('activity_pe','') }}</td>
+								<td>{{ Form::textarea('activity_pe','',array('rows' => 1)) }}</td>
 							</tr>
 							<tr>
 								<td>SKU/s Involved</td>
@@ -202,7 +202,7 @@
 									</table>
 									@endif
 								</td>
-								<td>{{ Form::text('activity_skus','') }}</td>
+								<td>{{ Form::textarea('activity_skus','',array('rows' => 1)) }}</td>
 							</tr>
 							<tr>
 								<td>Area/s Involved</td>
@@ -215,7 +215,7 @@
 									</ul>
 									@endif
 								</td>
-								<td>{{ Form::text('activity_area','') }}</td>
+								<td>{{ Form::textarea('activity_area','',array('rows' => 1)) }}</td>
 							</tr>
 							<tr>
 								<td>DT Channel/s Involved</td>
@@ -228,7 +228,7 @@
 									</ul>
 									@endif
 								</td>
-								<td>{{ Form::text('activity_channel','') }}</td>
+								<td>{{ Form::textarea('activity_channel','',array('rows' => 1)) }}</td>
 							</tr>
 							<tr>
 								<td>Schemes</td>
@@ -254,7 +254,7 @@
 									</table>
 									@endif
 								</td>
-								<td>{{ Form::text('activity_scheme','') }}</td>
+								<td>{{ Form::textarea('activity_scheme','',array('rows' => 1)) }}</td>
 							</tr>
 							<tr>
 								<td>Timings</td>
@@ -276,7 +276,7 @@
 									</table>
 									@endif
 								</td>
-								<td>{{ Form::text('activity_timing','') }}</td>
+								<td>{{ Form::textarea('activity_timing','',array('rows' => 1)) }}</td>
 							</tr>
 							<tr>
 								<td>Material Sourcing</td>
@@ -296,7 +296,7 @@
 									</table>
 									@endif
 								</td>
-								<td>{{ Form::text('activity_material','') }}</td>
+								<td>{{ Form::textarea('activity_material','',array('rows' => 1)) }}</td>
 							</tr>
 							<tr>
 								<td>FDA Permit No.</td>
@@ -305,29 +305,29 @@
 									{{ $fdapermit->permit_no }}
 									@endif
 								</td>
-								<td>{{ Form::text('activity_fda','') }}</td>
+								<td>{{ Form::textarea('activity_fda','',array('rows' => 1)) }}</td>
 							</tr>
 							<tr>
 								<td>Billing Requirements</td>
 								<td>{{ nl2br($activity->billing_remarks) }}</td>
-								<td>{{ Form::text('activity_billing','') }}</td>
+								<td>{{ Form::textarea('activity_billing','',array('rows' => 1)) }}</td>
 							</tr>
 							<tr>
 								<td>Billing Deadline</td>
 								<td>{{ date_format(date_create($activity->billing_date),'M j, Y') }}</td>
-								<td>{{ Form::text('activity_deadline','') }}</td>
+								<td>{{ Form::textarea('activity_deadline','',array('rows' => 1)) }}</td>
 							</tr>
 							<tr>
 								<td>Special Instructions</td>
 								<td>{{ nl2br($activity->instruction) }}</td>
-								<td>{{ Form::text('activity_ins','') }}</td>
+								<td>{{ Form::textarea('activity_ins','',array('rows' => 1)) }}</td>
 							</tr>
 						</table>
 					</div>
 					
 					<div class="ap-artworks">
 						<h2>Artworks</h2>
-						{{ Form::text('activity_pis','') }}
+						{{ Form::textarea('activity_art','',array('rows' => 1)) }}
 						@if(!empty($artworks))
 						<ul>
 							@foreach($artworks as $artwork)
@@ -339,7 +339,7 @@
 
 					<div class="ap-fdapermit">
 						<h2>FDA Permit</h2>
-						{{ Form::text('activity_pis','') }}
+						{{ Form::textarea('activity_fda','',array('rows' => 1)) }}
 						@if(!empty($fdapermit))
 						<ul>
 							<li>{{ HTML::image('fdapermit/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/'.$fdapermit->hash_name ,$fdapermit->file_desc) }}</li>
@@ -349,7 +349,7 @@
 
 					<div class="ap-codes">
 						<h2>Barcodes / Case Codes Per Scheme</h2>
-						{{ Form::text('activity_barcode','') }}
+						{{ Form::textarea('activity_barcode','',array('rows' => 1)) }}
 						@if(!empty($schemes))
 						<table>
 							<tr>
@@ -382,7 +382,7 @@
 					@if(count($pis) > 0)
 					<div class="ap-product">
 						<h2>Product Information Sheet</h2>
-						{{ Form::text('activity_pis','') }}
+						{{ Form::textarea('activity_pis','',array('rows' => 1)) }}
 						<table class="p-head bordered">
 							<tr>
 								<td>Product Category</td>
@@ -538,7 +538,7 @@
 
 					<div class="ap-allocations">
 						<h2>Allocations</h2>
-						{{ Form::text('activity_allocation','') }}
+						{{ Form::textarea('activity_alloc','',array('rows' => 1)) }}
 						@foreach($schemes as $scheme)
 
 						<?php 
@@ -667,6 +667,12 @@
 
 
 @section('page-script')
+
+$('textarea').each(function(){
+    autosize(this);
+}).on('autosize:resized', function(){
+    console.log('textarea height updated');
+});
 
 $('.nav-tabs a').click(function (e) {
 	// No e.preventDefault() here

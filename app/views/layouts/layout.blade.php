@@ -174,6 +174,9 @@
 	
 	{{ HTML::script('assets/plugins/uploadify/jquery.uploadify.min.js') }}
 
+	{{ HTML::script('assets/plugins/autosize-3.0.6/autosize.min.js') }}
+
+
 	{{ HTML::script('assets/js/function.js') }}
 
 

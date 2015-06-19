@@ -590,10 +590,11 @@ h2, .h2 {
 	vertical-align: top;
 }
 #activity_preview .ap-activity table tr > td:nth-child(2) {
-	width: 65%;
+	vertical-align: top;
 }
 #activity_preview .ap-activity table tr > td:nth-child(3) {
 	vertical-align: top;
+	width: 20%;
 }
 
 #activity_preview .sub-table{
@@ -670,7 +671,9 @@ h2, .h2 {
 	margin-top: 5px;
 }
 
-
+#activity_preview .ap-artworks textarea{
+	width: 100%;
+}
 #activity_preview .ap-artworks ul {
 	margin-top: 5px;
 	padding: 0;
@@ -680,6 +683,10 @@ h2, .h2 {
 #activity_preview .ap-artworks ul li a { text-decoration: none; padding: .2em 1em;}
 			
 
+#activity_preview .ap-fdapermit textarea{
+	width: 100%;
+}
+
 #activity_preview .ap-fdapermit  ul {
 	margin-top: 5px;
 	padding: 0;
@@ -688,6 +695,10 @@ h2, .h2 {
 
 #activity_preview .ap-fdapermit ul li { display: inline; }
 #activity_preview .ap-fdapermit ul li a { text-decoration: none; padding: .2em 1em;}
+
+#activity_preview .ap-codes textarea{
+	width: 100%;
+}
 
 #activity_preview .ap-codes table  tr > th {
   	border: 1px solid #000000;
@@ -702,6 +713,11 @@ h2, .h2 {
   	padding: 5px;
   	text-align: center;
 }
+
+#activity_preview .ap-product textarea{
+	width: 100%;
+}
+
 #activity_preview .ap-product table{
 	font-size: 11px;
 }
@@ -731,6 +747,10 @@ h2, .h2 {
 }
 #activity_preview .ap-product .alloc-header {
 	margin-bottom: 5px;
+}
+
+#activity_preview .ap-allocations textarea{
+	width: 100%;
 }
 
 #activity_preview .ap-allocations {
