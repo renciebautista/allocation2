@@ -347,14 +347,12 @@ class ActivityController extends BaseController {
 				$route = 'activity.index';
 				$recall = $activity->pro_recall;
 				$submit_action = 'ActivityController@updateactivity';
-
-				echo $recall;
-				// return View::make('shared.activity_readonly', compact('activity', 'sel_planner', 'approvers', 
-				//  'sel_divisions','divisions',
-				//  'objectives',  'users', 'budgets', 'nobudgets','sel_approver',
-				//  'sel_objectives',  'schemes', 'networks',
-				//  'scheme_customers', 'scheme_allcations', 'materials', 'force_allocs',
-				//  'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings', 'comments' ,'submitstatus', 'route', 'recall', 'submit_action'));
+				return View::make('shared.activity_readonly', compact('activity', 'sel_planner', 'approvers', 
+				 'sel_divisions','divisions',
+				 'objectives',  'users', 'budgets', 'nobudgets','sel_approver',
+				 'sel_objectives',  'schemes', 'networks',
+				 'scheme_customers', 'scheme_allcations', 'materials', 'force_allocs',
+				 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings', 'comments' ,'submitstatus', 'route', 'recall', 'submit_action'));
 			}
 		}
 
