@@ -148,7 +148,7 @@
 
 	
 	{{ HTML::script('assets/plugins/jquery.maskMoney/jquery.maskMoney.min.js') }}
-	{{ HTML::script('assets/plugins/jquery-inputformat/jquery-inputformat.min.js') }}
+	{{ HTML::script('assets/plugins/jquery-inputformat/jquery-inputformat.js') }}
 
 	{{ HTML::script('assets/plugins/moment/moment.js') }}
 	{{ HTML::script('assets/plugins/bootstrap-datetimepicker-3.1.3/js/bootstrap-datetimepicker.min.js') }}

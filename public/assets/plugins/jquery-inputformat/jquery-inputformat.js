@@ -227,12 +227,13 @@ $.fn.inputNumber = function(options){
          var value = $(that).val();
 
 	 if(event.ctrlKey){
+	 	
 	      switch(event.keyCode){
-		case 65: // Ctrl A
-                case 67: // Ctrl C
-		case 88: // Ctrl X
-		case 86: // Ctrl V
-                   return;
+			case 65: // Ctrl A
+        	case 67: // Ctrl C
+			case 88: // Ctrl X
+			// case 86: // Ctrl V
+            return;
 	      }
          }
   	 switch(event.keyCode){
@@ -283,7 +284,7 @@ $.fn.inputNumber = function(options){
 					event.preventDefault();
 					break;
 				case 86: // Ctrl V
-					event.preventDefault();
+					// event.preventDefault();
 					break;			
 				default:
 					event.preventDefault();

@@ -28,7 +28,7 @@ $("#skus,#involve,#premuim").chosen({
 });
 
 
-$('#pr, #srp_p, #other_cost,#total_alloc,#new_alloc,#no_weeks,#lpat').inputNumber();
+$('#pr, #srp_p, #other_cost,#total_alloc,#new_alloc,#no_weeks,#lpat').inputNumber({ allowDecimals: true });
 
 
 $('#pr, #srp_p, #other_cost,#lpat').blur(function() {

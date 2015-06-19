@@ -59,7 +59,7 @@ $("#skus,#involve,#premuim").chosen({
 	allow_single_deselect: true
 });
 
-$('#pr, #srp_p, #other_cost,#total_alloc,#lpat').inputNumber();
+$('#pr, #srp_p, #other_cost,#total_alloc,#lpat').inputNumber({ allowDecimals: true });
 
 $('#pr, #srp_p, #other_cost,#lpat').blur(function() {
 	var srp = accounting.unformat($('#srp_p').val()) || 0;

@@ -905,43 +905,43 @@ class ActivityController extends BaseController {
 									$activity_status = 4;
 								}else{
 									// check if there is GCOM Approver
-									$gcom_approvers = ActivityApprover::getApproverByRole($activity->id,'GCOM APPROVER');
-									if(count($gcom_approvers) > 0){
-										$comment_status = "SUBMITTED TO GCOM";
-										$activity_status = 5;
+									// $gcom_approvers = ActivityApprover::getApproverByRole($activity->id,'GCOM APPROVER');
+									// if(count($gcom_approvers) > 0){
+									// 	$comment_status = "SUBMITTED TO GCOM";
+									// 	$activity_status = 5;
 
-										foreach ($gcom_approvers as $gcom_approver) {
-											$approver = ActivityApprover::find($gcom_approver->id);
-											$approver->show = 1;
-											$approver->update();
-										}
-									}else{
-										// check if there is CD OPS Approver
-										$cdops_approvers = ActivityApprover::getApproverByRole($activity->id,'CD OPS APPROVER');
-										if(count($cdops_approvers) > 0){
-											$comment_status = "SUBMITTED TO CD OPS";
-											$activity_status = 6;
+									// 	foreach ($gcom_approvers as $gcom_approver) {
+									// 		$approver = ActivityApprover::find($gcom_approver->id);
+									// 		$approver->show = 1;
+									// 		$approver->update();
+									// 	}
+									// }else{
+									// 	// check if there is CD OPS Approver
+									// 	$cdops_approvers = ActivityApprover::getApproverByRole($activity->id,'CD OPS APPROVER');
+									// 	if(count($cdops_approvers) > 0){
+									// 		$comment_status = "SUBMITTED TO CD OPS";
+									// 		$activity_status = 6;
 
-											foreach ($cdops_approvers as $cdops_approver) {
-												$approver = ActivityApprover::find($cdops_approver->id);
-												$approver->show = 1;
-												$approver->update();
-											}
-										}else{
-											// check if there is CMD DIRECTOR Approver
-											$cmd_approvers = ActivityApprover::getApproverByRole($activity->id,'CMD DIRECTOR');
-											if(count($cmd_approvers) > 0){
-												$comment_status = "SUBMITTED TO CMD";
-												$activity_status = 7;
+									// 		foreach ($cdops_approvers as $cdops_approver) {
+									// 			$approver = ActivityApprover::find($cdops_approver->id);
+									// 			$approver->show = 1;
+									// 			$approver->update();
+									// 		}
+									// 	}else{
+									// 		// check if there is CMD DIRECTOR Approver
+									// 		$cmd_approvers = ActivityApprover::getApproverByRole($activity->id,'CMD DIRECTOR');
+									// 		if(count($cmd_approvers) > 0){
+									// 			$comment_status = "SUBMITTED TO CMD";
+									// 			$activity_status = 7;
 
-												foreach ($cmd_approvers as $cmd_approver) {
-													$approver = ActivityApprover::find($cmd_approver->id);
-													$approver->show = 1;
-													$approver->update();
-												}
-											}
-										}
-									}
+									// 			foreach ($cmd_approvers as $cmd_approver) {
+									// 				$approver = ActivityApprover::find($cmd_approver->id);
+									// 				$approver->show = 1;
+									// 				$approver->update();
+									// 			}
+									// 		}
+									// 	}
+									// }
 								}
 								$class = "text-success";
 							}
@@ -952,18 +952,20 @@ class ActivityController extends BaseController {
 								ActivityApprover::resetAll($activity->id);
 							}
 
-							$comment = new ActivityComment;
-							$comment->created_by = Auth::id();
-							$comment->activity_id = $id;
-							$comment->comment = Input::get('submitremarks');
-							$comment->comment_status = $comment_status;
-							$comment->class = $class;
-							$comment->save();
+							// $comment = new ActivityComment;
+							// $comment->created_by = Auth::id();
+							// $comment->activity_id = $id;
+							// $comment->comment = Input::get('submitremarks');
+							// $comment->comment_status = $comment_status;
+							// $comment->class = $class;
+							// $comment->save();
 
 							$activity->status_id = $activity_status;
 							$activity->pro_recall = $pro_recall;
 							$activity->pmog_recall = $pmog_recall;
-							$activity->update();
+
+							Helper::print_r($activity);
+							// $activity->update();
 
 							$arr['success'] = 1;
 							Session::flash('class', 'alert-success');
@@ -977,7 +979,7 @@ class ActivityController extends BaseController {
 
 
 			
-			return json_encode($arr);
+			// return json_encode($arr);
 		}
 
 	}

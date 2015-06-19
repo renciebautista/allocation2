@@ -85,8 +85,7 @@ class ReportController extends \BaseController {
 			}
 
 			return View::make('shared.preview', compact('activity' ,'planner','budgets','nobudgets','schemes','skuinvolves',
-					'materials','non_ulp',
-					'fdapermit', 'networks','artworks', 'pis' , 'areas','channels'));
+					'materials','non_ulp','fdapermit', 'networks','artworks', 'pis' , 'areas','channels'));
 			
 			
 		}

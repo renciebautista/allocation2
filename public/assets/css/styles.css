@@ -515,3 +515,152 @@ h2, .h2 {
 .has-error .multiselect.dropdown-toggle.btn-block.btn.btn-default{
 	  border-color: #f04124;
 }
+
+
+#activity_preview{
+	
+}
+#activity_preview input{
+	width: 100%;
+}
+#activity_preview .bordered{
+	border: 1px solid #000000;
+}
+#activity_preview .bordered tr > th{
+	border: 1px solid #000000;
+	padding: 5px;
+}
+#activity_preview .bordered tr > td{
+	border: 1px solid #000000;
+	padding: 5px;
+}
+#activity_preview h2{
+	margin-bottom: 2px;
+	font-weight: bold;
+}
+#activity_preview p{
+	margin: 0px;
+}
+#activity_preview table {
+	width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+#activity_preview .ap-logo {
+    position: relative;
+}
+#activity_preview .ap-logo img {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+}
+#activity_preview .ap-header {
+    padding-top: 20px;
+	margin-bottom: 30px;
+}
+#activity_preview .ap-header p{
+    font-size: 13px;
+}
+#activity_preview .ap-title{
+    padding-bottom: 15px;
+	border-bottom: .8px solid #000000;
+}
+#activity_preview .ap-title table tr > td:first-child{
+    font-weight: bold;
+	width: 140px;
+}
+#activity_preview .ap-activity {
+    padding-top: 15px;
+}
+#activity_preview .ap-activity ul{
+    list-style-type: none;
+	margin-top: 2px;
+	margin-bottom: 2px;
+}
+#activity_preview .ap-activity ul li{
+    margin-left: -39px;
+}
+#activity_preview .ap-activity table  {
+	font-size: 11px;
+}
+
+#activity_preview .ap-activity table tr > td:first-child {
+	font-weight: bold;
+	width: 150px;
+	vertical-align: top;
+}
+#activity_preview .ap-activity table tr > td:nth-child(2) {
+	width: 65%;
+}
+#activity_preview .ap-activity table tr > td:nth-child(3) {
+	vertical-align: top;
+}
+
+#activity_preview .sub-table{
+	width: 100%;
+}
+#activity_preview .sub-table tr > th {
+	background-color: #000000;
+	color: #FFFFFF;
+}
+
+
+#activity_preview .ap-activity table .sub-table.sku tr > th{
+	font-weight: normal;
+	text-align: center;
+}
+#activity_preview .ap-activity table .sub-table.sku tr > td{
+	text-align: center;
+	font-weight: normal;
+}
+#activity_preview .ap-activity table .sub-table.sku tr > td:first-child {
+	width: 20%;
+
+}
+#activity_preview .ap-activity table .sub-table.sku tr > td:nth-child(2){
+	width: 30%;
+}
+#activity_preview .ap-activity table .sub-table.sku tr > td:nth-child(3){
+	width: 20%;
+}
+
+#activity_preview .ap-activity table .sub-table.ulp tr > td{
+	font-weight: normal;
+	text-align: center;
+}
+
+
+
+#activity_preview .ap-activity table .sub-table.schemes tr > th{
+	font-weight: normal;
+	text-align: center;
+}
+#activity_preview .ap-activity table .sub-table.schemes tr > td{
+	text-align: center;
+	font-weight: normal;
+}
+#activity_preview .ap-activity table .sub-table.schemes tr > td:first-child {
+	width: 30%;
+
+}
+#activity_preview .ap-activity table .sub-table.schemes tr > td:nth-child(2){
+	width: 20%;
+}
+#activity_preview .ap-activity table .sub-table.schemes tr > td:nth-child(3){
+	width: 20%;
+}
+
+#activity_preview .ap-activity table .sub-table.timing tr > th{
+	font-weight: normal;
+	text-align: center;
+}
+#activity_preview .ap-activity table .sub-table.timing tr > td{
+	text-align: center;
+	font-weight: normal;
+}
+#activity_preview .ap-activity table .sub-table.timing tr > td:first-child {
+	width: 60%;
+}
+#activity_preview .ap-activity table .sub-table.timing tr > td:nth-child(2){
+	width: 20%;
+}
