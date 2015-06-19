@@ -212,8 +212,9 @@ class SubmittedActivityController extends \BaseController {
 						$class = "text-danger";
 						$pro_recall = 0;
 						$pmog_recall = 0;
-						$planner = ActivityPlanner::getPlanner($activity->id);
-						if(count($planner) > 0){
+
+						$planner_count = ActivityPlanner::getPlannerCount($activity->id);
+						if(count($planner_count) > 0){
 							$last_status = 4;
 							$pro_recall = 1;
 							$pmog_recall = 0;

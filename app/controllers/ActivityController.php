@@ -879,8 +879,8 @@ class ActivityController extends BaseController {
 						$arr['error'] = $validation['message'];
 					}else{
 
-						$planner = ActivityPlanner::getPlanner($activity->id);
-						if(count($planner) > 0){
+						$planner_count = ActivityPlanner::getPlannerCount($activity->id);
+						if(count($planner_count) > 0){
 							$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme','submission_deadline');
 						}else{
 							$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme','submission_deadline');
@@ -900,7 +900,7 @@ class ActivityController extends BaseController {
 							if($status_id == 1){
 								$pro_recall = 1;
 								// check if there is a planner
-								if(count($planner) > 0){
+								if(count($planner_count) > 0){
 									$comment_status = "SUBMITTED TO PMOG PLANNER";
 									$activity_status = 4;
 								}else{

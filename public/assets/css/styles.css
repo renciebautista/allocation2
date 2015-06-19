@@ -664,3 +664,97 @@ h2, .h2 {
 #activity_preview .ap-activity table .sub-table.timing tr > td:nth-child(2){
 	width: 20%;
 }
+
+#activity_preview .ap-codes  table {
+	width: 100%;
+	margin-top: 5px;
+}
+
+
+#activity_preview .ap-artworks ul {
+	margin-top: 5px;
+	padding: 0;
+	list-style-type: none; 
+}
+#activity_preview .ap-artworks ul li { display: inline; }
+#activity_preview .ap-artworks ul li a { text-decoration: none; padding: .2em 1em;}
+			
+
+#activity_preview .ap-fdapermit  ul {
+	margin-top: 5px;
+	padding: 0;
+	list-style-type: none; 
+}
+
+#activity_preview .ap-fdapermit ul li { display: inline; }
+#activity_preview .ap-fdapermit ul li a { text-decoration: none; padding: .2em 1em;}
+
+#activity_preview .ap-codes table  tr > th {
+  	border: 1px solid #000000;
+  	padding: 5px;
+ 	background-color: #000000;
+	color: #FFFFFF;
+	text-align: center;
+
+}
+#activity_preview .ap-codes table  tr > td {
+  	border: 1px solid #000000;
+  	padding: 5px;
+  	text-align: center;
+}
+#activity_preview .ap-product table{
+	font-size: 11px;
+}
+
+#activity_preview .ap-product table.p-head {
+	margin-top: 5px;
+}
+
+#activity_preview .ap-product table.p-head tr > td:first-child {
+	 width: 150px;
+}
+
+#activity_preview .ap-product .pis-table  tr > th {
+  	border: 1px solid #000000;
+  	padding: 5px;
+ 	background-color: #000000;
+	color: #FFFFFF;
+	text-align: center;
+}
+#activity_preview .ap-product .pis-table  tr > td {
+  	border: 1px solid #000000;
+  	padding: 5px;
+  	font-size: 10px;
+}
+#activity_preview .ap-product .p-head  tr > td:first-child{
+	width: 200px;
+}
+#activity_preview .ap-product .alloc-header {
+	margin-bottom: 5px;
+}
+
+#activity_preview .ap-allocations {
+	margin-top: 20px;
+}
+#activity_preview .ap-allocations table {
+	margin-top: 5px;
+	margin-bottom: 10px;
+}
+
+#activity_preview .ap-allocations table  tr > th {
+  	border: 1px solid #000000;
+  	padding: 5px;
+ 	background-color: #000000;
+		color: #FFFFFF;
+		text-align: left;
+		font-size: 11px;
+		text-align: center;
+}
+#activity_preview .ap-allocations table  tr > td {
+  	border: 1px solid #000000;
+  	padding: 5px;
+  	font-size: 10px;
+}
+#activity_preview .ap-allocations table  tr > td:first-child {
+	width: 5%;
+}

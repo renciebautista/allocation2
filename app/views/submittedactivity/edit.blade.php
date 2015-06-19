@@ -325,8 +325,9 @@
 						</table>
 					</div>
 					
-					<div id="artworks">
+					<div class="ap-artworks">
 						<h2>Artworks</h2>
+						{{ Form::text('activity_pis','') }}
 						@if(!empty($artworks))
 						<ul>
 							@foreach($artworks as $artwork)
@@ -336,8 +337,9 @@
 						@endif
 					</div>
 
-					<div id="fdapermit">
+					<div class="ap-fdapermit">
 						<h2>FDA Permit</h2>
+						{{ Form::text('activity_pis','') }}
 						@if(!empty($fdapermit))
 						<ul>
 							<li>{{ HTML::image('fdapermit/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/'.$fdapermit->hash_name ,$fdapermit->file_desc) }}</li>
@@ -345,8 +347,9 @@
 						@endif
 					</div>
 
-					<div id="codes">
+					<div class="ap-codes">
 						<h2>Barcodes / Case Codes Per Scheme</h2>
+						{{ Form::text('activity_barcode','') }}
 						@if(!empty($schemes))
 						<table>
 							<tr>
@@ -377,8 +380,9 @@
 					</div>
 
 					@if(count($pis) > 0)
-					<div id="product">
+					<div class="ap-product">
 						<h2>Product Information Sheet</h2>
+						{{ Form::text('activity_pis','') }}
 						<table class="p-head bordered">
 							<tr>
 								<td>Product Category</td>
@@ -532,8 +536,9 @@
 					</div>
 					@endif
 
-					<div id="allocations">
+					<div class="ap-allocations">
 						<h2>Allocations</h2>
+						{{ Form::text('activity_allocation','') }}
 						@foreach($schemes as $scheme)
 
 						<?php 
