@@ -100,7 +100,7 @@
 
 					<ul class="nav navbar-nav navbar-right">
 						<li class="dropdown">
-							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="download">{{ ucwords(strtolower(Auth::user()->getFullname())) }} <span class="caret"></span></a>
+							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="download">{{ ucwords(strtolower(Auth::user()->getFullname())) }} [ {{ Auth::user()->roles[0]->name }} ]<span class="caret"></span></a>
 							<ul class="dropdown-menu" aria-labelledby="download">  
 								<li>{{ HTML::linkAction('ProfileController@index', 'Profile') }}</li>  
 								<li>{{ HTML::linkAction('LoginController@logout' , 'Logout') }}</li>    
