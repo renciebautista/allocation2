@@ -86,7 +86,7 @@
 						<th>Activity Title</th>
 						<th>Activity Type</th>
 						<th>TOP Cycle</th>
-						<th style="text-align:center;">Action</th>
+						<th colspan="2" class="dash-action">Action</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -102,7 +102,9 @@
 						<td>{{ $activity->cycle_name }}</td>
 						<td class="action">
 							{{ HTML::linkAction('ReportController@download','Download', $activity->id, array('class' => 'btn btn-success btn-xs')) }}
-						<a class="btn btn-info btn-xs" target="_blank" href="{{ URL::action('ReportController@preview', $activity->id ) }}">Preview</a>							
+						</td>
+						<td class="action">	
+							<a class="btn btn-info btn-xs" target="_blank" href="{{ URL::action('ReportController@preview', $activity->id ) }}">Preview</a>							
 						</td>
 					</tr>
 					@endforeach

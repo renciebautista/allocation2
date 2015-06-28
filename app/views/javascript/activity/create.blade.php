@@ -140,6 +140,21 @@ $("#myform").validate({
 			required: true,
 			greaterdate : true
 		},
+		"division[]": {
+			needsSelection: true
+		},
+		"category[]": {
+			needsSelection: true
+		},
+		"brand[]": {
+			needsSelection: true
+		},
+		"objective[]": {
+			needsSelection: true
+		},
+		background: {
+			required: true,
+		},
 
 	},
 	errorPlacement: function(error, element) {               

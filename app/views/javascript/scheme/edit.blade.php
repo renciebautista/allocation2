@@ -134,7 +134,9 @@ function compute_budget(){
 	getWeeks();
 }
 
-$("form").validate({
+$("#updatescheme").disableButton();
+
+$("#updatescheme").validate({
 	ignore: null,
 	errorElement: "span", 
 	errorClass : "has-error",
@@ -148,7 +150,6 @@ $("form").validate({
 			maxlength: 8
 			},
 		item_barcode: {
-			required: true,
 			minlength: 13,
 			maxlength: 13
 			},
@@ -156,27 +157,20 @@ $("form").validate({
 			minlength: 14,
 			maxlength: 14
 			},
-		pr: "required",
-		lpat: "required",
-		srp_p: "required",
 		total_alloc: "required",
-		deals: "required",
 		'skus[]': {
                 is_natural_no_zero: true
             },
-        'involve[]': {
-                is_natural_no_zero: true
-            }
 	},
 	errorPlacement: function(error, element) {               
 		
 	},
 	highlight: function( element, errorClass, validClass ) {
-		$(element.closest('div')).addClass(errorClass).removeClass(validClass);
-	},
-	unhighlight: function( element, errorClass, validClass ) {
-		$(element.closest('div')).removeClass(errorClass).addClass(validClass);
-	},
+    	$(element).closest('div').addClass(errorClass).removeClass(validClass);
+  	},
+  	unhighlight: function( element, errorClass, validClass ) {
+    	$(element).closest('div').removeClass(errorClass).addClass(validClass);
+  	},
   	invalidHandler: function(form, validator) {
         var errors = validator.numberOfInvalids();
         if (errors) {

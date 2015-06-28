@@ -16,7 +16,6 @@ $("form").validate({
 			maxlength: 8
 			},
 		item_barcode: {
-			required: true,
 			minlength: 13,
 			maxlength: 13
 			},
@@ -24,17 +23,10 @@ $("form").validate({
 			minlength: 14,
 			maxlength: 14
 			},
-		pr: "required",
-		lpat: "required",
-		srp_p: "required",
 		total_alloc: "required",
-		deals: "required",
 		'skus[]': {
                 is_natural_no_zero: true
             },
-        'involve[]': {
-                is_natural_no_zero: true
-            }
 	},
 	errorPlacement: function(error, element) {               
 		

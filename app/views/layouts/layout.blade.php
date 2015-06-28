@@ -48,9 +48,9 @@
 				</div>
 				<div class="navbar-collapse collapse" id="navbar-main">
 					<ul class="nav navbar-nav">
-						@if(Auth::user()->inRoles(['PROPONENT','PMOG PLANNER','GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR','FIELD SALES']))
+						@if(Auth::user()->inRoles(['PROPONENT','PMOG PLANNER','GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']))
 						<li class="dropdown">
-							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="transaction">Activities <span class="caret"></span></a>
+							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="transaction">My Activities <span class="caret"></span></a>
 							<ul class="dropdown-menu" aria-labelledby="transaction">
 								@if(Auth::user()->inRoles(['PROPONENT','PMOG PLANNER','FIELD SALES']))
 								<li>{{ HTML::linkRoute('activity.index', 'All') }}</li> 
@@ -83,14 +83,28 @@
 						<li class="dropdown">
 							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="report">Reports <span class="caret"></span></a>
 							<ul class="dropdown-menu" aria-labelledby="report">
-								<li>{{ HTML::linkAction('ReportController@activities' , 'Activities') }}</li>  
+								@if(Auth::user()->inRoles(['PROPONENT','PMOG PLANNER']))
+								<li>{{ HTML::linkAction('ReportController@activities' , 'All Released Activities') }}</li>  
+								<li><a href="#">My Activity Summary Report</a></li>
+								<li><a href="#">My Allocation Detail Report</a></li>  
+								<li><a href="#">All Released Activity Summary Report</a></li>
+								<li><a href="#">All Released Allocation Detail Report</a></li> 
+								@endif
+
+								@if(Auth::user()->inRoles(['FIELD SALES']))
+								<li>{{ HTML::linkAction('ReportController@activities' , 'All Released Activities') }}</li>  
+								<li><a href="#">My Activity Summary Report</a></li>
+								<li><a href="#">My Allocation Detail Report</a></li>  
+								<li><a href="#">All Released Activity Summary Report</a></li>
+								<li><a href="#">All Released Allocation Detail Report</a></li>
+								@endif
 							</ul>
 						</li>
 
 						<li class="dropdown">
 							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="report">Exports <span class="caret"></span></a>
 							<ul class="dropdown-menu" aria-labelledby="report">
-								<li>{{ HTML::linkAction('DownloadsController@cycles' , 'Download by Cycle') }}</li>  
+								<li>{{ HTML::linkAction('DownloadsController@cycles' , 'Download Released Activities by Cycle') }}</li>  
 							</ul>
 						</li>
 						<li>

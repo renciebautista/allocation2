@@ -165,7 +165,7 @@
 						<div class="row">
 							<div class="col-lg-12">
 								{{ Form::label('division', 'Division', array('class' => 'control-label')) }}
-								{{ Form::select('division[]',  $divisions, null, array('id' => 'division', 'class' => 'form-control' ,'multiple' => 'multiple' ,'data-placeholder' => 'SELECT DIVISION')) }}
+								{{ Form::select('division[]',  $divisions, null, array('id' => 'division', 'class' => 'form-control multiselect' ,'multiple' => 'multiple' ,'data-placeholder' => 'SELECT DIVISION')) }}
 							</div>
 						</div>
 					</div>
@@ -175,7 +175,7 @@
 						<div class="row">
 							<div id="multiselect" class="col-lg-12">
 								{{ Form::label('category', 'Category', array('class' => 'control-label')) }}
-								<select class="form-control" data-placeholder="SELECT CATEGORY" id="category" name="category[]" multiple="multiple" ></select>
+								<select class="form-control multiselect" data-placeholder="SELECT CATEGORY" id="category" name="category[]" multiple="multiple" ></select>
 							</div>
 						</div>
 					</div>
@@ -185,7 +185,7 @@
 						<div class="row">
 							<div class="col-lg-12">
 								{{ Form::label('brand', 'Brand', array('class' => 'control-label')) }}
-								<select class="form-control" data-placeholder="SELECT BRAND" id="brand" name="brand[]" multiple="multiple" ></select>
+								<select class="form-control multiselect" data-placeholder="SELECT BRAND" id="brand" name="brand[]" multiple="multiple" ></select>
 							</div>
 						</div>
 					</div>
@@ -198,7 +198,7 @@
 						<div class="row">
 							<div class="col-lg-12">
 								{{ Form::label('objective', 'Objectives', array('class' => 'control-label' )) }}
-								{{ Form::select('objective[]', $objectives, null, array('id' => 'objective', 'class' => 'form-control', 'multiple' => 'multiple')) }}
+								{{ Form::select('objective[]', $objectives, null, array('id' => 'objective', 'class' => 'form-control multiselect', 'multiple' => 'multiple')) }}
 							</div>
 						</div>
 					</div>
@@ -214,7 +214,7 @@
 						<div class="row">
 							<div class="col-lg-12">
 								{{ Form::label('background', 'Background and Rationale', array('class' => 'control-label')) }}
-									{{ Form::textarea('background','',array('class' => 'form-control', 'placeholder' => 'Background and Rationale')) }}
+									{{ Form::textarea('background','',array('class' => 'form-control multiselect', 'placeholder' => 'Background and Rationale')) }}
 							</div>
 						</div>
 					</div>
