@@ -5,10 +5,10 @@ class Scheme extends \Eloquent {
 
 	public static $rules = array(
 		'scheme_name' => 'required',
-		'pr' => 'required',
-		'srp_p' => 'required',
+		// 'pr' => 'required',
+		// 'srp_p' => 'required',
 		'total_alloc' => 'required',
-		'deals' => 'required',
+		// 'deals' => 'required',
 		'skus' => 'required',
 	);
 

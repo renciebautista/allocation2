@@ -12,6 +12,12 @@ Queue::getIron()->ssl_verifypeer = false;
 |
 */
 
+Route::get("test", function(){
+	Excel::selectSheets('users')->load(app_path().'/database/seeds/seed_files/masterfile2.xlsx', function($reader) {
+		Helper::print_r($reader->toArray());
+	});
+});
+
 Route::get("mails", function(){
 
 	// send list of pending approval per day planner

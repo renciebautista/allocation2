@@ -7,6 +7,7 @@ use Zizaco\Entrust\HasRole;
 class User extends Eloquent implements ConfideUserInterface {
     use HasRole;
     use ConfideUser;
+
     
     public static $rules = array(
     	'username' => 'required|unique:users',
@@ -92,5 +93,120 @@ class User extends Eloquent implements ConfideUserInterface {
 		->where('users.active',1)
 		->whereIn('roles.name',$roles)
 		->get();
+	}
+
+	public static function batchInsert($records){
+		if(!empty($records)){
+			foreach ($records as $row) {
+				
+				if(!is_null($row['user_name'])){
+					$active = 0;
+					if($row['active'] == "Y"){
+						 $active = 1;
+					}
+					$user = User::where(['username' => str_replace(" ", "",$row['user_name'])])->first();
+					$role = Role::where('name',$row['groups'])->first();
+					if(!empty($user)){
+					    $user->username = str_replace(" ", "",$row['user_name']);
+					    $user->first_name = strtoupper($row['first_name']);
+					    $user->last_name = strtoupper($row['last_name']);
+					    $user->email = $row['email_address'];
+					    $user->confirmed = 1;
+					    $user->active = $active;
+					    $user->update();
+
+					    // // echo $user->id;
+						$for_delete = DB::table('assigned_roles')
+						->where('user_id', $user->id)
+						->get();
+						if(count($for_delete) > 0){
+							DB::table('assigned_roles')
+							->where('user_id', $user->id)
+							->delete();
+						}
+
+						$user->roles()->attach($role->id); // id only
+
+					}else{
+						if($row['email_address'] != ""){
+							$new_user = new User;
+						    $new_user->username = str_replace(" ", "",$row['user_name']);
+						    $new_user->first_name = strtoupper($row['first_name']);
+						    $new_user->last_name = strtoupper($row['last_name']);
+						    $new_user->email = str_replace(" ", "",$row['email_address']);
+						    $new_user->password = 'password';
+						    $new_user->password_confirmation = 'password';
+						    $new_user->confirmation_code = md5(uniqid(mt_rand(), true));
+						    $new_user->confirmed = 1;
+						    $new_user->active = $active;
+						    $new_user->save();
+
+						    $new_user->roles()->attach($role->id); // id only
+						}
+						
+					    
+					}
+				}
+			}
+		}
+		// $records->each(function($row) {
+		// 	if(!is_null($row->user_name)){
+		// 		$active = 0;
+		// 		if($row->active == "Y"){
+		// 			 $active = 1;
+		// 		}
+
+		// 		$user = User::where(['username' => $row->user_name])->first();
+		// 		$role = Role::where('name',$row->groups)->first();
+		// 		if(!empty($user)){
+		// 		    $user->username = $row->user_name;
+		// 		    $user->first_name = strtoupper($row->first_name);
+		// 		    $user->last_name = strtoupper($row->last_name);
+		// 		    $user->email = $row->email_address;
+		// 		    $user->password = 'password';
+		// 		    $user->password_confirmation = 'password';
+		// 		    $user->confirmation_code = md5(uniqid(mt_rand(), true));
+		// 		    $user->confirmed = 1;
+		// 		    $user->active = $active;
+		// 		    $user->update();
+
+		// 		    // // echo $user->id;
+		// 			$for_delete = DB::table('assigned_roles')
+		// 			->where('user_id', $user->id)
+		// 			->get();
+		// 			if(count($for_delete) > 0){
+		// 				DB::table('assigned_roles')
+		// 				->where('user_id', $user->id)
+		// 				->delete();
+		// 			}
+
+		// 			$user->roles()->attach($role->id); // id only
+
+		// 		}else{
+		// 			$new_user = new User;
+		// 		    $new_user->username = $row->user_name;
+		// 		    $new_user->first_name = strtoupper($row->first_name);
+		// 		    $new_user->last_name = strtoupper($row->last_name);
+		// 		    $new_user->email = $row->email_address;
+		// 		    $new_user->password = 'password';
+		// 		    $new_user->password_confirmation = 'password';
+		// 		    $new_user->confirmation_code = md5(uniqid(mt_rand(), true));
+		// 		    $new_user->confirmed = 1;
+		// 		    $new_user->active = $active;
+		// 		    $new_user->save();
+
+		// 		    $new_user->roles()->attach($role->id); // id only
+				    
+		// 		}
+				
+				
+
+				
+				
+
+				
+		// 	}
+			
+		// });
 	}
 }

@@ -13,3 +13,9 @@ Activities
 	- Unreleased
 	- Releaased
 add remarks per header in preview when approving put in remarks summary
+
+
+emails needed on users
+emails cannot have space
+username cannot have space
+invalid emails in masterfile
