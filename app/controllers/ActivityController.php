@@ -667,9 +667,17 @@ class ActivityController extends BaseController {
 							if(!empty($activity_type)){
 								$code .= '_'.$activity_type->activity_type;
 							}
-							if(!empty($division)){
-								$code .= '_'.$division->division_desc;
+							if(count($division_code)>0){
+								$code .= '_MULTI';
+							}else{
+								$division = Sku::select('division_code', 'division_desc')
+												->where('division_code',$division_code)
+												->first();
+								if(!empty($division)){
+									$code .= '_'.$division->division_desc;
+								}
 							}
+							
 							if(!empty($category_code)){
 								if(count($category_code) > 1){
 									$code .= '_MULTI';
@@ -685,8 +693,8 @@ class ActivityController extends BaseController {
 								if(count($brand_code) > 1){
 									$code .= '_MULTI';
 								}else{
-									$brand = Sku::select('brand_code', 'brand_desc')
-												->where('brand_code',$brand_code[0])
+									$brand = Sku::select('cpg_code', 'brand_desc')
+												->where('cpg_code',$brand_code[0])
 												->first();
 									$code .= '_'.$brand->brand_desc;
 								}
@@ -698,7 +706,7 @@ class ActivityController extends BaseController {
 							$activity->scope_type_id = $scope_id;
 							$activity->cycle_id = $cycle_id;
 							$activity->activity_type_id = $activity_type_id;
-							$activity->division_code = $division_code;
+							// $activity->division_code = $division_code;
 
 							$activity->duration = (Input::get('lead_time') == '') ? 0 : Input::get('lead_time');
 							$activity->edownload_date = date('Y-m-d',strtotime(Input::get('download_date')));
@@ -735,6 +743,18 @@ class ActivityController extends BaseController {
 								}
 								ActivityApprover::insert($activity_approver);
 							}
+
+							// update division
+							ActivityDivision::where('activity_id',$activity->id)->delete();
+							if (Input::has('division'))
+							{
+								$activity_division = array();
+								foreach (Input::get('division') as $division){
+									$activity_division[] = array('activity_id' => $activity->id, 'division_code' => $division);
+								}
+								ActivityDivision::insert($activity_division);
+							}
+
 
 							// update category
 							ActivityCategory::where('activity_id',$activity->id)->delete();
