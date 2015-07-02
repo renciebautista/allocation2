@@ -24,6 +24,7 @@ $("form").validate({
 			maxlength: 14
 			},
 		total_alloc: "required",
+		deals: "required",
 		'skus[]': {
                 is_natural_no_zero: true
             },
