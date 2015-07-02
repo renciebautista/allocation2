@@ -191,7 +191,7 @@ class Activity extends \Eloquent {
 		}
 
 		if(in_array("material_source", $required_array)){
-			$source = MaterialSource::getList($activity->id);
+			$source = ActivityMaterial::getList($activity->id);
 			if(count($source) == 0){
 				$required[] = 'Material Sourcing is required.';
 				$return['status'] = 0;

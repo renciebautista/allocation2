@@ -22,6 +22,8 @@ class DatabaseSeeder extends Seeder {
 
 		$this->call('ObjectivesTableSeeder');
 
+		$this->call('ActivityGroupingTableSeeder');
+
 		$this->call('MonthTableSeeder');
 		$this->call('BudgetTypeTableSeeder');
 		
