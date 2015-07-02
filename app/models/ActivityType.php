@@ -1,7 +1,7 @@
 <?php
 
 class ActivityType extends \Eloquent {
-	protected $fillable = ['id', 'activity_type', 'uom'];
+	protected $fillable = ['id', 'activity_type', 'uom','activity_grouping_id'];
 	public static $rules = array(
         'activity_type' => 'required|between:4,128|unique:activity_types',
         'uom' => 'required'
@@ -9,16 +9,26 @@ class ActivityType extends \Eloquent {
 	public $timestamps = false;
 
 	public static function batchInsert($records){
-		$records->each(function($row) {
-			if(!is_null($row->activity_type_code)){
-				$attributes = array(
-					'id' => $row->activity_type_code,
-					'activity_type' => $row->activity_type,
-					'uom' => strtoupper($row->uom));
-				self::insert($attributes);
+		if(!empty($records)){
+			foreach ($records as $row) {
+				if(!is_null($row['activity_type_code'])){
+					$attributes = array(
+						'id' => $row['activity_type_code'],
+						'activity_type' => $row['activity_type'],
+						'uom' => strtoupper($row['uom']),
+						'activity_grouping_id' => $row['activity_grouping_id']);
+					self::insert($attributes);
+
+					if($row['pe'] == "Y"){
+						ActivityTypeBudgetRequired::insert( array('activity_type_id' => $row['activity_type_code'], 'budget_type_id' => 2));
+					}
+
+					if($row['tts'] == "Y"){
+						ActivityTypeBudgetRequired::insert( array('activity_type_id' => $row['activity_type_code'], 'budget_type_id' => 1));
+					}
+				}
 			}
-			
-		});
+		}
 	}
 
 	public static function search($filter){
