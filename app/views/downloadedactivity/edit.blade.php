@@ -168,7 +168,7 @@
 						<div class="form-group">
 							<div class="row">
 								<div class="col-lg-12">
-									{{ Form::label('implementation_date', 'Target Implementation Date', array('class' => 'control-label')) }}
+									{{ Form::label('implementation_date', 'Target Start Date', array('class' => 'control-label')) }}
 									{{ Form::text('implementation_date',date_format(date_create($activity->eimplementation_date),'m/d/Y'),array('class' => 'form-control', 'placeholder' => 'mm/dd/yyyy')) }}
 								</div>
 							</div>
@@ -178,7 +178,7 @@
 						<div class="form-group">
 							<div class="row">
 								<div class="col-lg-12">
-									{{ Form::label('end_date', 'End Date', array('class' => 'control-label')) }}
+									{{ Form::label('end_date', 'Target End Date', array('class' => 'control-label')) }}
 									{{ Form::text('end_date',date_format(date_create($activity->end_date),'m/d/Y'),array('class' => 'form-control', 'placeholder' => 'mm/dd/yyyy')) }}
 								</div>
 							</div>
