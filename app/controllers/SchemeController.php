@@ -63,7 +63,7 @@ class SchemeController extends \BaseController {
 				// }
 				$scheme->pr = $pr;
 				$srp_p = str_replace(",", "", Input::get('srp_p'));
-				if(!empty(Input::get('srp_p'))){
+				// if(!empty(Input::get('srp_p'))){
 				// 	$srp_p = str_replace(",", "", Input::get('srp_p'));
 				// }else{
 				// 	$srp_p = 0;
