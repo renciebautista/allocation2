@@ -55,25 +55,26 @@ class SchemeController extends \BaseController {
 				$scheme->item_barcode = Input::get('item_barcode');
 				$scheme->item_casecode = Input::get('item_casecode');
 
-				if(!empty(Input::get('pr'))){
-					$pr = str_replace(",", "", Input::get('pr'));
-				}else{
-					$pr = 0;
-				}
+				$pr = str_replace(",", "", Input::get('pr'));
+				// if(!empty(Input::get('pr'))){
+					
+				// }else{
+				// 	$pr = 0;
+				// }
 				$scheme->pr = $pr;
-
+				$srp_p = str_replace(",", "", Input::get('srp_p'));
 				if(!empty(Input::get('srp_p'))){
-					$srp_p = str_replace(",", "", Input::get('srp_p'));
-				}else{
-					$srp_p = 0;
-				}
+				// 	$srp_p = str_replace(",", "", Input::get('srp_p'));
+				// }else{
+				// 	$srp_p = 0;
+				// }
 				$scheme->srp_p = $srp_p;
-
-				if(!empty(Input::get('other_cost'))){
-					$other_cost = str_replace(",", "", Input::get('other_cost'));
-				}else{
-					$other_cost = 0;
-				}
+				$other_cost = str_replace(",", "", Input::get('other_cost'));
+				// if(!empty(Input::get('other_cost'))){
+				// 	$other_cost = str_replace(",", "", Input::get('other_cost'));
+				// }else{
+				// 	$other_cost = 0;
+				// }
 				$scheme->other_cost = $other_cost;
 
 				$ulp = $srp_p + $other_cost;
