@@ -33,7 +33,6 @@ class ActivityType extends \Eloquent {
 
 	public static function search($filter){
 		return self::where('activity_type', 'LIKE' ,"%$filter%")
-			->orderBy('activity_type')
 			->get();
 	}
 
