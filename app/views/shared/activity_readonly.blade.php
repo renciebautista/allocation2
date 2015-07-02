@@ -11,13 +11,12 @@
 </div>
 
 @include('partials.notification')
-
 <div class="row">
 	<div class="col-lg-12">
 		<div class="form-group">
 			{{ HTML::linkRoute($route, 'Back To Activity List', array(), array('class' => 'btn btn-default')) }}
 
-			@if(($recall) && ($activity->cycle->submission_deadline > Carbon::now()))
+			@if(($recall) && (strtotime($activity->cycle->submission_deadline) >= strtotime(date('Y-m-d'))))
 			<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myAction">
 			  	Actions
 			</button>

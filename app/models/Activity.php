@@ -184,7 +184,7 @@ class Activity extends \Eloquent {
 		}
 
 		if(in_array("submission_deadline", $required_array)){
-			if($activity->cycle->submission_deadline < Carbon::now()){
+			if(strtotime($activity->cycle->submission_deadline) < strtotime(date('Y-m-d'))){
 				$required[] = 'Cycle Submission Deadline is already expired.';
 				$return['status'] = 0;
 			}

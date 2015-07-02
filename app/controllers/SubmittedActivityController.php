@@ -205,6 +205,8 @@ class SubmittedActivityController extends \BaseController {
 							}
 						}
 
+						$activity->status_id = $activity_status;
+						$activity->update();
 						$class = "text-success";
 					}else{ // denied
 						$activity_status = 2;
@@ -225,12 +227,12 @@ class SubmittedActivityController extends \BaseController {
 						$activity->pro_recall = $pro_recall;
 						$activity->pmog_recall = $pmog_recall;
 						$activity->status_id = $last_status;
+						$activity->update();
 							
 						ActivityApprover::resetAll($activity->id);		
 					}
-					$activity->status_id = $activity_status;
-					$activity->update();
-
+					
+					// Helper::print_r($activity);
 					$comment = new ActivityComment;
 					$comment->created_by = Auth::id();
 					$comment->activity_id = $id;

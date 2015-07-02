@@ -54,16 +54,36 @@ class SchemeController extends \BaseController {
 				$scheme->item_code = Input::get('item_code');
 				$scheme->item_barcode = Input::get('item_barcode');
 				$scheme->item_casecode = Input::get('item_casecode');
-				$pr = str_replace(",", "", Input::get('pr'));
+
+				if(empty(Input::get('pr'))){
+					$pr = 0;
+				}else{
+					$pr = str_replace(",", "", Input::get('pr'));
+				}
 				$scheme->pr = $pr;
-				$srp_p = str_replace(",", "", Input::get('srp_p'));
+
+				if(empty(Input::get('srp_p'))){
+					$srp_p = 0;
+				}else{
+					$srp_p = str_replace(",", "", Input::get('srp_p'));
+				}
 				$scheme->srp_p = $srp_p;
-				$other_cost = str_replace(",", "", Input::get('other_cost'));
+
+				if(empty(Input::get('other_cost'))){
+					$other_cost = 0;
+				}else{
+					$other_cost = str_replace(",", "", Input::get('other_cost'));
+				}
 				$scheme->other_cost = $other_cost;
 
 				$ulp = $srp_p + $other_cost;
 				$scheme->ulp = $ulp;
-				$scheme->cost_sale = ($ulp/$pr) * 100;
+				if($ulp > 0){
+					$scheme->cost_sale = ($ulp/$pr) * 100;
+				}else{
+					$scheme->cost_sale = 0;
+				}
+				
 				$scheme->quantity = str_replace(",", "", Input::get('total_alloc'));
 				$activitytype = ActivityType::find($activity->activity_type_id);
 				$scheme->deals = str_replace(",", "", Input::get('deals'));
@@ -327,16 +347,35 @@ class SchemeController extends \BaseController {
 				$scheme->item_code = Input::get('item_code');
 				$scheme->item_barcode = Input::get('item_barcode');
 				$scheme->item_casecode = Input::get('item_casecode');
-				$pr = str_replace(",", "", Input::get('pr'));
+				if(empty(Input::get('pr'))){
+					$pr = 0;
+				}else{
+					$pr = str_replace(",", "", Input::get('pr'));
+				}
 				$scheme->pr = $pr;
-				$srp_p = str_replace(",", "", Input::get('srp_p'));
+
+				if(empty(Input::get('srp_p'))){
+					$srp_p = 0;
+				}else{
+					$srp_p = str_replace(",", "", Input::get('srp_p'));
+				}
 				$scheme->srp_p = $srp_p;
-				$other_cost = str_replace(",", "", Input::get('other_cost'));
+
+				if(empty(Input::get('other_cost'))){
+					$other_cost = 0;
+				}else{
+					$other_cost = str_replace(",", "", Input::get('other_cost'));
+				}
 				$scheme->other_cost = $other_cost;
 
 				$ulp = $srp_p + $other_cost;
 				$scheme->ulp = $ulp;
-				$scheme->cost_sale = ($ulp/$pr) * 100;
+				if($ulp > 0){
+					$scheme->cost_sale = ($ulp/$pr) * 100;
+				}else{
+					$scheme->cost_sale = 0;
+				}
+				
 				$scheme->quantity = str_replace(",", "", Input::get('total_alloc'));
 				$activitytype = ActivityType::find($activity->activity_type_id);
 
