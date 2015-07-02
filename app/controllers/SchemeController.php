@@ -55,24 +55,24 @@ class SchemeController extends \BaseController {
 				$scheme->item_barcode = Input::get('item_barcode');
 				$scheme->item_casecode = Input::get('item_casecode');
 
-				if(empty(Input::get('pr'))){
-					$pr = 0;
-				}else{
+				if(!empty(Input::get('pr'))){
 					$pr = str_replace(",", "", Input::get('pr'));
+				}else{
+					$pr = 0;
 				}
 				$scheme->pr = $pr;
 
-				if(empty(Input::get('srp_p'))){
-					$srp_p = 0;
-				}else{
+				if(!empty(Input::get('srp_p'))){
 					$srp_p = str_replace(",", "", Input::get('srp_p'));
+				}else{
+					$srp_p = 0;
 				}
 				$scheme->srp_p = $srp_p;
 
-				if(empty(Input::get('other_cost'))){
-					$other_cost = 0;
-				}else{
+				if(!empty(Input::get('other_cost'))){
 					$other_cost = str_replace(",", "", Input::get('other_cost'));
+				}else{
+					$other_cost = 0;
 				}
 				$scheme->other_cost = $other_cost;
 
@@ -347,24 +347,24 @@ class SchemeController extends \BaseController {
 				$scheme->item_code = Input::get('item_code');
 				$scheme->item_barcode = Input::get('item_barcode');
 				$scheme->item_casecode = Input::get('item_casecode');
-				if(empty(Input::get('pr'))){
-					$pr = 0;
-				}else{
+				if(!empty(Input::get('pr'))){
 					$pr = str_replace(",", "", Input::get('pr'));
+				}else{
+					$pr = 0;
 				}
 				$scheme->pr = $pr;
 
-				if(empty(Input::get('srp_p'))){
-					$srp_p = 0;
-				}else{
+				if(!empty(Input::get('srp_p'))){
 					$srp_p = str_replace(",", "", Input::get('srp_p'));
+				}else{
+					$srp_p = 0;
 				}
 				$scheme->srp_p = $srp_p;
 
-				if(empty(Input::get('other_cost'))){
-					$other_cost = 0;
-				}else{
+				if(!empty(Input::get('other_cost'))){
 					$other_cost = str_replace(",", "", Input::get('other_cost'));
+				}else{
+					$other_cost = 0;
 				}
 				$scheme->other_cost = $other_cost;
 
