@@ -234,6 +234,9 @@ $("#implementation_date").on("dp.change",function (e) {
 			$('#download_date').val(msg.start_date)
 			$('#implementation_date').data("DateTimePicker").setMinDate(moment(msg.min_date).format('MM/DD/YYYY'));
 			getCycle(msg.end_date,{{$activity->id}});
+
+			$('#end_date').val(msg.end_date);
+			$('#end_date').data("DateTimePicker").setMinDate(moment(msg.end_date).format('MM/DD/YYYY'));
 		},
 		error: function(){
 			alert("failure");

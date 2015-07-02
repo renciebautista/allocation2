@@ -429,7 +429,7 @@
 			<div class="panel-body">
 				<div class="row">
 					<div class="col-lg-12">
-						<a href="{{ URL::action('SchemeController@create', $activity->id) }}" class="btn btn-primary"><i class="fa fa-plus"></i> Scheme</a>
+						<a href="{{ URL::action('SchemeController@create', $activity->id) }}" class="btn btn-primary">New Scheme</a>
 					</div>
 				</div>
 				<br>
