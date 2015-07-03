@@ -55,6 +55,10 @@ class SchemeController extends \BaseController {
 				$scheme->item_barcode = Input::get('item_barcode');
 				$scheme->item_casecode = Input::get('item_casecode');
 
+				$lpat = str_replace(",", "", Input::get('other_cost'));
+
+				$scheme->lpat = $lpat;
+
 				$pr = str_replace(",", "", Input::get('pr'));
 				// if(!empty(Input::get('pr'))){
 					
@@ -79,7 +83,7 @@ class SchemeController extends \BaseController {
 
 				$ulp = $srp_p + $other_cost;
 				$scheme->ulp = $ulp;
-				if($ulp > 0){
+				if(($ulp > 0) && ($pr > 0)){
 					$scheme->cost_sale = ($ulp/$pr) * 100;
 				}else{
 					$scheme->cost_sale = 0;
@@ -115,6 +119,7 @@ class SchemeController extends \BaseController {
 
 				$scheme->user_id = Auth::id();
 				$scheme->ulp_premium = Input::get('ulp_premium');
+
 				$scheme->save();
 
 				$skus = array();
@@ -348,6 +353,11 @@ class SchemeController extends \BaseController {
 				$scheme->item_code = Input::get('item_code');
 				$scheme->item_barcode = Input::get('item_barcode');
 				$scheme->item_casecode = Input::get('item_casecode');
+
+				$lpat = str_replace(",", "", Input::get('other_cost'));
+
+				$scheme->lpat = $lpat;
+				
 				$pr = str_replace(",", "", Input::get('pr'));
 				// if(!empty(Input::get('pr'))){
 				// 	$pr = str_replace(",", "", Input::get('pr'));
@@ -372,7 +382,7 @@ class SchemeController extends \BaseController {
 
 				$ulp = $srp_p + $other_cost;
 				$scheme->ulp = $ulp;
-				if($ulp > 0){
+				if(($ulp > 0) && ($pr > 0)){
 					$scheme->cost_sale = ($ulp/$pr) * 100;
 				}else{
 					$scheme->cost_sale = 0;

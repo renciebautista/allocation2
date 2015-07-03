@@ -140,8 +140,8 @@
 			<div class="form-group">
 				<div class="row">
 					<div class="col-lg-12">
-						{{ Form::label('lpat', 'List Price After Tax', array('class' => 'control-label')) }}
-						{{ Form::text('lpat','', array('id' => 'lpat', 'class' => 'form-control', 'placeholder' => 'List Price After Tax')) }}
+						{{ Form::label('lpat', 'List Price After Tax Per Deal (Php)', array('class' => 'control-label')) }}
+						{{ Form::text('lpat','', array('id' => 'lpat', 'class' => 'form-control', 'placeholder' => 'List Price After Tax Per Deal (Php)')) }}
 					</div>
 				</div>
 			</div>

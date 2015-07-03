@@ -31,6 +31,8 @@ class DatabaseSeeder extends Seeder {
 		$this->call('MaterialSourceTableSeeder');
 
 		$this->call('ActivityTypesTableSeeder');
+
+		$this->call('NewUserTableTableSeeder');
 			//
 		DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 

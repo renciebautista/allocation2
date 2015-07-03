@@ -130,7 +130,7 @@
 			<div id="pageloading">
 				<div class="row">
 				  	<div class="col-md-6 col-md-offset-3">
-				  		<h3 id="progress-animated">Please wait while page is loading....</h3>
+				  		<h3 id="progress-animated">Loading....</h3>
 				  		<div class="progress progress-striped active">
 			                <div class="progress-bar" style="width: 100%"></div>
 			            </div>
