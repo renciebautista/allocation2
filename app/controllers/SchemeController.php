@@ -55,7 +55,7 @@ class SchemeController extends \BaseController {
 				$scheme->item_barcode = Input::get('item_barcode');
 				$scheme->item_casecode = Input::get('item_casecode');
 
-				$lpat = str_replace(",", "", Input::get('other_cost'));
+				$lpat = str_replace(",", "", Input::get('lpat'));
 
 				$scheme->lpat = $lpat;
 
@@ -354,7 +354,7 @@ class SchemeController extends \BaseController {
 				$scheme->item_barcode = Input::get('item_barcode');
 				$scheme->item_casecode = Input::get('item_casecode');
 
-				$lpat = str_replace(",", "", Input::get('other_cost'));
+				$lpat = str_replace(",", "", Input::get('lpat'));
 
 				$scheme->lpat = $lpat;
 				
