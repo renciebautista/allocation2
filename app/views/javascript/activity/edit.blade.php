@@ -784,7 +784,6 @@ $("#submitactivity").validate({
 	errorClass : "has-error",
 	rules: {
 		submitstatus: "is_natural_no_zero",
-		submitremarks: "required"
 
 	},
 	errorPlacement: function(error, element) {               

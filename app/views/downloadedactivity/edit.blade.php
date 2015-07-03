@@ -458,7 +458,7 @@
 							  		<tr>
 							  			<td colspan="12">No record found!</td>
 							  		</tr>
-							  		@endif
+							  		@else
 							  		<?php $i = 0; ?>
 									@foreach($schemes as $scheme)
 									<?php $i += 1; ?>
@@ -480,7 +480,22 @@
 									  	</td>
 									</tr>
 									@endforeach
+									@endif
 							  	</tbody>
+							  	<tfoot>
+							  		<tr>
+										<th class="text-center" colspan="3">Sub Total</th>
+										<th class="text-right" style="width:80px;">{{ number_format($scheme_summary->pr,2) }}</th>
+										<th class="text-right" style="width:80px;">{{ number_format($scheme_summary->ulp,2) }}</th>
+										<th class="text-right" style="width:80px;">{{ number_format($scheme_summary->cost_sale,2) }}</th>
+										<th class="text-right" style="width:80px;">{{ number_format($scheme_summary->final_total_deals) }}</th>
+										<th class="text-right" style="width:80px;">{{ number_format($scheme_summary->final_total_cases) }}</th>
+										<th class="text-right" style="width:80px;">{{ number_format($scheme_summary->final_tts_r,2) }}</th>
+										<th class="text-right" style="width:80px;">{{ number_format($scheme_summary->final_pe_r,2) }}</th>
+										<th class="text-right" style="width:80px;">{{ number_format($scheme_summary->final_total_cost,2) }}</th>
+										<th class="text-right" style="width:110px;"></th>
+									</tr>
+							  	</tfoot>
 							</table> 
 						</div>
 

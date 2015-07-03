@@ -432,6 +432,7 @@
 									<table id="budget_table" class="table table-striped table-hover ">
 										<thead>
 											<tr>
+												<th>#</th>
 												<th class="text-center">Scheme Name</th>
 												<th class="text-center">Item Code</th>
 												<th class="text-center" style="width:80px;">Purchase Req't</th>
@@ -450,10 +451,14 @@
 									  		<tr>
 									  			<td colspan="15">No record found!</td>
 									  		</tr>
-									  		@endif
+									  		@else
 
+											<?php $i = 0; ?>
 											@foreach($schemes as $scheme)
+											<?php $i += 1; ?>
+											
 											<tr>
+												<td>{{ $i }}</td>
 											  	<td>{{ $scheme->name }}</td>
 											  	<td>{{ $scheme->item_code }}</td>
 											  	<td class="text-right">{{ number_format($scheme->pr,2) }}</td>
@@ -470,7 +475,22 @@
 											  	</td>
 											</tr>
 											@endforeach
+											@endif
 									  	</tbody>
+									  	<tfoot>
+									  		<tr>
+												<th class="text-center" colspan="3">Sub Total</th>
+												<th class="text-right" style="width:80px;">{{ number_format($scheme_summary->pr,2) }}</th>
+												<th class="text-right" style="width:80px;">{{ number_format($scheme_summary->ulp,2) }}</th>
+												<th class="text-right" style="width:80px;">{{ number_format($scheme_summary->cost_sale,2) }}</th>
+												<th class="text-right" style="width:80px;">{{ number_format($scheme_summary->final_total_deals) }}</th>
+												<th class="text-right" style="width:80px;">{{ number_format($scheme_summary->final_total_cases) }}</th>
+												<th class="text-right" style="width:80px;">{{ number_format($scheme_summary->final_tts_r,2) }}</th>
+												<th class="text-right" style="width:80px;">{{ number_format($scheme_summary->final_pe_r,2) }}</th>
+												<th class="text-right" style="width:80px;">{{ number_format($scheme_summary->final_total_cost,2) }}</th>
+												<th class="text-right" style="width:110px;"></th>
+											</tr>
+									  	</tfoot>
 									</table> 
 								</div>
 							</div>
