@@ -33,3 +33,11 @@ activity submitted on deadline not allowed
 
 
 update lpat formula on server side
+www.ulp-etop.com
+highlight cost to sales if above 30%
+
+fda and pis upload select files
+change select files to blue
+
+add color if blank grey add color if filledup input box
+force alloc multipler of sales min 0.01 max 1,000,000

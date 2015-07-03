@@ -18,7 +18,7 @@
 			{{ HTML::linkRoute('submittedactivity.index', 'Back To Activity List', array(), array('class' => 'btn btn-default')) }}
 
 			<!-- Button trigger modal -->
-			@if(($approver->status_id == 0) && ($valid) && && (strtotime($activity->cycle->submission_deadline) >= strtotime(date('Y-m-d'))))
+			@if(($approver->status_id == 0) && ($valid) && (strtotime($activity->cycle->submission_deadline) >= strtotime(date('Y-m-d'))))
 			<button type="button" class="btn btn-success" data-toggle="modal" data-target="#mySubmit" data-whatever="Approve">
 			  	Approve
 			</button>
