@@ -1034,7 +1034,7 @@ class ActivityController extends BaseController {
 						$pmog_recall = 0;
 						if($status == 1){
 							// check valdiation
-							$required_rules = array('budget','approver','cycle','activity','category','brand','objective','background','customer','scheme','fdapermit','artwork', 'material_source');
+							$required_rules = array('budget','approver','cycle','activity','category','brand','objective','background','customer','scheme','fdapermit','artwork', 'material_source', 'submission_deadline');
 							$validation = Activity::validForDownload($activity,$required_rules);
 							if($validation['status'] == 0){
 								$arr['success'] = 0;

@@ -120,57 +120,31 @@ class SubmittedActivityController extends \BaseController {
 
 	public function updateactivity($id)
 	{
-		if(Request::ajax()){
-			$arr = DB::transaction(function() use ($id)  {
-				$activity = Activity::find($id);
+		// Helper::print_r(Input::all());
 
-				if((empty($activity)) || (!ActivityApprover::myActivity($activity->id))){
-					$arr['success'] = 0;
-					Session::flash('class', 'alert-danger');
-					Session::flash('message', 'An error occured while updating activity.'); 
-				}else{
-					$status = Input::get('status');
-					// end update per approver
-					$planner = ActivityPlanner::getPlanner($activity->id);
-					$activity_status = $activity->status_id;
-					if($status == 1){  // approved
-						if(Auth::user()->hasRole("GCOM APPROVER")){
-							$approver = ActivityApprover::getCurrentApprover($activity->id);
+		$activity = Activity::findOrFail($id);
+		
+		if((empty($activity)) || (!ActivityApprover::myActivity($activity->id))){
+			return Response::make(View::make('shared/404'), 404);
+		}else{
 
-							if(count($approver) > 0 ){
-								$approver->status_id = 2;
-								$approver->update();
+			DB::beginTransaction();
 
-								$comment_status = "APPROVED BY GCOM";
+			try {
+				$planner = ActivityPlanner::getPlanner($activity->id);
+				$activity_status = $activity->status_id;
+				if(Input::get('action') == "approve"){
+					if(Auth::user()->hasRole("GCOM APPROVER")){
+						$approver = ActivityApprover::getCurrentApprover($activity->id);
+						if(count($approver) > 0 ){
+							$approver->status_id = 2;
+							$approver->update();
 
-								$gcom_approvers = ActivityApprover::getApproverByRole($activity->id,'GCOM APPROVER');
+							$comment_status = "APPROVED BY GCOM";
 
-								if(count($gcom_approvers) == 0){
-									$cd_approvers = ActivityApprover::getApproverByRole($activity->id,'CD OPS APPROVER');
-									if(count($cd_approvers) == 0){
-										$cmd_approvers = ActivityApprover::getApproverByRole($activity->id,'CMD DIRECTOR');
-										if(count($cmd_approvers) == 0){
-											$activity_status = 8;
-										}else{
-											ActivityApprover::updateNextApprover($activity->id,'CMD DIRECTOR');
-											$activity_status = 7;
-										}
-									}else{
-										ActivityApprover::updateNextApprover($activity->id,'CD OPS APPROVER');
-										$activity_status = 6;
-									}
-								}
-							}
-						}
+							$gcom_approvers = ActivityApprover::getApproverByRole($activity->id,'GCOM APPROVER');
 
-						if(Auth::user()->hasRole("CD OPS APPROVER")){
-							$approver = ActivityApprover::getCurrentApprover($activity->id);
-							if(count($approver) > 0 ){
-								$approver->status_id = 2;
-								$approver->update();
-
-								$comment_status = "APPROVED BY CD OPS";
-
+							if(count($gcom_approvers) == 0){
 								$cd_approvers = ActivityApprover::getApproverByRole($activity->id,'CD OPS APPROVER');
 								if(count($cd_approvers) == 0){
 									$cmd_approvers = ActivityApprover::getApproverByRole($activity->id,'CMD DIRECTOR');
@@ -186,15 +160,18 @@ class SubmittedActivityController extends \BaseController {
 								}
 							}
 						}
+					}
 
-						if(Auth::user()->hasRole("CMD DIRECTOR")){
-							$approver = ActivityApprover::getCurrentApprover($activity->id);
-							if(count($approver) > 0 ){
-								$approver->status_id = 2;
-								$approver->update();
+					if(Auth::user()->hasRole("CD OPS APPROVER")){
+						$approver = ActivityApprover::getCurrentApprover($activity->id);
+						if(count($approver) > 0 ){
+							$approver->status_id = 2;
+							$approver->update();
 
-								$comment_status = "APPROVED BY CMD DIRECTOR";
+							$comment_status = "APPROVED BY CD OPS";
 
+							$cd_approvers = ActivityApprover::getApproverByRole($activity->id,'CD OPS APPROVER');
+							if(count($cd_approvers) == 0){
 								$cmd_approvers = ActivityApprover::getApproverByRole($activity->id,'CMD DIRECTOR');
 								if(count($cmd_approvers) == 0){
 									$activity_status = 8;
@@ -202,54 +179,297 @@ class SubmittedActivityController extends \BaseController {
 									ActivityApprover::updateNextApprover($activity->id,'CMD DIRECTOR');
 									$activity_status = 7;
 								}
+							}else{
+								ActivityApprover::updateNextApprover($activity->id,'CD OPS APPROVER');
+								$activity_status = 6;
 							}
 						}
-
-						$activity->status_id = $activity_status;
-						$activity->update();
-						$class = "text-success";
-					}else{ // denied
-						$activity_status = 2;
-						$comment_status = "DENIED";
-						$class = "text-danger";
-						$pro_recall = 0;
-						$pmog_recall = 0;
-
-						$planner_count = ActivityPlanner::getPlannerCount($activity->id);
-						if(count($planner_count) > 0){
-							$last_status = 4;
-							$pro_recall = 1;
-							$pmog_recall = 0;
-						}else{
-							$last_status = 2;
-						}
-
-						$activity->pro_recall = $pro_recall;
-						$activity->pmog_recall = $pmog_recall;
-						$activity->status_id = $last_status;
-						$activity->update();
-							
-						ActivityApprover::resetAll($activity->id);		
 					}
-					
-					// Helper::print_r($activity);
-					$comment = new ActivityComment;
-					$comment->created_by = Auth::id();
-					$comment->activity_id = $id;
-					$comment->comment = Input::get('submitremarks');
-					$comment->comment_status = $comment_status;
-					$comment->class = $class;
-					$comment->save();
 
-					$arr['success'] = 1;
-					Session::flash('class', 'alert-success');
-					Session::flash('message', 'Activity successfully updated.'); 
+					if(Auth::user()->hasRole("CMD DIRECTOR")){
+						$approver = ActivityApprover::getCurrentApprover($activity->id);
+						if(count($approver) > 0 ){
+							$approver->status_id = 2;
+							$approver->update();
+
+							$comment_status = "APPROVED BY CMD DIRECTOR";
+
+							$cmd_approvers = ActivityApprover::getApproverByRole($activity->id,'CMD DIRECTOR');
+							if(count($cmd_approvers) == 0){
+								$activity_status = 8;
+							}else{
+								ActivityApprover::updateNextApprover($activity->id,'CMD DIRECTOR');
+								$activity_status = 7;
+							}
+						}
+					}
+
+					$activity->status_id = $activity_status;
+					$activity->update();
+
+					$class = "text-success";
+					$message = "Activity successfully approved.";
+				}else{
+					$comment_status = "DENIED";
+					$class = "text-danger";
+					$pro_recall = 0;
+					$pmog_recall = 0;
+
+					$planner_count = ActivityPlanner::getPlannerCount($activity->id);
+					if(count($planner_count) > 0){
+						$last_status = 4;
+						$pro_recall = 1;
+						$pmog_recall = 0;
+					}else{
+						$last_status = 2;
+					}
+
+					$activity->pro_recall = $pro_recall;
+					$activity->pmog_recall = $pmog_recall;
+					$activity->status_id = $last_status;
+					$activity->update();
+						
+					ActivityApprover::resetAll($activity->id);	
+					$message = "Activity successfully denied.";
 				}
-				return $arr;
-			});
+
+				$remarks = "";
+
+				if(!empty(Input::get("activity_type"))){
+					$activity_type = 
+					$remarks .= "Activity Type : <i>".Input::get('activity_type') . "</i></br>";
+				}
+
+				if(!empty(Input::get("activity_title"))){
+					$remarks .= "Activity Title : <i>".Input::get("activity_title") . "</i></br>";
+				}
+
+				if(!empty(Input::get("activity_background"))){
+					$remarks .= "Background : <i>".Input::get("activity_background") . "</i></br>";
+				}
+
+				if(!empty(Input::get("activity_objective"))){
+					$remarks .= "Objectives : <i>".Input::get("activity_objective") . "</i></br>";
+				}
+
+				if(!empty(Input::get("activity_tts"))){
+					$remarks .= "Budget IO TTS : <i>".Input::get("activity_tts") . "</i></br>";
+				}
+
+				if(!empty(Input::get("activity_pe"))){
+					$remarks .= "Budget IO PE : <i>".Input::get("activity_pe") . "</i></br>";
+				}
+
+				if(!empty(Input::get("activity_skus"))){
+					$remarks .= "SKU/s Involved : <i>".Input::get("activity_skus") . "</i></br>";
+				}
+
+				if(!empty(Input::get("activity_area"))){
+					$remarks .= "Area/s Involved : <i>".Input::get("activity_area") . "</i></br>";
+				}
+
+				if(!empty(Input::get("activity_channel"))){
+					$remarks .= "DT Channel/s Involved : <i>".Input::get("activity_channel") . "</i></br>";
+				}
+
+				if(!empty(Input::get("activity_scheme"))){
+					$remarks .= "Schemes : <i>".Input::get("activity_scheme") . "</i></br>";
+				}
+
+				if(!empty(Input::get("activity_timing"))){
+					$remarks .= "Timings : <i>".Input::get("activity_timing") . "</i></br>";
+				}
+
+				if(!empty(Input::get("activity_material"))){
+					$remarks .= "Material Sourcing : <i>".Input::get("activity_material") . "</i></br>";
+				}
+
+				if(!empty(Input::get("activity_fda"))){
+					$remarks .= "FDA Permit No. : <i>".Input::get("activity_fda") . "</i></br>";
+				}
+
+				if(!empty(Input::get("activity_billing"))){
+					$remarks .= "Billing Requirements : <i>".Input::get("activity_billing") . "</i></br>";
+				}
+
+				if(!empty(Input::get("activity_deadline"))){
+					$remarks .= "Billing Deadline : <i>".Input::get("activity_deadline") . "</i></br>";
+				}
+
+				if(!empty(Input::get("activity_ins"))){
+					$remarks .= "Special Instructions : <i>".Input::get("activity_ins") . "</i></br>";
+				}
+
+				if(!empty(Input::get("activity_art"))){
+					$remarks .= "Artworks : <i>".Input::get("activity_art") . "</i></br>";
+				}
+
+				if(!empty(Input::get("activity_fda_ac"))){
+					$remarks .= "FDA Permit : <i>".Input::get("activity_fda_ac") . "</i></br>";
+				}
+
+				if(!empty(Input::get("activity_barcode"))){
+					$remarks .= "Barcodes / Case Codes Per Scheme : <i>".Input::get("activity_barcode") . "</i></br>";
+				}
+
+				if(!empty(Input::get("activity_alloc"))){
+					$remarks .= "Allocations : <i>".Input::get("activity_alloc") . "</i></br>";
+				}
+				// echo $remarks;
+				$comment = new ActivityComment;
+				$comment->created_by = Auth::id();
+				$comment->activity_id = $activity->id;
+				$comment->comment = $remarks;
+				$comment->comment_status = $comment_status;
+				$comment->class = $class;
+				$comment->save();
+
+				DB::commit();
+
+				return Redirect::to(URL::action('SubmittedActivityController@edit', $id))
+					->with('class', "alert-success" )
+					->with('message', $message);
+			} catch (q $e) {
+				DB::rollback();
+
+				return Redirect::to(URL::action('SubmittedActivityController@edit', $id))
+					->with('class', "alert-danger" )
+					->with('message', "Error updating activity.");
+			}
 			
-			return json_encode($arr);
 		}
+
+		// r
+		// if(Request::ajax()){
+		// 	$arr = DB::transaction(function() use ($id)  {
+		// 		$activity = Activity::find($id);
+
+		// 		if((empty($activity)) || (!ActivityApprover::myActivity($activity->id))){
+		// 			$arr['success'] = 0;
+		// 			Session::flash('class', 'alert-danger');
+		// 			Session::flash('message', 'An error occured while updating activity.'); 
+		// 		}else{
+		// 			$status = Input::get('status');
+		// 			// end update per approver
+		// 			$planner = ActivityPlanner::getPlanner($activity->id);
+		// 			$activity_status = $activity->status_id;
+		// 			if($status == 1){  // approved
+		// 				if(Auth::user()->hasRole("GCOM APPROVER")){
+		// 					$approver = ActivityApprover::getCurrentApprover($activity->id);
+
+		// 					if(count($approver) > 0 ){
+		// 						$approver->status_id = 2;
+		// 						$approver->update();
+
+		// 						$comment_status = "APPROVED BY GCOM";
+
+		// 						$gcom_approvers = ActivityApprover::getApproverByRole($activity->id,'GCOM APPROVER');
+
+		// 						if(count($gcom_approvers) == 0){
+		// 							$cd_approvers = ActivityApprover::getApproverByRole($activity->id,'CD OPS APPROVER');
+		// 							if(count($cd_approvers) == 0){
+		// 								$cmd_approvers = ActivityApprover::getApproverByRole($activity->id,'CMD DIRECTOR');
+		// 								if(count($cmd_approvers) == 0){
+		// 									$activity_status = 8;
+		// 								}else{
+		// 									ActivityApprover::updateNextApprover($activity->id,'CMD DIRECTOR');
+		// 									$activity_status = 7;
+		// 								}
+		// 							}else{
+		// 								ActivityApprover::updateNextApprover($activity->id,'CD OPS APPROVER');
+		// 								$activity_status = 6;
+		// 							}
+		// 						}
+		// 					}
+		// 				}
+
+		// 				if(Auth::user()->hasRole("CD OPS APPROVER")){
+		// 					$approver = ActivityApprover::getCurrentApprover($activity->id);
+		// 					if(count($approver) > 0 ){
+		// 						$approver->status_id = 2;
+		// 						$approver->update();
+
+		// 						$comment_status = "APPROVED BY CD OPS";
+
+		// 						$cd_approvers = ActivityApprover::getApproverByRole($activity->id,'CD OPS APPROVER');
+		// 						if(count($cd_approvers) == 0){
+		// 							$cmd_approvers = ActivityApprover::getApproverByRole($activity->id,'CMD DIRECTOR');
+		// 							if(count($cmd_approvers) == 0){
+		// 								$activity_status = 8;
+		// 							}else{
+		// 								ActivityApprover::updateNextApprover($activity->id,'CMD DIRECTOR');
+		// 								$activity_status = 7;
+		// 							}
+		// 						}else{
+		// 							ActivityApprover::updateNextApprover($activity->id,'CD OPS APPROVER');
+		// 							$activity_status = 6;
+		// 						}
+		// 					}
+		// 				}
+
+		// 				if(Auth::user()->hasRole("CMD DIRECTOR")){
+		// 					$approver = ActivityApprover::getCurrentApprover($activity->id);
+		// 					if(count($approver) > 0 ){
+		// 						$approver->status_id = 2;
+		// 						$approver->update();
+
+		// 						$comment_status = "APPROVED BY CMD DIRECTOR";
+
+		// 						$cmd_approvers = ActivityApprover::getApproverByRole($activity->id,'CMD DIRECTOR');
+		// 						if(count($cmd_approvers) == 0){
+		// 							$activity_status = 8;
+		// 						}else{
+		// 							ActivityApprover::updateNextApprover($activity->id,'CMD DIRECTOR');
+		// 							$activity_status = 7;
+		// 						}
+		// 					}
+		// 				}
+
+		// 				$activity->status_id = $activity_status;
+		// 				$activity->update();
+		// 				$class = "text-success";
+		// 			}else{ // denied
+		// 				$activity_status = 2;
+		// 				$comment_status = "DENIED";
+		// 				$class = "text-danger";
+		// 				$pro_recall = 0;
+		// 				$pmog_recall = 0;
+
+		// 				$planner_count = ActivityPlanner::getPlannerCount($activity->id);
+		// 				if(count($planner_count) > 0){
+		// 					$last_status = 4;
+		// 					$pro_recall = 1;
+		// 					$pmog_recall = 0;
+		// 				}else{
+		// 					$last_status = 2;
+		// 				}
+
+		// 				$activity->pro_recall = $pro_recall;
+		// 				$activity->pmog_recall = $pmog_recall;
+		// 				$activity->status_id = $last_status;
+		// 				$activity->update();
+							
+		// 				ActivityApprover::resetAll($activity->id);		
+		// 			}
+					
+		// 			// Helper::print_r($activity);
+		// 			$comment = new ActivityComment;
+		// 			$comment->created_by = Auth::id();
+		// 			$comment->activity_id = $id;
+		// 			$comment->comment = Input::get('submitremarks');
+		// 			$comment->comment_status = $comment_status;
+		// 			$comment->class = $class;
+		// 			$comment->save();
+
+		// 			$arr['success'] = 1;
+		// 			Session::flash('class', 'alert-success');
+		// 			Session::flash('message', 'Activity successfully updated.'); 
+		// 		}
+		// 		return $arr;
+		// 	});
+			
+		// 	return json_encode($arr);
+		// }
 	}
 
 	

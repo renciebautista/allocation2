@@ -12,49 +12,29 @@
 
 @include('partials.notification')
 
+{{ Form::open(array('action' => array('SubmittedActivityController@updateactivity', $activity->id), 'class' => 'bs-component','id' => 'updateactivity')) }}
 <div class="row">
 	<div class="col-lg-12">
 		<div class="form-group">
 			{{ HTML::linkRoute('submittedactivity.index', 'Back To Activity List', array(), array('class' => 'btn btn-default')) }}
 
 			<!-- Button trigger modal -->
+			<?php $read_only = true; ?>
 			@if(($approver->status_id == 0) && ($valid) && (strtotime($activity->cycle->submission_deadline) >= strtotime(date('Y-m-d'))))
-			<button type="button" class="btn btn-success" data-toggle="modal" data-target="#mySubmit" data-whatever="Approve">
+
+			<button type="submit" class="btn btn-success" name="action" value="approve">
 			  	Approve
 			</button>
-			<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#mySubmit" data-whatever="Deny">
+			<button type="submit" class="btn btn-danger" name="action" value="deny">
 			  	Deny
 			</button>
+			<?php $read_only = false; ?>
 			@endif
 		</div>
 	</div>
 
 </div>
 
-<!-- Modal -->
-<div class="modal fade" id="mySubmit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  	<div class="modal-dialog">
-	    <div class="modal-content">
-	    	{{ Form::open(array('action' => array('SubmittedActivityController@updateactivity', $activity->id), 'class' => 'bs-component','id' => 'updateactivity')) }}
-	    	{{ Form::hidden('status', '', array('id' => 'status')) }}
-	      	<div class="modal-header">
-	        	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-	        	<h4 class="modal-title" id="myModalLabel"></h4>
-	      	</div>
-	      	<div class="modal-body">
-	          	<div class="form-group">
-	            	{{ Form::label('submitremarks', 'Comments:', array('class' => 'control-label')) }}
-	            	{{ Form::textarea('submitremarks','',array('class' => 'form-control', 'placeholder' => 'Comments', 'size' => '30x5')) }}
-	          	</div>
-	      	</div>
-	      	<div class="modal-footer">
-	        	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-	        	<button class="btn btn-primary">Submit</button>	    
-	     	</div>
-	     	{{ Form::close() }}
-	    </div>
-  	</div>
-</div>
 
 
 <ul class="nav nav-tabs">
@@ -112,17 +92,23 @@
 							<tr>
 								<td>Activity Type</td>
 								<td>{{ $activity->activitytype-> activity_type }}</td>
+								@if(!$read_only)
 								<td>{{ Form::textarea('activity_type','',array('rows' => 1,'placeholder' => 'Activity Type Remarks')) }}</td>
+								@endif
 							</tr>
 							<tr>
 								<td>Activity Title</td>
 								<td>{{ $activity->circular_name }}</td>
+								@if(!$read_only)
 								<td>{{ Form::textarea('activity_title','',array('rows' => 1,'placeholder' => 'Activity Title Remarks')) }}</td>
+								@endif
 							</tr>
 							<tr>
 								<td>Background</td>
 								<td>{{ nl2br($activity->background) }}</td>
+								@if(!$read_only)
 								<td>{{ Form::textarea('activity_background','',array('rows' => 1,'placeholder' => 'Background Remarks')) }}</td>
+								@endif
 							</tr>
 							<tr>
 								<td>Objectives</td>
@@ -133,7 +119,9 @@
 									@endforeach
 									</ul>
 								</td>
+								@if(!$read_only)
 								<td>{{ Form::textarea('activity_objective','',array('rows' => 1, 'placeholder' => 'Objectives Remarks')) }}</td>
+								@endif
 							</tr>
 							<tr>
 								<td>Budget IO TTS</td>
@@ -149,7 +137,9 @@
 									</ul>
 									@endif
 								</td>
+								@if(!$read_only)
 								<td>{{ Form::textarea('activity_tts','',array('rows' => 1, 'placeholder' => 'Budget IO TTS Remarks')) }}</td>
+								@endif
 							</tr>
 							<tr>
 								<td>Budget IO PE</td>
@@ -165,7 +155,9 @@
 									</ul>
 									@endif
 								</td>
+								@if(!$read_only)
 								<td>{{ Form::textarea('activity_pe','',array('rows' => 1, 'placeholder' => 'Budget IO PE Remarks')) }}</td>
+								@endif
 							</tr>
 							<tr>
 								<td>SKU/s Involved</td>
@@ -202,7 +194,9 @@
 									</table>
 									@endif
 								</td>
+								@if(!$read_only)
 								<td>{{ Form::textarea('activity_skus','',array('rows' => 1, 'placeholder' => 'Non ULP Premium SKU Remarks')) }}</td>
+								@endif
 							</tr>
 							<tr>
 								<td>Area/s Involved</td>
@@ -215,7 +209,9 @@
 									</ul>
 									@endif
 								</td>
+								@if(!$read_only)
 								<td>{{ Form::textarea('activity_area','',array('rows' => 1, 'placeholder' => 'Area/s Involved Remarks')) }}</td>
+								@endif
 							</tr>
 							<tr>
 								<td>DT Channel/s Involved</td>
@@ -228,7 +224,9 @@
 									</ul>
 									@endif
 								</td>
+								@if(!$read_only)
 								<td>{{ Form::textarea('activity_channel','',array('rows' => 1, 'placeholder' => 'DT Channel/s Involved Remarks')) }}</td>
+								@endif
 							</tr>
 							<tr>
 								<td>Schemes</td>
@@ -254,7 +252,9 @@
 									</table>
 									@endif
 								</td>
+								@if(!$read_only)
 								<td>{{ Form::textarea('activity_scheme','',array('rows' => 1, 'placeholder' => 'Schemes Remarks')) }}</td>
+								@endif
 							</tr>
 							<tr>
 								<td>Timings</td>
@@ -276,7 +276,9 @@
 									</table>
 									@endif
 								</td>
+								@if(!$read_only)
 								<td>{{ Form::textarea('activity_timing','',array('rows' => 1, 'placeholder' => 'Timings Remarks')) }}</td>
+								@endif
 							</tr>
 							<tr>
 								<td>Material Sourcing</td>
@@ -296,7 +298,9 @@
 									</table>
 									@endif
 								</td>
+								@if(!$read_only)
 								<td>{{ Form::textarea('activity_material','',array('rows' => 1, 'placeholder' => 'Material Sourcing Remarks')) }}</td>
+								@endif
 							</tr>
 							<tr>
 								<td>FDA Permit No.</td>
@@ -305,29 +309,39 @@
 									{{ $fdapermit->permit_no }}
 									@endif
 								</td>
+								@if(!$read_only)
 								<td>{{ Form::textarea('activity_fda','',array('rows' => 1, 'placeholder' => 'FDA Permit No. Remarks')) }}</td>
+								@endif
 							</tr>
 							<tr>
 								<td>Billing Requirements</td>
 								<td>{{ nl2br($activity->billing_remarks) }}</td>
+								@if(!$read_only)
 								<td>{{ Form::textarea('activity_billing','',array('rows' => 1, 'placeholder' => 'Billing Requirements Remarks')) }}</td>
+								@endif
 							</tr>
 							<tr>
 								<td>Billing Deadline</td>
 								<td>{{ date_format(date_create($activity->billing_date),'M j, Y') }}</td>
+								@if(!$read_only)
 								<td>{{ Form::textarea('activity_deadline','',array('rows' => 1, 'placeholder' => 'Billing Deadline Remarks')) }}</td>
+								@endif
 							</tr>
 							<tr>
 								<td>Special Instructions</td>
 								<td>{{ nl2br($activity->instruction) }}</td>
+								@if(!$read_only)
 								<td>{{ Form::textarea('activity_ins','',array('rows' => 1, 'placeholder' => 'Special Instructions Remarks')) }}</td>
+								@endif
 							</tr>
 						</table>
 					</div>
 					
 					<div class="ap-artworks">
 						<h2>Artworks</h2>
+						@if(!$read_only)
 						{{ Form::textarea('activity_art','',array('rows' => 1, 'placeholder' => 'Artworks Remarks')) }}
+						@endif
 						@if(!empty($artworks))
 						<ul>
 							@foreach($artworks as $artwork)
@@ -339,7 +353,9 @@
 
 					<div class="ap-fdapermit">
 						<h2>FDA Permit</h2>
-						{{ Form::textarea('activity_fda','',array('rows' => 1, 'placeholder' => 'FDA Permit Remarks')) }}
+						@if(!$read_only)
+						{{ Form::textarea('activity_fda_ac','',array('rows' => 1, 'placeholder' => 'FDA Permit Remarks')) }}
+						@endif
 						@if(!empty($fdapermit))
 						<ul>
 							<li>{{ HTML::image('fdapermit/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/'.$fdapermit->hash_name ,$fdapermit->file_desc) }}</li>
@@ -349,7 +365,9 @@
 
 					<div class="ap-codes">
 						<h2>Barcodes / Case Codes Per Scheme</h2>
+						@if(!$read_only)
 						{{ Form::textarea('activity_barcode','',array('rows' => 1, 'placeholder' => 'Barcodes / Case Codes Per Scheme Remarks')) }}
+						@endif
 						@if(!empty($schemes))
 						<table>
 							<tr>
@@ -382,7 +400,9 @@
 					@if(count($pis) > 0)
 					<div class="ap-product">
 						<h2>Product Information Sheet</h2>
+						@if(!$read_only)
 						{{ Form::textarea('activity_pis','',array('rows' => 1, 'placeholder' => 'Product Information Sheet Remarks')) }}
+						@endif
 						<table class="p-head bordered">
 							<tr>
 								<td>Product Category</td>
@@ -538,7 +558,9 @@
 
 					<div class="ap-allocations">
 						<h2>Allocations</h2>
+						@if(!$read_only)
 						{{ Form::textarea('activity_alloc','',array('rows' => 1, 'placeholder' => 'Allocations Remarks')) }}
+						@endif
 						@foreach($schemes as $scheme)
 
 						<?php 
@@ -662,6 +684,7 @@
 
 	
 </div>
+{{ Form::close() }}
 
 @stop
 
@@ -684,60 +707,6 @@ if(location.hash.length > 0){
 	activeTab && activeTab.tab('show');
 }
 
-$('#mySubmit').on('show.bs.modal', function (event) {
- 	var button = $(event.relatedTarget) // Button that triggered the modal
-  	var action = button.data('whatever') // Extract info from data-* attributes
-  	// If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-  	// Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
-  	var modal = $(this)
-  	modal.find('.modal-title').text(action+" activity")
-  	status = 0;
-  	if(action == "Approve"){
-  		status = 1;
-  	}
-  	modal.find('#status').val(status);
-})
+$("#updateactivity").disableButton();
 
-$("form[id='updateactivity']").on("submit",function(e){
-	var form = $(this);
-	var method = form.find('input[name="_method"]').val() || 'POST';
-	var url = form.prop('action');
-	if(form.valid()){
-		$.ajax({
-			url: url,
-			data: form.serialize(),
-			method: method,
-			dataType: "json",
-			success: function(data){
-				if(data.success == "1"){
-					$('#mySubmit').modal('hide');
-					location.reload();	
-				}else{
-					bootbox.alert("An error occured while updating."); 
-				}
-			}
-		});
-	}
-	
-	e.preventDefault();
-});
-
-$("#updateactivity").validate({
-	errorElement: "span", 
-	errorClass : "has-error",
-	rules: {
-		status: "required",
-		submitremarks: "required"
-
-	},
-	errorPlacement: function(error, element) {               
-		
-	},
-	highlight: function( element, errorClass, validClass ) {
-    	$(element).closest('div').addClass(errorClass).removeClass(validClass);
-  	},
-  	unhighlight: function( element, errorClass, validClass ) {
-    	$(element).closest('div').removeClass(errorClass).addClass(validClass);
-  	}
-});
 @stop
