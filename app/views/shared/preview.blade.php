@@ -388,7 +388,7 @@
 								</tr>
 								@endforeach
 								<tr>
-									<td>END DATE</td>
+									<td>IMPLEMENTATION DATE</td>
 									<td>{{ date_format(date_create($last_date),'M j, Y') }}</td>
 									<td>{{ date_format(date_create($activity->end_date),'M j, Y') }}</td>
 								</tr>

@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<title>Allocation System</title>
+		<title>E-TOP</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		{{ HTML::style('assets/plugins/jquery-ui-1.11.2/jquery-ui.min.css') }}
 		{{ HTML::style('assets/plugins/twitter-bootstrap/css/bootstrap.css') }}
@@ -25,7 +25,7 @@
 		<div class="navbar navbar-default navbar-fixed-top">
 			<div class="container">
 				<div class="navbar-header">
-					<a href="../" class="navbar-brand">Allocation System</a>
+					<a href="../" class="navbar-brand">E-TOP</a>
 					<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>

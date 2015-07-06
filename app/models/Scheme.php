@@ -20,8 +20,22 @@ class Scheme extends \Eloquent {
 
     public static function getList($activity_id){
 		return self::where('activity_id', $activity_id)
-				->orderBy('created_at', 'asc')
-				->get();
+			->orderBy('created_at', 'asc')
+			->get();
+	}
+
+	public static function getIdList($activity_id){
+		$data = array();
+		$records = self::where('activity_id', $activity_id)
+			->orderBy('id')
+			->get();
+		if(!empty($records)){
+			foreach ($records as $row) {
+				$data[] = $row->id;
+			}
+		}
+
+		return $data;
 	}
 
 

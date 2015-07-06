@@ -32,6 +32,8 @@ return of denied
 activity submitted on deadline not allowed
 
 
+
+
 update lpat formula on server side
 www.ulp-etop.com
 highlight cost to sales if above 30%
@@ -41,3 +43,17 @@ change select files to blue
 
 add color if blank grey add color if filledup input box
 force alloc multipler of sales min 0.01 max 1,000,000
+disable all inputs on read only
+allow recall if submission deadline lapse on last submit
+allow all day selecttion on start date after min date
+
+Non ULP Premium SKU 
+	PE Requirement (Php) = PE Requirement (Php) + Cost of Premium (Php) X Total No. of Deals 
+	No TTS Requirement (Php)
+	Disable Premuim Sku
+else
+	disable 
+	Non ULP Premium SKU 
+	reatinf formula
+
+check timings when edited and showed

@@ -461,9 +461,9 @@
 												<td>{{ $i }}</td>
 											  	<td>{{ $scheme->name }}</td>
 											  	<td>{{ $scheme->item_code }}</td>
-											  	<td class="text-right">{{ number_format($scheme->pr,2) }}</td>
-											  	<td class="text-right">{{ number_format($scheme->ulp,2) }}</td>
-											  	<td class="text-right">{{ number_format($scheme->cost_sale,2) }}</td>
+											  	<td class="text-right"></td>
+											  	<td class="text-right"></td>
+											  	<td class="text-right"></td>
 											  	<td class="text-right">{{ number_format($scheme->final_total_deals) }}</td>
 											  	<td class="text-right">{{ number_format($scheme->final_total_cases) }}</td>
 											  	<td class="text-right">{{ number_format($scheme->final_tts_r,2) }}</td>

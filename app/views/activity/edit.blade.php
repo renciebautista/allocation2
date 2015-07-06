@@ -346,13 +346,20 @@
 						<div class="form-group">
 							<div class="row">
 								<div class="col-lg-6">
-									{{ Form::label('tree3', 'Select Customers', array('class' => 'control-label' )) }}
+									{{ Form::label('tree3', 'Select Customers', array('class' => 'control-label' )) }}<br>
+									<a href="#" id="btnCSelectAll">Select all</a> |
+									<a href="#" id="btnCDeselectAll">Deselect all</a>
 									<div id="tree3"></div>
 									{{ Form::hidden('customers', null, array('id' => 'customers')) }}
 								</div>
 
 								<div class="col-lg-6">
-									{{ Form::label('tree4', 'Select DT Channels Involved', array('class' => 'control-label' )) }}
+									{{ Form::label('tree4', 'Select DT Channels Involved', array('class' => 'control-label' )) }}<br>
+									<div id="chSel">
+										<a href="#" id="btnChSelectAll">Select all</a> |
+										<a href="#" id="btnChDeselectAll">Deselect all</a>
+									</div>
+									
 									<div id="tree4"></div>
 									{{ Form::hidden('channels_involved', null, array('id' => 'channels_involved')) }}
 								</div>
@@ -430,14 +437,14 @@
 			<div class="panel-body">
 				<div class="row">
 					<div class="col-lg-12">
-						<a href="{{ URL::action('SchemeController@create', $activity->id) }}" class="btn btn-primary">New Scheme</a>
+						<a href="{{ URL::action('SchemeController@create', $activity->id) }}" class="btn btn-primary">Add New Scheme</a>
 					</div>
 				</div>
 				<br>
 				<div class="row">
 					<div class="col-lg-12">
 						<div class="table-responsive">
-							<table class="table table-condensed table-hover">
+							<table class="table table-striped table-condensed table-hover">
 								<thead>
 									<tr>
 										<th>#</th>
@@ -496,15 +503,15 @@
 							  	<tfoot>
 							  		<tr>
 										<th class="text-center" colspan="3">Sub Total</th>
-										<th class="text-right" style="width:80px;">{{ number_format($scheme_summary->pr,2) }}</th>
-										<th class="text-right" style="width:80px;">{{ number_format($scheme_summary->ulp,2) }}</th>
-										<th class="text-right" style="width:80px;">{{ number_format($scheme_summary->cost_sale,2) }}</th>
+										<th class="text-right" style="width:80px;"></th>
+										<th class="text-right" style="width:80px;"></th>
+										<th class="text-right" style="width:80px;"></th>
 										<th class="text-right" style="width:80px;">{{ number_format($scheme_summary->final_total_deals) }}</th>
 										<th class="text-right" style="width:80px;">{{ number_format($scheme_summary->final_total_cases) }}</th>
 										<th class="text-right" style="width:80px;">{{ number_format($scheme_summary->final_tts_r,2) }}</th>
 										<th class="text-right" style="width:80px;">{{ number_format($scheme_summary->final_pe_r,2) }}</th>
 										<th class="text-right" style="width:80px;">{{ number_format($scheme_summary->final_total_cost,2) }}</th>
-										<th class="text-right" style="width:110px;"></th>
+										<th colspan="3"></th>
 									</tr>
 							  	</tfoot>
 							</table> 
@@ -703,7 +710,7 @@
 		<br>
 		<div class="panel panel-default">
 		  	<div class="panel-heading">
-				<h3 class="panel-title">Timings Details</h3>
+				<h3 class="panel-title">Timings Details1</h3>
 			</div>
 		  	<div class="panel-body">
 				<div class="row">

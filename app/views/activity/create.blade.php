@@ -237,7 +237,7 @@
 			<div class="row">
 				<div class="col-lg-12">
 					<div class="form-group">
-						{{ Form::submit('Save', array('class' => 'btn btn-primary')) }}
+						{{ Form::submit('Save as Draft', array('class' => 'btn btn-primary')) }}
 					</div>
 				</div>
 			</div>

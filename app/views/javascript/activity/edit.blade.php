@@ -502,6 +502,20 @@ $("#tree3").fancytree({
     },
 });
 
+$("#btnCDeselectAll").click(function(){
+
+  	$("#tree3").fancytree("getTree").visit(function(node){
+    	node.setSelected(false);
+  	});
+  	return false;
+});
+$("#btnCSelectAll").click(function(){
+  	$("#tree3").fancytree("getTree").visit(function(node){
+    	node.setSelected(true);
+  	});
+  	return false;
+});
+
 $("#tree4").fancytree({
 	extensions: [],
 	checkbox: true,
@@ -524,6 +538,26 @@ $("#tree4").fancytree({
 	click: function(event, data) {
         $("#updateCustomer").addClass("dirty");
     },
+});
+
+$("#btnChDeselectAll").click(function(){
+	if(!$("#tree4").hasClass( "ui-fancytree-disabled" )){
+		$("#tree4").fancytree("getTree").visit(function(node){
+	    	node.setSelected(false);
+	  	});
+	}
+  	
+  	return false;
+});
+$("#btnChSelectAll").click(function(){
+	if(!$("#tree4").hasClass( "ui-fancytree-disabled" )){
+		$("#tree4").fancytree("getTree").visit(function(node){
+	    	node.setSelected(true);
+	  	});
+	}
+
+  	
+  	return false;
 });
 
 function updatechannel(){

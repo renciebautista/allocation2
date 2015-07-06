@@ -346,12 +346,18 @@
 						<div class="form-group">
 							<div class="row">
 								<div class="col-lg-6">
-									{{ Form::label('tree3', 'Select Customers', array('class' => 'control-label' )) }}
+									{{ Form::label('tree3', 'Select Customers', array('class' => 'control-label' )) }}<br>
+									<a href="#" id="btnCSelectAll">Select all</a> |
+									<a href="#" id="btnCDeselectAll">Deselect all</a>
 									<div id="tree3"></div>
 									{{ Form::hidden('customers', null, array('id' => 'customers')) }}
 								</div>
 								<div class="col-lg-6">
-									{{ Form::label('tree4', 'Select DT Channels Involved', array('class' => 'control-label' )) }}
+									{{ Form::label('tree4', 'Select DT Channels Involved', array('class' => 'control-label' )) }}<br>
+									<div id="chSel">
+										<a href="#" id="btnChSelectAll">Select all</a> |
+										<a href="#" id="btnChDeselectAll">Deselect all</a>
+									</div>
 									<div id="tree4"></div>
 									{{ Form::hidden('channels_involved', null, array('id' => 'channels_involved')) }}
 								</div>
@@ -429,7 +435,7 @@
 			<div class="panel-body">
 				<div class="row">
 					<div class="col-lg-12">
-						<a href="{{ URL::action('SchemeController@create', $activity->id) }}" class="btn btn-primary">New Scheme</a>
+						<a href="{{ URL::action('SchemeController@create', $activity->id) }}" class="btn btn-primary">Add New Scheme</a>
 					</div>
 				</div>
 				<br>
@@ -466,9 +472,9 @@
 										<td>{{ $i }}</td>
 									  	<td>{{ $scheme->name }}</td>
 									  	<td>{{ $scheme->item_code }}</td>
-									  	<td class="text-right">{{ number_format($scheme->pr,2) }}</td>
-									  	<td class="text-right">{{ number_format($scheme->ulp,2) }}</td>
-									  	<td class="text-right">{{ number_format($scheme->cost_sale,2) }}</td>
+									  	<td class="text-right"></td>
+									  	<td class="text-right"></td>
+									  	<td class="text-right"></td>
 									  	<td class="text-right">{{ number_format($scheme->final_total_deals) }}</td>
 									  	<td class="text-right">{{ number_format($scheme->final_total_cases) }}</td>
 									  	<td class="text-right">{{ number_format($scheme->final_tts_r,2) }}</td>

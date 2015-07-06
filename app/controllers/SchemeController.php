@@ -213,6 +213,10 @@ class SchemeController extends \BaseController {
 	{
 		$scheme = Scheme::find($id);
 		$activity = Activity::find($scheme->activity_id);
+
+		$activity_schemes = Scheme::getIdList($activity->id);
+		$id_index = array_search($id, $activity_schemes);
+
 		$divisions = ActivityDivision::getList($scheme->activity_id);
 		$categories = ActivityCategory::selected_category($scheme->activity_id);
 		$brands = ActivityBrand::selected_brand($scheme->activity_id);
@@ -313,20 +317,20 @@ class SchemeController extends \BaseController {
 
 		if(Auth::user()->hasRole("PROPONENT")){
 			if($activity->status_id < 4){
-				return View::make('scheme.edit',compact('scheme', 'activity', 'skus', 'involves', 'sel_skus', 'sel_hosts',
+				return View::make('scheme.edit',compact('scheme', 'activity_schemes', 'id_index', 'activity', 'skus', 'involves', 'sel_skus', 'sel_hosts',
 					'sel_premuim','allocations', 'total_sales', 'qty','id','total_gsv', 'ac_groups', 'groups'));
 			}else{
-				return View::make('scheme.read_only',compact('scheme', 'activity', 'skus', 'involves', 'sel_skus', 'sel_hosts',
+				return View::make('scheme.read_only',compact('scheme', 'activity', 'id_index', 'skus', 'involves', 'sel_skus', 'sel_hosts',
 					'sel_premuim','allocations', 'total_sales', 'qty','id', 'summary', 'total_gsv','sku', 'host', 'premuim','ac_groups','groups'));
 			}
 		}
 
 		if(Auth::user()->hasRole("PMOG PLANNER")){
 			if($activity->status_id == 4){
-				return View::make('scheme.edit',compact('scheme', 'activity', 'skus', 'involves', 'sel_skus', 'sel_hosts',
+				return View::make('scheme.edit',compact('scheme', 'activity_schemes', 'id_index', 'activity', 'skus', 'involves', 'sel_skus', 'sel_hosts',
 					'sel_premuim','allocations', 'total_sales', 'qty','id', 'summary', 'total_gsv','ac_groups', 'groups'));
 			}else{
-				return View::make('scheme.read_only',compact('scheme', 'activity', 'skus', 'involves', 'sel_skus', 'sel_hosts',
+				return View::make('scheme.read_only',compact('scheme', 'activity_schemes', 'id_index', 'activity', 'skus', 'involves', 'sel_skus', 'sel_hosts',
 					'sel_premuim','allocations', 'total_sales', 'qty','id', 'summary', 'total_gsv','sku', 'host', 'premuim','ac_groups','groups'));
 			}
 		}
@@ -674,7 +678,7 @@ class SchemeController extends \BaseController {
 
 		Excel::create($scheme->name, function($excel) use($allocations){
 			$excel->sheet('allocations', function($sheet) use($allocations) {
-				$sheet->fromModel($allocations);
+				$sheet->fromModel($allocations,null, 'A1', true);
 			})->download('xls');
 
 		});

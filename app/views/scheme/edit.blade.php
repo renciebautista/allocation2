@@ -24,6 +24,8 @@
 
 </div>
 
+@include('partials.scheme_pagination')
+
 
 
 @include('partials.notification')

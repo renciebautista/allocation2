@@ -13,7 +13,7 @@ h2, .h2 {
 	border-bottom: 1px solid #eee;
 }
 .action {
-	width: 10px;
+	min-width: 10px;
 	text-align: center;
 }
 .upload_date{
