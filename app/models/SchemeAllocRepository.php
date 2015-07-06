@@ -209,9 +209,14 @@ class SchemeAllocRepository
                             }
                            
                             $p = 0;
+
                             if($customer->gsv > 0){
-                                $p = round($account['gsv']/$customer->gsv * 100,5);
+                                $x = round($account['gsv']/$customer->gsv * 100,5);
+                                if($x > 0){
+                                    $p = $x;
+                                }
                             }
+
                             $account_alloc->outlet_to_gsv_p = $p;
                             $_account_alloc = round(($p * $shipto_alloc->ship_to_alloc)/100);
                             $account_alloc->outlet_to_alloc = $_account_alloc;
