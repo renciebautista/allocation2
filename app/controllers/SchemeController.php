@@ -127,6 +127,7 @@ class SchemeController extends \BaseController {
 				$scheme->final_total_cost = $scheme->total_cost;
 
 				$scheme->user_id = Auth::id();
+				
 				$scheme->ulp_premium = Input::get('ulp_premium');
 
 				$scheme->save();

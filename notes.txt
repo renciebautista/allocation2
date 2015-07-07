@@ -55,3 +55,4 @@ add color if blank grey add color if filledup input box
 force alloc multipler of sales min 0.01 max 1,000,000
 allow recall if submission deadline lapse on last submit
 check timings when edited and showed
+recall of activity and submit error on proponent and pmog

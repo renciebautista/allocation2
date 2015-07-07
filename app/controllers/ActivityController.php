@@ -894,7 +894,6 @@ class ActivityController extends BaseController {
 			if(Auth::user()->hasRole("PROPONENT")){
 				$arr = DB::transaction(function() use ($id)  {
 					$activity = Activity::findOrFail($id);
-
 					
 					if(empty($activity)){
 						$arr['success'] = 0;
@@ -913,7 +912,7 @@ class ActivityController extends BaseController {
 							$comment->class = $class;
 							$comment->save();
 						}else{
-							//
+
 							$planner_count = ActivityPlanner::getPlannerCount($activity->id);
 							if(count($planner_count) > 0){
 								$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme','submission_deadline');
@@ -923,11 +922,13 @@ class ActivityController extends BaseController {
 							
 							$validation = Activity::validForDownload($activity,$required_rules);
 							
+							// recall
+
+							// submit
 
 							if($validation['status'] == 0){
 								$arr['success'] = 0;
 								$arr['error'] = $validation['message'];
-
 								$arr['success'] = 0;
 							}else{
 
@@ -983,10 +984,6 @@ class ActivityController extends BaseController {
 									$class = "text-success";
 								}
 
-								if($status_id == 4){
-									
-								}
-
 								if($status_id == 2){
 									$comment_status = "RECALLED ACTIVITY";
 									$class = "text-warning";
@@ -1011,10 +1008,6 @@ class ActivityController extends BaseController {
 								Session::flash('message', 'Activity successfully updated.');
 							}
 						}
-
-						
-
-						
 						
 					}
 					return $arr;
