@@ -54,11 +54,10 @@
 							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="transaction">My Activities <span class="caret"></span></a>
 							<ul class="dropdown-menu" aria-labelledby="transaction">
 								@if(Auth::user()->inRoles(['PROPONENT']))
-								<li>{{ HTML::linkRoute('activity.create', 'Add New Activity') }}</li> 
 								<li>{{ HTML::linkRoute('activity.index', 'All') }}</li> 
 								<li>{{ HTML::linkAction('activity.index' , 'Unreleased',array('st' => ['1','2','3','4','5','6','7','8'],'title' => '')) }}</li>  
 								<li>{{ HTML::linkAction('activity.index' , 'Released',array('st' => ['9'],'title' => '')) }}</li>  
-								
+								<li>{{ HTML::linkRoute('activity.create', 'Add New Activity') }}</li> 
 								@endif
 
 								@if(Auth::user()->inRoles(['PMOG PLANNER','FIELD SALES']))

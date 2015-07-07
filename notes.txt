@@ -25,15 +25,11 @@ activity_type uom type required?
 
 
 
-target implementation date  to start date
-error cost error scheme
+target implementation date  to start date - done
+error cost error scheme - done
 
-return of denied
-activity submitted on deadline not allowed
-
-validate pis on uploading
-
-
+return of denied - done
+activity submitted on deadline not allowed - done
 
 
 update lpat formula on server side - done
@@ -51,6 +47,8 @@ else
 	reatinf formula
 done
 
+
+validate pis on uploading
 fda and pis upload select files
 change select files to blue
 add color if blank grey add color if filledup input box

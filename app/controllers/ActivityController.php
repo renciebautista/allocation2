@@ -901,11 +901,19 @@ class ActivityController extends BaseController {
 						$arr['error'] = $validation['message'];
 					}else{
 						$status_id = (int) Input::get('submitstatus');
-
 						if($status_id == 4){
 							$comment_status = "SAVE AS DRAFT";
 							$class = "text-success";
+
+							$comment = new ActivityComment;
+							$comment->created_by = Auth::id();
+							$comment->activity_id = $id;
+							$comment->comment = Input::get('submitremarks');
+							$comment->comment_status = $comment_status;
+							$comment->class = $class;
+							$comment->save();
 						}else{
+							//
 							$planner_count = ActivityPlanner::getPlannerCount($activity->id);
 							if(count($planner_count) > 0){
 								$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme','submission_deadline');
@@ -919,8 +927,10 @@ class ActivityController extends BaseController {
 							if($validation['status'] == 0){
 								$arr['success'] = 0;
 								$arr['error'] = $validation['message'];
+
+								$arr['success'] = 0;
 							}else{
-								
+
 								$activity_status = 3;
 								$pro_recall = 0;
 								$pmog_recall = 0;
@@ -987,20 +997,24 @@ class ActivityController extends BaseController {
 								$activity->pro_recall = $pro_recall;
 								$activity->pmog_recall = $pmog_recall;
 								$activity->update();
+
+								$comment = new ActivityComment;
+								$comment->created_by = Auth::id();
+								$comment->activity_id = $id;
+								$comment->comment = Input::get('submitremarks');
+								$comment->comment_status = $comment_status;
+								$comment->class = $class;
+								$comment->save();
+
+								$arr['success'] = 1;
+								Session::flash('class', 'alert-success');
+								Session::flash('message', 'Activity successfully updated.');
 							}
 						}
 
-						$comment = new ActivityComment;
-						$comment->created_by = Auth::id();
-						$comment->activity_id = $id;
-						$comment->comment = Input::get('submitremarks');
-						$comment->comment_status = $comment_status;
-						$comment->class = $class;
-						$comment->save();
+						
 
-						$arr['success'] = 1;
-						Session::flash('class', 'alert-success');
-						Session::flash('message', 'Activity successfully updated.');
+						
 						
 					}
 					return $arr;
