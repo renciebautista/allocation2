@@ -36,18 +36,18 @@ validate pis on uploading
 
 
 
-update lpat formula on server side
-www.ulp-etop.com
-highlight cost to sales if above 30%
+update lpat formula on server side - done
+www.ulp-etop.com - done
+highlight cost to sales if above 30% - done
 
 fda and pis upload select files
 change select files to blue
 
 add color if blank grey add color if filledup input box
 force alloc multipler of sales min 0.01 max 1,000,000
-disable all inputs on read only
+disable all inputs on read only - done
 allow recall if submission deadline lapse on last submit
-allow all day selecttion on start date after min date
+allow all day selecttion on start date after min date - done
 
 Non ULP Premium SKU 
 	PE Requirement (Php) = PE Requirement (Php) + Cost of Premium (Php) X Total No. of Deals 
@@ -57,5 +57,7 @@ else
 	disable 
 	Non ULP Premium SKU 
 	reatinf formula
+
+done
 
 check timings when edited and showed

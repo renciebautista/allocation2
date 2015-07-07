@@ -55,9 +55,7 @@ class SchemeController extends \BaseController {
 				$scheme->item_barcode = Input::get('item_barcode');
 				$scheme->item_casecode = Input::get('item_casecode');
 
-				$lpat = str_replace(",", "", Input::get('lpat'));
-
-				$scheme->lpat = $lpat;
+				
 
 				$pr = str_replace(",", "", Input::get('pr'));
 				// if(!empty(Input::get('pr'))){
@@ -83,11 +81,22 @@ class SchemeController extends \BaseController {
 
 				$ulp = $srp_p + $other_cost;
 				$scheme->ulp = $ulp;
-				if(($ulp > 0) && ($pr > 0)){
-					$scheme->cost_sale = ($ulp/$pr) * 100;
+
+				$lpat = str_replace(",", "", Input::get('lpat'));
+				$scheme->lpat = $lpat;
+
+				if(($lpat > 0) && ($ulp > 0)){
+					$scheme->cost_sale = ($ulp/$lpat) * 100;
+					
 				}else{
 					$scheme->cost_sale = 0;
 				}
+
+				// if(($ulp > 0) && ($pr > 0)){
+				// 	$scheme->cost_sale = ($ulp/$pr) * 100;
+				// }else{
+				// 	$scheme->cost_sale = 0;
+				// }
 				
 				$scheme->quantity = str_replace(",", "", Input::get('total_alloc'));
 				$activitytype = ActivityType::find($activity->activity_type_id);
@@ -229,8 +238,11 @@ class SchemeController extends \BaseController {
 
 		$sku = Sku::getSku($sel_skus[0]);
 		$host = Pricelist::getSku($sel_hosts[0]);
-		$premuim = Pricelist::getSku($sel_premuim[0]);
-
+		$premuim = array();
+		if(!empty($sel_premuim)){
+			$premuim = Pricelist::getSku($sel_premuim[0]);
+		}
+		
 		$customers = ActivityCustomer::customers($scheme->activity_id);
 		$_channels = ActivityChannel::channels($scheme->activity_id);
 		$qty = $scheme->quantity;
@@ -320,7 +332,7 @@ class SchemeController extends \BaseController {
 				return View::make('scheme.edit',compact('scheme', 'activity_schemes', 'id_index', 'activity', 'skus', 'involves', 'sel_skus', 'sel_hosts',
 					'sel_premuim','allocations', 'total_sales', 'qty','id','total_gsv', 'ac_groups', 'groups'));
 			}else{
-				return View::make('scheme.read_only',compact('scheme', 'activity', 'id_index', 'skus', 'involves', 'sel_skus', 'sel_hosts',
+				return View::make('scheme.read_only',compact('scheme', 'activity', 'activity_schemes', 'id_index', 'skus', 'involves', 'sel_skus', 'sel_hosts',
 					'sel_premuim','allocations', 'total_sales', 'qty','id', 'summary', 'total_gsv','sku', 'host', 'premuim','ac_groups','groups'));
 			}
 		}
@@ -357,10 +369,6 @@ class SchemeController extends \BaseController {
 				$scheme->item_code = Input::get('item_code');
 				$scheme->item_barcode = Input::get('item_barcode');
 				$scheme->item_casecode = Input::get('item_casecode');
-
-				$lpat = str_replace(",", "", Input::get('lpat'));
-
-				$scheme->lpat = $lpat;
 				
 				$pr = str_replace(",", "", Input::get('pr'));
 				// if(!empty(Input::get('pr'))){
@@ -386,11 +394,22 @@ class SchemeController extends \BaseController {
 
 				$ulp = $srp_p + $other_cost;
 				$scheme->ulp = $ulp;
-				if(($ulp > 0) && ($pr > 0)){
-					$scheme->cost_sale = ($ulp/$pr) * 100;
+
+				$lpat = str_replace(",", "", Input::get('lpat'));
+				$scheme->lpat = $lpat;
+
+				if(($lpat > 0) && ($ulp > 0)){
+					$scheme->cost_sale = ($ulp/$lpat) * 100;
+					
 				}else{
 					$scheme->cost_sale = 0;
 				}
+				
+				// if(($ulp > 0) && ($pr > 0)){
+				// 	$scheme->cost_sale = ($ulp/$pr) * 100;
+				// }else{
+				// 	$scheme->cost_sale = 0;
+				// }
 				
 				$scheme->quantity = str_replace(",", "", Input::get('total_alloc'));
 				$activitytype = ActivityType::find($activity->activity_type_id);
@@ -437,10 +456,14 @@ class SchemeController extends \BaseController {
 
 				$premuim = array();
 				SchemePremuimSku::where('scheme_id',$scheme->id)->delete();
-				foreach (Input::get('premuim') as $sap_code){
-					$premuim[] = array('scheme_id' => $scheme->id, 'sap_code' => $sap_code);
+				if (Input::has('premuim'))
+				{
+				    foreach (Input::get('premuim') as $sap_code){
+						$premuim[] = array('scheme_id' => $scheme->id, 'sap_code' => $sap_code);
+					}
+					SchemePremuimSku::insert($premuim);
 				}
-				SchemePremuimSku::insert($premuim);
+				
 
 				SchemeAllocRepository::updateAllocation($scheme);
 				

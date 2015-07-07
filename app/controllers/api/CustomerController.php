@@ -91,6 +91,11 @@ class CustomerController extends \BaseController {
 	}
 	public function index(){
 		$id = \Input::get('id');
+		$status = \Input::get('status');
+		$unselectable = false;
+		if($status == "1"){
+			$unselectable = true;
+		}
 		$channels = \DB::table('channels')->get();
 		$groups = \DB::table('groups')
 			->get();
@@ -135,6 +140,7 @@ class CustomerController extends \BaseController {
 									$ship_to_children[] = array(
 									'title' => $account->account_name,
 									'key' => $group->group_code.".".$area->area_code.".".$customer->customer_code.".".$ship_to->ship_to_code.".".$account->id,
+									'unselectable' => $unselectable,
 									);
 								}
 
@@ -149,12 +155,14 @@ class CustomerController extends \BaseController {
 								$customer_children[] = array(
 								'title' => $ship_to->ship_to_name,
 								'key' => $group->group_code.".".$area->area_code.".".$customer->customer_code.".".$ship_to->ship_to_code,
+								'unselectable' => $unselectable,
 								'children' => $ship_to_children
 								);
 							}else{
 								$customer_children[] = array(
 								'title' => $ship_to->ship_to_name,
 								'key' => $group->group_code.".".$area->area_code.".".$customer->customer_code.".".$ship_to->ship_to_code,
+								'unselectable' => $unselectable,
 								);
 							}
 						}
@@ -162,6 +170,7 @@ class CustomerController extends \BaseController {
 					$area_children[] = array(
 					'title' => $customer->customer_name,
 					'key' => $group->group_code.".".$area->area_code.".".$customer->customer_code,
+					'unselectable' => $unselectable,
 					'children' => $customer_children
 					);
 				}
@@ -170,6 +179,7 @@ class CustomerController extends \BaseController {
 					'title' => $area->area_name,
 					'isFolder' => true,
 					'key' => $group->group_code.".".$area->area_code,
+					'unselectable' => $unselectable,
 					'children' => $area_children
 					);
 			}
@@ -177,6 +187,7 @@ class CustomerController extends \BaseController {
 				'title' => $group->group_name,
 				'isFolder' => true,
 				'key' => $group->group_code,
+				'unselectable' => $unselectable,
 				'children' => $group_children
 				);
 		}

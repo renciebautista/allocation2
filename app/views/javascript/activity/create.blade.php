@@ -60,8 +60,8 @@ $('#implementation_date').datetimepicker({
 	pickTime: false,
 	calendarWeeks: true,
 	minDate: moment(),
-	daysOfWeekDisabled: [0, 6],
-	disabledDates: holidays()
+	//daysOfWeekDisabled: [0, 6],
+	//disabledDates: holidays()
 });
 
 $('#end_date').datetimepicker({

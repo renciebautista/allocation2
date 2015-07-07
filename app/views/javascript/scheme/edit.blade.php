@@ -28,8 +28,7 @@ $("#skus,#involve,#premuim").chosen({
 });
 
 
-$('#pr, #srp_p, #other_cost,#total_alloc,#new_alloc,#no_weeks,#lpat').inputNumber({ allowDecimals: true });
-
+$('#pr, #srp_p, #other_cost,#total_alloc,#lpat').inputNumber({ allowDecimals: true });
 
 $('#pr, #srp_p, #other_cost,#lpat').blur(function() {
 	var srp = accounting.unformat($('#srp_p').val()) || 0;
@@ -41,7 +40,13 @@ $('#pr, #srp_p, #other_cost,#lpat').blur(function() {
 	if(lpat == 0){
 		$('#cost_sale').val(0);
 	}else{
-		$('#cost_sale').val(accounting.formatNumber((ulp/lpat) * 100 ,2));
+		cost_sale = accounting.formatNumber((ulp/lpat) * 100 ,2);
+		if(((ulp/lpat) * 100) > 30){
+			$('#cost_sale').parent('div').addClass('has-error');
+		}else{
+			$('#cost_sale').parent('div').removeClass('has-error');
+		}
+		$('#cost_sale').val(cost_sale);
 	}
 	compute_budget();
 });
@@ -93,6 +98,47 @@ function checkDirty(target_id,callback) {
 	}
 };
 
+var non_ulp = false;
+
+$('#ulp_premium').on('change', function(){
+	var value = $(this).val();
+	if ( value.length > 0 ){
+		$('#premuim').prop('disabled', true).trigger("chosen:updated");
+		non_ulp = false;
+	}else{
+		$('#premuim').prop('disabled', false).trigger("chosen:updated");
+		non_ulp = true;
+	}
+
+	$('#premuim').val('').trigger('chosen:updated');
+
+	compute_budget();
+});
+
+$("#premuim").on('change', function (evt, params) {
+    var SelectedIds = $(this).find('option:selected').map(function () {
+        return $(this).val();
+    }).get();
+    
+    $('#ulp_premium').val("");
+    if ( SelectedIds != "0" ){
+		$('#ulp_premium').prop('disabled', true);
+		non_ulp = true;
+	}else{
+		$('#ulp_premium').prop('disabled', false);
+		non_ulp = false;
+	}
+
+	compute_budget();
+})
+
+if($("#ulp_premium").val().length !=0){
+	$('#ulp_premium').prop('disabled', false);
+	$('#premuim').prop('disabled', true).trigger("chosen:updated");	
+}else{
+	$('#premuim').prop('disabled', false).trigger("chosen:updated");
+	$('#ulp_premium').prop('disabled', true);
+}
 
 
 $('#total_alloc,#deals').blur(function() {
@@ -100,7 +146,7 @@ $('#total_alloc,#deals').blur(function() {
 });
 
 function compute_budget(){
-	var total_alloc = accounting.unformat($('#total_alloc').val()) || 0;
+		var total_alloc = accounting.unformat($('#total_alloc').val()) || 0;
 	var srp = accounting.unformat($('#srp_p').val()) || 0;
 	var others = accounting.unformat($('#other_cost').val()) || 0;
 	var deals = accounting.unformat($('#deals').val()) || 0;
@@ -123,10 +169,19 @@ function compute_budget(){
 
 		$('#tts_r').val(accounting.formatNumber(total_alloc*srp, 2, ",","."));
 	}
-	
-	$('#pe_r').val(accounting.formatNumber(total_alloc*others, 2, ",","."));
 
-	var tts_r = accounting.unformat($('#tts_r').val()) || 0;
+	var total_deals = accounting.unformat($('#total_deals').val()) || 0;
+	per = accounting.formatNumber(total_deals*others, 2, ",",".");
+	var tts_r = 0;
+	if(non_ulp){
+		non = accounting.formatNumber(srp * total_deals, 2, ",",".");
+		$('#pe_r').val(per+non);
+		tts_r = 0;
+	}else{
+		tts_r = accounting.unformat($('#tts_r').val()) || 0;
+		$('#pe_r').val(per);
+	}
+	
 	var pe_r = accounting.unformat($('#pe_r').val()) || 0;
 
 	$('#total_cost').val(accounting.formatNumber(tts_r+pe_r, 2, ",","."));

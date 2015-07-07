@@ -269,7 +269,7 @@
 							<div class="row">
 								<div class="col-lg-12">
 									{{ Form::label('background', 'Background and Rationale', array('class' => 'control-label')) }}
-									{{ Form::textarea('background',$activity->background,array('class' => 'form-control', 'placeholder' => 'Background and Rationale')) }}
+									{{ Form::textarea('background',$activity->background,array('class' => 'form-control', 'placeholder' => 'Background and Rationale' ,'readonly' => '')) }}
 								</div>
 							</div>
 						</div>
@@ -282,7 +282,7 @@
 							<div class="row">
 								<div class="col-lg-12">
 									{{ Form::label('instruction', 'Special Instruction', array('class' => 'control-label')) }}
-										{{ Form::textarea('instruction',$activity->instruction ,array('class' => 'form-control', 'placeholder' => 'Special Instruction')) }}
+										{{ Form::textarea('instruction',$activity->instruction ,array('class' => 'form-control', 'placeholder' => 'Special Instruction','readonly' => '')) }}
 								</div>
 							</div>
 						</div>
@@ -605,7 +605,7 @@
 										<div class="col-lg-12">
 											
 											{{ Form::label('billing_remarks', 'Billing Requirements', array('class' => 'control-label')) }}
-											{{ Form::textarea('billing_remarks',$activity->billing_remarks, array('class' => 'form-control', 'placeholder' => 'Billing Requirements' , 'size' => '50x5')) }}
+											{{ Form::textarea('billing_remarks',$activity->billing_remarks, array('class' => 'form-control', 'placeholder' => 'Billing Requirements' , 'size' => '50x5', 'readonly' => '')) }}
 										</div>
 									</div>
 								</div>
@@ -756,15 +756,6 @@
 		<div class="panel panel-default">
 		  	<div class="panel-heading">Product Information Sheet</div>
 		  	<div class="panel-body">
-		  		<div class="row">
-					<div class="col-lg-6">
-					  	<div class="form-group">
-					    	<a class="btn btn-success" target="_blank" href="{{ URL::action('ActivityController@pistemplate') }}">Download Template</a>		
-					  	</div>
-			  		</div>
-			  	</div>
-
-		  		<hr>
 		  		
 				<table class="table table-striped table-hover ">
 				  	<thead>
@@ -952,15 +943,10 @@ function getCustomer(){
 		url: "../../api/customerselected?id={{$activity->id}}",
 		success: function(data){
 			$.each(data, function(i, node) {
-				 $("#tree3").fancytree("getTree").getNodeByKey(node).setSelected(true);
-				// console.log(node);
-				$("#tree3").fancytree("getTree").visit(function(node){
-					///if(node.key == node.text){
-						///console.log(node);
-						//node.setSelected(true);
-					//}        
-				});
+				$("#tree3").fancytree("getTree").getNodeByKey(node).setSelected(true);
 			});
+
+
 		}
 	});
 }
@@ -1031,10 +1017,15 @@ $("a[href='#schemes']").on('shown.bs.tab', function(e) {
 <!-- activity details -->
 $('select#approver').multiselect({
 	maxHeight: 200,
-	includeSelectAllOption: true,
-	enableCaseInsensitiveFiltering: true,
-	enableFiltering: true
+	onDropdownShow: function(event) {
+        $('select#approver option').each(function() {
+          	var input = $('input[value="' + $(this).val() + '"]');
+          	input.prop('disabled', true);
+            input.parent('li').addClass('disabled');
+        });
+    }
 });
+
 
 function updatecategory(){
 	$.ajax({
@@ -1083,9 +1074,13 @@ if(parseInt(div) > 0) {
 
 $('select#division').multiselect({
 	maxHeight: 200,
-	includeSelectAllOption: true,
-	enableCaseInsensitiveFiltering: true,
-	enableFiltering: true,
+	onDropdownShow: function(event) {
+        $('select#division option').each(function() {
+          	var input = $('input[value="' + $(this).val() + '"]');
+          	input.prop('disabled', true);
+            input.parent('li').addClass('disabled');
+        });
+    },
 	onDropdownHide: function(event) {
 		updatecategory();
 	}
@@ -1094,9 +1089,13 @@ $('select#division').multiselect({
 
 $('select#category').multiselect({
 	maxHeight: 200,
-	includeSelectAllOption: true,
-	enableCaseInsensitiveFiltering: true,
-	enableFiltering: true,
+	onDropdownShow: function(event) {
+        $('select#category option').each(function() {
+          	var input = $('input[value="' + $(this).val() + '"]');
+          	input.prop('disabled', true);
+            input.parent('li').addClass('disabled');
+        });
+    },
 	onDropdownHide: function(event) {
 		updatebrand();
 	}
@@ -1104,9 +1103,13 @@ $('select#category').multiselect({
 
 $('select#brand').multiselect({
 	maxHeight: 200,
-	includeSelectAllOption: true,
-	enableCaseInsensitiveFiltering: true,
-	enableFiltering: true,
+	onDropdownShow: function(event) {
+        $('select#brand option').each(function() {
+          	var input = $('input[value="' + $(this).val() + '"]');
+          	input.prop('disabled', true);
+            input.parent('li').addClass('disabled');
+        });
+    },
 	onDropdownHide: function(event) {
 	}
 });
@@ -1114,9 +1117,13 @@ $('select#brand').multiselect({
 
 $('select#objective').multiselect({
 	maxHeight: 200,
-	includeSelectAllOption: true,
-	enableCaseInsensitiveFiltering: true,
-	enableFiltering: true
+	onDropdownShow: function(event) {
+        $('select#objective option').each(function() {
+          	var input = $('input[value="' + $(this).val() + '"]');
+          	input.prop('disabled', true);
+            input.parent('li').addClass('disabled');
+        });
+    }
 });
 
 <!-- Customer details -->
@@ -1135,25 +1142,15 @@ $("#tree3").fancytree({
 	checkbox: true,
 	selectMode: 3,
 	source: {
-		url: "../../api/customers?id={{$activity->id}}"
+		url: "../../api/customers?id={{$activity->id}}&status=2"
 	},
 	select: function(event, data) {
-		// Get a list of all selected nodes, and convert to a key array:
-		// var selKeys = $.map(data.tree.getSelectedNodes(), function(node){
-		//  return node.key;
-		// });
-		// $("#echoSelection3").text(selKeys.join(", "));
-
-
 		// Get a list of all selected TOP nodes
 		var selRootNodes = data.tree.getSelectedNodes(true);
 		// ... and convert to a key array:
 		var selRootKeys = $.map(selRootNodes, function(node){
 		  return node.key;
 		});
-
-		// $("#echoSelectionRootKeys3").text(selRootKeys.join("."));
-		// $("#echoSelectionRootKeys3").text(selRootKeys.join(", "));
 
 		var keys = selRootKeys.join(".").split(".");
 		// console.log(keys);
@@ -1165,10 +1162,8 @@ $("#tree3").fancytree({
 		        node.setSelected(false);
 		    });
 			$("#tree4").fancytree("disable");
-
 		}
-		$("#customers").val(selRootKeys.join(", "));
-	},
+	}
 });
 
 $("#tree4").fancytree({
@@ -1177,22 +1172,7 @@ $("#tree4").fancytree({
 	selectMode: 3,
 	source: {
 		url: "../../api/channels?id={{$activity->id}}"
-	},
-	select: function(event, data) {
-		// Get a list of all selected TOP nodes
-		var selRootNodes = data.tree.getSelectedNodes(true);
-		// ... and convert to a key array:
-		var selRootKeys = $.map(selRootNodes, function(node){
-		  return node.key;
-		});
-
-
-		var keys = selRootKeys.join(".").split(".");
-		$("#channels_involved").val(selRootKeys.join(", "));
-	},
-	click: function(event, data) {
-        $("#updateCustomer").addClass("dirty");
-    },
+	}
 });
 
 function updatechannel(){
