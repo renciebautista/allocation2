@@ -311,7 +311,7 @@ class SubmittedActivityController extends \BaseController {
 					$remarks .= "Barcodes / Case Codes Per Scheme : <i>".Input::get("activity_barcode") . "</i></br>";
 				}
 
-				if(Input::get("activity_alloc"))){
+				if(Input::get("activity_alloc") != ""){
 					$remarks .= "Allocations : <i>".Input::get("activity_alloc") . "</i></br>";
 				}
 				// echo $remarks;
