@@ -63,6 +63,7 @@ class NetworkController extends \BaseController {
 					$milestone->show = (Input::has('show')) ? true : false;
 					$milestone->save();
 					$depend_on = Input::get('depend_on');
+					
 					if($depend_on !== null){
 						foreach (Input::get('depend_on') as $parent) {
 							$depend_on = new ActivityNetworkDependent;
@@ -73,8 +74,7 @@ class NetworkController extends \BaseController {
 					}
 
 					// update task id
-					$milestones = ActivityTypeNetwork::where('activitytype_id', $id)
-						->get();
+					$milestones = ActivityTypeNetwork::where('activitytype_id', $id)->get();
 					if(!empty($milestones)){
 						foreach ($milestones as $key => $value) {
 							$ml = ActivityTypeNetwork::find($value->id);
@@ -82,6 +82,8 @@ class NetworkController extends \BaseController {
 							$ml->update();
 						}
 					}
+
+					
 				});
 				
 

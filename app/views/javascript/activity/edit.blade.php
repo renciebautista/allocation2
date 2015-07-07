@@ -140,6 +140,9 @@ $("a[href='#schemes']").on('shown.bs.tab', function(e) {
     $( $.fn.dataTable.tables( true ) ).DataTable().columns.adjust();
 });
 
+$("a[href='#timings']").on('shown.bs.tab', function(e) {
+    $('#activity_timings').bootstrapTable("refresh");
+});
 
 
 

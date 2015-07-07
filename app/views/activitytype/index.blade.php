@@ -33,7 +33,7 @@
 			<table class="table table-striped table-condensed table-hover table-bordered">
 				<thead>
 					<tr>
-						<th class="center">Activity Type Name</th>
+						<th class="center" style="width:55%;">Activity Type Name</th>
 						<th class="center">With Scheme</th>
 						<th class="center">Unit of Measurement</th>
 						<th colspan="3" style="text-align:center;">Action</th>

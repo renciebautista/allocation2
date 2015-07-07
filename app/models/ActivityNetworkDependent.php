@@ -21,6 +21,7 @@ class ActivityNetworkDependent extends \Eloquent {
 		$parents = self::select('activity_type_networks.task_id')
 			->where('child_id',$id)
 			->join('activity_type_networks', 'activity_network_dependents.parent_id', '=', 'activity_type_networks.id')
+			->orderBy('parent_id')
 			->get();
 		if(!empty($parents)){
 			foreach ($parents as $activity) {
@@ -31,11 +32,28 @@ class ActivityNetworkDependent extends \Eloquent {
 		return implode(",", $data);
 	}
 
+	public static function depend_on_array($id){
+		$data = array();
+		$parents = self::select('activity_type_networks.task_id')
+			->where('child_id',$id)
+			->join('activity_type_networks', 'activity_network_dependents.parent_id', '=', 'activity_type_networks.id')
+			->orderBy('parent_id')
+			->get();
+		if(!empty($parents)){
+			foreach ($parents as $activity) {
+				$data[] = $activity->task_id;
+			}
+		}
+
+		return $data;
+	}
+
 	public static function depend_on_task_array($id){
 		$data = array();
 		$parents = self::select('activity_type_networks.task_id','activity_network_dependents.parent_id')
 			->where('child_id',$id)
 			->join('activity_type_networks', 'activity_network_dependents.parent_id', '=', 'activity_type_networks.id')
+			->orderBy('parent_id')
 			->get();
 		if(!empty($parents)){
 			foreach ($parents as $activity) {

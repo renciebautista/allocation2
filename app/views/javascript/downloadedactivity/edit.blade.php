@@ -129,8 +129,16 @@ $('#updateActivity,#updateCustomer,#updateBilling').areYouSure();
 
 
 $("a[href='#customer']").on('shown.bs.tab', function(e) {
-   	$("#tree4").fancytree("disable");
+	$("#tree4").fancytree("disable");
     getCustomer();
+});
+
+$("a[href='#schemes']").on('shown.bs.tab', function(e) {
+    $( $.fn.dataTable.tables( true ) ).DataTable().columns.adjust();
+});
+
+$("a[href='#timings']").on('shown.bs.tab', function(e) {
+    $('#activity_timings').bootstrapTable("refresh");
 });
 
 
