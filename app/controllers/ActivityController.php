@@ -900,10 +900,105 @@ class ActivityController extends BaseController {
 						$arr['error'] = $validation['message'];
 					}else{
 						$status_id = (int) Input::get('submitstatus');
-						if($status_id == 4){
-							$comment_status = "SAVE AS DRAFT";
-							$class = "text-success";
+						$planner_count = ActivityPlanner::getPlannerCount($activity->id);
+						$activity_status = 3;
+						$pro_recall = 0;
+						$pmog_recall = 0;
+						$allow_comment = false;
+						$allow_update = false;
 
+						// save as draft
+						if($status_id == 4){
+							$comment_status = "SAVED AS DRAFT";
+							$class = "text-success";
+							$allow_comment = true;
+						}
+
+						// recall activity
+						if($status_id == 2){
+							$comment_status = "RECALLED ACTIVITY";
+							$class = "text-warning";
+							ActivityApprover::resetAll($activity->id);
+							$allow_update = true;
+							$allow_comment = true;
+						}
+
+						// submit activity
+						if($status_id == 1){
+							if(count($planner_count) > 0){
+								$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme','submission_deadline');
+							}else{
+								$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme','submission_deadline');
+							}
+
+							$validation = Activity::validForDownload($activity,$required_rules);
+
+							if($validation['status'] == 0){
+								$arr['success'] = 0;
+								$arr['error'] = $validation['message'];
+								$arr['success'] = 0;
+							}else{
+								$allow_update = true;
+								$allow_comment = true;
+								$pro_recall = 1;
+								$class = "text-success";
+								// check if there is a planner
+								if(count($planner_count) > 0){
+									$comment_status = "SUBMITTED TO PMOG PLANNER";
+									$activity_status = 4;
+								}else{
+									// check if there is GCOM Approver
+									$gcom_approvers = ActivityApprover::getApproverByRole($activity->id,'GCOM APPROVER');
+									if(count($gcom_approvers) > 0){
+										$comment_status = "SUBMITTED TO GCOM";
+										$activity_status = 5;
+
+										foreach ($gcom_approvers as $gcom_approver) {
+											$approver = ActivityApprover::find($gcom_approver->id);
+											$approver->show = 1;
+											$approver->update();
+										}
+									}else{
+										// check if there is CD OPS Approver
+										$cdops_approvers = ActivityApprover::getApproverByRole($activity->id,'CD OPS APPROVER');
+										if(count($cdops_approvers) > 0){
+											$comment_status = "SUBMITTED TO CD OPS";
+											$activity_status = 6;
+
+											foreach ($cdops_approvers as $cdops_approver) {
+												$approver = ActivityApprover::find($cdops_approver->id);
+												$approver->show = 1;
+												$approver->update();
+											}
+										}else{
+											// check if there is CMD DIRECTOR Approver
+											$cmd_approvers = ActivityApprover::getApproverByRole($activity->id,'CMD DIRECTOR');
+											if(count($cmd_approvers) > 0){
+												$comment_status = "SUBMITTED TO CMD";
+												$activity_status = 7;
+
+												foreach ($cmd_approvers as $cmd_approver) {
+													$approver = ActivityApprover::find($cmd_approver->id);
+													$approver->show = 1;
+													$approver->update();
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+
+						
+
+						if($allow_update){
+							$activity->status_id = $activity_status;
+							$activity->pro_recall = $pro_recall;
+							$activity->pmog_recall = $pmog_recall;
+							$activity->update();
+						}
+
+						if($allow_comment){
 							$comment = new ActivityComment;
 							$comment->created_by = Auth::id();
 							$comment->activity_id = $id;
@@ -911,111 +1006,124 @@ class ActivityController extends BaseController {
 							$comment->comment_status = $comment_status;
 							$comment->class = $class;
 							$comment->save();
-						}else{
 
-							$planner_count = ActivityPlanner::getPlannerCount($activity->id);
-							if(count($planner_count) > 0){
-								$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme','submission_deadline');
-							}else{
-								$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme','submission_deadline');
-							}
-							
-							$validation = Activity::validForDownload($activity,$required_rules);
-							
-							// recall
-
-							// submit
-
-							if($validation['status'] == 0){
-								$arr['success'] = 0;
-								$arr['error'] = $validation['message'];
-								$arr['success'] = 0;
-							}else{
-
-								$activity_status = 3;
-								$pro_recall = 0;
-								$pmog_recall = 0;
-								if($status_id == 1){
-									$pro_recall = 1;
-									// check if there is a planner
-									if(count($planner_count) > 0){
-										$comment_status = "SUBMITTED TO PMOG PLANNER";
-										$activity_status = 4;
-									}else{
-										// check if there is GCOM Approver
-										$gcom_approvers = ActivityApprover::getApproverByRole($activity->id,'GCOM APPROVER');
-										if(count($gcom_approvers) > 0){
-											$comment_status = "SUBMITTED TO GCOM";
-											$activity_status = 5;
-
-											foreach ($gcom_approvers as $gcom_approver) {
-												$approver = ActivityApprover::find($gcom_approver->id);
-												$approver->show = 1;
-												$approver->update();
-											}
-										}else{
-											// check if there is CD OPS Approver
-											$cdops_approvers = ActivityApprover::getApproverByRole($activity->id,'CD OPS APPROVER');
-											if(count($cdops_approvers) > 0){
-												$comment_status = "SUBMITTED TO CD OPS";
-												$activity_status = 6;
-
-												foreach ($cdops_approvers as $cdops_approver) {
-													$approver = ActivityApprover::find($cdops_approver->id);
-													$approver->show = 1;
-													$approver->update();
-												}
-											}else{
-												// check if there is CMD DIRECTOR Approver
-												$cmd_approvers = ActivityApprover::getApproverByRole($activity->id,'CMD DIRECTOR');
-												if(count($cmd_approvers) > 0){
-													$comment_status = "SUBMITTED TO CMD";
-													$activity_status = 7;
-
-													foreach ($cmd_approvers as $cmd_approver) {
-														$approver = ActivityApprover::find($cmd_approver->id);
-														$approver->show = 1;
-														$approver->update();
-													}
-												}
-											}
-										}
-									}
-									$class = "text-success";
-								}
-
-								if($status_id == 2){
-									$comment_status = "RECALLED ACTIVITY";
-									$class = "text-warning";
-									ActivityApprover::resetAll($activity->id);
-								}
-
-								$activity->status_id = $activity_status;
-								$activity->pro_recall = $pro_recall;
-								$activity->pmog_recall = $pmog_recall;
-								$activity->update();
-
-								$comment = new ActivityComment;
-								$comment->created_by = Auth::id();
-								$comment->activity_id = $id;
-								$comment->comment = Input::get('submitremarks');
-								$comment->comment_status = $comment_status;
-								$comment->class = $class;
-								$comment->save();
-
-								$arr['success'] = 1;
-								Session::flash('class', 'alert-success');
-								Session::flash('message', 'Activity successfully updated.');
-							}
+							$arr['success'] = 1;
+							Session::flash('class', 'alert-success');
+							Session::flash('message', 'Activity successfully updated.');
 						}
+						// if($status_id == 4){
+						// 	$comment_status = "SAVE AS DRAFT";
+						// 	$class = "text-success";
+
+						// 	$comment = new ActivityComment;
+						// 	$comment->created_by = Auth::id();
+						// 	$comment->activity_id = $id;
+						// 	$comment->comment = Input::get('submitremarks');
+						// 	$comment->comment_status = $comment_status;
+						// 	$comment->class = $class;
+						// 	$comment->save();
+						// }else{
+
+						// 	$planner_count = ActivityPlanner::getPlannerCount($activity->id);
+						// 	if(count($planner_count) > 0){
+						// 		$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme','submission_deadline');
+						// 	}else{
+						// 		$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme','submission_deadline');
+						// 	}
+							
+						// 	$validation = Activity::validForDownload($activity,$required_rules);
+							
+						// 	// recall
+
+						// 	// submit
+
+						// 	if($validation['status'] == 0){
+						// 		$arr['success'] = 0;
+						// 		$arr['error'] = $validation['message'];
+						// 		$arr['success'] = 0;
+						// 	}else{
+
+						// 		$activity_status = 3;
+						// 		$pro_recall = 0;
+						// 		$pmog_recall = 0;
+						// 		if($status_id == 1){
+						// 			$pro_recall = 1;
+						// 			// check if there is a planner
+						// 			if(count($planner_count) > 0){
+						// 				$comment_status = "SUBMITTED TO PMOG PLANNER";
+						// 				$activity_status = 4;
+						// 			}else{
+						// 				// check if there is GCOM Approver
+						// 				$gcom_approvers = ActivityApprover::getApproverByRole($activity->id,'GCOM APPROVER');
+						// 				if(count($gcom_approvers) > 0){
+						// 					$comment_status = "SUBMITTED TO GCOM";
+						// 					$activity_status = 5;
+
+						// 					foreach ($gcom_approvers as $gcom_approver) {
+						// 						$approver = ActivityApprover::find($gcom_approver->id);
+						// 						$approver->show = 1;
+						// 						$approver->update();
+						// 					}
+						// 				}else{
+						// 					// check if there is CD OPS Approver
+						// 					$cdops_approvers = ActivityApprover::getApproverByRole($activity->id,'CD OPS APPROVER');
+						// 					if(count($cdops_approvers) > 0){
+						// 						$comment_status = "SUBMITTED TO CD OPS";
+						// 						$activity_status = 6;
+
+						// 						foreach ($cdops_approvers as $cdops_approver) {
+						// 							$approver = ActivityApprover::find($cdops_approver->id);
+						// 							$approver->show = 1;
+						// 							$approver->update();
+						// 						}
+						// 					}else{
+						// 						// check if there is CMD DIRECTOR Approver
+						// 						$cmd_approvers = ActivityApprover::getApproverByRole($activity->id,'CMD DIRECTOR');
+						// 						if(count($cmd_approvers) > 0){
+						// 							$comment_status = "SUBMITTED TO CMD";
+						// 							$activity_status = 7;
+
+						// 							foreach ($cmd_approvers as $cmd_approver) {
+						// 								$approver = ActivityApprover::find($cmd_approver->id);
+						// 								$approver->show = 1;
+						// 								$approver->update();
+						// 							}
+						// 						}
+						// 					}
+						// 				}
+						// 			}
+						// 			$class = "text-success";
+						// 		}
+
+						// 		if($status_id == 2){
+						// 			$comment_status = "RECALLED ACTIVITY";
+						// 			$class = "text-warning";
+						// 			ActivityApprover::resetAll($activity->id);
+						// 		}
+
+						// 		$activity->status_id = $activity_status;
+						// 		$activity->pro_recall = $pro_recall;
+						// 		$activity->pmog_recall = $pmog_recall;
+						// 		$activity->update();
+
+						// 		$comment = new ActivityComment;
+						// 		$comment->created_by = Auth::id();
+						// 		$comment->activity_id = $id;
+						// 		$comment->comment = Input::get('submitremarks');
+						// 		$comment->comment_status = $comment_status;
+						// 		$comment->class = $class;
+						// 		$comment->save();
+
+						// 		$arr['success'] = 1;
+						// 		Session::flash('class', 'alert-success');
+						// 		Session::flash('message', 'Activity successfully updated.');
+						// 	}
+						// }
 						
 					}
 					return $arr;
 				});
 			}
-
-
-			
 			return json_encode($arr);
 		}
 

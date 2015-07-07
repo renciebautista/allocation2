@@ -49,7 +49,7 @@
 	      	</div>
 	      	<div class="modal-footer">
 	        	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-	        	<button class="btn btn-primary">Submit</button>	    
+	        	<button class="btn btn-primary" onclick="return confirm('Are you sure?')">Submit</button>	    
 	     	</div>
 	     	{{ Form::close() }}
 	    </div>

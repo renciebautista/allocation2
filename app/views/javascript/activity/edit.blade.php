@@ -408,11 +408,12 @@ $("#updateActivity").validate({
 		},
 
 	},
-	errorPlacement: function(error, element) {               
-		
+	errorPlacement: function(error, element) {    
+	
 	},
 	highlight: function( element, errorClass, validClass ) {
     	$(element).closest('div').addClass(errorClass).removeClass(validClass);
+    	
   	},
   	unhighlight: function( element, errorClass, validClass ) {
     	$(element).closest('div').removeClass(errorClass).addClass(validClass);
@@ -420,7 +421,8 @@ $("#updateActivity").validate({
   	invalidHandler: function(form, validator) {
         var errors = validator.numberOfInvalids();
         if (errors) {
-              $("html, body").animate({ scrollTop: 0 }, "fast");
+            $("html, body").animate({ scrollTop: 0 }, "fast");
+           
         }
     }
 });
@@ -500,6 +502,7 @@ $("#tree3").fancytree({
 		}
 		$("#customers").val(selRootKeys.join(", "));
 	},
+
 	click: function(event, data) {
         $("#updateCustomer").addClass("dirty");
     },
@@ -510,12 +513,14 @@ $("#btnCDeselectAll").click(function(){
   	$("#tree3").fancytree("getTree").visit(function(node){
     	node.setSelected(false);
   	});
+  	$("#updateCustomer").addClass("dirty");
   	return false;
 });
 $("#btnCSelectAll").click(function(){
   	$("#tree3").fancytree("getTree").visit(function(node){
     	node.setSelected(true);
   	});
+  	$("#updateCustomer").addClass("dirty");
   	return false;
 });
 
@@ -549,7 +554,7 @@ $("#btnChDeselectAll").click(function(){
 	    	node.setSelected(false);
 	  	});
 	}
-  	
+  	$("#updateCustomer").addClass("dirty");
   	return false;
 });
 $("#btnChSelectAll").click(function(){
@@ -558,7 +563,7 @@ $("#btnChSelectAll").click(function(){
 	    	node.setSelected(true);
 	  	});
 	}
-
+$("#updateCustomer").addClass("dirty");
   	
   	return false;
 });

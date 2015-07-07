@@ -1234,9 +1234,7 @@ $("#updateactivity").validate({
 	errorElement: "span", 
 	errorClass : "has-error",
 	rules: {
-		submitstatus: "is_natural_no_zero",
-		submitremarks: "required"
-
+		submitstatus: "is_natural_no_zero"
 	},
 	errorPlacement: function(error, element) {               
 		
