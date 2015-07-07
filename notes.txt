@@ -40,17 +40,7 @@ allow all day selecttion on start date after min date - done
 
 
 recall of activity and submit error on proponent and pmog - done
-
-
-validate pis on uploading
-fda and pis upload select files
-change select files to blue
-add color if blank grey add color if filledup input box
-force alloc multipler of sales min 0.01 max 1,000,000
-allow recall if submission deadline lapse on last submit
-check timings when edited and showed
-
-
+s
 Non ULP Premium SKU 
 	PE Requirement (Php) = PE Requirement (Php) + Cost of Premium (Php) X Total No. of Deals 
 	No TTS Requirement (Php) = 0
@@ -64,6 +54,14 @@ add comfirmation on approver - done
 pmog recall red on remarks still showing - done
 attachment lost when reloading pis - done when activity type is reset
 error on recall and submit activity  - done
+
+validate pis on uploading
+fda and pis upload select files
+change select files to blue
+add color if blank grey add color if filledup input box
+force alloc multipler of sales min 0.01 max 1,000,000
+allow recall if submission deadline lapse on last submit
+check timings when edited and showed
 list customers on read only
 
 DT-asdas-dsada

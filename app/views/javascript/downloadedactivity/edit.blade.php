@@ -200,7 +200,7 @@ $('select#activity_type').on("change",function(){
 $('#implementation_date').datetimepicker({
 	pickTime: false,
 	calendarWeeks: true,
-	minDate: moment(),
+	minDate: moment("{{date_format(date_create($activity->eimplementation_date),'m/d/Y')}}"),
 	//daysOfWeekDisabled: [0, 6],
 	//disabledDates: holidays()
 });
@@ -240,7 +240,7 @@ $("#implementation_date").on("dp.change",function (e) {
 			$('#lead_time').val(msg.days);
 			$('#implementation_date').val(msg.end_date);
 			$('#download_date').val(msg.start_date)
-			$('#implementation_date').data("DateTimePicker").setMinDate(moment(msg.min_date).format('MM/DD/YYYY'));
+			//$('#implementation_date').data("DateTimePicker").setMinDate(moment(msg.min_date).format('MM/DD/YYYY'));
 			getCycle(msg.end_date,{{$activity->id}});
 
 			$('#end_date').val(msg.end_date);
