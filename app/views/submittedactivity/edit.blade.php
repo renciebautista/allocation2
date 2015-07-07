@@ -22,10 +22,10 @@
 			<?php $read_only = true; ?>
 			@if(($approver->status_id == 0) && ($valid) && (strtotime($activity->cycle->submission_deadline) >= strtotime(date('Y-m-d'))))
 
-			<button type="submit" class="btn btn-success" name="action" value="approve">
+			<button type="submit" class="btn btn-success" name="action" value="approve" onclick="return confirm('Are you sure?')">
 			  	Approve
 			</button>
-			<button type="submit" class="btn btn-danger" name="action" value="deny">
+			<button type="submit" class="btn btn-danger" name="action" value="deny" onclick="return confirm('Are you sure?')">
 			  	Deny
 			</button>
 			<?php $read_only = false; ?>
