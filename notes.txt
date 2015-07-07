@@ -60,12 +60,13 @@ else
 	Non ULP Premium SKU 
 	reatinf formula
 
-add comfirmation on approver
-pmog recall red on remarks still showing
-attachment lost when reloading pis
-error on recall and submit activity 
+add comfirmation on approver - done
+pmog recall red on remarks still showing - done
+attachment lost when reloading pis - done when activity type is reset
+error on recall and submit activity  - done
 list customers on read only
 
 DT-asdas-dsada
 
 activity changed no update with are you sure
+ean13 check digit

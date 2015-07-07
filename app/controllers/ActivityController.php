@@ -610,6 +610,7 @@ class ActivityController extends BaseController {
 						if(!File::exists($path)) {
 							File::makeDirectory($path);
 						}
+
 						$path2 = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
 						if(!File::exists($path2)) {
 							File::makeDirectory($path2);
@@ -1041,7 +1042,7 @@ class ActivityController extends BaseController {
 						$pro_recall = 0;
 						$pmog_recall = 0;
 
-						
+
 						if($status == 1){
 							// check valdiation
 							$required_rules = array('budget','approver','cycle','activity','category','brand','objective','background','customer','scheme','fdapermit','artwork', 'material_source', 'submission_deadline');
@@ -1668,6 +1669,8 @@ class ActivityController extends BaseController {
 		} else{
 			$path = $activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
 			$upload = self::doupload_2($path);
+
+			
 
 			$docu = new ActivityFis;
 			$docu->created_by = Auth::id();

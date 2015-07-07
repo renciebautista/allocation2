@@ -102,12 +102,12 @@ var non_ulp = false;
 
 $('#ulp_premium').on('change', function(){
 	var value = $(this).val();
-	if ( value.length > 0 ){
+	if (value.length > 0 ){
 		$('#premuim').prop('disabled', true).trigger("chosen:updated");
-		non_ulp = false;
+		non_ulp = true;
 	}else{
 		$('#premuim').prop('disabled', false).trigger("chosen:updated");
-		non_ulp = true;
+		non_ulp = false;
 	}
 
 	$('#premuim').val('').trigger('chosen:updated');
@@ -121,11 +121,11 @@ $("#premuim").on('change', function (evt, params) {
     }).get();
     
     $('#ulp_premium').val("");
-    if ( SelectedIds != "0" ){
-		$('#ulp_premium').prop('disabled', true);
-		non_ulp = true;
+    if ( SelectedIds == "0" ){
+    	$('#ulp_premium').prop('disabled', false);
+		non_ulp = false;
 	}else{
-		$('#ulp_premium').prop('disabled', false);
+		$('#ulp_premium').prop('disabled', true);
 		non_ulp = false;
 	}
 
@@ -171,22 +171,19 @@ function compute_budget(){
 	}
 
 	var total_deals = accounting.unformat($('#total_deals').val()) || 0;
-	per = accounting.formatNumber(total_deals*others, 2, ",",".");
+	per = total_deals*others;
 	var tts_r = 0;
 
 	if(non_ulp){
-		non = accounting.formatNumber(srp * total_deals, 2, ",",".");
-		$('#pe_r').val(per+non);
+		non = srp * total_deals;
+		$('#pe_r').val(accounting.formatNumber(per+non, 2, ",","."));
 		tts_r = 0;
 		$('#tts_r').val(accounting.formatNumber(0, 2, ",","."));
 	}else{
 		tts_r = accounting.unformat($('#tts_r').val()) || 0;
-		$('#pe_r').val(per);
+		$('#pe_r').val(accounting.formatNumber(per, 2, ",","."));
 	}
 	
-	
-	
-
 	var pe_r = accounting.unformat($('#pe_r').val()) || 0;
 
 	$('#total_cost').val(accounting.formatNumber(tts_r+pe_r, 2, ",","."));

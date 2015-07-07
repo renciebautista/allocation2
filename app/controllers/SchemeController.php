@@ -110,12 +110,21 @@ class SchemeController extends \BaseController {
 					$scheme->total_cases = round($scheme->quantity/ $scheme->deals);
 				}
 				
-				
-				// $scheme->tts_r =  str_replace(",", "", Input::get('tts_r'));
-				$tts_r = $scheme->quantity * $scheme->deals * $srp_p;;
+				if(Input::get('ulp_premium') != ""){
+					$tts_r = 0;
+					$non = $srp_p * $scheme->total_deals;
+					$per = $scheme->total_deals * $scheme->other_cost;
+					$pe_r = $non+$per;
+				}else{
+					// $scheme->tts_r =  str_replace(",", "", Input::get('tts_r'));
+					$tts_r = $scheme->quantity * $scheme->deals * $srp_p;
+					
+					// $scheme->pe_r = str_replace(",", "", Input::get('pe_r'));
+					$pe_r = $scheme->total_deals * $other_cost;
+					
+				}
+
 				$scheme->tts_r =  $tts_r;
-				// $scheme->pe_r = str_replace(",", "", Input::get('pe_r'));
-				$pe_r = $scheme->total_deals * $other_cost;;
 				$scheme->pe_r = $pe_r;
 				// $scheme->total_cost = str_replace(",", "", Input::get('total_cost'));
 				$scheme->total_cost = $tts_r + $pe_r;
@@ -143,18 +152,59 @@ class SchemeController extends \BaseController {
 					$hosts[] = array('scheme_id' => $scheme->id, 'sap_code' => $sap_code);
 				}
 				SchemeHostSku::insert($hosts);
-
-				$premuim = array();
-				foreach (Input::get('premuim') as $sap_code){
-					$premuim[] = array('scheme_id' => $scheme->id, 'sap_code' => $sap_code);
+				if (Input::has('premuim')){
+					$premuim = array();
+					foreach (Input::get('premuim') as $sap_code){
+						$premuim[] = array('scheme_id' => $scheme->id, 'sap_code' => $sap_code);
+					}
+					SchemePremuimSku::insert($hosts);
 				}
-				SchemePremuimSku::insert($hosts);
+				
 
 				// create allocation
 				SchemeAllocRepository::insertAlllocation($scheme);
 
+				// $scheme2 = Scheme::find($scheme->id);
+				// $scheme2->final_alloc = SchemeAllocation::finalallocation($scheme->id);
+				// $scheme2->update();
+
+				// update final alloc
 				$scheme2 = Scheme::find($scheme->id);
-				$scheme2->final_alloc = SchemeAllocation::finalallocation($scheme->id);
+				$final_alloc = SchemeAllocation::finalallocation($scheme->id);
+				$total_cases = 0;
+				$total_deals = 0;
+				if($scheme->activity->activitytype->uom == 'CASES'){
+					$total_deals = $final_alloc * $scheme->deals;
+					$total_cases = $final_alloc;
+					$final_tts = $final_alloc * $scheme->deals * $scheme->srp_p; 
+				}else{
+					
+					if($final_alloc > 0){
+						$total_cases = round($final_alloc/$scheme->deals);
+						$total_deals = $final_alloc;
+					}
+					$final_tts = $final_alloc * $scheme->srp_p; 
+				}
+				
+				$final_pe = $total_deals *  $scheme->other_cost;
+				
+				$scheme2->final_alloc = $final_alloc;
+				$scheme2->final_total_deals = $total_deals;
+				$scheme2->final_total_cases = $total_cases;
+
+				$per = 0;
+				if(Input::get('ulp_premium') != ""){
+					$scheme2->final_tts_r = 0;
+					$non = $srp_p * $total_deals;
+					$per = $total_deals * $other_cost;
+					$scheme2->final_pe_r = $non+$per;
+				}else{
+					$scheme2->final_tts_r = $final_tts;
+					$scheme2->final_pe_r = $per;
+				}
+				
+				
+				$scheme2->final_total_cost = $scheme2->final_tts_r+$scheme2->final_pe_r;
 				$scheme2->update();
 
 				return $scheme->id;
@@ -424,14 +474,24 @@ class SchemeController extends \BaseController {
 					$scheme->total_cases = round($scheme->quantity/ $scheme->deals);
 				}
 				
-				// $scheme->tts_r =  str_replace(",", "", Input::get('tts_r'));
-				$tts_r = $scheme->quantity * $scheme->deals * $srp_p;;
+				if(Input::get('ulp_premium') != ""){
+					$tts_r = 0;
+					$non = $srp_p * $scheme->total_deals;
+					$per = $scheme->total_deals * $scheme->other_cost;
+					$pe_r = $non+$per;
+				}else{
+					// $scheme->tts_r =  str_replace(",", "", Input::get('tts_r'));
+					$tts_r = $scheme->quantity * $scheme->deals * $srp_p;
+					
+					// $scheme->pe_r = str_replace(",", "", Input::get('pe_r'));
+					$pe_r = $scheme->total_deals * $other_cost;
+					
+				}
 				$scheme->tts_r =  $tts_r;
-				// $scheme->pe_r = str_replace(",", "", Input::get('pe_r'));
-				$pe_r = $scheme->total_deals * $other_cost;;
 				$scheme->pe_r = $pe_r;
 				// $scheme->total_cost = str_replace(",", "", Input::get('total_cost'));
 				$scheme->total_cost = $tts_r + $pe_r;
+				
 
 				$scheme->final_total_deals = $scheme->total_deal;
 				$scheme->final_total_cases = $scheme->total_cases;
@@ -457,6 +517,7 @@ class SchemeController extends \BaseController {
 
 				$premuim = array();
 				SchemePremuimSku::where('scheme_id',$scheme->id)->delete();
+
 				if (Input::has('premuim'))
 				{
 				    foreach (Input::get('premuim') as $sap_code){
@@ -491,9 +552,20 @@ class SchemeController extends \BaseController {
 				$scheme2->final_alloc = $final_alloc;
 				$scheme2->final_total_deals = $total_deals;
 				$scheme2->final_total_cases = $total_cases;
-				$scheme2->final_tts_r = $final_tts;
-				$scheme2->final_pe_r = $final_pe;
-				$scheme2->final_total_cost = $final_tts+$final_pe;
+
+				$per = 0;
+				if(Input::get('ulp_premium') != ""){
+					$scheme2->final_tts_r = 0;
+					$non = $srp_p * $total_deals;
+					$per = $total_deals * $other_cost;
+					$scheme2->final_pe_r = $non+$per;
+				}else{
+					$scheme2->final_tts_r = $final_tts;
+					$scheme2->final_pe_r = $per;
+				}
+				
+				
+				$scheme2->final_total_cost = $scheme2->final_tts_r+$scheme2->final_pe_r;
 				$scheme2->update();
 
 				
