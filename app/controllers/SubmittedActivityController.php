@@ -101,7 +101,7 @@ class SubmittedActivityController extends \BaseController {
 		
 		// // Product Information Sheet
 		$path = '/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
-		if($pispermit)){
+		if($pispermit){
 			try {
 				$pis = Excel::selectSheets('Output')->load(storage_path().$path."/".$pispermit->hash_name)->get();
 			} catch (Exception $e) {
