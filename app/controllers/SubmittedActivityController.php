@@ -101,7 +101,7 @@ class SubmittedActivityController extends \BaseController {
 		
 		// // Product Information Sheet
 		$path = '/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
-		if(!empty($pispermit)){
+		if($pispermit)){
 			try {
 				$pis = Excel::selectSheets('Output')->load(storage_path().$path."/".$pispermit->hash_name)->get();
 			} catch (Exception $e) {
@@ -235,83 +235,83 @@ class SubmittedActivityController extends \BaseController {
 
 				$remarks = "";
 
-				if(!empty(Input::get("activity_type"))){
+				if(Input::get("activity_type") != ""){
 					$remarks .= "Activity Type : <i>".Input::get('activity_type') . "</i></br>";
 				}
 
-				if(!empty(Input::get("activity_title"))){
+				if(Input::get("activity_title") != ""){
 					$remarks .= "Activity Title : <i>".Input::get("activity_title") . "</i></br>";
 				}
 
-				if(!empty(Input::get("activity_background"))){
+				if(Input::get("activity_background") != ""){
 					$remarks .= "Background : <i>".Input::get("activity_background") . "</i></br>";
 				}
 
-				if(!empty(Input::get("activity_objective"))){
+				if(Input::get("activity_objective") != ""){
 					$remarks .= "Objectives : <i>".Input::get("activity_objective") . "</i></br>";
 				}
 
-				if(!empty(Input::get("activity_tts"))){
+				if(Input::get("activity_tts") != ""){
 					$remarks .= "Budget IO TTS : <i>".Input::get("activity_tts") . "</i></br>";
 				}
 
-				if(!empty(Input::get("activity_pe"))){
+				if(Input::get("activity_pe") != ""){
 					$remarks .= "Budget IO PE : <i>".Input::get("activity_pe") . "</i></br>";
 				}
 
-				if(!empty(Input::get("activity_skus"))){
+				if(Input::get("activity_skus") != ""){
 					$remarks .= "SKU/s Involved : <i>".Input::get("activity_skus") . "</i></br>";
 				}
 
-				if(!empty(Input::get("activity_area"))){
+				if(Input::get("activity_area") != ""){
 					$remarks .= "Area/s Involved : <i>".Input::get("activity_area") . "</i></br>";
 				}
 
-				if(!empty(Input::get("activity_channel"))){
+				if(Input::get("activity_channel") != ""){
 					$remarks .= "DT Channel/s Involved : <i>".Input::get("activity_channel") . "</i></br>";
 				}
 
-				if(!empty(Input::get("activity_scheme"))){
+				if(Input::get("activity_scheme") != ""){
 					$remarks .= "Schemes : <i>".Input::get("activity_scheme") . "</i></br>";
 				}
 
-				if(!empty(Input::get("activity_timing"))){
+				if(Input::get("activity_timing") != ""){
 					$remarks .= "Timings : <i>".Input::get("activity_timing") . "</i></br>";
 				}
 
-				if(!empty(Input::get("activity_material"))){
+				if(Input::get("activity_material") != ""){
 					$remarks .= "Material Sourcing : <i>".Input::get("activity_material") . "</i></br>";
 				}
 
-				if(!empty(Input::get("activity_fda"))){
+				if(Input::get("activity_fda") != ""){
 					$remarks .= "FDA Permit No. : <i>".Input::get("activity_fda") . "</i></br>";
 				}
 
-				if(!empty(Input::get("activity_billing"))){
+				if(Input::get("activity_billing") != ""){
 					$remarks .= "Billing Requirements : <i>".Input::get("activity_billing") . "</i></br>";
 				}
 
-				if(!empty(Input::get("activity_deadline"))){
+				if(Input::get("activity_deadline") != ""){
 					$remarks .= "Billing Deadline : <i>".Input::get("activity_deadline") . "</i></br>";
 				}
 
-				if(!empty(Input::get("activity_ins"))){
+				if(Input::get("activity_ins") != ""){
 					$remarks .= "Special Instructions : <i>".Input::get("activity_ins") . "</i></br>";
 				}
 
-				if(!empty(Input::get("activity_art"))){
+				if(Input::get("activity_art") != ""){
 					$remarks .= "Artworks : <i>".Input::get("activity_art") . "</i></br>";
 				}
 
-				if(!empty(Input::get("activity_fda_ac"))){
+				if(Input::get("activity_fda_ac") != ""){
 					$remarks .= "FDA Permit : <i>".Input::get("activity_fda_ac") . "</i></br>";
 				}
 
-				if(!empty(Input::get("activity_barcode"))){
+				if(Input::get("activity_barcode") != ""){
 					$remarks .= "Barcodes / Case Codes Per Scheme : <i>".Input::get("activity_barcode") . "</i></br>";
 				}
 
-				if(!empty(Input::get("activity_alloc"))){
+				if(Input::get("activity_alloc"))){
 					$remarks .= "Allocations : <i>".Input::get("activity_alloc") . "</i></br>";
 				}
 				// echo $remarks;
