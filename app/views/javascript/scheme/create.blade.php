@@ -117,6 +117,8 @@ function compute_budget(){
 		tts_r = accounting.unformat($('#tts_r').val()) || 0;
 		$('#pe_r').val(per);
 	}
+
+	console.log(non_ulp)
 	
 	var pe_r = accounting.unformat($('#pe_r').val()) || 0;
 

@@ -236,7 +236,6 @@ class SubmittedActivityController extends \BaseController {
 				$remarks = "";
 
 				if(!empty(Input::get("activity_type"))){
-					$activity_type = 
 					$remarks .= "Activity Type : <i>".Input::get('activity_type') . "</i></br>";
 				}
 

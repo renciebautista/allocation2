@@ -146,7 +146,7 @@ $('#total_alloc,#deals').blur(function() {
 });
 
 function compute_budget(){
-		var total_alloc = accounting.unformat($('#total_alloc').val()) || 0;
+	var total_alloc = accounting.unformat($('#total_alloc').val()) || 0;
 	var srp = accounting.unformat($('#srp_p').val()) || 0;
 	var others = accounting.unformat($('#other_cost').val()) || 0;
 	var deals = accounting.unformat($('#deals').val()) || 0;
@@ -173,15 +173,20 @@ function compute_budget(){
 	var total_deals = accounting.unformat($('#total_deals').val()) || 0;
 	per = accounting.formatNumber(total_deals*others, 2, ",",".");
 	var tts_r = 0;
+
 	if(non_ulp){
 		non = accounting.formatNumber(srp * total_deals, 2, ",",".");
 		$('#pe_r').val(per+non);
 		tts_r = 0;
+		$('#tts_r').val(accounting.formatNumber(0, 2, ",","."));
 	}else{
 		tts_r = accounting.unformat($('#tts_r').val()) || 0;
 		$('#pe_r').val(per);
 	}
 	
+	
+	
+
 	var pe_r = accounting.unformat($('#pe_r').val()) || 0;
 
 	$('#total_cost').val(accounting.formatNumber(tts_r+pe_r, 2, ",","."));
