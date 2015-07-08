@@ -28,7 +28,7 @@ return array(
 	|
 	*/
 
-	'host' => 'mail.chasetech.com',
+	'host' => $_ENV['MAIL_HOST'],
 
 	/*
 	|--------------------------------------------------------------------------
@@ -54,7 +54,7 @@ return array(
 	|
 	*/
 
-	'from' => array('address' => "test@chasetech.com", 'name' => "ETOP"),
+	'from' => array('address' => $_ENV['MAIL_ADDRESS'], 'name' => "ETOP"),
 
 	/*
 	|--------------------------------------------------------------------------
@@ -80,7 +80,7 @@ return array(
 	|
 	*/
 
-	'username' => "test@chasetech.com",
+	'username' => $_ENV['MAIL_USERNAME'],
 
 	/*
 	|--------------------------------------------------------------------------
@@ -93,7 +93,7 @@ return array(
 	|
 	*/
 
-	'password' => "testmail",
+	'password' => $_ENV['MAIL_PASSWORD'],
 
 	/*
 	|--------------------------------------------------------------------------
