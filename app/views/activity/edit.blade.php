@@ -369,44 +369,35 @@
 									<div class="form-group">
 										<div class="checkbox">
 									        <label>
-									        	{{ Form::checkbox('allow_force', 1,$activity->allow_force) }} Enable Force Allocation
+									        	{{ Form::checkbox('allow_force', 1,$activity->allow_force,['id' => 'allow_force']) }} Enable Force Allocation
 									        </label>
 									    </div>
 									</div>
 								</div>
 							</div>
-							<br>
-							@if($activity->allow_force)
-							<hr>
-
 							<div class="row">
 								<div  class="col-lg-12">
 									<caption>Force Allocation</caption>
-									<table id="force_alloc" class="table table-striped table-hover ">
+									<table id="force_alloc" class="table table-striped table-condensed table-hover table-bordered">
 									  	<thead>
 										    <tr>
-										    	<th>Group</th>
+										    	<th style="width:10%;">Group</th>
 										      	<th>Area</th>
-										      	<th class="multiplier">Force Percentage</th>
-								      			<th class="action">Action</th>
+										      	<th>Sales Multiplier</th>
 										    </tr>
 									  	</thead>
 									  	<tbody>
-									  		@foreach($force_allocs as $force)
-									  		<tr data-link="{{ $force->id }}">
-									  			<td>{{ $force->group_name }}</td>
-									  			<td>{{ $force->area_name }}</td>
-								  				<td class="multiplier">{{ $force->multi }}</td>
-									  			<td class="action">
-									  				<button class="btn btn-primary btn-xs">Update</button>
-									  			</td>
+									  		@foreach($areas as $area)
+									  		<tr>
+									  			<td>{{ $area->group_name }}</td>
+									  			<td>{{ $area->area_name }}</td>
+								  				<td><input class="input-number" id="{{ $area->area_code }}"  name="force_alloc[{{ $area->area_code }}]" value="{{ $area->multi }}" type="text"></td>
 									  		</tr>
 									  		@endforeach
 									  	</tbody>
 									</table> 
 								</div>
 						  	</div>
-						  	@endif
 							
 						</div>
 					</div>
@@ -1029,41 +1020,6 @@
 		<br>
 	</div>
 
-	<!-- Modal -->
-	<div class="modal fade" id="myForceAlloc" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</button>
-					<h4 class="modal-title" id="myModalLabel">Force Allocation</h4>
-				</div>
-				{{ Form::open(array('action' => array('ActivityController@updateforcealloc'), 'method' => 'PUT', 'class' => 'bs-component','id' => 'updateforcealloc')) }}
-				{{ Form::hidden('f_id', '', array('id' => 'f_id')) }}
-				<div class="modal-body">
-					<table id="forcealloc" class="table table-bordered">
-						<tbody>
-							<tr>
-								<td>Area</td>
-								<td field="area_name">
-								</td>
-							</tr>
-							<tr>
-								<td>Force Allocation (percentage)</td>
-								<td>
-									<input class="form-control" placeholder="Force Allocation (percentage)" name="f_percent" type="text" value="" id="f_percent">
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-					<button class="btn btn-primary">Update</button>
-				</div>
-				{{ Form::close() }}
-			</div>
-		</div>
-	</div>
 </div>
 
 @include('javascript.activity.edit')

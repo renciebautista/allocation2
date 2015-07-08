@@ -17,5 +17,8 @@ class Area extends \Eloquent {
 		});
 	}
 
+	public static function getAreaWithGroup(){
+		return self::join('groups','groups.group_code','=','areas.group_code')->get();
+	}
 	
 }

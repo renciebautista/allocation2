@@ -305,18 +305,12 @@ class ActivityController extends BaseController {
 			$sel_approver = ActivityApprover::getList($activity->id);
 			$sel_objectives = ActivityObjective::getList($activity->id);
 			$sel_divisions = ActivityDivision::getList($activity->id);
-			// $sel_channels = ActivityChannel::getList($activity->id);
-			// Helper::print_array($sel_channels);
 			$approvers = User::getApprovers(['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']);
-			// $channels = Channel::getList();
 			$objectives = Objective::getLists();
 			$budgets = ActivityBudget::getBudgets($activity->id);
 			$nobudgets = ActivityNobudget::getBudgets($activity->id);
 			$schemes = Scheme::getList($activity->id);
 			$scheme_summary = Scheme::getSummary($schemes);
-			// $scheme_customers = SchemeAllocation::getCustomers($activity->id);
-			$force_allocs = ForceAllocation::getlist($activity->id);
-			// $scheme_allcations = SchemeAllocation::getAllocation($activity->id);
 			$materials = ActivityMaterial::getList($activity->id);
 			// attachments
 			$fdapermits = ActivityFdapermit::getList($activity->id);
@@ -327,6 +321,17 @@ class ActivityController extends BaseController {
 			// comments
 			$comments = ActivityComment::getList($activity->id);
 
+			$force_allocs = ForceAllocation::getlist($activity->id);
+			$areas = Area::getAreaWithGroup();
+			foreach ($areas as $key => $area) {
+				$area->multi = "1.00";
+				foreach ($force_allocs as $force_alloc) {
+					if($area->area_code == $force_alloc->area_code){
+						$area->multi = $force_alloc->multi;
+					}
+				}
+			}
+			// Helper::print_r($areas);
 			if($activity->status_id < 4){
 				$submitstatus = array('1' => 'SUBMIT ACTIVITY','4' => 'SAVE AS DRAFT');
 				$scope_types = ScopeType::getLists($activity->id);
@@ -337,7 +342,7 @@ class ActivityController extends BaseController {
 
 				return View::make('activity.edit', compact('activity', 'scope_types', 'planners', 'approvers', 'cycles',
 				 'activity_types', 'divisions' , 'sel_divisions','objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
-				 'sel_objectives',  'schemes', 'scheme_summary', 'networks',
+				 'sel_objectives',  'schemes', 'scheme_summary', 'networks', 'areas',
 				 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings',
 				 'force_allocs', 'comments' ,'submitstatus'));
 			}
@@ -351,7 +356,7 @@ class ActivityController extends BaseController {
 				return View::make('shared.activity_readonly', compact('activity', 'sel_planner', 'approvers', 
 				 'sel_divisions','divisions',
 				 'objectives',  'users', 'budgets', 'nobudgets','sel_approver',
-				 'sel_objectives',  'schemes', 'scheme_summary', 'networks',
+				 'sel_objectives',  'schemes', 'scheme_summary', 'networks','areas',
 				 'scheme_customers', 'scheme_allcations', 'materials', 'force_allocs',
 				 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings', 'comments' ,'submitstatus', 'route', 'recall', 'submit_action'));
 			}
@@ -375,10 +380,7 @@ class ActivityController extends BaseController {
 			$nobudgets = ActivityNobudget::getBudgets($activity->id);
 			$schemes = Scheme::getList($activity->id);
 			$scheme_summary = Scheme::getSummary($schemes);
-			// $scheme_customers = SchemeAllocation::getCustomers($activity->id);
-			$force_allocs = ForceAllocation::getlist($activity->id);
-			// $scheme_customers = SchemeAllocation::getCustomers($activity->id);
-			// $scheme_allcations = SchemeAllocation::getAllocation($activity->id);
+
 			$materials = ActivityMaterial::getList($activity->id);
 			// attachments
 			$fdapermits = ActivityFdapermit::getList($activity->id);
@@ -388,6 +390,17 @@ class ActivityController extends BaseController {
 			$bandings = ActivityBanding::getList($activity->id);
 			// comments
 			$comments = ActivityComment::getList($activity->id);
+
+			$force_allocs = ForceAllocation::getlist($activity->id);
+			$areas = Area::getAreaWithGroup();
+			foreach ($areas as $key => $area) {
+				$area->multi = "1.00";
+				foreach ($force_allocs as $force_alloc) {
+					if($area->area_code == $force_alloc->area_code){
+						$area->multi = $force_alloc->multi;
+					}
+				}
+			}
 
 			if($activity->status_id == 4){
 				$submitstatus = array('1' => 'SUBMIT ACTIVITY','2' => 'DENY ACTIVITY');
@@ -399,7 +412,7 @@ class ActivityController extends BaseController {
 
 				return View::make('downloadedactivity.edit', compact('activity', 'scope_types', 'planners', 'approvers', 'cycles',
 				 'activity_types', 'sel_divisions','divisions' , 'objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
-				 'sel_objectives',  'schemes', 'scheme_summary', 'networks',
+				 'sel_objectives',  'schemes', 'scheme_summary', 'networks', 'areas',
 				 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings',
 				 'force_allocs','submitstatus', 'comments'));
 			}else{
@@ -410,7 +423,7 @@ class ActivityController extends BaseController {
 				$submit_action = 'ActivityController@submittogcm';
 				return View::make('shared.activity_readonly', compact('activity', 'sel_planner', 'approvers', 'sel_divisions','divisions' ,
 				 'objectives',  'users', 'budgets', 'nobudgets','sel_approver',
-				 'sel_objectives',  'schemes', 'scheme_summary', 'networks',
+				 'sel_objectives',  'schemes', 'scheme_summary', 'networks', 'areas',
 				 'scheme_customers', 'scheme_allcations', 'materials', 'force_allocs',
 				 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings', 'comments' ,'submitstatus', 'route', 'recall', 'submit_action'));
 			}
@@ -1290,11 +1303,14 @@ class ActivityController extends BaseController {
 
 	public function updatecustomer($id){
 		if(Request::ajax()){
-			$activity = Activity::find($id);
+			$activity = Activity::findOrFail($id);
 			if(empty($activity)){
 				$arr['success'] = 0;
 			}else{
-				DB::transaction(function() use ($id,$activity)  {
+				DB::beginTransaction();
+
+				try {
+
 					$_customers = Input::get('customers');
 					ActivityCustomer::where('activity_id',$id)->delete();
 
@@ -1302,34 +1318,25 @@ class ActivityController extends BaseController {
 					$activity->allow_force = $enable_force;
 					$activity->update();
 					if(!empty($_customers)){
+
 						$customers = explode(",", $_customers);
 						if(!empty($customers)){
 							$activity_customers = array();
-							$area_list = array();
+						
 							foreach ($customers as $customer_node){
 								$activity_customers[] = array('activity_id' => $id, 'customer_node' => trim($customer_node));
-								// add area
-								if($enable_force){
-									$_selected_customer = explode(".", trim($customer_node));
-
-									if(count($_selected_customer) < 2){
-										$areas = Area::where('group_code',$_selected_customer[0])->get();
-										foreach ($areas as $area) {
-											$area_list[$area->area_code] = array('activity_id' => $id, 'area_code' => $area->area_code);
-										}
-									}else{
-										if(!empty($_selected_customer[1])){
-											$area_list[$_selected_customer[1]] = array('activity_id' => $id, 'area_code' => $_selected_customer[1]);
-										}
-									}
-								}
-								
-							}
-							ForceAllocation::where('activity_id',$id)->delete();
-							if($enable_force){
-								ForceAllocation::insert($area_list);
 							}
 							ActivityCustomer::insert($activity_customers);
+
+							ForceAllocation::where('activity_id',$id)->delete();
+							if($enable_force){
+								$area_list = array();
+								foreach (Input::get('force_alloc') as $key => $value) {
+									$area_list[] = array('activity_id' => $id, 'area_code' => $key, 'multi' => $value);
+								}
+								ForceAllocation::insert($area_list);
+							}
+							
 						}
 					}else{
 						ForceAllocation::where('activity_id',$id)->delete();
@@ -1399,10 +1406,18 @@ class ActivityController extends BaseController {
 					// 	}
 					// }
 					// end update
-
-				});
-
-				$arr['success'] = 1;
+					DB::commit();
+					$arr['success'] = 1;
+					Session::flash('class', 'alert-success');
+					Session::flash('message', 'Activity customer successfully updated.');
+				} catch (Exception $e) {
+					DB::rollback();
+					$arr['success'] = 0;
+					Session::flash('class', 'alert-danger');
+					Session::flash('message', 'An error occcured while updating activity customers.');
+				}
+				
+				
 			}
 			
 			$arr['id'] = $id;

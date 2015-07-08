@@ -30,34 +30,25 @@
 		</div>
 
 		<div class="form-group">
-			{{ Form::label('vetting_deadline', 'Vetting Deadline', array('class' => 'control-label')) }}
-			{{ Form::text('vetting_deadline','',array('class' => 'form-control', 'placeholder' => 'Vetting Deadline')) }}
+			{{ Form::label('submission_deadline', 'Circular Submission Deadline', array('class' => 'control-label')) }}
+			{{ Form::text('submission_deadline','',array('class' => 'form-control', 'placeholder' => 'Circular Submission Deadline')) }}
 		</div>
 
 		<div class="form-group">
-			{{ Form::label('replyback_deadline', 'Replyback Deadline', array('class' => 'control-label')) }}
-			{{ Form::text('replyback_deadline','',array('class' => 'form-control', 'placeholder' => 'Replyback Deadline')) }}
+			{{ Form::label('approval_deadline', 'Approval Deadline', array('class' => 'control-label')) }}
+			{{ Form::text('approval_deadline','',array('class' => 'form-control', 'placeholder' => 'Approval Deadline')) }}
+		</div>
+		
+		<div class="form-group">
+			{{ Form::label('pdf_deadline', 'PDF and Attachment Creation Date', array('class' => 'control-label')) }}
+			{{ Form::text('pdf_deadline','',array('class' => 'form-control', 'placeholder' => 'PDF and Attachment Creation Date')) }}
 		</div>
 
 		<div class="form-group">
-			{{ Form::label('submission_deadline', 'Regular Approval/Circular Submission Deadline', array('class' => 'control-label')) }}
-			{{ Form::text('submission_deadline','',array('class' => 'form-control', 'placeholder' => 'Regular Approval/Circular Submission Deadline')) }}
+			{{ Form::label('release_date', 'Release Date', array('class' => 'control-label')) }}
+			{{ Form::text('release_date','',array('class' => 'form-control', 'placeholder' => 'Release Date')) }}
 		</div>
 
-		<div class="form-group">
-			{{ Form::label('release_date', 'Regular Release Date', array('class' => 'control-label')) }}
-			{{ Form::text('release_date','',array('class' => 'form-control', 'placeholder' => 'Regular Release Date')) }}
-		</div>
-
-		<div class="form-group">
-			{{ Form::label('emergency_deadline', 'Emergency Approval/Circular Submission Deadline', array('class' => 'control-label')) }}
-			{{ Form::text('emergency_deadline','',array('class' => 'form-control', 'placeholder' => 'Emergency Approval/Circular Submission Deadline')) }}
-		</div>
-
-		<div class="form-group">
-			{{ Form::label('emergency_release_date', 'Emergency Release Deadline', array('class' => 'control-label')) }}
-			{{ Form::text('emergency_release_date','',array('class' => 'form-control', 'placeholder' => 'Emergency Release Deadline')) }}
-		</div>
 
 		<div class="form-group">
 			{{ Form::label('implemintation_date', 'Implementation Date', array('class' => 'control-label')) }}

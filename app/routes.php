@@ -21,6 +21,132 @@ Route::get("test", function(){
 	}
 });
 
+Route::get("subdeadline", function(){
+	$proponents = User::GetPlanners(['PROPONENT']);
+	$cycles = Cycle::getBySubmissionDeadline();
+});
+
+Route::get("preapdeadline", function(){
+	$proponents = User::GetPlanners(['PROPONENT']);
+	$approvers = User::GetPlanners(['PMOG PLANNER', 'GCOM APPROVER', 'CD OPS APPROVER', 'CMD DIRECTOR']);
+	$cycles = Cycle::getByPreApDeadline();
+
+	foreach ($proponents as $proponent) {
+		$data['user'] = $proponent->getFullname();
+		$data['activities'] = Activity::ProponentActivitiesForApproval($proponent->user_id,$cycles);
+		$data['email'] = $proponent->email;
+		$data['fullname'] = $proponent->getFullname();
+		Mail::send('emails.preapdeadline', $data, function($message)  use ($data) {
+			$message->to($data['email'], $data['fullname'])->subject('ACTIVITIES STILL NOT APPROVED');
+		});
+	}
+
+	foreach ($approvers as $approver) {
+		if($approver->role_id == 3){
+			$data['user'] = $approver->getFullname();
+			$data['activities'] = Activity::PmogActivitiesForApproval($approver->user_id,$cycles);
+			$data['email'] = $approver->email;
+			$data['fullname'] = $approver->getFullname();
+			Mail::send('emails.preapdeadline_4', $data, function($message)  use ($data) {
+				$message->to($data['email'], $data['fullname'])->subject('ACTIVITIES FOR APPROVAL');
+			});
+		}
+		if($approver->role_id == 4){
+			$status_id =5;
+			$data['user'] = $approver->getFullname();
+			$data['activities'] = Activity::ApproverActivitiesForApproval($approver->user_id,$cycles,$status_id);
+			$data['email'] = $approver->email;
+			$data['fullname'] = $approver->getFullname();
+			Mail::send('emails.preapdeadline_5', $data, function($message)  use ($data) {
+				$message->to($data['email'], $data['fullname'])->subject('ACTIVITIES FOR APPROVAL');
+			});
+		}
+		if($approver->role_id == 5){
+			$status_id = 6;
+			$data['user'] = $approver->getFullname();
+			$data['activities'] = Activity::ApproverActivitiesForApproval($approver->user_id,$cycles,$status_id);
+			$data['email'] = $approver->email;
+			$data['fullname'] = $approver->getFullname();
+			Mail::send('emails.preapdeadline_6', $data, function($message)  use ($data) {
+				$message->to($data['email'], $data['fullname'])->subject('ACTIVITIES FOR APPROVAL');
+			});
+		}
+		if($approver->role_id == 6){
+			$status_id = 7;
+			$data['user'] = $approver->getFullname();
+			$data['activities'] = Activity::ApproverActivitiesForApproval($approver->user_id,$cycles,$status_id);
+			$data['email'] = $approver->email;
+			$data['fullname'] = $approver->getFullname();
+			Mail::send('emails.preapdeadline_7', $data, function($message)  use ($data) {
+				$message->to($data['email'], $data['fullname'])->subject('ACTIVITIES FOR APPROVAL');
+			});
+		}
+		
+	}
+	
+});
+
+
+Route::get("postapdeadline", function(){
+	$proponents = User::GetPlanners(['PROPONENT']);
+	$approvers = User::GetPlanners(['PMOG PLANNER', 'GCOM APPROVER', 'CD OPS APPROVER', 'CMD DIRECTOR']);
+	$cycles = Cycle::getByPostApDeadline();
+
+	foreach ($proponents as $proponent) {
+		$data['user'] = $proponent->getFullname();
+		$data['activities'] = Activity::ProponentActivitiesForApproval($proponent->user_id,$cycles);
+		$data['email'] = $proponent->email;
+		$data['fullname'] = $proponent->getFullname();
+		Mail::send('emails.preapdeadline', $data, function($message)  use ($data) {
+			$message->to($data['email'], $data['fullname'])->subject('ACTIVITIES STILL NOT APPROVED');
+		});
+	}
+
+	foreach ($approvers as $approver) {
+		if($approver->role_id == 3){
+			$data['user'] = $approver->getFullname();
+			$data['activities'] = Activity::PmogActivitiesForApproval($approver->user_id,$cycles);
+			$data['email'] = $approver->email;
+			$data['fullname'] = $approver->getFullname();
+			Mail::send('emails.preapdeadline_4', $data, function($message)  use ($data) {
+				$message->to($data['email'], $data['fullname'])->subject('ACTIVITIES FOR APPROVAL');
+			});
+		}
+		if($approver->role_id == 4){
+			$status_id =5;
+			$data['user'] = $approver->getFullname();
+			$data['activities'] = Activity::ApproverActivitiesForApproval($approver->user_id,$cycles,$status_id);
+			$data['email'] = $approver->email;
+			$data['fullname'] = $approver->getFullname();
+			Mail::send('emails.preapdeadline_5', $data, function($message)  use ($data) {
+				$message->to($data['email'], $data['fullname'])->subject('ACTIVITIES FOR APPROVAL');
+			});
+		}
+		if($approver->role_id == 5){
+			$status_id = 6;
+			$data['user'] = $approver->getFullname();
+			$data['activities'] = Activity::ApproverActivitiesForApproval($approver->user_id,$cycles,$status_id);
+			$data['email'] = $approver->email;
+			$data['fullname'] = $approver->getFullname();
+			Mail::send('emails.preapdeadline_6', $data, function($message)  use ($data) {
+				$message->to($data['email'], $data['fullname'])->subject('ACTIVITIES FOR APPROVAL');
+			});
+		}
+		if($approver->role_id == 6){
+			$status_id = 7;
+			$data['user'] = $approver->getFullname();
+			$data['activities'] = Activity::ApproverActivitiesForApproval($approver->user_id,$cycles,$status_id);
+			$data['email'] = $approver->email;
+			$data['fullname'] = $approver->getFullname();
+			Mail::send('emails.preapdeadline_7', $data, function($message)  use ($data) {
+				$message->to($data['email'], $data['fullname'])->subject('ACTIVITIES FOR APPROVAL');
+			});
+		}
+		
+	}
+	
+});
+
 Route::get("mails", function(){
 
 	// send list of pending approval per day planner
@@ -36,26 +162,26 @@ Route::get("mails", function(){
 	// }
 	
 	// send list of pending approval per day approver
-	$approvers = User::GetPlanners(['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']);
-	foreach ($approvers as $approver) {
-		$data['user'] = $approver->getFullname();
-		if($approver->role_id == 4){
-			$status_id = 5;
-		}
-		if($approver->role_id == 5){
-			$status_id = 6;
-		}
-		if($approver->role_id == 6){
-			$status_id = 7;
-		}
-		$data['activities'] = Activity::ApproverForApproval($approver->user_id,$status_id);
-		$data['email'] = $approver->email;
-		$data['fullname'] = $approver->getFullname();
-		Mail::send('emails.forapproval', $data, function($message)  use ($data) {
-			$message->to($data['email'], $data['fullname'])->subject('For Approval Activities (test mail) - Do Not Reply');
-		});
-		// return View::make('emails.forapproval',$data);
-	}
+	// $approvers = User::GetPlanners(['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']);
+	// foreach ($approvers as $approver) {
+	// 	$data['user'] = $approver->getFullname();
+	// 	if($approver->role_id == 4){
+	// 		$status_id = 5;
+	// 	}
+	// 	if($approver->role_id == 5){
+	// 		$status_id = 6;
+	// 	}
+	// 	if($approver->role_id == 6){
+	// 		$status_id = 7;
+	// 	}
+	// 	$data['activities'] = Activity::ApproverForApproval($approver->user_id,$status_id);
+	// 	$data['email'] = $approver->email;
+	// 	$data['fullname'] = $approver->getFullname();
+	// 	Mail::send('emails.forapproval', $data, function($message)  use ($data) {
+	// 		$message->to($data['email'], $data['fullname'])->subject('For Approval Activities (test mail) - Do Not Reply');
+	// 	});
+	// 	// return View::make('emails.forapproval',$data);
+	// }
 });
 
 Route::get('queue/send', function(){

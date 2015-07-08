@@ -30,33 +30,23 @@
 		</div>
 
 		<div class="form-group">
-			{{ Form::label('vetting_deadline', 'Vetting Deadline', array('class' => 'control-label')) }}
-			{{ Form::text('vetting_deadline', date_format(date_create($cycle->vetting_deadline),'m/d/Y'), array('class' => 'form-control', 'placeholder' => 'Vetting Deadline')) }}
+			{{ Form::label('submission_deadline', 'Circular Submission Deadline', array('class' => 'control-label')) }}
+			{{ Form::text('submission_deadline', date_format(date_create($cycle->submission_deadline),'m/d/Y'),array('class' => 'form-control', 'placeholder' => 'Circular Submission Deadline')) }}
 		</div>
 
 		<div class="form-group">
-			{{ Form::label('replyback_deadline', 'Replyback Deadline', array('class' => 'control-label')) }}
-			{{ Form::text('replyback_deadline', date_format(date_create($cycle->replyback_deadline),'m/d/Y'), array('class' => 'form-control', 'placeholder' => 'Replyback Deadline')) }}
+			{{ Form::label('approval_deadline', 'Approval Deadline', array('class' => 'control-label')) }}
+			{{ Form::text('approval_deadline', date_format(date_create($cycle->approval_deadline),'m/d/Y'),array('class' => 'form-control', 'placeholder' => 'Approval Deadline')) }}
+		</div>
+		
+		<div class="form-group">
+			{{ Form::label('pdf_deadline', 'PDF and Attachment Creation Date', array('class' => 'control-label')) }}
+			{{ Form::text('pdf_deadline', date_format(date_create($cycle->pdf_deadline),'m/d/Y'),array('class' => 'form-control', 'placeholder' => 'PDF and Attachment Creation Date')) }}
 		</div>
 
 		<div class="form-group">
-			{{ Form::label('submission_deadline', 'Regular Approval/Circular Submission Deadline', array('class' => 'control-label')) }}
-			{{ Form::text('submission_deadline', date_format(date_create($cycle->submission_deadline),'m/d/Y'), array('class' => 'form-control', 'placeholder' => 'Regular Approval/Circular Submission Deadline')) }}
-		</div>
-
-		<div class="form-group">
-			{{ Form::label('release_date', 'Regular Release Date', array('class' => 'control-label')) }}
-			{{ Form::text('release_date', date_format(date_create($cycle->release_date),'m/d/Y'), array('class' => 'form-control', 'placeholder' => 'Regular Release Date')) }}
-		</div>
-
-		<div class="form-group">
-			{{ Form::label('emergency_deadline', 'Emergency Approval/Circular Submission Deadline', array('class' => 'control-label')) }}
-			{{ Form::text('emergency_deadline', ($cycle->emergency_deadline == '0000-00-00') ? '' : date_format(date_create($cycle->emergency_deadline),'m/d/Y'), array('class' => 'form-control', 'placeholder' => 'Emergency Approval/Circular Submission Deadline')) }}
-		</div>
-
-		<div class="form-group">
-			{{ Form::label('emergency_release_date', 'Emergency Release Deadline', array('class' => 'control-label')) }}
-			{{ Form::text('emergency_release_date', ($cycle->emergency_release_date == '0000-00-00') ? '' : date_format(date_create($cycle->emergency_release_date),'m/d/Y'), array('class' => 'form-control', 'placeholder' => 'Emergency Release Deadline')) }}
+			{{ Form::label('release_date', 'Release Date', array('class' => 'control-label')) }}
+			{{ Form::text('release_date', date_format(date_create($cycle->release_date),'m/d/Y'),array('class' => 'form-control', 'placeholder' => 'Release Date')) }}
 		</div>
 
 		<div class="form-group">

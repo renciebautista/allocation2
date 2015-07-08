@@ -174,6 +174,7 @@
 	{{ HTML::script('assets/plugins/bootstrap-datetimepicker-3.1.3/js/bootstrap-datetimepicker.min.js') }}
 
 	{{ HTML::script('assets/plugins/digitalBush/jquery.maskedinput_1.4.0/jquery.maskedinput.min.js') }}
+	{{ HTML::script('assets/plugins/jquery.inputmask-3.1.63/inputmask/jquery.inputmask.min.js') }}
 
 	{{ HTML::script('assets/plugins/bootstrap-table/bootstrap-table.min.js') }}
 
@@ -197,6 +198,7 @@
 	{{ HTML::script('assets/plugins/autosize-3.0.6/autosize.min.js') }}
 
 
+	
 	{{ HTML::script('assets/js/function.js') }}
 
 

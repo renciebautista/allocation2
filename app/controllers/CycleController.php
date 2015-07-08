@@ -62,27 +62,14 @@ class CycleController extends \BaseController {
 		{
 			DB::transaction(function()
 			{
-				if(Input::get('emergency_deadline') != "" ){
-					$emergency_deadline = date('Y-m-d',strtotime(Input::get('emergency_deadline')));
-				}else{
-					$emergency_deadline = '0000-00-00';
-				}
-
-				if(Input::get('emergency_release_date') != "" ){
-					$emergency_release_date = date('Y-m-d',strtotime(Input::get('emergency_release_date')));
-				}else{
-					$emergency_release_date = '0000-00-00';
-				}
 
 				$cycle = new Cycle;
 				$cycle->cycle_name = strtoupper(Input::get('cycle_name'));
 				$cycle->month_year = Input::get('month_year');
-				$cycle->vetting_deadline = date('Y-m-d',strtotime(Input::get('vetting_deadline')));
-				$cycle->replyback_deadline = date('Y-m-d',strtotime(Input::get('replyback_deadline')));
 				$cycle->submission_deadline = date('Y-m-d',strtotime(Input::get('submission_deadline')));
+				$cycle->approval_deadline = date('Y-m-d',strtotime(Input::get('approval_deadline')));
+				$cycle->pdf_deadline = date('Y-m-d',strtotime(Input::get('pdf_deadline')));
 				$cycle->release_date = date('Y-m-d',strtotime(Input::get('release_date')));
-				$cycle->emergency_deadline = $emergency_deadline;
-				$cycle->emergency_release_date = $emergency_release_date;
 				$cycle->implemintation_date = date('Y-m-d',strtotime(Input::get('implemintation_date')));
 				$cycle->emergency = (Input::has('emergency')) ? 1 : 0;
 				$cycle->save();

@@ -54,12 +54,13 @@ add comfirmation on approver - done
 pmog recall red on remarks still showing - done
 attachment lost when reloading pis - done when activity type is reset
 error on recall and submit activity  - done
+change select files to blue - done
+force alloc multipler of sales min 0.01 max 1,000,000 - half done
 
 validate pis on uploading
 fda and pis upload select files
-change select files to blue
+
 add color if blank grey add color if filledup input box
-force alloc multipler of sales min 0.01 max 1,000,000
 allow recall if submission deadline lapse on last submit
 check timings when edited and showed
 list customers on read only
