@@ -1624,10 +1624,10 @@ class ActivityController extends BaseController {
 
 		if ($validator->fails())
 		{
-			return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
-				->with('class', 'alert-danger')
-				->withErrors($validator)
-				->with('message', 'Error uploading file.');
+			// return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
+			// 	->with('class', 'alert-danger')
+			// 	->withErrors($validator)
+			// 	->with('message', 'Error uploading file.');
 		} else{
 			$activity = Activity::findOrFail($id);
 		// 	$path = $activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
