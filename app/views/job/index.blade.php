@@ -20,7 +20,7 @@
 					<tr>
 						<th>#</th>
 						<th>Job ID</th>
-						<th>Status</th>
+						<th>All Status</th>
 					</tr>
 				</thead>
 				<tbody>

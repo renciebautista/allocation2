@@ -109,7 +109,7 @@
 				<thead>
 					<tr>
 						<th class="center">ID</th>
-						<th class="center">Status</th>
+						<th class="center">All Status</th>
 						<th class="center">TOP Cycle</th>
 						<th class="center">Scope</th>
 						<th class="center">Activity Type</th>

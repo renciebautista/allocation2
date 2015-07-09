@@ -81,7 +81,7 @@
 						<th class="center">Full Name</th>
 						<th class="center">Group</th>
 						<th class="center">Email</th>
-						<th class="center">Status</th>
+						<th class="center">All Status</th>
 						<th colspan="2" style="text-align:center;">Action</th>
 					</tr>
 				</thead>
