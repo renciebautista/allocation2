@@ -863,19 +863,17 @@
 							  	<thead>
 								    <tr>
 								      	<th>File Name</th>
-								      	<th class="update">Uploaded Date</th>
-						      			<th colspan="2" class="action">Action</th>
+								      	<th class="upload_date">Uploaded Date</th>
+						      			<th class="att_action">Action</th>
 								    </tr>
 							  	</thead>
 							  	<tbody>
 							  		@foreach($artworks as $artwork)
 								    <tr>
 								      	<td>{{ $artwork->file_name }}</td>
-								      	<td>{{ date_format(date_create($artwork->created_at),'m/d/Y H:m:s') }}</td>
-								      	<td class="action">
-											{{ HTML::linkAction('ActivityController@artworkdownload','Download', $artwork->id, array('class' => 'btn btn-info btn-xs')) }}
-										</td>
-								      	<td class="action">
+								      	<td class="upload_date">{{ date_format(date_create($artwork->created_at),'m/d/Y') }}</td>
+								      	<td class="att_action">
+											{{ HTML::linkAction('ActivityController@artworkdownload','Download', $artwork->id, array('class' => 'btn btn-success btn-xs')) }}
 											{{ Form::open(array('method' => 'DELETE', 'action' => array('ActivityController@artworkdelete', $artwork->id))) }}  
 											{{ Form::hidden('activity_id', $activity->id) }}                     
 											{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}
@@ -911,29 +909,23 @@
 							  	<thead>
 								    <tr>
 								      	<th>File Name</th>
-								      	<th class="update">Uploaded Date</th>
-						      			<th colspan="2" class="action">Action</th>
+								      	<th class="upload_date">Uploaded Date</th>
+						      			<th class="att_action">Action</th>
 								    </tr>
 							  	</thead>
 							  	<tbody>
 							  		@foreach($backgrounds as $background)
 								    <tr>
 								      	<td>{{ $background->file_name }}</td>
-								      	<td>{{ date_format(date_create($background->created_at),'m/d/Y H:m:s') }}</td>
-								      	<td class="action">
-											{{ HTML::linkAction('ActivityController@backgrounddownload','Download', $background->id, array('class' => 'btn btn-info btn-xs')) }}
+								      	<td class="upload_date">{{ date_format(date_create($background->created_at),'m/d/Y') }}</td>
+								      	<td class="att_action">
+											{{ HTML::linkAction('ActivityController@backgrounddownload','Download', $background->id, array('class' => 'btn btn-success btn-xs')) }}
+											{{ HTML::linkAction('ActivityController@backgrounddelete','Delete', null, array('class' => 'ajax_delete btn btn-danger btn-xs', 'id' => $background->id)) }}
 										</td>
-								      	<td class="action">
-											{{ Form::open(array('method' => 'DELETE', 'action' => array('ActivityController@backgrounddelete', $artwork->id))) }}  
-											{{ Form::hidden('activity_id', $activity->id) }}                     
-											{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}
-											{{ Form::close() }}
-										</td>
-
 								    </tr>
 								    @endforeach
 							  	</tbody>
-							</table> 
+							</table>  
 						</div>
 				  	</div>
 				</div>
@@ -960,23 +952,18 @@
 							  	<thead>
 								    <tr>
 								      	<th>File Name</th>
-								      	<th class="update">Uploaded Date</th>
-						      			<th colspan="2" class="action">Action</th>
+								      	<th class="upload_date">Uploaded Date</th>
+						      			<th class="att_action">Action</th>
 								    </tr>
 							  	</thead>
 							  	<tbody>
 							  		@foreach($bandings as $banding)
 								    <tr>
 								      	<td>{{ $banding->file_name }}</td>
-								      	<td>{{ date_format(date_create($banding->created_at),'m/d/Y H:m:s') }}</td>
-										<td class="action">
-											{{ HTML::linkAction('ActivityController@bandingdownload','Download', $banding->id, array('class' => 'btn btn-info btn-xs')) }}
-										</td>
-								      	<td class="action">
-											{{ Form::open(array('method' => 'DELETE', 'action' => array('ActivityController@bandingdelete', $banding->id))) }}  
-											{{ Form::hidden('activity_id', $activity->id) }}                     
-											{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}
-											{{ Form::close() }}
+								      	<td class="upload_date">{{ date_format(date_create($banding->created_at),'m/d/Y') }}</td>
+								      	<td class="att_action">
+											{{ HTML::linkAction('ActivityController@bandingdownload','Download', $banding->id, array('class' => 'btn btn-success btn-xs')) }}
+											{{ HTML::linkAction('ActivityController@bandingdelete','Delete', null, array('class' => 'ajax_delete btn btn-danger btn-xs', 'id' => $banding->id)) }}
 										</td>
 								    </tr>
 								    @endforeach

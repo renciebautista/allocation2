@@ -69,3 +69,6 @@ DT-asdas-dsada
 
 activity changed no update with are you sure
 ean13 check digit
+add doc file on download with pdf
+file type not working on new server
+delete file not working on pmog
