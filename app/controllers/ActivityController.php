@@ -1612,16 +1612,34 @@ class ActivityController extends BaseController {
 
 	public function fdaupload($id){
 		
+		Validator::extend('hashmatch', function($attribute, $value, $parameters)
+		{
+			Helper::print_r($parameters);
+			Helper::print_r($attribute);
+			Helper::print_r($value);
+		    // return Hash::check($value, Auth::user()->$parameters[0]);
+		});
+		// $messages = array(
+		//     'hashmatch' => 'Your current password must match your account password.'
+		// );
+		// $rules = array(
+		//     'current_password' => 'required|hashmatch:password',
+		//     'password'         => 'required|confirmed|min:4|different:current_password'
+		// );
+
+		// $validation = Validator::make( Input::all(), $rules, $messages );
+
 		$activity = Activity::findOrFail($id);
 
 		$input = array('file' => Input::file('file'));
 
 		$rules = array(
-			'file' => 'image|required'
+			'file' => 'image|required|hashmatch'
 		);
 		// Now pass the input and rules into the validator
 		$validator = Validator::make($input, $rules);
-
+		
+		
 		if ($validator->fails())
 		{
 			// return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
@@ -1629,26 +1647,26 @@ class ActivityController extends BaseController {
 			// 	->withErrors($validator)
 			// 	->with('message', 'Error uploading file.');
 
-			print_r($validator->errors()); //Messages with failed rules
-			print_r($validator->failed()); //Always Empty
+			// print_r($validator->errors()); //Messages with failed rules
+			// print_r($validator->failed()); //Always Empty
 
 		} else{
-			$path = $activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
+			// $path = $activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
 
-			$upload = self::doupload_2($path);
+			// $upload = self::doupload_2($path);
 
-			$docu = new ActivityFdapermit;
-			$docu->created_by = Auth::id();
-			$docu->activity_id = $id;
-			$docu->permit_no = Input::get('permitno');
-			$docu->hash_name = $upload->file_name;
-			$docu->file_name = $upload->original_file_name;
-			$docu->file_desc = (Input::get('file_desc') =='') ? $upload->original_file_name : Input::get('file_desc');
-			$docu->save();
+			// $docu = new ActivityFdapermit;
+			// $docu->created_by = Auth::id();
+			// $docu->activity_id = $id;
+			// $docu->permit_no = Input::get('permitno');
+			// $docu->hash_name = $upload->file_name;
+			// $docu->file_name = $upload->original_file_name;
+			// $docu->file_desc = (Input::get('file_desc') =='') ? $upload->original_file_name : Input::get('file_desc');
+			// $docu->save();
 
-			return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
-				->with('class', 'alert-success')
-				->with('message', 'FDA Permits is successfuly uploaded!');
+			// return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
+			// 	->with('class', 'alert-success')
+			// 	->with('message', 'FDA Permits is successfuly uploaded!');
 		}
 	}
 
