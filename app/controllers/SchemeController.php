@@ -561,7 +561,7 @@ class SchemeController extends \BaseController {
 					$scheme2->final_pe_r = $non+$per;
 				}else{
 					$scheme2->final_tts_r = $final_tts;
-					$scheme2->final_pe_r = $per;
+					$scheme2->final_pe_r = $final_pe;
 				}
 				
 				
