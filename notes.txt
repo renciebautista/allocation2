@@ -72,3 +72,7 @@ ean13 check digit
 add doc file on download with pdf
 file type not working on new server
 delete file not working on pmog
+
+final pe cost not working
+
+

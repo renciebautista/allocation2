@@ -410,11 +410,17 @@ class ActivityController extends BaseController {
 				$cycles = Cycle::getLists();
 				$divisions = Sku::getDivisionLists();
 
+				// return View::make('downloadedactivity.edit', compact('activity', 'scope_types', 'planners', 'approvers', 'cycles',
+				//  'activity_types', 'sel_divisions','divisions' , 'objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
+				//  'sel_objectives',  'schemes', 'scheme_summary', 'networks', 'areas',
+				//  'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings',
+				//  'force_allocs','submitstatus', 'comments'));
+
 				return View::make('downloadedactivity.edit', compact('activity', 'scope_types', 'planners', 'approvers', 'cycles',
-				 'activity_types', 'sel_divisions','divisions' , 'objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
+				 'activity_types', 'divisions' , 'sel_divisions','objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
 				 'sel_objectives',  'schemes', 'scheme_summary', 'networks', 'areas',
 				 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings',
-				 'force_allocs','submitstatus', 'comments'));
+				 'force_allocs', 'comments' ,'submitstatus'));
 			}else{
 				$submitstatus = array('3' => 'RECALL ACTIVITY');
 				$divisions = Sku::getDivisionLists();

@@ -16,8 +16,10 @@
 	<div class="col-lg-12">
 		<div class="form-group">
 			{{ HTML::linkRoute('activity.index', 'Back To Activity List', array(), array('class' => 'btn btn-default')) }}
-			<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myAction">
-			  	Actions
+
+			<!-- Button trigger modal -->
+			<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#mySubmit">
+			  Action
 			</button>
 			<a class="btn btn-info" target="_blank" href="{{ URL::action('ReportController@preview', $activity->id ) }}">Preview</a>
 		</div>
@@ -26,18 +28,16 @@
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="myAction" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal fade" id="mySubmit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   	<div class="modal-dialog">
-  		<div class="modal-content">
-  			
-	    	{{ Form::open(array('action' => array('ActivityController@updateactivity', $activity->id), 'class' => 'bs-component','id' => 'submitactivity')) }}
+	    <div class="modal-content">
+	    	{{ Form::open(array('action' => array('ActivityController@submittogcm', $activity->id), 'class' => 'bs-component','id' => 'submittogcm')) }}
 	      	<div class="modal-header">
-	        	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</button>
-	        	<h4 class="modal-title" id="myModalLabel">Activity Actions</h4>
+	        	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        	<h4 class="modal-title" id="myModalLabel">Submit To GCOM</h4>
 	      	</div>
 	      	<div class="modal-body">
 	      		<div id="error"></div>
-	      		
 	          	<div class="form-group">
 	            	{{ Form::label('submitstatus', 'Status:', array('class' => 'control-label')) }}
 	            	{{ Form::select('submitstatus', array('0' => 'PLEASE SELECT') + $submitstatus, null, array('id' => 'submitstatus', 'class' => 'form-control')) }}
@@ -57,6 +57,8 @@
 </div>
 
 
+
+
 <ul class="nav nav-tabs">
 	<li class="active"><a id="tab-activity" aria-expanded="true" href="#activity">Activity Details</a></li>
 	<li class=""><a id="tab-customer" aria-expanded="false" href="#customer">Customer Details</a></li>
@@ -70,7 +72,6 @@
 	<li class=""><a id="tab-attachments" aria-expanded="false" href="#attachment">Attachments</a></li>
 	<li class=""><a id="tab-comments" aria-expanded="false" href="#comments">Comments</a></li>
 </ul>
-
 <div id="myTabContent" class="tab-content">
 
 	<!-- activity details -->
@@ -113,7 +114,7 @@
 							<div class="row">
 								<div class="col-lg-12">
 									{{ Form::label('planner', 'PMOG Planner', array('class' => 'control-label')) }}
-									{{ Form::select('planner', array('0' => 'PLEASE SELECT') + $planners, (!is_null($sel_planner)) ? $sel_planner->user_id : 0, array('class' => 'form-control')) }}
+									{{ Form::text('planner',(count($sel_planner) > 0) ? $sel_planner->planner->getFullname() : '', array('class' => 'form-control','readonly' => '')) }}
 								</div>
 							</div>
 						</div>
@@ -173,7 +174,6 @@
 							</div>
 						</div>
 					</div>	
-
 					<div class="col-lg-2">
 						<div class="form-group">
 							<div class="row">
@@ -219,7 +219,7 @@
 							<div class="row">
 								<div class="col-lg-12">
 									{{ Form::label('division', 'Division', array('class' => 'control-label')) }}
-									{{ Form::select('division[]',  $divisions, $sel_divisions, array('id' => 'division', 'class' => 'form-control' ,'multiple' => 'multiple' ,'data-placeholder' => 'SELECT DIVISION')) }}
+									{{ Form::select('division[]',  $divisions, $sel_divisions, array('id' => 'division', 'class' => 'form-control multiselect' ,'multiple' => 'multiple')) }}
 								</div>
 							</div>
 						</div>
@@ -229,7 +229,7 @@
 							<div class="row">
 								<div id="multiselect" class="col-lg-12">
 									{{ Form::label('category', 'Category', array('class' => 'control-label')) }}
-									<select class="form-control" data-placeholder="SELECT CATEGORY" id="category" name="category[]" multiple="multiple" ></select>
+									<select class="form-control multiselect" data-placeholder="SELECT CATEGORY" id="category" name="category[]" multiple="multiple" ></select>
 								</div>
 							</div>
 						</div>
@@ -239,7 +239,7 @@
 							<div class="row">
 								<div class="col-lg-12">
 									{{ Form::label('brand', 'Brand', array('class' => 'control-label')) }}
-									<select class="form-control" data-placeholder="SELECT BRAND" id="brand" name="brand[]" multiple="multiple" ></select>
+									<select class="form-control multiselect" data-placeholder="SELECT BRAND" id="brand" name="brand[]" multiple="multiple" ></select>
 								</div>
 							</div>
 						</div>
@@ -252,7 +252,7 @@
 							<div class="row">
 								<div class="col-lg-12">
 									{{ Form::label('objective', 'Objectives', array('class' => 'control-label' )) }}
-									{{ Form::select('objective[]', $objectives, $sel_objectives, array('id' => 'objective', 'class' => 'form-control', 'multiple' => 'multiple')) }}
+									{{ Form::select('objective[]', $objectives, $sel_objectives, array('id' => 'objective', 'class' => 'form-control multiselect', 'multiple' => 'multiple')) }}
 								</div>
 							</div>
 						</div>
@@ -266,7 +266,7 @@
 							<div class="row">
 								<div class="col-lg-12">
 									{{ Form::label('background', 'Background and Rationale', array('class' => 'control-label')) }}
-									{{ Form::textarea('background',$activity->background,array('class' => 'form-control', 'placeholder' => 'Background and Rationale')) }}
+									{{ Form::textarea('background',$activity->background,array('class' => 'form-control multiselect', 'placeholder' => 'Background and Rationale')) }}
 								</div>
 							</div>
 						</div>
@@ -352,14 +352,12 @@
 									<div id="tree3"></div>
 									{{ Form::hidden('customers', null, array('id' => 'customers')) }}
 								</div>
-
 								<div class="col-lg-6">
 									{{ Form::label('tree4', 'Select DT Channels Involved', array('class' => 'control-label' )) }}<br>
 									<div id="chSel">
 										<a href="#" id="btnChSelectAll">Select all</a> |
 										<a href="#" id="btnChDeselectAll">Deselect all</a>
 									</div>
-									
 									<div id="tree4"></div>
 									{{ Form::hidden('channels_involved', null, array('id' => 'channels_involved')) }}
 								</div>
@@ -369,35 +367,44 @@
 									<div class="form-group">
 										<div class="checkbox">
 									        <label>
-									        	{{ Form::checkbox('allow_force', 1,$activity->allow_force,['id' => 'allow_force']) }} Enable Force Allocation
+									        	{{ Form::checkbox('allow_force', 1,$activity->allow_force) }} Enable Force Allocation
 									        </label>
 									    </div>
 									</div>
 								</div>
 							</div>
+							<br>
+							@if($activity->allow_force)
+							<hr>
+
 							<div class="row">
 								<div  class="col-lg-12">
 									<caption>Force Allocation</caption>
-									<table id="force_alloc" class="table table-striped table-condensed table-hover table-bordered">
+									<table id="force_alloc" class="table table-striped table-hover ">
 									  	<thead>
 										    <tr>
-										    	<th style="width:10%;">Group</th>
+										    	<th>Group</th>
 										      	<th>Area</th>
-										      	<th>Sales Multiplier</th>
+										      	<th class="multiplier">Force Percentage</th>
+								      			<th class="action">Action</th>
 										    </tr>
 									  	</thead>
 									  	<tbody>
-									  		@foreach($areas as $area)
-									  		<tr>
-									  			<td>{{ $area->group_name }}</td>
-									  			<td>{{ $area->area_name }}</td>
-								  				<td><input class="input-number" id="{{ $area->area_code }}"  name="force_alloc[{{ $area->area_code }}]" value="{{ $area->multi }}" type="text"></td>
+									  		@foreach($force_allocs as $force)
+									  		<tr data-link="{{ $force->id }}">
+									  			<td>{{ $force->group_name }}</td>
+									  			<td>{{ $force->area_name }}</td>
+								  				<td class="multiplier">{{ $force->multi }}</td>
+									  			<td class="action">
+									  				<button class="btn btn-primary btn-xs">Update</button>
+									  			</td>
 									  		</tr>
 									  		@endforeach
 									  	</tbody>
 									</table> 
 								</div>
 						  	</div>
+						  	@endif
 							
 						</div>
 					</div>
@@ -417,8 +424,8 @@
 		<br>
 	</div>
 
-	<!-- scheme details -->
 	@if($activity->activitytype->with_scheme)
+	<!-- scheme details -->
 	<div class="tab-pane fade" id="schemes">
 		<br>
 		<div class="panel panel-default">
@@ -435,7 +442,7 @@
 				<div class="row">
 					<div class="col-lg-12">
 						<div class="table-responsive">
-							<table class="table table-striped table-condensed table-hover">
+							<table class="table table-condensed table-hover">
 								<thead>
 									<tr>
 										<th>#</th>
@@ -449,13 +456,13 @@
 										<th class="text-center">Total TTS</th>
 										<th class="text-center">Total PE</th>
 										<th class="text-center">Total Cost</th>
-										<th colspan="3" class="text-center">Action</th>
+										<th class="text-center">Action</th>
 									</tr>
 								</thead>
 							  	<tbody>
 							  		@if(count($schemes) == 0)
 							  		<tr>
-							  			<td colspan="13">No record found!</td>
+							  			<td colspan="12">No record found!</td>
 							  		</tr>
 							  		@else
 							  		<?php $i = 0; ?>
@@ -465,27 +472,17 @@
 										<td>{{ $i }}</td>
 									  	<td>{{ $scheme->name }}</td>
 									  	<td>{{ $scheme->item_code }}</td>
-									  	<td class="text-right">{{ number_format($scheme->pr,2) }}</td>
-									  	<td class="text-right">{{ number_format($scheme->ulp,2) }}</td>
-									  	<td class="text-right">{{ number_format($scheme->cost_sale,2) }}</td>
+									  	<td class="text-right"></td>
+									  	<td class="text-right"></td>
+									  	<td class="text-right"></td>
 									  	<td class="text-right">{{ number_format($scheme->final_total_deals) }}</td>
 									  	<td class="text-right">{{ number_format($scheme->final_total_cases) }}</td>
 									  	<td class="text-right">{{ number_format($scheme->final_tts_r,2) }}</td>
 									  	<td class="text-right">{{ number_format($scheme->final_pe_r,2) }}</td>
 									  	<td class="text-right">{{ number_format($scheme->final_total_cost,2) }}</td>
-									  	<td class="action">
-									  		{{ HTML::linkAction('SchemeController@edit','View', $scheme->id, array('class' => 'btn btn-success btn-xs')) }}
-									  	</td>
-									  	<td class="action">
-									  		{{ Form::open(array('method' => 'POST', 'action' => array('SchemeController@duplicate', $scheme->id), 'class' => 'disable-button')) }}                       
-											{{ Form::submit('Duplicate', array('class'=> 'btn btn-primary btn-xs disable-button','onclick' => "if(!confirm('Are you sure to duplicate this record?')){return false;};")) }}
-											{{ Form::close() }}
-									  	</td>
-
-									  	<td class="action">
-									  		{{ Form::open(array('method' => 'DELETE', 'action' => array('SchemeController@destroy', $scheme->id),'class' => 'disable-button')) }}                       
-												{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs disable-button','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}
-											{{ Form::close() }}
+									  	<td style="width:10%;">
+									  		{{ HTML::linkAction('SchemeController@edit','View', $scheme->id, array('class' => 'btn btn-primary btn-xs')) }}
+									  		<a class="btn btn-danger btn-xs" href="#">Delete</a>
 									  	</td>
 									</tr>
 									@endforeach
@@ -494,15 +491,15 @@
 							  	<tfoot>
 							  		<tr>
 										<th class="text-center" colspan="3">Sub Total</th>
-										<th class="text-right" style="width:80px;"></th>
-										<th class="text-right" style="width:80px;"></th>
-										<th class="text-right" style="width:80px;"></th>
+										<th class="text-right" style="width:80px;">{{ number_format($scheme_summary->pr,2) }}</th>
+										<th class="text-right" style="width:80px;">{{ number_format($scheme_summary->ulp,2) }}</th>
+										<th class="text-right" style="width:80px;">{{ number_format($scheme_summary->cost_sale,2) }}</th>
 										<th class="text-right" style="width:80px;">{{ number_format($scheme_summary->final_total_deals) }}</th>
 										<th class="text-right" style="width:80px;">{{ number_format($scheme_summary->final_total_cases) }}</th>
 										<th class="text-right" style="width:80px;">{{ number_format($scheme_summary->final_tts_r,2) }}</th>
 										<th class="text-right" style="width:80px;">{{ number_format($scheme_summary->final_pe_r,2) }}</th>
 										<th class="text-right" style="width:80px;">{{ number_format($scheme_summary->final_total_cost,2) }}</th>
-										<th colspan="3"></th>
+										<th class="text-right" style="width:110px;"></th>
 									</tr>
 							  	</tfoot>
 							</table> 
@@ -545,6 +542,7 @@
 	@else
 
 	@endif
+	
 	<!-- budget details -->
 	<div class="tab-pane fade" id="budget">
 		<br>
@@ -701,7 +699,7 @@
 		<br>
 		<div class="panel panel-default">
 		  	<div class="panel-heading">
-				<h3 class="panel-title">Timings Details1</h3>
+				<h3 class="panel-title">Timings Details</h3>
 			</div>
 		  	<div class="panel-body">
 				<div class="row">
@@ -736,6 +734,7 @@
 		<br>
 	</div>
 
+	
 	<!-- attachment details -->
 	<div class="tab-pane fade" id="attachment">
 		<br>
@@ -875,7 +874,10 @@
 								      	<td class="upload_date">{{ date_format(date_create($artwork->created_at),'m/d/Y') }}</td>
 								      	<td class="att_action">
 											{{ HTML::linkAction('ActivityController@artworkdownload','Download', $artwork->id, array('class' => 'btn btn-success btn-xs')) }}
-											{{ HTML::linkAction('ActivityController@artworkdownload','Delete', null, array('class' => 'ajax_delete btn btn-danger btn-xs', 'id' => $artwork->id)) }}
+											{{ Form::open(array('method' => 'DELETE', 'action' => array('ActivityController@artworkdelete', $artwork->id))) }}  
+											{{ Form::hidden('activity_id', $activity->id) }}                     
+											{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}
+											{{ Form::close() }}
 										</td>
 								    </tr>
 								    @endforeach
@@ -1022,7 +1024,8 @@
 
 </div>
 
-@include('javascript.activity.edit')
+
+@include('javascript.downloadedactivity.edit')
 
 @stop
 
@@ -1037,7 +1040,7 @@ $("#backgroundupload").uploadifyTable({
 $("#bandingupload").uploadifyTable({
 	'fileTypeExts' : '*.*'
 });
-@stop
 
+@stop
 
 
