@@ -1611,7 +1611,7 @@ class ActivityController extends BaseController {
 	}
 
 	public function fdaupload($id){
-		$file = Input::file('file');
+		$activity = Activity::findOrFail($id);
 
 		$input = array('file' => Input::file('file'));
 		$rules = array(
@@ -1627,7 +1627,7 @@ class ActivityController extends BaseController {
 				->withErrors($validator)
 				->with('message', 'Error uploading file.');
 		} else{
-			$activity = Activity::findOrFail($id);
+			
 			$path = $activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
 
 			$upload = self::doupload_2($path);
@@ -1645,7 +1645,6 @@ class ActivityController extends BaseController {
 				->with('class', 'alert-success')
 				->with('message', 'FDA Permits is successfuly uploaded!');
 		}
-		var_dump($file);
 	}
 
 	public function fdadelete($id){
