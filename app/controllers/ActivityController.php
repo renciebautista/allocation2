@@ -1611,11 +1611,13 @@ class ActivityController extends BaseController {
 	}
 
 	public function fdaupload($id){
+		
 		$activity = Activity::findOrFail($id);
 
 		$input = array('file' => Input::file('file'));
+
 		$rules = array(
-			'file' => 'image'
+			'file' => 'image|required'
 		);
 		// Now pass the input and rules into the validator
 		$validator = Validator::make($input, $rules);
@@ -1627,7 +1629,6 @@ class ActivityController extends BaseController {
 				->withErrors($validator)
 				->with('message', 'Error uploading file.');
 		} else{
-			
 			$path = $activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
 
 			$upload = self::doupload_2($path);
