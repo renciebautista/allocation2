@@ -1613,8 +1613,6 @@ class ActivityController extends BaseController {
 	public function fdaupload($id){
 		$file = Input::file('file');
 
-		
-
 		$input = array('file' => Input::file('file'));
 		$rules = array(
 			'file' => 'image'
@@ -1624,28 +1622,28 @@ class ActivityController extends BaseController {
 
 		if ($validator->fails())
 		{
-			// return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
-			// 	->with('class', 'alert-danger')
-			// 	->withErrors($validator)
-			// 	->with('message', 'Error uploading file.');
+			return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
+				->with('class', 'alert-danger')
+				->withErrors($validator)
+				->with('message', 'Error uploading file.');
 		} else{
 			$activity = Activity::findOrFail($id);
-		// 	$path = $activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
+			$path = $activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
 
-		// 	$upload = self::doupload_2($path);
+			$upload = self::doupload_2($path);
 
-		// 	$docu = new ActivityFdapermit;
-		// 	$docu->created_by = Auth::id();
-		// 	$docu->activity_id = $id;
-		// 	$docu->permit_no = Input::get('permitno');
-		// 	$docu->hash_name = $upload->file_name;
-		// 	$docu->file_name = $upload->original_file_name;
-		// 	$docu->file_desc = (Input::get('file_desc') =='') ? $upload->original_file_name : Input::get('file_desc');
-		// 	$docu->save();
+			$docu = new ActivityFdapermit;
+			$docu->created_by = Auth::id();
+			$docu->activity_id = $id;
+			$docu->permit_no = Input::get('permitno');
+			$docu->hash_name = $upload->file_name;
+			$docu->file_name = $upload->original_file_name;
+			$docu->file_desc = (Input::get('file_desc') =='') ? $upload->original_file_name : Input::get('file_desc');
+			$docu->save();
 
-		// 	return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
-		// 		->with('class', 'alert-success')
-		// 		->with('message', 'FDA Permits is successfuly uploaded!');
+			return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
+				->with('class', 'alert-success')
+				->with('message', 'FDA Permits is successfuly uploaded!');
 		}
 		var_dump($file);
 	}
