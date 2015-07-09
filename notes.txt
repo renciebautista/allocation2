@@ -73,6 +73,9 @@ add doc file on download with pdf
 file type not working on new server
 delete file not working on pmog
 
-final pe cost not working
+final pe cost not working on scheme
+email sent?
+force alloc not working
+mine types not working in new server
 
 

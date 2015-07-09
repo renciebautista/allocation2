@@ -875,7 +875,7 @@
 								      	<td class="upload_date">{{ date_format(date_create($artwork->created_at),'m/d/Y') }}</td>
 								      	<td class="att_action">
 											{{ HTML::linkAction('ActivityController@artworkdownload','Download', $artwork->id, array('class' => 'btn btn-success btn-xs')) }}
-											{{ HTML::linkAction('ActivityController@artworkdownload','Delete', null, array('class' => 'ajax_delete btn btn-danger btn-xs', 'id' => $artwork->id)) }}
+											{{ HTML::linkAction('ActivityController@artworkdelete','Delete', null, array('class' => 'ajax_delete btn btn-danger btn-xs', 'id' => $artwork->id)) }}
 										</td>
 								    </tr>
 								    @endforeach
