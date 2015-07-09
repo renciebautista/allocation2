@@ -3,5 +3,5 @@
 	RewriteCond %{REQUEST_URI} !^public
 	RewriteRule ^(.*)$ public/$1 [L]
 
-	php_admin_flag extension=php_fileinfo.dll
+	php_admin_flag extension=php_fileinfo.so
 </IfModule>
