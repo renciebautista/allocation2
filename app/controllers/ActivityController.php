@@ -1617,6 +1617,7 @@ class ActivityController extends BaseController {
 			Helper::print_r($parameters);
 			Helper::print_r($attribute);
 			Helper::print_r($value);
+			echo $value->guessExtension();
 		    // return Hash::check($value, Auth::user()->$parameters[0]);
 		});
 		// $messages = array(
