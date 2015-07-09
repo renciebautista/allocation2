@@ -108,11 +108,16 @@
 						</li>
 
 						<li class="dropdown">
+							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="report">TOP Calendar <span class="caret"></span></a>
+						</li>
+
+						<li class="dropdown">
 							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="report">Exports <span class="caret"></span></a>
 							<ul class="dropdown-menu" aria-labelledby="report">
 								<li>{{ HTML::linkAction('DownloadsController@cycles' , 'Download Released Activities by Cycle') }}</li>  
 							</ul>
 						</li>
+
 						<li>
 							<a href="../help/">Help</a>
 						</li>

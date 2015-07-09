@@ -98,7 +98,7 @@
 							{{ $user->roles[0]->name }}
 						</td>
 						<td>{{ $user->email }}</td>
-						<td class="center">{{ (($user->active == 1) ? 'Active':'In Active') }}</td>
+						<td class="center">{{ (($user->active == 1) ? 'Active':'Inactive') }}</td>
 						<td class="action">
 							{{ Form::open(array('method' => 'DELETE', 'action' => array('ActivityController@destroy', $user->id))) }}                       
 							{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}

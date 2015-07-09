@@ -3,7 +3,7 @@
 class ActivityType extends \Eloquent {
 	protected $fillable = ['id', 'activity_type', 'uom','activity_grouping_id'];
 	public static $rules = array(
-        'activity_type' => 'required|between:4,128|unique:activity_types',
+        'activity_type' => 'required|between:1,128|unique:activity_types',
         'uom' => 'required'
     );
 	public $timestamps = false;
