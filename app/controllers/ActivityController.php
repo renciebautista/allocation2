@@ -1614,16 +1614,16 @@ class ActivityController extends BaseController {
 		
 		$activity = Activity::findOrFail($id);
 
-		$input = array('file' => Input::file('file'));
+		// $input = array('file' => Input::file('file'));
 
-		$rules = array(
-			'file' => 'required|image'
-		);
-		// Now pass the input and rules into the validator
-		$validator = Validator::make($input, $rules);
+		// $rules = array(
+		// 	'file' => 'required|image'
+		// );
+		// // Now pass the input and rules into the validator
+		// $validator = Validator::make($input, $rules);
 
-		if ($validator->passes())
-		{
+		// if ($validator->passes())
+		// {
 			$path = $activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
 
 			$upload = self::doupload_2($path);
@@ -1637,16 +1637,16 @@ class ActivityController extends BaseController {
 			$docu->file_desc = (Input::get('file_desc') =='') ? $upload->original_file_name : Input::get('file_desc');
 			$docu->save();
 
-			// return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
-			// 	->with('class', 'alert-success')
-			// 	->with('message', 'FDA Permits is successfuly uploaded!');
-		} else{
-			// return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
-			// 	->with('class', 'alert-danger')
-			// 	->withErrors($validator)
-			// 	->with('message', 'Error uploading file.');
+			return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
+				->with('class', 'alert-success')
+				->with('message', 'FDA Permits is successfuly uploaded!');
+		// } else{
+		// 	// return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
+		// 	// 	->with('class', 'alert-danger')
+		// 	// 	->withErrors($validator)
+		// 	// 	->with('message', 'Error uploading file.');
 			
-		}
+		// }
 	}
 
 	public function fdadelete($id){
