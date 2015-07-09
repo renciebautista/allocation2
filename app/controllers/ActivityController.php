@@ -1610,7 +1610,7 @@ class ActivityController extends BaseController {
 
 		$input = array('file' => Input::file('file'));
 		$rules = array(
-			'file' => 'required'
+			'file' => 'image|required'
 		);
 		// Now pass the input and rules into the validator
 		$validator = Validator::make($input, $rules);
