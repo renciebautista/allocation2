@@ -1619,7 +1619,7 @@ class ActivityController extends BaseController {
 		{
 			return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
 				->with('class', 'alert-danger')
-				->withErrors($validation)
+				->withErrors($validator)
 				->with('message', 'Error uploading file.');
 		} else{
 			$path = $activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
