@@ -12,7 +12,7 @@ Queue::getIron()->ssl_verifypeer = false;
 |
 */
 
-Route::get("testmail", function()){
+Route::get("testmail", function(){
 	$user = User::find(1);
 	$cycles = Cycle::getBySubmissionDeadline();
 	$data['cycles'] = $cycles;
