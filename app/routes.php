@@ -23,7 +23,7 @@ Route::get("testmail", function()){
 	Mail::send('emails.mail1', $data, function($message) use ($data){
 		$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITY STATUS');
 	});
-}
+});
 
 
 Route::get("mail1", function(){
