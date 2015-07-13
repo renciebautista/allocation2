@@ -976,6 +976,7 @@ class ActivityController extends BaseController {
 										foreach ($gcom_approvers as $gcom_approver) {
 											$approver = ActivityApprover::find($gcom_approver->id);
 											$approver->show = 1;
+											$approver->for_approval = 1;
 											$approver->update();
 										}
 									}else{
@@ -988,6 +989,7 @@ class ActivityController extends BaseController {
 											foreach ($cdops_approvers as $cdops_approver) {
 												$approver = ActivityApprover::find($cdops_approver->id);
 												$approver->show = 1;
+												$approver->for_approval = 1;
 												$approver->update();
 											}
 										}else{
@@ -1000,6 +1002,7 @@ class ActivityController extends BaseController {
 												foreach ($cmd_approvers as $cmd_approver) {
 													$approver = ActivityApprover::find($cmd_approver->id);
 													$approver->show = 1;
+													$approver->for_approval = 1;
 													$approver->update();
 												}
 											}
@@ -1080,6 +1083,7 @@ class ActivityController extends BaseController {
 									foreach ($gcom_approvers as $gcom_approver) {
 										$approver = ActivityApprover::find($gcom_approver->id);
 										$approver->show = 1;
+										$approver->for_approval = 1;
 										$approver->update();
 									}
 								}else{
@@ -1090,6 +1094,7 @@ class ActivityController extends BaseController {
 										foreach ($cdops_approvers as $cdops_approver) {
 											$approver = ActivityApprover::find($cdops_approver->id);
 											$approver->show = 1;
+											$approver->for_approval = 1;
 											$approver->update();
 										}
 									}else{
@@ -1100,6 +1105,7 @@ class ActivityController extends BaseController {
 											foreach ($cmd_approvers as $cmd_approver) {
 												$approver = ActivityApprover::find($cmd_approver->id);
 												$approver->show = 1;
+												$approver->for_approval = 1;
 												$approver->update();
 											}
 										}else{

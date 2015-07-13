@@ -108,7 +108,8 @@
 						</li>
 
 						<li class="dropdown">
-							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="report">TOP Calendar <span class="caret"></span></a>
+							{{ HTML::linkAction('CycleController@calendar', 'TOP Calendar',null, array()) }}
+							
 						</li>
 
 						<li class="dropdown">

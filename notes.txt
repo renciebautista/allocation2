@@ -83,3 +83,5 @@ upload cycles database
 cycle calendar order by implementation date and name
 change status to All Status
 validate ean13 barcode
+
+security for users

@@ -501,12 +501,11 @@ class Activity extends \Eloquent {
 	}
 
 	public static function ApproverForApproval($user_id,$status_id){
-		// $activities = ActivityApprover::GetActivitiesForApproval($user_id);
 		
 		return self::select('activities.id','activities.circular_name','activities.edownload_date',
 			'activities.eimplementation_date','activities.billing_date',
 			'activity_statuses.status','cycles.cycle_name',
-			'scope_types.scope_name','activity_types.activity_type',
+			'scope_types.scope_name','activity_types.activity_type','activities.status_id',
 			DB::raw('CONCAT(propo.first_name, " ", propo.last_name) AS proponent'))
 			->join('activity_statuses', 'activities.status_id','=','activity_statuses.id')
 			->join('cycles', 'activities.cycle_id','=','cycles.id')
@@ -526,7 +525,7 @@ class Activity extends \Eloquent {
 		return self::select('activities.id','activities.circular_name','activities.edownload_date',
 			'activities.eimplementation_date','activities.billing_date',
 			'activity_statuses.status','cycles.cycle_name',
-			'scope_types.scope_name','activity_types.activity_type',
+			'scope_types.scope_name','activity_types.activity_type','activities.status_id',
 			DB::raw('CONCAT(propo.first_name, " ", propo.last_name) AS proponent'))
 			->join('activity_statuses', 'activities.status_id','=','activity_statuses.id')
 			->join('cycles', 'activities.cycle_id','=','cycles.id')
@@ -537,7 +536,7 @@ class Activity extends \Eloquent {
 			->join('users as propo', 'activities.created_by','=','propo.id')
 			->where('activities.created_by',$user_id)
 			->where('activities.status_id', '>',3)
-			->where('activities.status_id', '<',8)
+			->where('activities.status_id', '<',9)
 			->whereIn('activities.cycle_id',$cycles)
 			->orderBy('activity_types.activity_type')
 			->orderBy('activities.circular_name')
@@ -549,7 +548,7 @@ class Activity extends \Eloquent {
 		return self::select('activities.id','activities.circular_name','activities.edownload_date',
 			'activities.eimplementation_date','activities.billing_date',
 			'activity_statuses.status','cycles.cycle_name',
-			'scope_types.scope_name','activity_types.activity_type',
+			'scope_types.scope_name','activity_types.activity_type', 'activities.status_id',
 			DB::raw('CONCAT(propo.first_name, " ", propo.last_name) AS proponent'))
 			->join('activity_statuses', 'activities.status_id','=','activity_statuses.id')
 			->join('cycles', 'activities.cycle_id','=','cycles.id')
@@ -559,7 +558,8 @@ class Activity extends \Eloquent {
 			->join('users', 'activity_planners.user_id','=','users.id','left')
 			->join('users as propo', 'activities.created_by','=','propo.id')
 			->where('activity_planners.user_id',$user_id)
-			->where('activities.status_id', 4)
+			->where('activities.status_id', '>',3)
+			->where('activities.status_id', '<',9)
 			->whereIn('activities.cycle_id',$cycles)
 			->orderBy('activity_types.activity_type')
 			->orderBy('activities.circular_name')
@@ -567,12 +567,12 @@ class Activity extends \Eloquent {
 			->get();
 	}
 
-	public static function ApproverActivitiesForApproval($user_id,$cycles,$status_id){
-		$activities = ActivityApprover::getActivities($user_id);
+	public static function ApproverActivitiesForApproval($user_id,$cycles){
+		$activities = ActivityApprover::getActivitiesForApproval($user_id);
 		return self::select('activities.id','activities.circular_name','activities.edownload_date',
 			'activities.eimplementation_date','activities.billing_date',
 			'activity_statuses.status','cycles.cycle_name',
-			'scope_types.scope_name','activity_types.activity_type',
+			'scope_types.scope_name','activity_types.activity_type', 'activities.status_id',
 			DB::raw('CONCAT(propo.first_name, " ", propo.last_name) AS proponent'))
 			->join('activity_statuses', 'activities.status_id','=','activity_statuses.id')
 			->join('cycles', 'activities.cycle_id','=','cycles.id')
@@ -581,9 +581,55 @@ class Activity extends \Eloquent {
 			->join('activity_planners', 'activities.id','=','activity_planners.activity_id','left')
 			->join('users', 'activity_planners.user_id','=','users.id','left')
 			->join('users as propo', 'activities.created_by','=','propo.id')
-			->where('activities.status_id', $status_id)
+			->where('activities.status_id', '>',3)
+			->where('activities.status_id', '<',9)
 			->whereIn('activities.cycle_id',$cycles)
 			->whereIn('activities.id',$activities)
+			->orderBy('activity_types.activity_type')
+			->orderBy('activities.circular_name')
+			->orderBy('activities.id')
+			->get();
+	}
+
+	public static function ApproverActivities($user_id,$cycles){
+		$activities = ActivityApprover::getActivities($user_id);
+		return self::select('activities.id','activities.circular_name','activities.edownload_date',
+			'activities.eimplementation_date','activities.billing_date',
+			'activity_statuses.status','cycles.cycle_name',
+			'scope_types.scope_name','activity_types.activity_type',  'activities.status_id',
+			DB::raw('CONCAT(propo.first_name, " ", propo.last_name) AS proponent'))
+			->join('activity_statuses', 'activities.status_id','=','activity_statuses.id')
+			->join('cycles', 'activities.cycle_id','=','cycles.id')
+			->join('scope_types', 'activities.scope_type_id','=','scope_types.id')
+			->join('activity_types', 'activities.activity_type_id','=','activity_types.id')
+			->join('activity_planners', 'activities.id','=','activity_planners.activity_id','left')
+			->join('users', 'activity_planners.user_id','=','users.id','left')
+			->join('users as propo', 'activities.created_by','=','propo.id')
+			->where('activities.status_id', '>',3)
+			->where('activities.status_id', '<',9)
+			->whereIn('activities.cycle_id',$cycles)
+			->whereIn('activities.id',$activities)
+			->orderBy('activity_types.activity_type')
+			->orderBy('activities.circular_name')
+			->orderBy('activities.id')
+			->get();
+	}
+
+	public static function Released($cycles){
+		return self::select('activities.id','activities.circular_name','activities.edownload_date',
+			'activities.eimplementation_date','activities.billing_date',
+			'activity_statuses.status','cycles.cycle_name',
+			'scope_types.scope_name','activity_types.activity_type',  'activities.status_id',
+			DB::raw('CONCAT(propo.first_name, " ", propo.last_name) AS proponent'))
+			->join('activity_statuses', 'activities.status_id','=','activity_statuses.id')
+			->join('cycles', 'activities.cycle_id','=','cycles.id')
+			->join('scope_types', 'activities.scope_type_id','=','scope_types.id')
+			->join('activity_types', 'activities.activity_type_id','=','activity_types.id')
+			->join('activity_planners', 'activities.id','=','activity_planners.activity_id','left')
+			->join('users', 'activity_planners.user_id','=','users.id','left')
+			->join('users as propo', 'activities.created_by','=','propo.id')
+			->where('activities.status_id', 9)
+			->whereIn('activities.cycle_id',$cycles)
 			->orderBy('activity_types.activity_type')
 			->orderBy('activities.circular_name')
 			->orderBy('activities.id')

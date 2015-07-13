@@ -25,17 +25,20 @@ class Cycle extends \Eloquent {
 	}
 
 	public static function getBySubmissionDeadline(){
-		$today = date('Y-m-d');
-		$records = self::select('id')
-			->where('submission_deadline',$today)
-			->get();
-		$data = array();
-		foreach ($records as $value) {
-			$data[] = $value->id;
-		}
-
-		return $data;
+		$now = date('Y-m-d');
+		return DB::select(DB::raw("select * from cycles WHERE '$now' >=  (submission_deadline - interval 2 day) AND '$now' <= approval_deadline;"));
 	}
+
+	public static function getByApprovalDeadline(){
+		$now = date('Y-m-d');
+		return DB::select(DB::raw("select * from cycles WHERE '$now' >=  (approval_deadline - interval 3 day) AND '$now' <= approval_deadline;"));
+	}
+
+	public static function getByApprovalDeadlinePassed(){
+		$now = date('Y-m-d');
+		return DB::select(DB::raw("select * from cycles WHERE '$now' >=  (approval_deadline - interval 3 day) AND '$now' <= approval_deadline;"));
+	}
+
 
 	public static function getByPreApDeadline(){
 		$today = date('Y-m-d');
@@ -56,6 +59,20 @@ class Cycle extends \Eloquent {
 		$deadline = date('Y-m-d', strtotime("{$today} - 1 day"));
 		$records = self::select('id')
 			->where('approval_deadline',$deadline)
+			->get();
+		$data = array();
+		foreach ($records as $value) {
+			$data[] = $value->id;
+		}
+
+		return $data;
+	}
+
+	public static function getByReleaseDate(){
+		$today = date('Y-m-d');
+		// $deadline = date('Y-m-d', strtotime("{$today} - 1 day"));
+		$records = self::select('id')
+			->where('release_date',$today)
 			->get();
 		$data = array();
 		foreach ($records as $value) {

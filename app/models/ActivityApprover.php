@@ -2,7 +2,7 @@
 
 class ActivityApprover extends \Eloquent {
 	protected $fillable = [];
-	// public $timestamps = false;
+	public $timestamps = false;
 
 	public static function getCurrentApprover($activity_id){
 		return self::where('activity_id',$activity_id)
@@ -109,7 +109,7 @@ class ActivityApprover extends \Eloquent {
 
 
 	public static function resetAll($activity_id){
-		self::where('activity_id',$activity_id)->update(array('status_id' => 0));
+		self::where('activity_id',$activity_id)->update(array('status_id' => 0,'for_approval' => 0));
 	}
 
 	public static function getActivities($user_id){
@@ -125,11 +125,12 @@ class ActivityApprover extends \Eloquent {
 		return $list;
 	}
 
-	public static function GetActivitiesForApproval($user_id){
+	public static function getActivitiesForApproval($user_id){
 		$list = array();
 		$data = self::where('user_id',$user_id)
 		->where('show',1)
 		->where('status_id',0)
+		->where('for_approval',1)
 		->get();
 		if(!empty($data)){
 			foreach ($data as $row) {
@@ -138,6 +139,8 @@ class ActivityApprover extends \Eloquent {
 		}
 		return $list;
 	}
+
+	
 
 	public static function getApprover($id,$user_id){
 		return self::where('activity_id',$id)

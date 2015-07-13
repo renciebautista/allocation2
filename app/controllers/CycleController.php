@@ -191,4 +191,11 @@ class CycleController extends \BaseController {
 				->with('message', $message);
 	}
 
+
+	public function calendar(){
+		Input::flash();
+		$cycles = Cycle::search(Input::get('s'));
+		return View::make('cycle.calendar', compact('cycles'));
+	}
+
 }
