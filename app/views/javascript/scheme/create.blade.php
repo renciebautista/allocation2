@@ -14,10 +14,13 @@ $("form").validate({
 		item_code: {
 			minlength: 8,
 			maxlength: 8
+			
 			},
 		item_barcode: {
-			minlength: 13,
-			maxlength: 13
+			minlength: 1
+			,
+			maxlength: 13,
+			eanCheckDigit : true
 			},
 		item_casecode: {
 			minlength: 14,
@@ -44,6 +47,10 @@ $("form").validate({
               $("html, body").animate({ scrollTop: 0 }, "fast");
         }
     }
+});
+
+$.validator.addMethod("eanCheckDigit", function (value,element) {
+	return Barcoder.validate(value);
 });
 
 

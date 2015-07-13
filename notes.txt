@@ -68,20 +68,20 @@ list customers on read only
 DT-asdas-dsada
 
 activity changed no update with are you sure
-ean13 check digit
+ean13 check digit - done
 add doc file on download with pdf
-file type not working on new server
-delete file not working on pmog
+file type not working on new server - done
+delete file not working on pmog - done
 
-final pe cost not working on scheme
-email sent?
-force alloc not working
-mine types not working in new server
+final pe cost not working on scheme - done
+email sent - done
+force alloc not working - done
+mine types not working in new server - done
 
 
 upload cycles database
 cycle calendar order by implementation date and name
 change status to All Status - done
-validate ean13 barcode
+validate ean13 barcode - done
 
 security for users

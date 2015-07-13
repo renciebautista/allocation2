@@ -208,7 +208,8 @@ $("#updatescheme").validate({
 			},
 		item_barcode: {
 			minlength: 13,
-			maxlength: 13
+			maxlength: 13,
+			eanCheckDigit: true
 			},
 		item_casecode: {
 			minlength: 14,
@@ -235,6 +236,10 @@ $("#updatescheme").validate({
               $("html, body").animate({ scrollTop: 0 }, "fast");
         }
     }
+});
+
+$.validator.addMethod("eanCheckDigit", function (value,element) {
+	return Barcoder.validate(value);
 });
 
 var table = $("#customer-allocation").dataTable({

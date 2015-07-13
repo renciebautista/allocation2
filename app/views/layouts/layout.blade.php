@@ -203,9 +203,12 @@
 
 	{{ HTML::script('assets/plugins/autosize-3.0.6/autosize.min.js') }}
 
+	{{ HTML::script('assets/plugins/barcoder/barcoder.js') }}
+
 
 	
 	{{ HTML::script('assets/js/function.js') }}
+
 
 
 
