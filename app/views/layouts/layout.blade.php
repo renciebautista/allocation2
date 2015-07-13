@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<title>E-TOP</title>
+		<title>E-TOP {{ Carbon::now() }}</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		{{ HTML::style('assets/plugins/jquery-ui-1.11.2/jquery-ui.min.css') }}
 		{{ HTML::style('assets/plugins/twitter-bootstrap/css/bootstrap.css') }}

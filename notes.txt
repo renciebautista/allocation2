@@ -81,7 +81,7 @@ mine types not working in new server
 
 upload cycles database
 cycle calendar order by implementation date and name
-change status to All Status
+change status to All Status - done
 validate ean13 barcode
 
 security for users

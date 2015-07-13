@@ -4,6 +4,7 @@ class AllocationRepository  {
 	private $mt_total_sales = 0;
 	private $dt_total_sales = 0;
 	private $total_gsv = 0;
+	private $force_total_gsv = 0;
 	private $_mt_primary_sales = array();
 	private $_dt_secondary_sales = array();
 
@@ -16,7 +17,7 @@ class AllocationRepository  {
     }
 
 
-	public function customers($skus, $selected_channels, $selected_customers){
+	public function customers($skus, $selected_channels, $selected_customers,$forced_areas){
 
 		$this->_customers = $selected_customers;
 		$salescources = DB::table('split_old_customers')->get();
@@ -183,11 +184,10 @@ class AllocationRepository  {
 		$data = array();
 		foreach ($customers as $customer) {
 			if($customer->active == 1){
-
 				$ado_total = 0;
+				$forced_ado_total = 0;
 				$total_account_gsv = 0;
 				foreach ($_shiptos as $_shipto) {
-
 					if($customer->customer_code == $_shipto->customer_code){
 
 						if(!is_null($_shipto->ship_to_code)){
@@ -320,7 +320,10 @@ class AllocationRepository  {
 									}
 								}
 								
-								// $ado_total += $_ship_to_sale->gsv;
+								if(array_key_exists($customer->area_code, $forced_areas)){
+									 $forced_ado_total += $_shipto->gsv * $forced_areas[$customer->area_code];
+								}
+								
 								$ado_total += $_shipto->gsv;
 								$abort_shipto = true;
 							}
@@ -336,7 +339,12 @@ class AllocationRepository  {
 						$customer->shiptos[] = (array)	$_shipto;
 
 						$customer->ado_total = $ado_total;
+						
+						$customer->forced_ado_total = $forced_ado_total;
 
+						// if(array_key_exists($customer->area_code, $forced_areas)){
+						// 	 $customer->forced_ado_total = $forced_ado_total * $forced_areas[$customer->area_code];
+						// }
 
 					}else{
 
@@ -377,6 +385,10 @@ class AllocationRepository  {
 						}
 					}else{
 						$customer->gsv = $total_account_gsv;
+					}
+
+					if(array_key_exists($customer->area_code, $forced_areas)){
+						$this->force_total_gsv += $customer->gsv * $forced_areas[$customer->area_code];
 					}
 					$this->total_gsv += $customer->gsv;
 
@@ -427,6 +439,10 @@ class AllocationRepository  {
 					}else{
 						$customer->gsv = $total_account_gsv;
 
+					}
+
+					if(array_key_exists($customer->area_code, $forced_areas)){
+						$this->force_total_gsv += $customer->gsv * $forced_areas[$customer->area_code];
 					}
 					$this->total_gsv += $customer->gsv;
 				}
@@ -613,6 +629,10 @@ class AllocationRepository  {
 
 	public function total_gsv(){
 		return $this->total_gsv;
+	}
+
+	public function force_total_gsv(){
+		return $this->force_total_gsv;
 	}
 
 

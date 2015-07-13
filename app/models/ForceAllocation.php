@@ -25,4 +25,10 @@ class ForceAllocation extends \Eloquent {
 		}
 		return $list;
 	}
+
+	public static function getForcedAreas($id){
+		$list = array();
+		$data = self::where('activity_id',$id)->lists('multi', 'area_code');
+		return $data;
+	}
 }

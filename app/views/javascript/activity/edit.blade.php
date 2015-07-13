@@ -657,7 +657,6 @@ function show_force_alloc(){
 			$(this).removeAttr('disabled');
 		}else{
 			$(this).attr('disabled','disabled');
-			$(this).val("1.00");
 		}
 	});
 }
