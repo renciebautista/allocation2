@@ -15,6 +15,10 @@ Queue::getIron()->ssl_verifypeer = false;
 Route::get("testmail", function(){
 	$user = User::find(1);
 	$cycles = Cycle::getBySubmissionDeadline();
+	$cycle_ids = array();
+	foreach ($cycles as $value) {
+		$cycle_ids[] = $value->id;
+	}
 	$data['cycles'] = $cycles;
 	$data['user'] = $user->getFullname();
 	$data['email'] = $user->email;
