@@ -384,12 +384,12 @@
 									<td>{{ $network->task }}</td>
 									<td>{{ date_format(date_create($network->final_start_date),'M j, Y') }}</td>
 									<td>{{ date_format(date_create($network->final_end_date),'M j, Y') }}</td>
-									<?php $last_date = $network->end_date;?>
+									
 								</tr>
 								@endforeach
 								<tr>
 									<td>IMPLEMENTATION DATE</td>
-									<td>{{ date_format(date_create($last_date),'M j, Y') }}</td>
+									<td>{{ date_format(date_create($activity->start_date),'M j, Y') }}</td>
 									<td>{{ date_format(date_create($activity->end_date),'M j, Y') }}</td>
 								</tr>
 							</table>

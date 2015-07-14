@@ -90,3 +90,8 @@ setup pdf creation
 	change timings final timngs
 
 update pmog on settings
+addjust date in activity type if network is changed
+refresh timings page
+remove outside click in edit networks
+
+php -q /home/ulpeto5/test.ulp-etop.com/artisan 
