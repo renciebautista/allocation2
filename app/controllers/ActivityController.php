@@ -118,7 +118,10 @@ class ActivityController extends BaseController {
 							$activity_timing[] = array('activity_id' => $activity->id, 'task_id' => $network->task_id,
 								'milestone' => $network->milestone, 'task' => $network->task, 'responsible' => $network->responsible,
 								'duration' => $network->duration, 'depend_on' => $network->depend_on,
-								'start_date' => date('Y-m-d',strtotime($network->start_date)), 'end_date' => date('Y-m-d',strtotime($network->end_date)));
+								'start_date' => date('Y-m-d',strtotime($network->start_date)),
+								'end_date' => date('Y-m-d',strtotime($network->end_date)),
+								'final_start_date' => date('Y-m-d',strtotime($network->start_date)),
+								'final_enddate' => date('Y-m-d',strtotime($network->end_date)));
 						}
 						ActivityTiming::insert($activity_timing);
 					}
@@ -321,6 +324,8 @@ class ActivityController extends BaseController {
 			// comments
 			$comments = ActivityComment::getList($activity->id);
 
+			$timings = ActivityTiming::where('activity_id', $activity->id)->get();
+
 			$force_allocs = ForceAllocation::getlist($activity->id);
 			$areas = Area::getAreaWithGroup();
 			foreach ($areas as $key => $area) {
@@ -342,7 +347,7 @@ class ActivityController extends BaseController {
 
 				return View::make('activity.edit', compact('activity', 'scope_types', 'planners', 'approvers', 'cycles',
 				 'activity_types', 'divisions' , 'sel_divisions','objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
-				 'sel_objectives',  'schemes', 'scheme_summary', 'networks', 'areas',
+				 'sel_objectives',  'schemes', 'scheme_summary', 'networks', 'areas', 'timings',
 				 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings',
 				 'force_allocs', 'comments' ,'submitstatus'));
 			}
@@ -354,7 +359,7 @@ class ActivityController extends BaseController {
 				$recall = $activity->pro_recall;
 				$submit_action = 'ActivityController@updateactivity';
 				return View::make('shared.activity_readonly', compact('activity', 'sel_planner', 'approvers', 
-				 'sel_divisions','divisions',
+				 'sel_divisions','divisions', 'timings',
 				 'objectives',  'users', 'budgets', 'nobudgets','sel_approver',
 				 'sel_objectives',  'schemes', 'scheme_summary', 'networks','areas',
 				 'scheme_customers', 'scheme_allcations', 'materials', 'force_allocs',
@@ -391,6 +396,8 @@ class ActivityController extends BaseController {
 			// comments
 			$comments = ActivityComment::getList($activity->id);
 
+			$timings = ActivityTiming::where('activity_id', $activity->id)->get();
+
 			$force_allocs = ForceAllocation::getlist($activity->id);
 			$areas = Area::getAreaWithGroup();
 			foreach ($areas as $key => $area) {
@@ -418,7 +425,7 @@ class ActivityController extends BaseController {
 
 				return View::make('downloadedactivity.edit', compact('activity', 'scope_types', 'planners', 'approvers', 'cycles',
 				 'activity_types', 'divisions' , 'sel_divisions','objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
-				 'sel_objectives',  'schemes', 'scheme_summary', 'networks', 'areas',
+				 'sel_objectives',  'schemes', 'scheme_summary', 'networks', 'areas', 'timings',
 				 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings',
 				 'force_allocs', 'comments' ,'submitstatus'));
 			}else{
@@ -430,7 +437,7 @@ class ActivityController extends BaseController {
 				return View::make('shared.activity_readonly', compact('activity', 'sel_planner', 'approvers', 'sel_divisions','divisions' ,
 				 'objectives',  'users', 'budgets', 'nobudgets','sel_approver',
 				 'sel_objectives',  'schemes', 'scheme_summary', 'networks', 'areas',
-				 'scheme_customers', 'scheme_allcations', 'materials', 'force_allocs',
+				 'scheme_customers', 'scheme_allcations', 'materials', 'force_allocs', 'timings',
 				 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings', 'comments' ,'submitstatus', 'route', 'recall', 'submit_action'));
 			}
 		}
@@ -546,7 +553,9 @@ class ActivityController extends BaseController {
 										'duration' => $network->duration, 'depend_on' => $network->depend_on,
 										'start_date' => date('Y-m-d',strtotime($network->start_date)), 
 										'show' => $network->show,
-										'end_date' => date('Y-m-d',strtotime($network->end_date)));
+										'end_date' => date('Y-m-d',strtotime($network->end_date)),
+										'final_start_date' => date('Y-m-d',strtotime($network->start_date)),
+										'final_end_date' => date('Y-m-d',strtotime($network->end_date)));
 								}
 								ActivityTiming::insert($activity_timing);
 							}
@@ -2440,6 +2449,38 @@ class ActivityController extends BaseController {
 		// return Redirect::to(URL::action('ActivityController@index'))
 		// 		->with('class', $class )
 		// 		->with('message', $message);
+	}
+
+	public function updatetimings($id){
+		Helper::print_r(Input::all());
+		$activity = Activity::findOrFail($id);
+
+		// ActivityTiming::where('activity_id',$activity->id)->delete();
+		$data = array();
+		if (Input::has('timing_start')){
+			foreach (Input::get('timing_start') as $key => $value) {
+				$data[$key]['start_date'] = $value;
+			}
+		}
+
+		if (Input::has('timing_end')){
+			foreach (Input::get('timing_end') as $key => $value) {
+				$data[$key]['end_date'] = $value;
+			}
+		}
+
+		$new_timings = array();
+		foreach ($data as $key => $value) {
+			$timing = ActivityTiming::find($key);
+			$timing->final_start_date = date('Y-m-d',strtotime($value['start_date']));
+			$timing->final_end_date = date('Y-m-d',strtotime($value['end_date']));
+			$timing->update();
+		}
+
+		return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#timings")
+				->with('class', 'alert-success')
+				->with('message', 'Timings successfully updated.');
+
 	}
 
 }

@@ -87,3 +87,6 @@ validate ean13 barcode - done
 security for users
 
 setup pdf creation
+	change timings final timngs
+
+update pmog on settings

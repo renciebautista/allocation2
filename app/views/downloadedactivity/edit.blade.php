@@ -61,11 +61,7 @@
 <ul class="nav nav-tabs">
 	<li class="active"><a id="tab-activity" aria-expanded="true" href="#activity">Activity Details</a></li>
 	<li class=""><a id="tab-customer" aria-expanded="false" href="#customer">Customer Details</a></li>
-	@if($activity->activitytype->with_scheme)
 	<li class=""><a id="tab-schemes" aria-expanded="false" href="#schemes">Schemes</a></li>
-	@else
-
-	@endif
 	<li class=""><a id="tab-budget" aria-expanded="false" href="#budget">Budget Details</a></li>
 	<li class=""><a id="tab-timings" aria-expanded="false" href="#timings">Timings Details</a></li>
 	<li class=""><a id="tab-attachments" aria-expanded="false" href="#attachment">Attachments</a></li>
@@ -419,7 +415,6 @@
 	</div>
 
 	<!-- scheme details -->
-	@if($activity->activitytype->with_scheme)
 	<div class="tab-pane fade" id="schemes">
 		<br>
 		<div class="panel panel-default">
@@ -543,9 +538,7 @@
 		</div>
 		<br>
 	</div>
-	@else
 
-	@endif
 	<!-- budget details -->
 	<div class="tab-pane fade" id="budget">
 		<br>
@@ -700,9 +693,10 @@
 	<!-- timings details -->
 	<div class="tab-pane fade" id="timings">
 		<br>
+		{{ Form::open(array('action' => array('ActivityController@updatetimings', $activity->id), 'class' => 'bs-component','id' => 'updatetimings')) }}
 		<div class="panel panel-default">
 		  	<div class="panel-heading">
-				<h3 class="panel-title">Timings Details1</h3>
+				<h3 class="panel-title">Timings Details</h3>
 			</div>
 		  	<div class="panel-body">
 				<div class="row">
@@ -710,16 +704,40 @@
 						<table id="activity_timings" class="table table-striped table-hover ">
 						  	<thead>
 								<tr>
-							  		<th data-field="task_id">Task ID</th>
-							        <th data-field="milestone">Milestone</th>
-							        <th data-field="task">Task</th>
-							        <th data-field="responsible">Team Responsible</th>
-							        <th data-field="duration">Duration (days)</th>
-							        <th data-field="depend_on">Depends On</th>
-							  		<th data-field="start_date">Start Date</th>
-							  		<th data-field="end_date">End Date</th>
+							  		<th>Task ID</th>
+							        <th>Milestone</th>
+							        <th>Task</th>
+							        <th>Team Responsible</th>
+							       	<th>Duration (days)</th>
+							        <th>Depends On</th>
+							  		<th>Start Date</th>
+							  		<th>End Date</th>
+							  		<th>Final Start Date</th>
+							  		<th>Final End Date</th>
 								</tr>
 						  	</thead>
+						  	<tbody>
+								@if(count($timings) == 0)
+								<tr>
+									<td colspan="10">No record found!</td>
+								</tr>
+								@else
+								@foreach($timings as $timing)
+								<tr>
+									<td>{{ $timing->task_id }}</td>
+									<td>{{ $timing->milestone }}</td>
+									<td>{{ $timing->task }}</td>
+									<td>{{ $timing->responsible }}</td>
+									<td>{{ $timing->duration }}</td>
+									<td>{{ $timing->depend_on }}</td>
+									<td>{{ date_format(date_create($timing->start_date),'m/d/Y') }}</td>
+									<td>{{ date_format(date_create($timing->end_date),'m/d/Y') }}</td>
+									<td><input class="timing_date" type="text" id="timing_start[{{ $timing->id }}]" name="timing_start[{{ $timing->id }}]" value="{{ date_format(date_create($timing->final_start_date),'m/d/Y') }}"  placeholder="mm/dd/yyyy" value=""></td>
+									<td><input class="timing_date" type="text" id="timing_end[{{ $timing->id }}]" name="timing_end[{{ $timing->id }}]"  value="{{ date_format(date_create($timing->final_end_date),'m/d/Y') }}" placeholder="mm/dd/yyyy" value=""></td>
+								</tr>
+								@endforeach
+								@endif
+							</tbody>
 						</table> 
 					</div>
 				</div>
@@ -729,11 +747,13 @@
 		<div class="row">
 			<div class="col-lg-12">
 				<div class="form-group">
+					<button class="btn btn-primary">Update</button>
 					<button class="btn btn-default btn-style" type="submit">Back</button>
 					<button class="btn btn-primary btn-style" type="submit">Next</button>
 				</div>
 			</div>
 		</div>
+		{{ Form::close() }}
 		<br>
 	</div>
 

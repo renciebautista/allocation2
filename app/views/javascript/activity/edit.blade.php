@@ -128,7 +128,7 @@ function checkDirty(target_id,callback) {
 };
 
 
-$('#updateActivity,#updateCustomer,#updateBilling').areYouSure();
+$('#updateActivity,#updateCustomer,#updateBilling,#updatetimings').areYouSure();
 
 
 $("a[href='#customer']").on('shown.bs.tab', function(e) {
@@ -140,9 +140,9 @@ $("a[href='#schemes']").on('shown.bs.tab', function(e) {
     $( $.fn.dataTable.tables( true ) ).DataTable().columns.adjust();
 });
 
-$("a[href='#timings']").on('shown.bs.tab', function(e) {
-    $('#activity_timings').bootstrapTable("refresh");
-});
+//$("a[href='#timings']").on('shown.bs.tab', function(e) {
+    //$('#activity_timings').bootstrapTable("refresh");
+//});
 
 
 
@@ -765,8 +765,37 @@ $('#no_budget_table').ajax_table({
 
 
 <!-- activity timings -->
-$('#activity_timings').bootstrapTable({
+/**$('#activity_timings').bootstrapTable({
     url: '{{ URL::action('ActivityController@timings', $activity->id ) }}'
+});**/
+
+$('.timing_date').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
+$('.timing_date').datetimepicker({
+	pickTime: false,
+	calendarWeeks: true
+});
+
+$("#updatetimings").validate({
+	errorElement: "span", 
+	errorClass : "has-error",
+	rules: {
+		'timing_start[]': {
+			required: true
+		},
+		'timing_end[]': {
+			required: true
+		},
+
+	},
+	errorPlacement: function(error, element) {               
+		
+	},
+	highlight: function( element, errorClass, validClass ) {
+    	$(element).closest('div').addClass(errorClass).removeClass(validClass);
+  	},
+  	unhighlight: function( element, errorClass, validClass ) {
+    	$(element).closest('div').removeClass(errorClass).addClass(validClass);
+  	}
 });
 
 

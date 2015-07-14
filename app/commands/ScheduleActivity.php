@@ -41,7 +41,7 @@ class ScheduleActivity extends Command {
 		$this->line(Carbon::now());
 		$activities = Activity::select('activities.id', 'activities.circular_name')
 			->join('cycles', 'cycles.id', '=', 'activities.cycle_id')
-			// ->where('cycles.submission_deadline',date('Y-m-d'))
+			->where('cycles.pdf_deadline',date('Y-m-d'))
 			->where('status_id',8)
 			->where('pdf',0)
 			->where('scheduled',0)

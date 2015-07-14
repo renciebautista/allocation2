@@ -382,8 +382,8 @@
 								@foreach($networks as $network)
 								<tr>
 									<td>{{ $network->task }}</td>
-									<td>{{ date_format(date_create($network->start_date),'M j, Y') }}</td>
-									<td>{{ date_format(date_create($network->end_date),'M j, Y') }}</td>
+									<td>{{ date_format(date_create($network->final_start_date),'M j, Y') }}</td>
+									<td>{{ date_format(date_create($network->final_end_date),'M j, Y') }}</td>
 									<?php $last_date = $network->end_date;?>
 								</tr>
 								@endforeach

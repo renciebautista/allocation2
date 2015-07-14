@@ -34,9 +34,7 @@ Route::get("test", function(){
 	if($_ENV['MAIL_TEST']){
 		echo "test mail";
 	}else{
-		// Mail::send('emails.mail1', $data, function($message) use ($data){
-		// 	$message->to($data['email'], $data['fullname'])->subject('TOP ACTIVITY STATUS');
-		// });
+		echo "live mail";
 	}
 });
 
@@ -213,6 +211,8 @@ Route::group(array('before' => 'auth'), function()
 
 	Route::get('activity/{id}/timings', 'ActivityController@timings');
 
+	Route::post('activity/{id}/updatetimings', 'ActivityController@updatetimings');
+	
 	Route::post('activity/{id}/updateactivity', 'ActivityController@updateactivity');
 	Route::get('activity/{id}/recall', 'ActivityController@recall');
 
