@@ -15,7 +15,7 @@
 	<div class="col-lg-12">
 		{{ HTML::linkRoute('activitytype.index', 'Back To Activity Type List', array(), array('class' => 'btn btn-default')) }}
 		<!-- Button trigger modal -->
-		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" data-backdrop="static">
 			<i class="fa fa-plus"></i> Milestone
 		</button>
 	</div>
