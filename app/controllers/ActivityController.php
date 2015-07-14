@@ -121,7 +121,7 @@ class ActivityController extends BaseController {
 								'start_date' => date('Y-m-d',strtotime($network->start_date)),
 								'end_date' => date('Y-m-d',strtotime($network->end_date)),
 								'final_start_date' => date('Y-m-d',strtotime($network->start_date)),
-								'final_enddate' => date('Y-m-d',strtotime($network->end_date)));
+								'final_end_date' => date('Y-m-d',strtotime($network->end_date)));
 						}
 						ActivityTiming::insert($activity_timing);
 					}
