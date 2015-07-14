@@ -389,7 +389,7 @@
 								@endforeach
 								<tr>
 									<td>IMPLEMENTATION DATE</td>
-									<td>{{ date_format(date_create($activity->start_date),'M j, Y') }}</td>
+									<td>{{ date_format(date_create($activity->eimplementation_date),'M j, Y') }}</td>
 									<td>{{ date_format(date_create($activity->end_date),'M j, Y') }}</td>
 								</tr>
 							</table>
