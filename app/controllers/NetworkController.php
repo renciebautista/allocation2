@@ -54,6 +54,13 @@ class NetworkController extends \BaseController {
 			if($validation->passes())
 			{
 				DB::transaction(function() use ($id){
+					$key = 1;
+					$last_record = ActivityTypeNetwork::orderBy('id', 'desc')
+						->where('activitytype_id',$id)
+						->first();
+					if(!empty($last_record)){
+						$key = $last_record->task_id + 1;
+					}
 					$milestone = new ActivityTypeNetwork();
 					$milestone->activitytype_id = $id;
 					$milestone->milestone = strtoupper(Input::get('milestone'));
@@ -61,6 +68,7 @@ class NetworkController extends \BaseController {
 					$milestone->responsible = strtoupper(Input::get('responsible'));
 					$milestone->duration = Input::get('duration');
 					$milestone->show = (Input::has('show')) ? true : false;
+					$milestone->task_id = $key;
 					$milestone->save();
 					$depend_on = Input::get('depend_on');
 					
@@ -74,14 +82,14 @@ class NetworkController extends \BaseController {
 					}
 
 					// update task id
-					$milestones = ActivityTypeNetwork::where('activitytype_id', $id)->get();
-					if(!empty($milestones)){
-						foreach ($milestones as $key => $value) {
-							$ml = ActivityTypeNetwork::find($value->id);
-							$ml->task_id = $key+1;
-							$ml->update();
-						}
-					}
+					// $milestones = ActivityTypeNetwork::where('activitytype_id', $id)->get();
+					// if(!empty($milestones)){
+					// 	foreach ($milestones as $key => $value) {
+					// 		$ml = ActivityTypeNetwork::find($value->id);
+					// 		$ml->task_id = $key+1;
+					// 		$ml->update();
+					// 	}
+					// }
 
 					
 				});

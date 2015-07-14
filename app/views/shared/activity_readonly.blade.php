@@ -929,31 +929,7 @@
 @section('page-script')
 
 
-function getCustomer(){
-	$.ajax({
-		type: "GET",
-		url: "../../api/customerselected?id={{$activity->id}}",
-		success: function(data){
-			$.each(data, function(i, node) {
-				$("#tree3").fancytree("getTree").getNodeByKey(node).setSelected(true);
-			});
 
-
-		}
-	});
-}
-
-function getChannel(){
-	$.ajax({
-		type: "GET",
-		url: "../../api/channelselected?id={{$activity->id}}",
-		success: function(data){
-			$.each(data, function(i, node) {
-				$("#tree4").fancytree("getTree").getNodeByKey(node).setSelected(true);
-			});
-		}
-	});
-}
 
 if(location.hash.length > 0){
 	var activeTab = $('[href=' + location.hash + ']');
@@ -1158,6 +1134,19 @@ $("#tree3").fancytree({
 	}
 });
 
+function getCustomer(){
+	$.ajax({
+		type: "GET",
+		url: "../../api/customerselected?id={{$activity->id}}",
+		success: function(data){
+			$.each(data, function(i, node) {
+				$("#tree3").fancytree("getTree").getNodeByKey(node).setSelected(true);
+			});
+		}
+	});
+}
+
+
 $("#tree4").fancytree({
 	extensions: [],
 	checkbox: true,
@@ -1166,6 +1155,19 @@ $("#tree4").fancytree({
 		url: "../../api/channels?id={{$activity->id}}"
 	}
 });
+
+
+function getChannel(){
+	$.ajax({
+		type: "GET",
+		url: "../../api/channelselected?id={{$activity->id}}",
+		success: function(data){
+			$.each(data, function(i, node) {
+				$("#tree4").fancytree("getTree").getNodeByKey(node).setSelected(true);
+			});
+		}
+	});
+}
 
 function updatechannel(){
 	$.ajax({

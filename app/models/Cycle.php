@@ -17,6 +17,7 @@ class Cycle extends \Eloquent {
 
 	public static function search($filter){
 		return self::where('cycles.cycle_name', 'LIKE' ,"%$filter%")
+			->orderBy('submission_deadline')
 			->get();
 	}
 

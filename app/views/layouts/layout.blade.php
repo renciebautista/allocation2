@@ -13,7 +13,7 @@
 		{{ HTML::style('assets/plugins/DataTables-1.10.7/css/jquery.dataTables.min.css') }}
 		{{ HTML::style('assets/plugins/FixedColumns-3.0.4/css/dataTables.fixedColumns.min.css') }}
 		{{ HTML::style('assets/plugins/ColVis-1.1.1/css/dataTables.colVis.min.css') }}
-		{{ HTML::style('assets/plugins/fancytree-2.6.0/skin-xp/ui.fancytree.min.css') }}
+		{{ HTML::style('assets/plugins/fancytree-2.10.2/skin-xp/ui.fancytree.min.css') }}
 		{{ HTML::style('assets/plugins/bootstrap-datetimepicker-3.1.3/css/bootstrap-datetimepicker.min.css') }}
 		{{ HTML::style('assets/plugins/bootstrap3-editable/css/bootstrap-editable.css') }}
 
@@ -170,7 +170,7 @@
 
 	{{ HTML::script('assets/js/selectchain.js') }}
 
-	{{ HTML::script('assets/plugins/fancytree-2.6.0/jquery.fancytree.min.js') }}
+	{{ HTML::script('assets/plugins/fancytree-2.10.2/jquery.fancytree.min.js') }}
 
 	
 	{{ HTML::script('assets/plugins/jquery.maskMoney/jquery.maskMoney.min.js') }}

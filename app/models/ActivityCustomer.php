@@ -11,7 +11,7 @@ class ActivityCustomer extends \Eloquent {
 
 		return $customers;
 	}
-
+	
 	public static function getSelectedAreas($activity_id){
 		$selected = self::customers($activity_id);
 		$areas = array();

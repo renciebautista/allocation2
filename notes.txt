@@ -80,8 +80,10 @@ mine types not working in new server - done
 
 
 upload cycles database
-cycle calendar order by implementation date and name
+cycle calendar order by implementation date and name - done
 change status to All Status - done
 validate ean13 barcode - done
 
 security for users
+
+setup pdf creation
