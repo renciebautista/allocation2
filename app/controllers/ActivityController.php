@@ -946,9 +946,18 @@ class ActivityController extends BaseController {
 						// submit activity
 						if($status_id == 1){
 							if(count($planner_count) > 0){
-								$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme','submission_deadline');
+								if($activity->activitytype->with_scheme){
+									$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme','submission_deadline');
+								}else{
+									$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','submission_deadline');
+								}
+								
 							}else{
-								$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme','submission_deadline');
+								if($activity->activitytype->with_scheme){
+									$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme','submission_deadline');
+								}else{
+									$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','submission_deadline');
+								}
 							}
 
 							$validation = Activity::validForDownload($activity,$required_rules);
@@ -1067,7 +1076,12 @@ class ActivityController extends BaseController {
 
 						if($status == 1){
 							// check valdiation
-							$required_rules = array('budget','approver','cycle','activity','category','brand','objective','background','customer','scheme','fdapermit','artwork', 'material_source', 'submission_deadline');
+							if($activity->activitytype->with_scheme){
+								$required_rules = array('budget','approver','cycle','activity','category','brand','objective','background','customer','scheme','fdapermit','artwork', 'material_source', 'submission_deadline');
+							}else{
+								$required_rules = array('budget','approver','cycle','activity','category','brand','objective','background','customer','fdapermit','artwork', 'material_source', 'submission_deadline');
+							}
+							
 							$validation = Activity::validForDownload($activity,$required_rules);
 							if($validation['status'] == 0){
 								$arr['success'] = 0;
