@@ -57,10 +57,16 @@ Route::get("mail1", function(){
 		}
 
 		if(count($data['activities']) > 0){
-			// Mail::send('emails.mail1', $data, function($message) use ($data){
-			// 	$message->to($data['email'], $data['fullname'])->subject('TOP ACTIVITY STATUS');
-			// });
-			Helper::print_r($data);
+			if($_ENV['MAIL_TEST']){
+				Mail::send('emails.mail1', $data, function($message) use ($data){
+					$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITY STATUS');
+				});
+			}else{
+				// Mail::send('emails.mail1', $data, function($message) use ($data){
+				// 	$message->to($data['email'], $data['fullname'])->subject('TOP ACTIVITY STATUS');
+				// });
+			}
+			
 		}
 		
 	}
@@ -84,9 +90,16 @@ Route::get("mail2", function(){
 		$data['activities'] = Activity::ApproverActivitiesForApproval($user->id,$cycle_ids);
 
 		if(count($data['activities']) > 0){
-			// Mail::send('emails.mail2', $data, function($message) use ($data){
-			// 	$message->to($data['email'], $data['fullname'])->subject('FOR APPROVAL: TOP ACTIVITIES');
-			// });
+			if($_ENV['MAIL_TEST']){
+				Mail::send('emails.mail2', $data, function($message) use ($data){
+					$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITY STATUS');
+				});
+			}else{
+				// Mail::send('emails.mail2', $data, function($message) use ($data){
+				// 	$message->to($data['email'], $data['fullname'])->subject('FOR APPROVAL: TOP ACTIVITIES');
+				// });
+			}
+			
 		}
 		
 	}
@@ -119,9 +132,16 @@ Route::get("mail3", function(){
 		}
 
 		if(count($data['activities']) > 0){
-			// Mail::send('emails.mail3', $data, function($message) use ($data){
-			// 	$message->to($data['email'], $data['fullname'])->subject('TOP ACTIVITY STATUS');
-			// });
+			if($_ENV['MAIL_TEST']){
+				Mail::send('emails.mail3', $data, function($message) use ($data){
+					$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITY STATUS');
+				});
+			}else{
+				// Mail::send('emails.mail3', $data, function($message) use ($data){
+				// 	$message->to($data['email'], $data['fullname'])->subject('TOP ACTIVITY STATUS');
+				// });
+			}
+			
 		}
 		
 	}
@@ -147,9 +167,15 @@ Route::get("mail4", function(){
 		$data['activities'] = Activity::Released($cycle_ids);
 
 		if(count($data['activities']) > 0){
-			// Mail::send('emails.mail4', $data, function($message) use ($data){
-			// 	$message->to($data['email'], $data['fullname'])->subject('TOP ACTIVITIES FOR: ('.$cycle_names.')');
-			// });
+			if($_ENV['MAIL_TEST']){
+				Mail::send('emails.mail4', $data, function($message) use ($data){
+					$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITY STATUS');
+				});
+			}else{
+				// Mail::send('emails.mail4', $data, function($message) use ($data){
+				// 	$message->to($data['email'], $data['fullname'])->subject('TOP ACTIVITIES FOR: ('.$cycle_names.')');
+				// });
+			}
 		}
 		
 	}
