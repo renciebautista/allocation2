@@ -31,7 +31,13 @@ Route::get("testmail", function(){
 });
 
 Route::get("test", function(){
-	return View::make('test.index');
+	if($_ENV['MAIL_TEST']){
+		echo "test mail";
+	}else{
+		// Mail::send('emails.mail1', $data, function($message) use ($data){
+		// 	$message->to($data['email'], $data['fullname'])->subject('TOP ACTIVITY STATUS');
+		// });
+	}
 });
 
 
