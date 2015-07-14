@@ -324,7 +324,9 @@ class ActivityController extends BaseController {
 			// comments
 			$comments = ActivityComment::getList($activity->id);
 
-			$timings = ActivityTiming::where('activity_id', $activity->id)->get();
+			$timings = ActivityTiming::where('activity_id', $activity->id)
+				->orderBy('task_id')
+				->get();
 
 			$force_allocs = ForceAllocation::getlist($activity->id);
 			$areas = Area::getAreaWithGroup();
@@ -396,7 +398,9 @@ class ActivityController extends BaseController {
 			// comments
 			$comments = ActivityComment::getList($activity->id);
 
-			$timings = ActivityTiming::where('activity_id', $activity->id)->get();
+			$timings = ActivityTiming::where('activity_id', $activity->id)
+				->orderBy('task_id')
+				->get();
 
 			$force_allocs = ForceAllocation::getlist($activity->id);
 			$areas = Area::getAreaWithGroup();
@@ -2031,7 +2035,10 @@ class ActivityController extends BaseController {
 						$activity_timing[] = array('activity_id' => $new_activity->id, 'task_id' => $timing->task_id,
 								'milestone' => $timing->milestone, 'task' => $timing->task, 'responsible' => $timing->responsible,
 								'duration' => $timing->duration, 'depend_on' => $timing->depend_on,
-								'start_date' => date('Y-m-d',strtotime($timing->start_date)), 'end_date' => date('Y-m-d',strtotime($timing->end_date)));
+								'start_date' => date('Y-m-d',strtotime($timing->start_date)),
+								'end_date' => date('Y-m-d',strtotime($timing->end_date)),
+								'final_start_date' => date('Y-m-d',strtotime($timing->final_start_date)),
+								'final_end_date' => date('Y-m-d',strtotime($timing->final_end_date)));
 					}
 					if(!empty($activity_timing)){
 						ActivityTiming::insert($activity_timing);
