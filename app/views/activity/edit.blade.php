@@ -951,7 +951,7 @@
 		</div>
 
 		<div class="panel panel-default">
-		  	<div class="panel-heading">Banding Guidelines / Activation Mechanics</div>
+		  	<div class="panel-heading">Banding Guidelines / Activation Mechanics / Others</div>
 		  	<div class="panel-body">
 		  		<div id="bandingupload">
 		  		{{ Form::open(array('action' => array('ActivityController@bandingupload', $activity->id),'id' => 'bandingupload_form',  'class' => 'bs-component','files'=>true)) }}

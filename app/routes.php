@@ -25,9 +25,11 @@ Route::get("testmail", function(){
 	$data['fullname'] = $user->getFullname();
 	$data['cycle_ids'] = $cycle_ids;
 	$data['activities'] = Activity::ProponentActivitiesForApproval($user->id,$cycle_ids);
-	Mail::send('emails.mail1', $data, function($message) use ($data){
-		$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITY STATUS');
-	});
+	// Mail::send('emails.mail1', $data, function($message) use ($data){
+	// 	$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITY STATUS');
+	// });
+
+	return View::make('emails.mail1',$data);
 });
 
 Route::get("test", function(){

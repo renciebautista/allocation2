@@ -95,3 +95,5 @@ refresh timings page
 remove outside click in edit networks
 
 php -q /home/ulpeto5/test.ulp-etop.com/artisan 
+
+multiple host and premuim sku
