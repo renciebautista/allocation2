@@ -2452,7 +2452,7 @@ class ActivityController extends BaseController {
 	}
 
 	public function updatetimings($id){
-		Helper::print_r(Input::all());
+		// Helper::print_r(Input::all());
 		$activity = Activity::findOrFail($id);
 
 		// ActivityTiming::where('activity_id',$activity->id)->delete();
