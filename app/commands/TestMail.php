@@ -37,36 +37,60 @@ class TestMail extends Command {
 	 */
 	public function fire()
 	{
-		$user = User::find(1);
-		$cycles = Cycle::getBySubmissionDeadline();
-		$cycle_ids = array();
-		foreach ($cycles as $value) {
-			$cycle_ids[] = $value->id;
+		$type = $this->argument('type');
+		$user_id = $this->argument('user_id');
+		$user = User::find($user_id);
+		switch ($type) {
+			case 'mail1':
+				$cycles = Cycle::getBySubmissionDeadline();
+				$cycle_ids = array();
+				foreach ($cycles as $value) {
+					$cycle_ids[] = $value->id;
+				}
+				$data['cycles'] = $cycles;
+				$data['user'] = $user->getFullname();
+				$data['email'] = $user->email;
+				$data['fullname'] = $user->getFullname();
+				$data['cycle_ids'] = $cycle_ids;
+				$data['activities'] = Activity::ProponentActivitiesForApproval($user->id,$cycle_ids);
+				Mail::send('emails.mail1', $data, function($message) use ($data){
+					$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITY STATUS');
+				});
+			break;
+			
+			default:
+				# code...
+				break;
 		}
-		$data['cycles'] = $cycles;
-		$data['user'] = $user->getFullname();
-		$data['email'] = $user->email;
-		$data['fullname'] = $user->getFullname();
-		$data['cycle_ids'] = $cycle_ids;
-		$data['activities'] = Activity::ProponentActivitiesForApproval($user->id,$cycle_ids);
-		Mail::send('emails.mail1', $data, function($message) use ($data){
-			$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITY STATUS');
-		});
-
+		// $cycles = Cycle::getBySubmissionDeadline();
+		// $cycle_ids = array();
+		// foreach ($cycles as $value) {
+		// 	$cycle_ids[] = $value->id;
+		// }
+		// $data['cycles'] = $cycles;
+		// $data['user'] = $user->getFullname();
+		// $data['email'] = $user->email;
+		// $data['fullname'] = $user->getFullname();
+		// $data['cycle_ids'] = $cycle_ids;
+		// $data['activities'] = Activity::ProponentActivitiesForApproval($user->id,$cycle_ids);
+		// Mail::send('emails.mail1', $data, function($message) use ($data){
+		// 	$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITY STATUS');
+		// });
 		$this->line("Mail sent.");
 	}
 
-	// /**
-	//  * Get the console command arguments.
-	//  *
-	//  * @return array
-	//  */
-	// protected function getArguments()
-	// {
-	// 	return array(
-	// 		array('example', InputArgument::REQUIRED, 'An example argument.'),
-	// 	);
-	// }
+	/**
+	 * Get the console command arguments.
+	 *
+	 * @return array
+	 */
+	protected function getArguments()
+	{
+		return array(
+			array('type', InputArgument::REQUIRED, 'An example argument.'),
+			array('user_id', InputArgument::REQUIRED, 'An example argument.'),
+		);
+	}
 
 	// /**
 	//  * Get the console command options.
