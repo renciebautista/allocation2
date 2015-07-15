@@ -53,7 +53,7 @@ class SendMail extends Command {
 				foreach ($users as $user) {
 					$job_id = Queue::push('MailScheduler', array('template' => 'emails.mail1', 'id' => $user->id, 'cycle_ids' => $cycle_ids));
 					Job::create(array('job_id' => $job_id));
-					$this->line("Scheduling ".$activity->circular_name);
+					$this->line("Scheduling mail");
 				}
 				$this->line("Total queued email {$total_mails}");
 			break;
