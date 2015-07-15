@@ -215,17 +215,21 @@ Route::get("test", function(){
 
 
 
-// Route::get('queue/send', function(){
-// 	$job_id = Queue::push('Scheduler', array('string' => 'Hello world'));
-// 	Job::create(array('job_id' => $job_id));
-// 	return $job_id;
-// });
+Route::get('queue/send', function(){
+	// Queue::pushRaw("This is Hello World payload", "email");
+	Queue::push('Scheduler', array('string' => 'Hello world'),'pdf');
+});
 
 Route::post('queue/push', function()
 {
 	return Queue::marshal();
 });
 
+
+Route::post('queue/pdf', function()
+{
+	return Queue::marshal();
+});
 
 
 Route::get('/','LoginController@index');
