@@ -15,7 +15,7 @@ class MailScheduler{
 		// 	$message->to("rbautista@chasetech.com", $data2['fullname'])->subject('TOP ACTIVITY STATUS');
 		// });
 
-		File::append(storage_path().'/queue.txt',$data['user_id'].$job_id.PHP_EOL); //Add content to file
+		File::append(storage_path().'/queue.txt',"hello world".PHP_EOL); //Add content to file
 		
 		// $job->delete();
 		return true;
