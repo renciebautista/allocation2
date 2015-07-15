@@ -5,17 +5,17 @@ class MailScheduler{
 
 		$user = User::find($data['user_id']);
 		$cycles = Cycle::whereIn('id',$data['cycles']);
-		$data['cycles'] = $cycles;
-		$data['user'] = $user->getFullname();
-		$data['email'] = $user->email;
-		$data['fullname'] = $user->getFullname();
-		$data['activities'] = Activity::ProponentActivitiesForApproval($user->id,$data['cycles']);
+		$data2['cycles'] = $cycles;
+		$data2['user'] = $user->getFullname();
+		$data2['email'] = $user->email;
+		$data2['fullname'] = $user->getFullname();
+		$data2['activities'] = Activity::ProponentActivitiesForApproval($user->id,$data['cycles']);
 
-		Mail::send('emails.mail1', $data, function($message) use ($data){
-			$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITY STATUS');
+		Mail::send('emails.mail1', $data2, function($message) use ($data){
+			$message->to("rbautista@chasetech.com", $data2['fullname'])->subject('TOP ACTIVITY STATUS');
 		});
 		
-		$job->delete();
+		// $job->delete();
 		return true;
 
 	}
