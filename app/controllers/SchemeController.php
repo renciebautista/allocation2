@@ -802,6 +802,7 @@ class SchemeController extends \BaseController {
 			$new_scheme->total_cases = $scheme->total_cases;
 			$new_scheme->tts_r = $scheme->tts_r;
 			$new_scheme->pe_r = $scheme->pe_r;
+			$new_scheme->lpat = $scheme->lpat;
 			$new_scheme->total_cost = $scheme->total_cost;
 			$new_scheme->user_id = Auth::id();
 			$new_scheme->final_alloc = $scheme->final_alloc;
@@ -810,6 +811,7 @@ class SchemeController extends \BaseController {
 			$new_scheme->final_tts_r = $scheme->final_tts_r;
 			$new_scheme->final_pe_r = $scheme->final_pe_r;
 			$new_scheme->final_total_cost = $scheme->final_total_cost;
+			$new_scheme->ulp_premium = $scheme->ulp_premium;
 			$new_scheme->save();
 
 			// add skus
