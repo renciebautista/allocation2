@@ -4,7 +4,7 @@
 <div class="page-header" id="banner">
 	<div class="row">
 		<div class="col-lg-12 col-md-7 col-sm-6">
-			<h1>Activty : {{ $scheme->activity->circular_name }}</h1>
+			<h1>Activity : {{ $scheme->activity->circular_name }}</h1>
 			<h2>Edit {{ $scheme->name }}</h2>
 		</div>
 	</div>

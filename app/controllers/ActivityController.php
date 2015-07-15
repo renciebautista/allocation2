@@ -2324,6 +2324,7 @@ class ActivityController extends BaseController {
 						$new_scheme->total_cases = $scheme->total_cases;
 						$new_scheme->tts_r = $scheme->tts_r;
 						$new_scheme->pe_r = $scheme->pe_r;
+						$new_scheme->lpat = $scheme->lpat;
 						$new_scheme->total_cost = $scheme->total_cost;
 						$new_scheme->user_id = Auth::id();
 						$new_scheme->final_alloc = $scheme->final_alloc;
@@ -2332,6 +2333,7 @@ class ActivityController extends BaseController {
 						$new_scheme->final_tts_r = $scheme->final_tts_r;
 						$new_scheme->final_pe_r = $scheme->final_pe_r;
 						$new_scheme->final_total_cost = $scheme->final_total_cost;
+						$new_scheme->ulp_premium = $scheme->ulp_premium;
 						$new_scheme->save();
 
 						// add skus
@@ -2362,7 +2364,7 @@ class ActivityController extends BaseController {
 						$last_shipto_id = 0;
 						foreach ($allocations as $allocation) {
 							$scheme_alloc = new SchemeAllocation;
-
+							$scheme_alloc->scheme_id = $new_scheme->id;
 							if((!empty($allocation->customer_id)) && (empty($allocation->shipto_id))){
 								$scheme_alloc->customer_id = $last_area_id;
 							}
@@ -2372,7 +2374,6 @@ class ActivityController extends BaseController {
 								$scheme_alloc->shipto_id = $last_shipto_id;
 							}
 							
-							$scheme_alloc->scheme_id = $new_scheme->id;
 							$scheme_alloc->group = $allocation->group;
 							$scheme_alloc->area = $allocation->area;
 							$scheme_alloc->sold_to = $allocation->sold_to;
@@ -2381,14 +2382,23 @@ class ActivityController extends BaseController {
 							$scheme_alloc->account_group_name = $allocation->account_group_name;
 							$scheme_alloc->outlet = $allocation->outlet;
 							$scheme_alloc->sold_to_gsv = $allocation->sold_to_gsv;
+							$scheme_alloc->forced_sold_to_gsv = $allocation->forced_sold_to_gsv;
 							$scheme_alloc->sold_to_gsv_p = $allocation->sold_to_gsv_p;
+							$scheme_alloc->forced_sold_to_gsv_p = $allocation->forced_sold_to_gsv_p;
 							$scheme_alloc->sold_to_alloc = $allocation->sold_to_alloc;
+							$scheme_alloc->forced_sold_to_alloc = $allocation->forced_sold_to_alloc;
 							$scheme_alloc->ship_to_gsv = $allocation->ship_to_gsv;
+							$scheme_alloc->forced_ship_to_gsv = $allocation->forced_ship_to_gsv;
 							$scheme_alloc->ship_to_gsv_p = $allocation->ship_to_gsv_p;
+							$scheme_alloc->forced_ship_to_gsv_p = $allocation->forced_ship_to_gsv_p;
 							$scheme_alloc->ship_to_alloc = $allocation->ship_to_alloc;
+							$scheme_alloc->forced_ship_to_alloc = $allocation->forced_ship_to_alloc;
 							$scheme_alloc->outlet_to_gsv = $allocation->outlet_to_gsv;
+							$scheme_alloc->forced_outlet_to_gsv = $allocation->forced_outlet_to_gsv;
 							$scheme_alloc->outlet_to_gsv_p = $allocation->outlet_to_gsv_p;
+							$scheme_alloc->forced_outlet_to_gsv_p = $allocation->forced_outlet_to_gsv_p;
 							$scheme_alloc->outlet_to_alloc = $allocation->outlet_to_alloc;
+							$scheme_alloc->forced_outlet_to_alloc = $allocation->forced_outlet_to_alloc;
 							$scheme_alloc->multi = $allocation->multi;
 							$scheme_alloc->computed_alloc = $allocation->computed_alloc;
 							$scheme_alloc->force_alloc = $allocation->force_alloc;

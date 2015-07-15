@@ -48,6 +48,8 @@ class SendMail extends Command {
 					$cycle_ids[] = $value->id;
 				}
 				$total_mails = 0;
+				$total_users = count($users);
+				$this->line("Total users {$total_users}");
 				foreach ($users as $user) {
 					$data['cycles'] = $cycles;
 					$data['user'] = $user->getFullname();
@@ -61,7 +63,7 @@ class SendMail extends Command {
 						$data['activities'] = Activity::PmogActivitiesForApproval($user->id,$cycle_ids);
 					}
 
-					//if(count($data['activities']) > 0){
+					if(count($data['activities']) > 0){
 						$total_mails++;
 						if($_ENV['MAIL_TEST']){
 							Mail::send('emails.mail1', $data, function($message) use ($data){
@@ -73,7 +75,7 @@ class SendMail extends Command {
 							// });
 						}
 						
-					//}
+					}
 				}
 				$this->line("Total queued email {$total_mails}");
 			break;
