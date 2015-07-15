@@ -105,4 +105,6 @@ cd /home/ulpeto5/test.ulp-etop.com && /usr/bin/php5-cli artisan test:mail
 ironmgq
 rencie.bautista@yahoo.com
 031988
- php artisan queue:subscribe email http://test.ulp-etop.com/queue/mail
+ php artisan queue:subscribe email http://test.ulp-etop.com/queue/push
+
+ php artisan command:make SendMail --command=mail:send

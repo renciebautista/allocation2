@@ -43,20 +43,40 @@ Route::get("test", function(){
 
 
 Route::get("mail1", function(){
-
-	$user = User::find(2);
+	$users = User::GetPlanners(['PROPONENT' ,'PMOG']);
 	$cycles = Cycle::getBySubmissionDeadline();
 	$cycle_ids = array();
 	foreach ($cycles as $value) {
 		$cycle_ids[] = $value->id;
 	}
-	$data['cycles'] = $cycles;
-	$data['user'] = $user->getFullname();
-	$data['email'] = $user->email;
-	$data['fullname'] = $user->getFullname();
-	$data['cycle_ids'] = $cycle_ids;
-	$data['activities'] = Activity::ProponentActivitiesForApproval($user->id,$cycle_ids);
-	return View::make('emails.mail1', $data);
+
+	foreach ($users as $user) {
+		$data['cycles'] = $cycles;
+		$data['user'] = $user->getFullname();
+		$data['email'] = $user->email;
+		$data['fullname'] = $user->getFullname();
+		$data['cycle_ids'] = $cycle_ids;
+		if($user->role_id == 2){
+			$data['activities'] = Activity::ProponentActivitiesForApproval($user->id,$cycle_ids);
+		}
+		if($user->role_id == 3){
+			$data['activities'] = Activity::PmogActivitiesForApproval($user->id,$cycle_ids);
+		}
+
+		if(count($data['activities']) > 0){
+			if($_ENV['MAIL_TEST']){
+				Mail::send('emails.mail1', $data, function($message) use ($data){
+					$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITY STATUS');
+				});
+			}else{
+				// Mail::send('emails.mail1', $data, function($message) use ($data){
+				// 	$message->to($data['email'], $data['fullname'])->subject('TOP ACTIVITY STATUS');
+				// });
+			}
+			
+		}
+		
+	}
 
 });
 
@@ -155,12 +175,9 @@ Route::get("mail4", function(){
 
 		if(count($data['activities']) > 0){
 			if($_ENV['MAIL_TEST']){
-				$job_id = Queue::push('Scheduler', array('string' => "Scheduling ".$activity->circular_name, 'id' => $activity->id));
-				Job::create(array('job_id' => $job_id));
-				$this->line("Scheduling ".$activity->circular_name);
-				// Mail::send('emails.mail4', $data, function($message) use ($data){
-				// 	$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITY STATUS');
-				// });
+				Mail::send('emails.mail4', $data, function($message) use ($data){
+					$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITY STATUS');
+				});
 			}else{
 				// Mail::send('emails.mail4', $data, function($message) use ($data){
 				// 	$message->to($data['email'], $data['fullname'])->subject('TOP ACTIVITIES FOR: ('.$cycle_names.')');
@@ -172,25 +189,25 @@ Route::get("mail4", function(){
 });
 
 
-Route::post('queue/mail1', function()
-{
-	return Queue::marshal();
-});
+// Route::post('queue/mail1', function()
+// {
+// 	return Queue::marshal();
+// });
 
-Route::post('queue/mail2', function()
-{
-	return Queue::marshal();
-});
+// Route::post('queue/mail2', function()
+// {
+// 	return Queue::marshal();
+// });
 
-Route::post('queue/mail3', function()
-{
-	return Queue::marshal();
-});
+// Route::post('queue/mail3', function()
+// {
+// 	return Queue::marshal();
+// });
 
-Route::post('queue/mail4', function()
-{
-	return Queue::marshal();
-});
+// Route::post('queue/mail4', function()
+// {
+// 	return Queue::marshal();
+// });
 
 
 
