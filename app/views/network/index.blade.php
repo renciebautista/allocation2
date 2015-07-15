@@ -128,6 +128,7 @@
 	</div>
 
 	<p id="totalduration"></p>
+	<p id="cpm"></p>
 </div>
 
 
@@ -143,6 +144,8 @@ function duration(){
 		success: function(msg){
 			$("#totalduration").empty();
 			$("#totalduration").append( " <strong>Total Duration : "+msg.days+" days</strong>" );
+			$("#cpm").empty();
+			$("#cpm").append( " <strong>Critical Path : "+msg.cpm+"</strong>" );
 		},
 		error: function(){
 			alert("failure");

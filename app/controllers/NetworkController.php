@@ -143,6 +143,7 @@ class NetworkController extends \BaseController {
 			if(count($activities)>0){
 				$cpm = new Cpm($activities);
 				$data['days'] = $cpm->TotalDuration();
+				$data['cpm'] = $cpm->CriticalPath();
 			}
 
 			$data['min_date'] = ActivityTypeNetwork::getImplemetationDate($data['start_date'],$holidays,$data['days'] - 1);
