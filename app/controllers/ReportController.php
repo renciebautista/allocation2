@@ -37,18 +37,18 @@ class ReportController extends \BaseController {
 			$schemes = Scheme::getList($id);
 
 			$skuinvolves = array();
-			$premium_skus = array();
 			foreach ($schemes as $scheme) {
 				$involves = SchemeHostSku::where('scheme_id',$scheme->id)
 					->join('pricelists', 'scheme_host_skus.sap_code', '=', 'pricelists.sap_code')
 					->get();
-				foreach ($involves as $value) {
-					$skuinvolves[] = $value;
-				}
 
 				$premiums = SchemePremuimSku::where('scheme_id',$scheme->id)
 					->join('pricelists', 'scheme_premuim_skus.sap_code', '=', 'pricelists.sap_code')
 					->get();
+
+				foreach ($involves as $value) {
+					$skuinvolves[] = $value;
+				}
 
 				foreach ($premiums as $premium) {
 					$premium_skus[] = $premium;

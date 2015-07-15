@@ -291,43 +291,23 @@
 								<tr>
 									<th>Host SKU Code</th>
 									<th>Host SKU Description</th>
+									<th>Premium SKU Code</th>
+									<th>Premium SKU Description</th>
+									<th>Non ULP Premium SKUs</th>
 								</tr>
 								@foreach($skuinvolves as $involve)
 								<tr>
 									<td>{{ $involve->sap_code }}</td>
+									<td>{{ $involve->sap_desc }}</td>
+									<td>{{ $involve->sap_code }}</td>
+									<td>{{ $involve->sap_desc }}</td>
 									<td>{{ $involve->sap_desc }}</td>
 								</tr>
 								@endforeach
 							</table>
 							@endif
 
-							@if(!empty($premium_skus))
-							<table class="sub-table">
-								<tr>
-									<th>Premium SKU Code</th>
-									<th>Premium SKU Description</th>
-								</tr>
-								@foreach($premium_skus as $premium)
-								<tr>
-									<td>{{ $premium->sap_code }}</td>
-									<td>{{ $premium->sap_desc }}</td>
-								</tr>
-								@endforeach
-							</table>
-							@endif
-
-							@if(!empty($non_ulp))
-							<table class="sub-table" style="margin-top:5px;"> 
-								<tr>
-									<th>Non ULP Premium SKUs</th>
-								</tr>
-								@foreach($non_ulp as $ulp)
-								<tr>
-									<td>{{ $ulp }}</td>
-								</tr>
-								@endforeach
-							</table>
-							@endif
+							
 						</td>
 					</tr>
 					<tr>

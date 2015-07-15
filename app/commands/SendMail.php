@@ -48,13 +48,45 @@ class SendMail extends Command {
 					$cycle_ids[] = $value->id;
 				}
 				$total_mails = 0;
+				foreach ($users as $user) {
+					$data['cycles'] = $cycles;
+					$data['user'] = $user->getFullname();
+					$data['email'] = $user->email;
+					$data['fullname'] = $user->getFullname();
+					$data['cycle_ids'] = $cycle_ids;
+					if($user->role_id == 2){
+						$data['activities'] = Activity::ProponentActivitiesForApproval($user->id,$cycle_ids);
+					}
+					if($user->role_id == 3){
+						$data['activities'] = Activity::PmogActivitiesForApproval($user->id,$cycle_ids);
+					}
+					if($_ENV['MAIL_TEST']){
+						Mail::queue('emails.mail1', $data, function($message) use ($data){
+							$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITY STATUS');
+						});
+					}else{
+						// Mail::send('emails.mail1', $data, function($message) use ($data){
+						// 	$message->to($data['email'], $data['fullname'])->subject('TOP ACTIVITY STATUS');
+						// });
+					}
+						
+					// if(count($data['activities']) > 0){
+					// 	$total_mails++;
+					// 	if($_ENV['MAIL_TEST']){
+					// 		Mail::queue('emails.mail1', $data, function($message) use ($data){
+					// 			$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITY STATUS');
+					// 		});
+					// 	}else{
+					// 		// Mail::send('emails.mail1', $data, function($message) use ($data){
+					// 		// 	$message->to($data['email'], $data['fullname'])->subject('TOP ACTIVITY STATUS');
+					// 		// });
+					// 	}
+						
+					// }
+					
+				}
 				$total_users = count($users);
 				$this->line("Total users {$total_users}");
-				foreach ($users as $user) {
-					$job_id = Queue::push('MailScheduler', array('template' => 'emails.mail1', 'id' => $user->id, 'cycle_ids' => $cycle_ids));
-					Job::create(array('job_id' => $job_id));
-					$this->line("Scheduling mail");
-				}
 				$this->line("Total queued email {$total_mails}");
 			break;
 			case 'mail2':
