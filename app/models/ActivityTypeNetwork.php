@@ -146,8 +146,7 @@ class ActivityTypeNetwork extends \Eloquent {
 			$var_end_date ='';
 			if($value->task_id == 1){
 				$activities[$key]->start_date = date_format(date_create($start_date),'m/d/Y');
-				// $activities[$key]->end_date =  date('m/d/Y',strtotime($activities[$key]->start_date.' +'.$value->duration.' days'));
-				$activities[$key]->end_date = ActivityTypeNetwork::getImplemetationDate($activities[$key]->start_date,$holidays,$value->duration - 1);
+				$activities[$key]->end_date = ActivityTypeNetwork::getNextDate($activities[$key]->start_date,$holidays,$value->duration - 1);
 				$var_end_date = $activities[$key]->end_date;
 			}else{
 				
@@ -163,9 +162,7 @@ class ActivityTypeNetwork extends \Eloquent {
 					}
 				}
 				$activities[$key]->start_date = date('m/d/Y',strtotime($var_end_date.' + 1 days'));
-				// $activities[$key]->start_date = date_format(date_create($var_end_date),'m/d/Y');
-				// $activities[$key]->end_date =  date('m/d/Y',strtotime($activities[$key]->start_date.' +'.$value->duration.' days'));
-				$activities[$key]->end_date =  ActivityTypeNetwork::getImplemetationDate($activities[$key]->start_date,$holidays,$value->duration - 1);
+				$activities[$key]->end_date =  ActivityTypeNetwork::getNextDate($activities[$key]->start_date,$holidays,$value->duration - 1);
 			}
 		}
 
@@ -173,8 +170,7 @@ class ActivityTypeNetwork extends \Eloquent {
 			$var_end_date ='';
 			if($value->task_id == 1){
 				$activities[$key]->start_date = date_format(date_create($start_date),'m/d/Y');
-				// $activities[$key]->end_date =  date('m/d/Y',strtotime($activities[$key]->start_date.' +'.$value->duration.' days'));
-				$activities[$key]->end_date = ActivityTypeNetwork::getImplemetationDate($activities[$key]->start_date,$holidays,$value->duration - 1);
+				$activities[$key]->end_date = ActivityTypeNetwork::getNextDate($activities[$key]->start_date,$holidays,$value->duration - 1);
 				$var_end_date = $activities[$key]->end_date;
 			}else{
 				
@@ -190,9 +186,7 @@ class ActivityTypeNetwork extends \Eloquent {
 					}
 				}
 				$activities[$key]->start_date = date('m/d/Y',strtotime($var_end_date.' + 1 days'));
-				// $activities[$key]->start_date = date_format(date_create($var_end_date),'m/d/Y');
-				// $activities[$key]->end_date =  date('m/d/Y',strtotime($activities[$key]->start_date.' +'.$value->duration.' days'));
-				$activities[$key]->end_date =  ActivityTypeNetwork::getImplemetationDate($activities[$key]->start_date,$holidays,$value->duration - 1);
+				$activities[$key]->end_date =  ActivityTypeNetwork::getNextDate($activities[$key]->start_date,$holidays,$value->duration - 1);
 			}
 		}
 
@@ -200,69 +194,25 @@ class ActivityTypeNetwork extends \Eloquent {
 		return $activities;
 	}
 
-	// public static function activityDuration($id){
-	// 	$activities = self::where('activitytype_id', $id)
-	// 		->orderBy('task_id')
-	// 		->get();
+	public static function getNextDate($startDate,$holidays,$wDays){
+		
+	    // using + weekdays excludes weekends
+	    $new_date = date('Y-m-d', strtotime("{$startDate} +{$wDays} weekdays"));
 
-	// 	foreach ($activities as $key => $value) {
-	// 		$activities[$key]->depend_on = ActivityNetworkDependent::depend_on_task($value->id);			
-	// 	}
+	    foreach ($holidays as $holiday) {
+	    	$holiday_ts = strtotime($holiday);
 
-	// 	foreach ($activities as $key => $value) {
-	// 		$var_end_date ='';
-	// 		if($value->task_id == 1){
-	// 			$activities[$key]->start_date = date_format(date_create($start_date),'m/d/Y');
-	// 			$activities[$key]->end_date = ActivityTypeNetwork::getImplemetationDate($activities[$key]->start_date,$holidays,$value->duration - 1);
-	// 			$var_end_date = $activities[$key]->end_date;
-	// 		}else{
-				
-	// 			if(!empty($activities[$key]->depend_on)){
-	// 				$depend_on = explode(",", $activities[$key]->depend_on);
-	// 				foreach ($depend_on  as $obj) {
-	// 					$parent_obj = self::searchObject($activities,'task_id', $obj);
-	// 					$old_date = strtotime($var_end_date);
-	// 					$new_date = strtotime( $parent_obj->end_date);
-	// 					if($new_date > $old_date ){
-	// 						$var_end_date = $parent_obj->end_date;
-	// 					}
-	// 				}
-	// 			}
-	// 			$activities[$key]->start_date = date('m/d/Y',strtotime($var_end_date.' + 1 days'));
-	// 			// $activities[$key]->start_date = date_format(date_create($var_end_date),'m/d/Y');
-	// 			// $activities[$key]->end_date =  date('m/d/Y',strtotime($activities[$key]->start_date.' +'.$value->duration.' days'));
-	// 			$activities[$key]->end_date =  ActivityTypeNetwork::getImplemetationDate($activities[$key]->start_date,$holidays,$value->duration - 1);
-	// 		}
-	// 	}
+		    // if holiday falls between start date and new date, then account for it
+		    if ($holiday_ts >= strtotime($startDate) && $holiday_ts <= strtotime($new_date)) {
 
-	// 	foreach ($activities as $key => $value) {
-	// 		$var_end_date ='';
-	// 		if($value->task_id == 1){
-	// 			$activities[$key]->start_date = date_format(date_create($start_date),'m/d/Y');
-	// 			// $activities[$key]->end_date =  date('m/d/Y',strtotime($activities[$key]->start_date.' +'.$value->duration.' days'));
-	// 			$activities[$key]->end_date = ActivityTypeNetwork::getImplemetationDate($activities[$key]->start_date,$holidays,$value->duration - 1);
-	// 			$var_end_date = $activities[$key]->end_date;
-	// 		}else{
-				
-	// 			if(!empty($activities[$key]->depend_on)){
-	// 				$depend_on = explode(",", $activities[$key]->depend_on);
-	// 				foreach ($depend_on  as $obj) {
-	// 					$parent_obj = self::searchObject($activities,'task_id', $obj);
-	// 					$old_date = strtotime($var_end_date);
-	// 					$new_date = strtotime( $parent_obj->end_date);
-	// 					if($new_date > $old_date ){
-	// 						$var_end_date = $parent_obj->end_date;
-	// 					}
-	// 				}
-	// 			}
-	// 			$activities[$key]->start_date = date('m/d/Y',strtotime($var_end_date.' + 1 days'));
-	// 			// $activities[$key]->start_date = date_format(date_create($var_end_date),'m/d/Y');
-	// 			// $activities[$key]->end_date =  date('m/d/Y',strtotime($activities[$key]->start_date.' +'.$value->duration.' days'));
-	// 			$activities[$key]->end_date =  ActivityTypeNetwork::getImplemetationDate($activities[$key]->start_date,$holidays,$value->duration - 1);
-	// 		}
-	// 	}
-
-
-	// 	return $activities;
-	// }
+		        // check if the holiday falls on a working day
+		        $h = date('w', $holiday_ts);
+		            if ($h != 0 && $h != 6 ) {
+		            // holiday falls on a working day, add an extra working day
+		            $new_date = date('Y-m-d', strtotime("{$new_date} + 1 weekdays"));
+		        }
+		    }
+	    }
+	    return date('m/d/Y', strtotime($new_date));
+	}
 }

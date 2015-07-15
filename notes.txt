@@ -92,11 +92,8 @@ setup pdf creation
 update pmog on settings
 addjust date in activity type if network is changed
 refresh timings page
-remove outside click in edit networks
+remove outside click in edit networks - done
 
 php -q /home/ulpeto5/test.ulp-etop.com/artisan 
 
 multiple host and premuim sku
-
-
-PRE-BANDED PACK Network
