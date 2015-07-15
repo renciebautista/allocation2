@@ -9,17 +9,17 @@ class MailScheduler{
 		$ejob->status = 'running'; //Set job status to running
 
 		$ejob->save();
-		$user = User::find($data['id']);
-		if($user->role_id == 2){
-			$data['activities'] = Activity::ProponentActivitiesForApproval($user->id,$data['cycle_ids']);
-		}
-		if($user->role_id == 3){
-			$data['activities'] = Activity::PmogActivitiesForApproval($user->id,$data['cycle_ids']);
-		}
+		// $user = User::find($data['id']);
+		// if($user->role_id == 2){
+		// 	$data['activities'] = Activity::ProponentActivitiesForApproval($user->id,$data['cycle_ids']);
+		// }
+		// if($user->role_id == 3){
+		// 	$data['activities'] = Activity::PmogActivitiesForApproval($user->id,$data['cycle_ids']);
+		// }
 
-		Mail::send($data['template'], $data, function($message) use ($data){
-			$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITY STATUS');
-		});
+		// Mail::send($data['template'], $data, function($message) use ($data){
+		// 	$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITY STATUS');
+		// });
 
 		$ejob->status = 'finished'; //Set job status to finished
 
