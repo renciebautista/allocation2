@@ -1,5 +1,9 @@
 <?php
 use Imagecow\Image;
+
+use Rencie\Cpm\CpmActivity;
+use Rencie\Cpm\Cpm;
+
 Queue::getIron()->ssl_verifypeer = false;
 /*
 |--------------------------------------------------------------------------
@@ -11,6 +15,17 @@ Queue::getIron()->ssl_verifypeer = false;
 | and give it the Closure to execute when that URI is requested.
 |
 */
+
+Route::get("testcpm", function(){
+	$activities = ActivityTypeNetwork::activities(8);
+	// Helper::print_r($activities);
+
+	$cpm = new Cpm($activities);
+	$data['days'] = $cpm->TotalDuration();
+	$data['cpm'] = $cpm->CriticalPath();
+
+	Helper::print_r($data);
+});
 
 Route::get("testmail", function(){
 	$user = User::find(1);
