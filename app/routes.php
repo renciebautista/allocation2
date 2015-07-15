@@ -42,155 +42,155 @@ Route::get("test", function(){
 });
 
 
-Route::get("mail1", function(){
-	$users = User::GetPlanners(['PROPONENT' ,'PMOG']);
-	$cycles = Cycle::getBySubmissionDeadline();
-	$cycle_ids = array();
-	foreach ($cycles as $value) {
-		$cycle_ids[] = $value->id;
-	}
+// Route::get("mail1", function(){
+// 	// $users = User::GetPlanners(['PROPONENT' ,'PMOG']);
+// 	// $cycles = Cycle::getBySubmissionDeadline();
+// 	// $cycle_ids = array();
+// 	// foreach ($cycles as $value) {
+// 	// 	$cycle_ids[] = $value->id;
+// 	// }
 
-	foreach ($users as $user) {
-		$data = array();
-		$data['user_id'] = $user->id;
-		$data['cycles'] = $cycles;
-		$data['user'] = $user->getFullname();
-		$data['email'] = $user->email;
-		$data['fullname'] = $user->getFullname();
-		$data['cycle_ids'] = $cycle_ids;
-		if($user->role_id == 2){
-			$data['activities'] = Activity::ProponentActivitiesForApproval($user->user_id,$cycle_ids);
-		}
-		if($user->role_id == 3){
-			$data['activities'] = Activity::PmogActivitiesForApproval($user->user_id,$cycle_ids);
-		}
+// 	// foreach ($users as $user) {
+// 	// 	$data = array();
+// 	// 	$data['user_id'] = $user->id;
+// 	// 	$data['cycles'] = $cycles;
+// 	// 	$data['user'] = $user->getFullname();
+// 	// 	$data['email'] = $user->email;
+// 	// 	$data['fullname'] = $user->getFullname();
+// 	// 	$data['cycle_ids'] = $cycle_ids;
+// 	// 	if($user->role_id == 2){
+// 	// 		$data['activities'] = Activity::ProponentActivitiesForApproval($user->user_id,$cycle_ids);
+// 	// 	}
+// 	// 	if($user->role_id == 3){
+// 	// 		$data['activities'] = Activity::PmogActivitiesForApproval($user->user_id,$cycle_ids);
+// 	// 	}
 
-		// if(count($data['activities']) > 0){
-		// 	if($_ENV['MAIL_TEST']){
-		// 		Mail::send('emails.mail1', $data, function($message) use ($data){
-		// 			$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITY STATUS');
-		// 		});
-		// 	}else{
-		// 		// Mail::send('emails.mail1', $data, function($message) use ($data){
-		// 		// 	$message->to($data['email'], $data['fullname'])->subject('TOP ACTIVITY STATUS');
-		// 		// });
-		// 	}
+// 	// 	// if(count($data['activities']) > 0){
+// 	// 	// 	if($_ENV['MAIL_TEST']){
+// 	// 	// 		Mail::send('emails.mail1', $data, function($message) use ($data){
+// 	// 	// 			$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITY STATUS');
+// 	// 	// 		});
+// 	// 	// 	}else{
+// 	// 	// 		// Mail::send('emails.mail1', $data, function($message) use ($data){
+// 	// 	// 		// 	$message->to($data['email'], $data['fullname'])->subject('TOP ACTIVITY STATUS');
+// 	// 	// 		// });
+// 	// 	// 	}
 			
-		// }
+// 	// 	// }
 
-		Helper::print_r($data);
+// 	// 	Helper::print_r($data);
 		
-	}
+// 	}
 
-});
+// });
 
-Route::get("mail2", function(){
-	$users = User::GetPlanners(['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']);
-	$cycles = Cycle::getByApprovalDeadline();
-	$cycle_ids = array();
-	foreach ($cycles as $value) {
-		$cycle_ids[] = $value->id;
-	}
+// Route::get("mail2", function(){
+// 	$users = User::GetPlanners(['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']);
+// 	$cycles = Cycle::getByApprovalDeadline();
+// 	$cycle_ids = array();
+// 	foreach ($cycles as $value) {
+// 		$cycle_ids[] = $value->id;
+// 	}
 
-	foreach ($users as $user) {
-		$data['cycles'] = $cycles;
-		$data['user'] = $user->getFullname();
-		$data['email'] = $user->email;
-		$data['fullname'] = $user->getFullname();
-		$data['cycle_ids'] = $cycle_ids;
-		$data['activities'] = Activity::ApproverActivitiesForApproval($user->id,$cycle_ids);
+// 	foreach ($users as $user) {
+// 		$data['cycles'] = $cycles;
+// 		$data['user'] = $user->getFullname();
+// 		$data['email'] = $user->email;
+// 		$data['fullname'] = $user->getFullname();
+// 		$data['cycle_ids'] = $cycle_ids;
+// 		$data['activities'] = Activity::ApproverActivitiesForApproval($user->id,$cycle_ids);
 
-		if(count($data['activities']) > 0){
-			if($_ENV['MAIL_TEST']){
-				Mail::send('emails.mail2', $data, function($message) use ($data){
-					$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITY STATUS');
-				});
-			}else{
-				// Mail::send('emails.mail2', $data, function($message) use ($data){
-				// 	$message->to($data['email'], $data['fullname'])->subject('FOR APPROVAL: TOP ACTIVITIES');
-				// });
-			}
+// 		if(count($data['activities']) > 0){
+// 			if($_ENV['MAIL_TEST']){
+// 				Mail::send('emails.mail2', $data, function($message) use ($data){
+// 					$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITY STATUS');
+// 				});
+// 			}else{
+// 				// Mail::send('emails.mail2', $data, function($message) use ($data){
+// 				// 	$message->to($data['email'], $data['fullname'])->subject('FOR APPROVAL: TOP ACTIVITIES');
+// 				// });
+// 			}
 			
-		}
+// 		}
 		
-	}
-});
+// 	}
+// });
 
 
-Route::get("mail3", function(){
-	$users = User::GetPlanners(['PROPONENT' ,'PMOG','GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']);
-	$cycles = Cycle::getByApprovalDeadlinePassed();
-	$cycle_ids = array();
-	foreach ($cycles as $value) {
-		$cycle_ids[] = $value->id;
-	}
+// Route::get("mail3", function(){
+// 	$users = User::GetPlanners(['PROPONENT' ,'PMOG','GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']);
+// 	$cycles = Cycle::getByApprovalDeadlinePassed();
+// 	$cycle_ids = array();
+// 	foreach ($cycles as $value) {
+// 		$cycle_ids[] = $value->id;
+// 	}
 
-	foreach ($users as $user) {
-		$data['cycles'] = $cycles;
-		$data['user'] = $user->getFullname();
-		$data['email'] = $user->email;
-		$data['fullname'] = $user->getFullname();
-		$data['cycle_ids'] = $cycle_ids;
+// 	foreach ($users as $user) {
+// 		$data['cycles'] = $cycles;
+// 		$data['user'] = $user->getFullname();
+// 		$data['email'] = $user->email;
+// 		$data['fullname'] = $user->getFullname();
+// 		$data['cycle_ids'] = $cycle_ids;
 
-		if($user->role_id == 2){
-			$data['activities'] = Activity::ProponentActivitiesForApproval($user->id,$cycle_ids);
-		}
-		if($user->role_id == 3){
-			$data['activities'] = Activity::PmogActivitiesForApproval($user->id,$cycle_ids);
-		}
-		if($user->role_id  > 3){
-			$data['activities'] = Activity::ApproverActivities($user->id,$cycle_ids);
-		}
+// 		if($user->role_id == 2){
+// 			$data['activities'] = Activity::ProponentActivitiesForApproval($user->id,$cycle_ids);
+// 		}
+// 		if($user->role_id == 3){
+// 			$data['activities'] = Activity::PmogActivitiesForApproval($user->id,$cycle_ids);
+// 		}
+// 		if($user->role_id  > 3){
+// 			$data['activities'] = Activity::ApproverActivities($user->id,$cycle_ids);
+// 		}
 
-		if(count($data['activities']) > 0){
-			if($_ENV['MAIL_TEST']){
-				Mail::send('emails.mail3', $data, function($message) use ($data){
-					$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITY STATUS');
-				});
-			}else{
-				// Mail::send('emails.mail3', $data, function($message) use ($data){
-				// 	$message->to($data['email'], $data['fullname'])->subject('TOP ACTIVITY STATUS');
-				// });
-			}
+// 		if(count($data['activities']) > 0){
+// 			if($_ENV['MAIL_TEST']){
+// 				Mail::send('emails.mail3', $data, function($message) use ($data){
+// 					$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITY STATUS');
+// 				});
+// 			}else{
+// 				// Mail::send('emails.mail3', $data, function($message) use ($data){
+// 				// 	$message->to($data['email'], $data['fullname'])->subject('TOP ACTIVITY STATUS');
+// 				// });
+// 			}
 			
-		}
+// 		}
 		
-	}
-});
+// 	}
+// });
 
 
-Route::get("mail4", function(){
-	$users = User::GetPlanners(['PROPONENT' ,'PMOG','GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR','FIELD SALES']);
-	$cycles = Cycle::getByReleaseDate();
-	$cycle_ids = array();
-	$cycle_names = "";
-	foreach ($cycles as $value) {
-		$cycle_ids[] = $value->id;
-		$cycle_names .= $value->cycle_name ." - ";
-	}
+// Route::get("mail4", function(){
+// 	$users = User::GetPlanners(['PROPONENT' ,'PMOG','GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR','FIELD SALES']);
+// 	$cycles = Cycle::getByReleaseDate();
+// 	$cycle_ids = array();
+// 	$cycle_names = "";
+// 	foreach ($cycles as $value) {
+// 		$cycle_ids[] = $value->id;
+// 		$cycle_names .= $value->cycle_name ." - ";
+// 	}
 
-	foreach ($users as $user) {
-		$data['cycles'] = $cycles;
-		$data['user'] = $user->getFullname();
-		$data['email'] = $user->email;
-		$data['fullname'] = $user->getFullname();
-		$data['cycle_ids'] = $cycle_ids;
-		$data['activities'] = Activity::Released($cycle_ids);
+// 	foreach ($users as $user) {
+// 		$data['cycles'] = $cycles;
+// 		$data['user'] = $user->getFullname();
+// 		$data['email'] = $user->email;
+// 		$data['fullname'] = $user->getFullname();
+// 		$data['cycle_ids'] = $cycle_ids;
+// 		$data['activities'] = Activity::Released($cycle_ids);
 
-		if(count($data['activities']) > 0){
-			if($_ENV['MAIL_TEST']){
-				Mail::send('emails.mail4', $data, function($message) use ($data){
-					$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITY STATUS');
-				});
-			}else{
-				// Mail::send('emails.mail4', $data, function($message) use ($data){
-				// 	$message->to($data['email'], $data['fullname'])->subject('TOP ACTIVITIES FOR: ('.$cycle_names.')');
-				// });
-			}
-		}
+// 		if(count($data['activities']) > 0){
+// 			if($_ENV['MAIL_TEST']){
+// 				Mail::send('emails.mail4', $data, function($message) use ($data){
+// 					$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITY STATUS');
+// 				});
+// 			}else{
+// 				// Mail::send('emails.mail4', $data, function($message) use ($data){
+// 				// 	$message->to($data['email'], $data['fullname'])->subject('TOP ACTIVITIES FOR: ('.$cycle_names.')');
+// 				// });
+// 			}
+// 		}
 		
-	}
-});
+// 	}
+// });
 
 
 // Route::post('queue/mail1', function()
