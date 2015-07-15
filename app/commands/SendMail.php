@@ -56,17 +56,12 @@ class SendMail extends Command {
 						$data['activities'] = Activity::PmogActivitiesForApproval($user->user_id,$cycle_ids);
 					}
 
+					Queue::push('MailScheduler', array('type' => $type, 'user_id' => $user->user_id));
 					if(count($data['activities']) > 0){
 						$total_mails++;
 						if($_ENV['MAIL_TEST']){
-							Queue::push('MailScheduler', array('type' => $type, 'user_id' => $user->user_id));
-							// Mail::send('emails.mail1', $data, function($message) use ($data){
-							// 	$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITY STATUS');
-							// });
+							// Queue::push('MailScheduler', array('type' => $type, 'user_id' => $user->user_id));
 						}else{
-							// Mail::send('emails.mail1', $data, function($message) use ($data){
-							// 	$message->to($data['email'], $data['fullname'])->subject('TOP ACTIVITY STATUS');
-							// });
 						}
 						
 					}
