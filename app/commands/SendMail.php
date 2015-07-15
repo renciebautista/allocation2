@@ -55,10 +55,10 @@ class SendMail extends Command {
 					$data['fullname'] = $user->getFullname();
 					$data['cycle_ids'] = $cycle_ids;
 					if($user->role_id == 2){
-						$data['activities'] = Activity::ProponentActivitiesForApproval($user->id,$cycle_ids);
+						$data['activities'] = Activity::ProponentActivitiesForApproval($user->user_id,$cycle_ids);
 					}
 					if($user->role_id == 3){
-						$data['activities'] = Activity::PmogActivitiesForApproval($user->id,$cycle_ids);
+						$data['activities'] = Activity::PmogActivitiesForApproval($user->user_id,$cycle_ids);
 					}
 					if($_ENV['MAIL_TEST']){
 						Mail::send('emails.mail1', $data, function($message) use ($data){
