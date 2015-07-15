@@ -112,7 +112,9 @@ class NetworkController extends \BaseController {
 	{
 		if(Request::ajax()){
 			
-			$activities = ActivityTypeNetwork::where('activitytype_id', $id)->get();
+			$activities = ActivityTypeNetwork::where('activitytype_id', $id)
+				->orderBy('task_id')
+				->get();
 			foreach ($activities as $key => $value) {
 				$activities[$key]->depend_on = ActivityNetworkDependent::depend_on_task($value->id);
 			}
