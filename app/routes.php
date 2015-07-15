@@ -1,9 +1,5 @@
 <?php
 use Imagecow\Image;
-
-use Rencie\Cpm\CpmActivity;
-use Rencie\Cpm\Cpm;
-
 Queue::getIron()->ssl_verifypeer = false;
 /*
 |--------------------------------------------------------------------------
@@ -16,16 +12,6 @@ Queue::getIron()->ssl_verifypeer = false;
 |
 */
 
-Route::get("testcpm", function(){
-	$activities = ActivityTypeNetwork::activities(8);
-	// Helper::print_r($activities);
-
-	$cpm = new Cpm($activities);
-	$data['days'] = $cpm->TotalDuration();
-	$data['cpm'] = $cpm->CriticalPath();
-
-	Helper::print_r($data);
-});
 
 Route::get("testmail", function(){
 	$user = User::find(1);
@@ -201,6 +187,28 @@ Route::get("mail4", function(){
 		
 	}
 });
+
+
+Route::post('queue/mail1', function()
+{
+	return Queue::marshal();
+});
+
+Route::post('queue/mail2', function()
+{
+	return Queue::marshal();
+});
+
+Route::post('queue/mail3', function()
+{
+	return Queue::marshal();
+});
+
+Route::post('queue/mail4', function()
+{
+	return Queue::marshal();
+});
+
 
 
 Route::get('queue/send', function(){
