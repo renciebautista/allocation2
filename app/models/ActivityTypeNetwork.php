@@ -161,7 +161,8 @@ class ActivityTypeNetwork extends \Eloquent {
 						}
 					}
 				}
-				$activities[$key]->start_date = date('m/d/Y',strtotime($var_end_date.' + 1 days'));
+				// $activities[$key]->start_date = date('m/d/Y',strtotime($var_end_date.' + 1 days'));
+				$activities[$key]->start_date = self::checkStartDate($var_end_date,$holidays);
 				$activities[$key]->end_date =  ActivityTypeNetwork::getNextDate($activities[$key]->start_date,$holidays,$value->duration - 1);
 			}
 		}
@@ -185,7 +186,8 @@ class ActivityTypeNetwork extends \Eloquent {
 						}
 					}
 				}
-				$activities[$key]->start_date = date('m/d/Y',strtotime($var_end_date.' + 1 days'));
+				// $activities[$key]->start_date = date('m/d/Y',strtotime($var_end_date.' + 1 days'));
+				$activities[$key]->start_date = self::checkStartDate($var_end_date,$holidays);
 				$activities[$key]->end_date =  ActivityTypeNetwork::getNextDate($activities[$key]->start_date,$holidays,$value->duration - 1);
 			}
 		}
@@ -195,9 +197,31 @@ class ActivityTypeNetwork extends \Eloquent {
 	}
 
 	public static function getNextDate($startDate,$holidays,$wDays){
-		
+
 	    // using + weekdays excludes weekends
 	    $new_date = date('Y-m-d', strtotime("{$startDate} +{$wDays} weekdays"));
+
+	    foreach ($holidays as $holiday) {
+	    	$holiday_ts = strtotime($holiday);
+
+		    // if holiday falls between start date and new date, then account for it
+		    if ($holiday_ts >= strtotime($startDate) && $holiday_ts <= strtotime($new_date)) {
+
+		        // check if the holiday falls on a working day
+		        $h = date('w', $holiday_ts);
+		            if ($h != 0 && $h != 6 ) {
+		            // holiday falls on a working day, add an extra working day
+		            $new_date = date('Y-m-d', strtotime("{$new_date} + 1 weekdays"));
+		        }
+		    }
+	    }
+	    return date('m/d/Y', strtotime($new_date));
+	}
+
+	public static function checkStartDate($startDate,$holidays){
+		
+	    // using + weekdays excludes weekends
+	    $new_date = date('Y-m-d', strtotime("{$startDate} + 1 weekdays"));
 
 	    foreach ($holidays as $holiday) {
 	    	$holiday_ts = strtotime($holiday);
