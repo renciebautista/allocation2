@@ -60,29 +60,21 @@ class SendMail extends Command {
 					if($user->role_id == 3){
 						$data['activities'] = Activity::PmogActivitiesForApproval($user->user_id,$cycle_ids);
 					}
-					if($_ENV['MAIL_TEST']){
-						Mail::send('emails.mail1', $data, function($message) use ($data){
-							$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITY STATUS');
-						});
-					}else{
-						// Mail::send('emails.mail1', $data, function($message) use ($data){
-						// 	$message->to($data['email'], $data['fullname'])->subject('TOP ACTIVITY STATUS');
-						// });
+
+						
+					if(count($data['activities']) > 0){
+						$total_mails++;
+						if($_ENV['MAIL_TEST']){
+							Mail::queue('emails.mail1', $data, function($message) use ($data){
+								$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITY STATUS');
+							});
+						}else{
+							// Mail::send('emails.mail1', $data, function($message) use ($data){
+							// 	$message->to($data['email'], $data['fullname'])->subject('TOP ACTIVITY STATUS');
+							// });
+						}
+						
 					}
-						
-					// if(count($data['activities']) > 0){
-					// 	$total_mails++;
-					// 	if($_ENV['MAIL_TEST']){
-					// 		Mail::queue('emails.mail1', $data, function($message) use ($data){
-					// 			$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITY STATUS');
-					// 		});
-					// 	}else{
-					// 		// Mail::send('emails.mail1', $data, function($message) use ($data){
-					// 		// 	$message->to($data['email'], $data['fullname'])->subject('TOP ACTIVITY STATUS');
-					// 		// });
-					// 	}
-						
-					// }
 					
 				}
 				$total_users = count($users);
