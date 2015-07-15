@@ -117,11 +117,14 @@ class SendMail extends Command {
 					$cycle_ids[] = $value->id;
 				}
 				foreach ($users as $user) {
-					$data['activities'] = Activity::Released($cycle_ids);
-					if(count($data['activities']) > 0){
-						$total_mails++;
-						Queue::push('MailScheduler', array('type' => $type, 'user_id' => $user->user_id, 'role_id' => $user->role_id));
-					}
+					$total_mails++;
+					Queue::push('MailScheduler', array('type' => $type, 'user_id' => $user->user_id, 'role_id' => $user->role_id));
+
+					// $data['activities'] = Activity::Released($cycle_ids);
+					// if(count($data['activities']) > 0){
+					// 	$total_mails++;
+					// 	Queue::push('MailScheduler', array('type' => $type, 'user_id' => $user->user_id, 'role_id' => $user->role_id));
+					// }
 				}
 				$total_users = count($users);
 				$this->line("Total users {$total_users}");
