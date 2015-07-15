@@ -46,13 +46,15 @@ class ReportController extends \BaseController {
 					->join('pricelists', 'scheme_premuim_skus.sap_code', '=', 'pricelists.sap_code')
 					->get();
 
+				
+
 				foreach ($involves as $value) {
 					$skuinvolves[] = $value;
 				}
 
-				foreach ($premiums as $premium) {
-					$premium_skus[] = $premium;
-				}
+				// foreach ($premiums as $premium) {
+				// 	$premium_skus[] = $premium;
+				// }
 
 				$scheme->allocations = SchemeAllocation::getAllocations($scheme->id);
 				$non_ulp = explode(",", $scheme->ulp_premium);

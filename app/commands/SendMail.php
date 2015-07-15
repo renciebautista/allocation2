@@ -61,7 +61,7 @@ class SendMail extends Command {
 						$data['activities'] = Activity::PmogActivitiesForApproval($user->id,$cycle_ids);
 					}
 					if($_ENV['MAIL_TEST']){
-						Mail::queue('emails.mail1', $data, function($message) use ($data){
+						Mail::send('emails.mail1', $data, function($message) use ($data){
 							$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITY STATUS');
 						});
 					}else{
