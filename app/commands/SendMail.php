@@ -65,7 +65,7 @@ class SendMail extends Command {
 					if(count($data['activities']) > 0){
 						$total_mails++;
 						if($_ENV['MAIL_TEST']){
-							Mail::queue('emails.mail1', $data, function($message) use ($data){
+							Mail::send('emails.mail1', $data, function($message) use ($data){
 								$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITY STATUS');
 							});
 						}else{
