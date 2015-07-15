@@ -59,18 +59,19 @@ class TestMail extends Command {
 					$data['activities'] = Activity::PmogActivitiesForApproval($user->id,$cycle_ids);
 				}
 				if(count($data['activities'])>0){
+					Mail::send('emails.mail1', $data, function($message) use ($data){
+						$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITY STATUS');
+					});
 					if($_ENV['MAIL_TEST']){
-						Mail::send('emails.mail1', $data, function($message) use ($data){
-							$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITY STATUS');
-						});	
+							
 					}else{
-						Mail::send('emails.mail1', $data, function($message) use ($data){
-							$message->to($data['email'], $data['fullname'])->subject('TOP ACTIVITY STATUS');
-						});
+						// Mail::send('emails.mail1', $data, function($message) use ($data){
+						// 	$message->to($data['email'], $data['fullname'])->subject('TOP ACTIVITY STATUS');
+						// });
 					}
 				}
-				
 			break;
+
 			case 'mail2':
 				$cycles = Cycle::getByApprovalDeadline();
 				$cycle_ids = array();
@@ -89,13 +90,13 @@ class TestMail extends Command {
 							$message->to("rbautista@chasetech.com", $data['fullname'])->subject('FOR APPROVAL: TOP ACTIVITIES');
 						});	
 					}else{
-						Mail::send('emails.mail2', $data, function($message) use ($data){
-							$message->to($data['email'], $data['fullname'])->subject('FOR APPROVAL: TOP ACTIVITIES');
-						});
+						// Mail::send('emails.mail2', $data, function($message) use ($data){
+						// 	$message->to($data['email'], $data['fullname'])->subject('FOR APPROVAL: TOP ACTIVITIES');
+						// });
 					}
 				}
-				
 			break;
+
 			case 'mail3':
 				$cycles = Cycle::getByApprovalDeadlinePassed();
 				$cycle_ids = array();
@@ -122,12 +123,13 @@ class TestMail extends Command {
 							$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITY STATUS');
 						});	
 					}else{
-						Mail::send('emails.mail3', $data, function($message) use ($data){
-							$message->to($data['email'], $data['fullname'])->subject('TOP ACTIVITY STATUS');
-						});
+						// Mail::send('emails.mail3', $data, function($message) use ($data){
+						// 	$message->to($data['email'], $data['fullname'])->subject('TOP ACTIVITY STATUS');
+						// });
 					}
 				}
 			break;
+
 			case 'mail4':
 				$cycles = Cycle::getByReleaseDate();
 				$cycle_ids = array();
@@ -144,22 +146,24 @@ class TestMail extends Command {
 				$data['cycle_names'] = $cycle_names;
 				
 				$data['activities'] = Activity::Released($cycle_ids);
-				
+
 				if(count($data['activities'])>0){
 					if($_ENV['MAIL_TEST']){
 						Mail::send('emails.mail4', $data, function($message) use ($data){
 							$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITIES FOR: ('.$data['cycle_names'].')');
 						});	
 					}else{
-						Mail::send('emails.mail4', $data, function($message) use ($data){
-							$message->to($data['email'], $data['fullname'])->subject('TOP ACTIVITIES FOR: ('.$data['cycle_names'].')');
-						});
+						// Mail::send('emails.mail4', $data, function($message) use ($data){
+						// 	$message->to($data['email'], $data['fullname'])->subject('TOP ACTIVITIES FOR: ('.$data['cycle_names'].')');
+						// });
 					}
 				}
 			break;
+
 			default:
-				# code...
-				break;
+			# code...
+			break;
+
 		}
 		// $cycles = Cycle::getBySubmissionDeadline();
 		// $cycle_ids = array();
