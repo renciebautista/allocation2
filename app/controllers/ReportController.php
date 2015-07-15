@@ -37,12 +37,21 @@ class ReportController extends \BaseController {
 			$schemes = Scheme::getList($id);
 
 			$skuinvolves = array();
+			$premium_skus = array();
 			foreach ($schemes as $scheme) {
 				$involves = SchemeHostSku::where('scheme_id',$scheme->id)
 					->join('pricelists', 'scheme_host_skus.sap_code', '=', 'pricelists.sap_code')
 					->get();
 				foreach ($involves as $value) {
 					$skuinvolves[] = $value;
+				}
+
+				$premiums = SchemePremuimSku::where('scheme_id',$scheme->id)
+					->join('pricelists', 'scheme_premuim_skus.sap_code', '=', 'pricelists.sap_code')
+					->get();
+
+				foreach ($premiums as $premium) {
+					$premium_skus[] = $premium;
 				}
 
 				$scheme->allocations = SchemeAllocation::getAllocations($scheme->id);
@@ -84,7 +93,7 @@ class ReportController extends \BaseController {
 				$pis = array();
 			}
 
-			return View::make('shared.preview', compact('activity' ,'planner','budgets','nobudgets','schemes','skuinvolves',
+			return View::make('shared.preview', compact('activity' ,'planner','budgets','nobudgets','schemes','skuinvolves','premium_skus',
 					'materials','non_ulp','fdapermit', 'networks','artworks', 'pis' , 'areas','channels'));
 			
 			

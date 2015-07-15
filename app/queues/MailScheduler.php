@@ -28,7 +28,5 @@ class MailScheduler{
 		$job->delete();
 		return true;
 
-		
-		return true;
 	}
 }
