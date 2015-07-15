@@ -53,9 +53,13 @@ class TestMail extends Command {
 				$data['fullname'] = $user->getFullname();
 				$data['cycle_ids'] = $cycle_ids;
 				$data['activities'] = Activity::ProponentActivitiesForApproval($user->id,$cycle_ids);
-				Mail::send('emails.mail1', $data, function($message) use ($data){
-					$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITY STATUS');
-				});
+				if($_ENV['MAIL_TEST']){
+					Mail::send('emails.mail1', $data, function($message) use ($data){
+						$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITY STATUS');
+					});	
+				}else{
+
+				}
 			break;
 			
 			default:
