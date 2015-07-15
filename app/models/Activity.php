@@ -537,7 +537,7 @@ class Activity extends \Eloquent {
 			->where('activities.created_by',$user_id)
 			// ->where('activities.status_id', '>',3)
 			// ->where('activities.status_id', '<',9)
-			->whereIn('activities.cycle_id',$cycles)
+			// ->whereIn('activities.cycle_id',$cycles)
 			->orderBy('activity_types.activity_type')
 			->orderBy('activities.circular_name')
 			->orderBy('activities.id')
