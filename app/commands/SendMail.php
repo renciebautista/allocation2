@@ -63,6 +63,7 @@ class SendMail extends Command {
 				}
 				$total_users = count($users);
 				$this->line("Total users {$total_users}");
+				$this->line("Total queued email {$total_mails}");
 			break;
 			case 'mail2':
 				$users = User::GetPlanners(['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']);
@@ -80,6 +81,7 @@ class SendMail extends Command {
 				}
 				$total_users = count($users);
 				$this->line("Total users {$total_users}");
+				$this->line("Total queued email {$total_mails}");
 				break;
 			case 'mail3':
 				$users = User::GetPlanners(['PROPONENT' ,'PMOG','GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']);
@@ -105,6 +107,7 @@ class SendMail extends Command {
 				}
 				$total_users = count($users);
 				$this->line("Total users {$total_users}");
+				$this->line("Total queued email {$total_mails}");
 				break;
 			case 'mail4':
 				$users = User::GetPlanners(['PROPONENT' ,'PMOG','GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR','FIELD SALES']);
@@ -122,12 +125,13 @@ class SendMail extends Command {
 				}
 				$total_users = count($users);
 				$this->line("Total users {$total_users}");
+				$this->line("Total queued email {$total_mails}");
 				break;
 			default:
 				$this->line("Not valid type.");
 				break;
 
-			$this->line("Total queued email {$total_mails}");
+			
 		}
 
 	}
