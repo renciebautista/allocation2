@@ -39,6 +39,7 @@ class TestMail extends Command {
 	{
 		$type = $this->argument('type');
 		$user_id = $this->argument('user_id');
+		$role_id = $this->argument('role_id');
 		$user = User::find($user_id);
 		switch ($type) {
 			case 'mail1':
@@ -52,18 +53,18 @@ class TestMail extends Command {
 				$data['email'] = $user->email;
 				$data['fullname'] = $user->getFullname();
 				$data['cycle_ids'] = $cycle_ids;
-				if($user->role_id == 2){
+				if($role_id == 2){
 					$data['activities'] = Activity::ProponentActivitiesForApproval($user->id,$cycle_ids);
 				}
-				if($user->role_id == 3){
+				if($role_id == 3){
 					$data['activities'] = Activity::PmogActivitiesForApproval($user->id,$cycle_ids);
 				}
 				if(count($data['activities'])>0){
-					Mail::send('emails.mail1', $data, function($message) use ($data){
-						$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITY STATUS');
-					});
+					
 					if($_ENV['MAIL_TEST']){
-							
+						Mail::send('emails.mail1', $data, function($message) use ($data){
+							$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITY STATUS');
+						});
 					}else{
 						// Mail::send('emails.mail1', $data, function($message) use ($data){
 						// 	$message->to($data['email'], $data['fullname'])->subject('TOP ACTIVITY STATUS');
@@ -108,13 +109,13 @@ class TestMail extends Command {
 				$data['email'] = $user->email;
 				$data['fullname'] = $user->getFullname();
 				$data['cycle_ids'] = $cycle_ids;
-				if($user->role_id == 2){
+				if($role_id == 2){
 					$data['activities'] = Activity::ProponentActivitiesForApproval($user->id,$cycle_ids);
 				}
-				if($user->role_id == 3){
+				if($role_id == 3){
 					$data['activities'] = Activity::PmogActivitiesForApproval($user->id,$cycle_ids);
 				}
-				if($user->role_id  > 3){
+				if($role_id  > 3){
 					$data['activities'] = Activity::ApproverActivities($user->id,$cycle_ids);
 				}
 				if(count($data['activities'])>0){
@@ -192,6 +193,7 @@ class TestMail extends Command {
 		return array(
 			array('type', InputArgument::REQUIRED, 'An example argument.'),
 			array('user_id', InputArgument::REQUIRED, 'An example argument.'),
+			array('role_id', InputArgument::REQUIRED, 'An example argument.'),
 		);
 	}
 
