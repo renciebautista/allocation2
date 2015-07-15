@@ -63,19 +63,24 @@ class SendMail extends Command {
 						$data['activities'] = Activity::PmogActivitiesForApproval($user->id,$cycle_ids);
 					}
 
-					if(count($data['activities']) > 0){
-						$total_mails++;
-						if($_ENV['MAIL_TEST']){
-							Mail::send('emails.mail1', $data, function($message) use ($data){
-								$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITY STATUS');
-							});
-						}else{
-							// Mail::send('emails.mail1', $data, function($message) use ($data){
-							// 	$message->to($data['email'], $data['fullname'])->subject('TOP ACTIVITY STATUS');
-							// });
-						}
+					$data['template'] = 'emails.mail1';
+					$data['subject'] = 'TOP ACTIVITY STATUS';
+					$data['to'] = 'rbautista@chasetech.com';
+					Queue::push('MailScheduler', $data);
+
+					// if(count($data['activities']) > 0){
+					// 	$total_mails++;
+					// 	if($_ENV['MAIL_TEST']){
+					// 		$data['subject'] = 'TOP ACTIVITY STATUS';
+					// 		$data['to'] = 'rbautista@chasetech.com';
+					// 		Queue::push('MailScheduler', $data);
+					// 	}else{
+					// 		// Mail::send('emails.mail1', $data, function($message) use ($data){
+					// 		// 	$message->to($data['email'], $data['fullname'])->subject('TOP ACTIVITY STATUS');
+					// 		// });
+					// 	}
 						
-					}
+					// }
 				}
 				$this->line("Total queued email {$total_mails}");
 			break;

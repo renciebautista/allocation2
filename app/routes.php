@@ -155,9 +155,12 @@ Route::get("mail4", function(){
 
 		if(count($data['activities']) > 0){
 			if($_ENV['MAIL_TEST']){
-				Mail::send('emails.mail4', $data, function($message) use ($data){
-					$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITY STATUS');
-				});
+				$job_id = Queue::push('Scheduler', array('string' => "Scheduling ".$activity->circular_name, 'id' => $activity->id));
+				Job::create(array('job_id' => $job_id));
+				$this->line("Scheduling ".$activity->circular_name);
+				// Mail::send('emails.mail4', $data, function($message) use ($data){
+				// 	$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITY STATUS');
+				// });
 			}else{
 				// Mail::send('emails.mail4', $data, function($message) use ($data){
 				// 	$message->to($data['email'], $data['fullname'])->subject('TOP ACTIVITIES FOR: ('.$cycle_names.')');

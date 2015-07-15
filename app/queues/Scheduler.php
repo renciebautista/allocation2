@@ -17,6 +17,7 @@ class Scheduler{
 		$ejob->status = 'finished'; //Set job status to finished
 
 		$ejob->save();
+		
 		$job->delete();
 		return true;
 		
