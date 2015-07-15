@@ -373,7 +373,7 @@ $('#activity_table').on("click",".netEdit",function(e){
 			}
 
 			
-			modal.modal();
+			modal.modal({backdrop: 'static'});
 		},
 		error: function(){
 			alert("failure");

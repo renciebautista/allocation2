@@ -101,7 +101,8 @@ class ActivityTypeNetwork extends \Eloquent {
 					$pre = explode(",", $dependents);
 				}
 				
-				$_activity = new  CpmActivity;;
+				$_activity = new  CpmActivity;
+				$_activity->task_id = $activity->task_id;
 				$_activity->id = $activity->id;
 				$_activity->description = $activity->task;
 				$_activity->duration = $activity->duration;
@@ -114,9 +115,6 @@ class ActivityTypeNetwork extends \Eloquent {
 			
 		}
 
-		// echo '<pre>';
-		// print_r($activities);
-		// echo '</pre>';
 		return $activities;
 	}
 
@@ -132,7 +130,9 @@ class ActivityTypeNetwork extends \Eloquent {
 	public static function timings($id,$start_date){
 		$holidays = Holiday::allHoliday();
 
-		$activities = self::where('activitytype_id', $id)->get();
+		$activities = self::where('activitytype_id', $id)
+			->orderBy('task_id')
+			->get();
 		foreach ($activities as $key => $value) {
 			$activities[$key]->depend_on = ActivityNetworkDependent::depend_on_task($value->id);			
 		}
