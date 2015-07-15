@@ -295,13 +295,33 @@
 									<th>Premium SKU Description</th>
 									<th>Non ULP Premium SKUs</th>
 								</tr>
-								@foreach($skuinvolves as $involve)
+								@foreach($skuinvolves as $sku)
 								<tr>
-									<td>{{ $involve->sap_code }}</td>
-									<td>{{ $involve->sap_desc }}</td>
-									<td>{{ $involve->sap_code }}</td>
-									<td>{{ $involve->sap_desc }}</td>
-									<td>{{ $involve->sap_desc }}</td>
+									<td>
+										@foreach($sku['involves'] as $involve)
+										{{ $involve->sap_code}}
+										@endforeach
+									</td>
+									<td>
+										@foreach($sku['involves'] as $involve)
+										{{ $involve->sap_desc}}
+										@endforeach
+									</td>
+									<td>
+										@foreach($sku['premiums'] as $premium)
+										{{ $premium->sap_code}}
+										@endforeach
+									</td>
+									<td>
+										@foreach($sku['premiums'] as $premium)
+										{{ $premium->sap_desc}}
+										@endforeach
+									</td>
+									<td>
+										@foreach($sku['non_ulp'] as $non_ulp)
+										{{ $non_ulp }}
+										@endforeach
+									</td>
 								</tr>
 								@endforeach
 							</table>

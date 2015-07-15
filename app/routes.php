@@ -13,25 +13,25 @@ Queue::getIron()->ssl_verifypeer = false;
 */
 
 
-Route::get("testmail", function(){
-	$user = User::find(1);
-	$cycles = Cycle::getBySubmissionDeadline();
-	$cycle_ids = array();
-	foreach ($cycles as $value) {
-		$cycle_ids[] = $value->id;
-	}
-	$data['cycles'] = $cycles;
-	$data['user'] = $user->getFullname();
-	$data['email'] = $user->email;
-	$data['fullname'] = $user->getFullname();
-	$data['cycle_ids'] = $cycle_ids;
-	$data['activities'] = Activity::ProponentActivitiesForApproval($user->id,$cycle_ids);
-	// Mail::send('emails.mail1', $data, function($message) use ($data){
-	// 	$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITY STATUS');
-	// });
+// Route::get("testmail", function(){
+// 	$user = User::find(1);
+// 	$cycles = Cycle::getBySubmissionDeadline();
+// 	$cycle_ids = array();
+// 	foreach ($cycles as $value) {
+// 		$cycle_ids[] = $value->id;
+// 	}
+// 	$data['cycles'] = $cycles;
+// 	$data['user'] = $user->getFullname();
+// 	$data['email'] = $user->email;
+// 	$data['fullname'] = $user->getFullname();
+// 	$data['cycle_ids'] = $cycle_ids;
+// 	$data['activities'] = Activity::ProponentActivitiesForApproval($user->id,$cycle_ids);
+// 	// Mail::send('emails.mail1', $data, function($message) use ($data){
+// 	// 	$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITY STATUS');
+// 	// });
 
-	return View::make('emails.mail1',$data);
-});
+// 	return View::make('emails.mail1',$data);
+// });
 
 Route::get("test", function(){
 	if($_ENV['MAIL_TEST']){
@@ -215,11 +215,11 @@ Route::get("test", function(){
 
 
 
-Route::get('queue/send', function(){
-	$job_id = Queue::push('Scheduler', array('string' => 'Hello world'));
-	Job::create(array('job_id' => $job_id));
-	return $job_id;
-});
+// Route::get('queue/send', function(){
+// 	$job_id = Queue::push('Scheduler', array('string' => 'Hello world'));
+// 	Job::create(array('job_id' => $job_id));
+// 	return $job_id;
+// });
 
 Route::post('queue/push', function()
 {

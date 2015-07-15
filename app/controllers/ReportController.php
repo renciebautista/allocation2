@@ -45,24 +45,26 @@ class ReportController extends \BaseController {
 				$premiums = SchemePremuimSku::where('scheme_id',$scheme->id)
 					->join('pricelists', 'scheme_premuim_skus.sap_code', '=', 'pricelists.sap_code')
 					->get();
-
 				
-
+				$_involves = array();
 				foreach ($involves as $value) {
-					$skuinvolves[] = $value;
+					$_involves[] = $value;
 				}
-
-				// foreach ($premiums as $premium) {
-				// 	$premium_skus[] = $premium;
-				// }
+				$_premiums = array();
+				foreach ($premiums as $premium) {
+					$_premiums[] = $premium;
+				}
 
 				$scheme->allocations = SchemeAllocation::getAllocations($scheme->id);
 				$non_ulp = explode(",", $scheme->ulp_premium);
 				
+
+				$skuinvolves[$scheme->id]['premiums'] = $_premiums;
+				$skuinvolves[$scheme->id]['involves'] = $_involves;
+				$skuinvolves[$scheme->id]['non_ulp'] = $non_ulp;
 			}
 
-			// Helper::print_r($schemes);
-
+			
 			$materials = ActivityMaterial::where('activity_id', $activity->id)
 				->with('source')
 				->get();
@@ -72,15 +74,9 @@ class ReportController extends \BaseController {
 			$artworks = ActivityArtwork::getList($activity->id);
 			$pispermit = ActivityFis::where('activity_id', $activity->id)->first();
 
-			// $scheme_customers = SchemeAllocation::getCustomers($activity->id);
-
 			//Involved Area
 			$areas = ActivityCustomer::getSelectedAreas($activity->id);
-			// $channels = ActivityChannel::getSelectecdChannels($activity->id);
 			$channels = ActivityChannel2::getSelectecdChannels($activity->id);
-			// Helper::print_array($areas);
-
-
 			
 			// // Product Information Sheet
 			$path = '/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
@@ -95,8 +91,9 @@ class ReportController extends \BaseController {
 				$pis = array();
 			}
 
-			return View::make('shared.preview', compact('activity' ,'planner','budgets','nobudgets','schemes','skuinvolves','premium_skus',
-					'materials','non_ulp','fdapermit', 'networks','artworks', 'pis' , 'areas','channels'));
+			// Helper::print_r($skuinvolves);
+			return View::make('shared.preview', compact('activity' ,'planner','budgets','nobudgets','schemes','skuinvolves',
+					'materials','fdapermit', 'networks','artworks', 'pis' , 'areas','channels'));
 			
 			
 		}
