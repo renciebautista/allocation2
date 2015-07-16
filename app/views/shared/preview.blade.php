@@ -289,32 +289,20 @@
 							@if(!empty($skuinvolves))
 							<table class="sub-table">
 								<tr>
-									<th>Host SKU Code</th>
-									<th>Host SKU Description</th>
-									<th>Premium SKU Code</th>
-									<th>Premium SKU Description</th>
-									<th>Non ULP Premium SKUs</th>
+									<th style="width:30%">Host SKU Code - Description</th>
+									<th style="width:30%">Premium SKU Code - Description</th>
+									<th style="width:30%">Non ULP Premium</th>
 								</tr>
 								@foreach($skuinvolves as $sku)
 								<tr>
 									<td>
 										@foreach($sku['involves'] as $involve)
-										{{ $involve->sap_code}}
-										@endforeach
-									</td>
-									<td>
-										@foreach($sku['involves'] as $involve)
-										{{ $involve->sap_desc}}
+										{{ $involve->sap_code}} - {{ $involve->sap_desc}}
 										@endforeach
 									</td>
 									<td>
 										@foreach($sku['premiums'] as $premium)
-										{{ $premium->sap_code}}
-										@endforeach
-									</td>
-									<td>
-										@foreach($sku['premiums'] as $premium)
-										{{ $premium->sap_desc}}
+										{{ $premium->sap_code}} - {{ $premium->sap_desc}}
 										@endforeach
 									</td>
 									<td>
