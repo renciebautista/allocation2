@@ -731,8 +731,8 @@
 									<td>{{ $timing->depend_on }}</td>
 									<td>{{ date_format(date_create($timing->start_date),'m/d/Y') }}</td>
 									<td>{{ date_format(date_create($timing->end_date),'m/d/Y') }}</td>
-									<td><input class="timing_date" type="text" id="timing_start[{{ $timing->id }}]" name="timing_start[{{ $timing->id }}]" value="{{ date_format(date_create($timing->final_start_date),'m/d/Y') }}"  placeholder="mm/dd/yyyy" value=""></td>
-									<td><input class="timing_date" type="text" id="timing_end[{{ $timing->id }}]" name="timing_end[{{ $timing->id }}]"  value="{{ date_format(date_create($timing->final_end_date),'m/d/Y') }}" placeholder="mm/dd/yyyy" value=""></td>
+									<td><input class="timing_date" type="text" id="timing_start[]" name="timing_start[{{ $timing->id }}]" value="{{ date_format(date_create($timing->final_start_date),'m/d/Y') }}"  placeholder="mm/dd/yyyy" value=""></td>
+									<td><input class="timing_date" type="text" id="timing_end[]" name="timing_end[{{ $timing->id }}]"  value="{{ date_format(date_create($timing->final_end_date),'m/d/Y') }}" placeholder="mm/dd/yyyy" value=""></td>
 								</tr>
 								@endforeach
 								@endif
@@ -814,14 +814,15 @@
 		  	<div class="panel-heading">Product Information Sheet</div>
 		  	<div class="panel-body">
 		  		<div class="row">
-					<div class="col-lg-6">
+					<div class="col-lg-12">
 					  	<div class="form-group">
-					    	<a class="btn btn-success" target="_blank" href="{{ URL::action('ActivityController@pistemplate') }}">Download Template</a>		
+					    	<a  target="_blank" href="{{ URL::action('ActivityController@pistemplate') }}">Download Product Information Sheet Template</a>		
 					  	</div>
 			  		</div>
 			  	</div>
 
-		  		<hr>
+		  		<p>Please select XLS, XLXS or Excel file.</p>
+		  		<div id="fisupload">
 		  		@if(count($fis)==0)
 		  		{{ Form::open(array('action' => array('ActivityController@fisupload', $activity->id),  'class' => 'bs-component','id' => 'fisupload', 'files'=>true)) }}
 		  			<div class="row">
@@ -861,12 +862,14 @@
 					  	</tbody>
 					</table> 
 				@endif
+				</div>
 		  	</div>
 		</div>
 
 		<div class="panel panel-default">
 		  	<div class="panel-heading">Artwork Packshots</div>
 		  	<div class="panel-body">
+		  		<p>Please select JPG, GIF or PNG images.</p>
 		  		<div id="artworkupload">
 		  		{{ Form::open(array('action' => array('ActivityController@artworkupload', $activity->id),'id' => 'artworkupload_form', 'class' => 'bs-component','files'=>true)) }}
 		  			<div class="row">
@@ -875,6 +878,7 @@
 						    	{{ Form::file('file','',array('id'=>'','class'=>'')) }}
 						  	</div>
 						  	{{ Form::submit('Upload', array('class' => 'btn btn-primary')) }}
+
 				  		</div>
 				  	</div>
 				{{ Form::close() }}
@@ -910,6 +914,7 @@
 		<div class="panel panel-default">
 		  	<div class="panel-heading">Marketing Backgrounds</div>
 		  	<div class="panel-body">
+		  		<p>Please select a file to upload.</p>
 		  		<div id="backgroundupload">
 		  		{{ Form::open(array('action' => array('ActivityController@backgroundupload', $activity->id),'id' => 'backgroundupload_form',  'class' => 'bs-component','files'=>true)) }}
 		  			<div class="row">
@@ -953,6 +958,7 @@
 		<div class="panel panel-default">
 		  	<div class="panel-heading">Banding Guidelines / Activation Mechanics / Others</div>
 		  	<div class="panel-body">
+		  		<p>Please select a file to upload.</p>
 		  		<div id="bandingupload">
 		  		{{ Form::open(array('action' => array('ActivityController@bandingupload', $activity->id),'id' => 'bandingupload_form',  'class' => 'bs-component','files'=>true)) }}
 		  			<div class="row">
@@ -1048,6 +1054,12 @@
 
 @section('page-script')
 
+$("#fisupload").uploadifyTable({
+	'multi': false,
+	'fileTypeExts' : '*.xls; *.xlsx',
+	'reload' : true
+});
+
 $("#artworkupload").uploadifyTable({
 	'fileTypeExts' : '*.gif; *.jpg; *.png'
 });
@@ -1056,6 +1068,22 @@ $("#backgroundupload").uploadifyTable({
 });
 $("#bandingupload").uploadifyTable({
 	'fileTypeExts' : '*.*'
+});
+
+$('INPUT[type="file"]').change(function () {
+    var ext = this.value.match(/\.(.+)$/)[1];
+    switch (ext.toLowerCase()) {
+        case 'jpg':
+        case 'jpeg':
+        case 'png':
+        case 'gif':
+        case 'pdf':
+            //$('#uploadButton').attr('disabled', false);
+            break;
+        default:
+            alert('This is not an allowed file type.');
+            this.value = '';
+    }
 });
 @stop
 

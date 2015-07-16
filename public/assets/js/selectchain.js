@@ -6,31 +6,53 @@ $(document).ready(function(){
 		var form  = $(this).find('form');
 		var div_sel = $(this).attr('id');
 		var action = form.attr('action');
-		$("#"+form.attr('id')).uploadify({
-			'debug' : false,
-			'fileTypeExts' : methodOrOptions.fileTypeExts,
-			'method' : 'post',
-			'formData' : { 'token' : '{{ csrf_token() }}', 'div_sel' : div_sel },
-			'height' : 30,
-			'swf'  : '/assets/plugins/uploadify/uploadify.swf',
-			'uploader' : action,
-			'width' : 120,
-			'onUploadSuccess' : function(file, data, response) {
-				jsonObject = jQuery.parseJSON(data);
-				var _table = $("#"+jsonObject.div_sel).find('table tr:last');
-				var html = "";
-				html += '<td>'+jsonObject.file_name+'</td>';
-				html += '<td class="upload_date">'+jsonObject.date+'</td>';
-				html += '<td class="att_action">';
-				html += '	<a href="'+jsonObject.download+'" class="btn btn-success btn-xs">Download</a>';
-				html += '	<a href="'+jsonObject.remove+'" class="ajax_delete btn btn-danger btn-xs" id="'+jsonObject.id+'">Delete</a>';
-				html += '</td>';
-				$(_table).last().after('<tr>'+html+'</tr>');
-		    },
-		    'onUploadError' : function(file, errorCode, errorMsg, errorString) {
-	            alert('The file ' + file.name + ' could not be uploaded: ' + errorString);
-	        }
-		});
+		if(methodOrOptions.reload){
+			$("#"+form.attr('id')).uploadify({
+				'debug' : false,
+				'multi' : methodOrOptions.multi,
+				'fileTypeExts' : methodOrOptions.fileTypeExts,
+				'method' : 'post',
+				'formData' : { 'token' : '{{ csrf_token() }}', 'div_sel' : div_sel },
+				'height' : 30,
+				'swf'  : '/assets/plugins/uploadify/uploadify.swf',
+				'uploader' : action,
+				'width' : 120,
+				'onUploadSuccess' : function(file, data, response) {
+					location.reload();
+			    },
+			    'onUploadError' : function(file, errorCode, errorMsg, errorString) {
+		            alert('The file ' + file.name + ' could not be uploaded: ' + errorString);
+		        }
+			});
+		}else{
+			$("#"+form.attr('id')).uploadify({
+				'debug' : false,
+				'multi' : methodOrOptions.multi,
+				'fileTypeExts' : methodOrOptions.fileTypeExts,
+				'method' : 'post',
+				'formData' : { 'token' : '{{ csrf_token() }}', 'div_sel' : div_sel },
+				'height' : 30,
+				'swf'  : '/assets/plugins/uploadify/uploadify.swf',
+				'uploader' : action,
+				'width' : 120,
+				'onUploadSuccess' : function(file, data, response) {
+					jsonObject = jQuery.parseJSON(data);
+					var _table = $("#"+jsonObject.div_sel).find('table tr:last');
+					var html = "";
+					html += '<td>'+jsonObject.file_name+'</td>';
+					html += '<td class="upload_date">'+jsonObject.date+'</td>';
+					html += '<td class="att_action">';
+					html += '	<a href="'+jsonObject.download+'" class="btn btn-success btn-xs">Download</a>';
+					html += '	<a href="'+jsonObject.remove+'" class="ajax_delete btn btn-danger btn-xs" id="'+jsonObject.id+'">Delete</a>';
+					html += '</td>';
+					$(_table).last().after('<tr>'+html+'</tr>');
+			    },
+			    'onUploadError' : function(file, errorCode, errorMsg, errorString) {
+		            alert('The file ' + file.name + ' could not be uploaded: ' + errorString);
+		        }
+			});
+		}
+		
 
 		$(this).on("click",".ajax_delete",function(e){
 			e.preventDefault();

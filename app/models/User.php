@@ -209,4 +209,6 @@ class User extends Eloquent implements ConfideUserInterface {
 			
 		// });
 	}
+
+	
 }

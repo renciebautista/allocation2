@@ -635,4 +635,8 @@ class Activity extends \Eloquent {
 			->orderBy('activities.id')
 			->get();
 	}
+
+	public static function withActivities($user_id){
+		// $recors
+	}
 }

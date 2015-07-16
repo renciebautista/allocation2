@@ -1,4 +1,4 @@
-<?php
+	<?php
 
 
 
@@ -295,5 +295,10 @@ class UsersController extends Controller
 		Confide::logout();
 
 		return Redirect::to('/');
+	}
+
+	public function destroy($id){
+		$user = User::findOrFail($id);
+		// Helper::print_r($user);
 	}
 }

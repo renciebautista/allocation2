@@ -1672,7 +1672,7 @@ class ActivityController extends BaseController {
 		$input = array('file' => Input::file('file'));
 
 		$rules = array(
-			'file' => 'image|required'
+			'file' => 'required|mimes:jpg,jpeg,png,gif,pdf'
 		);
 		// Now pass the input and rules into the validator
 		$validator = Validator::make($input, $rules);
@@ -1736,7 +1736,7 @@ class ActivityController extends BaseController {
 	public function fisupload($id){
 		$activity = Activity::findOrFail($id);
 
-		$input = array('file' => Input::file('file'));
+		$input = array('file' => Input::file('Filedata'));
 		$rules = array(
 			'file' => 'mimes:xls,xlsx|required'
 		);
@@ -1746,12 +1746,13 @@ class ActivityController extends BaseController {
 
 		if ($validator->fails())
 		{
-			return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
-					->with('class', 'alert-danger')
-					->with('message', 'Error uploading file.');
+			$arr['success'] = 0;
+			// return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
+			// 		->with('class', 'alert-danger')
+			// 		->with('message', 'Error uploading file.');
 		} else{
 			$path = $activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
-			$upload = self::doupload_2($path);
+			$upload = self::doupload($path);
 
 			
 
@@ -1763,10 +1764,20 @@ class ActivityController extends BaseController {
 			$docu->file_desc = (Input::get('file_desc') =='') ? $upload->original_file_name : Input::get('file_desc');
 			$docu->save();
 
-			return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
-				->with('class', 'alert-success')
-				->with('message', 'Product information Sheet is successfuly uploaded!');
+			$arr['id'] = $docu->id; 
+			$arr['div_sel'] = Input::get('div_sel');
+			$arr['download'] = action('ActivityController@fdadownload', $docu->id);
+			$arr['remove'] = action('ActivityController@fisdelete');
+			$arr['file_name'] = $docu->file_name; 
+			$arr['date'] = date('m/d/Y');
+			$arr['success'] = 1;
+
+			// return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
+			// 	->with('class', 'alert-success')
+			// 	->with('message', 'Product information Sheet is successfuly uploaded!');
 		}
+
+		return json_encode($arr);
 
 		
 	}
@@ -2473,34 +2484,41 @@ class ActivityController extends BaseController {
 	}
 
 	public function updatetimings($id){
-		// Helper::print_r(Input::all());
-		$activity = Activity::findOrFail($id);
+		if(Request::ajax()){
+			// Helper::print_r(Input::all());
+			$activity = Activity::findOrFail($id);
 
-		// ActivityTiming::where('activity_id',$activity->id)->delete();
-		$data = array();
-		if (Input::has('timing_start')){
-			foreach (Input::get('timing_start') as $key => $value) {
-				$data[$key]['start_date'] = $value;
+			// ActivityTiming::where('activity_id',$activity->id)->delete();
+			$data = array();
+			if (Input::has('timing_start')){
+				foreach (Input::get('timing_start') as $key => $value) {
+					$data[$key]['start_date'] = $value;
+				}
 			}
-		}
 
-		if (Input::has('timing_end')){
-			foreach (Input::get('timing_end') as $key => $value) {
-				$data[$key]['end_date'] = $value;
+			if (Input::has('timing_end')){
+				foreach (Input::get('timing_end') as $key => $value) {
+					$data[$key]['end_date'] = $value;
+				}
 			}
-		}
 
-		$new_timings = array();
-		foreach ($data as $key => $value) {
-			$timing = ActivityTiming::find($key);
-			$timing->final_start_date = date('Y-m-d',strtotime($value['start_date']));
-			$timing->final_end_date = date('Y-m-d',strtotime($value['end_date']));
-			$timing->update();
-		}
+			$new_timings = array();
+			foreach ($data as $key => $value) {
+				$timing = ActivityTiming::find($key);
+				$timing->final_start_date = date('Y-m-d',strtotime($value['start_date']));
+				$timing->final_end_date = date('Y-m-d',strtotime($value['end_date']));
+				$timing->update();
+			}
 
-		return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#timings")
-				->with('class', 'alert-success')
-				->with('message', 'Timings successfully updated.');
+			// return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#timings")
+			// 		->with('class', 'alert-success')
+			// 		->with('message', 'Timings successfully updated.');
+			$arr['success'] = 1;
+			Session::flash('class', 'alert-success');
+			Session::flash('message', 'Activity successfully updated.');
+			$arr['id'] = $id;
+			return json_encode($arr);
+		}
 
 	}
 

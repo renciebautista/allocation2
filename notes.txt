@@ -4,15 +4,15 @@ SORT ACTIVITY
 	- activity title
 	- id
 	
-add non ulp premuim add on scheme show on preveiw
-mpk and big 10 allocation
-change brand use cpg
-passing of activity not working
+add non ulp premuim add on scheme show on preveiw - done
+mpk and big 10 allocation - done
+change brand use cpg - done
+passing of activity not working - done
 Activities
 	- All
 	- Unreleased
 	- Releaased
-add remarks per header in preview when approving put in remarks summary
+add remarks per header in preview when approving put in remarks summary - done
 
 
 emails needed on users
@@ -48,17 +48,17 @@ Non ULP Premium SKU
 else
 	disable 
 	Non ULP Premium SKU 
-	reatinf formula
+	reatinf formula -done
 
 add comfirmation on approver - done
 pmog recall red on remarks still showing - done
 attachment lost when reloading pis - done when activity type is reset
 error on recall and submit activity  - done
 change select files to blue - done
-force alloc multipler of sales min 0.01 max 1,000,000 - half done
+force alloc multipler of sales min 0.01 max 1,000,000 - done
 
 validate pis on uploading
-fda and pis upload select files
+fda and pis upload select files - done
 
 add color if blank grey add color if filledup input box
 allow recall if submission deadline lapse on last submit
@@ -87,21 +87,20 @@ validate ean13 barcode - done
 security for users
 
 setup pdf creation
-	change timings final timngs
+	change timings final timngs - done
 
-update pmog on settings
-addjust date in activity type if network is changed
-refresh timings page
+update pmog on settings - done
+adjust date in activity type if network is changed
+refresh timings page - done
 remove outside click in edit networks - done
-
-php -q /home/ulpeto5/test.ulp-etop.com/artisan 
 
 multiple host and premuim sku
 
+
+
 php -q /home/ulpeto5/test.ulp-etop.com/artisan test:mail
-
+php -q /home/ulpeto5/test.ulp-etop.com/artisan 
 cd /home/ulpeto5/test.ulp-etop.com && /usr/bin/php5-cli artisan test:mail
-
 ironmgq
 rencie.bautista@yahoo.com
 031988

@@ -124,9 +124,7 @@ function checkDirty(target_id,callback) {
 	}
 };
 
-
-$('#updateActivity,#updateCustomer,#updateBilling').areYouSure();
-
+$('#updateActivity,#updateCustomer,#updateBilling,#updatetimings').areYouSure();
 
 $("a[href='#customer']").on('shown.bs.tab', function(e) {
 	$("#tree4").fancytree("disable");
@@ -347,7 +345,8 @@ $("form[id='updateActivity']").on("submit",function(e){
 			dataType: "json",
 			success: function(data){
 				if(data.success == "1"){
-					bootbox.alert("Activity details was successfully updated."); 
+					//bootbox.alert("Activity details was successfully updated."); 
+					location.reload();
 				}else{
 					bootbox.alert("An error occured while updating."); 
 				}
@@ -781,28 +780,30 @@ $('.timing_date').datetimepicker({
 	calendarWeeks: true
 });
 
-$("#updatetimings").validate({
-	errorElement: "span", 
-	errorClass : "has-error",
-	rules: {
-		'timing_start[]': {
-			required: true
-		},
-		'timing_end[]': {
-			required: true
-		},
 
-	},
-	errorPlacement: function(error, element) {               
-		
-	},
-	highlight: function( element, errorClass, validClass ) {
-    	$(element).closest('div').addClass(errorClass).removeClass(validClass);
-  	},
-  	unhighlight: function( element, errorClass, validClass ) {
-    	$(element).closest('div').removeClass(errorClass).addClass(validClass);
-  	}
+$("form[id='updatetimings']").on("submit",function(e){
+	var form = $(this);
+	var url = form.prop('action');
+	if(form.valid()){
+		$.ajax({
+			url: url,
+			data: form.serialize(),
+			method: 'POST',
+			dataType: "json",
+			success: function(data){
+				if(data.success == "1"){
+					//bootbox.alert("Activity details was successfully updated."); 
+					location.reload();
+				}else{
+					bootbox.alert("An error occured while updating."); 
+				}
+			}
+		});
+	}
+	
+	e.preventDefault();
 });
+
 
 <!-- submit activity -->
 $("#mySubmit").on("hidden.bs.modal", function(){

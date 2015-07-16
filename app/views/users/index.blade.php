@@ -20,7 +20,7 @@
 					<div class="row">
 						<div class="col-lg-12">
 						{{ Form::label('status', 'Status', array('class' => 'control-label')) }}
-						{{ Form::select('status', array('0' => 'ALL STATUSES') + $status , null, array('id' => 'status','class' => 'form-control')) }}
+						{{ Form::select('status', array('0' => 'ALL STATUS') + $status , null, array('id' => 'status','class' => 'form-control')) }}
 						</div>
 					</div>
 				</div>
@@ -100,7 +100,7 @@
 						<td>{{ $user->email }}</td>
 						<td class="center">{{ (($user->active == 1) ? 'Active':'Inactive') }}</td>
 						<td class="action">
-							{{ Form::open(array('method' => 'DELETE', 'action' => array('ActivityController@destroy', $user->id))) }}                       
+							{{ Form::open(array('method' => 'DELETE', 'action' => array('UsersController@destroy', $user->id))) }}                       
 							{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}
 							{{ Form::close() }}
 						</td>

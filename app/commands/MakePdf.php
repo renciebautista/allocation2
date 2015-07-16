@@ -299,6 +299,9 @@ class MakePdf extends Command {
 			$timeSecond = strtotime(date('Y-m-d H:i:s'));
 			$differenceInSeconds = $timeSecond - $timeFirst;
 			$this->line( 'Time used ' . $differenceInSeconds . " sec");
+
+			$activity->pdf = 1;
+			$activity->update();
 		}
 
 		
