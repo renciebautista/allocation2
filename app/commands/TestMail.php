@@ -86,12 +86,13 @@ class TestMail extends Command {
 				$data['email'] = $user->email;
 				$data['fullname'] = $user->getFullname();
 				$data['cycle_ids'] = $cycle_ids;
-				$data['activities'] = Activity::ProponentActivitiesForApproval($user->id,$cycle_ids);
+				$data['activities'] = Activity::ApproverActivitiesForApproval($user->id,$cycle_ids);
 				if(count($data['activities'])>0){
 					if($_ENV['MAIL_TEST']){
 						Mail::send('emails.mail2', $data, function($message) use ($data){
-							$message->to("rbautista@chasetech.com", $data['fullname'])->subject('FOR APPROVAL: TOP ACTIVITIES');
-							$message->bcc("Rosarah.Reyes@unilever.com", $data['fullname'])->subject('FOR APPROVAL: TOP ACTIVITIES');
+							$message->to("rbautista@chasetech.com", $data['fullname']);
+							$message->bcc("rosarah.reyes@unilever.com");
+							$message->subject('FOR APPROVAL: TOP ACTIVITIES');
 						});	
 					}else{
 						Mail::send('emails.mail2', $data, function($message) use ($data){
@@ -124,8 +125,9 @@ class TestMail extends Command {
 				if(count($data['activities'])>0){
 					if($_ENV['MAIL_TEST']){
 						Mail::send('emails.mail3', $data, function($message) use ($data){
-							$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITY STATUS');
-							$message->bcc("Rosarah.Reyes@unilever.com", $data['fullname'])->subject('TOP ACTIVITY STATUS');
+							$message->to("rbautista@chasetech.com", $data['fullname']);
+							$message->bcc("rosarah.reyes@unilever.com");
+							$message->subject('TOP ACTIVITY STATUS');
 						});	
 					}else{
 						Mail::send('emails.mail3', $data, function($message) use ($data){
@@ -155,8 +157,9 @@ class TestMail extends Command {
 				if(count($data['activities'])>0){
 					if($_ENV['MAIL_TEST']){
 						Mail::send('emails.mail4', $data, function($message) use ($data){
-							$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITIES FOR: ('.$data['cycle_names'].')');
-							$message->bcc("Rosarah.Reyes@unilever.com", $data['fullname'])->subject('TOP ACTIVITIES FOR: ('.$data['cycle_names'].')');
+							$message->to("rbautista@chasetech.com", $data['fullname']);
+							$message->bcc("rosarah.reyes@unilever.com");
+							$message->subject('TOP ACTIVITIES FOR: ('.$data['cycle_names'].')');
 						});	
 					}else{
 						Mail::send('emails.mail4', $data, function($message) use ($data){

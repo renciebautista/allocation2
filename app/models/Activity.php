@@ -526,6 +526,7 @@ class Activity extends \Eloquent {
 			'activities.eimplementation_date','activities.billing_date',
 			'activity_statuses.status','cycles.cycle_name',
 			'scope_types.scope_name','activity_types.activity_type','activities.status_id',
+			DB::raw('CONCAT(users.first_name, " ", users.last_name) AS planner'),
 			DB::raw('CONCAT(propo.first_name, " ", propo.last_name) AS proponent'))
 			->join('activity_statuses', 'activities.status_id','=','activity_statuses.id')
 			->join('cycles', 'activities.cycle_id','=','cycles.id')
@@ -535,7 +536,6 @@ class Activity extends \Eloquent {
 			->join('users', 'activity_planners.user_id','=','users.id','left')
 			->join('users as propo', 'activities.created_by','=','propo.id')
 			->where('activities.created_by',$user_id)
-			->where('activities.status_id', '>',3)
 			->where('activities.status_id', '<',9)
 			->whereIn('activities.cycle_id',$cycles)
 			->orderBy('activity_types.activity_type')
@@ -549,6 +549,7 @@ class Activity extends \Eloquent {
 			'activities.eimplementation_date','activities.billing_date',
 			'activity_statuses.status','cycles.cycle_name',
 			'scope_types.scope_name','activity_types.activity_type', 'activities.status_id',
+			DB::raw('CONCAT(users.first_name, " ", users.last_name) AS planner'),
 			DB::raw('CONCAT(propo.first_name, " ", propo.last_name) AS proponent'))
 			->join('activity_statuses', 'activities.status_id','=','activity_statuses.id')
 			->join('cycles', 'activities.cycle_id','=','cycles.id')
@@ -573,6 +574,7 @@ class Activity extends \Eloquent {
 			'activities.eimplementation_date','activities.billing_date',
 			'activity_statuses.status','cycles.cycle_name',
 			'scope_types.scope_name','activity_types.activity_type', 'activities.status_id',
+			DB::raw('CONCAT(users.first_name, " ", users.last_name) AS planner'),
 			DB::raw('CONCAT(propo.first_name, " ", propo.last_name) AS proponent'))
 			->join('activity_statuses', 'activities.status_id','=','activity_statuses.id')
 			->join('cycles', 'activities.cycle_id','=','cycles.id')
@@ -597,6 +599,7 @@ class Activity extends \Eloquent {
 			'activities.eimplementation_date','activities.billing_date',
 			'activity_statuses.status','cycles.cycle_name',
 			'scope_types.scope_name','activity_types.activity_type',  'activities.status_id',
+			DB::raw('CONCAT(users.first_name, " ", users.last_name) AS planner'),
 			DB::raw('CONCAT(propo.first_name, " ", propo.last_name) AS proponent'))
 			->join('activity_statuses', 'activities.status_id','=','activity_statuses.id')
 			->join('cycles', 'activities.cycle_id','=','cycles.id')
@@ -620,6 +623,7 @@ class Activity extends \Eloquent {
 			'activities.eimplementation_date','activities.billing_date',
 			'activity_statuses.status','cycles.cycle_name',
 			'scope_types.scope_name','activity_types.activity_type',  'activities.status_id',
+			DB::raw('CONCAT(users.first_name, " ", users.last_name) AS planner'),
 			DB::raw('CONCAT(propo.first_name, " ", propo.last_name) AS proponent'))
 			->join('activity_statuses', 'activities.status_id','=','activity_statuses.id')
 			->join('cycles', 'activities.cycle_id','=','cycles.id')
