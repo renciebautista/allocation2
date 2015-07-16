@@ -47,7 +47,7 @@ class ScheduleActivity extends Command {
 			->where('scheduled',0)
 			->get();
 		foreach ($activities as $activity) {
-			$job_id = Queue::push('Scheduler', array('string' => "Scheduling ".$activity->circular_name, 'id' => $activity->id));
+			$job_id = Queue::push('Scheduler', array('string' => "Scheduling ".$activity->circular_name, 'id' => $activity->id),'pdf');
 			Job::create(array('job_id' => $job_id));
 			$this->line("Scheduling ".$activity->circular_name);
 		}
