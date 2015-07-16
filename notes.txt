@@ -109,3 +109,9 @@ rencie.bautista@yahoo.com
  php artisan command:make SendMail --command=mail:send
 
  cd /home/ulpeto5/test.ulp-etop.com && /usr/bin/php5-cli artisan mail:queue mail1
+
+
+ update pmog attachment
+ update timings no 1970
+ dont show field no value in pdf
+ add approver on html

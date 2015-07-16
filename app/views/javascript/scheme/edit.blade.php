@@ -209,7 +209,7 @@ $("#updatescheme").validate({
 		item_barcode: {
 			minlength: 13,
 			maxlength: 13,
-			eanCheckDigit: true
+			eanCheckDigit : true
 			},
 		item_casecode: {
 			minlength: 14,
@@ -239,9 +239,13 @@ $("#updatescheme").validate({
 });
 
 $.validator.addMethod("eanCheckDigit", function (value,element) {
-	return Barcoder.validate(value);
+	if(value.length == 0){
+		return true;
+	}else{
+		return Barcoder.validate(value);
+	}
+	
 });
-
 var table = $("#customer-allocation").dataTable({
 		"scrollY": "500px",
 		"scrollCollapse": true,

@@ -17,8 +17,7 @@ $("form").validate({
 			
 			},
 		item_barcode: {
-			minlength: 1
-			,
+			minlength: 13,
 			maxlength: 13,
 			eanCheckDigit : true
 			},
@@ -50,7 +49,12 @@ $("form").validate({
 });
 
 $.validator.addMethod("eanCheckDigit", function (value,element) {
-	return Barcoder.validate(value);
+	if(value.length == 0){
+		return true;
+	}else{
+		return Barcoder.validate(value);
+	}
+	
 });
 
 
