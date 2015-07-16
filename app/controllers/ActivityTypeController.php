@@ -112,7 +112,7 @@ class ActivityTypeController extends \BaseController {
 		$input = Input::all();
 
 		$rules = array(
-	        'activity_type' => 'required|between:4,128|unique:activity_types,activity_type,'.$id,
+	        'activity_type' => 'required|between:1,128|unique:activity_types,activity_type,'.$id,
 	        'uom' => 'required'
 	    );
 
