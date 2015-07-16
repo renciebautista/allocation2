@@ -38,7 +38,7 @@ class ScheduleActivity extends Command {
 	public function fire()
 	{
 		$this->line("Scheduling approved activity.");
-		$this->line(Carbon::now());
+		// $this->line(Carbon::now());
 		$activities = Activity::select('activities.id', 'activities.circular_name')
 			->join('cycles', 'cycles.id', '=', 'activities.cycle_id')
 			->where('cycles.pdf_deadline',date('Y-m-d'))
