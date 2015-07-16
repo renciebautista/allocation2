@@ -763,6 +763,7 @@
 		  	<div class="panel-heading">FDA Permit</div>
 		  	<div class="panel-body">
 		  		@if(count($fdapermits)==0)
+
 		  		{{ Form::open(array('action' => array('ActivityController@fdaupload', $activity->id),  'class' => 'bs-component','id' => 'fdaupload', 'files'=>true)) }}
 		  			<div class="row">
 						<div class="col-lg-6">
@@ -773,6 +774,7 @@
 						  	<div class="form-group">
 						    	{{ Form::file('file','',array('id'=>'','class'=>'')) }}
 						  	</div>
+						  	<p class="text-success">Uploadable file version/s: .jpg,.jpeg,.png,.gif,.pdf</p>
 						  	{{ Form::submit('Upload', array('class' => 'btn btn-primary')) }}
 					  	</div>
 				  	</div>
@@ -820,8 +822,7 @@
 					  	</div>
 			  		</div>
 			  	</div>
-
-		  		<p>Please select XLS, XLXS or Excel file.</p>
+			  	<p class="text-success">Uploadable file version/s: .xls,.xlxs.</p>
 		  		<div id="fisupload">
 		  		@if(count($fis)==0)
 		  		{{ Form::open(array('action' => array('ActivityController@fisupload', $activity->id),  'class' => 'bs-component','id' => 'fisupload', 'files'=>true)) }}
@@ -869,7 +870,7 @@
 		<div class="panel panel-default">
 		  	<div class="panel-heading">Artwork Packshots</div>
 		  	<div class="panel-body">
-		  		<p>Please select JPG, GIF or PNG images.</p>
+		  		 	<p class="text-success">Uploadable file version/s: .jpg,.jpeg,.png,.gif</p>
 		  		<div id="artworkupload">
 		  		{{ Form::open(array('action' => array('ActivityController@artworkupload', $activity->id),'id' => 'artworkupload_form', 'class' => 'bs-component','files'=>true)) }}
 		  			<div class="row">
@@ -914,7 +915,7 @@
 		<div class="panel panel-default">
 		  	<div class="panel-heading">Marketing Backgrounds</div>
 		  	<div class="panel-body">
-		  		<p>Please select a file to upload.</p>
+		  		 	<p class="text-success">Uploadable file version/s: any</p>
 		  		<div id="backgroundupload">
 		  		{{ Form::open(array('action' => array('ActivityController@backgroundupload', $activity->id),'id' => 'backgroundupload_form',  'class' => 'bs-component','files'=>true)) }}
 		  			<div class="row">
@@ -958,7 +959,7 @@
 		<div class="panel panel-default">
 		  	<div class="panel-heading">Banding Guidelines / Activation Mechanics / Others</div>
 		  	<div class="panel-body">
-		  		<p>Please select a file to upload.</p>
+		  		<p class="text-success">Uploadable file version/s: any</p>
 		  		<div id="bandingupload">
 		  		{{ Form::open(array('action' => array('ActivityController@bandingupload', $activity->id),'id' => 'bandingupload_form',  'class' => 'bs-component','files'=>true)) }}
 		  			<div class="row">
