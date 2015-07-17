@@ -559,7 +559,7 @@ class Activity extends \Eloquent {
 			->join('users', 'activity_planners.user_id','=','users.id','left')
 			->join('users as propo', 'activities.created_by','=','propo.id')
 			->where('activity_planners.user_id',$user_id)
-			->where('activities.status_id', '>',3)
+			// ->where('activities.status_id', '>',3)
 			->where('activities.status_id', '<',9)
 			->whereIn('activities.cycle_id',$cycles)
 			->orderBy('activity_types.activity_type')
