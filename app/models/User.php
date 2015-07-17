@@ -51,6 +51,10 @@ class User extends Eloquent implements ConfideUserInterface {
 	    return $this->attributes['first_name'] .' '.$this->attributes['last_name'];
 	}
 
+	public function isActive(){
+		return $this->attributes['active'];
+	}
+
 
 	public function scopeIsRole($query, $role) {
 	    return $query->whereHas(

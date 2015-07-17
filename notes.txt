@@ -137,3 +137,7 @@ rencie.bautista@yahoo.com
  	- check download date should be equal or greater than today
 
  timings when to freeze download date
+
+
+role bug
+badz uy - inactive

@@ -17,17 +17,27 @@ class LoginController extends \BaseController {
 		$field = filter_var($usernameinput, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
 
 		if (Auth::attempt(array($field => $usernameinput, 'password' => $password), false)) {
-			Session::flash('message', '<h4>Welcome to E-TOP,</h4><p> '.ucwords(strtolower(Auth::user()->getFullname())).'</p>');
-			Session::flash('class', 'alert alert-success');
-			return Redirect::intended('/dashboard');
+			// 
+			if(Auth::user()->isActive()){
+				Session::flash('message', '<h4>Welcome to E-TOP,</h4><p> '.ucwords(strtolower(Auth::user()->getFullname())).'</p>');
+				Session::flash('class', 'alert alert-success');
+				return Redirect::intended('/dashboard');
+			}else{
+				Auth::logout();
+				Session::flash('message', 'User account is inactive, please contact the administrator');
+				Session::flash('class', 'alert alert-danger');
+				return Redirect::back();
+			}
+			
 		    // return Redirect::action('DashboardController@index');
 		}
-
 
 		Auth::logout();
 		Session::flash('message', 'Invalid credentials, please try again');
 		Session::flash('class', 'alert alert-danger');
 		return Redirect::back();
+
+		
 
 		// $repo = App::make('UserRepository');
 		// $input = Input::all();
