@@ -42,12 +42,13 @@ class SendMail extends Command {
 		$total_mails = 0;
 		switch ($type) {
 			case 'mail1':
-				$users = User::GetPlanners(['PROPONENT' ,'PMOG']);
+				$users = User::GetPlanners(['PROPONENT' ,'PMOG PLANNER']);
 				$cycles = Cycle::getBySubmissionDeadline();
 				$cycle_ids = array();
 				foreach ($cycles as $value) {
 					$cycle_ids[] = $value->id;
 				}
+				
 				foreach ($users as $user) {
 					if($user->role_id == 2){
 						$data['activities'] = Activity::ProponentActivitiesForApproval($user->user_id,$cycle_ids);
@@ -84,7 +85,7 @@ class SendMail extends Command {
 				$this->line("Total queued email {$total_mails}");
 				break;
 			case 'mail3':
-				$users = User::GetPlanners(['PROPONENT' ,'PMOG','GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']);
+				$users = User::GetPlanners(['PROPONENT' ,'PMOG PLANNER','GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']);
 				$cycles = Cycle::getByApprovalDeadlinePassed();
 				$cycle_ids = array();
 				foreach ($cycles as $value) {
@@ -110,7 +111,7 @@ class SendMail extends Command {
 				$this->line("Total queued email {$total_mails}");
 				break;
 			case 'mail4':
-				$users = User::GetPlanners(['PROPONENT' ,'PMOG','GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR','FIELD SALES']);
+				$users = User::GetPlanners(['PROPONENT' ,'PMOG PLANNER','GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR','FIELD SALES']);
 				$cycles = Cycle::getByReleaseDate();
 				$cycle_ids = array();
 				foreach ($cycles as $value) {

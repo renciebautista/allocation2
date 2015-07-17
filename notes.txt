@@ -61,7 +61,9 @@ validate pis on uploading
 fda and pis upload select files - done
 
 add color if blank grey add color if filledup input box
+
 allow recall if submission deadline lapse on last submit
+
 check timings when edited and showed
 list customers on read only
 
@@ -91,6 +93,7 @@ setup pdf creation
 
 update pmog on settings - done
 adjust date in activity type if network is changed
+
 refresh timings page - done
 remove outside click in edit networks - done
 
@@ -115,3 +118,22 @@ rencie.bautista@yahoo.com
  update timings no 1970
  dont show field no value in pdf
  add approver on html
+ add roles and responsibilities under timings
+ 	- process owner(pre text)
+ 	- action Points(pre text)
+ 	- timings (date)
+
+ allow recall (approved)
+ 	- not yet released
+ allow recall (unapproved)
+
+ disable submit (proponent / pmog)
+ 	- if over submission deadline
+
+ disable approve
+ 	- if over approval deadline
+
+ proponet (submitting activity)
+ 	- check download date should be equal or greater than today
+
+ timings when to freeze download date

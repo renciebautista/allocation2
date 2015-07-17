@@ -25,7 +25,7 @@
 					<div class="form-group">
 						<div class="row">
 							<div class="col-lg-12">
-								<label class="control-label" for="password">Password <a href="">(forgot password)</a></label>
+								<label class="control-label" for="password">Password</label>
 								{{ Form::password('password',array('class' => 'form-control')) }}
 							</div>
 						</div>

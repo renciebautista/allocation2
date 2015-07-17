@@ -211,8 +211,16 @@
 						<td>: {{ $activity->activity_code }}</td>
 					</tr>
 					<tr>
+						<td>TOP Cycle</td>
+						<td>: {{ $activity->cycle->cycle_name }}</td>
+					</tr>
+					<tr>
 						<td>Proponent Name</td>
-						<td>: {{ $activity->createdby->getFullname() }} / {{ $activity->createdby->contact_no }}</td>
+						<td>: {{ $activity->createdby->getFullname() }} 
+							@if(!empty($activity->createdby->contact_no))
+							/ {{ $activity->createdby->contact_no }}
+							@endif
+						</td>
 					</tr>
 					<tr>
 						<td>PMOG Partner</td>
@@ -222,10 +230,16 @@
 						<td>:</td>
 						@endif
 					</tr>
+
 					<tr>
-						<td>TOP Cycle</td>
-						<td>: {{ $activity->cycle->cycle_name }}</td>
+						<td>Approvers</td>
+						@if(!empty($activity->pmog[0]))
+						<td>: {{ $activity->pmog[0]->getFullname() }} / {{ $activity->pmog[0]->contact_no }}</td>
+						@else
+						<td>:</td>
+						@endif
 					</tr>
+					
 				</table>
 			</div>
 		
@@ -283,41 +297,27 @@
 							@endif
 						</td>
 					</tr>
+
 					<tr>
 						<td>SKU/s Involved</td>
 						<td>
-							@if(!empty($skuinvolves))
+							@if(count($schemes)> 0)
 							<table class="sub-table">
 								<tr>
-									<th style="width:30%">Host SKU Code - Description</th>
-									<th style="width:30%">Premium SKU Code - Description</th>
-									<th style="width:30%">Non ULP Premium</th>
+									<th style="width:16%">SKU Code</th>
+									<th >Description</th>
 								</tr>
-								@foreach($skuinvolves as $sku)
+								@foreach($schemes as $scheme)
 								<tr>
-									<td>
-										@foreach($sku['involves'] as $involve)
-										{{ $involve->sap_code}} - {{ $involve->sap_desc}}
-										@endforeach
-									</td>
-									<td>
-										@foreach($sku['premiums'] as $premium)
-										{{ $premium->sap_code}} - {{ $premium->sap_desc}}
-										@endforeach
-									</td>
-									<td>
-										@foreach($sku['non_ulp'] as $non_ulp)
-										{{ $non_ulp }}
-										@endforeach
-									</td>
+									<td>{{ $scheme->item_code }}</td>
+									<td>{{ $scheme->name }}</td>
 								</tr>
 								@endforeach
 							</table>
 							@endif
-
-							
 						</td>
 					</tr>
+					
 					<tr>
 						<td>Area/s Involved</td>
 						<td>
@@ -348,14 +348,17 @@
 							@if(count($schemes)> 0)
 							<table class="sub-table">
 								<tr>
+									<th style="width:3%"></th>
 									<th>Scheme Desc.</th>
-									<th>Item Code</th>
-									<th>Cost per Deal</th>
-									<th>Cost of Premium</th>
-									<th>Shopper Purchase Requirement</th>
+									<th style="width:16%">Item Code</th>
+									<th style="width:16%">Cost per Deal</th>
+									<th style="width:16%">Cost of Premium</th>
+									<th style="width:16%">Shopper Purchase Requirement</th>
 								</tr>
+								<?php $cnt =1; ?>
 								@foreach($schemes as $scheme)
 								<tr>
+									<td>{{ $cnt++ }}</td>
 									<td>{{ $scheme->name }}</td>
 									<td>{{ ($scheme->item_code == '') ? 'N/A' :  $scheme->item_code }}</td>
 									<td>{{ number_format($scheme->ulp,2) }}</td>
@@ -365,6 +368,44 @@
 								@endforeach
 							</table>
 							@endif
+						</td>
+					</tr>
+					<tr>
+						<td>SKU/s Involved Per Scheme</td>
+						<td>
+							@if(!empty($skuinvolves))
+							<table class="sub-table">
+								<tr>
+									<th style="width:3%"></th>
+									<th>Host SKU Code - Description</th>
+									<th style="width:32%">Premium SKU Code - Description</th>
+									<th style="width:32%">Non ULP Premium</th>
+								</tr>
+								<?php $cnt =1; ?>
+								@foreach($skuinvolves as $key => $sku)
+								<tr>
+									<td>{{ $cnt++ }}</td>
+									<td>
+										@foreach($sku['involves'] as $involve)
+										{{ $involve->sap_code}} - {{ $involve->sap_desc}}
+										@endforeach
+									</td>
+									<td>
+										@foreach($sku['premiums'] as $premium)
+										{{ $premium->sap_code}} - {{ $premium->sap_desc}}
+										@endforeach
+									</td>
+									<td>
+										@foreach($sku['non_ulp'] as $non_ulp)
+										{{ $non_ulp }}
+										@endforeach
+									</td>
+								</tr>
+								@endforeach
+							</table>
+							@endif
+
+							
 						</td>
 					</tr>
 					<tr>

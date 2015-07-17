@@ -32,8 +32,7 @@ class Cycle extends \Eloquent {
 
 	public static function getByApprovalDeadline(){
 		$now = date('Y-m-d');
-		return DB::select(DB::raw("select * from cycles;"));
-		// return DB::select(DB::raw("select * from cycles WHERE '$now' >=  (approval_deadline - interval 3 day) AND '$now' <= approval_deadline;"));
+		return DB::select(DB::raw("select * from cycles WHERE '$now' >=  (approval_deadline - interval 3 day) AND '$now' <= approval_deadline;"));
 	}
 
 	public static function getByApprovalDeadlinePassed(){

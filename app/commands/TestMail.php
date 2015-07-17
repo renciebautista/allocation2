@@ -64,7 +64,7 @@ class TestMail extends Command {
 					if($_ENV['MAIL_TEST']){
 						Mail::send('emails.mail1', $data, function($message) use ($data){
 							$message->to("rbautista@chasetech.com", $data['fullname']);
-							$message->bcc("rosarah.reyes@unilever.com");
+							// $message->bcc("rosarah.reyes@unilever.com");
 							$message->subject('TOP ACTIVITY STATUS');
 						});
 					}else{
