@@ -15,9 +15,16 @@ Queue::getIron()->ssl_verifypeer = false;
 
 Route::get("testmail", function(){
 	$users = User::GetPlanners(['PROPONENT' ,'PMOG PLANNER']);
+	$cycles = Cycle::getBySubmissionDeadline();
+	$cycle_ids = array();
+	foreach ($cycles as $value) {
+		$cycle_ids[] = $value->id;
+	}
 	foreach ($users as $key => $user) {
 		if($user->role_id == 3){
 			echo $user->getFullname() . " = > ". $user->role_id . " = > ". $user->user_id. "</br>";
+			$activities = Activity::PmogActivitiesForApproval($user->user_id,$cycle_ids);
+			Helper::print_r($activities);
 		}
 		
 	}
