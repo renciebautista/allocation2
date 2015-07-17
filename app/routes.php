@@ -16,28 +16,13 @@ Queue::getIron()->ssl_verifypeer = false;
 Route::get("testmail", function(){
 	$users = User::GetPlanners(['PROPONENT' ,'PMOG PLANNER']);
 	foreach ($users as $key => $user) {
-		echo $user->getFullname() . " = > ". $user->role_id . " = > ". $user->user_id. "</br>";
+		if($user->role_id == 3){
+			echo $user->getFullname() . " = > ". $user->role_id . " = > ". $user->user_id. "</br>";
+		}
+		
 	}
 
-	$user = User::find(246);
-	$cycles = Cycle::getBySubmissionDeadline();
-	$cycle_ids = array();
-	foreach ($cycles as $value) {
-		$cycle_ids[] = $value->id;
-	}
-	$data['cycles'] = $cycles;
-	$data['user'] = $user->getFullname();
-	$data['email'] = $user->email;
-	$data['fullname'] = $user->getFullname();
-	$data['cycle_ids'] = $cycle_ids;
-	$activities = Activity::PmogActivitiesForApproval($user->id,$cycle_ids);
-	$data['activities'] = $activities;
-	// Mail::send('emails.mail1', $data, function($message) use ($data){
-	// 	$message->to("rbautista@chasetech.com", $data['fullname'])->subject('TOP ACTIVITY STATUS');
-	// });
-	// Helper::print_r($activities);
-
-	return View::make('emails.mail1',$data);
+	
 });
 
 Route::get("test", function(){

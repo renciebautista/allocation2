@@ -44,7 +44,7 @@
 
 <body>
 
-	<h1>Hi, {{ $user }}!</h1>
+	<h1>Hi, {{ $user }}</h1>
 	<p>Please see below summary of <?php echo count($activities); ?> approved circular.  PDF copy of circulars and attachments are ready for download.</p>
 	{{ HTML::linkAction('activity.index' , 'Click here to download the files.') }}
 	<hr>

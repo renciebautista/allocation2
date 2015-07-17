@@ -44,7 +44,7 @@
 
 <body>
 
-	<h1>Hi, {{ $user }}!</h1>
+	<h1>Hi, {{ $user }}</h1>
 	<p>Sending below summary of activities awaiting your approval. Please note that deadline is on.</p>
 	<ul>
 		@foreach($cycles as $cycle)
