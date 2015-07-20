@@ -256,6 +256,12 @@ class ActivityController extends BaseController {
 						ActivityObjective::insert($activity_objective);
 					}
 
+					$path_1 = storage_path().'/uploads/'.$activity->cycle_id;
+
+					if(!File::exists($path_1)) {
+						File::makeDirectory($path_1);
+					}
+
 					$path = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id;
 					if(!File::exists($path)) {
 						File::makeDirectory($path);
@@ -665,6 +671,11 @@ class ActivityController extends BaseController {
 								ActivityObjective::insert($activity_objective);
 							}
 						});
+
+						$path_1 = storage_path().'/uploads/'.$activity->cycle_id;
+						if(!File::exists($path_1)) {
+							File::makeDirectory($path_1);
+						}
 						
 						$path = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id;
 						if(!File::exists($path)) {
@@ -866,6 +877,31 @@ class ActivityController extends BaseController {
 								ActivityObjective::insert($activity_objective);
 							}
 						});
+
+						$path_1 = storage_path().'/uploads/'.$activity->cycle_id;
+						if(!File::exists($path_1)) {
+							File::makeDirectory($path_1);
+						}
+						
+						$path = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id;
+						if(!File::exists($path)) {
+							File::makeDirectory($path);
+						}
+
+						$path2 = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
+						if(!File::exists($path2)) {
+							File::makeDirectory($path2);
+
+							$old_path = storage_path().'/uploads/'.$old_cycle.'/'.$old_type.'/'.$activity->id;
+							File::copyDirectory($old_path, $path2);
+
+							File::deleteDirectory($old_path);
+
+							$list = File::directories(storage_path().'/uploads/'.$old_cycle.'/'.$old_type);
+							if(count($list) == 0){
+								File::deleteDirectory(storage_path().'/uploads/'.$old_cycle.'/'.$old_type);
+							}
+						}
 
 						$arr['success'] = 1;
 					}
