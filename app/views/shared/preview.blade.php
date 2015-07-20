@@ -481,7 +481,7 @@
 								<tr>
 									<td>{{ $activity_role->owner }}</td>
 									<td>{{ $activity_role->point }}</td>
-									<td>{{ date_format(date_create($activity_role->timing),'M j, Y') }}</td>
+									<td>{{ $activity_role->timing }}</td>
 									
 								</tr>
 								@endforeach
