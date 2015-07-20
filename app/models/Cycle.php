@@ -15,6 +15,39 @@ class Cycle extends \Eloquent {
 		'implemintation_date' => 'required|date',
 	);
 
+	public static function batchInsert($records){
+		$records->each(function($row) {
+			if(!is_null($row->cycle_name)){
+
+				$cycle = self::where('cycle_name',$row->cycle_name)->first();
+				if(!empty($cycle)){
+					$cycle->cycle_name = $row->cycle_name;
+					$cycle->month_year = date_format(date_create($row->month_year),'m/Y');
+					$cycle->submission_deadline = $row->submission_deadline;
+					$cycle->release_date = $row->release_date;
+					$cycle->implemintation_date = $row->implemintation_date;
+					$cycle->emergency = ($row->emergency == 'Y') ? 1 : 0;
+					$cycle->approval_deadline = $row->approval_deadline;
+					$cycle->pdf_deadline = $row->pdf_deadline;
+					$cycle->update();
+				}else{
+					$cycle = new Cycle;
+					$cycle->cycle_name = $row->cycle_name;
+					$cycle->month_year = date_format(date_create($row->month_year),'m/Y');
+					$cycle->submission_deadline = $row->submission_deadline;
+					$cycle->release_date = $row->release_date;
+					$cycle->implemintation_date = $row->implemintation_date;
+					$cycle->emergency = ($row->emergency == 'Y') ? 1 : 0;
+					$cycle->approval_deadline = $row->approval_deadline;
+					$cycle->pdf_deadline = $row->pdf_deadline;
+					$cycle->save();
+				}
+
+			}
+			
+		});
+	}
+
 	public static function search($filter){
 		return self::where('cycles.cycle_name', 'LIKE' ,"%$filter%")
 			->orderBy('submission_deadline')

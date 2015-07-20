@@ -7,11 +7,9 @@ class CyclesTableSeeder extends Seeder {
 
 	public function run()
 	{
-		// DB::table('cycles')->truncate();
-
-		// DB::statement("INSERT INTO cycles (id, cycle_name) VALUES
-		// 	(1, 'TEST CYCLE'),
-		// 	(2, 'CUSTOME CYCLE');");
+		Excel::selectSheets('cycles')->load(app_path().'/database/seeds/seed_files/masterfile2.xlsx', function($reader) {
+			Cycle::batchInsert($reader->ignoreEmpty());
+		});
 	}
 
 }

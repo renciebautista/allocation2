@@ -65,9 +65,15 @@
 								<li>{{ HTML::linkAction('activity.index' , 'Unreleased',array('st' => ['1','2','3','4','5','6','7','8'],'title' => '')) }}</li>  
 								<li>{{ HTML::linkAction('activity.index' , 'Released',array('st' => ['9'],'title' => '')) }}</li>  
 								@endif
-								@if(Auth::user()->inRoles(['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']))
+								@if(Auth::user()->inRoles(['GCOM APPROVER']))
 								<li>{{ HTML::linkAction('submittedactivity.index' , 'For Approval',array('st' => ['5'],'title' => '')) }}</li>  
 								@endif  
+								@if(Auth::user()->inRoles(['CD OPS APPROVER']))
+								<li>{{ HTML::linkAction('submittedactivity.index' , 'For Approval',array('st' => ['6'],'title' => '')) }}</li>  
+								@endif 
+								@if(Auth::user()->inRoles(['CMD DIRECTOR']))
+								<li>{{ HTML::linkAction('submittedactivity.index' , 'For Approval',array('st' => ['7'],'title' => '')) }}</li>  
+								@endif 
 							</ul>
 						</li>
 						@endif

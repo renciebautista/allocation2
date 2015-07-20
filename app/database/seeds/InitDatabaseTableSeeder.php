@@ -9,6 +9,8 @@ class InitDatabaseTableSeeder extends Seeder {
 		Eloquent::unguard();
 		DB::statement('SET FOREIGN_KEY_CHECKS=0;');
 		
+		$this->call('CyclesTableSeeder');
+		
 		$this->call('PricelistTableSeeder');
 		$this->call('SkusTableSeeder');
 
