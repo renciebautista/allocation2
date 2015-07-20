@@ -898,11 +898,13 @@ class ActivityController extends BaseController {
 
 			try {
 				ActivityTiming::where('activity_id',$activity->id)->delete();
+				ActivityRole::where('activity_id',$activity->id)->delete();
 				ActivityPlanner::where('activity_id',$activity->id)->delete();
 				ActivityApprover::where('activity_id',$activity->id)->delete();
 				ActivityDivision::where('activity_id',$activity->id)->delete();
 				ActivityCategory::where('activity_id',$activity->id)->delete();
 				ActivityBrand::where('activity_id',$activity->id)->delete();
+				ActivitySku::where('activity_id',$activity->id)->delete();
 				ActivityObjective::where('activity_id',$activity->id)->delete();
 
 				ActivityMaterial::where('activity_id',$activity->id)->delete();
@@ -2098,6 +2100,22 @@ class ActivityController extends BaseController {
 					
 				}
 
+				// add roles
+				$roles = ActivityRole::where('activity_id',$activity->id)->get();
+				if(!empty($roles)){
+					$activity_role = array();
+					foreach ($roles as $role) {
+						$activity_role[] = array('activity_id' => $new_activity->id,
+							'owner' => $role->owner,
+							'point' => $role->point,
+							'timing' => $role->timing,);
+					}
+					if(!empty($activity_role)){
+						ActivityRole::insert($activity_role);
+					}
+					
+				}
+
 				// add planner
 				$planners = ActivityPlanner::where('activity_id',$activity->id)->get();
 				if(!empty($planners)){
@@ -2154,6 +2172,19 @@ class ActivityController extends BaseController {
 					}
 					if(!empty($activity_brand)){
 						ActivityBrand::insert($activity_brand);
+					}
+					
+				}
+
+				// add skus
+				$activity_skus = ActivitySku::where('activity_id',$activity->id)->get();
+				if(!empty($activity_skus)){
+					$activity_sku = array();
+					foreach ($activity_skus as $sku){
+						$activity_sku[] = array('activity_id' => $new_activity->id, 'sap_code' => $sku->sap_code);
+					}
+					if(!empty($activity_sku)){
+						ActivitySku::insert($activity_sku);
 					}
 					
 				}

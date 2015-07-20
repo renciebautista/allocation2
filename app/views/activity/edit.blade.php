@@ -770,7 +770,7 @@
 												<tr>
 													<th>Process Owner</th>
 													<th>Action Points</th>
-													<th style="width:15%;">Date</th>
+													<th>Timing</th>
 													<th style="width:15%;" colspan="2">Action</th>
 												</tr>
 											</thead>
@@ -779,7 +779,7 @@
 											<tr id="{{ $activity_role->id }}">
 												<td class="owner">{{ $activity_role->owner }}</td>
 												<td class="point">{{ $activity_role->point }}</td>
-												<td class="timing">{{ date_format(date_create($activity_role->timing),'m/d/Y') }}</td>
+												<td class="timing">{{ $activity_role->timing }}</td>
 												<td>
 													<a href="javascript:;" id="{{ $activity_role->id }}" class="ajaxEdit btn btn-primary btn-xs">Edit</a>
 												</td>

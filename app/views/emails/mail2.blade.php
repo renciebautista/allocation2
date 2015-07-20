@@ -45,7 +45,7 @@
 <body>
 
 	<h1>Hi, {{ $user }}</h1>
-	<p>Sending below summary of your activity status.  Gentle reminder please on the following deadlines.</p>
+	<p>Sending below summary of activities for your approval. Gentle reminder please on below deadline.</p>
 	<ul>
 		@foreach($cycles as $cycle)
 		<li>{{ $cycle->cycle_name }} - Approval Deadline:  {{ date_format(date_create($cycle->approval_deadline),'l, F d, Y') }} </li>
