@@ -42,6 +42,7 @@
 			}
 			#title table tr > td:first-child {
 				font-weight: bold;
+				vertical-align: top;
 				width: 150px;
 
 			}
@@ -90,11 +91,25 @@
 				text-align: left;
 				width: 60%;
 			}
+			
+
+			#activity table .sub-table.role tr > td:first-child {
+				font-weight: normal;
+				text-align: left;
+				width: 40%;
+			}
+			#activity table .sub-table.role tr > td:last-child {
+				font-weight: normal;
+				width: 20%;
+			}
+
 			#activity table .sub-table.source tr > td:first-child {
 				font-weight: normal;
 				text-align: left;
 				width: 40%;
 			}
+
+
 			#logo {
 			    position: relative;
 			}
@@ -224,8 +239,13 @@
 					</tr>
 					<tr>
 						<td>PMOG Partner</td>
+
 						@if(!empty($activity->pmog[0]))
-						<td>: {{ $activity->pmog[0]->getFullname() }} / {{ $activity->pmog[0]->contact_no }}</td>
+						<td>: {{  $activity->pmog[0]->getFullname() }} 
+							@if(!empty($activity->pmog[0]->contact_no))
+							/ {{ $activity->pmog[0]->contact_no }}
+							@endif
+						</td>
 						@else
 						<td>:</td>
 						@endif
@@ -233,8 +253,19 @@
 
 					<tr>
 						<td>Approvers</td>
-						@if(!empty($activity->pmog[0]))
-						<td>: {{ $activity->pmog[0]->getFullname() }} / {{ $activity->pmog[0]->contact_no }}</td>
+						@if(!empty($approvers))
+						<td>
+							<?php $first = false; ?>
+							@foreach($approvers as $approver)
+							@if(!$first)
+							:
+							<?php $first = true; ?>
+							@else
+							&nbsp
+							@endif
+							 {{$approver->first_name}} {{$approver->last_name}}</br>
+							@endforeach
+						</td>
 						@else
 						<td>:</td>
 						@endif
@@ -301,16 +332,16 @@
 					<tr>
 						<td>SKU/s Involved</td>
 						<td>
-							@if(count($schemes)> 0)
+							@if(count($sku_involves)> 0)
 							<table class="sub-table">
 								<tr>
 									<th style="width:16%">SKU Code</th>
 									<th >Description</th>
 								</tr>
-								@foreach($schemes as $scheme)
+								@foreach($sku_involves as $sku_involve)
 								<tr>
-									<td>{{ $scheme->item_code }}</td>
-									<td>{{ $scheme->name }}</td>
+									<td>{{ $sku_involve->sap_code }}</td>
+									<td>{{ $sku_involve->sap_desc }}</td>
 								</tr>
 								@endforeach
 							</table>
@@ -432,6 +463,29 @@
 									<td>{{ date_format(date_create($activity->eimplementation_date),'M j, Y') }}</td>
 									<td>{{ date_format(date_create($activity->end_date),'M j, Y') }}</td>
 								</tr>
+							</table>
+							@endif
+						</td>
+					</tr>
+					<tr>
+						<td>Roles and Responsibilities</td>
+						<td>
+							@if(count($activity_roles)> 0)
+							<table class="sub-table role">
+								<tr>
+									<th>Process Owner</th>
+									<th>Action Points</th>
+									<th>Timings</th>
+								</tr>
+								@foreach($activity_roles as $activity_role)
+								<tr>
+									<td>{{ $activity_role->owner }}</td>
+									<td>{{ $activity_role->point }}</td>
+									<td>{{ date_format(date_create($activity_role->timing),'M j, Y') }}</td>
+									
+								</tr>
+								@endforeach
+
 							</table>
 							@endif
 						</td>

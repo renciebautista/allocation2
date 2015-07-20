@@ -211,7 +211,7 @@
 				</div>
 
 				<div class="row">
-					<div class="col-lg-4">
+					<div class="col-lg-3">
 						<div class="form-group">
 							<div class="row">
 								<div class="col-lg-12">
@@ -221,7 +221,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-lg-4">
+					<div class="col-lg-3">
 						<div class="form-group">
 							<div class="row">
 								<div id="multiselect" class="col-lg-12">
@@ -231,12 +231,22 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-lg-4">
+					<div class="col-lg-3">
 						<div class="form-group">
 							<div class="row">
 								<div class="col-lg-12">
 									{{ Form::label('brand', 'Brand', array('class' => 'control-label')) }}
 									<select class="form-control" data-placeholder="SELECT BRAND" id="brand" name="brand[]" multiple="multiple" ></select>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-3">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('skus', 'SKU/s Involved', array('class' => 'control-label')) }}
+									{{ Form::select('skus[]',  $involves, $sel_involves, array('id' => 'skus', 'class' => 'form-control multiselect' ,'multiple' => 'multiple' ,'data-placeholder' => 'SELECT SKU/s')) }}
 								</div>
 							</div>
 						</div>
@@ -732,8 +742,8 @@
 									<td>{{ $timing->depend_on }}</td>
 									<td>{{ date_format(date_create($timing->start_date),'m/d/Y') }}</td>
 									<td>{{ date_format(date_create($timing->end_date),'m/d/Y') }}</td>
-									<td><input class="timing_date" type="text" id="timing_start[{{ $timing->id }}]" name="timing_start[{{ $timing->id }}]" value="{{ date_format(date_create($timing->final_start_date),'m/d/Y') }}"  placeholder="mm/dd/yyyy" value=""></td>
-									<td><input class="timing_date" type="text" id="timing_end[{{ $timing->id }}]" name="timing_end[{{ $timing->id }}]"  value="{{ date_format(date_create($timing->final_end_date),'m/d/Y') }}" placeholder="mm/dd/yyyy" value=""></td>
+									<td><input class="timing_date" type="text" id="timing_start[{{ $timing->id }}]" name="timing_start[{{ $timing->id }}]" value="<?php echo ($timing->final_start_date != null) ?  date_format(date_create($timing->final_start_date),'m/d/Y') : '';?>"  placeholder="mm/dd/yyyy" value=""></td>
+									<td><input class="timing_date" type="text" id="timing_end[{{ $timing->id }}]" name="timing_end[{{ $timing->id }}]"  value="<?php echo ($timing->final_end_date != null) ?  date_format(date_create($timing->final_end_date),'m/d/Y') : '';?>" placeholder="mm/dd/yyyy" value=""></td>
 								</tr>
 								@endforeach
 								@endif
@@ -742,6 +752,50 @@
 					</div>
 				</div>
 		  	</div>
+		</div>
+
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Roles and Responsibilities</h3>
+			</div>
+			<div class="panel-body">
+				<div id="activityroles">
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="form-group">
+								<div class="row">
+									<div class="col-lg-12">
+										<table id="activityroles_table" class="table table-striped table-hover ">
+											<thead>
+												<tr>
+													<th>Process Owner</th>
+													<th>Action Points</th>
+													<th style="width:15%;">Date</th>
+													<th style="width:15%;"colspan="2">Action</th>
+												</tr>
+											</thead>
+											<tbody>
+											@foreach ($activity_roles as $activity_role)
+											<tr id="{{ $activity_role->id }}">
+												<td class="owner">{{ $activity_role->owner }}</td>
+												<td class="point">{{ $activity_role->point }}</td>
+												<td class="timing">{{ date_format(date_create($activity_role->timing),'m/d/Y') }}</td>
+												<td>
+													<a href="javascript:;" id="{{ $activity_role->id }}" class="ajaxEdit btn btn-primary btn-xs">Edit</a>
+												</td>
+												<td><a href="javascript:;" id="{{ $activity_role->id }}" class="ajaxDelete btn btn-danger btn-xs">Delete</a></td>
+											</tr>
+											@endforeach
+											</tbody>
+											
+										</table> 
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 
 		<div class="row">
@@ -764,6 +818,7 @@
 		  	<div class="panel-heading">FDA Permit</div>
 		  	<div class="panel-body">
 		  		@if(count($fdapermits)==0)
+
 		  		{{ Form::open(array('action' => array('ActivityController@fdaupload', $activity->id),  'class' => 'bs-component','id' => 'fdaupload', 'files'=>true)) }}
 		  			<div class="row">
 						<div class="col-lg-6">
@@ -774,6 +829,7 @@
 						  	<div class="form-group">
 						    	{{ Form::file('file','',array('id'=>'','class'=>'')) }}
 						  	</div>
+						  	<p class="text-success">Uploadable file version/s: .jpg,.jpeg,.png,.gif,.pdf</p>
 						  	{{ Form::submit('Upload', array('class' => 'btn btn-primary')) }}
 					  	</div>
 				  	</div>
@@ -821,8 +877,7 @@
 					  	</div>
 			  		</div>
 			  	</div>
-
-		  		<p>Please select XLS, XLXS or Excel file.</p>
+			  	<p class="text-success">Uploadable file version/s: .xls,.xlxs.</p>
 		  		<div id="fisupload">
 		  		@if(count($fis)==0)
 		  		{{ Form::open(array('action' => array('ActivityController@fisupload', $activity->id),  'class' => 'bs-component','id' => 'fisupload', 'files'=>true)) }}
@@ -870,7 +925,7 @@
 		<div class="panel panel-default">
 		  	<div class="panel-heading">Artwork Packshots</div>
 		  	<div class="panel-body">
-		  		<p>Please select JPG, GIF or PNG images.</p>
+		  		 	<p class="text-success">Uploadable file version/s: .jpg,.jpeg,.png,.gif</p>
 		  		<div id="artworkupload">
 		  		{{ Form::open(array('action' => array('ActivityController@artworkupload', $activity->id),'id' => 'artworkupload_form', 'class' => 'bs-component','files'=>true)) }}
 		  			<div class="row">
@@ -915,7 +970,7 @@
 		<div class="panel panel-default">
 		  	<div class="panel-heading">Marketing Backgrounds</div>
 		  	<div class="panel-body">
-		  		<p>Please select a file to upload.</p>
+		  		 	<p class="text-success">Uploadable file version/s: any</p>
 		  		<div id="backgroundupload">
 		  		{{ Form::open(array('action' => array('ActivityController@backgroundupload', $activity->id),'id' => 'backgroundupload_form',  'class' => 'bs-component','files'=>true)) }}
 		  			<div class="row">
@@ -959,7 +1014,7 @@
 		<div class="panel panel-default">
 		  	<div class="panel-heading">Banding Guidelines / Activation Mechanics / Others</div>
 		  	<div class="panel-body">
-		  		<p>Please select a file to upload.</p>
+		  		<p class="text-success">Uploadable file version/s: any</p>
 		  		<div id="bandingupload">
 		  		{{ Form::open(array('action' => array('ActivityController@bandingupload', $activity->id),'id' => 'bandingupload_form',  'class' => 'bs-component','files'=>true)) }}
 		  			<div class="row">

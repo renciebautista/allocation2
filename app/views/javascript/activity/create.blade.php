@@ -237,6 +237,13 @@ $('select#brand').multiselect({
 	}
 });
 
+$('select#skus').multiselect({
+	maxHeight: 200,
+	includeSelectAllOption: true,
+	enableCaseInsensitiveFiltering: true,
+	enableFiltering: true
+});
+
 $("#involve").chosen();
 
 $('select#objective').multiselect({

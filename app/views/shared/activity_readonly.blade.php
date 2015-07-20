@@ -217,7 +217,7 @@
 				</div>
 
 				<div class="row">
-					<div class="col-lg-4">
+					<div class="col-lg-3">
 						<div class="form-group">
 							<div class="row">
 								<div class="col-lg-12">
@@ -227,7 +227,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-lg-4">
+					<div class="col-lg-3">
 						<div class="form-group">
 							<div class="row">
 								<div id="multiselect" class="col-lg-12">
@@ -237,12 +237,22 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-lg-4">
+					<div class="col-lg-3">
 						<div class="form-group">
 							<div class="row">
 								<div class="col-lg-12">
 									{{ Form::label('brand', 'Brand', array('class' => 'control-label')) }}
 									<select class="form-control" data-placeholder="SELECT BRAND" id="brand" name="brand[]" multiple="multiple" ></select>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-3">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('skus', 'SKU/s Involved', array('class' => 'control-label')) }}
+									{{ Form::select('skus[]',  $involves, $sel_involves, array('id' => 'skus', 'class' => 'form-control' ,'multiple' => 'multiple' ,'data-placeholder' => 'SELECT SKU/s')) }}
 								</div>
 							</div>
 						</div>
@@ -549,7 +559,7 @@
 														<th>Start Date</th>
 														<th>End Date</th>
 														<th>Remarks</th>
-														<th colspan="2">Action</th>
+														<th style="width:10%;" colspan="2">Action</th>
 													</tr>
 												</thead>
 												<tbody>
@@ -628,7 +638,7 @@
 														<th>Start Date</th>
 														<th>End Date</th>
 														<th>Remarks</th>
-														<th colspan="2">Action</th>
+														<th style="width:10%;" colspan="2">Action</th>
 													</tr>
 												</thead>
 												<tbody>
@@ -684,21 +694,101 @@
 						<table id="activity_timings" class="table table-striped table-hover ">
 						  	<thead>
 								<tr>
-							  		<th data-field="task_id">Task ID</th>
-							        <th data-field="milestone">Milestone</th>
-							        <th data-field="task">Task</th>
-							        <th data-field="responsible">Team Responsible</th>
-							        <th data-field="duration">Duration (days)</th>
-							        <th data-field="depend_on">Depends On</th>
-							  		<th data-field="start_date">Start Date</th>
-							  		<th data-field="end_date">End Date</th>
+							  		<th>Task ID</th>
+							        <th>Milestone</th>
+							        <th>Task</th>
+							        <th>Team Responsible</th>
+							       	<th>Duration (days)</th>
+							        <th>Depends On</th>
+							  		<th>Start Date</th>
+							  		<th>End Date</th>
+							  		<th>Final Start Date</th>
+							  		<th>Final End Date</th>
 								</tr>
 						  	</thead>
+						  	<tbody>
+								@if(count($timings) == 0)
+								<tr>
+									<td colspan="10">No record found!</td>
+								</tr>
+								@else
+								@foreach($timings as $timing)
+								<tr>
+									<td>{{ $timing->task_id }}</td>
+									<td>{{ $timing->milestone }}</td>
+									<td>{{ $timing->task }}</td>
+									<td>{{ $timing->responsible }}</td>
+									<td>{{ $timing->duration }}</td>
+									<td>{{ $timing->depend_on }}</td>
+									<td>{{ date_format(date_create($timing->start_date),'m/d/Y') }}</td>
+									<td>{{ date_format(date_create($timing->end_date),'m/d/Y') }}</td>
+									<td>
+										@if($timing->final_start_date != null)
+										{{ date_format(date_create($timing->final_start_date),'m/d/Y') }}
+										@else
+										@endif
+									</td>
+									<td>
+										@if($timing->final_end_date != null)
+										{{ date_format(date_create($timing->final_end_date),'m/d/Y') }}
+										@else
+										@endif
+									</td>
+								</tr>
+								@endforeach
+								@endif
+							</tbody>
 						</table> 
 					</div>
 				</div>
 		  	</div>
 		</div>
+
+		<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">Roles and Responsibilities</h3>
+				</div>
+				<div class="panel-body">
+					<div id="activityroles">
+						<div class="row">
+							<div class="col-lg-12">
+								<div class="form-group">
+									<div class="row">
+										<div class="col-lg-12">
+											<table id="activityroles_table" class="table table-striped table-hover ">
+												<thead>
+													<tr>
+														<th>Process Owner</th>
+														<th>Action Points</th>
+														<th style="width:15%;">Date</th>
+														<th style="width:10%;" colspan="2">Action</th>
+													</tr>
+												</thead>
+												<tbody>
+												@foreach ($activity_roles as $activity_role)
+												<tr id="{{ $activity_role->id }}">
+													<td class="owner">{{ $activity_role->owner }}</td>
+													<td class="point">{{ $activity_role->point }}</td>
+													<td class="timing">{{ date_format(date_create($activity_role->timing),'m/d/Y') }}</td>
+													<td>
+														<button class="btn btn-primary btn-xs disabled">Edit</button>
+													</td>
+													<td>
+														<button class="btn btn-danger btn-xs disabled">Delete</button>
+													</td>
+												</tr>
+												@endforeach
+												</tbody>
+												
+											</table> 
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 
 		<div class="row">
 			<div class="col-lg-12">
@@ -723,7 +813,7 @@
 					      	<th class="permit">FDA Permit No.</th>
 					      	<th >File Name</th>
 					      	<th class="update">Uploaded Date</th>
-					      	<th colspan="2" class="action">Action</th>
+					      	<th style="width:15%;" colspan="2">Action</th>
 					    </tr>
 				  	</thead>
 				  	<tbody>
@@ -1198,8 +1288,15 @@ function updatechannel(){
 <!-- Budget details -->
 
 <!-- activity timings -->
-$('#activity_timings').bootstrapTable({
-    url: '{{ URL::action('ActivityController@timings', $activity->id ) }}'
+$('select#skus').multiselect({
+	maxHeight: 200,
+	onDropdownShow: function(event) {
+        $('select#skus option').each(function() {
+          	var input = $('input[value="' + $(this).val() + '"]');
+          	input.prop('disabled', true);
+            input.parent('li').addClass('disabled');
+        });
+    }
 });
 
 <!-- update activty -->

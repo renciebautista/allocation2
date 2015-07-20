@@ -210,7 +210,7 @@
 				</div>
 
 				<div class="row">
-					<div class="col-lg-4">
+					<div class="col-lg-3">
 						<div class="form-group">
 							<div class="row">
 								<div class="col-lg-12">
@@ -220,7 +220,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-lg-4">
+					<div class="col-lg-3">
 						<div class="form-group">
 							<div class="row">
 								<div id="multiselect" class="col-lg-12">
@@ -230,12 +230,22 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-lg-4">
+					<div class="col-lg-3">
 						<div class="form-group">
 							<div class="row">
 								<div class="col-lg-12">
 									{{ Form::label('brand', 'Brand', array('class' => 'control-label')) }}
 									<select class="form-control" data-placeholder="SELECT BRAND" id="brand" name="brand[]" multiple="multiple" ></select>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-3">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('skus', 'SKU/s Involved', array('class' => 'control-label')) }}
+									{{ Form::select('skus[]',  $involves, $sel_involves, array('id' => 'skus', 'class' => 'form-control multiselect' ,'multiple' => 'multiple' ,'data-placeholder' => 'SELECT SKU/s')) }}
 								</div>
 							</div>
 						</div>
@@ -627,49 +637,49 @@
 				</div>
 				<div class="panel-body">
 					<div id="c_without_budget">
-				<div class="row">
-					<div class="col-lg-12">
-						<div class="form-group">
-							<div class="row">
-								<div class="col-lg-12">
-									<table id="no_budget_table" class="table table-striped table-hover ">
-										<thead>
-											<tr>
-												<th style="width:9%;">Type</th>
-												<th>Budget Holder</th>
-												<th>Budget Name</th>
-												<th>Amount</th>
-												<th>Start Date</th>
-												<th>End Date</th>
-												<th>Remarks</th>
-												<th colspan="2">Action</th>
-											</tr>
-										</thead>
-										<tbody>
-										@foreach ($nobudgets as $nobudget)
-										<tr id="{{ $nobudget->id }}">
-											<td class="budget_ttstype">{{ $nobudget->budgettype->budget_type }}</td>
-											<td class="budget_no">{{ $nobudget->budget_no }}</td>
-											<td class="budget_name">{{ $nobudget->budget_name }}</td>
-											<td class="budget_amount">{{ number_format($nobudget->amount,2) }}</td>
-											<td class="budget_startdate">{{ date_format(date_create($nobudget->start_date),'m/d/Y') }}</td>
-											<td class="budget_enddate">{{ date_format(date_create($nobudget->end_date),'m/d/Y') }}</td>
-											<td class="budget_remarks">{{ $nobudget->remarks }}</td>
-											<td>
-												<a href="javascript:;" id="{{ $nobudget->id }}" class="ajaxEdit btn btn-primary btn-xs">Edit</a>
-											</td>
-											<td><a href="javascript:;" id="{{ $nobudget->id }}" class="ajaxDelete btn btn-danger btn-xs">Delete</a></td>
-										</tr>
-										@endforeach
-										</tbody>
-										
-									</table> 
+						<div class="row">
+							<div class="col-lg-12">
+								<div class="form-group">
+									<div class="row">
+										<div class="col-lg-12">
+											<table id="no_budget_table" class="table table-striped table-hover ">
+												<thead>
+													<tr>
+														<th style="width:9%;">Type</th>
+														<th>Budget Holder</th>
+														<th>Budget Name</th>
+														<th>Amount</th>
+														<th>Start Date</th>
+														<th>End Date</th>
+														<th>Remarks</th>
+														<th colspan="2">Action</th>
+													</tr>
+												</thead>
+												<tbody>
+												@foreach ($nobudgets as $nobudget)
+												<tr id="{{ $nobudget->id }}">
+													<td class="budget_ttstype">{{ $nobudget->budgettype->budget_type }}</td>
+													<td class="budget_no">{{ $nobudget->budget_no }}</td>
+													<td class="budget_name">{{ $nobudget->budget_name }}</td>
+													<td class="budget_amount">{{ number_format($nobudget->amount,2) }}</td>
+													<td class="budget_startdate">{{ date_format(date_create($nobudget->start_date),'m/d/Y') }}</td>
+													<td class="budget_enddate">{{ date_format(date_create($nobudget->end_date),'m/d/Y') }}</td>
+													<td class="budget_remarks">{{ $nobudget->remarks }}</td>
+													<td>
+														<a href="javascript:;" id="{{ $nobudget->id }}" class="ajaxEdit btn btn-primary btn-xs">Edit</a>
+													</td>
+													<td><a href="javascript:;" id="{{ $nobudget->id }}" class="ajaxDelete btn btn-danger btn-xs">Delete</a></td>
+												</tr>
+												@endforeach
+												</tbody>
+												
+											</table> 
+										</div>
+									</div>
 								</div>
 							</div>
 						</div>
 					</div>
-				</div>
-			</div>
 				</div>
 			</div>
 
@@ -731,8 +741,8 @@
 									<td>{{ $timing->depend_on }}</td>
 									<td>{{ date_format(date_create($timing->start_date),'m/d/Y') }}</td>
 									<td>{{ date_format(date_create($timing->end_date),'m/d/Y') }}</td>
-									<td><input class="timing_date" type="text" id="timing_start[]" name="timing_start[{{ $timing->id }}]" value="{{ date_format(date_create($timing->final_start_date),'m/d/Y') }}"  placeholder="mm/dd/yyyy" value=""></td>
-									<td><input class="timing_date" type="text" id="timing_end[]" name="timing_end[{{ $timing->id }}]"  value="{{ date_format(date_create($timing->final_end_date),'m/d/Y') }}" placeholder="mm/dd/yyyy" value=""></td>
+									<td><input class="timing_date" type="text" id="timing_start[{{ $timing->id }}]" name="timing_start[{{ $timing->id }}]" value="<?php echo ($timing->final_start_date != null) ?  date_format(date_create($timing->final_start_date),'m/d/Y') : '';?>"  placeholder="mm/dd/yyyy" value=""></td>
+									<td><input class="timing_date" type="text" id="timing_end[{{ $timing->id }}]" name="timing_end[{{ $timing->id }}]"  value="<?php echo ($timing->final_end_date != null) ?  date_format(date_create($timing->final_end_date),'m/d/Y') : '';?>" placeholder="mm/dd/yyyy" value=""></td>
 								</tr>
 								@endforeach
 								@endif
@@ -741,6 +751,51 @@
 					</div>
 				</div>
 		  	</div>
+		</div>
+
+
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Roles and Responsibilities</h3>
+			</div>
+			<div class="panel-body">
+				<div id="activityroles">
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="form-group">
+								<div class="row">
+									<div class="col-lg-12">
+										<table id="activityroles_table" class="table table-striped table-hover ">
+											<thead>
+												<tr>
+													<th>Process Owner</th>
+													<th>Action Points</th>
+													<th style="width:15%;">Date</th>
+													<th style="width:15%;" colspan="2">Action</th>
+												</tr>
+											</thead>
+											<tbody>
+											@foreach ($activity_roles as $activity_role)
+											<tr id="{{ $activity_role->id }}">
+												<td class="owner">{{ $activity_role->owner }}</td>
+												<td class="point">{{ $activity_role->point }}</td>
+												<td class="timing">{{ date_format(date_create($activity_role->timing),'m/d/Y') }}</td>
+												<td>
+													<a href="javascript:;" id="{{ $activity_role->id }}" class="ajaxEdit btn btn-primary btn-xs">Edit</a>
+												</td>
+												<td><a href="javascript:;" id="{{ $activity_role->id }}" class="ajaxDelete btn btn-danger btn-xs">Delete</a></td>
+											</tr>
+											@endforeach
+											</tbody>
+											
+										</table> 
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 
 		<div class="row">

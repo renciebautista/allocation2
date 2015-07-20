@@ -130,12 +130,6 @@ class Activity extends \Eloquent {
 		}
 
 		
-
-		// $skus = ActivitySku::getList($activity->id);
-		// if(count($skus) == 0){
-		// 	$required[] = 'Activity skus involved is required.';
-		// 	$return['status'] = 0;
-		// }
 		if(in_array("objective", $required_array)){
 			$objective = ActivityObjective::getList($activity->id);
 			if(count($objective) == 0){

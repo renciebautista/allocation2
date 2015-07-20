@@ -10,6 +10,7 @@ class ActivityApprover extends \Eloquent {
 			->where('status_id',0)
 			->first();
 	}
+
 	public static function updateNextApprover($activity_id,$role){
 		$approvers = self::getApproverByRole($activity_id,$role);
 		foreach ($approvers as $approver) {
@@ -40,6 +41,7 @@ class ActivityApprover extends \Eloquent {
 			->where('activity_approvers.status_id',0)
 			->get();
 	}
+
 	public static function getAllApproverByRole($activity_id,$role_name){
 		return self::select('activity_approvers.user_id')
 			->join('users', 'activity_approvers.user_id', '=', 'users.id')
@@ -107,7 +109,6 @@ class ActivityApprover extends \Eloquent {
 		}
 	}
 
-
 	public static function resetAll($activity_id){
 		self::where('activity_id',$activity_id)->update(array('status_id' => 0,'for_approval' => 0));
 	}
@@ -140,8 +141,6 @@ class ActivityApprover extends \Eloquent {
 		return $list;
 	}
 
-	
-
 	public static function getApprover($id,$user_id){
 		return self::where('activity_id',$id)
 			->where('user_id',$user_id)->first();
@@ -165,5 +164,11 @@ class ActivityApprover extends \Eloquent {
     	}else{
     		return false;
     	}
+    }
+
+    public static function getNames($activity_id){
+    	return self::where('activity_id',$activity_id)
+    	->join('users','users.id','=','activity_approvers.user_id')
+    	->get();
     }
 }

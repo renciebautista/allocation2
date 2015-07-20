@@ -325,6 +325,13 @@ $('select#brand').multiselect({
 	}
 });
 
+$('select#skus').multiselect({
+	maxHeight: 200,
+	includeSelectAllOption: true,
+	enableCaseInsensitiveFiltering: true,
+	enableFiltering: true
+});
+
 
 $('select#objective').multiselect({
 	maxHeight: 200,
@@ -803,6 +810,32 @@ $("form[id='updatetimings']").on("submit",function(e){
 	
 	e.preventDefault();
 });
+
+$('#activityroles_table').ajax_table({
+	add_url: "{{ URL::action('ActivityController@addrole', $activity->id ) }}",
+	delete_url: "{{ URL::action('ActivityController@deleterole') }}",
+	update_url: "{{ URL::action('ActivityController@updaterole') }}",
+	columns: [
+		{ type: "text", id: "owner", placeholder: "Process Owner",validation: { required :true} },
+		{ type: "text", id: "point", placeholder: "Action Point",validation: { required :true} },
+		{ type: "text", id: "timing", placeholder: "mm/dd/yyyy",validation: { required :true} },
+	],onError: function (){
+		bootbox.alert("Unexpected error, Please try again"); 
+	},onInitRow: function() {
+		$('#timing').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
+		$('#timing').datetimepicker({
+			pickTime: false,
+			calendarWeeks: true
+		});
+	},onEditRow : function(){
+		$('#timing').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
+		$('#timing').datetimepicker({
+			pickTime: false,
+			calendarWeeks: true
+		});
+	}
+});
+
 
 
 <!-- submit activity -->

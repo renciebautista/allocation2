@@ -26,6 +26,7 @@ class ReportController extends \BaseController {
 		$activity = Activity::find($id);
 		if(!empty($activity)){
 			$planner = ActivityPlanner::where('activity_id', $activity->id)->first();
+			$approvers = ActivityApprover::getNames($activity->id);
 			$budgets = ActivityBudget::with('budgettype')
 					->where('activity_id', $id)
 					->get();
@@ -71,12 +72,17 @@ class ReportController extends \BaseController {
 
 			$fdapermit = ActivityFdapermit::where('activity_id', $activity->id)->first();
 			$networks = ActivityTiming::getTimings($activity->id,true);
+
+			$activity_roles = ActivityRole::getList($activity->id);
+
 			$artworks = ActivityArtwork::getList($activity->id);
 			$pispermit = ActivityFis::where('activity_id', $activity->id)->first();
 
 			//Involved Area
 			$areas = ActivityCustomer::getSelectedAreas($activity->id);
 			$channels = ActivityChannel2::getSelectecdChannels($activity->id);
+
+			$sku_involves = ActivitySku::getInvolves($activity->id);
 			
 			// // Product Information Sheet
 			$path = '/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
@@ -92,10 +98,9 @@ class ReportController extends \BaseController {
 			}
 
 			// Helper::print_r($skuinvolves);
-			return View::make('shared.preview', compact('activity' ,'planner','budgets','nobudgets','schemes','skuinvolves',
-					'materials','fdapermit', 'networks','artworks', 'pis' , 'areas','channels'));
-			
-			
+			return View::make('shared.preview', compact('activity' ,'planner','budgets','nobudgets',
+				'schemes','skuinvolves', 'activity_roles','materials','fdapermit', 'networks','artworks', 
+				'pis' , 'areas','channels', 'approvers' , 'sku_involves'));
 		}
 		
 

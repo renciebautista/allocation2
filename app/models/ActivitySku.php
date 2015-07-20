@@ -3,14 +3,19 @@
 class ActivitySku extends \Eloquent {
 	protected $fillable = [];
 
-	public static function getList($id){
-		$list = array();
-		$data = self::where('activity_id',$id)->get();
-		if(!empty($data)){
-			foreach ($data as $row) {
-				$list[] = $row->sap_code;
-			}
+	public static function getSkus($id){
+		$skus = array();
+		foreach(self::where('activity_id',$id)->get() as $sku){
+			$skus[] = $sku->sap_code;
 		}
-		return $list;
+
+		return $skus;
+	}
+
+	public static function getInvolves($id){
+		return self::where('activity_id',$id)
+			->join('pricelists', 'activity_skus.sap_code', '=', 'pricelists.sap_code')
+			->orderBy('pricelists.sap_desc')
+			->get();
 	}
 }

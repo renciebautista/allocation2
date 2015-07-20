@@ -160,7 +160,7 @@
 			</div>
 
 			<div class="row">
-				<div class="col-lg-4">
+				<div class="col-lg-3">
 					<div class="form-group">
 						<div class="row">
 							<div class="col-lg-12">
@@ -170,7 +170,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="col-lg-4">
+				<div class="col-lg-3">
 					<div class="form-group">
 						<div class="row">
 							<div id="multiselect" class="col-lg-12">
@@ -180,12 +180,22 @@
 						</div>
 					</div>
 				</div>
-				<div class="col-lg-4">
+				<div class="col-lg-3">
 					<div class="form-group">
 						<div class="row">
 							<div class="col-lg-12">
 								{{ Form::label('brand', 'Brand', array('class' => 'control-label')) }}
 								<select class="form-control multiselect" data-placeholder="SELECT BRAND" id="brand" name="brand[]" multiple="multiple" ></select>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-3">
+					<div class="form-group">
+						<div class="row">
+							<div class="col-lg-12">
+								{{ Form::label('skus', 'SKU/s Involved', array('class' => 'control-label')) }}
+								{{ Form::select('skus[]',  $involves, null, array('id' => 'skus', 'class' => 'form-control multiselect' ,'multiple' => 'multiple' ,'data-placeholder' => 'SELECT SKU/s')) }}
 							</div>
 						</div>
 					</div>
@@ -202,10 +212,8 @@
 							</div>
 						</div>
 					</div>
-					
 				</div>
 			</div>
-
 
 
 			<div class="row">

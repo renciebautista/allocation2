@@ -97,9 +97,6 @@ adjust date in activity type if network is changed
 refresh timings page - done
 remove outside click in edit networks - done
 
-multiple host and premuim sku
-
-
 
 php -q /home/ulpeto5/test.ulp-etop.com/artisan test:mail
 php -q /home/ulpeto5/test.ulp-etop.com/artisan 
@@ -114,14 +111,17 @@ rencie.bautista@yahoo.com
  cd /home/ulpeto5/test.ulp-etop.com && /usr/bin/php5-cli artisan mail:queue mail1
 
 
- update pmog attachment
- update timings no 1970
+
  dont show field no value in pdf
- add approver on html
+ 
+ add approver on html - done
  add roles and responsibilities under timings
  	- process owner(pre text)
  	- action Points(pre text)
- 	- timings (date)
+ 	- timings (date) - done
+multiple host and premuim sku - done
+update timings no 1970 - done
+update pmog attachment - done
 
  allow recall (approved)
  	- not yet released
@@ -137,7 +137,4 @@ rencie.bautista@yahoo.com
  	- check download date should be equal or greater than today
 
  timings when to freeze download date
-
-
-role bug
-badz uy - inactive
+ sku involve
