@@ -49,7 +49,7 @@ class TestMail extends Command {
 					$cycle_ids[] = $value->id;
 				}
 				$data['cycles'] = $cycles;
-				$data['user'] = $user->getFullname();
+				$data['user'] = $user->first_name;
 				$data['email'] = $user->email;
 				$data['fullname'] = $user->getFullname();
 				$data['cycle_ids'] = $cycle_ids;
@@ -82,7 +82,7 @@ class TestMail extends Command {
 					$cycle_ids[] = $value->id;
 				}
 				$data['cycles'] = $cycles;
-				$data['user'] = $user->getFullname();
+				$data['user'] = $user->first_name;
 				$data['email'] = $user->email;
 				$data['fullname'] = $user->getFullname();
 				$data['cycle_ids'] = $cycle_ids;
@@ -109,7 +109,7 @@ class TestMail extends Command {
 					$cycle_ids[] = $value->id;
 				}
 				$data['cycles'] = $cycles;
-				$data['user'] = $user->getFullname();
+				$data['user'] = $user->first_name;
 				$data['email'] = $user->email;
 				$data['fullname'] = $user->getFullname();
 				$data['cycle_ids'] = $cycle_ids;
@@ -146,7 +146,7 @@ class TestMail extends Command {
 					$cycle_names .= $value->cycle_name ." - ";
 				}
 				$data['cycles'] = $cycles;
-				$data['user'] = $user->getFullname();
+				$data['user'] = $user->first_name;
 				$data['email'] = $user->email;
 				$data['fullname'] = $user->getFullname();
 				$data['cycle_ids'] = $cycle_ids;

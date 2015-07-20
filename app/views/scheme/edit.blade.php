@@ -53,13 +53,13 @@
 					<div class="form-group">
 						<div class="row">
 							<div class="col-lg-6">
-						{{ Form::label('skus', 'Reference Sales SKU', array('class' => 'control-label')) }}
-						{{ Form::select('skus[]', array('0' => '') + $skus, $sel_skus, array('data-placeholder' => 'Select Reference Sales SKU','id' => 'skus', 'class' => 'form-control')) }}
-					</div>
-					<div class="col-lg-6">
-						{{ Form::label('involve', 'Host SKU', array('class' => 'control-label')) }}
-						{{ Form::select('involve[]', array('0' => '') + $involves, $sel_hosts, array('data-placeholder' => 'Select Host SKU','id' => 'skus', 'class' => 'form-control')) }}
-					</div>
+								{{ Form::label('skus', 'Reference Sales SKU', array('class' => 'control-label')) }}
+								{{ Form::select('skus[]', array('0' => '') + $skus, $sel_skus, array('data-placeholder' => 'Select Reference Sales SKU','id' => 'skus', 'class' => 'form-control')) }}
+							</div>
+							<div class="col-lg-6">
+								{{ Form::label('involve', 'Host SKU', array('class' => 'control-label')) }}
+								{{ Form::select('involve[]', $involves, $sel_hosts, array('id' => 'involve', 'class' => 'form-control multiselect', 'multiple' => 'multiple')) }}
+							</div>
 						</div>
 					</div>
 				</div>
@@ -71,7 +71,7 @@
 						<div class="row">
 							<div class="col-lg-6">
 								{{ Form::label('premuim', 'Premium SKU', array('class' => 'control-label')) }}
-								{{ Form::select('premuim[]', array('0' => '') + $involves, $sel_premuim, array('data-placeholder' => 'Select Premium SKU','id' => 'premuim', 'class' => 'form-control')) }}
+								{{ Form::select('premuim[]', $involves, $sel_premuim, array('id' => 'premuim', 'class' => 'form-control multiselect', 'multiple' => 'multiple')) }}
 							</div>
 							<div class="col-lg-6">
 								{{ Form::label('ulp_premium', 'Non ULP Premium SKU', array('class' => 'control-label')) }}

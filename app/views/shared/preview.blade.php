@@ -418,12 +418,12 @@
 									<td>{{ $cnt++ }}</td>
 									<td>
 										@foreach($sku['involves'] as $involve)
-										{{ $involve->sap_code}} - {{ $involve->sap_desc}}
+										{{ $involve->sap_code}} - {{ $involve->sap_desc}} </br>
 										@endforeach
 									</td>
 									<td>
 										@foreach($sku['premiums'] as $premium)
-										{{ $premium->sap_code}} - {{ $premium->sap_desc}}
+										{{ $premium->sap_code}} - {{ $premium->sap_desc}} </br>
 										@endforeach
 									</td>
 									<td>

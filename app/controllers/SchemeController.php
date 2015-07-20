@@ -147,11 +147,15 @@ class SchemeController extends \BaseController {
 				}
 				SchemeSku::insert($skus);
 
-				$hosts = array();
-				foreach (Input::get('involve') as $sap_code){
-					$hosts[] = array('scheme_id' => $scheme->id, 'sap_code' => $sap_code);
+				if (Input::has('involve')){
+					$hosts = array();
+					foreach (Input::get('involve') as $sap_code){
+						$hosts[] = array('scheme_id' => $scheme->id, 'sap_code' => $sap_code);
+					}
+					SchemeHostSku::insert($hosts);
 				}
-				SchemeHostSku::insert($hosts);
+				
+
 				if (Input::has('premuim')){
 					$premuim = array();
 					foreach (Input::get('premuim') as $sap_code){
@@ -510,10 +514,14 @@ class SchemeController extends \BaseController {
 
 				$hosts = array();
 				SchemeHostSku::where('scheme_id',$scheme->id)->delete();
-				foreach (Input::get('involve') as $sap_code){
-					$hosts[] = array('scheme_id' => $scheme->id, 'sap_code' => $sap_code);
+				if (Input::has('involve'))
+				{
+					foreach (Input::get('involve') as $sap_code){
+						$hosts[] = array('scheme_id' => $scheme->id, 'sap_code' => $sap_code);
+					}
+					SchemeHostSku::insert($hosts);
 				}
-				SchemeHostSku::insert($hosts);
+				
 
 				$premuim = array();
 				SchemePremuimSku::where('scheme_id',$scheme->id)->delete();

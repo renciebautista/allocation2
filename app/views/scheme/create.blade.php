@@ -47,7 +47,7 @@
 					</div>
 					<div class="col-lg-6">
 						{{ Form::label('involve', 'Host SKU', array('class' => 'control-label')) }}
-						{{ Form::select('involve[]', array('0' => '') + $involves, '', array('data-placeholder' => 'Select Host SKU','id' => 'skus', 'class' => 'form-control')) }}
+						{{ Form::select('involve[]', $involves, null, array('id' => 'involve', 'class' => 'form-control multiselect', 'multiple' => 'multiple')) }}
 					</div>
 				</div>
 			</div>
@@ -59,7 +59,7 @@
 				<div class="row">
 					<div class="col-lg-6">
 						{{ Form::label('premuim', 'Premium SKU', array('class' => 'control-label')) }}
-						{{ Form::select('premuim[]', array('0' => '') + $involves, '', array('data-placeholder' => 'Select Premium SKU','id' => 'premuim', 'class' => 'form-control')) }}
+						{{ Form::select('premuim[]', $involves, null, array('id' => 'premuim', 'class' => 'form-control multiselect', 'multiple' => 'multiple')) }}
 					</div>
 					<div class="col-lg-6">
 						{{ Form::label('ulp_premium', 'Non ULP Premium SKU', array('class' => 'control-label')) }}

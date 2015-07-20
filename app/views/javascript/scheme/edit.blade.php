@@ -22,11 +22,41 @@ function getWeeks(){
 
 getWeeks();
 
-$("#skus,#involve,#premuim").chosen({
+$("#skus").chosen({
 	search_contains: true,
 	allow_single_deselect: true
 });
 
+$('select#involve').multiselect({
+	maxHeight: 200,
+	includeSelectAllOption: true,
+	enableCaseInsensitiveFiltering: true,
+	enableFiltering: true
+});
+
+$('select#premuim').multiselect({
+	maxHeight: 200,
+	includeSelectAllOption: true,
+	enableCaseInsensitiveFiltering: true,
+	enableFiltering: true
+});
+
+
+$("#premuim").on('change', function (evt, params) {
+    var premiums = $('#premuim option:selected');
+    
+    $('#ulp_premium').val("");
+    if(premiums.length > 0){
+    	$('#ulp_premium').prop('disabled', true);
+		non_ulp = false;
+
+	}else{
+		$('#ulp_premium').prop('disabled', false);
+		non_ulp = false;
+	}
+
+	compute_budget();
+})
 
 $('#pr, #srp_p, #other_cost,#total_alloc,#lpat').inputNumber({ allowDecimals: true });
 
@@ -103,10 +133,10 @@ var non_ulp = false;
 $('#ulp_premium').on('change', function(){
 	var value = $(this).val();
 	if (value.length > 0 ){
-		$('#premuim').prop('disabled', true).trigger("chosen:updated");
+		$('#premuim').multiselect('disable');
 		non_ulp = true;
 	}else{
-		$('#premuim').prop('disabled', false).trigger("chosen:updated");
+		$('#premuim').multiselect('enable');
 		non_ulp = false;
 	}
 
@@ -115,28 +145,13 @@ $('#ulp_premium').on('change', function(){
 	compute_budget();
 });
 
-$("#premuim").on('change', function (evt, params) {
-    var SelectedIds = $(this).find('option:selected').map(function () {
-        return $(this).val();
-    }).get();
-    
-    $('#ulp_premium').val("");
-    if ( SelectedIds == "0" ){
-    	$('#ulp_premium').prop('disabled', false);
-		non_ulp = false;
-	}else{
-		$('#ulp_premium').prop('disabled', true);
-		non_ulp = false;
-	}
 
-	compute_budget();
-})
 
 if($("#ulp_premium").val().length !=0){
 	$('#ulp_premium').prop('disabled', false);
-	$('#premuim').prop('disabled', true).trigger("chosen:updated");	
+	$('#premuim').multiselect('disable');
 }else{
-	$('#premuim').prop('disabled', false).trigger("chosen:updated");
+	$('#premuim').multiselect('enable');
 	$('#ulp_premium').prop('disabled', true);
 }
 

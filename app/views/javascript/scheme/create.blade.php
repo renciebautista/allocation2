@@ -58,9 +58,23 @@ $.validator.addMethod("eanCheckDigit", function (value,element) {
 });
 
 
-$("#skus,#involve,#premuim").chosen({
+$("#skus").chosen({
 	search_contains: true,
 	allow_single_deselect: true
+});
+
+$('select#involve').multiselect({
+	maxHeight: 200,
+	includeSelectAllOption: true,
+	enableCaseInsensitiveFiltering: true,
+	enableFiltering: true
+});
+
+$('select#premuim').multiselect({
+	maxHeight: 200,
+	includeSelectAllOption: true,
+	enableCaseInsensitiveFiltering: true,
+	enableFiltering: true
 });
 
 $('#pr, #srp_p, #other_cost,#total_alloc,#lpat').inputNumber({ allowDecimals: true });
@@ -187,10 +201,10 @@ var non_ulp = false;
 $('#ulp_premium').on('change', function(){
 	var value = $(this).val();
 	if (value.length > 0 ){
-		$('#premuim').prop('disabled', true).trigger("chosen:updated");
+		$('#premuim').multiselect('disable');
 		non_ulp = true;
 	}else{
-		$('#premuim').prop('disabled', false).trigger("chosen:updated");
+		$('#premuim').multiselect('enable');
 		non_ulp = false;
 	}
 
@@ -200,16 +214,15 @@ $('#ulp_premium').on('change', function(){
 });
 
 $("#premuim").on('change', function (evt, params) {
-    var SelectedIds = $(this).find('option:selected').map(function () {
-        return $(this).val();
-    }).get();
+    var premiums = $('#premuim option:selected');
     
     $('#ulp_premium').val("");
-    if ( SelectedIds == "0" ){
-    	$('#ulp_premium').prop('disabled', false);
+    if(premiums.length > 0){
+    	$('#ulp_premium').prop('disabled', true);
 		non_ulp = false;
+
 	}else{
-		$('#ulp_premium').prop('disabled', true);
+		$('#ulp_premium').prop('disabled', false);
 		non_ulp = false;
 	}
 
