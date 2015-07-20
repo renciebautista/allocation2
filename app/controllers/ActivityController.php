@@ -889,6 +889,7 @@ class ActivityController extends BaseController {
 						}
 
 						$path2 = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
+						
 						if(!File::exists($path2)) {
 							File::makeDirectory($path2);
 

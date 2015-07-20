@@ -451,6 +451,8 @@ h2, .h2 {
 }
 .has-error span {
 	color: #f04124;
+	font-style: italic;
+	margin-left: 10px;
 }	
 
 #allocation .blue {

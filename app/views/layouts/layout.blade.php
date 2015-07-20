@@ -134,7 +134,8 @@
 						<li class="dropdown">
 							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="download">{{ ucwords(strtolower(Auth::user()->getFullname())) }} [ {{ Auth::user()->roles[0]->name }} ]<span class="caret"></span></a>
 							<ul class="dropdown-menu" aria-labelledby="download">  
-								<li>{{ HTML::linkAction('ProfileController@index', 'Profile') }}</li>  
+								<li>{{ HTML::linkAction('ProfileController@index', 'My Profile') }}</li>  
+								<li>{{ HTML::linkAction('UsersController@changepassword', 'Change Password') }}</li>  
 								<li>{{ HTML::linkAction('LoginController@logout' , 'Logout') }}</li>    
 							</ul>
 						</li>

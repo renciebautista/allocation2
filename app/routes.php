@@ -336,6 +336,7 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('dashboard/customerselected', 'DashboardController@customerselected');
 
 	Route::get('profile','ProfileController@index');
+	Route::put('profile','ProfileController@index');
 
 	// Confide routes
 	// Route::get('users', 'UsersController@index');
@@ -352,6 +353,9 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('users/reset_password/{token}', 'UsersController@resetPassword');
 	Route::post('users/reset_password', 'UsersController@doResetPassword');
 	Route::get('users/logout', 'UsersController@logout');
+	Route::get('changepassword', 'UsersController@changepassword');
+	Route::post('updatepassword', 'UsersController@updatepassword');
+
 	Route::resource('users', 'UsersController');
 	
 
