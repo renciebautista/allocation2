@@ -171,4 +171,13 @@ class ActivityApprover extends \Eloquent {
     	->join('users','users.id','=','activity_approvers.user_id')
     	->get();
     }
+
+    public static function withActivities($user_id){
+		$records = self::where('user_id',$user_id)->count();
+		if($records > 0){
+			return true;
+		}else{
+			return false;
+		}
+	}
 }

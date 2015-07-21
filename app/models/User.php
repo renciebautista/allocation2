@@ -105,9 +105,9 @@ class User extends Eloquent implements ConfideUserInterface {
 				
 				if(!is_null($row['user_name'])){
 					$active = 0;
-					if($row['active'] == "Y"){
-						 $active = 1;
-					}
+					// if($row['active'] == "Y"){
+					// 	 $active = 1;
+					// }
 					$user = User::where(['username' => str_replace(" ", "",$row['user_name'])])->first();
 					$role = Role::where('name',$row['groups'])->first();
 					if(!empty($user)){
@@ -115,11 +115,15 @@ class User extends Eloquent implements ConfideUserInterface {
 					    $user->first_name = strtoupper($row['first_name']);
 					    $user->last_name = strtoupper($row['last_name']);
 					    $user->email = $row['email_address'];
+					    if(!empty($row['contact_no'])){
+					    	$user->contact_no = $row['contact_no'];
+					    }
+					    
 					    $user->confirmed = 1;
-					    $user->active = $active;
+					    // $user->active = $active;
 					    $user->update();
 
-					    // // echo $user->id;
+					    // echo $user->id;
 						$for_delete = DB::table('assigned_roles')
 						->where('user_id', $user->id)
 						->get();
@@ -141,8 +145,11 @@ class User extends Eloquent implements ConfideUserInterface {
 						    $new_user->password = 'password';
 						    $new_user->password_confirmation = 'password';
 						    $new_user->confirmation_code = md5(uniqid(mt_rand(), true));
+						    if(!empty($row['contact_no'])){
+						    	$new_user->contact_no = $row['contact_no'];
+						    }
 						    $new_user->confirmed = 1;
-						    $new_user->active = $active;
+						    // $new_user->active = $active;
 						    $new_user->save();
 
 						    $new_user->roles()->attach($role->id); // id only

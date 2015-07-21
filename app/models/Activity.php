@@ -52,8 +52,6 @@ class Activity extends \Eloquent {
         return $this->belongsToMany('User', 'activity_planners', 'activity_id', 'user_id');
     }
 
-
-
     // static function
 	public static function validForDownload($activity,$required_array){
 		$return = array();
@@ -635,6 +633,11 @@ class Activity extends \Eloquent {
 	}
 
 	public static function withActivities($user_id){
-		// $recors
+		$records = self::where('created_by',$user_id)->count();
+		if($records > 0){
+			return true;
+		}else{
+			return false;
+		}
 	}
 }

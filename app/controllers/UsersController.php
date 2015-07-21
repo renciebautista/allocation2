@@ -80,10 +80,12 @@ class UsersController extends Controller
 	}
 
 	public function edit($id){
+		Session::flash('url',Request::server('HTTP_REFERER'));
+		$url = Session::get('url');
 		$user = User::findOrFail($id);
 		$user_group = 
 		$groups = Role::orderBy('name')->lists('name', 'id');
-		return View::make('users.edit',compact('groups','user'));
+		return View::make('users.edit',compact('groups','user','url'));
 	}
 
 	public function show($id){
@@ -91,6 +93,7 @@ class UsersController extends Controller
 	}
 
 	public function update($id){
+		// Session::flash('url',Request::server('HTTP_REFERER'));
 		$input = Input::all();
 		$user = User::findOrFail($id);
 
@@ -126,9 +129,9 @@ class UsersController extends Controller
 
 				DB::commit();
 
-				return Redirect::action('UsersController@index')
-				->with('class', 'alert-success')
-				->with('message', 'Record successfuly updated.');
+				return Redirect::to(Session::get('url'))
+					->with('class', 'alert-success')
+					->with('message', 'Record successfuly updated.');
 
 			} catch (\Exception $e) {
 				DB::rollback();
@@ -298,8 +301,37 @@ class UsersController extends Controller
 	}
 
 	public function destroy($id){
+		Session::flash('url',Request::server('HTTP_REFERER'));  
+
 		$user = User::findOrFail($id);
-		// Helper::print_r($user);
+
+		$errors = array();
+		
+		if(Activity::withActivities($id)){
+			$errors[] = "There is an existing activity created.";
+		}
+
+		if(ActivityPlanner::withActivities($id)){
+			$errors[] = "There is an existing activity with approval.";
+		}
+
+		if(ActivityApprover::withActivities($id)){
+			$errors[] = "There is an existing activity with approval.";
+		}
+
+		if(count($errors) > 0){
+			return Redirect::to(Session::get('url'))
+				->withErrors($errors)
+				->with('class', 'alert-danger')
+				->with('message', 'Unable to delete user.');
+		}else{
+			$user->delete();
+			return Redirect::to(Session::get('url'))
+				->with('class', 'alert-success')
+				->with('message', $user->last_name.', '.$user->first_name.' user is successfuly deleted.');
+		}
+
+		
 	}
 
 	public function changepassword(){

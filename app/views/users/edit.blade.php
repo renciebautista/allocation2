@@ -55,14 +55,14 @@
 		<div class="form-group">
 			<div class="checkbox">
 				<label>
-					{{ Form::checkbox('active', 1,$user->active) }} Active
+					{{ Form::checkbox('active', 1, ($user->active) ? true:false) }} Active
 				</label>
 			</div>
 		</div>
 
 		<div class="form-group">
 			{{ Form::submit('Update', array('class' => 'btn btn-primary')) }}
-			{{ HTML::linkAction('UsersController@index', 'Back', array(), array('class' => 'btn btn-default')) }}
+			<a href="{{$url}}" class="btn btn-default">Back</a>
 		</div>
 	{{ Form::close() }}
 	</div>

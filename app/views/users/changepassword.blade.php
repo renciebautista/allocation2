@@ -24,8 +24,8 @@
 
 
 		<div class="form-group">
-			{{ Form::label('password', 'Password', array('class' => 'control-label')) }}
-			{{ Form::password('password',array('class' => 'form-control', 'placeholder' => 'Password')) }}
+			{{ Form::label('password', 'New Password', array('class' => 'control-label')) }}
+			{{ Form::password('password',array('class' => 'form-control', 'placeholder' => 'New Password')) }}
 		</div>
 
 		<div class="form-group">
