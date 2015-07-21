@@ -69,10 +69,6 @@
 			{{ HTML::linkAction('UsersController@index', 'Back', array(), array('class' => 'btn btn-default')) }}
 		</div>
 	{{ Form::close() }}
-
-		{{ Helper::print_r($user) }}
-		{{ Helper::print_r($groups) }}
-		{{ Helper::print_r($role) }}
 	</div>
 </div>
 
