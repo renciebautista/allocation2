@@ -109,8 +109,10 @@ class User extends Eloquent implements ConfideUserInterface {
 					// 	 $active = 1;
 					// }
 					$user = User::where(['username' => str_replace(" ", "",$row['user_name'])])->first();
-					$role = Role::where('name',$row['groups'])->first();
+
+					
 					if(!empty($user)){
+						$role = Role::where('name',$row['groups'])->first();
 					    $user->username = str_replace(" ", "",$row['user_name']);
 					    $user->first_name = strtoupper($row['first_name']);
 					    $user->last_name = strtoupper($row['last_name']);
