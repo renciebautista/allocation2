@@ -6,10 +6,12 @@
 <div class="page-header" id="banner">
 	<div class="row">
 		<div class="col-lg-8 col-md-7 col-sm-6">
-			<h1>New User</h1>
+			<h1>Edit User</h1>
 		</div>
 	</div>
 </div>
+
+	
 
 @include('partials.notification')
 
@@ -47,10 +49,10 @@
 			{{ Form::text('last_name', $user->last_name,array('class' => 'form-control', 'placeholder' => 'Last Name')) }}
 		</div>
 
-		
+
 		<div class="form-group">
 			{{ Form::label('group', 'Group', array('class' => 'control-label')) }}
-			{{ Form::select('group', array('0' => 'Please Select') + $groups, $user->roles[0]->id, array('class' => 'form-control')) }}
+			{{ Form::select('group', array('0' => 'Please Select') + $groups, $role, array('class' => 'form-control')) }}
 		</div>
 		
 
@@ -68,6 +70,8 @@
 			{{ HTML::linkAction('UsersController@index', 'Back', array(), array('class' => 'btn btn-default')) }}
 		</div>
 	{{ Form::close() }}
+
+
 	</div>
 </div>
 
