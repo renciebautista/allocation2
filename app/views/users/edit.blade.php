@@ -48,6 +48,11 @@
 		</div>
 
 		
+		<div class="form-group">
+			{{ Form::label('group', 'Group', array('class' => 'control-label')) }}
+			{{ Form::select('group', array('0' => 'Please Select') + $groups, $user->roles[0]->id, array('class' => 'form-control')) }}
+		</div>
+		
 
 		<div class="form-group">
 			<div class="checkbox">
@@ -57,7 +62,7 @@
 			</div>
 		</div>
 
-		{{ $user->active }}
+
 		<div class="form-group">
 			{{ Form::submit('Update', array('class' => 'btn btn-primary')) }}
 			{{ HTML::linkAction('UsersController@index', 'Back', array(), array('class' => 'btn btn-default')) }}
