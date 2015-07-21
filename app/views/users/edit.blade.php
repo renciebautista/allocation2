@@ -58,7 +58,11 @@
 		<div class="form-group">
 			<div class="checkbox">
 				<label>
-					{{ Form::checkbox('active', 1, (($user->active == '1') ? true : false)) }} Active
+					@if($user->active == 0 )
+			            {{ Form::checkbox('active', 1, false) }} Active
+			        @elseif($user->active == 1 )
+			            {{ Form::checkbox('active', 1, true) }} Active
+			        @endif
 				</label>
 			</div>
 		</div>

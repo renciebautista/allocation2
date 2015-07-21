@@ -80,13 +80,10 @@ class UsersController extends Controller
 	}
 
 	public function edit($id){
-		// Session::flash('url',Request::server('HTTP_REFERER'));
-		// $url = Session::get('url');
 		$user = User::with('roles')->findOrFail($id);
 		$groups = Role::getLists();
 		$role = $user->roles[0]->id;
 		return View::make('users.edit',compact('groups','user','role'));
-		// var_dump($user->roles[0]->id);
 	}
 
 	public function show($id){
