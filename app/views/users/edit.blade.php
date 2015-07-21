@@ -47,10 +47,7 @@
 			{{ Form::text('last_name', $user->last_name,array('class' => 'form-control', 'placeholder' => 'Last Name')) }}
 		</div>
 
-		<div class="form-group">
-			{{ Form::label('group', 'Group', array('class' => 'control-label')) }}
-			{{ Form::select('group', array('0' => 'Please Select') + $groups, $user_group, array('class' => 'form-control')) }}
-		</div>
+		
 
 		<div class="form-group">
 			<div class="checkbox">
