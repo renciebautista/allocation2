@@ -54,7 +54,6 @@
 			{{ Form::label('group', 'Group', array('class' => 'control-label')) }}
 			{{ Form::select('group', array('0' => 'Please Select') + $groups, $role, array('class' => 'form-control')) }}
 		</div>
-		{{$role}}
 
 		<div class="form-group">
 			<div class="checkbox">
