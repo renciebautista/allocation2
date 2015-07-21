@@ -126,16 +126,16 @@ class User extends Eloquent implements ConfideUserInterface {
 					    $user->update();
 
 					    // echo $user->id;
-						// $for_delete = DB::table('assigned_roles')
-						// ->where('user_id', $user->id)
-						// ->get();
-						// if(count($for_delete) > 0){
-						// 	DB::table('assigned_roles')
-						// 	->where('user_id', $user->id)
-						// 	->delete();
-						// }
+						$for_delete = DB::table('assigned_roles')
+						->where('user_id', $user->id)
+						->get();
+						if(count($for_delete) > 0){
+							DB::table('assigned_roles')
+							->where('user_id', $user->id)
+							->delete();
+						}
 
-						// $user->roles()->attach($role->id); // id only
+						$user->roles()->attach($role->id); // id only
 
 					}else{
 						if($row['email_address'] != ""){
