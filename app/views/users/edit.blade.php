@@ -49,13 +49,13 @@
 
 		<div class="form-group">
 			{{ Form::label('group', 'Group', array('class' => 'control-label')) }}
-			{{ Form::select('group', array('0' => 'Please Select') + $groups, $user->roles[0]->id, array('class' => 'form-control')) }}
+			{{ Form::select('group', array('0' => 'Please Select') + $groups, $user_group, array('class' => 'form-control')) }}
 		</div>
 
 		<div class="form-group">
 			<div class="checkbox">
 				<label>
-					{{ Form::checkbox('active', 1, ($user->active) ? true:false) }} Active
+					{{ Form::checkbox('active', 1, $user->active) }} Active
 				</label>
 			</div>
 		</div>

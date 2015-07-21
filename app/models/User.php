@@ -105,9 +105,9 @@ class User extends Eloquent implements ConfideUserInterface {
 				
 				if(!is_null($row['user_name'])){
 					$active = 0;
-					// if($row['active'] == "Y"){
-					// 	 $active = 1;
-					// }
+					if($row['active'] == "Y"){
+						 $active = 1;
+					}
 					$user = User::where(['username' => str_replace(" ", "",$row['user_name'])])->first();
 					$role = Role::where('name',$row['groups'])->first();
 					
@@ -151,7 +151,7 @@ class User extends Eloquent implements ConfideUserInterface {
 						    	$new_user->contact_no = $row['contact_no'];
 						    }
 						    $new_user->confirmed = 1;
-						    // $new_user->active = $active;
+						    $new_user->active = $active;
 						    $new_user->save();
 
 						    $new_user->roles()->attach($role->id); // id only

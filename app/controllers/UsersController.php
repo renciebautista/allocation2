@@ -83,9 +83,9 @@ class UsersController extends Controller
 		Session::flash('url',Request::server('HTTP_REFERER'));
 		$url = Session::get('url');
 		$user = User::findOrFail($id);
-		$user_group = 
+		$user_group = $user->roles[0]->id;
 		$groups = Role::orderBy('name')->lists('name', 'id');
-		return View::make('users.edit',compact('groups','user','url'));
+		return View::make('users.edit',compact('groups','user','url','user_group'));
 	}
 
 	public function show($id){
