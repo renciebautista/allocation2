@@ -67,6 +67,8 @@ Route::get('logout','LoginController@logout');
 
 Route::post('login', 'LoginController@dologin');
 
+Route::get('reports/{id}/preview', 'ReportController@preview');
+
 Route::group(array('before' => 'auth'), function()
 {	
 	Route::pattern('id', '[0-9]+');
@@ -206,7 +208,7 @@ Route::group(array('before' => 'auth'), function()
 
 
 	Route::get('reports/activities', 'ReportController@activities');
-	Route::get('reports/{id}/preview', 'ReportController@preview');
+	
 	Route::get('reports/{id}/download', 'ReportController@download');
 
 	Route::resource('activitytype', 'ActivityTypeController');
