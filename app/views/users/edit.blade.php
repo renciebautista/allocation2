@@ -58,7 +58,7 @@
 		<div class="form-group">
 			<div class="checkbox">
 				<label>
-					{{ Form::checkbox('active', 1,$user->isActive(),['id' => 'active']) }} Active
+					{{ Form::checkbox('is_active', true, (($user->active == 1) ? true : false)) }} Active
 				</label>
 			</div>
 		</div>
@@ -69,6 +69,8 @@
 			{{ HTML::linkAction('UsersController@index', 'Back', array(), array('class' => 'btn btn-default')) }}
 		</div>
 	{{ Form::close() }}
+
+
 	</div>
 </div>
 

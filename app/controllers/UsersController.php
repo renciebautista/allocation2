@@ -60,7 +60,7 @@ class UsersController extends Controller
 				$user->password_confirmation = Input::get('password_confirmation');
 				$user->confirmation_code = md5(uniqid(mt_rand(), true));
 				$user->confirmed = 1;
-				$user->active = (Input::has('active')) ? 1 : 0;
+				$user->active = (Input::has('is_active')) ? 1 : 0;
 				$user->save();
 
 				$role = Role::find(Input::get('group_id'));
@@ -80,6 +80,8 @@ class UsersController extends Controller
 	}
 
 	public function edit($id){
+		Session::forget('_old_input');
+		
 		$user = User::with('roles')->findOrFail($id);
 		$groups = Role::getLists();
 		$role = $user->roles[0]->id;
@@ -91,7 +93,6 @@ class UsersController extends Controller
 	}
 
 	public function update($id){
-		// Session::flash('url',Request::server('HTTP_REFERER'));
 		$input = Input::all();
 		$user = User::findOrFail($id);
 
@@ -116,7 +117,7 @@ class UsersController extends Controller
 				$user->username = Input::get('username');
 				$user->email = Input::get('email');
 				$user->contact_no = Input::get('contact_no');
-				$user->active = (Input::has('active')) ? 1 : 0;
+				$user->active = (Input::has('is_active')) ? 1 : 0;
 				$user->update();
 
 				$user->detachRoles($user->roles);
