@@ -31,7 +31,7 @@ class UsersController extends Controller
 	 */
 	public function create()
 	{
-		$groups = Role::orderBy('name')->lists('name', 'id');
+		$groups = Role::getLists();
 		return View::make('users.create',compact('groups'));
 	}
 
@@ -63,7 +63,7 @@ class UsersController extends Controller
 				$user->active = (Input::has('active')) ? 1 : 0;
 				$user->save();
 
-				$role = Role::find(Input::get('group'));
+				$role = Role::find(Input::get('group_id'));
 
 				$user->roles()->attach($role->id); // id only
 			});
@@ -83,7 +83,7 @@ class UsersController extends Controller
 		// Session::flash('url',Request::server('HTTP_REFERER'));
 		// $url = Session::get('url');
 		$user = User::with('roles')->findOrFail($id);
-		$groups = Role::orderBy('name')->lists('name', 'id');
+		$groups = Role::getLists();
 		$role = $user->roles[0]->id;
 		return View::make('users.edit',compact('groups','user','role'));
 		// var_dump($user->roles[0]->id);
@@ -103,7 +103,7 @@ class UsersController extends Controller
 			'email' => 'required|email|unique:users,email,'.$id,
 			'first_name' => 'required',
 			'last_name' => 'required',
-			'group' => 'required|integer|min:1'
+			'group_id' => 'required|integer|min:1'
 		);
 
 		$validation = Validator::make($input, $rules);
@@ -124,7 +124,7 @@ class UsersController extends Controller
 
 				$user->detachRoles($user->roles);
 
-				$role = Role::find(Input::get('group'));
+				$role = Role::find(Input::get('group_id'));
 
 				$user->roles()->attach($role->id); // id only
 

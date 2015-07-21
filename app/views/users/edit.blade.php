@@ -51,8 +51,8 @@
 
 
 		<div class="form-group">
-			{{ Form::label('group', 'Group', array('class' => 'control-label')) }}
-			{{ Form::select('group', array('0' => 'PLEASE SELECT') + $groups, $role, array('class' => 'form-control')) }}
+			{{ Form::label('group_id', 'Group', array('class' => 'control-label')) }}
+			{{ Form::select('group_id', array('0' => 'PLEASE SELECT') + $groups, $role, array('class' => 'form-control')) }}
 		</div>
 
 		<div class="form-group">

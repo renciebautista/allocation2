@@ -16,7 +16,7 @@ class User extends Eloquent implements ConfideUserInterface {
 		'email' => 'required|email|unique:users',
 		'first_name' => 'required',
 		'last_name' => 'required',
-		'group' => 'required|integer|min:1'
+		'group_id' => 'required|integer|min:1'
 	);
 
 	public static function search($status,$type,$search){
