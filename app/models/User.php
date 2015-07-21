@@ -109,10 +109,10 @@ class User extends Eloquent implements ConfideUserInterface {
 					// 	 $active = 1;
 					// }
 					$user = User::where(['username' => str_replace(" ", "",$row['user_name'])])->first();
-
+					$role = Role::where('name',$row['groups'])->first();
 					
 					if(!empty($user)){
-						$role = Role::where('name',$row['groups'])->first();
+						
 					    $user->username = str_replace(" ", "",$row['user_name']);
 					    $user->first_name = strtoupper($row['first_name']);
 					    $user->last_name = strtoupper($row['last_name']);
@@ -126,16 +126,16 @@ class User extends Eloquent implements ConfideUserInterface {
 					    $user->update();
 
 					    // echo $user->id;
-						$for_delete = DB::table('assigned_roles')
-						->where('user_id', $user->id)
-						->get();
-						if(count($for_delete) > 0){
-							DB::table('assigned_roles')
-							->where('user_id', $user->id)
-							->delete();
-						}
+						// $for_delete = DB::table('assigned_roles')
+						// ->where('user_id', $user->id)
+						// ->get();
+						// if(count($for_delete) > 0){
+						// 	DB::table('assigned_roles')
+						// 	->where('user_id', $user->id)
+						// 	->delete();
+						// }
 
-						$user->roles()->attach($role->id); // id only
+						// $user->roles()->attach($role->id); // id only
 
 					}else{
 						if($row['email_address'] != ""){
