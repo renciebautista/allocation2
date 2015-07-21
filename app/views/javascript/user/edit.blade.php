@@ -12,7 +12,7 @@ $("form").validate({
 		},
 		first_name: "required",
 		last_name: "required",
-		group: {
+		group_id: {
 			required: true,
 			is_natural_no_zero: true,
 		}
