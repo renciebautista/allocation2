@@ -80,12 +80,11 @@ class UsersController extends Controller
 	}
 
 	public function edit($id){
-		Session::flash('url',Request::server('HTTP_REFERER'));
-		$url = Session::get('url');
+		// Session::flash('url',Request::server('HTTP_REFERER'));
+		// $url = Session::get('url');
 		$user = User::findOrFail($id);
-		$user_group = $user->roles[0]->id;
 		$groups = Role::orderBy('name')->lists('name', 'id');
-		return View::make('users.edit',compact('groups','user','url','user_group'));
+		return View::make('users.edit',compact('groups','user'));
 	}
 
 	public function show($id){
@@ -129,7 +128,7 @@ class UsersController extends Controller
 
 				DB::commit();
 
-				return Redirect::to(Session::get('url'))
+				return Redirect::action('UsersController@index')
 					->with('class', 'alert-success')
 					->with('message', 'Record successfuly updated.');
 

@@ -60,7 +60,7 @@
 		{{ $user->active }}
 		<div class="form-group">
 			{{ Form::submit('Update', array('class' => 'btn btn-primary')) }}
-			<a href="{{$url}}" class="btn btn-default">Back</a>
+			{{ HTML::linkAction('UsersController@index', 'Back', array(), array('class' => 'btn btn-default')) }}
 		</div>
 	{{ Form::close() }}
 	</div>
