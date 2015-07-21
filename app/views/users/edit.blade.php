@@ -52,11 +52,12 @@
 		<div class="form-group">
 			<div class="checkbox">
 				<label>
-					{{ Form::checkbox('active', 1, (($user->active == 1) ? true:false )) }} Active
+					{{ Form::checkbox('active', 1, $user->active) }} Active
 				</label>
 			</div>
 		</div>
 
+		{{ $user->active }}
 		<div class="form-group">
 			{{ Form::submit('Update', array('class' => 'btn btn-primary')) }}
 			<a href="{{$url}}" class="btn btn-default">Back</a>
