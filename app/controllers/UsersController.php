@@ -84,7 +84,7 @@ class UsersController extends Controller
 		// $url = Session::get('url');
 		$user = User::findOrFail($id);
 		$groups = Role::orderBy('name')->lists('name', 'id');
-		$role = $user->roles[0]->id;
+		$role = (int)$user->roles[0]->id;
 		return View::make('users.edit',compact('groups','user','role'));
 	}
 
