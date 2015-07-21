@@ -43,6 +43,7 @@ class User extends Eloquent implements ConfideUserInterface {
 				}
 					
 			})
+			->orderBy('first_name')
 			->get();
 	}
 
