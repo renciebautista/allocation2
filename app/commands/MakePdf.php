@@ -256,7 +256,7 @@ class MakePdf extends Command {
 					$x = $pdf->getX();
 					$y = $pdf->getY();
 					$image_file = $path = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/'.$fdapermit->hash_name;
-					$pdf->Image($image_file, $x, $y, 180, 0, '', '', '', true, 150, '', false, false, 0, false, false, false);
+					$pdf->Image($image_file, $x, $y, 170, 0, '', '', '', true, 150, '', false, false, 0, false, false, false);
 					$pdf->AddPage();
 				}
 			}
