@@ -44,7 +44,7 @@
 
 <body>
 
-	<h1>Hi, {{ $user }}</h1>
+	<h1>Hi {{ ucwords(strtolower($user)) }}!</h1>
 	<p>Sending below summary of activities for your approval. Gentle reminder please on below deadline.</p>
 	<ul>
 		@foreach($cycles as $cycle)

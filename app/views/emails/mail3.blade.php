@@ -44,7 +44,7 @@
 
 <body>
 
-	<h1>Hi, {{ $user }}</h1>
+	<h1>Hi {{ ucwords(strtolower($user)) }}!</h1>
 	<p>Sending below summary of your activity status after the approval deadline.</p> 
 	<p>Highlighted in red are unapproved activities. Please contact eTOP Admin if you still need to approve.</p> 
 	{{ HTML::linkAction('activity.index' , 'Click here to view your activities.',array(

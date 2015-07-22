@@ -14,21 +14,23 @@ Queue::getIron()->ssl_verifypeer = false;
 
 
 Route::get("testmail", function(){
-	$users = User::GetPlanners(['PROPONENT' ,'PMOG PLANNER']);
-	$cycles = Cycle::getBySubmissionDeadline();
+	
+	$user = User::find(1);
+	$cycles = Cycle::getByReleaseDate();
 	$cycle_ids = array();
+	$cycle_names = "";
 	foreach ($cycles as $value) {
 		$cycle_ids[] = $value->id;
+		$cycle_names .= $value->cycle_name ." - ";
 	}
-	foreach ($users as $key => $user) {
-		if($user->role_id == 3){
-			echo $user->getFullname() . " = > ". $user->role_id . " = > ". $user->user_id. "</br>";
-			$activities = Activity::PmogActivitiesForApproval($user->user_id,$cycle_ids);
-			Helper::print_r($activities);
-		}
-		
-	}
-
+	$data['cycles'] = $cycles;
+	$data['user'] = $user->first_name;
+	$data['email'] = $user->email;
+	$data['fullname'] = $user->getFullname();
+	$data['cycle_ids'] = $cycle_ids;
+	$data['cycle_names'] = $cycle_names;
+	$data['activities'] = Activity::Released($cycle_ids);
+	return View::make('emails.mail4', $data);
 	
 });
 
@@ -67,6 +69,7 @@ Route::get('logout','LoginController@logout');
 
 Route::post('login', 'LoginController@dologin');
 
+Route::get('downloadcycle/{id}', 'DownloadsController@downloadcycle');
 
 Route::group(array('before' => 'auth'), function()
 {	

@@ -44,7 +44,7 @@
 
 <body>
 
-	<h1>Hi, {{ $user }}</h1>
+	<h1>Hi {{ ucwords(strtolower($user)) }}!</h1>
 	<p>Sending below summary of your activity status as of today. Please take note of the following deadlines.</p>
 	<ul>
 		@foreach($cycles as $cycle)
