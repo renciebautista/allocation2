@@ -56,33 +56,16 @@
 		<tr nobr="true">
 			<td>SKU/s Involved</td>
 			<td>
-				@if(!empty($skuinvolves))
+				@if(!empty($sku_involves))
 				<table class="sub-table">
 					<tr nobr="true">
-						<th>Host SKU Code</th>
-						<th>Host SKU Description</th>
-						<th>Premium SKU Code</th>
-						<th>Premium SKU Description</th>
+						<th>SKU Code</th>
+						<th>Description</th>
 					</tr>
-					@foreach($skuinvolves as $involve)
-					<tr nobr="true">
-						<td>{{ $involve->sap_code }}</td>
-						<td>{{ $involve->sap_desc }}</td>
-						<td>{{ $involve->sap_code }}</td>
-						<td>{{ $involve->sap_desc }}</td>
-					</tr>
-					@endforeach
-				</table>
-				@endif
-
-				@if(!empty($non_ulp))
-				<table class="sub-table" style="margin-top:5px;"> 
+					@foreach($sku_involves as $sku_involve)
 					<tr>
-						<th>Non ULP Premium SKUs</th>
-					</tr>
-					@foreach($non_ulp as $ulp)
-					<tr>
-						<td>{{ $ulp }}</td>
+						<td>{{ $sku_involve->sap_code }}</td>
+						<td>{{ $sku_involve->sap_desc }}</td>
 					</tr>
 					@endforeach
 				</table>
@@ -119,19 +102,85 @@
 				@if(count($schemes)> 0)
 				<table class="sub-table">
 					<tr nobr="true">
-						<th>Scheme Desc.</th>
+						<th width="20"></th>
+						<th width="130">Scheme Desc.</th>
 						<th>Item Code</th>
 						<th>Cost per Deal</th>
 						<th>Cost of Premium</th>
 						<th>Shopper Purchase Requirement</th>
 					</tr>
+					<?php $cnt =1; ?>
 					@foreach($schemes as $scheme)
 					<tr nobr="true">
+						<td>{{ $cnt++ }}</td>
 						<td>{{ $scheme->name }}</td>
 						<td>{{ ($scheme->item_code == '') ? 'N/A' :  $scheme->item_code }}</td>
 						<td>{{ number_format($scheme->ulp,2) }}</td>
 						<td>{{ number_format($scheme->srp_p,2) }}</td>
 						<td>{{ number_format($scheme->pr,2) }}</td>
+					</tr>
+					@endforeach
+				</table>
+				@endif
+			</td>
+		</tr>
+		<tr nobr="true">
+			<td>SKU/s Involved Per Scheme</td>
+			<td>
+				@if(!empty($skuinvolves))
+				<table class="sub-table">
+					<tr nobr="true">
+						<th width="20"></th>
+						<th width="142">Host SKU Code - Description</th>
+						<th width="143">Premium SKU Code - Description</th>
+						<th width="143">Non ULP Premium</th>
+					</tr>
+					<?php $cnt =1; ?>
+					@foreach($skuinvolves as $key => $sku)
+					<tr nobr="true">
+						<td>{{ $cnt++ }}</td>
+						<td>
+							@if(!empty($sku['involves']))
+							<ul>
+							@foreach($sku['involves'] as $involve)
+							<li>{{ $involve->sap_code}} - {{ $involve->sap_desc}}</li>
+							@endforeach
+							</ul>
+							@endif
+						</td>
+						<td>
+							@if(!empty($sku['premiums']))
+							<ul>
+							@foreach($sku['premiums'] as $premium)
+							<li>{{ $premium->sap_code}} - {{ $premium->sap_desc}}</li>
+							@endforeach
+							</ul>
+							@endif
+						</td>
+						<td>
+							@if(!empty($sku['non_ulp']))
+							<ul>
+							@foreach($sku['non_ulp'] as $_non_ulp)
+							@if($_non_ulp != "")
+							<li>{{ $_non_ulp }}</li>
+							@endif
+							@endforeach
+							</ul>
+							@endif
+						</td>
+					</tr>
+					@endforeach
+				</table>
+				@endif
+
+				@if(!empty($non_ulp))
+				<table class="sub-table" style="margin-top:5px;"> 
+					<tr>
+						<th>Non ULP Premium SKUs</th>
+					</tr>
+					@foreach($non_ulp as $ulp)
+					<tr>
+						<td>{{ $ulp }}</td>
 					</tr>
 					@endforeach
 				</table>
@@ -148,13 +197,19 @@
 						<th>Start Date</th>
 						<th>End Date</th>
 					</tr>
+					<?php $last_date; ?>
 					@foreach($networks as $network)
 					<tr nobr="true">
 						<td>{{ $network->task }}</td>
-						<td>{{ date_format(date_create($network->start_date),'M j, Y') }}</td>
-						<td>{{ date_format(date_create($network->end_date),'M j, Y') }}</td>
+						<td><?php echo ($network->final_start_date != null) ?  date_format(date_create($network->final_start_date),'m/d/Y') : '';?></td>
+						<td><?php echo ($network->final_end_date != null) ?  date_format(date_create($network->final_end_date),'m/d/Y') : '';?></td>
 					</tr>
 					@endforeach
+					<tr>
+						<td>IMPLEMENTATION DATE</td>
+						<td>{{ date_format(date_create($activity->eimplementation_date),'M j, Y') }}</td>
+						<td>{{ date_format(date_create($activity->end_date),'M j, Y') }}</td>
+					</tr>
 				</table>
 				@endif
 			</td>
