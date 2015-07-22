@@ -45,9 +45,8 @@
 <body>
 
 	<h1>Hi, {{ $user }}</h1>
-	<p>Sending below summary of your activity status as of today.</p> 
-	<p>Highlighted in red are unapproved activities. </p> 
-	<p>Please contact eTOP Admin if you still need to approve.</p>
+	<p>Sending below summary of your activity status after the approval deadline.</p> 
+	<p>Highlighted in red are unapproved activities. Please contact eTOP Admin if you still need to approve.</p> 
 	{{ HTML::linkAction('activity.index' , 'Click here to view your activities.',array(
 	  'cy' => $cycle_ids,
 	  'title' => ''
