@@ -44,11 +44,14 @@ class SendMail extends Command {
 			case 'mail1':
 				$users = User::GetPlanners(['PROPONENT' ,'PMOG PLANNER']);
 				$cycles = Cycle::getBySubmissionDeadline();
+
 				$cycle_ids = array();
-				foreach ($cycles as $value) {
-					$cycle_ids[] = $value->id;
+				if(count($cycles) > 0){
+					foreach ($cycles as $value) {
+						$cycle_ids[] = $value->id;
+					}
 				}
-				
+
 				foreach ($users as $user) {
 					if($user->role_id == 2){
 						$data['activities'] = Activity::ProponentActivitiesForApproval($user->user_id,$cycle_ids);
@@ -73,10 +76,14 @@ class SendMail extends Command {
 			case 'mail2':
 				$users = User::GetPlanners(['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']);
 				$cycles = Cycle::getByApprovalDeadline();
+				
 				$cycle_ids = array();
-				foreach ($cycles as $value) {
-					$cycle_ids[] = $value->id;
+				if(count($cycles) > 0){
+					foreach ($cycles as $value) {
+						$cycle_ids[] = $value->id;
+					}
 				}
+
 				foreach ($users as $user) {
 					$data['activities'] = Activity::ApproverActivitiesForApproval($user->user_id,$cycle_ids);
 					if(count($data['activities']) > 0){
@@ -95,10 +102,14 @@ class SendMail extends Command {
 			case 'mail3':
 				$users = User::GetPlanners(['PROPONENT' ,'PMOG PLANNER','GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']);
 				$cycles = Cycle::getByApprovalDeadlinePassed();
+				
 				$cycle_ids = array();
-				foreach ($cycles as $value) {
-					$cycle_ids[] = $value->id;
+				if(count($cycles) > 0){
+					foreach ($cycles as $value) {
+						$cycle_ids[] = $value->id;
+					}
 				}
+
 				foreach ($users as $user) {
 					if($user->role_id == 2){
 						$data['activities'] = Activity::ProponentActivitiesForApproval($user->user_id,$cycle_ids);
@@ -125,24 +136,35 @@ class SendMail extends Command {
 			case 'mail4':
 				$users = User::GetPlanners(['PROPONENT' ,'PMOG PLANNER','GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR','FIELD SALES']);
 				$cycles = Cycle::getByReleaseDate();
+
 				$cycle_ids = array();
-				foreach ($cycles as $value) {
-					$cycle_ids[] = $value->id;
-				}
-				foreach ($users as $user) {
-					$data['activities'] = Activity::Released($cycle_ids);
-					if(count($data['activities']) > 0){
-						$total_mails++;
-						if($_ENV['MAIL_TEST']){
-							Queue::push('MailScheduler', array('type' => $type, 'user_id' => $user->user_id, 'role_id' => $user->role_id),'etop');
-						}else{
-							Queue::push('MailScheduler', array('type' => $type, 'user_id' => $user->user_id, 'role_id' => $user->role_id),'p_etop');
-						}
+				if(count($cycles) > 0){
+					foreach ($cycles as $value) {
+						$cycle_ids[] = $value->id;
 					}
 				}
-				$total_users = count($users);
-				$this->line("Total users {$total_users}");
-				$this->line("Total queued email {$total_mails}");
+
+				$forRelease = Activity::forRelease($cycle_ids);
+				foreach ($forRelease as $activity) {
+					$activity->scheduled = 1;
+					$activity->status_id = 9;
+					$activity->update();
+				}
+
+				// foreach ($users as $user) {
+				// 	$data['activities'] = Activity::Released($cycle_ids);
+				// 	if(count($data['activities']) > 0){
+				// 		$total_mails++;
+				// 		if($_ENV['MAIL_TEST']){
+				// 			Queue::push('MailScheduler', array('type' => $type, 'user_id' => $user->user_id, 'role_id' => $user->role_id),'etop');
+				// 		}else{
+				// 			Queue::push('MailScheduler', array('type' => $type, 'user_id' => $user->user_id, 'role_id' => $user->role_id),'p_etop');
+				// 		}
+				// 	}
+				// }
+				// $total_users = count($users);
+				// $this->line("Total users {$total_users}");
+				// $this->line("Total queued email {$total_mails}");
 				break;
 			default:
 				$this->line("Not valid type.");

@@ -2,7 +2,7 @@
 <div id="activity">
 	<table class="bordered">
 		<tr nobr="true">
-			<td width="100">Activity Type</td>
+			<td width="80">Activity Type</td>
 			<td>{{ $activity->activitytype-> activity_type }}</td>
 		</tr>
 		<tr nobr="true">
@@ -23,6 +23,7 @@
 				</ul>
 			</td>
 		</tr>
+		@if(count($budgets) > 0)
 		<tr nobr="true">
 			<td>Budget IO TTS</td>
 			<td>
@@ -38,6 +39,8 @@
 				@endif
 			</td>
 		</tr>
+		@endif
+		@if(count($budgets) > 0)
 		<tr nobr="true">
 			<td>Budget IO PE</td>
 			<td>
@@ -53,6 +56,8 @@
 				@endif
 			</td>
 		</tr>
+		@endif
+		@if(count($sku_involves) > 0)
 		<tr nobr="true">
 			<td>SKU/s Involved</td>
 			<td>
@@ -72,6 +77,8 @@
 				@endif
 			</td>
 		</tr>
+		@endif
+		@if(count($areas) > 0)
 		<tr nobr="true">
 			<td>Area/s Involved</td>
 			<td>
@@ -84,10 +91,12 @@
 				@endif
 			</td>
 		</tr>
+		@endif
+		@if(count($channels) > 0)
 		<tr nobr="true">
 			<td>DT Channel/s Involved</td>
 			<td>
-				@if(!empty($areas))
+				@if(!empty($channels))
 				<ul>
 					@foreach($channels as $channel)
 					<li>{{ $channel }}</li>
@@ -96,6 +105,8 @@
 				@endif
 			</td>
 		</tr>
+		@endif
+		@if(count($schemes) > 0)
 		<tr nobr="true">
 			<td>Schemes</td>
 			<td>
@@ -124,6 +135,8 @@
 				@endif
 			</td>
 		</tr>
+		@endif
+		@if(count($skuinvolves) > 0)
 		<tr nobr="true">
 			<td>SKU/s Involved Per Scheme</td>
 			<td>
@@ -187,6 +200,8 @@
 				@endif
 			</td>
 		</tr>
+		@endif
+		@if(count($networks) > 0)
 		<tr nobr="true">
 			<td>Timings</td>
 			<td>
@@ -214,6 +229,8 @@
 				@endif
 			</td>
 		</tr>
+		@endif
+		@if(count($materials) > 0)
 		<tr nobr="true">
 			<td>Material Sourcing</td>
 			<td>
@@ -233,6 +250,8 @@
 				@endif
 			</td>
 		</tr>
+		@endif
+		@if(!empty($fdapermit))
 		<tr nobr="true">
 			<td>FDA Permit No.</td>
 			<td>
@@ -241,17 +260,24 @@
 				@endif
 			</td>
 		</tr>
+		@endif
+		@if(!empty($activity->billing_remarks))
 		<tr nobr="true">
 			<td>Billing Requirements</td>
 			<td>{{ nl2br($activity->billing_remarks) }}</td>
 		</tr>
+		@endif
+		@if(!empty($activity->billing_date))
 		<tr nobr="true">
 			<td>Billing Deadline</td>
 			<td>{{ date_format(date_create($activity->billing_date),'M j, Y') }}</td>
 		</tr>
+		@endif
+		@if(!empty($activity->instruction))
 		<tr nobr="true">
 			<td>Special Instructions</td>
 			<td>{{ nl2br($activity->instruction) }}</td>
 		</tr>
+		@endif
 	</table>
 </div>

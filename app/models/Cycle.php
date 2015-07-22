@@ -105,14 +105,6 @@ class Cycle extends \Eloquent {
 	public static function getByReleaseDate(){
 		$today = date('Y-m-d');
 		// $deadline = date('Y-m-d', strtotime("{$today} - 1 day"));
-		$records = self::select('id')
-			->where('release_date',$today)
-			->get();
-		$data = array();
-		foreach ($records as $value) {
-			$data[] = $value->id;
-		}
-
-		return $data;
+		return self::where('release_date',$today)->get();
 	}
 }

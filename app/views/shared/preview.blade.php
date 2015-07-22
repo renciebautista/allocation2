@@ -543,25 +543,6 @@
 				@endif
 			</div>
 
-			<div id="fdapermit">
-				<h2>FDA Permit</h2>
-				@if(!empty($fdapermit))
-				<?php 
-					$file = explode(".", $fdapermit->file_desc);
-
-				?>
-				<ul>
-				@if($file[1] != "pdf")
-				
-					<li>{{ HTML::image('fdapermit/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/'.$fdapermit->hash_name ,$fdapermit->file_desc) }}</li>
-				
-				@else
-				<li>{{ HTML::linkAction('ActivityController@fdadownload',$fdapermit->file_desc, $fdapermit->id, array('class' => 'btn btn-success btn-xs')) }}</li>
-				@endif
-				</ul>
-				@endif
-			</div>
-
 			<div id="codes">
 				<h2>Barcodes / Case Codes Per Scheme</h2>
 				@if(!empty($schemes))
@@ -590,6 +571,25 @@
 					</tr>
 					@endforeach
 				</table>
+				@endif
+			</div>
+
+			<div id="fdapermit">
+				<h2>FDA Permit</h2>
+				@if(!empty($fdapermit))
+				<?php 
+					$file = explode(".", $fdapermit->file_desc);
+
+				?>
+				<ul>
+				@if($file[1] != "pdf")
+				
+					<li>{{ HTML::image('fdapermit/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/'.$fdapermit->hash_name ,$fdapermit->file_desc) }}</li>
+				
+				@else
+				<li>{{ HTML::linkAction('ActivityController@fdadownload',$fdapermit->file_desc, $fdapermit->id, array('class' => 'btn btn-success btn-xs')) }}</li>
+				@endif
+				</ul>
 				@endif
 			</div>
 

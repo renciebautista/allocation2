@@ -132,14 +132,14 @@ class MakePdf extends Command {
 			$y = $pdf->getY();
 
 			$h = $pdf->getPageHeight();
-			if($h-$y < 60){
+			if($h-$y < 40){
 				$pdf->AddPage();
 			}
 
-			$artwork = View::make('pdf.artwork')->render();
-			$pdf->writeHTML($artwork , $ln=true, $fill=false, $reset=false, $cell=false, $align='');
-
 			if(count($artworks) > 0){
+				$artwork = View::make('pdf.artwork')->render();
+				$pdf->writeHTML($artwork , $ln=true, $fill=false, $reset=false, $cell=false, $align='');
+
 				$x = $pdf->getX();
 				$y = $pdf->getY();
 				$cnt = 0;
@@ -147,34 +147,28 @@ class MakePdf extends Command {
 					$pdf->SetXY($x, $y);
 					$cnt++;
 					$image_file = $path = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/'.$artwork->hash_name;
-					$pdf->Image($image_file, $x, $y, 60, 60, '', '', '', true, 150, '', false, false, 0, false, false, false);
-					$x+=65;
-					if($cnt == 3){
-						$y+=65;
+					$pdf->Image($image_file, $x, $y, 30, 30, '', '', '', true, 150, '', false, false, 0, false, false, false);
+					$x+=31;
+					if($x > 165){
+						$y+=31;
 						$x = 10;
+					}
+
+					if($h-$y < 40){
+						$pdf->AddPage();
 					}
 				
 				}
-				$pdf->AddPage();
-			}
-			
-
-			$fdapermit_view = View::make('pdf.fdapermit')->render();
-			$pdf->writeHTML($fdapermit_view, $ln=true, $fill=false, $reset=false, $cell=false, $align='');
-			if(count($fdapermit) > 0){
-				$x = $pdf->getX();
 				$y = $pdf->getY();
-				$image_file = $path = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/'.$fdapermit->hash_name;
-				$pdf->Image($image_file, $x, $y, 196, 0, '', '', '', true, 150, '', false, false, 0, false, false, false);
-				
-				$pdf->AddPage();
+				$y+=31;
+				$pdf->SetXY($x, $y);
 			}
 			
-			$barcodes = View::make('pdf.barcodes',compact('schemes'))->render();
-			$pdf->writeHTML($barcodes, $ln=true, $fill=false, $reset=false, $cell=false, $align='');
-			// define barcode style
-
 			if(count($schemes) > 0){
+				$barcodes = View::make('pdf.barcodes',compact('schemes'))->render();
+				$pdf->writeHTML($barcodes, $ln=true, $fill=false, $reset=false, $cell=false, $align='');
+				// define barcode style
+
 				$style = array(
 			    'position' => '',
 			    'align' => 'C',
@@ -222,7 +216,7 @@ class MakePdf extends Command {
 				}
 
 
-				$str_table='<table cellspacing="0" cellpadding="2" border="1">            
+				$str_table='<table cellspacing="0" cellpadding="2" border=".1px;">            
 				<tr nobr="true">
 					<td align="center" style="background-color: #000000;color: #FFFFFF;">Barcode</td>
 					<td align="center" style="background-color: #000000;color: #FFFFFF;">Case Code</td>
@@ -232,81 +226,99 @@ class MakePdf extends Command {
 				// echo $str_table;
 				$pdf->writeHTML($str_table, $ln=true, $fill=false, $reset=false, $cell=false, $align='');
 			}
+			
+			if(count($fdapermit) > 0){
+				$file = explode(".", $fdapermit->file_desc);
+				if($file[1] != "pdf"){
+					$pdf->AddPage();
+					$fdapermit_view = View::make('pdf.fdapermit')->render();
+					$pdf->writeHTML($fdapermit_view, $ln=true, $fill=false, $reset=false, $cell=false, $align='');
+				
+					$x = $pdf->getX();
+					$y = $pdf->getY();
+					$image_file = $path = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/'.$fdapermit->hash_name;
+					$pdf->Image($image_file, $x, $y, 190, 0, '', '', '', true, 150, '', false, false, 0, false, false, false);
+					$pdf->AddPage();
+				}
+			}
+				
 
 			$pis_view = "";
 			$pis_view .= View::make('pdf.style')->render();
 			$pis_view .= View::make('pdf.pis',compact('activity','pis'))->render();
 			$pdf->writeHTML($pis_view , $ln=true, $fill=false, $reset=false, $cell=false, $align='');
 
-			// $pdf->SetFont('helvetica', '', 6);
-			// foreach ($schemes as $scheme) {
-			// 	$count = count($scheme->allocations);
-			// 	$loops = (int) ($count / 34);
-			// 	if($count %34 != 0) {
-			// 	  $loops = $loops+1;
-			// 	}
-			// 	$scheme_count  = count($schemes);
-			// 	$body ='';
-				
-			// 	$cnt = 0;
-			// 	for ($i = 0; $i <= $loops; $i++) { 
-			// 		$allocs = array();
-			// 		$body ='';
-			// 		$last_count =  $cnt+34;
-			// 		for ($x=$cnt; $x <= $last_count; $x++) { 
-			// 			if($cnt == $count){
-			// 				break;
-			// 			}
-			// 			$num = $x + 1;
-			// 			$class = '';
-			// 			if((empty($scheme->allocations[$x]->customer_id)) && (empty($scheme->allocations[$x]->shipto_id))){
-			// 				$class = 'style="background-color: #d9edf7;"';
-			// 			}
-			// 			if((!empty($scheme->allocations[$x]->customer_id)) && (!empty($scheme->allocations[$x]->shipto_id))){
-			// 				$class = 'style="background-color: #fcf8e3;"';
-			// 			}
-
-			// 			$body .='<tr '.$class.'>
-			// 					<td style="width:20px;border: 1px solid #000000; text-align:right;">'.$num.'</td>
-			// 					<td style="width:35px;border: 1px solid #000000;">'.$scheme->allocations[$x]->group.'</td>
-			// 					<td style="width:85px;border: 1px solid #000000;">'.$scheme->allocations[$x]->area.'</td>
-			// 					<td style="width:95px;border: 1px solid #000000;">'.$scheme->allocations[$x]->sold_to.'</td>
-			// 					<td style="width:130px;border: 1px solid #000000;">'.$scheme->allocations[$x]->ship_to.'</td>
-			// 					<td style="width:50px;border: 1px solid #000000;;">'.$scheme->allocations[$x]->channel.'</td>
-			// 					<td style="width:140px;border: 1px solid #000000;">'.$scheme->allocations[$x]->outlet.'</td>
-			// 					<td style="width:40px;border: 1px solid #000000; text-align:right;">'.number_format($scheme->allocations[$x]->in_deals).'</td>
-			// 					<td style="width:40px;border: 1px solid #000000; text-align:right;">'.number_format($scheme->allocations[$x]->in_cases).'</td>
-			// 					<td style="width:50px;border: 1px solid #000000; text-align:right;">'.number_format($scheme->allocations[$x]->tts_budget,2).'</td>
-			// 					<td style="width:50px;border: 1px solid #000000; text-align:right;">'.number_format($scheme->allocations[$x]->pe_budget,2).'</td>
-			// 				</tr>';
-			// 			$cnt++;
+			// if(count($schemes) > 0){
+			// 	$pdf->SetFont('helvetica', '', 6);
+			// 	foreach ($schemes as $scheme) {
+			// 		$count = count($scheme->allocations);
+			// 		$loops = (int) ($count / 34);
+			// 		if($count %34 != 0) {
+			// 		  $loops = $loops+1;
 			// 		}
-			// 		if(!empty($body)){
-			// 			$x = $i +1;
-			// 			$table = '<h2>'.$scheme->name.'</h2>
-			// 			<h2>'.$x.' of '.$loops.'</h2>
-			// 			<table width="100%" style="padding:2px;">
-			// 				<thead>
-			// 					<tr>
-			// 						<th style="width:20px;border: 1px solid #000000; text-align:center;">#</th>
-			// 						<th style="width:35px;border: 1px solid #000000; text-align:center;">GROUP</th>
-			// 						<th style="width:85px;border: 1px solid #000000; text-align:center;">AREA NAME</th>
-			// 						<th style="width:95px;border: 1px solid #000000; text-align:center;">CUSTOMER SOLD TO</th>
-			// 						<th style="width:130px;border: 1px solid #000000; text-align:center;">CUSTOMER SHIP TO NAME</th>
-			// 						<th style="width:50px;border: 1px solid #000000; text-align:center;">CHANNEL</th>
-			// 						<th style="width:140px;border: 1px solid #000000; text-align:center;">ACCOUNT NAME</th> 
-			// 						<th style="width:40px;border: 1px solid #000000; text-align:center;">IN DEALS</th>
-			// 						<th style="width:40px;border: 1px solid #000000; text-align:center;">IN CASES</th>
-			// 						<th style="width:50px;border: 1px solid #000000; text-align:center;">TTS BUDGET</th>
-			// 						<th style="width:50px;border: 1px solid #000000; text-align:center;">PE BUDGET</th>
-			// 					</tr>
-			// 				</thead>
-			// 			  	<tbody>'.
-			// 			  		$body. 
-			// 			  	'</tbody>
-			// 			</table> ';
-			// 			$pdf->AddPage($orientation = 'L',$format = '',$keepmargins = false,$tocpage = false );
-			// 			$pdf->writeHTML($table, $ln=true, $fill=false, $reset=false, $cell=false, $align='');
+			// 		$scheme_count  = count($schemes);
+			// 		$body ='';
+					
+			// 		$cnt = 0;
+			// 		for ($i = 0; $i <= $loops; $i++) { 
+			// 			$allocs = array();
+			// 			$body ='';
+			// 			$last_count =  $cnt+34;
+			// 			for ($x=$cnt; $x <= $last_count; $x++) { 
+			// 				if($cnt == $count){
+			// 					break;
+			// 				}
+			// 				$num = $x + 1;
+			// 				$class = '';
+			// 				if((empty($scheme->allocations[$x]->customer_id)) && (empty($scheme->allocations[$x]->shipto_id))){
+			// 					$class = 'style="background-color: #d9edf7;"';
+			// 				}
+			// 				if((!empty($scheme->allocations[$x]->customer_id)) && (!empty($scheme->allocations[$x]->shipto_id))){
+			// 					$class = 'style="background-color: #fcf8e3;"';
+			// 				}
+
+			// 				$body .='<tr '.$class.'>
+			// 						<td style="width:20px;border: 1px solid #000000; text-align:right;">'.$num.'</td>
+			// 						<td style="width:35px;border: 1px solid #000000;">'.$scheme->allocations[$x]->group.'</td>
+			// 						<td style="width:85px;border: 1px solid #000000;">'.$scheme->allocations[$x]->area.'</td>
+			// 						<td style="width:95px;border: 1px solid #000000;">'.$scheme->allocations[$x]->sold_to.'</td>
+			// 						<td style="width:130px;border: 1px solid #000000;">'.$scheme->allocations[$x]->ship_to.'</td>
+			// 						<td style="width:50px;border: 1px solid #000000;;">'.$scheme->allocations[$x]->channel.'</td>
+			// 						<td style="width:140px;border: 1px solid #000000;">'.$scheme->allocations[$x]->outlet.'</td>
+			// 						<td style="width:40px;border: 1px solid #000000; text-align:right;">'.number_format($scheme->allocations[$x]->in_deals).'</td>
+			// 						<td style="width:40px;border: 1px solid #000000; text-align:right;">'.number_format($scheme->allocations[$x]->in_cases).'</td>
+			// 						<td style="width:50px;border: 1px solid #000000; text-align:right;">'.number_format($scheme->allocations[$x]->tts_budget,2).'</td>
+			// 						<td style="width:50px;border: 1px solid #000000; text-align:right;">'.number_format($scheme->allocations[$x]->pe_budget,2).'</td>
+			// 					</tr>';
+			// 				$cnt++;
+			// 			}
+			// 			if(!empty($body)){
+			// 				$x = $i +1;
+			// 				$table = '<h2>'.$scheme->name.'</h2>
+			// 				<h2>'.$x.' of '.$loops.'</h2>
+			// 				<table width="100%" style="padding:2px;">
+			// 					<thead>
+			// 						<tr>
+			// 							<th style="width:20px;border: 1px solid #000000; text-align:center;">#</th>
+			// 							<th style="width:35px;border: 1px solid #000000; text-align:center;">GROUP</th>
+			// 							<th style="width:85px;border: 1px solid #000000; text-align:center;">AREA NAME</th>
+			// 							<th style="width:95px;border: 1px solid #000000; text-align:center;">CUSTOMER SOLD TO</th>
+			// 							<th style="width:130px;border: 1px solid #000000; text-align:center;">CUSTOMER SHIP TO NAME</th>
+			// 							<th style="width:50px;border: 1px solid #000000; text-align:center;">CHANNEL</th>
+			// 							<th style="width:140px;border: 1px solid #000000; text-align:center;">ACCOUNT NAME</th> 
+			// 							<th style="width:40px;border: 1px solid #000000; text-align:center;">IN DEALS</th>
+			// 							<th style="width:40px;border: 1px solid #000000; text-align:center;">IN CASES</th>
+			// 							<th style="width:50px;border: 1px solid #000000; text-align:center;">TTS BUDGET</th>
+			// 							<th style="width:50px;border: 1px solid #000000; text-align:center;">PE BUDGET</th>
+			// 						</tr>
+			// 					</thead>
+			// 				  	<tbody>'.
+			// 				  		$body. 
+			// 				  	'</tbody>
+			// 				</table> ';
+			// 				$pdf->AddPage($orientation = 'L',$format = '',$keepmargins = false,$tocpage = false );
+			// 				$pdf->writeHTML($table, $ln=true, $fill=false, $reset=false, $cell=false, $align='');
+			// 			}
 			// 		}
 			// 	}
 			// }
@@ -322,8 +334,6 @@ class MakePdf extends Command {
 			$activity->pdf = 1;
 			$activity->update();
 		}
-
-		
 	}
 
 	/**

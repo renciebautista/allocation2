@@ -632,6 +632,14 @@ class Activity extends \Eloquent {
 			->get();
 	}
 
+	public static function forRelease($cycles){
+		return self::where('activities.status_id', 8)
+			->where('activities.pdf', 1)
+			->whereIn('activities.cycle_id',$cycles)
+			->get();
+	}
+
+
 	public static function withActivities($user_id){
 		$records = self::where('created_by',$user_id)->count();
 		if($records > 0){
