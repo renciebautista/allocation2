@@ -44,10 +44,10 @@ Route::get("test", function(){
 
 
 
-Route::get('queue/send', function(){
-	// Queue::pushRaw("This is Hello World payload", "email");
-	Queue::push('Scheduler', array('string' => 'Hello world'),'pdf');
-});
+// Route::get('queue/send', function(){
+// 	// Queue::pushRaw("This is Hello World payload", "email");
+// 	Queue::push('Scheduler', array('string' => 'Hello world'),'pdf');
+// });
 
 Route::post('queue/push', function()
 {

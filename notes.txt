@@ -81,7 +81,7 @@ force alloc not working - done
 mine types not working in new server - done
 
 
-upload cycles database
+upload cycles database - done
 cycle calendar order by implementation date and name - done
 change status to All Status - done
 validate ean13 barcode - done
@@ -122,7 +122,7 @@ rencie.bautista@yahoo.com
 multiple host and premuim sku - done
 update timings no 1970 - done
 update pmog attachment - done
-
+sku involve -done
 
 
  allow recall (approved)
@@ -139,4 +139,4 @@ update pmog attachment - done
  	- check download date should be equal or greater than today
 
  timings when to freeze download date
- sku involve
+ 

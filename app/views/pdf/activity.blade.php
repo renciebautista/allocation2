@@ -114,11 +114,11 @@
 				<table class="sub-table">
 					<tr nobr="true">
 						<th width="20"></th>
-						<th width="130">Scheme Desc.</th>
-						<th>Item Code</th>
-						<th>Cost per Deal</th>
-						<th>Cost of Premium</th>
-						<th>Shopper Purchase Requirement</th>
+						<th width="150">Scheme Desc.</th>
+						<th width="75">Item Code</th>
+						<th width="75">Cost per Deal</th>
+						<th width="75">Cost of Premium</th>
+						<th width="75">Shopper Purchase Requirement</th>
 					</tr>
 					<?php $cnt =1; ?>
 					@foreach($schemes as $scheme)
@@ -144,9 +144,9 @@
 				<table class="sub-table">
 					<tr nobr="true">
 						<th width="20"></th>
-						<th width="142">Host SKU Code - Description</th>
-						<th width="143">Premium SKU Code - Description</th>
-						<th width="143">Non ULP Premium</th>
+						<th width="150">Host SKU Code - Description</th>
+						<th width="150">Premium SKU Code - Description</th>
+						<th width="150">Non ULP Premium</th>
 					</tr>
 					<?php $cnt =1; ?>
 					@foreach($skuinvolves as $key => $sku)
@@ -208,9 +208,9 @@
 				@if(count($networks)> 0)
 				<table class="sub-table timing">
 					<tr nobr="true">
-						<th>Activity</th>
-						<th>Start Date</th>
-						<th>End Date</th>
+						<th width="320">Activity</th>
+						<th width="75">Start Date</th>
+						<th width="75">End Date</th>
 					</tr>
 					<?php $last_date; ?>
 					@foreach($networks as $network)

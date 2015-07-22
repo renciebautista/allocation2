@@ -4,7 +4,7 @@ table{
 }
 .bordered{
     padding: 3px;
-    width: 910px;
+    width: 950px;
 }
 .bordered tr > th{
 

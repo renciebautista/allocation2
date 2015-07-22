@@ -162,69 +162,88 @@ class MakePdf extends Command {
 				$y = $pdf->getY();
 				$y+=31;
 				$pdf->SetXY($x, $y);
+
+				$h = $pdf->getPageHeight();
+				if($h-$y < 60){
+					$pdf->AddPage();
+				}
 			}
 			
 			if(count($schemes) > 0){
-				$barcodes = View::make('pdf.barcodes',compact('schemes'))->render();
-				$pdf->writeHTML($barcodes, $ln=true, $fill=false, $reset=false, $cell=false, $align='');
-				// define barcode style
-
-				$style = array(
-			    'position' => '',
-			    'align' => 'C',
-			    'stretch' => false,
-			    'fitwidth' => true,
-			    'cellfitalign' => 'C',
-			    'border' => false,
-			    'hpadding' => 'auto',
-			    'vpadding' => 'auto',
-			    'fgcolor' => array(0,0,0),
-			    'bgcolor' => false, //array(255,255,255),
-			    'text' => true,
-			    'font' => 'helvetica',
-			    'fontsize' => 8,
-			    'stretchtext' => 4
-				);
-				$str= "";
-				$cnt= 1;
-				// $style['cellfitalign'] = 'C';
+				$w_codes = false;
 				foreach ($schemes as $scheme) {
-					$y = $pdf->GetY();
-					if(!empty($scheme->item_casecode)){
-						$casecode[$cnt] = $pdf->serializeTCPDFtagParameters(array($scheme->item_casecode, 'I25', '', '', '', 18, 0.4, $style, '')); 
+					if(count($scheme->item_casecode) > 0){
+						$w_codes = true;
 					}
-					if(!empty($scheme->item_barcode)){
-						$barcode[$cnt] = $pdf->serializeTCPDFtagParameters(array($scheme->item_barcode, 'EAN13', '', '', '', 18, 0.4, $style, ''));       
+					if(count($scheme->item_barcode) > 0){
+						$w_codes = true;
 					}
-					if(!empty($scheme->item_casecode)){
-						$str .='<tr nobr="true"><td align="center">'.$scheme->name.'<br>
-						<tcpdf method="write1DBarcode" params="'.$barcode[$cnt] .'" />
-						</td>';
-					}else{
-						$str .='<tr nobr="true"><td align="center"></td>';
-					}
-					if(!empty($scheme->item_barcode)){
-						$str .='<td align="center">'.$scheme->name.'<br>
-						<tcpdf method="write1DBarcode" params="'.$casecode[$cnt] .'" />
-						</td></tr>';
-					}else{
-						$str .='<tr nobr="true"><td align="center"></td>';
-					}
-					
-				
-					$cnt++;
 				}
+				if($w_codes){
+					$barcodes = View::make('pdf.barcodes',compact('schemes'))->render();
+					$pdf->writeHTML($barcodes, $ln=true, $fill=false, $reset=false, $cell=false, $align='');
+					// define barcode style
+
+					$style = array(
+				    'position' => '',
+				    'align' => 'C',
+				    'stretch' => false,
+				    'fitwidth' => true,
+				    'cellfitalign' => 'C',
+				    'border' => false,
+				    'hpadding' => 'auto',
+				    'vpadding' => 'auto',
+				    'fgcolor' => array(0,0,0),
+				    'bgcolor' => false, //array(255,255,255),
+				    'text' => true,
+				    'font' => 'helvetica',
+				    'fontsize' => 8,
+				    'stretchtext' => 4
+					);
+					$str= "";
+					$cnt= 1;
+					// $style['cellfitalign'] = 'C';
+					foreach ($schemes as $scheme) {
+						$y = $pdf->GetY();
+						if(count($scheme->item_casecode) > 0){
+							$casecode[$cnt] = $pdf->serializeTCPDFtagParameters(array($scheme->item_casecode, 'I25', '', '', '', 18, 0.4, $style, '')); 
+							
+						}
+						if(count($scheme->item_barcode) > 0){
+							$barcode[$cnt] = $pdf->serializeTCPDFtagParameters(array($scheme->item_barcode, 'EAN13', '', '', '', 18, 0.4, $style, ''));       
+						}
+
+						if(count($scheme->item_barcode) > 0){
+							$str .='<tr nobr="true"><td align="center">'.$scheme->name.'<br>
+							<tcpdf method="write1DBarcode" params="'.$barcode[$cnt] .'" />
+							</td>';
+						}else{
+							$str .='<tr nobr="true"><td align="center"></td>';
+						}
+						if(count($scheme->item_barcode) > 0){
+							$str .='<td align="center">'.$scheme->name.'<br>
+							<tcpdf method="write1DBarcode" params="'.$casecode[$cnt] .'" />
+							</td></tr>';
+						}else{
+							$str .='<tr nobr="true"><td align="center"></td>';
+						}
+						
+					
+						$cnt++;
+					}
 
 
-				$str_table='<table cellspacing="0" cellpadding="2" border=".1px;">            
-				<tr nobr="true">
-					<td align="center" style="background-color: #000000;color: #FFFFFF;">Barcode</td>
-					<td align="center" style="background-color: #000000;color: #FFFFFF;">Case Code</td>
-				</tr>';
-				$str_table .= $str;
-				$str_table .='</table>';
-				// echo $str_table;
-				$pdf->writeHTML($str_table, $ln=true, $fill=false, $reset=false, $cell=false, $align='');
+					$str_table='<table cellspacing="0" cellpadding="2" border=".1px;">            
+					<tr nobr="true">
+						<td align="center" style="background-color: #000000;color: #FFFFFF;">Barcode</td>
+						<td align="center" style="background-color: #000000;color: #FFFFFF;">Case Code</td>
+					</tr>';
+					$str_table .= $str;
+					$str_table .='</table>';
+					// echo $str_table;
+					$pdf->writeHTML($str_table, $ln=true, $fill=false, $reset=false, $cell=false, $align='');
+				}
+				
 			}
 			
 			if(count($fdapermit) > 0){
