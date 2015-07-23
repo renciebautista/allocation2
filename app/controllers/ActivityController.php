@@ -115,9 +115,14 @@ class ActivityController extends BaseController {
 						$activity_timing = array();
 
 						foreach ($networks as $network) {
-							$activity_timing[] = array('activity_id' => $activity->id, 'task_id' => $network->task_id,
-								'milestone' => $network->milestone, 'task' => $network->task, 'responsible' => $network->responsible,
-								'duration' => $network->duration, 'depend_on' => $network->depend_on,
+							$activity_timing[] = array('activity_id' => $activity->id,
+							 	'task_id' => $network->task_id,
+								'milestone' => $network->milestone, 
+								'task' => $network->task, 
+								'responsible' => $network->responsible,
+								'duration' => $network->duration, 
+								'depend_on' => $network->depend_on,
+								'show' => $network->show,
 								'start_date' => date('Y-m-d',strtotime($network->start_date)),
 								'end_date' => date('Y-m-d',strtotime($network->end_date)),
 								'final_start_date' => date('Y-m-d',strtotime($network->start_date)),
@@ -572,9 +577,13 @@ class ActivityController extends BaseController {
 								$activity_timing = array();
 
 								foreach ($networks as $network) {
-									$activity_timing[] = array('activity_id' => $activity->id, 'task_id' => $network->task_id,
-										'milestone' => $network->milestone, 'task' => $network->task, 'responsible' => $network->responsible,
-										'duration' => $network->duration, 'depend_on' => $network->depend_on,
+									$activity_timing[] = array('activity_id' => $activity->id, 
+										'task_id' => $network->task_id,
+										'milestone' => $network->milestone, 
+										'task' => $network->task, 
+										'responsible' => $network->responsible,
+										'duration' => $network->duration, 
+										'depend_on' => $network->depend_on,
 										'start_date' => date('Y-m-d',strtotime($network->start_date)), 
 										'show' => $network->show,
 										'end_date' => date('Y-m-d',strtotime($network->end_date)),
