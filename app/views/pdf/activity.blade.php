@@ -30,12 +30,13 @@
 				@if(!empty($budgets))
 				<ul>
 				@foreach($budgets as $budget)
-				@if(!empty($budget->remarks))
-				<li>{{ $budget->io_number }} - {{ $budget->remarks}}</li>
-				@else
-				@endif
-				<li>{{ $budget->io_number }}</li>
-				@endif
+					@if($budget->budget_type_id == 1)
+						@if(!empty($budget->remarks))
+						<li>{{ $budget->io_number }} - {{ $budget->remarks}}</li>
+						@else
+						<li>{{ $budget->io_number }}</li>
+						@endif
+					@endif
 				@endforeach
 				
 				</ul>
@@ -50,13 +51,13 @@
 				@if(!empty($budgets))
 				<ul>
 				@foreach($budgets as $budget)
-				@if($budget->budget_type_id == 2)
-				@if(!empty($budget->remarks))
-				<li>{{ $budget->io_number }}  - {{ $budget->remarks}}</li>
-				@else
-				<li>{{ $budget->io_number }}</li>
-				@endif
-				@endif
+					@if($budget->budget_type_id == 2)
+						@if(!empty($budget->remarks))
+						<li>{{ $budget->io_number }}  - {{ $budget->remarks}}</li>
+						@else
+						<li>{{ $budget->io_number }}</li>
+						@endif
+					@endif
 				@endforeach
 				
 				</ul>
