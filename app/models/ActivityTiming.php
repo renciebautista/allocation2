@@ -16,6 +16,12 @@ class ActivityTiming extends \Eloquent {
 			->orderBy('end_date')
 			->get();;
 	}
+
+	public static function getList($id,$preview = false){
+		return self::where('activity_id', $id)
+				->orderBy('task_id')
+				->get();
+	}
 	
 
 }

@@ -71,8 +71,9 @@ class ReportController extends \BaseController {
 				->get();
 
 			$fdapermit = ActivityFdapermit::where('activity_id', $activity->id)->first();
-			$networks = ActivityTiming::getTimings($activity->id,true);
 
+			$networks = ActivityTiming::getTimings($activity->id,true);
+			Helper::print_r($networks);
 			$activity_roles = ActivityRole::getList($activity->id);
 
 			$artworks = ActivityArtwork::getList($activity->id);
@@ -98,9 +99,9 @@ class ReportController extends \BaseController {
 			}
 
 			// Helper::print_r($skuinvolves);
-			return View::make('shared.preview', compact('activity' ,'planner','budgets','nobudgets',
-				'schemes','skuinvolves', 'activity_roles','materials','fdapermit', 'networks','artworks', 
-				'pis' , 'areas','channels', 'approvers' , 'sku_involves'));
+			// return View::make('shared.preview', compact('activity' ,'planner','budgets','nobudgets',
+			// 	'schemes','skuinvolves', 'activity_roles','materials','fdapermit', 'networks','artworks', 
+			// 	'pis' , 'areas','channels', 'approvers' , 'sku_involves'));
 		}
 		
 

@@ -342,9 +342,7 @@ class ActivityController extends BaseController {
 			// comments
 			$comments = ActivityComment::getList($activity->id);
 
-			$timings = ActivityTiming::where('activity_id', $activity->id)
-				->orderBy('task_id')
-				->get();
+			$timings = ActivityTiming::getList($activity->id);
 
 			$activity_roles = ActivityRole::getList($activity->id);
 
@@ -420,9 +418,7 @@ class ActivityController extends BaseController {
 			// comments
 			$comments = ActivityComment::getList($activity->id);
 
-			$timings = ActivityTiming::where('activity_id', $activity->id)
-				->orderBy('task_id')
-				->get();
+			$timings = ActivityTiming::getList($activity->id);
 
 			$activity_roles = ActivityRole::getList($activity->id);
 

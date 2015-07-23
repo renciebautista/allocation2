@@ -12,7 +12,7 @@ class ScopeTypesTableSeeder extends Seeder {
 
 		DB::statement("INSERT INTO scope_types (id, scope_name) VALUES
 			(1, 'NATIONAL'),
-			(2, 'CUSTOMIZE');");
+			(2, 'CUSTOMIZED');");
 		DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 	}
 
