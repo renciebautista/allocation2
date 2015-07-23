@@ -140,7 +140,7 @@ class MakePdf extends Command {
 			if(count($artworks) > 0){
 				$artwork = View::make('pdf.artwork')->render();
 				$pdf->writeHTML($artwork , $ln=true, $fill=false, $reset=false, $cell=false, $align='');
-
+				$pdf->setImageScale(1.53);
 				$x = $pdf->getX();
 				$y = $pdf->getY();
 				$cnt = 0;
@@ -148,7 +148,7 @@ class MakePdf extends Command {
 					$pdf->SetXY($x, $y);
 					$cnt++;
 					$image_file = $path = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/'.$artwork->hash_name;
-					$pdf->Image($image_file, $x, $y, 30, 30, '', '', '', true, 150, '', false, false, 0, false, false, false);
+					$pdf->Image($image_file, $x, $y, 30, 0, '', '', '', true, 150, '', false, false, 0, false, false, false);
 					$x+=31;
 					if($x > 165){
 						$y+=31;

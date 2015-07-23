@@ -49,8 +49,8 @@ class DownloadsController extends \BaseController {
 							$folder = storage_path().$path.'/';
 						}
 						$with_files = true;
-						// $folders[strtoupper(Helper::sanitize($type->activity_type)).'/'.$activity->id.'_'.strtoupper(Helper::sanitize($activity->circular_name))] = $folder;
-						$folders[strtoupper(Helper::sanitize($type->activity_type)).'/'.strtoupper(Helper::sanitize($activity->circular_name))] = $folder;
+						$folders[strtoupper(Helper::sanitize($type->activity_type)).'/'.$activity->id.'_'.strtoupper(Helper::sanitize($activity->circular_name))] = $folder;
+						//$folders[strtoupper(Helper::sanitize($type->activity_type)).'/'.strtoupper(Helper::sanitize($activity->circular_name))] = $folder;
 					}else{
 						// $with_files = true;
 						// $folder = $nofile;
