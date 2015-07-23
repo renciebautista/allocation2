@@ -13,23 +13,18 @@ class SchemeAllocRepository
 
 	private static function save($scheme){
 		$activity = Activity::find($scheme->activity_id);
-		// $selected_areas = ForceAllocation::getAreas($scheme->activity_id);
 		$forced_areas = ForceAllocation::getForcedAreas($scheme->activity_id);
 		$customers = ActivityCustomer::customers($scheme->activity_id);
-		// $_channels = ActivityChannel::channels($scheme->activity_id);
 		$_channels = ActivityChannel2::channels($scheme->activity_id);
 
 
 		$_allocation = new AllocationRepository;
 		$allocations = $_allocation->customers(Input::get('skus'), $_channels, $customers,$forced_areas);
 		$_areasales =  $_allocation->area_sales();
-	   
-		// $total_sales = $_allocation->total_sales();
+	   	// Helper::print_r($allocations);
 		$total_sales = $_allocation->total_gsv();
 		$force_total_sales = $_allocation->force_total_gsv();
 		$force_alloc = $activity->allow_force;
-		// echo 'Total Sales => '.  $total_sales . '<br>';
-		// echo 'Force Total Sales => '.  $force_total_sales . '<br>';
 		foreach ($allocations as $customer) {
 			$scheme_alloc = new SchemeAllocation;
 			$scheme_alloc->scheme_id = $scheme->id;
@@ -103,8 +98,6 @@ class SchemeAllocRepository
 				$scheme_alloc->multi = $c_multi;
 			}
 			
-
-
 			$in_deals = 0;
 			$in_cases = 0;
 			if($scheme->activity->activitytype->uom == 'CASES'){
@@ -231,7 +224,14 @@ class SchemeAllocRepository
 					$shipto_alloc->in_cases = $in_cases;
 					$shipto_alloc->tts_budget = $tts_budget;
 					$shipto_alloc->pe_budget = $shipto_alloc->final_alloc *  $scheme->other_cost;
-				   
+				   	
+				   	if($shipto_alloc->multi == 0){
+				   		if(($shipto['split'] != null) && ($shipto['split'] > 0)){
+				   			$shipto_alloc->multi = $shipto['split']/100;
+				   		}
+				   		
+				   	}
+
 					$shipto_alloc->save();  
 
 					if(!empty($shipto['accounts'] )){

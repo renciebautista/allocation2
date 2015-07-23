@@ -2,8 +2,8 @@
 
 $("#myform").disableButton();
 
-$("form").validate({
-	ignore: null,
+$("#myform").validate({
+	ignore: ":hidden:not(select)",
 	errorElement: "span", 
 	errorClass : "has-error",
 	rules: {

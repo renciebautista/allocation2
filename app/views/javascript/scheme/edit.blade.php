@@ -211,7 +211,7 @@ function compute_budget(){
 $("#updatescheme").disableButton();
 
 $("#updatescheme").validate({
-	ignore: null,
+	ignore: ":hidden:not(select)",
 	errorElement: "span", 
 	errorClass : "has-error",
 	rules: {

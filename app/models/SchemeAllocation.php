@@ -94,7 +94,7 @@ class SchemeAllocation extends \Eloquent {
 		return $data;
 	}
 
-	public static function recomputeAlloc($alloc){
+	public static function recomputeAlloc($alloc,$scheme){
 		
 		if(is_null($alloc->customer_id)){
 			$customer_id = $alloc->id;
@@ -107,6 +107,26 @@ class SchemeAllocation extends \Eloquent {
 			if(!empty($childs)){
 				foreach ($childs as $child) {
 					$child->final_alloc = $alloc->final_alloc * $child->multi;
+
+					$c_in_deals = 0;
+					$c_in_cases = 0;
+					if($scheme->activity->activitytype->uom == 'CASES'){
+						$c_in_deals = $child->final_alloc * $scheme->deals;
+						$c_in_cases = $child->final_alloc;
+						$tts_budget =$child->final_alloc * $scheme->deals * $scheme->srp_p; 
+					}else{
+						if($child->final_alloc > 0){
+							$c_in_cases = round($child->final_alloc/$scheme->deals);
+							$c_in_deals =  $child->final_alloc;
+						}
+						$tts_budget = $child->final_alloc * $scheme->srp_p;
+					}
+
+					$child->in_deals = $c_in_deals;
+					$child->in_cases = $c_in_cases;
+					$child->tts_budget = $tts_budget;
+					$child->pe_budget = $child->final_alloc *  $scheme->other_cost;
+
 					$child->update();
 
 					$outlets = self::where('customer_id',$customer_id)
@@ -124,6 +144,26 @@ class SchemeAllocation extends \Eloquent {
 								$others_alloc -= $outlet_final_alloc;
 							}
 							// $outlet->multi = $child->final_alloc/$others_alloc;
+
+							$o_in_deals = 0;
+							$o_in_cases = 0;
+							if($scheme->activity->activitytype->uom == 'CASES'){
+								$o_in_deals = $outlet->final_alloc * $scheme->deals;
+								$o_in_cases = $outlet->final_alloc;
+								$tts_budget =$outlet->final_alloc * $scheme->deals * $scheme->srp_p; 
+							}else{
+								if($outlet->final_alloc > 0){
+									$o_in_cases = round($outlet->final_alloc/$scheme->deals);
+									$o_in_deals =  $outlet->final_alloc;
+								}
+								$tts_budget = $outlet->final_alloc * $scheme->srp_p;
+							}
+
+							$outlet->in_deals = $o_in_deals;
+							$outlet->in_cases = $o_in_cases;
+							$outlet->tts_budget = $tts_budget;
+							$outlet->pe_budget = $outlet->final_alloc *  $scheme->other_cost;
+
 							$outlet->update();
 						}
 					}
@@ -132,17 +172,13 @@ class SchemeAllocation extends \Eloquent {
 
 		}else{
 			$customer_id = $alloc->customer_id;
-			// $parent = self::find($alloc->customer_id);
-			// $parent->final_alloc = round($alloc->final_alloc / $alloc->multi);
-			// $parent->update();		
-
-			// $customer_alloc	= $parent->final_alloc;
 
 			$outlets = self::where('customer_id',$customer_id)
 				->where('shipto_id',$alloc->id)
 				->get();
 
 			$others_alloc =  $alloc->final_alloc;
+
 			if(!empty($outlets)){
 				foreach ($outlets as $outlet) {
 					$outlet_final_alloc =  $alloc->final_alloc * $outlet->multi;
@@ -152,12 +188,51 @@ class SchemeAllocation extends \Eloquent {
 						$outlet->final_alloc = $outlet_final_alloc;
 						$others_alloc -= $outlet_final_alloc;
 					}
+
+					$o_in_deals = 0;
+					$o_in_cases = 0;
+					if($scheme->activity->activitytype->uom == 'CASES'){
+						$o_in_deals = $outlet->final_alloc * $scheme->deals;
+						$o_in_cases = $outlet->final_alloc;
+						$tts_budget =$outlet->final_alloc * $scheme->deals * $scheme->srp_p; 
+					}else{
+						if($outlet->final_alloc > 0){
+							$o_in_cases = round($outlet->final_alloc/$scheme->deals);
+							$o_in_deals =  $outlet->final_alloc;
+						}
+						$tts_budget = $outlet->final_alloc * $scheme->srp_p;
+					}
+
+					$outlet->in_deals = $o_in_deals;
+					$outlet->in_cases = $o_in_cases;
+					$outlet->tts_budget = $tts_budget;
+					$outlet->pe_budget = $outlet->final_alloc *  $scheme->other_cost;
+
 					$outlet->update();
 				}
 			}
 
 			$parent = self::find($alloc->customer_id);
 			$parent->final_alloc = self::soldtofinalallocation($alloc->scheme_id,$parent->id);
+
+			$p_in_deals = 0;
+			$p_in_cases = 0;
+			if($scheme->activity->activitytype->uom == 'CASES'){
+				$p_in_deals = $parent->final_alloc * $scheme->deals;
+				$p_in_cases = $parent->final_alloc;
+				$tts_budget =$parent->final_alloc * $scheme->deals * $scheme->srp_p; 
+			}else{
+				if($parent->final_alloc > 0){
+					$p_in_cases = round($parent->final_alloc/$scheme->deals);
+					$p_in_deals =  $parent->final_alloc;
+				}
+				$tts_budget = $parent->final_alloc * $scheme->srp_p;
+			}
+
+			$parent->in_deals = $p_in_deals;
+			$parent->in_cases = $p_in_cases;
+			$parent->tts_budget = $tts_budget;
+			$parent->pe_budget = $parent->final_alloc *  $scheme->other_cost;
 			$parent->update();		
 		}
 

@@ -236,34 +236,6 @@ class SchemeController extends \BaseController {
 	public function show($id)
 	{	
 		return Redirect::action('SchemeController@edit',$id);
-		// $scheme = Scheme::find($id);
-		// $skus = SchemeSku::getSkus($id);
-		// $customers = ActivityCustomer::customers($scheme->activity_id);
-
-		// // $channels = array('C1', 'C2', 'C3');
-
-		// $_channels = ActivityChannel::channels($scheme->activity_id);
-
-		// $qty = $scheme->quantity;
-
-		// $_allocation = new AllocationRepository;
-		// $allocations = $_allocation->customers($skus, $_channels, $customers);
-		
-		// $total_sales = $_allocation->total_sales();
-
-		// $summary = $_allocation->allocation_summary();
-		// $big10 = $_allocation->account_group("AG4");
-		// $gaisanos = $_allocation->account_group("AG5");
-		// $nccc = $_allocation->account_group("AG6");
-		// // echo '<pre>';
-		// // print_r($big10);
-		// // echo '</pre>';
-		// // $channels = array();
-		// // $groups = $_allocation->groups();
-		// // $areas = $_allocation->areas();
-		// // $soldtos = $_allocation->soldtos();
-		// return View::make('scheme.show', compact('allocations','total_sales',
-		// 	'qty','id', 'summary', 'big10', 'gaisanos', 'nccc'));
 	}
 
 	/**
@@ -291,8 +263,12 @@ class SchemeController extends \BaseController {
 		$sel_hosts = SchemeHostSku::getHosts($scheme->id);
 		$sel_premuim = SchemePremuimSku::getPremuim($scheme->id);
 
-		$sku = Sku::getSku($sel_skus[0]);
-		$host = Pricelist::getSku($sel_hosts[0]);
+		// $sku = Sku::getSku($sel_skus[0]);
+		// if(count($sel_hosts)>0){
+		// 	$host = Pricelist::getSku($sel_hosts[0]);
+		// }
+		
+
 		$premuim = array();
 		if(!empty($sel_premuim)){
 			$premuim = Pricelist::getSku($sel_premuim[0]);
@@ -426,25 +402,13 @@ class SchemeController extends \BaseController {
 				$scheme->item_casecode = Input::get('item_casecode');
 				
 				$pr = str_replace(",", "", Input::get('pr'));
-				// if(!empty(Input::get('pr'))){
-				// 	$pr = str_replace(",", "", Input::get('pr'));
-				// }else{
-				// 	$pr = 0;
-				// }
+
 				$scheme->pr = $pr;
 				$srp_p = str_replace(",", "", Input::get('srp_p'));
-				// if(!empty(Input::get('srp_p'))){
-				// 	$srp_p = str_replace(",", "", Input::get('srp_p'));
-				// }else{
-				// 	$srp_p = 0;
-				// }
+	
 				$scheme->srp_p = $srp_p;
 				$other_cost = str_replace(",", "", Input::get('other_cost'));
-				// if(!empty(Input::get('other_cost'))){
-				// 	$other_cost = str_replace(",", "", Input::get('other_cost'));
-				// }else{
-				// 	$other_cost = 0;
-				// }
+
 				$scheme->other_cost = $other_cost;
 
 				$ulp = $srp_p + $other_cost;
@@ -459,12 +423,7 @@ class SchemeController extends \BaseController {
 				}else{
 					$scheme->cost_sale = 0;
 				}
-				
-				// if(($ulp > 0) && ($pr > 0)){
-				// 	$scheme->cost_sale = ($ulp/$pr) * 100;
-				// }else{
-				// 	$scheme->cost_sale = 0;
-				// }
+			
 				
 				$scheme->quantity = str_replace(",", "", Input::get('total_alloc'));
 				$activitytype = ActivityType::find($activity->activity_type_id);
@@ -653,12 +612,31 @@ class SchemeController extends \BaseController {
 			if(empty($alloc)){
 				$arr['success'] = 0;
 			}else{
+				$scheme = Scheme::find($alloc->scheme_id);
 				$alloc->final_alloc = str_replace(",", "", $new_alloc);
+
+				$in_deals = 0;
+				$in_cases = 0;
+				if($scheme->activity->activitytype->uom == 'CASES'){
+					$in_deals = $alloc->final_alloc * $scheme->deals;
+					$in_cases = $alloc->final_alloc;
+					$tts_budget =$alloc->final_alloc * $scheme->deals * $scheme->srp_p; 
+				}else{
+					if($alloc->final_alloc > 0){
+						$in_cases = round($alloc->final_alloc/$scheme->deals);
+						$in_deals =  $alloc->final_alloc;
+					}
+					$tts_budget = $alloc->final_alloc * $scheme->srp_p;
+				}
+
+				$alloc->in_deals = $in_deals;
+				$alloc->in_cases = $in_cases;
+				$alloc->tts_budget = $tts_budget;
+				$alloc->pe_budget = $alloc->final_alloc *  $scheme->other_cost;
 				$alloc->update();
 
-				$scheme = Scheme::find($alloc->scheme_id);
+				SchemeAllocation::recomputeAlloc($alloc,$scheme);
 
-				SchemeAllocation::recomputeAlloc($alloc);
 				$final_alloc = SchemeAllocation::finalallocation($alloc->scheme_id);
 
 				if($scheme->activity->activitytype->uom == 'CASES'){
