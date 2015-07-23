@@ -11,7 +11,7 @@
 		</tr>
 		<tr nobr="true">
 			<td>Background</td>
-			<td>{{ nl2br($activity->background) }}</td>
+			<td>{{ $activity->background }}</td>
 		</tr>
 		<tr nobr="true">
 			<td>Objectives</td>
@@ -30,8 +30,11 @@
 				@if(!empty($budgets))
 				<ul>
 				@foreach($budgets as $budget)
-				@if($budget->budget_type_id == 1)
+				@if(!empty($budget->remarks))
 				<li>{{ $budget->io_number }} - {{ $budget->remarks}}</li>
+				@else
+				@endif
+				<li>{{ $budget->io_number }}</li>
 				@endif
 				@endforeach
 				
@@ -48,7 +51,11 @@
 				<ul>
 				@foreach($budgets as $budget)
 				@if($budget->budget_type_id == 2)
+				@if(!empty($budget->remarks))
 				<li>{{ $budget->io_number }}  - {{ $budget->remarks}}</li>
+				@else
+				<li>{{ $budget->io_number }}</li>
+				@endif
 				@endif
 				@endforeach
 				

@@ -305,7 +305,11 @@
 							<ul>
 							@foreach($budgets as $budget)
 							@if($budget->budget_type_id == 1)
+							@if(!empty($budget->remarks))
 							<li>{{ $budget->io_number }} - {{ $budget->remarks}}</li>
+							@else
+							@endif
+							<li>{{ $budget->io_number }}</li>
 							@endif
 							@endforeach
 							
@@ -320,7 +324,11 @@
 							<ul>
 							@foreach($budgets as $budget)
 							@if($budget->budget_type_id == 2)
+							@if(!empty($budget->remarks))
 							<li>{{ $budget->io_number }}  - {{ $budget->remarks}}</li>
+							@else
+							<li>{{ $budget->io_number }}</li>
+							@endif
 							@endif
 							@endforeach
 							
