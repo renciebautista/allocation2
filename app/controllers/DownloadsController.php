@@ -27,7 +27,7 @@ class DownloadsController extends \BaseController {
 		foreach ($activity_types as $type) {
 			$activities = Activity::where('activity_type_id',$type->id)
 				->where('cycle_id',$cycle->id)
-				->where('status_id',8)
+				->where('status_id',9)
 				->get();
 			if (App::isLocal())
 			{
@@ -49,8 +49,8 @@ class DownloadsController extends \BaseController {
 							$folder = storage_path().$path.'/';
 						}
 						$with_files = true;
-						$folders[strtoupper(Helper::sanitize($type->activity_type)).'/'.$activity->id.'_'.strtoupper(Helper::sanitize($activity->circular_name))] = $folder;
-						//$folders[strtoupper(Helper::sanitize($type->activity_type)).'/'.strtoupper(Helper::sanitize($activity->circular_name))] = $folder;
+						// $folders[strtoupper(Helper::sanitize($type->activity_type)).'/'.$activity->id.'_'.strtoupper(Helper::sanitize($activity->circular_name))] = $folder;
+						$folders[strtoupper(Helper::sanitize($type->activity_type)).'/'.strtoupper(Helper::sanitize($activity->circular_name))] = $folder;
 					}else{
 						// $with_files = true;
 						// $folder = $nofile;
@@ -83,7 +83,7 @@ class DownloadsController extends \BaseController {
 		foreach ($activity_types as $type) {
 			$activities = Activity::where('activity_type_id',$type->id)
 				->where('cycle_id',$cycle->id)
-				->where('status_id',8)
+				->where('status_id',9)
 				->get();
 			if (App::isLocal())
 			{
@@ -105,7 +105,8 @@ class DownloadsController extends \BaseController {
 							$folder = storage_path().$path.'/';
 						}
 						$with_files = true;
-						$folders[strtoupper(Helper::sanitize($type->activity_type)).'/'.$activity->id.'_'.strtoupper(Helper::sanitize($activity->circular_name))] = $folder;
+						// $folders[strtoupper(Helper::sanitize($type->activity_type)).'/'.$activity->id.'_'.strtoupper(Helper::sanitize($activity->circular_name))] = $folder;
+						$folders[strtoupper(Helper::sanitize($type->activity_type)).'/'.strtoupper(Helper::sanitize($activity->circular_name))] = $folder;
 					}else{
 						// $with_files = true;
 						// $folder = $nofile;
