@@ -110,7 +110,7 @@ class MakePdf extends Command {
 
 			// start of pdf
 			// create new PDF document
-			$pdf = new ActivityPDF($orientation='P', $unit='mm', $format='LETTER', $unicode=false, $encoding='UTF-8', $diskcache=false, $pdfa=false);	
+			$pdf = new ActivityPDF($orientation='P', $unit='mm', $format='LETTER', $unicode=false, $encoding='ISO-8859-1', $diskcache=false, $pdfa=false);	
 			// set document information
 			$pdf->SetMargins(10, 32,10);
 			$pdf->setListIndentWidth(0);	
@@ -127,7 +127,7 @@ class MakePdf extends Command {
 			$header .= View::make('pdf.activity',compact('activity','schemes','networks','materials', 
 				'budgets','nobudgets', 'skuinvolves', 'areas', 'channels','fdapermit', 'sku_involves'))->render();
 			
-			$pdf->writeHTML($header , $ln=true, $fill=false, $reset=false, $cell=false, $align='');
+			$pdf->writeHTML(iconv("UTF-8", "CP1252", $header) , $ln=true, $fill=false, $reset=false, $cell=false, $align='');
 
 			$x = $pdf->getX();
 			$y = $pdf->getY();
