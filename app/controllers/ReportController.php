@@ -74,6 +74,9 @@ class ReportController extends \BaseController {
 
 			$networks = ActivityTiming::getTimings($activity->id,true);
 			Helper::print_r($networks);
+			$timings = ActivityTiming::getList($activity->id);
+			Helper::print_r($timings);
+
 			$activity_roles = ActivityRole::getList($activity->id);
 
 			$artworks = ActivityArtwork::getList($activity->id);
