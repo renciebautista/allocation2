@@ -54,11 +54,7 @@
 							</div>
 							<div class="col-lg-6">
 								{{ Form::label('involve', 'Host SKU', array('class' => 'control-label')) }}
-								@if(!empty($host))
-								{{ Form::text('involve',$host->sap_desc.' - '.$host->sap_code, array('id' => 'involve', 'class' => 'form-control', 'placeholder' => 'Host SKU','readonly' => '')) }}
-								@else
-								{{ Form::text('involve',$host->sap_desc.' - '.$host->sap_code, array('id' => 'involve', 'class' => 'form-control', 'placeholder' => 'Host SKU','readonly' => '')) }}
-								@endif
+								{{ Form::select('involve[]', $involves, $sel_hosts, array('id' => 'involve', 'class' => 'form-control multiselect', 'multiple' => 'multiple')) }}
 							</div>
 						</div>
 					</div>
@@ -71,7 +67,7 @@
 						<div class="row">
 							<div class="col-lg-6">
 								{{ Form::label('premuim', 'Premium SKU', array('class' => 'control-label')) }}
-								{{ Form::text('premuim',$premuim->sap_desc.' - '.$premuim->sap_code, array('id' => 'premuim', 'class' => 'form-control', 'placeholder' => 'Premium SKU','readonly' => '')) }}
+								{{ Form::select('premuim[]', $involves, $sel_premuim, array('id' => 'premuim', 'class' => 'form-control multiselect', 'multiple' => 'multiple')) }}
 							</div>
 							<div class="col-lg-6">
 								{{ Form::label('ulp_premium', 'Non ULP Premium SKU', array('class' => 'control-label')) }}

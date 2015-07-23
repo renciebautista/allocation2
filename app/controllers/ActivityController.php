@@ -2592,8 +2592,6 @@ class ActivityController extends BaseController {
 		if(Request::ajax()){
 			// Helper::print_r(Input::all());
 			$activity = Activity::findOrFail($id);
-
-			// ActivityTiming::where('activity_id',$activity->id)->delete();
 			$data = array();
 			if (Input::has('timing_start')){
 				foreach (Input::get('timing_start') as $key => $value) {
@@ -2624,9 +2622,6 @@ class ActivityController extends BaseController {
 				$timing->update();
 			}
 
-			// return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#timings")
-			// 		->with('class', 'alert-success')
-			// 		->with('message', 'Timings successfully updated.');
 			$arr['success'] = 1;
 			Session::flash('class', 'alert-success');
 			Session::flash('message', 'Activity successfully updated.');
@@ -2643,7 +2638,7 @@ class ActivityController extends BaseController {
 			$role->activity_id = $id;
 			$role->owner = strtoupper(Input::get('owner'));
 			$role->point = strtoupper(Input::get('point'));
-			$role->timing = date('Y-m-d',strtotime(Input::get('timing')));
+			$role->timing = strtoupper(Input::get('timing'));
 			$role->save();
 
 			$arr = Input::all();
@@ -2680,7 +2675,7 @@ class ActivityController extends BaseController {
 			}else{
 				$role->owner = strtoupper(Input::get('owner'));
 				$role->point = strtoupper(Input::get('point'));
-				$role->timing = date('Y-m-d',strtotime(Input::get('timing')));
+				$role->timing = strtoupper(Input::get('timing'));
 				$role->update();
 	
 				$arr = Input::all();
@@ -2689,6 +2684,12 @@ class ActivityController extends BaseController {
 			}
 			return json_encode($arr);
 		}
+	}
+
+	public function activityroles($id){
+		$data['d'] = ActivityRole::getList($id);
+		$data['msg'] = 'success';
+		return json_encode($data);
 	}
 
 }

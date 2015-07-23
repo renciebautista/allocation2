@@ -775,6 +775,49 @@ $('.timing_date').datetimepicker({
 	calendarWeeks: true
 });
 
+/**
+var $container = $("#example");
+
+function getRoles() {
+    var roles = "";
+
+    $.ajax({
+        async: false,
+        type: "GET",
+        url: "{{ URL::action('ActivityController@activityroles', $activity->id ) }}",
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (msg) { roles = msg.d; },
+        error: function (msg) { roles = msg; }
+    });
+    return roles;
+}
+
+$container.handsontable({
+	data: getRoles(),
+	startRows: 5,
+    minSpareRows: 1,
+    rowHeaders: true,
+    colHeaders: true,
+    contextMenu: false,
+    colWidths: [300, 300, 300],
+	colHeaders: ["Process Owner", "Action Points", "Timing"],
+	columns: [{
+      data: "owner",
+      type: 'text',
+    },{
+      data: "point",
+      type: 'text',
+    },{
+      data: "timing",
+      type: 'text',
+    }],
+	afterChange: function (change, source) {
+		console.log(source);
+	}
+});
+var handsontable = $container.data('handsontable');
+**/
 
 $("form[id='updatetimings']").on("submit",function(e){
 	var form = $(this);
@@ -799,6 +842,7 @@ $("form[id='updatetimings']").on("submit",function(e){
 	e.preventDefault();
 });
 
+
 $('#activityroles_table').ajax_table({
 	add_url: "{{ URL::action('ActivityController@addrole', $activity->id ) }}",
 	delete_url: "{{ URL::action('ActivityController@deleterole') }}",
@@ -811,7 +855,6 @@ $('#activityroles_table').ajax_table({
 		bootbox.alert("Unexpected error, Please try again"); 
 	}
 });
-
 
 
 

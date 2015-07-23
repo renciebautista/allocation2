@@ -78,6 +78,7 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('help', 'HelpController@index');
 
 	Route::get('activity/{id}/timings', 'ActivityController@timings');
+	Route::get('activity/{id}/activityroles', 'ActivityController@activityroles');
 
 	Route::post('activity/{id}/updatetimings', 'ActivityController@updatetimings');
 	

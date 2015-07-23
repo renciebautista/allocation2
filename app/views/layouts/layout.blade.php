@@ -19,6 +19,7 @@
 
 		{{ HTML::style('assets/plugins/uploadify/uploadify.css') }}
 
+		{{ HTML::style('assets/plugins/handsontable-0.16.0/handsontable.full.min.css') }}
 
 		{{ HTML::style('assets/css/styles.css') }}
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -214,7 +215,7 @@
 
 	{{ HTML::script('assets/plugins/barcoder/barcoder.js') }}
 
-
+	{{ HTML::script('assets/plugins/handsontable-0.16.0/handsontable.full.min.js') }}
 	
 	{{ HTML::script('assets/js/function.js') }}
 

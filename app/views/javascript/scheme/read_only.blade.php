@@ -20,6 +20,28 @@ function getWeeks(){
 
 getWeeks();
 
+$('select#involve').multiselect({
+	maxHeight: 200,
+	onDropdownShow: function(event) {
+        $('select#involve option').each(function() {
+          	var input = $('input[value="' + $(this).val() + '"]');
+          	input.prop('disabled', true);
+            input.parent('li').addClass('disabled');
+        });
+    }
+});
+
+$('select#premuim').multiselect({
+	maxHeight: 200,
+	onDropdownShow: function(event) {
+        $('select#premuim option').each(function() {
+          	var input = $('input[value="' + $(this).val() + '"]');
+          	input.prop('disabled', true);
+            input.parent('li').addClass('disabled');
+        });
+    }
+});
+
 var table = $("#customer-allocation").dataTable({
 		"scrollY": "500px",
 		"scrollCollapse": true,

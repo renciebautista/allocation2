@@ -753,7 +753,6 @@
 		  	</div>
 		</div>
 
-
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<h3 class="panel-title">Roles and Responsibilities</h3>
@@ -771,7 +770,7 @@
 													<th>Process Owner</th>
 													<th>Action Points</th>
 													<th>Timing</th>
-													<th style="width:15%;" colspan="2">Action</th>
+													<th style="width:15%;"colspan="2">Action</th>
 												</tr>
 											</thead>
 											<tbody>
@@ -797,6 +796,15 @@
 				</div>
 			</div>
 		</div>
+
+		<!-- <div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Roles and Responsibilities</h3>
+			</div>
+			<div class="panel-body">
+				<div id="example"></div>
+			</div>
+		</div> -->
 
 		<div class="row">
 			<div class="col-lg-12">
