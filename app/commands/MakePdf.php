@@ -110,7 +110,7 @@ class MakePdf extends Command {
 
 			// start of pdf
 			// create new PDF document
-			$pdf = new ActivityPDF($orientation='P', $unit='mm', $format='LETTER', $unicode=false, $encoding='ISO-8859-1', $diskcache=false, $pdfa=false);	
+			$pdf = new ActivityPDF($orientation='P', $unit='mm', $format='LETTER', $unicode=false, $encoding='UTF-8', $diskcache=false, $pdfa=false);	
 			// set document information
 			$pdf->SetMargins(10, 32,10);
 			$pdf->setListIndentWidth(0);	
