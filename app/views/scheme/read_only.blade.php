@@ -334,7 +334,7 @@
 
 <div class="row">
 	<div class="col-lg-12">
-		<h2>Alocation Summary</h2>
+		<h2>Allocation Summary</h2>
 		<a class="btn btn-success" target="_blank" href="{{ URL::action('SchemeController@export', $scheme->id ) }}">Export To Excel</a>
 		<div id="allocation">
 				<table id="customer-allocation" class="table table-condensed table-bordered display compact ">
