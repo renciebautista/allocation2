@@ -762,42 +762,7 @@
 				<h3 class="panel-title">Roles and Responsibilities</h3>
 			</div>
 			<div class="panel-body">
-				<div id="activityroles">
-					<div class="row">
-						<div class="col-lg-12">
-							<div class="form-group">
-								<div class="row">
-									<div class="col-lg-12">
-										<table id="activityroles_table" class="table table-striped table-hover ">
-											<thead>
-												<tr>
-													<th>Process Owner</th>
-													<th>Action Points</th>
-													<th>Timing</th>
-													<th style="width:15%;"colspan="2">Action</th>
-												</tr>
-											</thead>
-											<tbody>
-											@foreach ($activity_roles as $activity_role)
-											<tr id="{{ $activity_role->id }}">
-												<td class="owner">{{ $activity_role->owner }}</td>
-												<td class="point">{{ $activity_role->point }}</td>
-												<td class="timing">{{ $activity_role->timing }}</td>
-												<td>
-													<a href="javascript:;" id="{{ $activity_role->id }}" class="ajaxEdit btn btn-primary btn-xs">Edit</a>
-												</td>
-												<td><a href="javascript:;" id="{{ $activity_role->id }}" class="ajaxDelete btn btn-danger btn-xs">Delete</a></td>
-											</tr>
-											@endforeach
-											</tbody>
-											
-										</table> 
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
+				<div id="roles"></div>
 			</div>
 		</div>
 

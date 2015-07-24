@@ -788,13 +788,55 @@ $('.timing_date').datetimepicker({
 });
 
 
+var $container = $("#roles");
+
+function getRoles() {
+    var roles = "";
+
+    $.ajax({
+        async: false,
+        type: "GET",
+        url: "{{ URL::action('ActivityController@activityroles', $activity->id ) }}",
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (msg) { roles = msg.d; },
+        error: function (msg) { roles = msg; }
+    });
+    return roles;
+}
+
+$container.handsontable({
+	data: getRoles(),
+	startRows: 5,
+    minSpareRows: 1,
+    rowHeaders: true,
+    colHeaders: true,
+    contextMenu: false,
+    colWidths: [300, 300, 300],
+	colHeaders: ["Process Owner", "Action Points", "Timing"],
+	columns: [{
+      data: "owner",
+      type: 'text',
+    },{
+      data: "point",
+      type: 'text',
+    },{
+      data: "timing",
+      type: 'text',
+    }],
+	afterChange: function (change, source) {
+		console.log(source);
+	}
+});
+var handsontable = $container.data('handsontable');
+
 $("form[id='updatetimings']").on("submit",function(e){
 	var form = $(this);
 	var url = form.prop('action');
 	if(form.valid()){
 		$.ajax({
 			url: url,
-			data: form.serialize(),
+			data: form.serialize() + "&roles=" + JSON.stringify(handsontable.getData()),
 			method: 'POST',
 			dataType: "json",
 			success: function(data){
@@ -809,19 +851,6 @@ $("form[id='updatetimings']").on("submit",function(e){
 	}
 	
 	e.preventDefault();
-});
-
-$('#activityroles_table').ajax_table({
-	add_url: "{{ URL::action('ActivityController@addrole', $activity->id ) }}",
-	delete_url: "{{ URL::action('ActivityController@deleterole') }}",
-	update_url: "{{ URL::action('ActivityController@updaterole') }}",
-	columns: [
-		{ type: "text", id: "owner", placeholder: "Process Owner",validation: { required :true} },
-		{ type: "text", id: "point", placeholder: "Action Point",validation: { required :true} },
-		{ type: "text", id: "timing", placeholder: "Timing", validation: { required :true} },
-	],onError: function (){
-		bootbox.alert("Unexpected error, Please try again"); 
-	}
 });
 
 

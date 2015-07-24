@@ -125,10 +125,6 @@ Route::group(array('before' => 'auth'), function()
 	Route::post('activity/bandingdelete', 'ActivityController@bandingdelete');
 	Route::get('activity/{id}/bandingdownload', 'ActivityController@bandingdownload');
 
-	Route::post('activity/{id}/addrole', 'ActivityController@addrole');
-	Route::delete('activity/deleterole', 'ActivityController@deleterole');
-	Route::put('activity/updaterole', 'ActivityController@updaterole');
-
 	Route::get('activity/{id}/channels', 'ActivityController@channels');
 
 	Route::post('activity/{id}/submittogcm', 'ActivityController@submittogcm');

@@ -775,8 +775,8 @@ $('.timing_date').datetimepicker({
 	calendarWeeks: true
 });
 
-/**
-var $container = $("#example");
+
+var $container = $("#roles");
 
 function getRoles() {
     var roles = "";
@@ -817,7 +817,6 @@ $container.handsontable({
 	}
 });
 var handsontable = $container.data('handsontable');
-**/
 
 $("form[id='updatetimings']").on("submit",function(e){
 	var form = $(this);
@@ -825,7 +824,7 @@ $("form[id='updatetimings']").on("submit",function(e){
 	if(form.valid()){
 		$.ajax({
 			url: url,
-			data: form.serialize(),
+			data: form.serialize() + "&roles=" + JSON.stringify(handsontable.getData()),
 			method: 'POST',
 			dataType: "json",
 			success: function(data){
@@ -842,19 +841,6 @@ $("form[id='updatetimings']").on("submit",function(e){
 	e.preventDefault();
 });
 
-
-$('#activityroles_table').ajax_table({
-	add_url: "{{ URL::action('ActivityController@addrole', $activity->id ) }}",
-	delete_url: "{{ URL::action('ActivityController@deleterole') }}",
-	update_url: "{{ URL::action('ActivityController@updaterole') }}",
-	columns: [
-		{ type: "text", id: "owner", placeholder: "Process Owner",validation: { required :true} },
-		{ type: "text", id: "point", placeholder: "Action Point",validation: { required :true} },
-		{ type: "text", id: "timing", placeholder: "Timing", validation: { required :true} },
-	],onError: function (){
-		bootbox.alert("Unexpected error, Please try again"); 
-	}
-});
 
 
 

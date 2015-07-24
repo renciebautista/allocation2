@@ -748,50 +748,13 @@
 		</div>
 
 		<div class="panel panel-default">
-				<div class="panel-heading">
-					<h3 class="panel-title">Roles and Responsibilities</h3>
-				</div>
-				<div class="panel-body">
-					<div id="activityroles">
-						<div class="row">
-							<div class="col-lg-12">
-								<div class="form-group">
-									<div class="row">
-										<div class="col-lg-12">
-											<table id="activityroles_table" class="table table-striped table-hover ">
-												<thead>
-													<tr>
-														<th>Process Owner</th>
-														<th>Action Points</th>
-														<th>Timing</th>
-														<th style="width:10%;" colspan="2">Action</th>
-													</tr>
-												</thead>
-												<tbody>
-												@foreach ($activity_roles as $activity_role)
-												<tr id="{{ $activity_role->id }}">
-													<td class="owner">{{ $activity_role->owner }}</td>
-													<td class="point">{{ $activity_role->point }}</td>
-													<td class="timing">{{ $activity_role->timing }}</td>
-													<td>
-														<button class="btn btn-primary btn-xs disabled">Edit</button>
-													</td>
-													<td>
-														<button class="btn btn-danger btn-xs disabled">Delete</button>
-													</td>
-												</tr>
-												@endforeach
-												</tbody>
-												
-											</table> 
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
+			<div class="panel-heading">
+				<h3 class="panel-title">Roles and Responsibilities</h3>
 			</div>
+			<div class="panel-body">
+				<div id="roles"></div>
+			</div>
+		</div>
 
 		<div class="row">
 			<div class="col-lg-12">
@@ -1300,6 +1263,44 @@ $('select#skus').multiselect({
             input.parent('li').addClass('disabled');
         });
     }
+});
+
+var $container = $("#roles");
+
+function getRoles() {
+    var roles = "";
+
+    $.ajax({
+        async: false,
+        type: "GET",
+        url: "{{ URL::action('ActivityController@activityroles', $activity->id ) }}",
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (msg) { roles = msg.d; },
+        error: function (msg) { roles = msg; }
+    });
+    return roles;
+}
+
+$container.handsontable({
+	data: getRoles(),
+	startRows: 5,
+    minSpareRows: 1,
+    rowHeaders: true,
+    colHeaders: true,
+    contextMenu: false,
+    colWidths: [300, 300, 300],
+	colHeaders: ["Process Owner", "Action Points", "Timing"],
+	columns: [{
+      data: "owner",
+      readOnly: true
+    },{
+      data: "point",
+      readOnly: true
+    },{
+      data: "timing",
+     	readOnly: true
+    }]
 });
 
 <!-- update activty -->

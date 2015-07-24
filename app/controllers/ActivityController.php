@@ -349,10 +349,11 @@ class ActivityController extends BaseController {
 
 			$timings = ActivityTiming::getList($activity->id);
 
-			$activity_roles = ActivityRole::getList($activity->id);
+			// $activity_roles = ActivityRole::getList($activity->id);
 
 			$force_allocs = ForceAllocation::getlist($activity->id);
 			$areas = Area::getAreaWithGroup();
+
 			foreach ($areas as $key => $area) {
 				$area->multi = "1.00";
 				foreach ($force_allocs as $force_alloc) {
@@ -373,7 +374,7 @@ class ActivityController extends BaseController {
 
 				return View::make('activity.edit', compact('activity', 'scope_types', 'planners', 'approvers', 'cycles',
 				 'activity_types', 'divisions' , 'sel_divisions','objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
-				 'sel_objectives',  'schemes', 'scheme_summary', 'networks', 'areas', 'timings', 'activity_roles', 'involves' ,'sel_involves',
+				 'sel_objectives',  'schemes', 'scheme_summary', 'networks', 'areas', 'timings', 'involves' ,'sel_involves',
 				 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings',
 				 'force_allocs', 'comments' ,'submitstatus'));
 			}
@@ -388,7 +389,7 @@ class ActivityController extends BaseController {
 				 'sel_divisions','divisions', 'timings',
 				 'objectives',  'users', 'budgets', 'nobudgets','sel_approver',
 				 'sel_objectives',  'schemes', 'scheme_summary', 'networks','areas',
-				 'scheme_customers', 'scheme_allcations', 'materials', 'force_allocs', 'activity_roles', 'involves' ,'sel_involves',
+				 'scheme_customers', 'scheme_allcations', 'materials', 'force_allocs', 'involves' ,'sel_involves',
 				 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings', 'comments' ,'submitstatus', 'route', 'recall', 'submit_action'));
 			}
 		}
@@ -425,7 +426,7 @@ class ActivityController extends BaseController {
 
 			$timings = ActivityTiming::getList($activity->id);
 
-			$activity_roles = ActivityRole::getList($activity->id);
+			// $activity_roles = ActivityRole::getList($activity->id);
 
 			$force_allocs = ForceAllocation::getlist($activity->id);
 			$areas = Area::getAreaWithGroup();
@@ -454,7 +455,7 @@ class ActivityController extends BaseController {
 
 				return View::make('downloadedactivity.edit', compact('activity', 'scope_types', 'planners', 'approvers', 'cycles',
 				 'activity_types', 'divisions' , 'sel_divisions','objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
-				 'sel_objectives',  'schemes', 'scheme_summary', 'networks', 'areas', 'timings', 'activity_roles', 'involves' ,'sel_involves',
+				 'sel_objectives',  'schemes', 'scheme_summary', 'networks', 'areas', 'timings', 'involves' ,'sel_involves',
 				 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings',
 				 'force_allocs', 'comments' ,'submitstatus'));
 			}else{
@@ -466,7 +467,7 @@ class ActivityController extends BaseController {
 				return View::make('shared.activity_readonly', compact('activity', 'sel_planner', 'approvers', 'sel_divisions','divisions' ,
 				 'objectives',  'users', 'budgets', 'nobudgets','sel_approver',
 				 'sel_objectives',  'schemes', 'scheme_summary', 'networks', 'areas',
-				 'scheme_customers', 'scheme_allcations', 'materials', 'force_allocs', 'timings', 'activity_roles', 'involves' ,'sel_involves',
+				 'scheme_customers', 'scheme_allcations', 'materials', 'force_allocs', 'timings',  'involves' ,'sel_involves',
 				 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings', 'comments' ,'submitstatus', 'route', 'recall', 'submit_action'));
 			}
 		}
@@ -2627,6 +2628,29 @@ class ActivityController extends BaseController {
 				$timing->update();
 			}
 
+			ActivityRole::where('activity_id',$activity->id)->delete();
+			$_data = array();
+			$roles = json_decode(Input::get('roles'));
+			if(count($roles) > 0){
+				foreach ($roles as $role) {
+					if(count( (array)$role) > 0){
+						if(($role->owner != "") && ($role->point != "") && ($role->timing != "")){
+							$_data[] = array('activity_id' => $activity->id,
+								'owner' => $role->owner,
+								'point' => $role->point,
+								'timing' => $role->timing);
+						}
+						
+					}
+				}
+
+				if(!empty($_data)){
+					ActivityRole::insert($_data);
+				}
+				
+			}
+			
+
 			$arr['success'] = 1;
 			Session::flash('class', 'alert-success');
 			Session::flash('message', 'Activity successfully updated.');
@@ -2636,63 +2660,10 @@ class ActivityController extends BaseController {
 
 	}
 
-	// Activity Roles
-	public function addrole($id){
-		if(Request::ajax()){
-			$role = new ActivityRole;
-			$role->activity_id = $id;
-			$role->owner = strtoupper(Input::get('owner'));
-			$role->point = strtoupper(Input::get('point'));
-			$role->timing = strtoupper(Input::get('timing'));
-			$role->save();
-
-			$arr = Input::all();
-			$arr['success'] = 1;
-			$arr['id'] = $role->id;
-			return json_encode($arr);
-		}
-	}
-
-	public function deleterole(){
-		if(Request::ajax()){
-			$id = Input::get('d_id');
-			$role = ActivityRole::find($id);
-
-			if(empty($role)){
-				$arr['success'] = 0;
-			}else{
-				$role->delete();
-				$arr['success'] = 1;
-			}
-			
-			$arr['id'] = $id;
-			return json_encode($arr);
-		}
-	}
-
-	public function updaterole(){
-		if(Request::ajax()){
-			$id = Input::get('id');
-			$role = ActivityRole::find($id);
-
-			if(empty($role)){
-				$arr['success'] = 0;
-			}else{
-				$role->owner = strtoupper(Input::get('owner'));
-				$role->point = strtoupper(Input::get('point'));
-				$role->timing = strtoupper(Input::get('timing'));
-				$role->update();
 	
-				$arr = Input::all();
-				$arr['id'] = $role->id;
-				$arr['success'] = 1;
-			}
-			return json_encode($arr);
-		}
-	}
 
 	public function activityroles($id){
-		$data['d'] = ActivityRole::getList($id);
+		$data['d'] = ActivityRole::getListData($id);
 		$data['msg'] = 'success';
 		return json_encode($data);
 	}
