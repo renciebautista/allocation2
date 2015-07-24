@@ -18,7 +18,6 @@
 	   font-size: 12px;
 	}
 	.header1{
-		background-color:#428bca;
 		font-size: 20px;
 		color: #fff;
 	}
@@ -27,6 +26,10 @@
 	}
 	.right{
 		text-align: right;
+	}
+	.blue{
+		color: #ffffff;
+ 	 	background-color: #008cba;
 	}
 	.alert{
 		color: #ffffff;
@@ -39,9 +42,12 @@
 	h1{
 		font-size: 18px;
 	}
+	table>tbody>tr:nth-of-type(odd) {
+	    background-color: #f9f9f9;
+	    color: #000;
+	}
 	</style><!-- CREATE TEXT STYLES USED IN THIS HTML FILE, END -->
 </head>
-
 <body>
 
 	<h1>Hi {{ ucwords(strtolower($user)) }}!</h1>
@@ -59,10 +65,10 @@
 	<hr>
 	<table width="100%" border="0" cellspacing="0" cellpadding="5">
 		<thead>
-			<tr>
+			<tr class="blue">
 				<th class="center header1" colspan="12">Summary of Activities</th>
 			</tr>
-			<tr >
+			<tr class="blue">
 				<th class="center"></th>
 				<th class="center">ID</th>
 				<th class="center">Status</th>

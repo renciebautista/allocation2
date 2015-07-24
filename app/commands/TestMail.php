@@ -156,14 +156,27 @@ class TestMail extends Command {
 
 				if(count($data['activities'])>0){
 					if($_ENV['MAIL_TEST']){
-						Mail::send('emails.mail4', $data, function($message) use ($data){
-							$message->to("rbautista@chasetech.com", $data['fullname']);
-							$message->bcc("rosarah.reyes@unilever.com");
-							$message->subject('TOP ACTIVITIES FOR: ('.$data['cycle_names'].')');
-						});	
+						if(count($data) > 0){
+							Mail::send('emails.mail4', $data, function($message) use ($data){
+								$message->to("rbautista@chasetech.com", $data['fullname']);
+								$message->bcc("rosarah.reyes@unilever.com");
+								$message->subject('TOP ACTIVITIES FOR: ('.$data['cycle_names'].')');
+							});	
+						}else{
+							Mail::send('emails.mail4', $data, function($message) use ($data){
+								$message->to("rbautista@chasetech.com", $data['fullname']);
+								$message->bcc("rosarah.reyes@unilever.com");
+								$message->subject('TOP ACTIVITIES FOR: '.$data['cycle_names']);
+							});	
+						}
 					}else{
 						Mail::send('emails.mail4', $data, function($message) use ($data){
-							$message->to($data['email'], $data['fullname'])->subject('TOP ACTIVITIES FOR: ('.$data['cycle_names'].')');
+							if(count($data) > 0){
+								$message->to($data['email'], $data['fullname'])->subject('TOP ACTIVITIES FOR: ('.$data['cycle_names'].')');
+							}else{
+								$message->to($data['email'], $data['fullname'])->subject('TOP ACTIVITIES FOR: '.$data['cycle_names']);
+							}
+							
 						});
 					}
 				}

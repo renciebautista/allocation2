@@ -98,18 +98,16 @@
 							<ul class="dropdown-menu" aria-labelledby="report">
 								@if(Auth::user()->inRoles(['PROPONENT','PMOG PLANNER']))
 								<li>{{ HTML::linkAction('ReportController@activities' , 'All Released Activities',array('st' => ['9'])) }}</li>  
-								<li><a href="#">My Activity Summary Report</a></li>
-								<li><a href="#">My Allocation Detail Report</a></li>  
-								<li><a href="#">All Released Activity Summary Report</a></li>
-								<li><a href="#">All Released Allocation Detail Report</a></li> 
+								<li><a href="#">Calendar of Activities</a></li>
+								<li><a href="#">Activity Details Report</a></li>  
+								<li><a href="#">Activity Timings Report</a></li>
+								<li><a href="#">PIS Summary Report</a></li>
+								<li><a href="#">Allocation Report</a></li>
 								@endif
 
 								@if(Auth::user()->inRoles(['FIELD SALES']))
 								<li>{{ HTML::linkAction('ReportController@activities' , 'All Released Activities',array('st' => ['9'])) }}</li>  
-								<li><a href="#">My Activity Summary Report</a></li>
-								<li><a href="#">My Allocation Detail Report</a></li>  
-								<li><a href="#">All Released Activity Summary Report</a></li>
-								<li><a href="#">All Released Allocation Detail Report</a></li>
+	
 								@endif
 								@if(Auth::user()->inRoles(['ADMINISTRATOR']))
 								<li>{{ HTML::linkAction('ReportController@activities' , 'All Activities') }}</li> 								@endif

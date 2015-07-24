@@ -17,19 +17,19 @@ Route::get("testmail", function(){
 	
 	$user = User::find(1);
 	$cycles = Cycle::getByReleaseDate();
-	$cycle_ids = array();
-	$cycle_names = "";
-	foreach ($cycles as $value) {
-		$cycle_ids[] = $value->id;
-		$cycle_names .= $value->cycle_name ." - ";
-	}
+	$cycle_ids = array('1','2');
+	// $cycle_names = "";
+	// foreach ($cycles as $value) {
+	// 	$cycle_ids[] = $value->id;
+	// 	$cycle_names .= $value->cycle_name ." - ";
+	// }
 	$data['cycles'] = $cycles;
 	$data['user'] = $user->first_name;
 	$data['email'] = $user->email;
 	$data['fullname'] = $user->getFullname();
 	$data['cycle_ids'] = $cycle_ids;
-	$data['cycle_names'] = $cycle_names;
-	$data['activities'] = Activity::Released($cycle_ids);
+	$data['cycle_names'] = "test";
+	$data['activities'] = Activity::all();
 	return View::make('emails.mail4', $data);
 	
 });
@@ -173,7 +173,7 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('dashboard/customerselected', 'DashboardController@customerselected');
 
 	Route::get('profile','ProfileController@index');
-	Route::put('profile','ProfileController@index');
+	Route::post('profile','ProfileController@update');
 
 	// Confide routes
 	// Route::get('users', 'UsersController@index');
