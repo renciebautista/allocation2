@@ -124,6 +124,6 @@ return array(
     | You will have to run `php artisan queue:listen --queue=emails`
     |
     */
-    'email_queue' => 'default',
+    'email_queue' => 'sync',
 
 );
