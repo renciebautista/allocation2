@@ -71,16 +71,16 @@ class LoginController extends \BaseController {
 
     public function doforgotpassword(){
     	if (Confide::forgotPassword(Input::get('email'))) {
-			// $notice_msg = Lang::get('confide::confide.alerts.password_forgot');
-			// return Redirect::action('LoginController@index')
-			// 	->with('class', 'alert-success')
-			// 	->with('message', $notice_msg);
+			$notice_msg = Lang::get('confide::confide.alerts.password_forgot');
+			return Redirect::action('LoginController@index')
+				->with('class', 'alert-success')
+				->with('message', $notice_msg);
 		} else {
-			// $error_msg = Lang::get('confide::confide.alerts.wrong_password_forgot');
-			// return Redirect::action('LoginController@doforgotpassword')
-			// 	->withInput()
-			// 	->with('class', 'alert-danger')
-			// 	->with('message', $error_msg);
+			$error_msg = Lang::get('confide::confide.alerts.wrong_password_forgot');
+			return Redirect::action('LoginController@doforgotpassword')
+				->withInput()
+				->with('class', 'alert-danger')
+				->with('message', $error_msg);
 		}
     }
 }
