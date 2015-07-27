@@ -672,10 +672,8 @@ function show_force_alloc(){
 $('#billing_deadline').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
 $('#billing_deadline').datetimepicker({
 	pickTime: false,
-	calendarWeeks: true,
-	minDate: moment()
+	calendarWeeks: true
 });
-
 $("form[id='updateBilling']").on("submit",function(e){
 	var form = $(this);
 	var url = form.prop('action');

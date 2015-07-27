@@ -609,7 +609,11 @@
 							<div class="row">
 								<div class="col-lg-6">
 									{{ Form::label('billing_deadline', 'Billing Deadline', array('class' => 'control-label')) }}
+									@if($activity->billing_date != "")
 									{{ Form::text('billing_deadline',date_format(date_create($activity->billing_date),'m/d/Y'), array('class' => 'form-control', 'placeholder' => 'mm/dd/yyyy')) }}
+									@else
+									{{ Form::text('billing_deadline',null, array('class' => 'form-control', 'placeholder' => 'mm/dd/yyyy')) }}
+									@endif
 								</div>
 							</div>
 						</div>

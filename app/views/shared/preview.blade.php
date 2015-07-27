@@ -531,7 +531,11 @@
 					</tr>
 					<tr>
 						<td>Billing Deadline</td>
+						@if($activity->billing_date != "")
 						<td>{{ date_format(date_create($activity->billing_date),'M j, Y') }}</td>
+						@else
+						<td>N/A</td>
+						@endif
 					</tr>
 					<tr>
 						<td>Special Instructions</td>

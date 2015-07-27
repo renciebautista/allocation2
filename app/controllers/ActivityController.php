@@ -1176,9 +1176,9 @@ class ActivityController extends BaseController {
 						if($status == 1){
 							// check valdiation
 							if($activity->activitytype->with_scheme){
-								$required_rules = array('budget','approver','cycle','activity','category','brand','objective','background','customer','scheme','fdapermit','artwork', 'material_source', 'submission_deadline');
+								$required_rules = array('budget','approver','cycle','activity','category','brand','objective','background','customer','scheme', 'material_source', 'submission_deadline');
 							}else{
-								$required_rules = array('budget','approver','cycle','activity','category','brand','objective','background','customer','fdapermit','artwork', 'material_source', 'submission_deadline');
+								$required_rules = array('budget','approver','cycle','activity','category','brand','objective','background','customer', 'material_source', 'submission_deadline');
 							}
 							
 							$validation = Activity::validForDownload($activity,$required_rules);
@@ -1575,7 +1575,11 @@ class ActivityController extends BaseController {
 				$arr['success'] = 0;
 			}else{
 				DB::transaction(function() use ($activity)  {
-					$activity->billing_date = date('Y-m-d',strtotime(Input::get('billing_deadline')));
+					$billing_date = date('Y-m-d',strtotime(Input::get('billing_deadline')));
+					if($billing_date == '1970-01-01'){
+						$billing_date = null;
+					}
+					$activity->billing_date = $billing_date;
 					$activity->billing_remarks = Input::get('billing_remarks');
 					$activity->update();
 				});

@@ -278,7 +278,12 @@
 		@if(!empty($activity->billing_date))
 		<tr nobr="true">
 			<td><b>Billing Deadline</b></td>
+			@if($activity->billing_date != "")
 			<td>{{ date_format(date_create($activity->billing_date),'M j, Y') }}</td>
+			@else
+			<td>N/A</td>
+			@endif
+			
 		</tr>
 		@endif
 		@if(!empty($activity->instruction))
