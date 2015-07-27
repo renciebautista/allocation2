@@ -1,19 +1,19 @@
 <div>
 	<table id="title" width="910">
 		<tr>
-			<td width="80">Circular Reference No.</td>
+			<td width="80"><b>Circular Ref. No.</b></td>
 			<td>: {{ $activity->id }}</td>
 		</tr>
 		<tr>
-			<td>Activity Name</td>
+			<td><b>Activity Name</b></td>
 			<td>: {{ strip_tags($activity->activity_code) }}</td>
 		</tr>
 		<tr>
-			<td>TOP Cycle</td>
+			<td><b>TOP Cycle</b></td>
 			<td>: {{ $activity->cycle->cycle_name }}</td>
 		</tr>
 		<tr>
-			<td>Proponent Name</td>
+			<td><b>Proponent Name</b></td>
 			<td>: {{ $activity->createdby->getFullname() }} 
 				@if(!empty($activity->createdby->contact_no))
 				/ {{ $activity->createdby->contact_no }}
@@ -21,7 +21,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>PMOG Partner</td>
+			<td><b>PMOG Partner</b></td>
 
 			@if(!empty($activity->pmog[0]))
 			<td>: {{  $activity->pmog[0]->getFullname() }} 
@@ -35,7 +35,7 @@
 		</tr>
 
 		<tr>
-			<td>Approvers</td>
+			<td><b>Approvers</b></td>
 			@if(!empty($approvers))
 			<td>
 				<ul>

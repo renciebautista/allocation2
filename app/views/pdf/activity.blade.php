@@ -2,19 +2,19 @@
 <div id="activity">
 	<table class="bordered">
 		<tr nobr="true">
-			<td width="80">Activity Type</td>
+			<td width="80"><b>Activity Type</b></td>
 			<td>{{ $activity->activitytype-> activity_type }}</td>
 		</tr>
 		<tr nobr="true">
-			<td>Activity Title</td>
+			<td><b>Activity Title</b></td>
 			<td>{{ $activity->circular_name }}</td>
 		</tr>
 		<tr nobr="true">
-			<td>Background</td>
+			<td><b>Background</b></td>
 			<td>{{ nl2br($activity->background) }}</td>
 		</tr>
 		<tr nobr="true">
-			<td>Objectives</td>
+			<td><b>Objectives</b></td>
 			<td>
 				<ul style="margin: 0px; padding: 0px;">
 				@foreach($activity->objectives as $objective)
@@ -25,7 +25,7 @@
 		</tr>
 		@if(count($budgets) > 0)
 		<tr nobr="true">
-			<td>Budget IO TTS</td>
+			<td><b>Budget IO TTS</b></td>
 			<td>
 				@if(!empty($budgets))
 				<ul>
@@ -46,7 +46,7 @@
 		@endif
 		@if(count($budgets) > 0)
 		<tr nobr="true">
-			<td>Budget IO PE</td>
+			<td><b>Budget IO PE</b></td>
 			<td>
 				@if(!empty($budgets))
 				<ul>
@@ -67,7 +67,7 @@
 		@endif
 		@if(count($sku_involves) > 0)
 		<tr nobr="true">
-			<td>SKU/s Involved</td>
+			<td><b>SKU/s Involved</b></td>
 			<td>
 				@if(!empty($sku_involves))
 				<table class="sub-table">
@@ -88,7 +88,7 @@
 		@endif
 		@if(count($areas) > 0)
 		<tr nobr="true">
-			<td>Area/s Involved</td>
+			<td><b>Area/s Involved</b></td>
 			<td>
 				@if(!empty($areas))
 				<ul>
@@ -102,7 +102,7 @@
 		@endif
 		@if(count($channels) > 0)
 		<tr nobr="true">
-			<td>DT Channel/s Involved</td>
+			<td><b>DT Channel/s Involved</b></td>
 			<td>
 				@if(!empty($channels))
 				<ul>
@@ -116,7 +116,7 @@
 		@endif
 		@if(count($schemes) > 0)
 		<tr nobr="true">
-			<td>Schemes</td>
+			<td><b>Schemes</b></td>
 			<td>
 				@if(count($schemes)> 0)
 				<table class="sub-table">
@@ -146,7 +146,7 @@
 		@endif
 		@if(count($skuinvolves) > 0)
 		<tr nobr="true">
-			<td>SKU/s Involved Per Scheme</td>
+			<td><b>SKU/s Involved Per Scheme</b></td>
 			<td>
 				@if(!empty($skuinvolves))
 				<table class="sub-table">
@@ -211,7 +211,7 @@
 		@endif
 		@if(count($networks) > 0)
 		<tr nobr="true">
-			<td>Timings</td>
+			<td><b>Timings</b></td>
 			<td>
 				@if(count($networks)> 0)
 				<table class="sub-table timing">
@@ -240,7 +240,7 @@
 		@endif
 		@if(count($materials) > 0)
 		<tr nobr="true">
-			<td>Material Sourcing</td>
+			<td><b>Material Sourcing</b></td>
 			<td>
 				@if(count($materials)> 0)
 				<table class="sub-table source">
@@ -261,7 +261,7 @@
 		@endif
 		@if(!empty($fdapermit))
 		<tr nobr="true">
-			<td>FDA Permit No.</td>
+			<td><b>FDA Permit No.</b></td>
 			<td>
 				@if(!empty($fdapermit))
 				{{ $fdapermit->permit_no }}
@@ -271,19 +271,19 @@
 		@endif
 		@if(!empty($activity->billing_remarks))
 		<tr nobr="true">
-			<td>Billing Requirements</td>
+			<td><b>Billing Requirements</b></td>
 			<td>{{ nl2br($activity->billing_remarks) }}</td>
 		</tr>
 		@endif
 		@if(!empty($activity->billing_date))
 		<tr nobr="true">
-			<td>Billing Deadline</td>
+			<td><b>Billing Deadline</b></td>
 			<td>{{ date_format(date_create($activity->billing_date),'M j, Y') }}</td>
 		</tr>
 		@endif
 		@if(!empty($activity->instruction))
 		<tr nobr="true">
-			<td>Special Instructions</td>
+			<td><b>Special Instructions</b></td>
 			<td>{{ nl2br($activity->instruction) }}</td>
 		</tr>
 		@endif
