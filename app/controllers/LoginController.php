@@ -64,4 +64,23 @@ class LoginController extends \BaseController {
         Confide::logout();
         return Redirect::to('/dashboard');
     }
+
+    public function forgotpassword(){
+    	return View::make('login.forgotpassword');
+    }
+
+    public function doforgotpassword(){
+    	if (Confide::forgotPassword(Input::get('email'))) {
+			// $notice_msg = Lang::get('confide::confide.alerts.password_forgot');
+			// return Redirect::action('LoginController@index')
+			// 	->with('class', 'alert-success')
+			// 	->with('message', $notice_msg);
+		} else {
+			// $error_msg = Lang::get('confide::confide.alerts.wrong_password_forgot');
+			// return Redirect::action('LoginController@doforgotpassword')
+			// 	->withInput()
+			// 	->with('class', 'alert-danger')
+			// 	->with('message', $error_msg);
+		}
+    }
 }

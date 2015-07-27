@@ -66,10 +66,15 @@ Route::post('queue/pdf', function()
 Route::get('/','LoginController@index');
 Route::get('login','LoginController@index');
 Route::get('logout','LoginController@logout');
-
 Route::post('login', 'LoginController@dologin');
 
+Route::get('forgotpassword','LoginController@forgotpassword');
+Route::post('forgotpassword','LoginController@doforgotpassword');
+
 Route::get('downloadcycle/{id}', 'DownloadsController@downloadcycle');
+
+Route::get('users/forgot_password', 'UsersController@forgotPassword');
+Route::post('users/forgot_password', 'UsersController@doForgotPassword');
 
 Route::group(array('before' => 'auth'), function()
 {	
@@ -171,6 +176,7 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('profile','ProfileController@index');
 	Route::post('profile','ProfileController@update');
 
+
 	// Confide routes
 	// Route::get('users', 'UsersController@index');
 	// Route::get('users/create', 'UsersController@create');
@@ -178,14 +184,14 @@ Route::group(array('before' => 'auth'), function()
 	// Route::put('users/{id}', 'UsersController@update');
 	// Route::post('users', 'UsersController@store');
 
-	Route::get('users/login', 'UsersController@login');
-	Route::post('users/login', 'UsersController@doLogin');
-	Route::get('users/confirm/{code}', 'UsersController@confirm');
-	Route::get('users/forgot_password', 'UsersController@forgotPassword');
-	Route::post('users/forgot_password', 'UsersController@doForgotPassword');
-	Route::get('users/reset_password/{token}', 'UsersController@resetPassword');
-	Route::post('users/reset_password', 'UsersController@doResetPassword');
-	Route::get('users/logout', 'UsersController@logout');
+	// Route::get('users/login', 'UsersController@login');
+	// Route::post('users/login', 'UsersController@doLogin');
+	// Route::get('users/confirm/{code}', 'UsersController@confirm');
+	// Route::get('users/forgot_password', 'UsersController@forgotPassword');
+	// Route::post('users/forgot_password', 'UsersController@doForgotPassword');
+	// Route::get('users/reset_password/{token}', 'UsersController@resetPassword');
+	// Route::post('users/reset_password', 'UsersController@doResetPassword');
+	// Route::get('users/logout', 'UsersController@logout');
 	Route::get('changepassword', 'UsersController@changepassword');
 	Route::post('updatepassword', 'UsersController@updatepassword');
 

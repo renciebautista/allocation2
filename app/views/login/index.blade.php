@@ -34,6 +34,7 @@
 				<div class="col-lg-12">
 					<div class="form-group">
 						{{ Form::submit('Sign in', array('class' => 'btn btn-primary')) }}
+						{{ HTML::linkAction('LoginController@forgotpassword' , 'Forgot your password?',null,['class' => 'pull-right m-top']) }}
 					</div>
 				</div>
 			</div>
