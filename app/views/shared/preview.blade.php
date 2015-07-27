@@ -461,8 +461,8 @@
 								@foreach($networks as $network)
 								<tr>
 									<td>{{ $network->task }}</td>
-									<td><?php echo ($network->final_start_date != null) ?  date_format(date_create($network->final_start_date),'m/d/Y') : '';?></td>
-									<td><?php echo ($network->final_end_date != null) ?  date_format(date_create($network->final_end_date),'m/d/Y') : '';?></td>
+									<td><?php echo ($network->final_start_date != null) ?  date_format(date_create($network->final_start_date),'M j, Y') : '';?></td>
+									<td><?php echo ($network->final_end_date != null) ?  date_format(date_create($network->final_end_date),'M j, Y') : '';?></td>
 									
 								</tr>
 								@endforeach

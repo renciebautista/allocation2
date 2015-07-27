@@ -6,6 +6,7 @@ table{
     padding: 3px;
     width: 950px;
 }
+
 .bordered tr > th{
 
     border: 0.1px solid #000000;
