@@ -150,7 +150,7 @@ class ActivityController extends BaseController {
 						$code .= '_'.$activity_type->activity_type;
 					}
 
-					if(count($division_code) > 0){
+					if(count($division_code) > 1){
 						$code .= '_MULTI';
 					}else{
 						$division = Sku::select('division_code', 'division_desc')
@@ -485,6 +485,8 @@ class ActivityController extends BaseController {
 	 */
 	public function update($id)
 	{
+		// $division_code = Input::get('division');
+		// echo count($division_code);
 		if(Auth::user()->hasRole("PROPONENT")){
 			if(Request::ajax()){
 				$activity = Activity::find($id);
@@ -521,7 +523,7 @@ class ActivityController extends BaseController {
 								$code .= '_'.$activity_type->activity_type;
 							}
 
-							if(count($division_code)>0){
+							if(count($division_code) > 1){
 								$code .= '_MULTI';
 							}else{
 								$division = Sku::select('division_code', 'division_desc')
@@ -747,7 +749,7 @@ class ActivityController extends BaseController {
 							if(!empty($activity_type)){
 								$code .= '_'.$activity_type->activity_type;
 							}
-							if(count($division_code)>0){
+							if(count($division_code) > 1){
 								$code .= '_MULTI';
 							}else{
 								$division = Sku::select('division_code', 'division_desc')
