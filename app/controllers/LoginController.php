@@ -38,25 +38,6 @@ class LoginController extends \BaseController {
 		return Redirect::back();
 
 		
-
-		// $repo = App::make('UserRepository');
-		// $input = Input::all();
-
-		// if ($repo->login($input)) {
-		// 	return Redirect::action('DashboardController@index');
-		// } else {
-		// 	if ($repo->isThrottled($input)) {
-		// 		$err_msg = Lang::get('confide::confide.alerts.too_many_attempts');
-		// 	} elseif ($repo->existsButNotConfirmed($input)) {
-		// 		$err_msg = Lang::get('confide::confide.alerts.not_confirmed');
-		// 	} else {
-		// 		$err_msg = Lang::get('confide::confide.alerts.wrong_credentials');
-		// 	}
-
-		// 	return Redirect::back()
-		// 		->withInput(Input::except('password'))
-		// 		->with('error', $err_msg);
-		// }
 	}
 
 	public function logout()
@@ -70,17 +51,42 @@ class LoginController extends \BaseController {
     }
 
     public function doforgotpassword(){
-    	if (Confide::forgotPassword(Input::get('email'))) {
-			$notice_msg = Lang::get('confide::confide.alerts.password_forgot');
+    	if (User::forgot_password(Input::get('email'))) {
 			return Redirect::action('LoginController@index')
-				->with('class', 'alert-success')
-				->with('message', $notice_msg);
+				->with('class', ' alert alert-success')
+				->with('message', 'The information regarding password reset was sent to your email.');
 		} else {
-			$error_msg = Lang::get('confide::confide.alerts.wrong_password_forgot');
 			return Redirect::action('LoginController@doforgotpassword')
 				->withInput()
-				->with('class', 'alert-danger')
-				->with('message', $error_msg);
+				->with('class', 'alert alert-danger')
+				->with('message', 'User not found.');
 		}
+    }
+
+    public function resetpassword($token)
+    {
+        return View::make('login.reset_password')->with('token', $token);
+    }
+
+    public function doResetPassword()
+    {
+        $repo = App::make('UserRepository');
+        $input = array(
+            'token'                 =>Input::get('token'),
+            'password'              =>Input::get('password'),
+            'password_confirmation' =>Input::get('password_confirmation'),
+        );
+
+        // By passing an array with the token, password and confirmation
+        if ($repo->resetPassword($input)) {
+            return Redirect::action('LoginController@index')
+                ->with('message', 'Your password has been changed successfully.')
+                ->with('class', 'alert alert-success');
+        } else {
+            return Redirect::action('LoginController@resetpassword', array('token'=>$input['token']))
+                ->withInput()
+                ->with('message', 'Invalid password. Try again')
+                ->with('class', 'alert alert-danger');
+        }
     }
 }

@@ -60,4 +60,56 @@ class ProfileController extends \BaseController {
 			->with('class', 'alert-danger')
 			->with('message', 'There were validation errors.');
 	}
+
+		public function changepassword(){
+		return View::make('profile.changepassword');
+	}
+
+	public function updatepassword(){
+		Validator::extend('passcheck', function($attribute, $value, $parameters) {
+		    return Hash::check($value, Auth::user()->password); // Works for any form!
+		});
+
+		$messages = array(
+		    'passcheck' => 'Your old password was incorrect',
+		);
+
+		$validator = Validator::make(Input::all(), [
+		    'old_password'  => 'passcheck',
+		   	'password' => 'required|min:6|confirmed',
+			'password_confirmation' => 'same:password'
+		    // more rules ...
+		], $messages);
+
+		if($validator->passes())
+		{
+			DB::beginTransaction();
+			try {
+				$user = User::find(Auth::id());
+				$user->password = Input::get('password');
+				$user->password_confirmation = Input::get('password_confirmation');
+				$user->update();
+				DB::commit();
+
+				return Redirect::action('ProfileController@changepassword')
+				->with('class', 'alert-success')
+				->with('message', 'Your password has beeed successfuly updated.');
+
+			} catch (\Exception $e) {
+				DB::rollback();
+				return Redirect::action('ProfileController@changepassword')
+				->withInput(Input::except(array('password','password_confirmation')))
+				->withErrors($validator)
+				->with('class', 'alert-danger')
+				->with('message', 'There were validation errors.');
+			}		
+			
+		}
+
+		return Redirect::action('ProfileController@changepassword')
+			->withInput(Input::except(array('password','password_confirmation')))
+			->withErrors($validator)
+			->with('class', 'alert-danger')
+			->with('message', 'There were validation errors.');
+	}
 }

@@ -165,18 +165,43 @@ class User extends Eloquent implements ConfideUserInterface {
 		}
 	}
 
-	public static function changepassword($user){
-		$user->password = "031988";
-		$user->password_confirmation = "031988";
-		$user->update();
-		return true;
+
+	private static function getUserByEmail($email){
+		return self::where('email',$email)->first();
 	}
 
-	public static function resetpassword($email){
-		$user = self::where('email',$email)->first();
+	private static function generateToken()
+    {
+        return md5(uniqid(mt_rand(), true));
+    }
 
-        if (($user) && ($user->active == 1)) {
-            return self::changepassword($user);
+    private static function sendEmail($user, $token){
+    	$data['user'] = $user;
+    	$data['token'] = $token;
+    	Mail::send('emails.password_reset', $data, function($message) use ($user){
+			$message->to($user->email, $user->first_name);
+			$message->subject('ETOP Password Reset');
+		});
+    }
+
+	private static function requestChangePassword($user){
+		$token = self::generateToken();
+        $values = array(
+            'email'=> $user->email,
+            'token'=> $token,
+            'created_at'=> new \DateTime
+        );
+
+        DB::table('password_reminders')->insert($values);
+
+        self::sendEmail($user, $token);
+
+        return $token;
+	}
+	public static function forgot_password($email){
+		$user = self::getUserByEmail($email);
+        if (($user) && ($user->active)){
+            return self::requestChangePassword($user);
         }
 
         return false;

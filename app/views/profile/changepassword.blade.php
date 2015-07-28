@@ -16,7 +16,7 @@
 <div class="row">
 
 	<div class="col-lg-6">
-	{{ Form::open(array('action' => 'UsersController@updatepassword','class' => 'bs-component')) }}
+	{{ Form::open(array('action' => 'ProfileController@updatepassword','class' => 'bs-component')) }}
 		<div class="form-group">
 			{{ Form::label('old_password', 'Old Password', array('class' => 'control-label')) }}
 			{{ Form::password('old_password',array('class' => 'form-control', 'placeholder' => 'Old Password')) }}
@@ -49,8 +49,7 @@ $("form").validate({
 	errorClass : "has-error",
 	rules: {
 		old_password : {
-			required: true,
-            minlength : 6
+			required: true
         },
         password : {
 			required: true,
