@@ -89,6 +89,12 @@ class SubmittedActivityController extends \BaseController {
 		$artworks = ActivityArtwork::getList($activity->id);
 		$pispermit = ActivityFis::where('activity_id', $activity->id)->first();
 
+		$fdapermits = ActivityFdapermit::getList($activity->id);
+		$fis = ActivityFis::getList($activity->id);
+		// $artworks = ActivityArtwork::getList($activity->id);
+		$backgrounds = ActivityBackground::getList($activity->id);
+		$bandings = ActivityBanding::getList($activity->id);
+
 		// $scheme_customers = SchemeAllocation::getCustomers($activity->id);
 
 		//Involved Area
@@ -115,7 +121,8 @@ class SubmittedActivityController extends \BaseController {
 		$comments = ActivityComment::getList($activity->id);
 		return View::make('submittedactivity.edit',compact('activity','comments','approver', 'valid',
 			'activity' ,'planner','budgets','nobudgets','schemes','skuinvolves',
-			'materials','non_ulp','fdapermit', 'networks','artworks', 'pis' , 'areas','channels'));
+			'materials','non_ulp','fdapermit', 'networks','artworks', 'pis' , 'areas','channels', 
+			'fdapermits','fis', 'backgrounds', 'bandings'));
 	}
 
 	public function updateactivity($id)

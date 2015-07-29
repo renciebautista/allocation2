@@ -39,7 +39,9 @@
 
 <ul class="nav nav-tabs">
 	<li class="active"><a aria-expanded="true" href="#activty">Activity Preview</a></li>
+	<li class=""><a aria-expanded="false" href="#attachment">Attachments</a></li>
 	<li class=""><a aria-expanded="false" href="#comments">Comments</a></li>
+	
 </ul>
 
 <div id="myTabContent" class="tab-content">
@@ -184,7 +186,7 @@
 									@if(!empty($non_ulp))
 									<table class="sub-table ulp" style="margin-top:5px;"> 
 										<tr>
-											<th>Non ULP Premium SKUs</th>
+											<th>Non-ULP Premium SKUs</th>
 										</tr>
 										@foreach($non_ulp as $ulp)
 										<tr>
@@ -652,10 +654,156 @@
 				</div>
 		  	</div>
 		</div>
-		
 	</div>
 
 	<!-- attachment details -->
+	<div class="tab-pane fade" id="attachment">
+		<br>
+		<div class="panel panel-default">
+		  	<div class="panel-heading">FDA Permit</div>
+		  	<div class="panel-body">
+				<table class="table table-striped table-hover ">
+				  	<thead>
+					    <tr>
+					      	<th class="permit">FDA Permit No.</th>
+					      	<th >File Name</th>
+					      	<th class="update">Uploaded Date</th>
+					      	<th class="action">Action</th>
+					    </tr>
+				  	</thead>
+				  	<tbody>
+				  		@foreach($fdapermits as $permit)
+					    <tr>
+					      	<td>{{ $permit->permit_no }}</td>
+					      	<td>{{ $permit->file_name }}</td>
+					      	<td>{{ date_format(date_create($permit->created_at),'m/d/Y H:m:s') }}</td>
+					      	<td class="action">
+								{{ HTML::linkAction('ActivityController@fdadownload','Download', $permit->id, array('class' => 'btn btn-info btn-xs')) }}
+							</td>
+					    </tr>
+					    @endforeach
+				  	</tbody>
+				</table> 
+		  	</div>
+		</div>
+
+		<div class="panel panel-default">
+		  	<div class="panel-heading">Product Information Sheet</div>
+		  	<div class="panel-body">
+		  		
+				<table class="table table-striped table-hover ">
+				  	<thead>
+					    <tr>
+					      	<th>File Name</th>
+					      	<th class="update">Uploaded Date</th>
+					      	<th class="action">Action</th>
+					    </tr>
+				  	</thead>
+				  	<tbody>
+				  		@foreach($fis as $fi)
+					    <tr>
+					      	<td>{{ $fi->file_name }}</td>
+					      	<td>{{ date_format(date_create($fi->created_at),'m/d/Y H:m:s') }}</td>
+							<td class="action">
+								{{ HTML::linkAction('ActivityController@fisdownload','Download', $fi->id, array('class' => 'btn btn-info btn-xs')) }}
+							</td>
+					    </tr>
+					    @endforeach
+				  	</tbody>
+				</table>
+		  	</div>
+		</div>
+
+		<div class="panel panel-default">
+		  	<div class="panel-heading">Artwork Packshots</div>
+		  	<div class="panel-body">
+				<div class="row">
+					<div class="col-lg-12">
+						<table class="table table-striped table-hover ">
+						  	<thead>
+							    <tr>
+							      	<th>File Name</th>
+							      	<th class="update">Uploaded Date</th>
+					      			<th class="action">Action</th>
+							    </tr>
+						  	</thead>
+						  	<tbody>
+						  		@foreach($artworks as $artwork)
+							    <tr>
+							      	<td>{{ $artwork->file_name }}</td>
+							      	<td>{{ date_format(date_create($artwork->created_at),'m/d/Y H:m:s') }}</td>
+									<td class="action">
+										{{ HTML::linkAction('ActivityController@artworkdownload','Download', $artwork->id, array('class' => 'btn btn-info btn-xs')) }}
+									</td>
+							    </tr>
+							    @endforeach
+						  	</tbody>
+						</table> 
+					</div>
+			  	</div>
+		  	</div>
+		</div>	
+
+		<div class="panel panel-default">
+		  	<div class="panel-heading">Marketing Backgrounds</div>
+		  	<div class="panel-body">
+				<div class="row">
+					<div class="col-lg-12">
+						<table class="table table-striped table-hover ">
+						  	<thead>
+							    <tr>
+							      	<th>File Name</th>
+							      	<th class="update">Uploaded Date</th>
+					      			<th class="action">Action</th>
+							    </tr>
+						  	</thead>
+						  	<tbody>
+						  		@foreach($backgrounds as $background)
+							    <tr>
+							      	<td>{{ $background->file_name }}</td>
+							      	<td>{{ date_format(date_create($background->created_at),'m/d/Y H:m:s') }}</td>
+									<td class="action">
+										{{ HTML::linkAction('ActivityController@backgrounddownload','Download', $background->id, array('class' => 'btn btn-info btn-xs')) }}
+									</td>
+							    </tr>
+							    @endforeach
+						  	</tbody>
+						</table> 
+					</div>
+			  	</div>
+		  	</div>
+		</div>
+
+		<div class="panel panel-default">
+		  	<div class="panel-heading">Banding Guidelines / Activation Mechanics / Others</div>
+		  	<div class="panel-body">
+				<div class="row">
+					<div class="col-lg-12">
+						<table class="table table-striped table-hover ">
+						  	<thead>
+							    <tr>
+							      	<th>File Name</th>
+							      	<th class="update">Uploaded Date</th>
+							    </tr>
+						  	</thead>
+						  	<tbody>
+						  		@foreach($bandings as $banding)
+							    <tr>
+							      	<td>{{ $banding->file_name }}</td>
+							      	<td>{{ date_format(date_create($banding->created_at),'m/d/Y H:m:s') }}</td>
+									<td class="action">
+										{{ HTML::linkAction('ActivityController@bandingdownload','Download', $banding->id, array('class' => 'btn btn-info btn-xs')) }}
+									</td>
+							    </tr>
+							    @endforeach
+						  	</tbody>
+						</table> 
+					</div>
+			  	</div>
+		  	</div>
+		</div>
+	</div>
+
 	<div class="tab-pane fade" id="comments">
 		<br>
 		<div class="panel panel-default">
