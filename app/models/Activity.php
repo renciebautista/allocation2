@@ -405,10 +405,17 @@ class Activity extends \Eloquent {
 
 	public static function summary($status,$type){
 		return self::select('activities.id','activities.circular_name','cycles.cycle_name',
-			'scope_types.scope_name','activity_types.activity_type')
+			'activities.edownload_date',
+			'activities.eimplementation_date','activities.end_date','activities.billing_date',
+			'scope_types.scope_name','activity_types.activity_type',
+			DB::raw('CONCAT(users.first_name, " ", users.last_name) AS planner'),
+			DB::raw('CONCAT(propo.first_name, " ", propo.last_name) AS proponent'))	
 			->join('cycles', 'activities.cycle_id','=','cycles.id')
 			->join('scope_types', 'activities.scope_type_id','=','scope_types.id')
 			->join('activity_types', 'activities.activity_type_id','=','activity_types.id')
+			->join('activity_planners', 'activities.id','=','activity_planners.activity_id', 'left')
+			->join('users', 'activity_planners.user_id','=','users.id', 'left')	
+			->join('users as propo', 'activities.created_by','=','propo.id')
 			->where('activities.status_id',$status)
 			->where(function($query) use ($type){
 				if($type == 'ongoing'){

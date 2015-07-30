@@ -138,7 +138,11 @@
 						<td>{{ $activity->planner }}</td>
 						<td>{{ date_format(date_create($activity->eimplementation_date),'m/d/Y') }}</td>
 						<td>{{ date_format(date_create($activity->end_date),'m/d/Y') }}</td>
+						@if($activity->billing_date != "")
 						<td>{{ date_format(date_create($activity->billing_date),'m/d/Y') }}</td>
+						@else
+						<td></td>
+						@endif
 						<td class="action">
 							{{ HTML::linkAction('ActivityController@edit','View', $activity->id, array('class' => 'btn btn-success btn-xs')) }}
 						</td>

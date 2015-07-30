@@ -2653,13 +2653,28 @@ class ActivityController extends BaseController {
 			$roles = json_decode(Input::get('roles'));
 			if(count($roles) > 0){
 				foreach ($roles as $role) {
+					
+
 					if(count( (array)$role) > 0){
-						if(($role->owner != "") && ($role->point != "") && ($role->timing != "")){
-							$_data[] = array('activity_id' => $activity->id,
-								'owner' => $role->owner,
-								'point' => $role->point,
-								'timing' => $role->timing);
+						$owner = '';
+						$point = '';
+						$timing = '';
+						if(isset($role->owner)){
+							$owner = $role->owner;
 						}
+						if(isset($role->point)){
+							$point = $role->point;
+						}
+						if(isset($role->timing)){
+							$timing = $role->timing;
+						}
+						if(($owner != "") || ($point != "")  || ($timing != "") ){
+							$_data[] = array('activity_id' => $activity->id,
+								'owner' => $owner,
+								'point' => $point,
+								'timing' => $timing);
+						}
+						
 						
 					}
 				}

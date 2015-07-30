@@ -52,9 +52,13 @@
 					<td>{{ $ongoing->circular_name }}</td>
 					<td>{{ $ongoing->proponent }}</td>
 					<td>{{ $ongoing->planner }}</td>
-					<td>{{ date_format(date_create($ongoing->edownload_date),'m/d/Y') }}</td>
 					<td>{{ date_format(date_create($ongoing->eimplementation_date),'m/d/Y') }}</td>
+					<td>{{ date_format(date_create($ongoing->end_date),'m/d/Y') }}</td>
+					@if($ongoing->billing_date != "")
 					<td>{{ date_format(date_create($ongoing->billing_date),'m/d/Y') }}</td>
+					@else
+					<td></td>
+					@endif
 					<td class="action">
 						{{ HTML::linkAction('ReportController@download','Download', $ongoing->id, array('class' => 'btn btn-success btn-xs')) }}
 					</td>
@@ -104,9 +108,13 @@
 					<td>{{ $upcoming->circular_name }}</td>
 					<td>{{ $upcoming->proponent }}</td>
 					<td>{{ $upcoming->planner }}</td>
-					<td>{{ date_format(date_create($upcoming->edownload_date),'m/d/Y') }}</td>
 					<td>{{ date_format(date_create($upcoming->eimplementation_date),'m/d/Y') }}</td>
+					<td>{{ date_format(date_create($upcoming->end_date),'m/d/Y') }}</td>
+					@if($upcoming->billing_date != "")
 					<td>{{ date_format(date_create($upcoming->billing_date),'m/d/Y') }}</td>
+					@else
+					<td></td>
+					@endif
 					<td class="action">
 						{{ HTML::linkAction('ReportController@download','Download', $upcoming->id, array('class' => 'btn btn-success btn-xs')) }}
 					</td>
@@ -155,9 +163,13 @@
 					<td>{{ $lastmonth->circular_name }}</td>
 					<td>{{ $lastmonth->proponent }}</td>
 					<td>{{ $lastmonth->planner }}</td>
-					<td>{{ date_format(date_create($lastmonth->edownload_date),'m/d/Y') }}</td>
 					<td>{{ date_format(date_create($lastmonth->eimplementation_date),'m/d/Y') }}</td>
+					<td>{{ date_format(date_create($lastmonth->end_date),'m/d/Y') }}</td>
+					@if($lastmonth->billing_date != "")
 					<td>{{ date_format(date_create($lastmonth->billing_date),'m/d/Y') }}</td>
+					@else
+					<td></td>
+					@endif
 					<td class="action">
 						{{ HTML::linkAction('ReportController@download','Download', $lastmonth->id, array('class' => 'btn btn-success btn-xs')) }}
 					</td>
