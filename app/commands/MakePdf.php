@@ -90,7 +90,7 @@ class MakePdf extends Command {
 
 			$fdapermit = ActivityFdapermit::where('activity_id', $activity->id)->first();
 			$networks = ActivityTiming::getTimings($activity->id,true);
-			$activity_roles = ActivityRole::getList($activity->id);
+			$activity_roles = ActivityRole::getListData($activity->id);
 			$artworks = ActivityArtwork::getList($activity->id);
 			$pispermit = ActivityFis::where('activity_id', $activity->id)->first();
 

@@ -5,7 +5,9 @@ class ActivityRole extends \Eloquent {
 	public $timestamps = false;
 
 	public static function getList($activity_id){
-		return self::where('activity_id', $activity_id)->get();;
+		return self::where('activity_id', $activity_id)
+			->orderBy('id')
+			->get();;
 	}
 
 	public static function getListData($activity_id){
