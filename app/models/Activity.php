@@ -516,7 +516,7 @@ class Activity extends \Eloquent {
 	public static function ProponentActivitiesForApproval($user_id,$cycles){
 		return self::select('activities.id','activities.circular_name','activities.edownload_date',
 			'activities.eimplementation_date','activities.billing_date',
-			'activity_statuses.status','cycles.cycle_name',
+			'activity_statuses.status','cycles.cycle_name','end_date',
 			'scope_types.scope_name','activity_types.activity_type','activities.status_id',
 			DB::raw('CONCAT(users.first_name, " ", users.last_name) AS planner'),
 			DB::raw('CONCAT(propo.first_name, " ", propo.last_name) AS proponent'))
@@ -539,7 +539,7 @@ class Activity extends \Eloquent {
 	public static function PmogActivitiesForApproval($user_id,$cycles){
 		return self::select('activities.id','activities.circular_name','activities.edownload_date',
 			'activities.eimplementation_date','activities.billing_date',
-			'activity_statuses.status','cycles.cycle_name',
+			'activity_statuses.status','cycles.cycle_name','end_date',
 			'scope_types.scope_name','activity_types.activity_type', 'activities.status_id',
 			DB::raw('CONCAT(users.first_name, " ", users.last_name) AS planner'),
 			DB::raw('CONCAT(propo.first_name, " ", propo.last_name) AS proponent'))
@@ -564,7 +564,7 @@ class Activity extends \Eloquent {
 		$activities = ActivityApprover::getActivitiesForApproval($user_id);
 		return self::select('activities.id','activities.circular_name','activities.edownload_date',
 			'activities.eimplementation_date','activities.billing_date',
-			'activity_statuses.status','cycles.cycle_name',
+			'activity_statuses.status','cycles.cycle_name','end_date',
 			'scope_types.scope_name','activity_types.activity_type', 'activities.status_id',
 			DB::raw('CONCAT(users.first_name, " ", users.last_name) AS planner'),
 			DB::raw('CONCAT(propo.first_name, " ", propo.last_name) AS proponent'))
@@ -589,7 +589,7 @@ class Activity extends \Eloquent {
 		$activities = ActivityApprover::getActivities($user_id);
 		return self::select('activities.id','activities.circular_name','activities.edownload_date',
 			'activities.eimplementation_date','activities.billing_date',
-			'activity_statuses.status','cycles.cycle_name',
+			'activity_statuses.status','cycles.cycle_name','end_date',
 			'scope_types.scope_name','activity_types.activity_type',  'activities.status_id',
 			DB::raw('CONCAT(users.first_name, " ", users.last_name) AS planner'),
 			DB::raw('CONCAT(propo.first_name, " ", propo.last_name) AS proponent'))
@@ -613,7 +613,7 @@ class Activity extends \Eloquent {
 	public static function Released($cycles){
 		return self::select('activities.id','activities.circular_name','activities.edownload_date',
 			'activities.eimplementation_date','activities.billing_date',
-			'activity_statuses.status','cycles.cycle_name',
+			'activity_statuses.status','cycles.cycle_name','end_date',
 			'scope_types.scope_name','activity_types.activity_type',  'activities.status_id',
 			DB::raw('CONCAT(users.first_name, " ", users.last_name) AS planner'),
 			DB::raw('CONCAT(propo.first_name, " ", propo.last_name) AS proponent'))
@@ -647,5 +647,60 @@ class Activity extends \Eloquent {
 		}else{
 			return false;
 		}
+	}
+
+
+	public static function activitiesForAllocReport($filters){
+		// $status = $filters['status'];
+		// return self::join('activity_planners', 'activities.id','=','activity_planners.activity_id', 'left')
+		// 	->join('activity_approvers', 'activities.id','=','activity_approvers.activity_id', 'left')
+		// 	->join('activity_categories', 'activities.id','=','activity_categories.activity_id', 'left')
+		// 	->join('activity_brands', 'activities.id','=','activity_brands.activity_id', 'left')
+		// 	->where(function($query) use ($status){
+		// 		if(count($status) > 0){
+		// 			$query->whereIn('activities.status_id', $status);
+		// 		}
+		// 	})
+		// 	// ->where(function($query) use ($data['scopes']){
+		// 	// 	if(count($data['scopes']) > 0){
+		// 	// 		$query->whereIn('activities.scope_type_id', $data['scopes']);
+		// 	// 	}
+		// 	// })
+		// 	// ->where(function($query) use ($data['proponents']){
+		// 	// 	if(count($data['proponents']) > 0){
+		// 	// 		$query->whereIn('activities.created_by', $data['proponents']);
+		// 	// 	}
+		// 	// })
+		// 	// ->where(function($query) use ($data['planners']){
+		// 	// 	if(count($data['planners']) > 0){
+		// 	// 		$query->whereIn('activity_planners.user_id', $data['planners']);
+		// 	// 	}
+		// 	// })
+		// 	// ->where(function($query) use ($data['approvers']){
+		// 	// 	if(count(data['approvers']) > 0){
+		// 	// 		$query->whereIn('activity_approvers.user_id', $data['approvers']);
+		// 	// 	}
+		// 	// })
+		// 	// ->where(function($query) use ($data['activitytypes']){
+		// 	// 	if(count($data['activitytypes']) > 0){
+		// 	// 		$query->whereIn('activities.activity_type_id', $data['activitytypes']);
+		// 	// 	}
+		// 	// })
+		// 	// ->where(function($query) use ($data['divisions']){
+		// 	// 	if(count($data['divisions']) > 0){
+		// 	// 		$query->whereIn('activities.division_code', $data['divisions']);
+		// 	// 	}
+		// 	// })
+		// 	// ->where(function($query) use ($data['categories']){
+		// 	// 	if(count($data['categories']) > 0){
+		// 	// 		$query->whereIn('activity_categories.category_code', $data['categories']);
+		// 	// 	}
+		// 	// })
+		// 	// ->where(function($query) use ($data['brands']){
+		// 	// 	if(count($data['brands']) > 0){
+		// 	// 		$query->whereIn('activity_brands.brand_code', $data['brands']);
+		// 	// 	}
+		// 	// })
+		// 	->get();
 	}
 }
