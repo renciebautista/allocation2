@@ -1053,7 +1053,7 @@
 	                            	<p class="{{ $comment->class }}">({{ $comment->comment_status }})</p>
 	                            </strong> 
 	                            <small class="pull-right text-muted">
-	                                <i class="fa fa-clock-o fa-fw"></i> {{ Carbon::parse($comment->created_at)->subMinutes(2)->diffForHumans()}}
+	                                <i class="fa fa-clock-o fa-fw"></i>{{ date_format(date_create($comment->created_at),'m/d/Y H:m:s') }} 
 	                            </small>
 	                        </div>
 	                        <p>{{ $comment->comment }}</p>

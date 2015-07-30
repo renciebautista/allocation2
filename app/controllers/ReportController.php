@@ -11,7 +11,7 @@ class ReportController extends \BaseController {
 	public function activities()
 	{
 		Input::flash();
-		$statuses = ActivityStatus::orderBy('id')->lists('status', 'id');
+		$statuses = ActivityStatus::getLists();
 		$cycles = Cycle::getLists();
 		$scopes = ScopeType::getLists();
 		$types = ActivityType::getLists();
@@ -102,9 +102,6 @@ class ReportController extends \BaseController {
 				'schemes','skuinvolves', 'activity_roles','materials','fdapermit', 'networks','artworks', 
 				'pis' , 'areas','channels', 'approvers' , 'sku_involves'));
 		}
-		
-
-		
 	}
 
 	public function download($id){
@@ -134,5 +131,5 @@ class ReportController extends \BaseController {
 		$archive = $zippy->create($zip_path,$folder,true);
 		return Response::download($zip_path);
 	}
-
+	
 }

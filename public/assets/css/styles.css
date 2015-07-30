@@ -570,6 +570,7 @@ h2, .h2 {
 #activity_preview .ap-title table tr > td:first-child{
     font-weight: bold;
 	width: 140px;
+	vertical-align: top;
 }
 #activity_preview .ap-activity {
     padding-top: 15px;
@@ -583,7 +584,7 @@ h2, .h2 {
     margin-left: -39px;
 }
 #activity_preview .ap-activity table  {
-	font-size: 11px;
+	font-size: 12px;
 }
 
 #activity_preview .ap-activity table tr > td:first-child {

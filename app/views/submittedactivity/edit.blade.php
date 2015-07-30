@@ -20,6 +20,7 @@
 
 			<!-- Button trigger modal -->
 			<?php $read_only = true; ?>
+
 			@if(($approver->status_id == 0) && ($valid) && (strtotime($activity->cycle->submission_deadline) >= strtotime(date('Y-m-d'))))
 
 			<button type="submit" class="btn btn-success" name="action" value="approve" onclick="return confirm('You are about to approve this activity. Do you want to proceed?')">
@@ -34,7 +35,6 @@
 	</div>
 
 </div>
-
 
 
 <ul class="nav nav-tabs">
@@ -71,20 +71,49 @@
 								<td>: {{ $activity->activity_code }}</td>
 							</tr>
 							<tr>
+								<td>TOP Cycle</td>
+								<td>: {{ $activity->cycle->cycle_name }}</td>
+							</tr>
+							<tr>
 								<td>Proponent Name</td>
-								<td>: {{ $activity->createdby->getFullname() }} / {{ $activity->createdby->contact_no }}</td>
+								<td>: {{ $activity->createdby->getFullname() }} 
+									@if(!empty($activity->createdby->contact_no))
+									/ {{ $activity->createdby->contact_no }}
+									@endif
+								</td>
 							</tr>
 							<tr>
 								<td>PMOG Partner</td>
+
 								@if(!empty($activity->pmog[0]))
-								<td>: {{ $activity->pmog[0]->getFullname() }} / {{ $activity->pmog[0]->contact_no }}</td>
+								<td>: {{  $activity->pmog[0]->getFullname() }} 
+									@if(!empty($activity->pmog[0]->contact_no))
+									/ {{ $activity->pmog[0]->contact_no }}
+									@endif
+								</td>
 								@else
 								<td>:</td>
 								@endif
 							</tr>
+
 							<tr>
-								<td>TOP Cycle</td>
-								<td>: {{ $activity->cycle->cycle_name }}</td>
+								<td>Approvers</td>
+								@if(!empty($approvers))
+								<td>
+									<?php $first = false; ?>
+									@foreach($approvers as $approver)
+									@if(!$first)
+									:
+									<?php $first = true; ?>
+									@else
+									&nbsp
+									@endif
+									 {{$approver->first_name}} {{$approver->last_name}}</br>
+									@endforeach
+								</td>
+								@else
+								<td>:</td>
+								@endif
 							</tr>
 						</table>
 					</div>
@@ -131,11 +160,14 @@
 									@if(!empty($budgets))
 									<ul>
 									@foreach($budgets as $budget)
-									@if($budget->budget_type_id == 1)
-									<li>{{ $budget->io_number }} - {{ $budget->remarks}}</li>
-									@endif
+										@if($budget->budget_type_id == 1)
+											@if(!empty($budget->remarks))
+											<li>{{ $budget->io_number }} - {{ $budget->remarks}}</li>
+											@else
+											<li>{{ $budget->io_number }}</li>
+											@endif
+										@endif
 									@endforeach
-									
 									</ul>
 									@endif
 								</td>
@@ -149,11 +181,14 @@
 									@if(!empty($budgets))
 									<ul>
 									@foreach($budgets as $budget)
-									@if($budget->budget_type_id == 2)
-									<li>{{ $budget->io_number }}  - {{ $budget->remarks}}</li>
-									@endif
+										@if($budget->budget_type_id == 2)
+											@if(!empty($budget->remarks))
+											<li>{{ $budget->io_number }}  - {{ $budget->remarks}}</li>
+											@else
+											<li>{{ $budget->io_number }}</li>
+											@endif
+										@endif
 									@endforeach
-									
 									</ul>
 									@endif
 								</td>
@@ -164,40 +199,23 @@
 							<tr>
 								<td>SKU/s Involved</td>
 								<td>
-									@if(!empty($skuinvolves))
-									<table class="sub-table sku">
+									@if(count($sku_involves)> 0)
+									<table class="sub-table">
 										<tr>
-											<th>Host SKU Code</th>
-											<th>Host SKU Description</th>
-											<th>Premium SKU Code</th>
-											<th>Premium SKU Description</th>
+											<th style="width:16%">SKU Code</th>
+											<th >Description</th>
 										</tr>
-										@foreach($skuinvolves as $involve)
+										@foreach($sku_involves as $sku_involve)
 										<tr>
-											<td>{{ $involve->sap_code }}</td>
-											<td>{{ $involve->sap_desc }}</td>
-											<td>{{ $involve->sap_code }}</td>
-											<td>{{ $involve->sap_desc }}</td>
-										</tr>
-										@endforeach
-									</table>
-									@endif
-
-									@if(!empty($non_ulp))
-									<table class="sub-table ulp" style="margin-top:5px;"> 
-										<tr>
-											<th>Non-ULP Premium SKUs</th>
-										</tr>
-										@foreach($non_ulp as $ulp)
-										<tr>
-											<td>{{ $ulp }}</td>
+											<td>{{ $sku_involve->sap_code }}</td>
+											<td>{{ $sku_involve->sap_desc }}</td>
 										</tr>
 										@endforeach
 									</table>
 									@endif
 								</td>
 								@if(!$read_only)
-								<td>{{ Form::textarea('activity_skus','',array('rows' => 1, 'placeholder' => 'Non ULP Premium SKU Remarks')) }}</td>
+								<td>{{ Form::textarea('activity_skus','',array('rows' => 1, 'placeholder' => 'SKU/s Involved Remarks')) }}</td>
 								@endif
 							</tr>
 							<tr>
@@ -234,16 +252,19 @@
 								<td>Schemes</td>
 								<td>
 									@if(count($schemes)> 0)
-									<table class="sub-table schemes">
+									<table class="sub-table">
 										<tr>
+											<th style="width:3%"></th>
 											<th>Scheme Desc.</th>
-											<th>Item Code</th>
-											<th>Cost per Deal</th>
-											<th>Cost of Premium</th>
-											<th>Shopper Purchase Requirement</th>
+											<th style="width:16%">Item Code</th>
+											<th style="width:16%">Cost per Deal</th>
+											<th style="width:16%">Cost of Premium</th>
+											<th style="width:16%">Shopper Purchase Requirement</th>
 										</tr>
+										<?php $cnt =1; ?>
 										@foreach($schemes as $scheme)
 										<tr>
+											<td>{{ $cnt++ }}</td>
 											<td>{{ $scheme->name }}</td>
 											<td>{{ ($scheme->item_code == '') ? 'N/A' :  $scheme->item_code }}</td>
 											<td>{{ number_format($scheme->ulp,2) }}</td>
@@ -259,6 +280,45 @@
 								@endif
 							</tr>
 							<tr>
+								<td>SKU/s Involved Per Scheme</td>
+								<td>
+									@if(!empty($skuinvolves))
+									<table class="sub-table">
+										<tr>
+											<th style="width:3%"></th>
+											<th>Host SKU Code - Description</th>
+											<th style="width:32%">Premium SKU Code - Description</th>
+											<th style="width:32%">Non ULP Premium</th>
+										</tr>
+										<?php $cnt =1; ?>
+										@foreach($skuinvolves as $key => $sku)
+										<tr>
+											<td>{{ $cnt++ }}</td>
+											<td>
+												@foreach($sku['involves'] as $involve)
+												{{ $involve->sap_code}} - {{ $involve->sap_desc}} </br>
+												@endforeach
+											</td>
+											<td>
+												@foreach($sku['premiums'] as $premium)
+												{{ $premium->sap_code}} - {{ $premium->sap_desc}} </br>
+												@endforeach
+											</td>
+											<td>
+												@foreach($sku['non_ulp'] as $non_ulp)
+												{{ $non_ulp }}
+												@endforeach
+											</td>
+										</tr>
+										@endforeach
+									</table>
+									@endif
+								</td>
+								@if(!$read_only)
+								<td>{{ Form::textarea('activity_scheme_skus','',array('rows' => 1, 'placeholder' => 'SKU/s Involved Per Scheme Remarks')) }}</td>
+								@endif
+							</tr>
+							<tr>
 								<td>Timings</td>
 								<td>
 									@if(count($networks)> 0)
@@ -268,18 +328,51 @@
 											<th>Start Date</th>
 											<th>End Date</th>
 										</tr>
+										<?php $last_date; ?>
 										@foreach($networks as $network)
 										<tr>
 											<td>{{ $network->task }}</td>
-											<td>{{ date_format(date_create($network->start_date),'M j, Y') }}</td>
-											<td>{{ date_format(date_create($network->end_date),'M j, Y') }}</td>
+											<td><?php echo ($network->final_start_date != null) ?  date_format(date_create($network->final_start_date),'M j, Y') : '';?></td>
+											<td><?php echo ($network->final_end_date != null) ?  date_format(date_create($network->final_end_date),'M j, Y') : '';?></td>
+											
 										</tr>
 										@endforeach
+										<tr>
+											<td>IMPLEMENTATION DATE</td>
+											<td>{{ date_format(date_create($activity->eimplementation_date),'M j, Y') }}</td>
+											<td>{{ date_format(date_create($activity->end_date),'M j, Y') }}</td>
+										</tr>
 									</table>
 									@endif
 								</td>
 								@if(!$read_only)
 								<td>{{ Form::textarea('activity_timing','',array('rows' => 1, 'placeholder' => 'Timings Remarks')) }}</td>
+								@endif
+							</tr>
+							<tr>
+								<td>Roles and Responsibilities</td>
+								<td>
+									@if(count($activity_roles)> 0)
+									<table class="sub-table role">
+										<tr>
+											<th>Process Owner</th>
+											<th>Action Points</th>
+											<th>Timings</th>
+										</tr>
+										@foreach($activity_roles as $activity_role)
+										<tr>
+											<td>{{ $activity_role->owner }}</td>
+											<td>{{ $activity_role->point }}</td>
+											<td>{{ $activity_role->timing }}</td>
+											
+										</tr>
+										@endforeach
+
+									</table>
+									@endif
+								</td>
+								@if(!$read_only)
+								<td>{{ Form::textarea('activity_roles','',array('rows' => 1, 'placeholder' => 'Roles and Responsibilities Remarks')) }}</td>
 								@endif
 							</tr>
 							<tr>
@@ -353,18 +446,6 @@
 						@endif
 					</div>
 
-					<div class="ap-fdapermit">
-						<h2>FDA Permit</h2>
-						@if(!$read_only)
-						{{ Form::textarea('activity_fda_ac','',array('rows' => 1, 'placeholder' => 'FDA Permit Remarks')) }}
-						@endif
-						@if(!empty($fdapermit))
-						<ul>
-							<li>{{ HTML::image('fdapermit/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/'.$fdapermit->hash_name ,$fdapermit->file_desc) }}</li>
-						</ul>
-						@endif
-					</div>
-
 					<div class="ap-codes">
 						<h2>Barcodes / Case Codes Per Scheme</h2>
 						@if(!$read_only)
@@ -398,6 +479,30 @@
 						</table>
 						@endif
 					</div>
+
+					<div class="ap-fdapermit">
+						<h2>FDA Permit</h2>
+						@if(!$read_only)
+						{{ Form::textarea('activity_fda_ac','',array('rows' => 1, 'placeholder' => 'FDA Permit Remarks')) }}
+						@endif
+						@if(!empty($fdapermit))
+						<?php 
+							$file = explode(".", $fdapermit->file_desc);
+
+						?>
+						<ul>
+						@if($file[1] != "pdf")
+						
+							<li>{{ HTML::image('fdapermit/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/'.$fdapermit->hash_name ,$fdapermit->file_desc) }}</li>
+						
+						@else
+						<li>{{ HTML::linkAction('ActivityController@fdadownload',$fdapermit->file_desc, $fdapermit->id, array('class' => 'btn btn-success btn-xs')) }}</li>
+						@endif
+						</ul>
+						@endif
+					</div>
+
+					
 
 					@if(count($pis) > 0)
 					<div class="ap-product">
@@ -818,7 +923,7 @@
 	                            	<p class="{{ $comment->class }}">({{ $comment->comment_status }})</p>
 	                            </strong> 
 	                            <small class="pull-right text-muted">
-	                                <i class="fa fa-clock-o fa-fw"></i> {{ Carbon::parse($comment->created_at)->subMinutes(2)->diffForHumans()}}
+	                                <i class="fa fa-clock-o fa-fw"></i> {{ date_format(date_create($comment->created_at),'m/d/Y H:m:s') }} 
 	                            </small>
 	                        </div>
 	                        <p>{{ $comment->comment }}</p>

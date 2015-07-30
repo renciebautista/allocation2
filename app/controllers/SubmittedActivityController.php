@@ -35,7 +35,7 @@ class SubmittedActivityController extends \BaseController {
 			return Response::make(View::make('shared/404'), 404);
 		}
 
-		$approver = ActivityApprover::getApprover($id,Auth::id());
+		
 		$valid = false;
 		if(Auth::user()->hasRole("GCOM APPROVER")){
 			if($activity->status_id == 5){
@@ -53,7 +53,60 @@ class SubmittedActivityController extends \BaseController {
 			}
 		}
 
+		$approver = ActivityApprover::getApprover($id,Auth::id());
+
+		// $planner = ActivityPlanner::where('activity_id', $activity->id)->first();
+		// $budgets = ActivityBudget::with('budgettype')
+		// 		->where('activity_id', $id)
+		// 		->get();
+
+		// $nobudgets = ActivityNobudget::with('budgettype')
+		// 	->where('activity_id', $id)
+		// 	->get();
+
+		// $schemes = Scheme::getList($id);
+
+		// $skuinvolves = array();
+		// foreach ($schemes as $scheme) {
+		// 	$involves = SchemeHostSku::where('scheme_id',$scheme->id)
+		// 		->join('pricelists', 'scheme_host_skus.sap_code', '=', 'pricelists.sap_code')
+		// 		->get();
+		// 	foreach ($involves as $value) {
+		// 		$skuinvolves[] = $value;
+		// 	}
+
+		// 	$scheme->allocations = SchemeAllocation::getAllocations($scheme->id);
+		// 	$non_ulp = explode(",", $scheme->ulp_premium);
+			
+		// }
+
+		// // Helper::print_r($schemes);
+
+		// $materials = ActivityMaterial::where('activity_id', $activity->id)
+		// 	->with('source')
+		// 	->get();
+
+		// $fdapermit = ActivityFdapermit::where('activity_id', $activity->id)->first();
+		// $networks = ActivityTiming::getTimings($activity->id,true);
+		// $artworks = ActivityArtwork::getList($activity->id);
+		// $pispermit = ActivityFis::where('activity_id', $activity->id)->first();
+
+		// $fdapermits = ActivityFdapermit::getList($activity->id);
+		// $fis = ActivityFis::getList($activity->id);
+		// // $artworks = ActivityArtwork::getList($activity->id);
+		// $backgrounds = ActivityBackground::getList($activity->id);
+		// $bandings = ActivityBanding::getList($activity->id);
+
+		// // $scheme_customers = SchemeAllocation::getCustomers($activity->id);
+
+		// //Involved Area
+		// $areas = ActivityCustomer::getSelectedAreas($activity->id);
+		// // $channels = ActivityChannel::getSelectecdChannels($activity->id);
+		// $channels = ActivityChannel2::getSelectecdChannels($activity->id);
+		// // Helper::print_array($areas);
+
 		$planner = ActivityPlanner::where('activity_id', $activity->id)->first();
+		$approvers = ActivityApprover::getNames($activity->id);
 		$budgets = ActivityBudget::with('budgettype')
 				->where('activity_id', $id)
 				->get();
@@ -69,41 +122,47 @@ class SubmittedActivityController extends \BaseController {
 			$involves = SchemeHostSku::where('scheme_id',$scheme->id)
 				->join('pricelists', 'scheme_host_skus.sap_code', '=', 'pricelists.sap_code')
 				->get();
+
+			$premiums = SchemePremuimSku::where('scheme_id',$scheme->id)
+				->join('pricelists', 'scheme_premuim_skus.sap_code', '=', 'pricelists.sap_code')
+				->get();
+			
+			$_involves = array();
 			foreach ($involves as $value) {
-				$skuinvolves[] = $value;
+				$_involves[] = $value;
+			}
+			$_premiums = array();
+			foreach ($premiums as $premium) {
+				$_premiums[] = $premium;
 			}
 
 			$scheme->allocations = SchemeAllocation::getAllocations($scheme->id);
 			$non_ulp = explode(",", $scheme->ulp_premium);
 			
+
+			$skuinvolves[$scheme->id]['premiums'] = $_premiums;
+			$skuinvolves[$scheme->id]['involves'] = $_involves;
+			$skuinvolves[$scheme->id]['non_ulp'] = $non_ulp;
 		}
 
-		// Helper::print_r($schemes);
-
+		
 		$materials = ActivityMaterial::where('activity_id', $activity->id)
 			->with('source')
 			->get();
 
 		$fdapermit = ActivityFdapermit::where('activity_id', $activity->id)->first();
 		$networks = ActivityTiming::getTimings($activity->id,true);
+
+		$activity_roles = ActivityRole::getList($activity->id);
+
 		$artworks = ActivityArtwork::getList($activity->id);
 		$pispermit = ActivityFis::where('activity_id', $activity->id)->first();
 
-		$fdapermits = ActivityFdapermit::getList($activity->id);
-		$fis = ActivityFis::getList($activity->id);
-		// $artworks = ActivityArtwork::getList($activity->id);
-		$backgrounds = ActivityBackground::getList($activity->id);
-		$bandings = ActivityBanding::getList($activity->id);
-
-		// $scheme_customers = SchemeAllocation::getCustomers($activity->id);
-
 		//Involved Area
 		$areas = ActivityCustomer::getSelectedAreas($activity->id);
-		// $channels = ActivityChannel::getSelectecdChannels($activity->id);
 		$channels = ActivityChannel2::getSelectecdChannels($activity->id);
-		// Helper::print_array($areas);
 
-
+		$sku_involves = ActivitySku::getInvolves($activity->id);
 		
 		// // Product Information Sheet
 		$path = '/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
@@ -118,11 +177,18 @@ class SubmittedActivityController extends \BaseController {
 			$pis = array();
 		}
 
+		// attachments
+		$fdapermits = ActivityFdapermit::getList($activity->id);
+		$fis = ActivityFis::getList($activity->id);
+		$artworks = ActivityArtwork::getList($activity->id);
+		$backgrounds = ActivityBackground::getList($activity->id);
+		$bandings = ActivityBanding::getList($activity->id);
+		// comments
 		$comments = ActivityComment::getList($activity->id);
 		return View::make('submittedactivity.edit',compact('activity','comments','approver', 'valid',
-			'activity' ,'planner','budgets','nobudgets','schemes','skuinvolves',
+			'activity' ,'approvers', 'planner','budgets','nobudgets','schemes','skuinvolves', 'sku_involves',
 			'materials','non_ulp','fdapermit', 'networks','artworks', 'pis' , 'areas','channels', 
-			'fdapermits','fis', 'backgrounds', 'bandings'));
+			'fdapermits','fis', 'backgrounds', 'bandings' ,'activity_roles'));
 	}
 
 	public function updateactivity($id)
@@ -282,8 +348,16 @@ class SubmittedActivityController extends \BaseController {
 					$remarks .= "Schemes : <i>".Input::get("activity_scheme") . "</i></br>";
 				}
 
+				if(Input::get("activity_scheme_skus") != ""){
+					$remarks .= "SKU/s Involved Per Scheme : <i>".Input::get("activity_scheme_skus") . "</i></br>";
+				}
+
 				if(Input::get("activity_timing") != ""){
 					$remarks .= "Timings : <i>".Input::get("activity_timing") . "</i></br>";
+				}
+
+				if(Input::get("activity_roles") != ""){
+					$remarks .= "Roles and Responsibilities : <i>".Input::get("activity_roles") . "</i></br>";
 				}
 
 				if(Input::get("activity_material") != ""){
@@ -310,12 +384,12 @@ class SubmittedActivityController extends \BaseController {
 					$remarks .= "Artworks : <i>".Input::get("activity_art") . "</i></br>";
 				}
 
-				if(Input::get("activity_fda_ac") != ""){
-					$remarks .= "FDA Permit : <i>".Input::get("activity_fda_ac") . "</i></br>";
-				}
-
 				if(Input::get("activity_barcode") != ""){
 					$remarks .= "Barcodes / Case Codes Per Scheme : <i>".Input::get("activity_barcode") . "</i></br>";
+				}
+
+				if(Input::get("activity_fda_ac") != ""){
+					$remarks .= "FDA Permit : <i>".Input::get("activity_fda_ac") . "</i></br>";
 				}
 
 				if(Input::get("activity_alloc") != ""){
