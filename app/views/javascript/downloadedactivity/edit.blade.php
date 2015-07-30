@@ -688,12 +688,11 @@ $('#billing_deadline').datetimepicker({
 
 $("form[id='updateBilling']").on("submit",function(e){
 	var form = $(this);
-	var method = form.find('input[name="_method"]').val() || 'POST';
 	var url = form.prop('action');
 	$.ajax({
 		url: url,
 		data: form.serialize(),
-		method: method,
+		method: 'POST',
 		dataType: "json",
 		success: function(data){
 			if(data.success == "1"){

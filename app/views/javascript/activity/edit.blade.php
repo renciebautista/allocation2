@@ -811,7 +811,7 @@ $container.handsontable({
       type: 'text',
     }],
 	afterChange: function (change, source) {
-		console.log(source);
+		$("#updatetimings").addClass("dirty");
 	}
 });
 var handsontable = $container.data('handsontable');
