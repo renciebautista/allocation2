@@ -417,7 +417,11 @@
 							</tr>
 							<tr>
 								<td>Billing Deadline</td>
-								<td>{{ date_format(date_create($activity->billing_date),'M j, Y') }}</td>
+								@if($activity->billing_date != "")
+								<td>{{ date_format(date_create($activity->billing_date),'m/d/Y') }}</td>
+								@else
+								<td></td>
+								@endif
 								@if(!$read_only)
 								<td>{{ Form::textarea('activity_deadline','',array('rows' => 1, 'placeholder' => 'Billing Deadline Remarks')) }}</td>
 								@endif
