@@ -11,15 +11,15 @@ class ReportController extends \BaseController {
 	public function activities()
 	{
 		Input::flash();
-		// $statuses = ActivityStatus::getLists();
+		$statuses = ActivityStatus::getLists();
 		$cycles = Cycle::getLists();
 		$scopes = ScopeType::getLists();
 		$types = ActivityType::getLists();
-		// $planners = User::getApprovers(['PMOG PLANNER']);
-		// $proponents = User::getApprovers(['PROPONENT']);
-		// $activities = Activity::search(Input::get('pr'),Input::get('st'),Input::get('cy'),Input::get('sc'),
-		// 	Input::get('ty'),Input::get('pm'),Input::get('title'));
-		// return View::make('report.activities',compact('statuses', 'activities', 'cycles', 'scopes', 'types', 'planners', 'proponents'));
+		$planners = User::getApprovers(['PMOG PLANNER']);
+		$proponents = User::getApprovers(['PROPONENT']);
+		$activities = Activity::search(Input::get('pr'),Input::get('st'),Input::get('cy'),Input::get('sc'),
+			Input::get('ty'),Input::get('pm'),Input::get('title'));
+		return View::make('report.activities',compact('statuses', 'activities', 'cycles', 'scopes', 'types', 'planners', 'proponents'));
 	}
 
 	public function preview($id){

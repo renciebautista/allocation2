@@ -8,4 +8,9 @@ class ActivityStatus extends \Eloquent {
 			->where('id', '>', $id)
 			->lists('status', 'id');
 	}
+
+	public static function getLists(){
+		return self::orderBy('id')->lists('status', 'id');
+	}
+
 }
