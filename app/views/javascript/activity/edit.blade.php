@@ -822,7 +822,7 @@ $("form[id='updatetimings']").on("submit",function(e){
 	if(form.valid()){
 		$.ajax({
 			url: url,
-			data: form.serialize() + "&roles=" + JSON.stringify(handsontable.getData()),
+			data: form.serialize() + "&roles=" + encodeURIComponent(JSON.stringify(handsontable.getData())),
 			method: 'POST',
 			dataType: "json",
 			success: function(data){
