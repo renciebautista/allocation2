@@ -90,6 +90,7 @@ class MakePdf extends Command {
 
 			$fdapermit = ActivityFdapermit::where('activity_id', $activity->id)->first();
 			$networks = ActivityTiming::getTimings($activity->id,true);
+			$activity_roles = ActivityRole::getList($activity->id);
 			$artworks = ActivityArtwork::getList($activity->id);
 			$pispermit = ActivityFis::where('activity_id', $activity->id)->first();
 
@@ -125,7 +126,7 @@ class MakePdf extends Command {
 			$header .= View::make('pdf.style')->render();
 			$header .= View::make('pdf.title',compact('activity','approvers'))->render();
 			$header .= View::make('pdf.activity',compact('activity','schemes','networks','materials', 
-				'budgets','nobudgets', 'skuinvolves', 'areas', 'channels','fdapermit', 'sku_involves'))->render();
+				'budgets','nobudgets', 'skuinvolves', 'areas', 'channels','fdapermit', 'sku_involves', 'activity_roles'))->render();
 			
 			$pdf->writeHTML(iconv("UTF-8", "CP1252", $header) , $ln=true, $fill=false, $reset=false, $cell=false, $align='');
 

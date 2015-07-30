@@ -727,7 +727,7 @@ class ActivityController extends BaseController {
 					{
 						$old_cycle = $activity->cycle_id;
 						$old_type = $activity->activity_type_id;
-						DB::transaction(function() use ($activity)  {
+						DB::transaction(function() use ($activity,$old_cycle,$old_type)  {
 							$scope_id = Input::get('scope');
 							$cycle_id = Input::get('cycle');
 							$activity_type_id = Input::get('activity_type');
@@ -1839,15 +1839,27 @@ class ActivityController extends BaseController {
 
 		if ($validator->fails())
 		{
-			$arr['success'] = 0;
-			// return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
-			// 		->with('class', 'alert-danger')
-			// 		->with('message', 'Error uploading file.');
+			$arr['mesage'] = 'Invalid file type.';
+			return Response::json($arr, 400);
 		} else{
 			$path = $activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
 			$upload = self::doupload($path);
 
-			
+			try {
+				$pis = Excel::selectSheets('Output')->load(storage_path().'/uploads/'.$path."/".$upload->file_name)->get();
+				if($pis[1][0] != "031988"){
+
+					$path_delete = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/';
+					File::delete($path_delete.$upload->file_name);
+
+					$arr['mesage'] = 'Invalid file type.';
+					return Response::json($arr, 400);
+				}
+			} catch (Exception $e) {
+				$arr['mesage'] = 'Invalid file type.';
+				return Response::json($arr, 400);
+			}
+
 
 			$docu = new ActivityFis;
 			$docu->created_by = Auth::id();
@@ -1863,16 +1875,9 @@ class ActivityController extends BaseController {
 			$arr['remove'] = action('ActivityController@fisdelete');
 			$arr['file_name'] = $docu->file_name; 
 			$arr['date'] = date('m/d/Y');
-			$arr['success'] = 1;
-
-			// return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#attachment")
-			// 	->with('class', 'alert-success')
-			// 	->with('message', 'Product information Sheet is successfuly uploaded!');
+			$arr['mesage'] = 'File successfuly uploaded';
+			return Response::json($arr, 200);
 		}
-
-		return json_encode($arr);
-
-		
 	}
 
 	public function fisdelete($id){
@@ -1913,7 +1918,8 @@ class ActivityController extends BaseController {
 
 		if ($validator->fails())
 		{
-			$arr['success'] = 0;
+			$arr['mesage'] = 'Error uploading file';
+			return Response::json($arr, 400);
 		} else{
 			$path = $activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
 			$upload = self::doupload($path);
@@ -1932,9 +1938,10 @@ class ActivityController extends BaseController {
 			$arr['remove'] = action('ActivityController@artworkdelete');
 			$arr['file_name'] = $docu->file_name; 
 			$arr['date'] = date('m/d/Y');
-			$arr['success'] = 1;
+
+			$arr['mesage'] = 'File successfuly uploaded';
+			return Response::json($arr, 200);
 		}
-		return json_encode($arr);
 	}
 
 	public function artworkdelete(){
@@ -1984,11 +1991,12 @@ class ActivityController extends BaseController {
 			$arr['remove'] = action('ActivityController@backgrounddelete');
 			$arr['file_name'] = $docu->file_name; 
 			$arr['date'] = date('m/d/Y');
-			$arr['success'] = 1;
+			$arr['mesage'] = 'File successfuly uploaded';
+			return Response::json($arr, 200);
 		}else{
-			$arr['success'] = 0;
+			$arr['mesage'] = 'Error uploading file';
+			return Response::json($arr, 400);
 		}
-		return json_encode($arr);
 	}
 
 	public function backgrounddelete(){
@@ -2038,11 +2046,12 @@ class ActivityController extends BaseController {
 			$arr['remove'] = action('ActivityController@bandingdelete');
 			$arr['file_name'] = $docu->file_name; 
 			$arr['date'] = date('m/d/Y');
-			$arr['success'] = 1;
+			$arr['mesage'] = 'File successfuly uploaded';
+			return Response::json($arr, 200);
 		}else{
-			$arr['success'] = 0;
+			$arr['mesage'] = 'Error uploading file';
+			return Response::json($arr, 400);
 		}
-		return json_encode($arr);
 	}
 
 	public function bandingdelete(){
@@ -2099,7 +2108,7 @@ class ActivityController extends BaseController {
 	}
 
 	public function pistemplate(){
-		$filepath = storage_path().'/uploads/tempfiles/PIS Template.xls';		
+		$filepath = storage_path().'/uploads/tempfiles/PIS Template_July 29, 2015.xls';		
 		return Response::download($filepath);
 	}
 

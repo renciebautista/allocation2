@@ -11,6 +11,8 @@ class ActivityRole extends \Eloquent {
 	public static function getListData($activity_id){
 
 		return self::select('owner','point','timing')
-			->where('activity_id', $activity_id)->get();;
+			->where('activity_id', $activity_id)
+			->orderBy('id')
+			->get();;
 	}
 }

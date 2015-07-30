@@ -197,7 +197,7 @@
 				@if(!empty($non_ulp))
 				<table class="sub-table" style="margin-top:5px;"> 
 					<tr>
-						<th>Non ULP Premium SKUs</th>
+						<th>Non-ULP Premium SKUs</th>
 					</tr>
 					@foreach($non_ulp as $ulp)
 					<tr>
@@ -238,6 +238,30 @@
 			</td>
 		</tr>
 		@endif
+		@if(count($activity_roles) > 0)
+		<tr nobr="true">
+			<td><b>Roles and Responsibilities</b></td>
+			<td>
+				@if(count($activity_roles)> 0)
+				<table class="sub-table role">
+					<tr nobr="true">
+						<th width="160">Process Owner</th>
+						<th width="160">Action Points</th>
+						<th width="150">Timings</th>
+					</tr>
+					@foreach($activity_roles as $activity_role)
+					<tr nobr="true">
+						<td>{{ $activity_role->owner }}</td>
+						<td>{{ $activity_role->point }}</td>
+						<td>{{ $activity_role->timing }}</td>
+					</tr>
+					@endforeach
+				</table>
+				@endif
+			</td>
+		</tr>
+		@endif
+				
 		@if(count($materials) > 0)
 		<tr nobr="true">
 			<td><b>Material Sourcing</b></td>
