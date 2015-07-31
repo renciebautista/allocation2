@@ -9,7 +9,7 @@
 	  	</div>
 	</div>
 </div>
-{{ $approver->status_id }} => {{ $valid }}
+{{ strtotime($activity->cycle->submission_deadline }} => {{ strtotime(date('Y-m-d')) }}
 @include('partials.notification')
 
 {{ Form::open(array('action' => array('SubmittedActivityController@updateactivity', $activity->id), 'class' => 'bs-component','id' => 'updateactivity')) }}
