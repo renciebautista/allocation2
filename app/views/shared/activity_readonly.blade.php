@@ -16,12 +16,18 @@
 		<div class="form-group">
 			{{ HTML::linkRoute($route, 'Back To Activity List', array(), array('class' => 'btn btn-default')) }}
 
-			@if(($recall) && (strtotime($activity->cycle->submission_deadline) >= strtotime(date('Y-m-d'))))
-			<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myAction">
-			  	Actions
-			</button>
+			@if((strtotime($activity->cycle->release_date) > strtotime(date('Y-m-d'))) && ($activity->status_id < 8))
+				<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myAction">
+			  		Actions
+				</button>
 			@else
-			<button type="button" class="btn btn-primary disabled" >Actions</button>
+				@if(($recall) && (strtotime($activity->cycle->submission_deadline) >= strtotime(date('Y-m-d'))))
+				<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myAction">
+				  	Actions
+				</button>
+				@else
+				<button type="button" class="btn btn-primary disabled" >Actions</button>
+				@endif
 			@endif
 			<a class="btn btn-info" target="_blank" href="{{ URL::action('ReportController@preview', $activity->id ) }}">Preview</a>
 		</div>
@@ -1354,6 +1360,5 @@ $("#myAction" ).on('show.bs.modal', function(){
 
 
 @stop
-
 
 
