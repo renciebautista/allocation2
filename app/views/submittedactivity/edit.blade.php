@@ -19,7 +19,7 @@
 			{{ HTML::linkRoute('submittedactivity.index', 'Back To Activity List', array(), array('class' => 'btn btn-default')) }}
 			<?php $read_only = true; ?>
 
-			@if(($approver->status_id == 0) && ($valid) && (strtotime($activity->cycle->approval_deadline) > strtotime(date('Y-m-d'))))
+			@if(($approver->status_id == 0) && ($valid) && (strtotime($activity->cycle->approval_deadline) >= strtotime(date('Y-m-d'))))
 
 			<button type="submit" class="btn btn-success" name="action" value="approve" onclick="return confirm('You are about to approve this activity. Do you want to proceed?')">
 			  	Approve
