@@ -17,8 +17,6 @@
 	<div class="col-lg-12">
 		<div class="form-group">
 			{{ HTML::linkRoute('submittedactivity.index', 'Back To Activity List', array(), array('class' => 'btn btn-default')) }}
-
-			<!-- Button trigger modal -->
 			<?php $read_only = true; ?>
 
 			@if(($approver->status_id == 0) && ($valid) && (strtotime($activity->cycle->submission_deadline) >= strtotime(date('Y-m-d'))))
