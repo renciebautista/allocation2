@@ -9,7 +9,7 @@
 	  	</div>
 	</div>
 </div>
-
+{{ $approver->status_id }} => {{ $valid }}
 @include('partials.notification')
 
 {{ Form::open(array('action' => array('SubmittedActivityController@updateactivity', $activity->id), 'class' => 'bs-component','id' => 'updateactivity')) }}
@@ -28,6 +28,7 @@
 			  	Deny
 			</button>
 			<?php $read_only = false; ?>
+
 			@endif
 		</div>
 	</div>
