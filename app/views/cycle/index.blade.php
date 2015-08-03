@@ -35,13 +35,13 @@
 						<th class="center">Cycle Month-Year</th>
 						<th class="center">Emergency</th>
 						<th class="center">Circular Submission Deadline</th>
-						<th colspan="2" class="dash-action">Action</th>
+						<th colspan="3" class="dash-action">Action</th>
 					</tr>
 				</thead>
 				<tbody>
 					@if(count($cycles) == 0)
 					<tr>
-						<td colspan="6">No record found!</td>
+						<td colspan="8">No record found!</td>
 					</tr>
 					@else
 					@foreach($cycles as $cycle)
@@ -63,6 +63,12 @@
 						</td>
 						<td class="action">
 							{{ HTML::linkAction('CycleController@edit','Edit', $cycle->id, array('class' => 'btn btn-info btn-xs')) }}
+						</td>
+						<td class="action">
+
+							{{ Form::open(array('action' => array('CycleController@rerun', $cycle->id))) }}                       
+							{{ Form::submit('Re-run PDF', array('class'=> 'btn btn-success btn-xs','onclick' => "if(!confirm('Are you sure to re-run this cycle?')){return false;};")) }}
+							{{ Form::close() }}
 						</td>
 					</tr>
 					@endforeach

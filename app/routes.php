@@ -12,44 +12,10 @@ Queue::getIron()->ssl_verifypeer = false;
 |
 */
 
-
-Route::get("testmail", function(){
-	
-	$user = User::find(1);
-	$cycles = Cycle::getByReleaseDate();
-	$cycle_ids = array('1','2');
-	// $cycle_names = "";
-	// foreach ($cycles as $value) {
-	// 	$cycle_ids[] = $value->id;
-	// 	$cycle_names .= $value->cycle_name ." - ";
-	// }
-	$data['cycles'] = $cycles;
-	$data['user'] = $user->first_name;
-	$data['email'] = $user->email;
-	$data['fullname'] = $user->getFullname();
-	$data['cycle_ids'] = $cycle_ids;
-	$data['cycle_names'] = "test";
-	$data['activities'] = Activity::all();
-	return View::make('emails.mail4', $data);
-	
+Route::get('testrole', function(){
+	$filename = preg_replace('/[^A-Za-z0-9 _ .-]/', '_', "SNOWBALL 2015 PREBANDED PACKS 470ML/700ML SCHEMES");
+	echo $filename;
 });
-
-Route::get("test", function(){
-	if($_ENV['MAIL_TEST']){
-		echo "test mail";
-	}else{
-		echo "live mail";
-	}
-});
-
-
-
-
-
-// Route::get('queue/send', function(){
-// 	// Queue::pushRaw("This is Hello World payload", "email");
-// 	Queue::push('Scheduler', array('string' => 'Hello world'),'pdf');
-// });
 
 Route::post('queue/push', function()
 {
@@ -182,7 +148,7 @@ Route::group(array('before' => 'auth'), function()
 
 	Route::resource('users', 'UsersController');
 	
-
+	Route::post('cycle/{id}/rerun', 'CycleController@rerun');
 	Route::get('cycle/calendar', 'CycleController@calendar');
 	Route::resource('cycle', 'CycleController');
 
@@ -197,22 +163,29 @@ Route::group(array('before' => 'auth'), function()
 
 
 
-	Route::get('reports/activities', 'ReportController@activities');
-	Route::get('reports/{id}/preview', 'ReportController@preview');
-	Route::get('reports/{id}/download', 'ReportController@download');
-
+	
 	Route::resource('activitytype', 'ActivityTypeController');
 
 	Route::get('holidays/getlist', 'HolidaysController@getlist');
 	Route::resource('holidays', 'HolidaysController');
 
-	Route::resource('job','JobController');
+	// Route::resource('job','JobController');	
+
+	Route::get('reports/allocation', 'AllocationReportController@index');
+	Route::get('reports/allocation/create', 'AllocationReportController@create');
+	Route::post('reports/allocation/create', 'AllocationReportController@store');
+	Route::get('reports/allocation/{id}/generate', 'AllocationReportController@show');
+	Route::post('reports/allocation/download', 'AllocationReportController@download');
+
+	Route::get('reports/activities', 'ReportController@activities');
+	Route::get('reports/{id}/preview', 'ReportController@preview');
+	Route::get('reports/{id}/download', 'ReportController@download');
+
+
 
 	Route::get('images/{cycle_id}/{type_id}/{activity_id}/{name}', function($cycle_id = null,$type_id = null,$activity_id = null,$name = null)
 	{
-		
 		$path = storage_path().'/uploads/'.$cycle_id.'/'. $type_id.'/'. $activity_id.'/'. $name;
-		// echo $path;
 		if (file_exists($path)) { 
 
 			$image = Image::create($path);
@@ -223,9 +196,7 @@ Route::group(array('before' => 'auth'), function()
 
 	Route::get('fdapermit/{cycle_id}/{type_id}/{activity_id}/{name}', function($cycle_id = null,$type_id = null,$activity_id = null,$name = null)
 	{
-		
 		$path = storage_path().'/uploads/'.$cycle_id.'/'. $type_id.'/'. $activity_id.'/'. $name;
-		// echo $path;
 		if (file_exists($path)) { 
 			$image = Image::create($path);
 			$image->resize(1000);

@@ -198,4 +198,30 @@ class CycleController extends \BaseController {
 		return View::make('cycle.calendar', compact('cycles'));
 	}
 
+	public function release($id){
+		
+	}
+
+	public function rerun($id){
+		$cycle = Cycle::find($id);
+		$activities = Activity::select('activities.id', 'activities.circular_name')
+			->join('cycles', 'cycles.id', '=', 'activities.cycle_id')
+			->where('cycles.id',$id)
+			->where('status_id',8)
+			->where('pdf',0)
+			->where('scheduled',0)
+			->get();
+		foreach ($activities as $activity) {
+			if($_ENV['MAIL_TEST']){
+				$job_id = Queue::push('Scheduler', array('string' => "Scheduling ".$activity->circular_name, 'id' => $activity->id),'pdf');
+			}else{
+				$job_id = Queue::push('Scheduler', array('string' => "Scheduling ".$activity->circular_name, 'id' => $activity->id),'p_pdf');
+			}
+			Job::create(array('job_id' => $job_id));
+		}
+
+		return Redirect::route('cycle.index')
+				->with('class', 'alert-success')
+				->with('message', $cycle->cycle_name.' cycle pdf creation is successfuly initiated.');
+	}
 }
