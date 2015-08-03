@@ -170,11 +170,19 @@ class TestMail extends Command {
 							});	
 						}
 					}else{
+						// Mail::send('emails.mail4', $data, function($message) use ($data){
+						// 	if(count($data) > 0){
+						// 		$message->to($data['email'], $data['fullname'])->subject('TOP ACTIVITIES FOR: ('.$data['cycle_names'].')');
+						// 	}else{
+						// 		$message->to($data['email'], $data['fullname'])->subject('TOP ACTIVITIES FOR: '.$data['cycle_names']);
+						// 	}
+							
+						// });
 						Mail::send('emails.mail4', $data, function($message) use ($data){
 							if(count($data) > 0){
-								$message->to($data['email'], $data['fullname'])->subject('TOP ACTIVITIES FOR: ('.$data['cycle_names'].')');
+								$message->to('rbautista@chasetech.com', $data['fullname'])->subject('TOP ACTIVITIES FOR: ('.$data['cycle_names'].')');
 							}else{
-								$message->to($data['email'], $data['fullname'])->subject('TOP ACTIVITIES FOR: '.$data['cycle_names']);
+								$message->to('rbautista@chasetech.com', $data['fullname'])->subject('TOP ACTIVITIES FOR: '.$data['cycle_names']);
 							}
 							
 						});
