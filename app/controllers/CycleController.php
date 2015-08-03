@@ -211,6 +211,8 @@ class CycleController extends \BaseController {
 			}
 
 			var_dump($cycle_ids);
+
+			
 			// $total_activities = 0;
 			// $type = "mail4";
 			// $forRelease = Activity::where('activities.status_id','>',7)
