@@ -245,6 +245,7 @@ class CycleController extends \BaseController {
 	}
 
 	public function rerun($id){
+		// rerun activities
 		$cycle = Cycle::find($id);
 		$activities = Activity::select('activities.id', 'activities.circular_name')
 			->join('cycles', 'cycles.id', '=', 'activities.cycle_id')
