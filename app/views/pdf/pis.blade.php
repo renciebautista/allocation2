@@ -91,7 +91,7 @@
 						<th colspan="3">Maximum Case Stocking</th>
 					</tr>
 					<tr nobr="true">
-						<th width="145">Item Description</th>
+						<th width="245">Item Description</th>
 						<th width="50" style="text-align:center">L</th>	
 						<th width="50" style="text-align:center">W</th>
 						<th width="50" style="text-align:center">H</th>
@@ -129,16 +129,16 @@
 						<th colspan="2">Trade margins</th>
 					</tr>
 					<tr nobr="true">
-						<th width="150">Item Description</th>
+						<th width="245">Item Description</th>
 						<th width="50">Total Shelf Life (SLED in Days)</th>
 						<th width="50">Pieces/Inner Pack (regular SKU with inner pack/carton)</th>
-						<th width="65">Product Barcode</th>
-						<th width="60">Product Code</th>
-						<th width="40">LPAT/CS</th>
-						<th width="40">LPAT per PC/MP</th>
-						<th width="40">SRP Per PC/MP</th>
-						<th width="20">%</th>
-						<th width="34">Absolute</th>
+						<th width="100">Product Barcode</th>
+						<th width="100">Product Code</th>
+						<th width="50">LPAT/CS</th>
+						<th width="50">LPAT per PC/MP</th>
+						<th width="50">SRP Per PC/MP</th>
+						<th width="50">%</th>
+						<th width="50">Absolute</th>
 					</tr>
 					<?php $x = $x+3; ?>
 					@for($x3 = $x; $x3 < count($pis); $x3++)
