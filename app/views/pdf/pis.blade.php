@@ -92,15 +92,15 @@
 					</tr>
 					<tr nobr="true">
 						<th width="195">Item Description</th>
-						<th width="50" style="text-align:center">L</th>
+						<th width="50" style="text-align:center">L</th>	
 						<th width="50" style="text-align:center">W</th>
 						<th width="50" style="text-align:center">H</th>
-						<th width="100">Product Casecode</th>
+						<th width="120">Product Casecode</th>
 						<th width="50">Net Wgt Kg</th>
 						<th>Gross Wgt KG</th>
 						<th width="50">CS/Layer</th>
 						<th width="50">Layer/Pallet</th>
-						<th width="50">Pallets/Tier</th>
+						<th width="100">Pallets/Tier</th>
 					</tr>
 					<?php $x = $x+3; ?>
 					@for($x2 = $x; $x2 < count($pis); $x2++)
