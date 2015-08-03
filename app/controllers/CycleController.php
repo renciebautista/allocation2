@@ -249,11 +249,14 @@ class CycleController extends \BaseController {
 		$activities = Activity::select('activities.id', 'activities.circular_name')
 			->join('cycles', 'cycles.id', '=', 'activities.cycle_id')
 			->where('cycles.id',$id)
-			->where('status_id',8)
+			->where('status_id','>', 7)
 			->where('pdf',0)
 			->where('scheduled',0)
 			->get();
 		foreach ($activities as $activity) {
+			$activity->pdf = 0;
+			$activity->udpate();
+			
 			if($_ENV['MAIL_TEST']){
 				$job_id = Queue::push('Scheduler', array('string' => "Scheduling ".$activity->circular_name, 'id' => $activity->id),'pdf');
 			}else{

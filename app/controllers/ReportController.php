@@ -118,9 +118,9 @@ class ReportController extends \BaseController {
 		if(count($files)>0){
 			if (App::isLocal())
 			{
-			    $folder[Helper::sanitize($activity->circular_name)] = 'app/storage'.$path.'/';
+			    $folder[strtoupper(Helper::sanitize($activity->circular_name))] = 'app/storage'.$path.'/';
 			}else{
-				$folder[Helper::sanitize($activity->circular_name)] = storage_path().$path.'/';
+				$folder[strtoupper(Helper::sanitize($activity->circular_name))] = storage_path().$path.'/';
 			}
 			
 		}else{
