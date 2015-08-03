@@ -180,9 +180,9 @@ class TestMail extends Command {
 						// });
 						Mail::send('emails.mail4', $data, function($message) use ($data){
 							if(count($data) > 0){
-								$message->to('rbautista@chasetech.com', $data['fullname'])->subject('TOP ACTIVITIES FOR: ('.$data['cycle_names'].')');
+								$message->to('rosarah.reyes@unilever.com', $data['fullname'])->subject('TOP ACTIVITIES FOR: ('.$data['cycle_names'].')');
 							}else{
-								$message->to('rbautista@chasetech.com', $data['fullname'])->subject('TOP ACTIVITIES FOR: '.$data['cycle_names']);
+								$message->to('rosarah.reyes@unilever.com', $data['fullname'])->subject('TOP ACTIVITIES FOR: '.$data['cycle_names']);
 							}
 							
 						});
