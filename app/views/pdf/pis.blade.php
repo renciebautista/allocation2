@@ -91,7 +91,7 @@
 						<th colspan="3">Maximum Case Stocking</th>
 					</tr>
 					<tr nobr="true">
-						<th width="195">Item Description</th>
+						<th width="145">Item Description</th>
 						<th width="50" style="text-align:center">L</th>	
 						<th width="50" style="text-align:center">W</th>
 						<th width="50" style="text-align:center">H</th>
