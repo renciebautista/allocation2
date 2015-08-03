@@ -116,20 +116,21 @@ class ReportController extends \BaseController {
 		$distination = storage_path().$path ;
 		$files = File::files($distination);
 		if(count($files)>0){
+			$circular_name = strtoupper(Helper::sanitize($activity->circular_name));
 			if (App::isLocal())
 			{
-			    $folder[str_replace("'", "_", strtoupper(Helper::sanitize($activity->circular_name)))] = 'app/storage'.$path.'/';
+			    $folder[$circular_name] = 'app/storage'.$path.'/';
 			}else{
-				$folder[str_replace("'", "_", strtoupper(Helper::sanitize($activity->circular_name)))] = storage_path().$path.'/';
+				$folder[$circular_name] = storage_path().$path.'/';
 			}
 			
 		}else{
 			$folder = $nofile;
 		}
 
-		Helper::print_r($folder);
-		// $archive = $zippy->create($zip_path,$folder,true);
-		// return Response::download($zip_path);
+		// Helper::print_r($folder);
+		$archive = $zippy->create($zip_path,$folder,true);
+		return Response::download($zip_path);
 	}
 	
 }
