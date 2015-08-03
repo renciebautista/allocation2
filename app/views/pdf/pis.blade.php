@@ -129,7 +129,7 @@
 						<th colspan="2">Trade margins</th>
 					</tr>
 					<tr nobr="true">
-						<th width="240">Item Description</th>
+						<th width="245">Item Description</th>
 						<th width="50">Total Shelf Life (SLED in Days)</th>
 						<th width="50">Pieces/Inner Pack (regular SKU with inner pack/carton)</th>
 						<th width="100">Product Barcode</th>
