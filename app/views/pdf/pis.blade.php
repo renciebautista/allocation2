@@ -47,7 +47,7 @@
 						<th colspan="3">Case Dimensions (MM)</th>
 					</tr>
 					<tr nobr="true">
-						<th width="200">Item Description</th>
+						<th width="195">Item Description</th>
 						<th width="100">Pack Size</th>
 						<th width="100">Pack Color</th>
 						<th width="50">Units/Case</th>
