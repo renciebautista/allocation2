@@ -4,7 +4,7 @@
 	<table class="bordered">
 		<tr nobr="true">
 			<td width="80">Product Category</td>
-			<td width="600">{{ $pis[2][1] }}</td>
+			<td width="470">{{ $pis[2][1] }}</td>
 		</tr>
 		<tr nobr="true">
 			<td>Sub Category</td>
