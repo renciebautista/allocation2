@@ -14,7 +14,8 @@
 	</style><!-- CREATE TEXT STYLES USED IN THIS HTML FILE, END -->
 </head>
 <body>
-	<h1>Hi {{{ ucwords(strtolower($user['first_name'])) }}!</h1>
+	<h1>Hi {{ ucwords(strtolower($user['first_name'])) }}!</h1>
+
 <p>We received a request to change your password on ETOP.</p>
 <p>Click the link below to set a new password</p>
 <a href='{{ URL::to('reset_password/'.$token) }}'>
