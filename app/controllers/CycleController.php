@@ -250,8 +250,6 @@ class CycleController extends \BaseController {
 			->join('cycles', 'cycles.id', '=', 'activities.cycle_id')
 			->where('cycles.id',$id)
 			->where('status_id','>', 7)
-			->where('pdf',0)
-			->where('scheduled',0)
 			->get();
 		foreach ($activities as $activity) {
 			$activity->pdf = 0;
