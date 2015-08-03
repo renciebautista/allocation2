@@ -262,7 +262,9 @@ class MakePdf extends Command {
 				}
 			}
 				
-
+			$pdf->SetMargins(10, 32,10);
+			$pdf->setListIndentWidth(0);
+			
 			$pis_view = "";
 			$pis_view .= View::make('pdf.style')->render();
 			$pis_view .= View::make('pdf.pis',compact('activity','pis'))->render();
