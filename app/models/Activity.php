@@ -200,7 +200,7 @@ class Activity extends \Eloquent {
 	public static function search($user_id = 0,$status,$cycle,$scope,$type,$pmog,$title){
 		return self::select('activities.id','activities.circular_name','activities.edownload_date',
 			'activities.eimplementation_date','activities.end_date','activities.billing_date',
-			'activity_statuses.status','cycles.cycle_name',
+			'activity_statuses.status','cycles.cycle_name','pdf',
 			'scope_types.scope_name','activity_types.activity_type',
 			DB::raw('CONCAT(users.first_name, " ", users.last_name) AS planner'),
 			DB::raw('CONCAT(propo.first_name, " ", propo.last_name) AS proponent'),
