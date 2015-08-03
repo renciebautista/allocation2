@@ -1,4 +1,19 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 
+<html>
+<head>
+	<title>For Approval</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=us-ascii"><!-- CREATE TEXT STYLES USED IN THIS HTML FILE, START -->
+
+	<style type="text/css">
+	body{
+		font-family: "Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif; 
+		font-size: 13px;
+	}
+
+	</style><!-- CREATE TEXT STYLES USED IN THIS HTML FILE, END -->
+</head>
+<body>
 <p>{{ ucwords(strtolower($user['first_name'])) }},</p>
 
 <p>We received a request to change your password on ETOP.</p>
@@ -12,3 +27,7 @@
 <br>
 <p>Thanks,</p>
 <p>ETOP Administrator</p>
+</body>
+
+
+</html>
