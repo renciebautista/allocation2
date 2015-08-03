@@ -127,9 +127,9 @@ class ReportController extends \BaseController {
 			$folder = $nofile;
 		}
 
-		Helper::print_array($folder);
+		Helper::print_r($folder);
 		// $archive = $zippy->create($zip_path,$folder,true);
-		// return Response::download($zip_path);
+		return Response::download($zip_path);
 	}
 	
 }
