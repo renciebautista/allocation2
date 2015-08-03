@@ -299,16 +299,16 @@ class MakePdf extends Command {
 
 							$body .='<tr '.$class.'>
 									<td style="width:20px;border: 1px solid #000000; text-align:right;">'.$num.'</td>
-									<td style="width:35px;border: 1px solid #000000;">'.$scheme->allocations[$x]->group.'</td>
-									<td style="width:85px;border: 1px solid #000000;">'.$scheme->allocations[$x]->area.'</td>
-									<td style="width:95px;border: 1px solid #000000;">'.$scheme->allocations[$x]->sold_to.'</td>
-									<td style="width:130px;border: 1px solid #000000;">'.$scheme->allocations[$x]->ship_to.'</td>
-									<td style="width:50px;border: 1px solid #000000;;">'.$scheme->allocations[$x]->channel.'</td>
-									<td style="width:140px;border: 1px solid #000000;">'.$scheme->allocations[$x]->outlet.'</td>
-									<td style="width:40px;border: 1px solid #000000; text-align:right;">'.number_format($scheme->allocations[$x]->in_deals).'</td>
-									<td style="width:40px;border: 1px solid #000000; text-align:right;">'.number_format($scheme->allocations[$x]->in_cases).'</td>
-									<td style="width:50px;border: 1px solid #000000; text-align:right;">'.number_format($scheme->allocations[$x]->tts_budget,2).'</td>
-									<td style="width:50px;border: 1px solid #000000; text-align:right;">'.number_format($scheme->allocations[$x]->pe_budget,2).'</td>
+									<td style="width:50px;border: 1px solid #000000;">'.$scheme->allocations[$x]->group.'</td>
+									<td style="width:100px;border: 1px solid #000000;">'.$scheme->allocations[$x]->area.'</td>
+									<td style="width:200px;border: 1px solid #000000;">'.$scheme->allocations[$x]->sold_to.'</td>
+									<td style="width:200px;border: 1px solid #000000;">'.$scheme->allocations[$x]->ship_to.'</td>
+									<td style="width:150px;border: 1px solid #000000;;">'.$scheme->allocations[$x]->channel.'</td>
+									<td style="width:150px;border: 1px solid #000000;">'.$scheme->allocations[$x]->outlet.'</td>
+									<td style="width:60px;border: 1px solid #000000; text-align:right;">'.number_format($scheme->allocations[$x]->in_deals).'</td>
+									<td style="width:60px;border: 1px solid #000000; text-align:right;">'.number_format($scheme->allocations[$x]->in_cases).'</td>
+									<td style="width:60px;border: 1px solid #000000; text-align:right;">'.number_format($scheme->allocations[$x]->tts_budget,2).'</td>
+									<td style="width:60px;border: 1px solid #000000; text-align:right;">'.number_format($scheme->allocations[$x]->pe_budget,2).'</td>
 								</tr>';
 							$cnt++;
 						}
