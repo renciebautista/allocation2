@@ -21,6 +21,7 @@
 		  	</div>
 		  	<button type="submit" class="btn btn-success"><i class="fa fa-search"></i> Search</button>
 		  	<a href="{{ URL::action('CycleController@create') }}" class="btn btn-primary"><i class="fa fa-plus"></i> Cycle</a>
+		  	<button id="release" type="button" class="btn btn-success"> Release</button>
 		{{ Form::close() }}
 	</div>
 </div>
@@ -31,6 +32,7 @@
 			<table class="table table-striped table-condensed table-hover table-bordered">
 				<thead>
 					<tr>
+						<th></th>
 						<th class="center">Cycle Name</th>
 						<th class="center">Cycle Month-Year</th>
 						<th class="center">Emergency</th>
@@ -46,6 +48,7 @@
 					@else
 					@foreach($cycles as $cycle)
 					<tr>
+						<td>{{ Form::checkbox('cycle[]', $cycle->id) }}</td>
 						<td>{{ $cycle->cycle_name }}</td>
 						<td class="center">{{ $cycle->month_year }}</td>
 						<td class="center">
@@ -79,4 +82,45 @@
 	</div>
 </div>
 
+@stop
+
+@section('page-script')
+$(function() {
+	$("#release").click(function(e){
+
+		bootbox.dialog({
+		  message: "Do you want to release this cycles?",
+		  title: "ETOP",
+		  buttons: {
+		    success: {
+		      	label: "Yes",
+		      	className: "btn btn-primary",
+		      	callback: function() {
+		        	var data = new Array();
+					$("input[name='cycle[]']:checked").each(function(i) {
+						data.push($(this).val());
+					});
+					if(data.length == 0){
+						alert("No cycle selected");
+					}else{
+						$.ajax({
+						    type: 'POST',
+						    url: "{{ URL::action('CycleController@release') }}",
+						    data: { ids: data },
+						    success: function(data) {
+						        alert(data + ' activities released.');
+						    }
+						});
+					}
+					
+		      }
+		    },
+		    danger: {
+		      	label: "No",
+		      	className: "btn btn-default"
+		    },
+		  }
+		});
+   	});
+});
 @stop

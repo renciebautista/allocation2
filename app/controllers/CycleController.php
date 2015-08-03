@@ -198,8 +198,50 @@ class CycleController extends \BaseController {
 		return View::make('cycle.calendar', compact('cycles'));
 	}
 
-	public function release($id){
-		
+	public function release(){
+		if(Request::ajax()){
+			$ids = Input::get('ids');
+
+			$users = User::GetPlanners(['PROPONENT' ,'PMOG PLANNER','GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR','FIELD SALES']);
+
+			$cycle_ids = array();
+			if(count($ids) > 0){
+				foreach ($ids as $value) {
+					$cycle_ids[] = $value;
+				}
+			}
+			$total_activities = 0;
+			$type = "mail4";
+			$forRelease = Activity::where('activities.status_id','>',7)
+				->where('activities.pdf', 1)
+				->whereIn('activities.cycle_id',$cycle_ids)
+				->get();
+			if(count($forRelease) > 0){
+				$total_activities = count($forRelease);
+				foreach ($forRelease as $activity) {
+					$activity->scheduled = 1;
+					$activity->status_id = 9;
+					$activity->update();
+				}
+
+				foreach ($users as $user) {
+					$data['activities'] = Activity::Released($cycle_ids);
+					if(count($data['activities']) > 0){
+						if($_ENV['MAIL_TEST']){
+							Queue::push('MailScheduler', array('type' => $type, 'user_id' => $user->user_id, 'role_id' => $user->role_id,),'etop');
+						}else{
+							Queue::push('MailScheduler', array('type' => $type, 'user_id' => $user->user_id, 'role_id' => $user->role_id),'p_etop');
+						}
+					}
+				}
+				
+			}else{
+			}
+			
+			echo $total_activities;
+			
+		}
+
 	}
 
 	public function rerun($id){

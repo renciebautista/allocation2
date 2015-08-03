@@ -148,6 +148,7 @@ Route::group(array('before' => 'auth'), function()
 
 	Route::resource('users', 'UsersController');
 	
+	Route::post('cycle/release', 'CycleController@release');
 	Route::post('cycle/{id}/rerun', 'CycleController@rerun');
 	Route::get('cycle/calendar', 'CycleController@calendar');
 	Route::resource('cycle', 'CycleController');
