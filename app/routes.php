@@ -13,8 +13,27 @@ Queue::getIron()->ssl_verifypeer = false;
 */
 
 Route::get('testrole', function(){
-	$filename = preg_replace('/[^A-Za-z0-9 _ .-]/', '_', "SNOWBALL 2015 PREBANDED PACKS 470ML/700ML SCHEMES");
-	echo $filename;
+	// $filename = preg_replace('/[^A-Za-z0-9 _ .-]/', '_', "SNOWBALL 2015 PREBANDED PACKS 470ML/700ML SCHEMES");
+	// echo strtoupper(Helper::sanitize("SNOWBALL-2015-LADY’S-CHOICE-CATEGORY-EXPERTS"));
+	$user = User::find(2);
+	$cycles = Cycle::getByReleaseDate();
+	$cycle_ids = array();
+	$cycle_names = "";
+	foreach ($cycles as $value) {
+		$cycle_ids[] = $value->id;
+		$cycle_names .= $value->cycle_name ." - ";
+	}
+	$data['cycles'] = $cycles;
+	$data['user'] = $user->first_name;
+	$data['email'] = $user->email;
+	$data['fullname'] = $user->getFullname();
+	$data['cycle_ids'] = $cycle_ids;
+	$data['cycle_names'] = $cycle_names;
+	
+	$data['activities'] = Activity::Released($cycle_ids);
+
+	return View::make('emails.mail4', $data);
+	
 });
 
 Route::post('queue/push', function()
