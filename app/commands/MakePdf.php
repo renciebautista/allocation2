@@ -128,7 +128,7 @@ class MakePdf extends Command {
 			$header .= View::make('pdf.activity',compact('activity','schemes','networks','materials', 
 				'budgets','nobudgets', 'skuinvolves', 'areas', 'channels','fdapermit', 'sku_involves', 'activity_roles'))->render();
 			
-			$pdf->writeHTML(iconv("UTF-8", "CP1252", $header) , $ln=true, $fill=false, $reset=false, $cell=false, $align='');
+			$pdf->writeHTML(iconv("UTF-8", "CP1252//IGNORE", $header) , $ln=true, $fill=false, $reset=false, $cell=false, $align='');
 
 			$x = $pdf->getX();
 			$y = $pdf->getY();
