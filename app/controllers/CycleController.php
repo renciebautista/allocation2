@@ -255,7 +255,7 @@ class CycleController extends \BaseController {
 			->get();
 		foreach ($activities as $activity) {
 			$activity->pdf = 0;
-			$activity->udpate();
+			$activity->update();
 			
 			if($_ENV['MAIL_TEST']){
 				$job_id = Queue::push('Scheduler', array('string' => "Scheduling ".$activity->circular_name, 'id' => $activity->id),'pdf');
