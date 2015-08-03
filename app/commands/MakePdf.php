@@ -326,10 +326,10 @@ class MakePdf extends Command {
 										<th style="width:200px;border: 1px solid #000000; text-align:center;">CUSTOMER SHIP TO NAME</th>
 										<th style="width:150px;border: 1px solid #000000; text-align:center;">CHANNEL</th>
 										<th style="width:150px;border: 1px solid #000000; text-align:center;">ACCOUNT NAME</th> 
-										<th style="width:75px;border: 1px solid #000000; text-align:center;">IN DEALS</th>
-										<th style="width:75px;border: 1px solid #000000; text-align:center;">IN CASES</th>
-										<th style="width:75px;border: 1px solid #000000; text-align:center;">TTS BUDGET</th>
-										<th style="width:75px;border: 1px solid #000000; text-align:center;">PE BUDGET</th>
+										<th style="width:60px;border: 1px solid #000000; text-align:center;">IN DEALS</th>
+										<th style="width:60px;border: 1px solid #000000; text-align:center;">IN CASES</th>
+										<th style="width:60px;border: 1px solid #000000; text-align:center;">TTS BUDGET</th>
+										<th style="width:60px;border: 1px solid #000000; text-align:center;">PE BUDGET</th>
 									</tr>
 								</thead>
 							  	<tbody>'.
