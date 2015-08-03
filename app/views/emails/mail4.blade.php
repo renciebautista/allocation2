@@ -52,7 +52,7 @@
 <body>
 
 	<h1>Hi {{ ucwords(strtolower($user)) }}!</h1>
-	<p>Please see below summary of <?php echo count($activities); ?> approved circular.  PDF copy of circulars and attachments are ready for download.</p>
+	<p>Please see below summary of <?php echo count($activities); ?> approved circular/s.  PDF copy of circulars and attachments are ready for download.</p>
 	{{ HTML::linkAction('DownloadsController@downloadcycle' , 'Click here to download the files.',array($cycle_ids[0])) }}
 	<hr>
 	<table width="100%" border="0" cellspacing="0" cellpadding="5">
