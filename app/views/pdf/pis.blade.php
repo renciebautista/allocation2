@@ -3,7 +3,7 @@
 	<h2>Product Information Sheet</h2>
 	<table class="bordered">
 		<tr nobr="true">
-			<td width="100">Product Category</td>
+			<td width="80">Product Category</td>
 			<td>{{ $pis[2][1] }}</td>
 		</tr>
 		<tr nobr="true">
