@@ -47,11 +47,11 @@
 						<th colspan="3">Case Dimensions (MM)</th>
 					</tr>
 					<tr nobr="true">
-						<th width="150">Item Description</th>
+						<th>Item Description</th>
 						<th>Pack Size</th>
 						<th>Pack Color</th>
 						<th width="50">Units/Case</th>
-						<th width="60">Product Barcode</th>
+						<th width="100">Product Barcode</th>
 						<th>Product Code</th>
 						<th width="49">Case/Ton</th>
 						<th width="25" style="text-align:center">L</th>
