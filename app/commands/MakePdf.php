@@ -343,8 +343,9 @@ class MakePdf extends Command {
 				}
 			}
 			
+			$pdf_name = preg_replace('/[^A-Za-z0-9 _ .-]/', '_', $activity->circular_name);
 			$filepath = '/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
-			$pdf_path = storage_path().$filepath.'/'. str_replace(":","_", $activity->circular_name).'.pdf';
+			$pdf_path = storage_path().$filepath.'/'. str_replace(":","_", $pdf_name).'.pdf';
 			$pdf->Output($pdf_path,'F');
 			$this->line($pdf_path);
 			$timeSecond = strtotime(date('Y-m-d H:i:s'));
