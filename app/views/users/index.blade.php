@@ -60,6 +60,7 @@
 						<div class="col-lg-12">
 							<div class="search">
 								<button type="submit" class="btn btn-success"><i class="fa fa-search"></i> Search</button>
+								
 								<a href="{{ URL::action('UsersController@create') }}" class="btn btn-primary"><i class="fa fa-plus"></i> User</a>
 							</div>
 						</div>
@@ -73,7 +74,15 @@
 
 <hr>
 
-
+<p><b>{{ count($users)}} record/s found.</b></p>
+@if($users->count() > 0)
+<div class="row">
+	<div class="col-lg-12">
+		{{ HTML::linkAction('UsersController@exportuser' , 'Export User List',array('st' => Input::get('status'),'grp' => Input::get('group'),'ser' => Input::get('search')),['class' => 'btn btn-success']) }}
+	</div>
+</div>
+<br>
+@endif
 <div class="row">
 	<div class="col-lg-12">
 		<div class="table-responsive">

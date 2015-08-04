@@ -47,6 +47,36 @@ class User extends Eloquent implements ConfideUserInterface {
 			->get();
 	}
 
+	public static function export($status,$type,$search){
+		return self::select('users.username', 'users.email', 'users.contact_no','users.first_name','users.last_name','roles.name as groups', 
+			DB::raw("IF(users.active = 1, 'YES', 'No') AS active"))
+			->join('assigned_roles', 'users.id', '=', 'assigned_roles.user_id')
+			->join('roles', 'assigned_roles.role_id', '=', 'roles.id')
+			->where(function($query) use ($search){
+				$query->where('first_name', 'LIKE' ,"%$search%")
+					->orwhere('last_name', 'LIKE' ,"%$search%")
+					->orwhere('middle_initial', 'LIKE' ,"%$search%");
+			})
+			->where(function($query) use ($status){
+				if($status == 1){
+					$query->where('active', 1);
+				}
+				if($status == 2){
+					$query->where('active', 0);
+				}
+				
+					
+			})
+			->where(function($query) use ($type){
+				if($type > 0){
+					$query->where('role_id', $type);
+				}
+					
+			})
+			->orderBy('first_name')
+			->get();
+	}
+
 	public function getFullname()
 	{
 	    return $this->attributes['first_name'] .' '.$this->attributes['last_name'];

@@ -1,12 +1,5 @@
-	<?php
+<?php
 
-
-
-/**
- * UsersController Class
- *
- * Implements actions regarding user management
- */
 class UsersController extends Controller
 {
 	/**
@@ -189,5 +182,15 @@ class UsersController extends Controller
 		}
 
 	}
-	
+
+	public function exportuser(){
+		$users = User::export(Input::get('st'),Input::get('grp'),Input::get('ser'));
+		Excel::create("User List", function($excel) use($users ){
+			$excel->sheet('users', function($sheet) use($users ) {
+				$sheet->fromArray($users);
+			})->download('xls');
+
+		});
+
+	}
 }

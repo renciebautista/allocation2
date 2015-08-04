@@ -165,6 +165,7 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('changepassword', 'ProfileController@changepassword');
 	Route::post('updatepassword', 'ProfileController@updatepassword');
 
+	Route::get('users/exportuser', 'UsersController@exportuser');
 	Route::resource('users', 'UsersController');
 	
 	Route::post('cycle/release', 'CycleController@release');
