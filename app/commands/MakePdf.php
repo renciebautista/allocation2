@@ -269,7 +269,7 @@ class MakePdf extends Command {
 				$pdf->writeHTML($pis_view , $ln=true, $fill=false, $reset=false, $cell=false, $align='');
 			}
 
-			$pdf->AddPage();
+			$pdf->lastPage();
 
 			if(count($schemes) > 0){
 				$pdf->SetFont('helvetica', '', 6);
