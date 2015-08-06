@@ -103,10 +103,9 @@ class MakePdf extends Command {
 
 			// // Product Information Sheet
 			$path = '/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
+			$pis = array();
 			if(!empty($pispermit)){
 				$pis = Excel::selectSheets('Output')->load(storage_path().$path."/".$pispermit->hash_name)->get();
-			}else{
-				$pis = array();
 			}
 
 			// start of pdf
