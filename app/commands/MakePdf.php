@@ -211,11 +211,11 @@ class MakePdf extends Command {
 							$casecode[$cnt] = $pdf->serializeTCPDFtagParameters(array($scheme->item_casecode, 'I25', '', '', '', 18, 0.4, $style, '')); 
 							
 						}
-						if($scheme->item_barcode  != "") > 0){
+						if($scheme->item_barcode  != ""){
 							$barcode[$cnt] = $pdf->serializeTCPDFtagParameters(array($scheme->item_barcode, 'EAN13', '', '', '', 18, 0.4, $style, ''));       
 						}
 
-						if($scheme->item_barcode  != "") > 0){
+						if($scheme->item_barcode  != ""){
 							$str .='<tr nobr="true"><td align="center">'.$scheme->name.'<br>
 							<tcpdf method="write1DBarcode" params="'.$barcode[$cnt] .'" />
 							</td>';
