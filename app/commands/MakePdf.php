@@ -181,6 +181,7 @@ class MakePdf extends Command {
 					}
 				}
 				if($w_codes){
+					$pdf->AddPage();
 					$barcodes = View::make('pdf.barcodes',compact('schemes'))->render();
 					$pdf->writeHTML($barcodes, $ln=true, $fill=false, $reset=false, $cell=false, $align='');
 					// define barcode style
