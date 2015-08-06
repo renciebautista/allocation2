@@ -162,9 +162,7 @@ class MakePdf extends Command {
 				
 				}
 				$y = $pdf->getY();
-				// should get max image height
-				$y+=61;
-
+				$y+=31;
 				$pdf->SetXY($x, $y);
 
 				$h = $pdf->getPageHeight();
@@ -209,22 +207,22 @@ class MakePdf extends Command {
 					// $style['cellfitalign'] = 'C';
 					foreach ($schemes as $scheme) {
 						$y = $pdf->GetY();
-						if(count($scheme->item_casecode) > 0){
+						if($scheme->item_casecode != ""){
 							$casecode[$cnt] = $pdf->serializeTCPDFtagParameters(array($scheme->item_casecode, 'I25', '', '', '', 18, 0.4, $style, '')); 
 							
 						}
-						if(count($scheme->item_barcode) > 0){
+						if($scheme->item_barcode  != "") > 0){
 							$barcode[$cnt] = $pdf->serializeTCPDFtagParameters(array($scheme->item_barcode, 'EAN13', '', '', '', 18, 0.4, $style, ''));       
 						}
 
-						if(count($scheme->item_barcode) > 0){
+						if($scheme->item_barcode  != "") > 0){
 							$str .='<tr nobr="true"><td align="center">'.$scheme->name.'<br>
 							<tcpdf method="write1DBarcode" params="'.$barcode[$cnt] .'" />
 							</td>';
 						}else{
 							$str .='<tr nobr="true"><td align="center"></td>';
 						}
-						if(count($scheme->item_barcode) > 0){
+						if($scheme->item_casecode != ""){
 							$str .='<td align="center">'.$scheme->name.'<br>
 							<tcpdf method="write1DBarcode" params="'.$casecode[$cnt] .'" />
 							</td></tr>';
