@@ -17,10 +17,10 @@ Route::get('testpdf',function(){
 	$schemes = Scheme::getList($activity->id);
 
 	foreach ($schemes as $scheme) {
-		if($scheme->item_casecode == ""){
+		if($scheme->item_casecode != ""){
 			var_dump($scheme->item_casecode);
 		}
-		if($scheme->item_barcode  == ""){
+		if($scheme->item_barcode  != ""){
 			var_dump($scheme->item_barcode);
 		}
 
