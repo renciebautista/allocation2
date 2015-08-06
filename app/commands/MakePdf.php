@@ -174,10 +174,10 @@ class MakePdf extends Command {
 			if(count($schemes) > 0){
 				$w_codes = false;
 				foreach ($schemes as $scheme) {
-					if(count($scheme->item_casecode) > 0){
+					if($scheme->item_casecode !== ""){
 						$w_codes = true;
 					}
-					if(count($scheme->item_barcode) > 0){
+					if($scheme->item_casecode !== ""){
 						$w_codes = true;
 					}
 				}
@@ -207,22 +207,23 @@ class MakePdf extends Command {
 					// $style['cellfitalign'] = 'C';
 					foreach ($schemes as $scheme) {
 						$y = $pdf->GetY();
-						if($scheme->item_casecode != ""){
+
+						if($scheme->item_casecode !== ""){
 							$casecode[$cnt] = $pdf->serializeTCPDFtagParameters(array($scheme->item_casecode, 'I25', '', '', '', 18, 0.4, $style, '')); 
 							
 						}
-						if($scheme->item_barcode  != ""){
+						if($scheme->item_barcode  !== ""){
 							$barcode[$cnt] = $pdf->serializeTCPDFtagParameters(array($scheme->item_barcode, 'EAN13', '', '', '', 18, 0.4, $style, ''));       
 						}
 
-						if($scheme->item_barcode  != ""){
+						if($scheme->item_casecode !== ""){
 							$str .='<tr nobr="true"><td align="center">'.$scheme->name.'<br>
 							<tcpdf method="write1DBarcode" params="'.$barcode[$cnt] .'" />
 							</td>';
 						}else{
 							$str .='<tr nobr="true"><td align="center"></td>';
 						}
-						if($scheme->item_casecode != ""){
+						if($scheme->item_casecode !== ""){
 							$str .='<td align="center">'.$scheme->name.'<br>
 							<tcpdf method="write1DBarcode" params="'.$casecode[$cnt] .'" />
 							</td></tr>';
@@ -299,16 +300,16 @@ class MakePdf extends Command {
 
 							$body .='<tr '.$class.'>
 									<td style="width:20px;border: 1px solid #000000; text-align:right;">'.$num.'</td>
-									<td style="width:50px;border: 1px solid #000000;">'.$scheme->allocations[$x]->group.'</td>
-									<td style="width:100px;border: 1px solid #000000;">'.$scheme->allocations[$x]->area.'</td>
-									<td style="width:200px;border: 1px solid #000000;">'.$scheme->allocations[$x]->sold_to.'</td>
-									<td style="width:200px;border: 1px solid #000000;">'.$scheme->allocations[$x]->ship_to.'</td>
-									<td style="width:150px;border: 1px solid #000000;;">'.$scheme->allocations[$x]->channel.'</td>
-									<td style="width:150px;border: 1px solid #000000;">'.$scheme->allocations[$x]->outlet.'</td>
-									<td style="width:60px;border: 1px solid #000000; text-align:right;">'.number_format($scheme->allocations[$x]->in_deals).'</td>
-									<td style="width:60px;border: 1px solid #000000; text-align:right;">'.number_format($scheme->allocations[$x]->in_cases).'</td>
-									<td style="width:60px;border: 1px solid #000000; text-align:right;">'.number_format($scheme->allocations[$x]->tts_budget,2).'</td>
-									<td style="width:60px;border: 1px solid #000000; text-align:right;">'.number_format($scheme->allocations[$x]->pe_budget,2).'</td>
+									<td style="width:30px;border: 1px solid #000000;">'.$scheme->allocations[$x]->group.'</td>
+									<td style="width:80px;border: 1px solid #000000;">'.$scheme->allocations[$x]->area.'</td>
+									<td style="width:100px;border: 1px solid #000000;">'.$scheme->allocations[$x]->sold_to.'</td>
+									<td style="width:120px;border: 1px solid #000000;">'.$scheme->allocations[$x]->ship_to.'</td>
+									<td style="width:60px;border: 1px solid #000000;;">'.$scheme->allocations[$x]->channel.'</td>
+									<td style="width:130px;border: 1px solid #000000;">'.$scheme->allocations[$x]->outlet.'</td>
+									<td style="width:50px;border: 1px solid #000000; text-align:right;">'.number_format($scheme->allocations[$x]->in_deals).'</td>
+									<td style="width:50px;border: 1px solid #000000; text-align:right;">'.number_format($scheme->allocations[$x]->in_cases).'</td>
+									<td style="width:50px;border: 1px solid #000000; text-align:right;">'.number_format($scheme->allocations[$x]->tts_budget,2).'</td>
+									<td style="width:50px;border: 1px solid #000000; text-align:right;">'.number_format($scheme->allocations[$x]->pe_budget,2).'</td>
 								</tr>';
 							$cnt++;
 						}
@@ -320,16 +321,16 @@ class MakePdf extends Command {
 								<thead>
 									<tr>
 										<th style="width:20px;border: 1px solid #000000; text-align:center;">#</th>
-										<th style="width:50px;border: 1px solid #000000; text-align:center;">GROUP</th>
-										<th style="width:100px;border: 1px solid #000000; text-align:center;">AREA NAME</th>
-										<th style="width:200px;border: 1px solid #000000; text-align:center;">CUSTOMER SOLD TO</th>
-										<th style="width:200px;border: 1px solid #000000; text-align:center;">CUSTOMER SHIP TO NAME</th>
-										<th style="width:150px;border: 1px solid #000000; text-align:center;">CHANNEL</th>
-										<th style="width:150px;border: 1px solid #000000; text-align:center;">ACCOUNT NAME</th> 
-										<th style="width:60px;border: 1px solid #000000; text-align:center;">IN DEALS</th>
-										<th style="width:60px;border: 1px solid #000000; text-align:center;">IN CASES</th>
-										<th style="width:60px;border: 1px solid #000000; text-align:center;">TTS BUDGET</th>
-										<th style="width:60px;border: 1px solid #000000; text-align:center;">PE BUDGET</th>
+										<th style="width:30px;border: 1px solid #000000; text-align:center;">GROUP</th>
+										<th style="width:80px;border: 1px solid #000000; text-align:center;">AREA NAME</th>
+										<th style="width:100px;border: 1px solid #000000; text-align:center;">CUSTOMER SOLD TO</th>
+										<th style="width:120px;border: 1px solid #000000; text-align:center;">CUSTOMER SHIP TO NAME</th>
+										<th style="width:60px;border: 1px solid #000000; text-align:center;">CHANNEL</th>
+										<th style="width:130px;border: 1px solid #000000; text-align:center;">ACCOUNT NAME</th> 
+										<th style="width:50px;border: 1px solid #000000; text-align:center;">IN DEALS</th>
+										<th style="width:50px;border: 1px solid #000000; text-align:center;">IN CASES</th>
+										<th style="width:50px;border: 1px solid #000000; text-align:center;">TTS BUDGET</th>
+										<th style="width:50px;border: 1px solid #000000; text-align:center;">PE BUDGET</th>
 									</tr>
 								</thead>
 							  	<tbody>'.

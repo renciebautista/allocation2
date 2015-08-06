@@ -3,8 +3,8 @@
 	<h2>Product Information Sheet</h2>
 	<table class="bordered">
 		<tr nobr="true">
-			<td width="120">Product Category</td>
-			<td width="730">{{ $pis[2][1] }}</td>
+			<td width="80">Product Category</td>
+			<td width="475">{{ $pis[2][1] }}</td>
 		</tr>
 		<tr nobr="true">
 			<td>Sub Category</td>
@@ -47,16 +47,16 @@
 						<th colspan="3">Case Dimensions (MM)</th>
 					</tr>
 					<tr nobr="true">
-						<th width="195">Item Description</th>
-						<th width="100">Pack Size</th>
-						<th width="100">Pack Color</th>
+						<th width="99">Item Description</th>
+						<th width="50">Pack Size</th>
+						<th width="50">Pack Color</th>
 						<th width="50">Units/Case</th>
-						<th width="100">Product Barcode</th>
-						<th width="100">Product Code</th>
+						<th width="80">Product Barcode</th>
+						<th width="80">Product Code</th>
 						<th width="50">Case/Ton</th>
-						<th width="50" style="text-align:center">L</th>
-						<th width="50" style="text-align:center">W</th>
-						<th width="50" style="text-align:center">H</th>
+						<th width="30" style="text-align:center">L</th>
+						<th width="30" style="text-align:center">W</th>
+						<th width="30" style="text-align:center">H</th>
 					</tr>
 					@for($x1 = $x; $x1 < count($pis); $x1++)
 						<?php if($pis[$x1][1] == "Product Dimension (MM)"){
@@ -91,16 +91,18 @@
 						<th colspan="3">Maximum Case Stocking</th>
 					</tr>
 					<tr nobr="true">
-						<th width="240">Item Description</th>
-						<th width="50" style="text-align:center">L</th>	
-						<th width="50" style="text-align:center">W</th>
-						<th width="50" style="text-align:center">H</th>
-						<th width="120">Product Casecode</th>
+						<th width="129">Item Description</th>
+						<th width="30" style="text-align:center">L</th>	
+						<th width="30" style="text-align:center">W</th>
+						<th width="30" style="text-align:center">H</th>
+						<th width="80">Product Casecode</th>
 						<th width="50">Net Wgt Kg</th>
-						<th>Gross Wgt KG</th>
+						<th width="50">Gross Wgt KG</th>
 						<th width="50">CS/Layer</th>
 						<th width="50">Layer/Pallet</th>
-						<th width="100">Pallets/Tier</th>
+						<th width="50">Pallets/Tier</th>
+
+
 					</tr>
 					<?php $x = $x+3; ?>
 					@for($x2 = $x; $x2 < count($pis); $x2++)
@@ -129,16 +131,16 @@
 						<th colspan="2">Trade margins</th>
 					</tr>
 					<tr nobr="true">
-						<th width="245">Item Description</th>
-						<th width="50">Total Shelf Life (SLED in Days)</th>
+						<th width="129">Item Description</th>
+						<th width="30">Total Shelf Life (SLED in Days)</th>
 						<th width="50">Pieces/Inner Pack (regular SKU with inner pack/carton)</th>
-						<th width="100">Product Barcode</th>
-						<th width="100">Product Code</th>
-						<th width="50">LPAT/CS</th>
-						<th width="50">LPAT per PC/MP</th>
-						<th width="50">SRP Per PC/MP</th>
-						<th width="75">%</th>
-						<th width="75">Absolute</th>
+						<th width="80">Product Barcode</th>
+						<th width="80">Product Code</th>
+						<th width="36">LPAT/CS</th>
+						<th width="36">LPAT per PC/MP</th>
+						<th width="36">SRP Per PC/MP</th>
+						<th width="36">%</th>
+						<th width="36">Absolute</th>
 					</tr>
 					<?php $x = $x+3; ?>
 					@for($x3 = $x; $x3 < count($pis); $x3++)
