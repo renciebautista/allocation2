@@ -17,7 +17,6 @@ Route::get('testpdf',function(){
 	$schemes = Scheme::getList($activity->id);
 
 	foreach ($schemes as $scheme) {
-		echo 
 		if(count($scheme->item_casecode) > 0){
 			var_dump($scheme->item_casecode);
 		}
