@@ -137,38 +137,38 @@ class MakePdf extends Command {
 				$pdf->AddPage();
 			}
 
-			if(count($artworks) > 0){
-				$artwork = View::make('pdf.artwork')->render();
-				$pdf->writeHTML($artwork , $ln=true, $fill=false, $reset=false, $cell=false, $align='');
-				$pdf->setImageScale(1.53);
-				$x = $pdf->getX();
-				$y = $pdf->getY();
-				$cnt = 0;
-				foreach($artworks as $artwork){
-					$pdf->SetXY($x, $y);
-					$cnt++;
-					$image_file = $path = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/'.$artwork->hash_name;
-					$pdf->Image($image_file, $x, $y, 30, 0, '', '', '', true, 150, '', false, false, 0, false, false, false);
-					$x+=31;
-					if($x > 165){
-						$y+=31;
-						$x = 10;
-					}
+			// if(count($artworks) > 0){
+			// 	$artwork = View::make('pdf.artwork')->render();
+			// 	$pdf->writeHTML($artwork , $ln=true, $fill=false, $reset=false, $cell=false, $align='');
+			// 	$pdf->setImageScale(1.53);
+			// 	$x = $pdf->getX();
+			// 	$y = $pdf->getY();
+			// 	$cnt = 0;
+			// 	foreach($artworks as $artwork){
+			// 		$pdf->SetXY($x, $y);
+			// 		$cnt++;
+			// 		$image_file = $path = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/'.$artwork->hash_name;
+			// 		$pdf->Image($image_file, $x, $y, 30, 0, '', '', '', true, 150, '', false, false, 0, false, false, false);
+			// 		$x+=31;
+			// 		if($x > 165){
+			// 			$y+=31;
+			// 			$x = 10;
+			// 		}
 
-					if($h-$y < 40){
-						$pdf->AddPage();
-					}
+			// 		if($h-$y < 40){
+			// 			$pdf->AddPage();
+			// 		}
 				
-				}
-				$y = $pdf->getY();
-				$y+=31;
-				$pdf->SetXY($x, $y);
+			// 	}
+			// 	$y = $pdf->getY();
+			// 	$y+=31;
+			// 	$pdf->SetXY($x, $y);
 
-				$h = $pdf->getPageHeight();
-				if($h-$y < 60){
-					$pdf->AddPage();
-				}
-			}
+			// 	$h = $pdf->getPageHeight();
+			// 	if($h-$y < 60){
+			// 		$pdf->AddPage();
+			// 	}
+			// }
 			
 			if(count($schemes) > 0){
 				$w_codes = false;
