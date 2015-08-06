@@ -133,42 +133,54 @@ class MakePdf extends Command {
 			$y = $pdf->getY();
 
 			$h = $pdf->getPageHeight();
-			if($h-$y < 40){
+			if($h-$y < 50){
 				$pdf->AddPage();
 			}
 
-			// if(count($artworks) > 0){
-			// 	$artwork = View::make('pdf.artwork')->render();
-			// 	$pdf->writeHTML($artwork , $ln=true, $fill=false, $reset=false, $cell=false, $align='');
-			// 	$pdf->setImageScale(1.53);
-			// 	$x = $pdf->getX();
-			// 	$y = $pdf->getY();
-			// 	$cnt = 0;
-			// 	foreach($artworks as $artwork){
-			// 		$pdf->SetXY($x, $y);
-			// 		$cnt++;
-			// 		$image_file = $path = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/'.$artwork->hash_name;
-			// 		$pdf->Image($image_file, $x, $y, 30, 0, '', '', '', true, 150, '', false, false, 0, false, false, false);
-			// 		$x+=31;
-			// 		if($x > 165){
-			// 			$y+=31;
-			// 			$x = 10;
-			// 		}
+			if(count($artworks) > 0){
+				$artwork = View::make('pdf.artwork')->render();
+				$pdf->writeHTML($artwork , $ln=true, $fill=false, $reset=false, $cell=false, $align='');
+				$x = $pdf->getX();
+				$y = $pdf->getY();
+				$cnt = 0;
+				$max_h = 0;
+				foreach($artworks as $artwork){
+					$pdf->SetXY($x, $y);
+					$cnt++;
 
-			// 		if($h-$y < 40){
-			// 			$pdf->AddPage();
-			// 		}
+					$image_file = $path = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/'.$artwork->hash_name;
+					$pdf->Image($image_file, $x, $y, 30, 0, '', '', '', true, 150, '', false, false, 0, false, false, false);
+					if($max_h < $pdf->getImageRBY() - $y){
+						$max_h = $pdf->getImageRBY() - $y;
+					}
+
+					
+					$x+=31;
+					if($x > 165){
+						$y+=$max_h;
+						$x = 10;
+						$max_h = 0;
+					}
+
+					if($h-$y < 40){
+						$pdf->AddPage();
+					}
 				
-			// 	}
-			// 	$y = $pdf->getY();
-			// 	$y+=31;
-			// 	$pdf->SetXY($x, $y);
+				}
+				$y = $pdf->getY();
+				
+				if($max_h < 31){
+					$max_h += 31;
+				}
+				$max_h += 10;
+				$y+=$max_h;
+				$pdf->SetXY($x, $y);
 
-			// 	$h = $pdf->getPageHeight();
-			// 	if($h-$y < 60){
-			// 		$pdf->AddPage();
-			// 	}
-			// }
+				$h = $pdf->getPageHeight();
+				if($h-$y < 60){
+					$pdf->AddPage();
+				}
+			}
 			
 			if(count($schemes) > 0){
 				$w_codes = false;
@@ -263,7 +275,6 @@ class MakePdf extends Command {
 			}
 				
 			if(count($pis) > 0){
-				$pdf->AddPage();
 				$pis_view = "";
 				$pis_view .= View::make('pdf.style')->render();
 				$pis_view .= View::make('pdf.pis',compact('activity','pis'))->render();
