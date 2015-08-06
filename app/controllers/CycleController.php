@@ -223,6 +223,7 @@ class CycleController extends \BaseController {
 					$activity->scheduled = 1;
 					$activity->status_id = 9;
 					$activity->update();
+					var_dump($activity);
 				}
 
 				// foreach ($users as $user) {
