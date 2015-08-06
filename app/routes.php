@@ -15,8 +15,9 @@ Queue::getIron()->ssl_verifypeer = false;
 Route::get('testpdf',function(){
 	$activity = Activity::find(15);
 	$schemes = Scheme::getList($activity->id);
-	var_dump($schemes);
+
 	foreach ($schemes as $scheme) {
+		Helper::print_r( $scheme);
 		if(!$scheme->item_casecode){
 			var_dump($scheme->item_casecode);
 		}
