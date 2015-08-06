@@ -12,6 +12,23 @@ Queue::getIron()->ssl_verifypeer = false;
 |
 */
 
+Route::get('testpdf',function(){
+	$activity = Activity::find(15);
+	$schemes = Scheme::getList($activity->id);
+
+	foreach ($schemes as $scheme) {
+		echo 
+		if(count($scheme->item_casecode) > 0){
+			var_dump($scheme->item_casecode);
+		}
+		if(count($scheme->item_barcode) > 0){
+			var_dump($scheme->item_barcode);
+		}
+
+		
+	}
+});
+
 Route::get('testrole', function(){
 	// $filename = preg_replace('/[^A-Za-z0-9 _ .-]/', '_', "SNOWBALL 2015 PREBANDED PACKS 470ML/700ML SCHEMES");
 	// echo strtoupper(Helper::sanitize("SNOWBALL-2015-LADY’S-CHOICE-CATEGORY-EXPERTS"));
@@ -196,7 +213,7 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('reports/allocation/create', 'AllocationReportController@create');
 	Route::post('reports/allocation/create', 'AllocationReportController@store');
 	Route::get('reports/allocation/{id}/generate', 'AllocationReportController@show');
-	Route::post('reports/allocation/download', 'AllocationReportController@download');
+	Route::post('reports/allocation/{id}/generate', 'AllocationReportController@download');
 
 	Route::get('reports/activities', 'ReportController@activities');
 	Route::get('reports/{id}/preview', 'ReportController@preview');
