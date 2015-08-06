@@ -262,12 +262,14 @@ class MakePdf extends Command {
 				}
 			}
 				
-			// if(count($pis) > 0){
-			// 	$pis_view = "";
-			// 	$pis_view .= View::make('pdf.style')->render();
-			// 	$pis_view .= View::make('pdf.pis',compact('activity','pis'))->render();
-			// 	$pdf->writeHTML($pis_view , $ln=true, $fill=false, $reset=false, $cell=false, $align='');
-			// }
+			if(count($pis) > 0){
+				$pis_view = "";
+				$pis_view .= View::make('pdf.style')->render();
+				$pis_view .= View::make('pdf.pis',compact('activity','pis'))->render();
+				$pdf->writeHTML($pis_view , $ln=true, $fill=false, $reset=false, $cell=false, $align='');
+			}
+
+			$pdf->AddPage();
 
 			if(count($schemes) > 0){
 				$pdf->SetFont('helvetica', '', 6);
