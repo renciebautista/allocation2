@@ -43,19 +43,28 @@ class MakePdf extends Command {
 		// echo $id;
 		$activity = Activity::find($id);
 		if(!empty($activity)){
-			$planner = ActivityPlanner::getPlanner($activity->id);
-			$approvers = ActivityApprover::getApprovers($activity->id);
+			$approvers = ActivityApprover::getNames($activity->id);
+			$planner = ActivityPlanner::where('activity_id', $activity->id)->first();
+			$budgets = ActivityBudget::with('budgettype')
+					->where('activity_id', $activity->id)
+					->get();
 
-			$budgets = ActivityBudget::getBudgets($activity->id);
-			$nobudgets = ActivityNobudget::getBudgets($activity->id);
+			$nobudgets = ActivityNobudget::with('budgettype')
+				->where('activity_id', $activity->id)
+				->get();
 
 			$schemes = Scheme::getList($activity->id);
 
 
 			$skuinvolves = array();
 			foreach ($schemes as $scheme) {
-				$involves = SchemeHostSku::getHostSku($scheme->id);
-				$premiums = SchemePremuimSku::getPremuimSku($scheme->id);
+				$involves = SchemeHostSku::where('scheme_id',$scheme->id)
+					->join('pricelists', 'scheme_host_skus.sap_code', '=', 'pricelists.sap_code')
+					->get();
+
+				$premiums = SchemePremuimSku::where('scheme_id',$scheme->id)
+					->join('pricelists', 'scheme_premuim_skus.sap_code', '=', 'pricelists.sap_code')
+					->get();
 				
 				$_involves = array();
 				foreach ($involves as $value) {
@@ -75,22 +84,22 @@ class MakePdf extends Command {
 				$skuinvolves[$scheme->id]['non_ulp'] = $non_ulp;
 			}
 
-			$materials = ActivityMaterial::getList($activity->id);
-			$fdapermit = ActivityFdapermit::getPermit($activity->id);
-			$networks = ActivityTiming::getTimings($activity->id,true);
+			$materials = ActivityMaterial::where('activity_id', $activity->id)
+				->with('source')
+				->get();
 
+			$fdapermit = ActivityFdapermit::where('activity_id', $activity->id)->first();
+			$networks = ActivityTiming::getTimings($activity->id,true);
 			$activity_roles = ActivityRole::getListData($activity->id);
 			$artworks = ActivityArtwork::getList($activity->id);
 			$pispermit = ActivityFis::where('activity_id', $activity->id)->first();
 
 			//Involved Area
-			// $areas = ActivityCustomer::getSelectedAreas($activity->id);
-			$areas = ActivityCutomerList::getSelectedAreas($activity->id);
-			// $channels = ActivityChannel2::getSelectecdChannels($activity->id);
-			$channels = ActivityChannelList::getSelectecdChannels($activity->id);
-
-			$sku_involves = ActivitySku::getSkusInvolve($activity->id);
-			$objectives = ActivityObjective::getObjectives($activity->id);
+			$areas = ActivityCustomer::getSelectedAreas($activity->id);
+			// $channels = ActivityChannel::getSelectecdChannels($activity->id);
+			$channels = ActivityChannel2::getSelectecdChannels($activity->id);
+			
+			$sku_involves = ActivitySku::getInvolves($activity->id);
 
 			// // Product Information Sheet
 			$path = '/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
@@ -115,10 +124,9 @@ class MakePdf extends Command {
 
 			$header = "";
 			$header .= View::make('pdf.style')->render();
-			$header .= View::make('pdf.title',compact('activity','approvers','planner'))->render();
+			$header .= View::make('pdf.title',compact('activity','approvers'))->render();
 			$header .= View::make('pdf.activity',compact('activity','schemes','networks','materials', 
-				'budgets','nobudgets', 'skuinvolves', 'areas', 'channels','fdapermit', 'sku_involves',
-				'activity_roles','objectives'))->render();
+				'budgets','nobudgets', 'skuinvolves', 'areas', 'channels','fdapermit', 'sku_involves', 'activity_roles'))->render();
 			
 			$pdf->writeHTML(iconv("UTF-8", "CP1252//TRANSLIT", $header) , $ln=true, $fill=false, $reset=false, $cell=false, $align='');
 
@@ -154,7 +162,9 @@ class MakePdf extends Command {
 				
 				}
 				$y = $pdf->getY();
-				$y+=31;
+				// should get max image height
+				$y+=61;
+
 				$pdf->SetXY($x, $y);
 
 				$h = $pdf->getPageHeight();
@@ -199,26 +209,22 @@ class MakePdf extends Command {
 					// $style['cellfitalign'] = 'C';
 					foreach ($schemes as $scheme) {
 						$y = $pdf->GetY();
-
-						if(($scheme->item_barcode != null) || ($scheme->item_barcode ="")){
-							$barcode[$cnt] = $pdf->serializeTCPDFtagParameters(array($scheme->item_barcode, 'EAN13', '', '', '', 18, 0.4, $style, ''));       
-						}
-						
-						if(($scheme->item_casecode != null) || ($scheme->item_casecode ="")){
+						if(count($scheme->item_casecode) > 0){
 							$casecode[$cnt] = $pdf->serializeTCPDFtagParameters(array($scheme->item_casecode, 'I25', '', '', '', 18, 0.4, $style, '')); 
 							
 						}
-						
+						if(count($scheme->item_barcode) > 0){
+							$barcode[$cnt] = $pdf->serializeTCPDFtagParameters(array($scheme->item_barcode, 'EAN13', '', '', '', 18, 0.4, $style, ''));       
+						}
 
-						if(($scheme->item_barcode != null) || ($scheme->item_barcode ="")){
+						if(count($scheme->item_barcode) > 0){
 							$str .='<tr nobr="true"><td align="center">'.$scheme->name.'<br>
 							<tcpdf method="write1DBarcode" params="'.$barcode[$cnt] .'" />
 							</td>';
 						}else{
 							$str .='<tr nobr="true"><td align="center"></td>';
 						}
-
-						if(($scheme->item_casecode != null) || ($scheme->item_casecode ="")){
+						if(count($scheme->item_barcode) > 0){
 							$str .='<td align="center">'.$scheme->name.'<br>
 							<tcpdf method="write1DBarcode" params="'.$casecode[$cnt] .'" />
 							</td></tr>';
