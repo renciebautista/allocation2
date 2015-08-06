@@ -239,7 +239,7 @@ class CycleController extends \BaseController {
 			}else{
 			}
 			
-			echo $total_activities;
+			// echo $total_activities;
 			
 		}
 
