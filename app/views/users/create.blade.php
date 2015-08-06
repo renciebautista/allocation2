@@ -65,7 +65,7 @@
 		<div class="form-group">
 			<div class="checkbox">
 				<label>
-					{{ Form::checkbox('is_active', true,null) }} Active
+					{{ Form::checkbox('is_active', true,true) }} Active
 				</label>
 			</div>
 		</div>
