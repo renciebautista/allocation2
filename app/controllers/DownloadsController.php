@@ -12,7 +12,13 @@ class DownloadsController extends \BaseController {
 	public function cycles()
 	{
 		Input::flash();
-		$cycles = Cycle::search(Input::get('search'));
+		if(Auth::user()->hasRole("ADMINISTRATOR")){
+			$cycles = Cycle::search(Input::get('search'));
+		}else{
+			$cycles = Cycle::getReleasedCycles(Input::get('search'));
+		}
+
+
 		return View::make('downloads.cycles',compact('cycles'));
 	}
 

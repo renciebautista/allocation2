@@ -52,18 +52,20 @@
 				<thead>
 					<tr>
 						<th>TOP Cycle</th>
-						<th style="text-align:center;">Action</th>
+						<th style="width:10%;text-align:center;">Activity Count</th>
+						<th style="width:10%;text-align:center;">Action</th>
 					</tr>
 				</thead>
 				<tbody>
 					@if(count($cycles) == 0)
 					<tr>
-						<td colspan="2">No record found!</td>
+						<td colspan="3">No record found!</td>
 					</tr>
 					@else
 					@foreach($cycles as $cycle)
 					<tr>
 						<td>{{ $cycle->cycle_name }}</td>
+						<td style="width:10%;text-align:center;">{{ $cycle->total }}</td>
 						<td class="action">
 							{{ HTML::linkAction('DownloadsController@download','Download Zip', $cycle->id, array('class' => 'btn btn-success btn-xs')) }}						
 						</td>

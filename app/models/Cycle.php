@@ -50,7 +50,7 @@ class Cycle extends \Eloquent {
 
 	public static function search($filter){
 		return self::where('cycles.cycle_name', 'LIKE' ,"%$filter%")
-			->orderBy('submission_deadline')
+			->orderBy('release_date')
 			->get();
 	}
 
@@ -106,5 +106,16 @@ class Cycle extends \Eloquent {
 		$today = date('Y-m-d');
 		// $deadline = date('Y-m-d', strtotime("{$today} - 1 day"));
 		return self::where('release_date',$today)->get();
+	}
+
+	public static function getReleasedCycles($filter){
+		return DB::table('activities')
+                 ->select('cycles.cycle_name', 'cycles.id',DB::raw('count(activities.id) as total'))
+                 ->join('cycles','activities.cycle_id','=','cycles.id')
+                 ->where('cycles.cycle_name', 'LIKE' ,"%$filter%")
+                 ->where('activities.status_id',9)
+                 ->groupBy('activities.cycle_id')
+                 ->orderBy('cycles.release_date')
+                 ->get();
 	}
 }
