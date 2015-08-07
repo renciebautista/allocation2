@@ -118,4 +118,14 @@ class Cycle extends \Eloquent {
                  ->orderBy('cycles.release_date')
                  ->get();
 	}
+
+	public static function getAllCycles($filter){
+		return DB::table('activities')
+                 ->select('cycles.cycle_name', 'cycles.id',DB::raw('count(activities.id) as total'))
+                 ->join('cycles','activities.cycle_id','=','cycles.id')
+                 ->where('cycles.cycle_name', 'LIKE' ,"%$filter%")
+                 ->groupBy('activities.cycle_id')
+                 ->orderBy('cycles.release_date')
+                 ->get();
+	}
 }

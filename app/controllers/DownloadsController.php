@@ -15,7 +15,7 @@ class DownloadsController extends \BaseController {
 		if(Auth::user()->hasRole("ADMINISTRATOR")){
 			$cycles = Cycle::search(Input::get('search'));
 		}else{
-			$cycles = Cycle::getReleasedCycles(Input::get('search'));
+			$cycles = Cycle::getAllCycles(Input::get('search'));
 		}
 
 
