@@ -131,7 +131,7 @@
 				<tbody>
 					@if(count($activities) == 0)
 					<tr>
-						<td colspan="11">No record found!</td>
+						<td colspan="13">No record found!</td>
 					</tr>
 					@else
 					@foreach($activities as $activity)
