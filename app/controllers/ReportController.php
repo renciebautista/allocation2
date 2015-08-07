@@ -17,7 +17,8 @@ class ReportController extends \BaseController {
 			$types = ActivityType::getLists();
 			$planners = User::getApprovers(['PMOG PLANNER']);
 			$proponents = User::getApprovers(['PROPONENT']);
-			$activities = Activity::search(Input::get('pr'),9,Input::get('cy'),Input::get('sc'),Input::get('ty'),Input::get('pm'),Input::get('title'));
+			$status = ['9'];
+			$activities = Activity::search(Input::get('pr'),$status,Input::get('cy'),Input::get('sc'),Input::get('ty'),Input::get('pm'),Input::get('title'));
 			return View::make('report.fieldactivities',compact('activities', 'cycles', 'scopes', 'types', 'planners', 'proponents'));
 		}else{
 			$statuses = ActivityStatus::getLists();
