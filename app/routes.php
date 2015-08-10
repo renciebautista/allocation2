@@ -13,16 +13,12 @@ Queue::getIron()->ssl_verifypeer = false;
 */
 
 Route::get('testpdf',function(){
-	$categories = [3102,3103];
-	$activity_categories = array();
-	foreach ($categories as $category){
-		$activitycategory = Sku::category($category);
-		Helper::print_r($activitycategory);
-		// $activity_categories[] = array('activity_id' => 1, 
-		// 	'category_code' => $category,
-		// 	'category_desc' => $activitycategory->$category_desc);
-	}
-	var_dump($activity_categories);
+	$data['temp_id'] = 1;
+	$data['user_id'] = 2;
+	$data['cycles'] = 6,7,12;
+	Artisan::call('make:allocreport',array('temp_id' => $data['temp_id'],
+			'user_id' => $data['user_id'],
+			'cycles' => $data['cycles']));
 							
 });
 
