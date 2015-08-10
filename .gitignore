@@ -3,6 +3,7 @@
 /app/storage/uploads/*
 /app/storage/zipped/*
 /app/database/seeds/seed_files/*
+/app/storage/exports/*
 composer.phar
 composer.lock
 .env.*.php

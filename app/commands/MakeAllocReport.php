@@ -44,10 +44,12 @@ class MakeAllocReport extends Command {
 	public function fire()
 	{	
 		$id = $this->argument('temp_id');
+		$user_id = $this->argument('user_id');
 		$cycles = $this->argument('cycles');
+		$user = User::find($user_id);
 		$template = AllocationReportTemplate::findOrFail($id);
 
-		$data['cycles'] = $cycles;
+		$data['cycles'] = explode(",", $cycles);
 		$data['status'] = AllocationReportFilter::getList($template->id,1);
 		$data['scopes'] = AllocationReportFilter::getList($template->id,2);
 		$data['proponents'] = AllocationReportFilter::getList($template->id,3);
@@ -63,8 +65,10 @@ class MakeAllocReport extends Command {
 		$data['shiptos'] = AllocationReportFilter::getList($template->id,13);
 		$data['outlets'] = AllocationReportFilter::getList($template->id,14);
 
+		$token = md5(uniqid(mt_rand(), true));
+		
 		$timeFirst  = strtotime(date('Y-m-d H:i:s'));
-		$filePath = storage_path('exports/Exported Report.xlsx');
+		$filePath = storage_path('exports/'.$token.'.xlsx');
 		$writer = WriterFactory::create(Type::XLSX);
 		$writer->openToFile($filePath); // write data to a file or to a PHP stream
 		$take = 1000; // adjust this however you choose
@@ -87,6 +91,19 @@ class MakeAllocReport extends Command {
 		$timeSecond = strtotime(date('Y-m-d H:i:s'));
 		$differenceInSeconds = $timeSecond - $timeFirst;
 		$this->line( 'Time used ' . $differenceInSeconds . " sec");
+
+		
+		$newfile = new AllocationReportFile;
+		$newfile->created_by = $user->id;
+		$newfile->token = $token;
+		$newfile->file_name = $token.'.xlsx';
+
+		$data['template'] = $template;
+    	$data['token'] = $token;
+    	Mail::send('emails.allocreport', $data, function($message) use ($user){
+			$message->to($user->email, $user->first_name);
+			$message->subject('Allocation Report - '.$template->name);
+		});
 	}
 
 	/**
@@ -98,6 +115,7 @@ class MakeAllocReport extends Command {
 	{
 		return array(
 			array('temp_id', InputArgument::REQUIRED, 'Template Id'),
+			array('user_id', InputArgument::REQUIRED, 'User Id'),
 			array('cycles', InputArgument::REQUIRED, 'Selected Cycles'),
 		);
 	}

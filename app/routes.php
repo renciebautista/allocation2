@@ -78,6 +78,7 @@ Route::get('reset_password/{token}','LoginController@resetpassword');
 Route::post('reset_password', 'LoginController@doResetPassword');
 
 Route::get('downloadcycle/{id}', 'DownloadsController@downloadcycle');
+Route::get('downloadalocreport/{token}','AllocationReportController@download');
 
 
 Route::group(array('before' => 'auth'), function()
@@ -215,7 +216,7 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('reports/allocation/create', 'AllocationReportController@create');
 	Route::post('reports/allocation/create', 'AllocationReportController@store');
 	Route::get('reports/allocation/{id}/generate', 'AllocationReportController@show');
-	Route::post('reports/allocation/{id}/generate', 'AllocationReportController@download');
+	Route::post('reports/allocation/{id}/generate', 'AllocationReportController@generate');
 	Route::get('reports/allocation/{id}', 'AllocationReportController@edit');
 	Route::delete('reports/allocation/{id}', 'AllocationReportController@destroy');
 

@@ -15,9 +15,8 @@ class CreateAllocationReportFilesTable extends Migration {
 		Schema::create('allocation_report_files', function(Blueprint $table)
 		{
 			$table->increments('id');
-			$table->string('report_id');
-			$table->integer('temp_id');
-			$table->string('cycles');
+			$table->integer('created_by');
+			$table->string('token');
 			$table->string('file_name')->nullable();
 			$table->timestamps();
 		});

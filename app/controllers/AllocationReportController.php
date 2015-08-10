@@ -306,7 +306,7 @@ class AllocationReportController extends \BaseController {
 		return View::make('allocationreport.generate', compact('template', 'cycles'));
 	}
 
-	public function download($id){
+	public function generate($id){
 		$template = AllocationReportTemplate::findOrFail($id);
 
 		$rules = array('cy' => 'required');
@@ -319,8 +319,7 @@ class AllocationReportController extends \BaseController {
 				$cycles[] = $cy;
 			}
 
-			$report_id = Queue::push('AllocReportScheduler', array('temp_id' => $id),'allocreport');
-			AllocationReportFile::create(array('report_id' => $report_id,'temp_id' =>  $id,'cycles' => implode(",", $cycles)));
+			$report_id = Queue::push('AllocReportScheduler', array('temp_id' => $id,'cycles' => implode(",", $cycles), 'user_id' => Auth::id()),'allocreport');
 
 			return Redirect::to(URL::action('AllocationReportController@show', array('id' => $template->id)))
 				->with('class', 'alert-success')
@@ -330,6 +329,10 @@ class AllocationReportController extends \BaseController {
 				->with('class', 'alert-danger')
 				->with('message', 'Cannot generate report please select a cycle.');
 		}
+	}
+
+	public function download($token){
+
 	}
 
 	/**
