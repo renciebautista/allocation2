@@ -102,7 +102,8 @@ class MakeAllocReport extends Command {
 
 		$data['template'] = $template;
     	$data['token'] = $token;
-    	Mail::send('emails.allocreport', $data, function($message) use ($user,$template){
+    	$data['user'] = $user;
+    	Mail::send('emails.allocreport', $data, function($message) use ($data){
 			$message->to($user->email, $user->first_name);
 			$message->subject('Allocation Report - '.$template->name);
 		});
