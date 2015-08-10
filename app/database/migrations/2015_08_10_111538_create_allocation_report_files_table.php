@@ -18,7 +18,7 @@ class CreateAllocationReportFilesTable extends Migration {
 			$table->string('report_id');
 			$table->integer('temp_id');
 			$table->string('cycles');
-			$table->string('file_name');
+			$table->string('file_name')->nullable();
 			$table->timestamps();
 		});
 	}
