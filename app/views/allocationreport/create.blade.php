@@ -149,7 +149,7 @@
 						<div class="form-group">
 							<div class="checkbox">
 								<label>
-									{{ Form::checkbox('groups[]', $group->group_code,true) }} {{ $group->group }}
+									{{ Form::checkbox('groups[]', $group->group_code) }} {{ $group->group }}
 								</label>
 							</div>
 						</div>
@@ -172,7 +172,7 @@
 						<div class="form-group">
 							<div class="checkbox">
 								<label>
-									{{ Form::checkbox('areas[]', $area->area_code,true) }} {{ $area->area}}
+									{{ Form::checkbox('areas[]', $area->area_code) }} {{ $area->area}}
 								</label>
 							</div>
 						</div>
@@ -195,7 +195,7 @@
 						<div class="form-group">
 							<div class="checkbox">
 								<label>
-									{{ Form::checkbox('soldto[]', $soldto->sold_to_code,true) }} {{ $soldto->sold_to}}
+									{{ Form::checkbox('soldto[]', $soldto->sold_to_code) }} {{ $soldto->sold_to}}
 								</label>
 							</div>
 						</div>
@@ -222,7 +222,7 @@
 						<div class="form-group">
 							<div class="checkbox">
 								<label>
-									{{ Form::checkbox('shipto[]', $shipto->ship_to_code,true) }} {{ $shipto->ship_to}}
+									{{ Form::checkbox('shipto[]', $shipto->ship_to_code) }} {{ $shipto->ship_to}}
 								</label>
 							</div>
 						</div>
@@ -245,7 +245,7 @@
 						<div class="form-group">
 							<div class="checkbox">
 								<label>
-									{{ Form::checkbox('outlet[]', $outlet->outlet,true) }} {{ $outlet->outlet}}
+									{{ Form::checkbox('outlet[]', $outlet->outlet) }} {{ $outlet->outlet}}
 								</label>
 							</div>
 						</div>

@@ -319,7 +319,6 @@ class AllocationReportController extends \BaseController {
 				$cycles[] = $cy;
 			}
 
-
 			$temp_id = $id;
 			$user_id = Auth::id();
 			$_cycles = implode(",", $cycles);
