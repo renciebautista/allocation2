@@ -319,11 +319,20 @@ class AllocationReportController extends \BaseController {
 				$cycles[] = $cy;
 			}
 
-			$report_id = Queue::push('AllocReportScheduler', array('temp_id' => $id,'cycles' => implode(",", $cycles), 'user_id' => Auth::id()),'allocreport');
 
-			return Redirect::to(URL::action('AllocationReportController@show', array('id' => $template->id)))
-				->with('class', 'alert-success')
-				->with('message', 'Report successfuly initiated, please wait for an email link to download the report.');
+			$temp_id = $id;
+			$user_id = Auth::id();
+			$_cycles = implode(",", $cycles);
+
+			var_dump($temp_id);
+			var_dump($user_id);
+			var_dump($_cycles);
+			// $report_id = Queue::push('AllocReportScheduler', array('temp_id' => $temp_id, 
+			// 	'user_id' => $user_id,'cycles' => $_cycles),'allocreport');
+
+			// return Redirect::to(URL::action('AllocationReportController@show', array('id' => $template->id)))
+			// 	->with('class', 'alert-success')
+			// 	->with('message', 'Report successfuly initiated, please wait for an email link to download the report.');
 		}else{
 			return Redirect::to(URL::action('AllocationReportController@show', array('id' => $template->id)))
 				->with('class', 'alert-danger')
@@ -335,8 +344,6 @@ class AllocationReportController extends \BaseController {
 		$file = AllocationReportFile::where('token',$token)->first();
 		if(!empty($file)){
 			$path = storage_path().'/exports/'.$file->file_name;
-			// Helper::print_r($file);
-			// Helper::print_r($path);
 			return Response::download($path, $file->template_name);
 		}else{
 			echo 'File not found';
