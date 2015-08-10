@@ -72,6 +72,7 @@ class MakeAllocReport extends Command {
 		$timeFirst  = strtotime(date('Y-m-d H:i:s'));
 		$filePath = storage_path('exports/'.$token.'.xlsx');
 		$writer = WriterFactory::create(Type::XLSX);
+		$writer->setShouldCreateNewSheetsAutomatically(true); // default value
 		$writer->openToFile($filePath); // write data to a file or to a PHP stream
 		$take = 1000; // adjust this however you choose
 		$counter = 0; // used to skip over the ones you've already processed
