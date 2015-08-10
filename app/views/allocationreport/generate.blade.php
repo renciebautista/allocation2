@@ -12,7 +12,7 @@
 
 @include('partials.notification')
 
-{{ Form::open(array('action' => array('AllocationReportController@download', $template->id) ,'class' => 'bs-component')) }}
+{{ Form::open(array('action' => array('AllocationReportController@generate', $template->id) ,'class' => 'bs-component')) }}
 {{ Form::hidden('temp_id', $template->id) }}
 <div class="panel panel-default">
 	<div class="panel-heading">Cycle Filter</div>

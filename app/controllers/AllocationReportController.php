@@ -332,7 +332,7 @@ class AllocationReportController extends \BaseController {
 	}
 
 	public function download($token){
-
+		
 	}
 
 	/**
