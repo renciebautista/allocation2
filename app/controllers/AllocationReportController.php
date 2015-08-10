@@ -320,13 +320,14 @@ class AllocationReportController extends \BaseController {
 			}
 
 			$report_id = Queue::push('AllocReportScheduler', array('temp_id' => $id),'allocreport');
-			AllocationReportFile::create(array('report_id' => $report_id,
-				'temp_id' =>  $id,
-				'cycles' => $cycles));
+			echo $report_id;
+			// AllocationReportFile::create(array('report_id' => $report_id,
+			// 	'temp_id' =>  $id,
+			// 	'cycles' => $cycles));
 
-			return Redirect::to(URL::action('AllocationReportController@show', array('id' => $template->id)))
-				->with('class', 'alert-success')
-				->with('message', 'Report successfuly initiated, please wait for an email link to download the report.');
+			// return Redirect::to(URL::action('AllocationReportController@show', array('id' => $template->id)))
+			// 	->with('class', 'alert-success')
+			// 	->with('message', 'Report successfuly initiated, please wait for an email link to download the report.');
 		}else{
 			return Redirect::to(URL::action('AllocationReportController@show', array('id' => $template->id)))
 				->with('class', 'alert-danger')
