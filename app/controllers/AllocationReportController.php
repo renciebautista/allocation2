@@ -332,7 +332,7 @@ class AllocationReportController extends \BaseController {
 	}
 
 	public function download($token){
-		$file = AllocationReportFile::where('token',$id)->first();
+		$file = AllocationReportFile::where('token',$token)->first();
 		if(!empty($file)){
 			$path = storage_path().'/exports/'.$file->filename;
 			return Response::download($path, $file->template_name);
