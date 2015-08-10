@@ -37,6 +37,7 @@ class MakePdf extends Command {
 	 */
 	public function fire()
 	{
+		set_time_limit(0);
 		$id = $this->argument('id');
 		$this->line("Generating PDF via comamnd line using TCPDF");
 		$timeFirst  = strtotime(date('Y-m-d H:i:s'));

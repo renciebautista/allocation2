@@ -184,7 +184,7 @@ class AllocationReport extends \Eloquent {
 				FROM scheme_premuim_skus 
 				GROUP BY scheme_id
 			) as premiumsku_tbl ON schemes.id = premiumsku_tbl.scheme_id
-			%s %s %s %s %s %s %s %s %s %s %s %s %s %s %s LIMIT %s,%s",
+			%s %s %s %s %s %s %s %s %s %s %s %s %s %s %s LIMIT %s,%s ORDER BY allocations.id",
 			$cycles,
 			$status,$scopes,$proponents,$planners,$approvers,
 			$activitytypes,$divisions,$categories,$brands,$groups,
