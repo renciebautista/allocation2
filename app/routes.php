@@ -15,7 +15,7 @@ Queue::getIron()->ssl_verifypeer = false;
 Route::get('testpdf',function(){
 	$data['temp_id'] = 1;
 	$data['user_id'] = 2;
-	$data['cycles'] = 6,7,12;
+	$data['cycles'] = '6,7,12';
 	Artisan::call('make:allocreport',array('temp_id' => $data['temp_id'],
 			'user_id' => $data['user_id'],
 			'cycles' => $data['cycles']));
