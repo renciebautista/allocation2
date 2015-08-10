@@ -322,13 +322,13 @@ class AllocationReportController extends \BaseController {
 			$temp_id = $id;
 			$user_id = Auth::id();
 			$_cycles = implode(",", $cycles);
-			var_dump($_cycles);
-			// $report_id = Queue::push('AllocReportScheduler', array('temp_id' => $temp_id, 
-			// 	'user_id' => $user_id,'cycles' => (string)$_cycles),'allocreport');
+			// var_dump($_cycles);
+			$report_id = Queue::push('AllocReportScheduler', array('temp_id' => $temp_id, 
+				'user_id' => $user_id,'cycles' => (string)$_cycles),'allocreport');
 
-			// return Redirect::to(URL::action('AllocationReportController@show', array('id' => $template->id)))
-			// 	->with('class', 'alert-success')
-			// 	->with('message', 'Report successfuly initiated, please wait for an email link to download the report.');
+			return Redirect::to(URL::action('AllocationReportController@show', array('id' => $template->id)))
+				->with('class', 'alert-success')
+				->with('message', 'Report successfuly initiated, please wait for an email link to download the report.');
 		}else{
 			return Redirect::to(URL::action('AllocationReportController@show', array('id' => $template->id)))
 				->with('class', 'alert-danger')
