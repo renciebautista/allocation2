@@ -320,7 +320,7 @@ class AllocationReportController extends \BaseController {
 			}
 
 			$report_id = Queue::push('AllocReportScheduler', array('temp_id' => $id),'allocreport');
-			AllocationReportFile::create(array('report_id' => $report_id,'temp_id' =>  $id,'cycles' => $cycles));
+			AllocationReportFile::create(array('report_id' => $report_id,'temp_id' =>  $id,'cycles' => implode(",", $cycles)));
 
 			return Redirect::to(URL::action('AllocationReportController@show', array('id' => $template->id)))
 				->with('class', 'alert-success')
