@@ -26,7 +26,7 @@ class FixActivityTableSeeder extends Seeder {
 		$this->call('FixActivityChannelListTableSeeder');
 
 		$this->call('FixActivityBudgetTableSeeder');
-		$this->call('FixActivityNoBudgetTableSeeder');
+		// $this->call('FixActivityNoBudgetTableSeeder');
 
 		$this->call('FixSchemeReferenceSkuTableSeeder');
 		$this->call('FixSchemeHostSkuTableSeeder');
