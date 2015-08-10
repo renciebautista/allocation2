@@ -1,8 +1,6 @@
 <?php
 
-// Composer: "fzaninotto/faker": "v1.3.0"
-use Faker\Factory as Faker;
-use App\Models;
+use App\Models\ActivityNoBudget;
 
 class FixActivityNoBudgetTableSeeder extends Seeder {
 
