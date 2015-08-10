@@ -8,4 +8,4 @@ class AllocReportScheduler{
 		$job->delete();
 		return true;
 	}
-}
+}	
