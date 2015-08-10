@@ -78,7 +78,7 @@ Route::get('reset_password/{token}','LoginController@resetpassword');
 Route::post('reset_password', 'LoginController@doResetPassword');
 
 Route::get('downloadcycle/{id}', 'DownloadsController@downloadcycle');
-Route::get('downloadalocreport/{token}','AllocationReportController@download');
+Route::get('ar/{token}','AllocationReportController@download');
 
 
 Route::group(array('before' => 'auth'), function()

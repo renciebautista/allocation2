@@ -99,13 +99,17 @@ class MakeAllocReport extends Command {
 		$newfile->created_by = $user->id;
 		$newfile->token = $token;
 		$newfile->file_name = $token.'.xlsx';
+		$newfile->template_name = $template->name.'_'.date('Y_m_d').'.xlsx';
+		$newfile->save();
 
 		$data['template'] = $template;
     	$data['token'] = $token;
     	$data['user'] = $user;
-    	Mail::send('emails.allocreport', $data, function($message) use ($user){
+    	$name = $template->name;
+    	
+    	Mail::send('emails.allocreport', $data, function($message) use ($user, $name){
 			$message->to($user->email, $user->first_name);
-			$message->subject('Allocation Report ');
+			$message->subject('Allocation Report - '.$name);
 		});
 	}
 

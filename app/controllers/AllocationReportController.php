@@ -320,7 +320,7 @@ class AllocationReportController extends \BaseController {
 			}
 
 			$report_id = Queue::push('AllocReportScheduler', array('temp_id' => $id,'cycles' => implode(",", $cycles), 'user_id' => Auth::id()),'allocreport');
-			
+
 			return Redirect::to(URL::action('AllocationReportController@show', array('id' => $template->id)))
 				->with('class', 'alert-success')
 				->with('message', 'Report successfuly initiated, please wait for an email link to download the report.');
@@ -332,7 +332,14 @@ class AllocationReportController extends \BaseController {
 	}
 
 	public function download($token){
-
+		$file = AllocationReportFile::where('token',$id)->first();
+		if(!empty($file)){
+			$path = storage_path().'/exports/'.$file->filename;
+			return Response::download($path, $file->template_name);
+		}else{
+			echo 'File not found';
+		}
+		
 	}
 
 	/**

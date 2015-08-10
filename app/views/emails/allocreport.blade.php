@@ -18,8 +18,8 @@
 
 <p>Your report with a template name {{ $template->name }} is ready for download.</p>
 <p>Click the link below to download the report</p>
-<a href='{{ URL::to('downloadalocreport/'.$token) }}'>
-    {{ URL::to('downloadalocreport/'.$token)  }}
+<a href='{{ URL::to('ar/'.$token) }}'>
+    {{ URL::to('ar/'.$token)  }}
 </a>
 
 <p>This generated report link will be auto deleted within 60 days.</p>
