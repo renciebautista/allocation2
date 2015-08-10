@@ -102,7 +102,7 @@
 								<li><a href="#">Activity Details Report</a></li>  
 								<li><a href="#">Activity Timings Report</a></li>
 								<li><a href="#">PIS Summary Report</a></li>
-								<li><a href="#">Allocation Report</a></li>
+								<li>{{ HTML::linkAction('AllocationReportController@index' , 'Allocation Report') }}</li>
 								@endif
 
 								@if(Auth::user()->inRoles(['FIELD SALES']))

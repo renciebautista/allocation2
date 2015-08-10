@@ -2,7 +2,8 @@
 
 class ActivityCategory extends \Eloquent {
 	protected $fillable = [];
-
+	public $timestamps = false;
+	
 	public static function selected_category($id){
 		$categories = self::select('category_code')->where('activity_id', $id)->get();
 		$_categories = array();

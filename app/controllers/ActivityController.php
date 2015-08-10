@@ -94,16 +94,27 @@ class ActivityController extends BaseController {
 
 					$activity = new Activity;
 					$activity->created_by = Auth::id();
+					$activity->proponent_name = Auth::user()->getFullname();
+					$activity->contact_no = Auth::user()->contact_no;
 					
+					$scope = ScopeType::find($scope_id);
 					$activity->scope_type_id = $scope_id;
+					$activity->scope_desc = $scope->scope_name;
+
+					$cycle = Cycle::find($cycle_id);
 					$activity->cycle_id = $cycle_id;
+					$activity->cycle_desc = $cycle->cycle_name;
+
+					$activitytype = ActivityType::find($activity_type_id);
 					$activity->activity_type_id = $activity_type_id;
+					$activity->activitytype_desc = $activitytype->activity_type;
+					$activity->uom_desc = $activitytype->uom;
+
 					$activity->duration = (Input::get('lead_time') == '') ? 0 : Input::get('lead_time');
 					$activity->edownload_date = date('Y-m-d',strtotime(Input::get('download_date')));
 					$activity->eimplementation_date = date('Y-m-d',strtotime(Input::get('implementation_date')));
 					$activity->end_date = date('Y-m-d',strtotime(Input::get('end_date')));
 					$activity->circular_name = strtoupper(Input::get('activity_title'));
-					// $activity->division_code = $division_code;
 					$activity->background = Input::get('background');
 					$activity->instruction = Input::get('instruction');
 					$activity->status_id = 1;
@@ -130,136 +141,32 @@ class ActivityController extends BaseController {
 						}
 						ActivityTiming::insert($activity_timing);
 					}
-
-
-					$scope = ScopeType::find($scope_id);
-					$cycle = Cycle::find($cycle_id);
-					$activity_type = ActivityType::find($activity_type_id);
-
 					
-
-					
-					$code = date('Y').$activity->id;
-					if(!empty($scope)){
-						$code .= '_'.$scope->scope_name;
-					}
-					if(!empty($cycle)){
-						$code .= '_'.$cycle->cycle_name;
-					}
-					if(!empty($activity_type)){
-						$code .= '_'.$activity_type->activity_type;
-					}
-
-					if(count($division_code) > 1){
-						$code .= '_MULTI';
-					}else{
-						$division = Sku::select('division_code', 'division_desc')
-										->where('division_code',$division_code)
-										->first();
-						if(!empty($division)){
-							$code .= '_'.$division->division_desc;
-						}
-					}
-					
-					if(!empty($category_code)){
-						if(count($category_code) > 1){
-							$code .= '_MULTI';
-						}else{
-							$category = Sku::select('category_code', 'category_desc')
-										->where('category_code',$category_code[0])
-										->first();
-							$code .= '_'.$category->category_desc;
-						}
-						
-					}
-					if(!empty($brand_code)){
-						if(count($brand_code) > 1){
-							$code .= '_MULTI';
-						}else{
-							$brand = Sku::select('cpg_code', 'brand_desc')
-										->where('cpg_code',$brand_code[0])
-										->first();
-							$code .= '_'.$brand->brand_desc;
-						}
-						
-					}
-
-					$activity->activity_code =  $code;
+					$activity->activity_code =  ActivityRepository::generateActivityCode($activity,$scope,$cycle,$activitytype,$division_code,$category_code,$brand_code);
 					$activity->update();
 
 					// add planner
-					if (Input::has('planner'))
-					{
-						if(Input::get('planner') > 0){
-							ActivityPlanner::insert(array('activity_id' => $activity->id, 'user_id' => Input::get('planner')));
-						}
-					}
+					ActivityRepository::addPlanner($activity);
 					
 					// add approver
-					if (Input::has('approver'))
-					{
-						$activity_approver = array();
-						foreach (Input::get('approver') as $approver) {
-							$activity_approver[] = array('activity_id' => $activity->id, 'user_id' => $approver);
-						}
-						ActivityApprover::insert($activity_approver);
-					}
-					
-					if($cycle->emergency){
-						$cmd = User::GetPlanners(['CMD DIRECTOR']);
-						if(!ActivityApprover::ApproverExist($activity->id,$cmd[0]->user_id)){
-							ActivityApprover::insert(array('activity_id' => $activity->id, 'user_id' => $cmd[0]->user_id));
-						}
-					}
+					ActivityRepository::addApprovers($activity,$cycle);
 
 					// add division
-					if (Input::has('division'))
-					{
-						$activity_division = array();
-						foreach (Input::get('division') as $division){
-							$activity_division[] = array('activity_id' => $activity->id, 'division_code' => $division);
-						}
-						ActivityDivision::insert($activity_division);
-					}
+					ActivityRepository::addDivisions($activity);
 
 					// add category
-					if (Input::has('category'))
-					{
-						$activity_category = array();
-						foreach (Input::get('category') as $category){
-							$activity_category[] = array('activity_id' => $activity->id, 'category_code' => $category);
-						}
-						ActivityCategory::insert($activity_category);
-					}
+					ActivityRepository::addCategories($activity);
 
 					// add brand
-					if (Input::has('brand'))
-					{
-						$activity_brand = array();
-						foreach (Input::get('brand') as $brand){
-							$activity_brand[] = array('activity_id' => $activity->id, 'brand_code' => $brand);
-						}
-						ActivityBrand::insert($activity_brand);
-					}
+					ActivityRepository::addBrands($activity);
 
 					// add skus
-					if(Input::has('skus')){
-						$activity_skus = array();
-						foreach (Input::get('skus') as $sku){
-							$activity_skus[] = array('activity_id' => $activity->id, 'sap_code' => $sku);
-						}
-						ActivitySku::insert($activity_skus);
-					}
+					ActivityRepository::addSkus($activity);
 					
 					// add objective
-					if (Input::has('objective'))
-					{
-						$activity_objective = array();
-						foreach (Input::get('objective') as $objective){
-							$activity_objective[] = array('activity_id' => $activity->id, 'objective_id' => $objective);
-						}
-						ActivityObjective::insert($activity_objective);
-					}
+					ActivityRepository::addObjectives($activity);
+
+					ActivityCutomerList::addCustomer($activity->id,array());
 
 					$path_1 = storage_path().'/uploads/'.$activity->cycle_id;
 
@@ -471,9 +378,6 @@ class ActivityController extends BaseController {
 				 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings', 'comments' ,'submitstatus', 'route', 'recall', 'submit_action'));
 			}
 		}
-
-		
-
 	}
 
 	/**
@@ -509,58 +413,20 @@ class ActivityController extends BaseController {
 							$cycle = Cycle::find($cycle_id);
 							$activity_type = ActivityType::find($activity_type_id);
 							
+							$activity->activity_code =  ActivityRepository::generateActivityCode($activity,$scope,$cycle,$activity_type,$division_code,$category_code,$brand_code);
 
-							$code = date('Y').$activity->id;
-							if(!empty($scope)){
-								$code .= '_'.$scope->scope_name;
-							}
-							if(!empty($cycle)){
-								$code .= '_'.$cycle->cycle_name;
-							}
-							if(!empty($activity_type)){
-								$code .= '_'.$activity_type->activity_type;
-							}
-
-							if(count($division_code) > 1){
-								$code .= '_MULTI';
-							}else{
-								$division = Sku::select('division_code', 'division_desc')
-												->where('division_code',$division_code)
-												->first();
-								if(!empty($division)){
-									$code .= '_'.$division->division_desc;
-								}
-							}
-							
-							if(!empty($category_code)){
-								if(count($category_code) > 1){
-									$code .= '_MULTI';
-								}else{
-									$category = Sku::select('category_code', 'category_desc')
-												->where('category_code',$category_code[0])
-												->first();
-									$code .= '_'.$category->category_desc;
-								}
-								
-							}
-							if(!empty($brand_code)){
-								if(count($brand_code) > 1){
-									$code .= '_MULTI';
-								}else{
-									$brand = Sku::select('cpg_code', 'brand_desc')
-												->where('cpg_code',$brand_code[0])
-												->first();
-									$code .= '_'.$brand->brand_desc;
-								}
-								
-							}
-
-							$activity->activity_code =  $code;
+							$activity->proponent_name = Auth::user()->getFullname();
+							$activity->contact_no = Auth::user()->contact_no;
 							
 							$activity->scope_type_id = $scope_id;
+							$activity->scope_desc = $scope->scope_name;
+
 							$activity->cycle_id = $cycle_id;
+							$activity->cycle_desc = $cycle->cycle_name;
+
 							$activity->activity_type_id = $activity_type_id;
-							
+							$activity->activitytype_desc = $activity_type->activity_type;
+							$activity->uom_desc = $activity_type->uom;
 
 							$activity->duration = (Input::get('lead_time') == '') ? 0 : Input::get('lead_time');
 							$activity->edownload_date = date('Y-m-d',strtotime(Input::get('download_date')));
@@ -596,116 +462,53 @@ class ActivityController extends BaseController {
 								}
 							}
 							
+							// add planner
+							ActivityRepository::addPlanner($activity);
+							
+							// add approver
+							ActivityRepository::addApprovers($activity,$cycle);
 
-							// update planner
-							ActivityPlanner::where('activity_id',$activity->id)->delete();
-							if (Input::has('planner'))
-							{
-								if(Input::get('planner') > 0){
-									ActivityPlanner::insert(array('activity_id' => $activity->id, 'user_id' => Input::get('planner')));
-								}
+							// add division
+							ActivityRepository::addDivisions($activity);
+
+							// add category
+							ActivityRepository::addCategories($activity);
+
+							// add brand
+							ActivityRepository::addBrands($activity);
+
+							// add skus
+							ActivityRepository::addSkus($activity);
+							
+							// add objective
+							ActivityRepository::addObjectives($activity);
+							
+
+							$path_1 = storage_path().'/uploads/'.$activity->cycle_id;
+							if(!File::exists($path_1)) {
+								File::makeDirectory($path_1);
 							}
 							
-							// update approver
-							ActivityApprover::where('activity_id',$activity->id)->delete();
-							if (Input::has('approver'))
-							{
-								$activity_approver = array();
-								foreach (Input::get('approver') as $approver) {
-									$activity_approver[] = array('activity_id' => $activity->id, 'user_id' => $approver);
-								}
-								ActivityApprover::insert($activity_approver);
+							$path = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id;
+							if(!File::exists($path)) {
+								File::makeDirectory($path);
 							}
 
-							if($cycle->emergency){
-								$cmd = User::GetPlanners(['CMD DIRECTOR']);
-								if(!ActivityApprover::ApproverExist($activity->id,$cmd[0]->user_id)){
-									ActivityApprover::insert(array('activity_id' => $activity->id, 'user_id' => $cmd[0]->user_id));
+							$path2 = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
+							if(!File::exists($path2)) {
+								File::makeDirectory($path2);
+
+								$old_path = storage_path().'/uploads/'.$old_cycle.'/'.$old_type.'/'.$activity->id;
+								File::copyDirectory($old_path, $path2);
+
+								File::deleteDirectory($old_path);
+
+								$list = File::directories(storage_path().'/uploads/'.$old_cycle.'/'.$old_type);
+								if(count($list) == 0){
+									File::deleteDirectory(storage_path().'/uploads/'.$old_cycle.'/'.$old_type);
 								}
-							}
-
-
-							// update division
-							ActivityDivision::where('activity_id',$activity->id)->delete();
-							if (Input::has('division'))
-							{
-								$activity_division = array();
-								foreach (Input::get('division') as $division){
-									$activity_division[] = array('activity_id' => $activity->id, 'division_code' => $division);
-								}
-								ActivityDivision::insert($activity_division);
-							}
-
-
-							// update category
-							ActivityCategory::where('activity_id',$activity->id)->delete();
-							if (Input::has('category'))
-							{
-								$activity_category = array();
-								foreach (Input::get('category') as $category){
-									$activity_category[] = array('activity_id' => $activity->id, 'category_code' => $category);
-								}
-								ActivityCategory::insert($activity_category);
-							}
-
-							// update brand
-							ActivityBrand::where('activity_id',$activity->id)->delete();
-							if (Input::has('brand'))
-							{
-								$activity_brand = array();
-								foreach (Input::get('brand') as $brand){
-									$activity_brand[] = array('activity_id' => $activity->id, 'brand_code' => $brand);
-								}
-								ActivityBrand::insert($activity_brand);
-							}
-
-							// update skus
-							ActivitySku::where('activity_id',$activity->id)->delete();
-							if(Input::has('skus')){
-								$activity_skus = array();
-								foreach (Input::get('skus') as $sku){
-									$activity_skus[] = array('activity_id' => $activity->id, 'sap_code' => $sku);
-								}
-								ActivitySku::insert($activity_skus);
-							}
-
-							// update objective
-							ActivityObjective::where('activity_id',$activity->id)->delete();
-							if (Input::has('objective'))
-							{
-								$activity_objective = array();
-								foreach (Input::get('objective') as $objective){
-									$activity_objective[] = array('activity_id' => $activity->id, 'objective_id' => $objective);
-								}
-								ActivityObjective::insert($activity_objective);
 							}
 						});
-
-						$path_1 = storage_path().'/uploads/'.$activity->cycle_id;
-						if(!File::exists($path_1)) {
-							File::makeDirectory($path_1);
-						}
-						
-						$path = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id;
-						if(!File::exists($path)) {
-							File::makeDirectory($path);
-						}
-
-						$path2 = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
-						if(!File::exists($path2)) {
-							File::makeDirectory($path2);
-
-							$old_path = storage_path().'/uploads/'.$old_cycle.'/'.$old_type.'/'.$activity->id;
-							File::copyDirectory($old_path, $path2);
-
-							File::deleteDirectory($old_path);
-
-							$list = File::directories(storage_path().'/uploads/'.$old_cycle.'/'.$old_type);
-							if(count($list) == 0){
-								File::deleteDirectory(storage_path().'/uploads/'.$old_cycle.'/'.$old_type);
-							}
-						}
-
 						$arr['success'] = 1;
 					}
 				}
@@ -738,60 +541,18 @@ class ActivityController extends BaseController {
 							$scope = ScopeType::find($scope_id);
 							$cycle = Cycle::find($cycle_id);
 							$activity_type = ActivityType::find($activity_type_id);
-							$division = Sku::select('division_code', 'division_desc')
-												->where('division_code',$division_code)
-												->first();
 
-							$code = date('Y').$activity->id;
-							if(!empty($scope)){
-								$code .= '_'.$scope->scope_name;
-							}
-							if(!empty($cycle)){
-								$code .= '_'.$cycle->cycle_name;
-							}
-							if(!empty($activity_type)){
-								$code .= '_'.$activity_type->activity_type;
-							}
-							if(count($division_code) > 1){
-								$code .= '_MULTI';
-							}else{
-								$division = Sku::select('division_code', 'division_desc')
-												->where('division_code',$division_code)
-												->first();
-								if(!empty($division)){
-									$code .= '_'.$division->division_desc;
-								}
-							}
-							
-							if(!empty($category_code)){
-								if(count($category_code) > 1){
-									$code .= '_MULTI';
-								}else{
-									$category = Sku::select('category_code', 'category_desc')
-												->where('category_code',$category_code[0])
-												->first();
-									$code .= '_'.$category->category_desc;
-								}
-								
-							}
-							if(!empty($brand_code)){
-								if(count($brand_code) > 1){
-									$code .= '_MULTI';
-								}else{
-									$brand = Sku::select('cpg_code', 'brand_desc')
-												->where('cpg_code',$brand_code[0])
-												->first();
-									$code .= '_'.$brand->brand_desc;
-								}
-								
-							}
-
-							$activity->activity_code =  $code;
+							$activity->activity_code =  ActivityRepository::generateActivityCode($activity,$scope,$cycle,$activity_type,$division_code,$category_code,$brand_code);
 							
 							$activity->scope_type_id = $scope_id;
+							$activity->scope_desc = $scope->scope_name;
+
 							$activity->cycle_id = $cycle_id;
+							$activity->cycle_desc = $cycle->cycle_name;
+
 							$activity->activity_type_id = $activity_type_id;
-							// $activity->division_code = $division_code;
+							$activity->activitytype_desc = $activity_type->activity_type;
+							$activity->uom_desc = $activity_type->uom;
 
 							$activity->duration = (Input::get('lead_time') == '') ? 0 : Input::get('lead_time');
 							$activity->edownload_date = date('Y-m-d',strtotime(Input::get('download_date')));
@@ -821,102 +582,51 @@ class ActivityController extends BaseController {
 									ActivityTiming::insert($activity_timing);
 								}
 							}
-
-							
 							
 							// update approver
-							ActivityApprover::where('activity_id',$activity->id)->delete();
-							if (Input::has('approver'))
-							{
-								$activity_approver = array();
-								foreach (Input::get('approver') as $approver) {
-									$activity_approver[] = array('activity_id' => $activity->id, 'user_id' => $approver);
-								}
-								ActivityApprover::insert($activity_approver);
-							}
+							ActivityRepository::addApprovers($activity,$cycle);
 
 							// update division
-							ActivityDivision::where('activity_id',$activity->id)->delete();
-							if (Input::has('division'))
-							{
-								$activity_division = array();
-								foreach (Input::get('division') as $division){
-									$activity_division[] = array('activity_id' => $activity->id, 'division_code' => $division);
-								}
-								ActivityDivision::insert($activity_division);
-							}
-
+							ActivityRepository::addDivisions($activity);
 
 							// update category
-							ActivityCategory::where('activity_id',$activity->id)->delete();
-							if (Input::has('category'))
-							{
-								$activity_category = array();
-								foreach (Input::get('category') as $category){
-									$activity_category[] = array('activity_id' => $activity->id, 'category_code' => $category);
-								}
-								ActivityCategory::insert($activity_category);
-							}
+							ActivityRepository::addCategories($activity);
 
 							// update brand
-							ActivityBrand::where('activity_id',$activity->id)->delete();
-							if (Input::has('brand'))
-							{
-								$activity_brand = array();
-								foreach (Input::get('brand') as $brand){
-									$activity_brand[] = array('activity_id' => $activity->id, 'brand_code' => $brand);
-								}
-								ActivityBrand::insert($activity_brand);
-							}
+							ActivityRepository::addBrands($activity);
 
 							// update skus
-							ActivitySku::where('activity_id',$activity->id)->delete();
-							if(Input::has('skus')){
-								$activity_skus = array();
-								foreach (Input::get('skus') as $sku){
-									$activity_skus[] = array('activity_id' => $activity->id, 'sap_code' => $sku);
-								}
-								ActivitySku::insert($activity_skus);
+							ActivityRepository::addSkus($activity);
+							
+							// update objective
+							ActivityRepository::addObjectives($activity);
+
+							$path_1 = storage_path().'/uploads/'.$activity->cycle_id;
+							if(!File::exists($path_1)) {
+								File::makeDirectory($path_1);
+							}
+							
+							$path = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id;
+							if(!File::exists($path)) {
+								File::makeDirectory($path);
 							}
 
-							// update objective
-							ActivityObjective::where('activity_id',$activity->id)->delete();
-							if (Input::has('objective'))
-							{
-								$activity_objective = array();
-								foreach (Input::get('objective') as $objective){
-									$activity_objective[] = array('activity_id' => $activity->id, 'objective_id' => $objective);
+							$path2 = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
+							
+							if(!File::exists($path2)) {
+								File::makeDirectory($path2);
+
+								$old_path = storage_path().'/uploads/'.$old_cycle.'/'.$old_type.'/'.$activity->id;
+								File::copyDirectory($old_path, $path2);
+
+								File::deleteDirectory($old_path);
+
+								$list = File::directories(storage_path().'/uploads/'.$old_cycle.'/'.$old_type);
+								if(count($list) == 0){
+									File::deleteDirectory(storage_path().'/uploads/'.$old_cycle.'/'.$old_type);
 								}
-								ActivityObjective::insert($activity_objective);
 							}
 						});
-
-						$path_1 = storage_path().'/uploads/'.$activity->cycle_id;
-						if(!File::exists($path_1)) {
-							File::makeDirectory($path_1);
-						}
-						
-						$path = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id;
-						if(!File::exists($path)) {
-							File::makeDirectory($path);
-						}
-
-						$path2 = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
-						
-						if(!File::exists($path2)) {
-							File::makeDirectory($path2);
-
-							$old_path = storage_path().'/uploads/'.$old_cycle.'/'.$old_type.'/'.$activity->id;
-							File::copyDirectory($old_path, $path2);
-
-							File::deleteDirectory($old_path);
-
-							$list = File::directories(storage_path().'/uploads/'.$old_cycle.'/'.$old_type);
-							if(count($list) == 0){
-								File::deleteDirectory(storage_path().'/uploads/'.$old_cycle.'/'.$old_type);
-							}
-						}
-
 						$arr['success'] = 1;
 					}
 				}
@@ -959,8 +669,10 @@ class ActivityController extends BaseController {
 
 				ActivityMaterial::where('activity_id',$activity->id)->delete();
 				ActivityCustomer::where('activity_id',$activity->id)->delete();
+				ActivityCutomerList::where('activity_id',$activity->id)->delete();
 				ActivityChannel::where('activity_id',$activity->id)->delete();
 				ActivityChannel2::where('activity_id',$activity->id)->delete();
+				ActivityChannelList::where('activity_id',$activity->id)->delete();
 				ForceAllocation::where('activity_id',$activity->id)->delete();
 				// loop schemes
 				$schemes = Scheme::getList($activity->id);
@@ -1287,6 +999,7 @@ class ActivityController extends BaseController {
 
 				$budget->activity_id = $id;
 				$budget->budget_type_id = $type_id;
+				$budget->budget_desc = $budget_type->budget_type;
 				$budget->io_number = strtoupper(Input::get('io_no'));
 				$budget->amount = str_replace(",", '', Input::get('io_amount'));
 				$budget->start_date = date('Y-m-d',strtotime(Input::get('io_startdate')));
@@ -1337,6 +1050,7 @@ class ActivityController extends BaseController {
 				$arr['success'] = 0;
 			}else{
 				$budget->budget_type_id = $type_id;
+				$budget->budget_desc = $budget_type->budget_type;
 				$budget->io_number = strtoupper(Input::get('io_no'));
 				$budget->amount = str_replace(",", '', Input::get('io_amount'));
 				$budget->start_date = date('Y-m-d',strtotime(Input::get('io_startdate')));
@@ -1370,6 +1084,7 @@ class ActivityController extends BaseController {
 
 				$budget->activity_id = $id;
 				$budget->budget_type_id = $type_id;
+				$budget->budget_desc = $budget_type->budget_type;
 				$budget->budget_no = Input::get('budget_no');
 				$budget->budget_name = Input::get('budget_name');
 				$budget->amount = str_replace(",", '', Input::get('budget_amount'));
@@ -1414,6 +1129,7 @@ class ActivityController extends BaseController {
 				$arr['success'] = 0;
 			}else{
 				$budget->budget_type_id = $type_id;
+				$budget->budget_desc = $budget_type->budget_type;
 				$budget->budget_no = Input::get('budget_no');
 				$budget->budget_name = Input::get('budget_name');
 				$budget->amount = str_replace(",", '', Input::get('budget_amount'));
@@ -1442,7 +1158,6 @@ class ActivityController extends BaseController {
 				DB::beginTransaction();
 
 				try {
-
 					$_customers = Input::get('customers');
 					ActivityCustomer::where('activity_id',$id)->delete();
 
@@ -1460,11 +1175,19 @@ class ActivityController extends BaseController {
 							}
 							ActivityCustomer::insert($activity_customers);
 
+							ActivityCutomerList::addCustomer($activity->id,$activity_customers);
+
 							ForceAllocation::where('activity_id',$id)->delete();
 							if($enable_force){
 								$area_list = array();
 								foreach (Input::get('force_alloc') as $key => $value) {
-									$area_list[] = array('activity_id' => $id, 'area_code' => $key, 'multi' => $value);
+									$area = Area::getArea($key);
+									$area_list[] = array('activity_id' => $id, 
+										'group_code' => $area->group_code,
+										'group_desc' => $area->group_desc,
+										'area_code' => $key, 
+										'area_desc' => $area->area_desc,
+										'multi' => $value);
 								}
 								ForceAllocation::insert($area_list);
 							}
@@ -1478,66 +1201,20 @@ class ActivityController extends BaseController {
 
 					$_channels = Input::get('channels_involved');
 					ActivityChannel2::where('activity_id',$id)->delete();
+					$activity_channels = array();
 					if(!empty($_channels)){
 						$channels = explode(",", $_channels);
-
 						if(!empty($channels)){
-							$activity_channels = array();
 							$channel_group = array();
 							foreach ($channels as $channel_node){
 								$activity_channels[] = array('activity_id' => $id, 'channel_node' => trim($channel_node));
 							}
 							ActivityChannel2::insert($activity_channels);
+
 						}
 					}
+					ActivityChannelList::addChannel($activity->id,$activity_channels);
 
-					// $channels = Input::get('channel');
-					// ActivityChannel::where('activity_id',$id)->delete();
-					// if(!empty($channels)){
-					// 	$activity_channels = array();
-					// 	foreach ($channels as $channel){
-					// 		$activity_channels[] = array('activity_id' => $id, 'channel_id' => $channel);
-					// 	}
-					// 	if(!empty($activity_channels)){
-					// 		ActivityChannel::insert($activity_channels);
-					// 	}
-					// }
-
-					// //update schemes
-					// // time limit expires
-					// $schemes = Scheme::where('activity_id',$id)->get();
-					// if(count($schemes) > 0){
-					// 	foreach ($schemes as $scheme) {
-					// 		SchemeAllocRepository::updateAllocation($scheme);
-					// 		$scheme2 = Scheme::find($scheme->id);
-					// 		$final_alloc = SchemeAllocation::finalallocation($scheme->id);
-					// 		$total_cases = 0;
-					// 		$total_deals = 0;
-					// 		if($scheme->activity->activitytype->uom == 'CASES'){
-					// 			$total_deals = $final_alloc * $scheme->deals;
-					// 			$total_cases = $final_alloc;
-					// 			$final_tts = $final_alloc * $scheme->deals * $scheme->srp_p; 
-					// 		}else{
-								
-					// 			if($final_alloc > 0){
-					// 				$total_cases = round($final_alloc/$scheme->deals);
-					// 				$total_deals = $final_alloc;
-					// 			}
-					// 			$final_tts = $final_alloc * $scheme->srp_p; 
-					// 		}
-							
-					// 		$final_pe = $final_alloc *  $scheme->other_cost;
-							
-					// 		$scheme2->final_alloc = $final_alloc;
-					// 		$scheme2->final_total_deals = $total_deals;
-					// 		$scheme2->final_total_cases = $total_cases;
-					// 		$scheme2->final_tts_r = $final_tts;
-					// 		$scheme2->final_pe_r = $final_pe;
-					// 		$scheme2->final_total_cost = $final_tts+$final_pe;
-					// 		$scheme2->update();
-					// 	}
-					// }
-					// // end update
 					DB::commit();
 					$arr['success'] = 1;
 					Session::flash('class', 'alert-success');
@@ -1557,23 +1234,23 @@ class ActivityController extends BaseController {
 		}
 	}
 
-	public function updateforcealloc(){
-		$id = Input::get("f_id");
-		if(Request::ajax()){
-			$arr['f_percent'] = Input::get("f_percent");
-			$force_alloc = ForceAllocation::find($id);
-			if(!empty($force_alloc)){
-				$force_alloc->multi = $arr['f_percent'];
-				$force_alloc->update();
-				$arr['success'] = 1;
-			}else{
-				$arr['success'] = 0;
-			}
-		}
+	// public function updateforcealloc(){
+	// 	$id = Input::get("f_id");
+	// 	if(Request::ajax()){
+	// 		$arr['f_percent'] = Input::get("f_percent");
+	// 		$force_alloc = ForceAllocation::find($id);
+	// 		if(!empty($force_alloc)){
+	// 			$force_alloc->multi = $arr['f_percent'];
+	// 			$force_alloc->update();
+	// 			$arr['success'] = 1;
+	// 		}else{
+	// 			$arr['success'] = 0;
+	// 		}
+	// 	}
 		
-		$arr['id'] = $id;
-		return json_encode($arr);
-	}
+	// 	$arr['id'] = $id;
+	// 	return json_encode($arr);
+	// }
 
 	public function updatebilling($id){
 		if(Request::ajax()){
@@ -1621,10 +1298,12 @@ class ActivityController extends BaseController {
 			if(empty($source)){
 				$arr['success'] = 0;
 			}else{
+				$activitymaterial = MaterialSource::find($source_id);
 				$material = new ActivityMaterial;
 
 				$material->activity_id = $id;
 				$material->source_id = $source_id;
+				$material->source_desc = $activitymaterial->source;
 				$material->material = Input::get('material');
 				$material->save();
 
@@ -1665,8 +1344,10 @@ class ActivityController extends BaseController {
 			if(empty($source) || empty($material)){
 				$arr['success'] = 0;
 			}else{
-				$material->source_id = Input::get('source');
+
+				$material->source_id = $source_id;
 				$material->material = Input::get('material');
+				$material->source_desc = $source->source;
 				$material->update();
 	
 				$arr = Input::all();
@@ -2127,21 +1808,28 @@ class ActivityController extends BaseController {
 				
 				$new_activity = new Activity;
 				$new_activity->created_by = Auth::id();
+				$new_activity->proponent_name = $activity->proponent_name;
+				$new_activity->contact_no = $activity->contact_no;
+				$new_activity->activity_code =  $activity->activity_code;
+				$new_activity->circular_name = $activity->circular_name;
 				$new_activity->scope_type_id = $activity->scope_type_id;
-				$new_activity->cycle_id = $activity->cycle_id;
-				$new_activity->activity_type_id = $activity->activity_type_id;
+				$new_activity->scope_desc = $activity->scope_desc;
 				$new_activity->duration = $activity->duration;
 				$new_activity->edownload_date = $activity->edownload_date;
 				$new_activity->eimplementation_date = $activity->eimplementation_date;
-				$new_activity->end_date = $activity->end_date;
-				$new_activity->circular_name = $activity->circular_name;
+				$new_activity->cycle_id = $activity->cycle_id;
+				$new_activity->cycle_desc = $activity->cycle_desc;
+				$new_activity->activity_type_id = $activity->activity_type_id;
+				$new_activity->activitytype_desc = $activity->activitytype_desc;
+				$new_activity->uom_desc = $activity->uom_desc;
 				$new_activity->division_code = $activity->division_code;
 				$new_activity->background = $activity->background;
-				$new_activity->instruction = $activity->instruction;
 				$new_activity->status_id = 1;
-				$new_activity->activity_code =  $activity->activity_code;
-				$new_activity->allow_force =  $activity->allow_force;
 				$new_activity->billing_date =  $activity->billing_date;
+				$new_activity->billing_remarks =  $activity->billing_remarks;
+				$new_activity->instruction = $activity->instruction;
+				$new_activity->allow_force =  $activity->allow_force;
+				$new_activity->end_date = $activity->end_date;
 				$new_activity->save();
 
 				// add timings
@@ -2149,9 +1837,14 @@ class ActivityController extends BaseController {
 				if(!empty($timings)){
 					$activity_timing = array();
 					foreach ($timings as $timing) {
-						$activity_timing[] = array('activity_id' => $new_activity->id, 'task_id' => $timing->task_id,
-								'milestone' => $timing->milestone, 'task' => $timing->task, 'responsible' => $timing->responsible,
-								'duration' => $timing->duration, 'depend_on' => $timing->depend_on,
+						$activity_timing[] = array('activity_id' => $new_activity->id, 
+								'task_id' => $timing->task_id,
+								'milestone' => $timing->milestone, 
+								'task' => $timing->task, 
+								'responsible' => $timing->responsible,
+								'duration' => $timing->duration, 
+								'depend_on' => $timing->depend_on,
+								'show' => $timing->show,
 								'start_date' => date('Y-m-d',strtotime($timing->start_date)),
 								'end_date' => date('Y-m-d',strtotime($timing->end_date)),
 								'final_start_date' => date('Y-m-d',strtotime($timing->final_start_date)),
@@ -2183,7 +1876,10 @@ class ActivityController extends BaseController {
 				$planners = ActivityPlanner::where('activity_id',$activity->id)->get();
 				if(!empty($planners)){
 					foreach ($planners as $planner) {
-						ActivityPlanner::insert(array('activity_id' => $new_activity->id, 'user_id' => $planner->user_id));
+						ActivityPlanner::insert(array('activity_id' => $new_activity->id, 
+							'user_id' => $planner->user_id,
+							'planner_desc' => $planner->planner_desc,
+							'contact_no' => $planner->contact_no));
 					}
 				}
 				
@@ -2192,7 +1888,11 @@ class ActivityController extends BaseController {
 				if(!empty($approvers)){
 					$activity_approver = array();
 					foreach ($approvers as $approver) {
-						$activity_approver[] = array('activity_id' => $new_activity->id, 'user_id' => $approver->user_id);
+						$activity_approver[] = array('activity_id' => $new_activity->id, 
+							'user_id' => $approver->user_id,
+							'approver_desc' => $approver->approver_desc,
+							'contact_no' => $approver->contact_no,
+							'group_id' => $approver->group_id);
 					}
 					if(!empty($activity_approver)){
 						ActivityApprover::insert($activity_approver);
@@ -2205,7 +1905,9 @@ class ActivityController extends BaseController {
 				if(!empty($divisions)){
 					$activity_division = array();
 					foreach ($divisions as $division){
-						$activity_division[] = array('activity_id' => $new_activity->id, 'division_code' => $division->division_code);
+						$activity_division[] = array('activity_id' => $new_activity->id, 
+							'division_code' => $division->division_code,
+							'division_desc' => $division->division_desc);
 					}
 					if(!empty($activity_division)){
 						ActivityDivision::insert($activity_division);
@@ -2218,7 +1920,9 @@ class ActivityController extends BaseController {
 				if(!empty($categories)){
 					$activity_category = array();
 					foreach ($categories as $category){
-						$activity_category[] = array('activity_id' => $new_activity->id, 'category_code' => $category->category_code);
+						$activity_category[] = array('activity_id' => $new_activity->id, 
+							'category_code' => $category->category_code,
+							'category_desc' => $category->category_desc);
 					}
 					if(!empty($activity_category)){
 						ActivityCategory::insert($activity_category);
@@ -2231,7 +1935,9 @@ class ActivityController extends BaseController {
 				if(!empty($brands)){
 					$activity_brand = array();
 					foreach ($brands as $brand){
-						$activity_brand[] = array('activity_id' => $new_activity->id, 'brand_code' => $brand->brand_code);
+						$activity_brand[] = array('activity_id' => $new_activity->id, 
+							'brand_code' => $brand->brand_code,
+							'brand_desc' => $brand->brand_desc);
 					}
 					if(!empty($activity_brand)){
 						ActivityBrand::insert($activity_brand);
@@ -2244,7 +1950,9 @@ class ActivityController extends BaseController {
 				if(!empty($activity_skus)){
 					$activity_sku = array();
 					foreach ($activity_skus as $sku){
-						$activity_sku[] = array('activity_id' => $new_activity->id, 'sap_code' => $sku->sap_code);
+						$activity_sku[] = array('activity_id' => $new_activity->id, 
+							'sap_code' => $sku->sap_code,
+							'sap_desc' => $sku->sap_desc);
 					}
 					if(!empty($activity_sku)){
 						ActivitySku::insert($activity_sku);
@@ -2257,7 +1965,9 @@ class ActivityController extends BaseController {
 				if(!empty($objectives)){
 					$activity_objective = array();
 					foreach ($objectives as $objective){
-						$activity_objective[] = array('activity_id' => $new_activity->id, 'objective_id' => $objective->objective_id);
+						$activity_objective[] = array('activity_id' => $new_activity->id, 
+							'objective_id' => $objective->objective_id,
+							'objective_desc' => $objective->objective_desc);
 					}
 					if(!empty($activity_objective)){
 						ActivityObjective::insert($activity_objective);
@@ -2270,7 +1980,10 @@ class ActivityController extends BaseController {
 				if(!empty($materials)){
 					$activity_materials = array();
 					foreach ($materials as $material){
-						$activity_materials[] = array('activity_id' => $new_activity->id, 'source_id' => $material->source_id, 'material' => $material->material);
+						$activity_materials[] = array('activity_id' => $new_activity->id, 
+							'source_id' => $material->source_id, 
+							'source_desc' => $material->source_desc,
+							'material' => $material->material);
 					}
 					if(!empty($activity_materials)){
 						ActivityMaterial::insert($activity_materials);
@@ -2283,19 +1996,41 @@ class ActivityController extends BaseController {
 				if(!empty($customers)){
 					$activity_customers = array();
 					foreach ($customers as $customer){
-						$activity_customers[] = array('activity_id' => $new_activity->id, 'customer_node' => $customer->customer_node);
+						$activity_customers[] = array('activity_id' => $new_activity->id, 
+							'customer_node' => $customer->customer_node);
 					}
 					if(!empty($activity_customers)){
 						ActivityCustomer::insert($activity_customers);
 					}
 					
 				}
+
+				$customer_lists = ActivityCutomerList::where('activity_id',$activity->id)->get();
+				$new_customerlist = array();
+				foreach ($customer_lists as $key => $customer_list) {
+					$new_customerlist[] = array('parent_id' => $customer_list->parent_id,
+						'activity_id' =>$new_activity->id,
+						'title' => $customer_list->title,
+						'isfolder' => $customer_list->isfolder,
+						'key' => $customer_list->key,
+						'unselectable' => $customer_list->unselectable,
+						'selected' => $customer_list->selected);
+				}
+				if(count($new_customerlist) > 0){
+					ActivityCutomerList::insert($new_customerlist);
+				}
+
 				// add force allocation
 				$force_allocations = ForceAllocation::where('activity_id',$activity->id)->get();
 				if(!empty($force_allocations)){
 					$activity_force_allocations = array();
 					foreach ($force_allocations as $force_allocation){
-						$activity_force_allocations[] = array('activity_id' => $new_activity->id, 'area_code' => $force_allocation->area_code, 'multi' => $force_allocation->multi);
+						$activity_force_allocations[] = array('activity_id' => $new_activity->id, 
+							'group_code' => $force_allocation->group_code,
+							'group_desc' => $force_allocation->group_desc,
+							'area_code' => $force_allocation->area_code, 
+							'area_desc' => $force_allocation->area_desc, 
+							'multi' => $force_allocation->multi);
 					}
 					if(!empty($activity_force_allocations)){
 						ForceAllocation::insert($activity_force_allocations);
@@ -2308,12 +2043,27 @@ class ActivityController extends BaseController {
 				if(!empty($channels)){
 					$activity_channels = array();
 					foreach ($channels as $channel){
-						$activity_channels[] = array('activity_id' => $new_activity->id, 'channel_node' => $channel->channel_node);
+						$activity_channels[] = array('activity_id' => $new_activity->id, 
+							'channel_node' => $channel->channel_node);
 					}
 					if(!empty($activity_channels)){
 						ActivityChannel2::insert($activity_channels);
 					}
-					
+				}
+
+				$channellists = ActivityChannelList::where('activity_id',$activity->id)->get();
+				$new_channells = array();
+				foreach ($channellists as $key => $channellist) {
+					$new_channells[] = array('parent_id' => $channellist->parent_id,
+						'activity_id' =>$new_activity->id,
+						'title' => $channellist->title,
+						'isfolder' => $channellist->isfolder,
+						'key' => $channellist->key,
+						'unselectable' => $channellist->unselectable,
+						'selected' => $channellist->selected);
+				}
+				if(count($new_channells) > 0){
+					ActivityChannelList::insert($new_channells);
 				}
 
 				// add budget
@@ -2323,11 +2073,14 @@ class ActivityController extends BaseController {
 					foreach ($budgets as $budget){
 						$activity_budgets[] = array('activity_id' => $new_activity->id,
 						 'budget_type_id' => $budget->budget_type_id,
+						 'budget_desc' => $budget->budget_desc,
 						 'io_number' => $budget->io_number,
 						 'amount' => $budget->amount,
 						 'start_date' => $budget->start_date,
 						 'end_date' => $budget->end_date,
-						 'remarks' => $budget->remarks);
+						 'remarks' => $budget->remarks,
+						 'created_at' => date('Y-m-d H:m:s'),
+						 'updated_at' => date('Y-m-d H:m:s'));
 					}
 					if(!empty($activity_budgets)){
 						ActivityBudget::insert($activity_budgets);
@@ -2341,12 +2094,15 @@ class ActivityController extends BaseController {
 					foreach ($nobudgets as $budget){
 						$activity_nobudgets[] = array('activity_id' => $new_activity->id,
 						 'budget_type_id' => $budget->budget_type_id,
+						 'budget_desc' => $budget->budget_desc,
 						 'budget_no' => $budget->budget_no,
 						 'budget_name' => $budget->budget_name,
 						 'amount' => $budget->amount,
 						 'start_date' => $budget->start_date,
 						 'end_date' => $budget->end_date,
-						 'remarks' => $budget->remarks);
+						 'remarks' => $budget->remarks,
+						 'created_at' => date('Y-m-d H:m:s'),
+						 'updated_at' => date('Y-m-d H:m:s'));
 					}
 					if(!empty($activity_nobudgets)){
 						ActivityNobudget::insert($activity_nobudgets);
@@ -2482,14 +2238,36 @@ class ActivityController extends BaseController {
 						$scheme_skus = SchemeSku::where('scheme_id',$scheme->id)->get();
 						if(!empty($scheme_skus)){
 							foreach ($scheme_skus as $sku) {
-								SchemeSku::insert(array('scheme_id' => $new_scheme->id, 'sku' => $sku->sku));
+								SchemeSku::insert(array('scheme_id' => $new_scheme->id, 
+									'sku' => $sku->sku,
+									'sku_desc' => $sku->sku_desc,
+									'division_code' => $sku->division_code,
+									'division_desc' => $sku->division_desc,
+									'category_code' => $sku->category_code,
+									'category_desc' => $sku->category_desc,
+									'brand_code' => $sku->brand_code,
+									'brand_desc' => $sku->brand_desc,
+									'cpg_code' => $sku->cpg_code,
+									'cpg_desc' => $sku->cpg_desc,
+									'packsize_code' => $sku->packsize_code,
+									'packsize_desc' => $sku->packsize_desc));
 							}
 						}
+
 						// add host sku
 						$host_skus = SchemeHostSku::where('scheme_id',$scheme->id)->get();
 						if(!empty($host_skus)){
 							foreach ($host_skus as $sku) {
-								SchemeHostSku::insert(array('scheme_id' => $new_scheme->id, 'sap_code' => $sku->sap_code));
+								SchemeHostSku::insert(array('scheme_id' => $new_scheme->id, 
+									'sap_code' => $sku->sap_code,
+									'sap_desc' => $sku->sap_desc,
+									'pack_size' => $sku->pack_size,
+									'barcode' => $sku->barcode,
+									'case_code' => $sku->case_code,
+									'price_case' => $sku->price_case,
+									'price_case_tax' => $sku->price_case_tax,
+									'price' => $sku->price,
+									'srp' => $sku->srp));
 							}
 						}
 
@@ -2497,7 +2275,16 @@ class ActivityController extends BaseController {
 						$premuim_skus = SchemePremuimSku::where('scheme_id',$scheme->id)->get();
 						if(!empty($premuim_skus)){
 							foreach ($premuim_skus as $sku) {
-								SchemePremuimSku::insert(array('scheme_id' => $new_scheme->id, 'sap_code' => $sku->sap_code));
+								SchemePremuimSku::insert(array('scheme_id' => $new_scheme->id, 
+									'sap_code' => $sku->sap_code,
+									'sap_desc' => $sku->sap_desc,
+									'pack_size' => $sku->pack_size,
+									'barcode' => $sku->barcode,
+									'case_code' => $sku->case_code,
+									'price_case' => $sku->price_case,
+									'price_case_tax' => $sku->price_case_tax,
+									'price' => $sku->price,
+									'srp' => $sku->srp));
 							}
 						}
 
@@ -2516,11 +2303,17 @@ class ActivityController extends BaseController {
 								$scheme_alloc->shipto_id = $last_shipto_id;
 							}
 							
+							$scheme_alloc->group_code = $allocation->group_code;
 							$scheme_alloc->group = $allocation->group;
+							$scheme_alloc->area_code = $allocation->area_code;
 							$scheme_alloc->area = $allocation->area;
+							$scheme_alloc->sold_to_code = $allocation->sold_to_code;
 							$scheme_alloc->sold_to = $allocation->sold_to;
+							$scheme_alloc->ship_to_code = $allocation->ship_to_code;
 							$scheme_alloc->ship_to = $allocation->ship_to;
+							$scheme_alloc->channel_code = $allocation->channel_code;
 							$scheme_alloc->channel = $allocation->channel;
+							$scheme_alloc->account_group_code = $allocation->account_group_code;
 							$scheme_alloc->account_group_name = $allocation->account_group_name;
 							$scheme_alloc->outlet = $allocation->outlet;
 							$scheme_alloc->sold_to_gsv = $allocation->sold_to_gsv;

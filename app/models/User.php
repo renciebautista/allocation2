@@ -79,8 +79,10 @@ class User extends Eloquent implements ConfideUserInterface {
 
 	public function getFullname()
 	{
-	    return $this->attributes['first_name'] .' '.$this->attributes['last_name'];
+	    return strtoupper($this->attributes['first_name'] .' '.$this->attributes['last_name']);
 	}
+
+
 
 	public function isActive(){
 		return $this->attributes['active'];

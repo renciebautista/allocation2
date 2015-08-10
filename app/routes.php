@@ -13,19 +13,17 @@ Queue::getIron()->ssl_verifypeer = false;
 */
 
 Route::get('testpdf',function(){
-	$activity = Activity::find(14);
-	$schemes = Scheme::getList($activity->id);
-
-	foreach ($schemes as $scheme) {
-		if($scheme->item_casecode != ""){
-			var_dump($scheme->item_casecode);
-		}
-		if($scheme->item_barcode  != ""){
-			var_dump($scheme->item_barcode);
-		}
-
-		
+	$categories = [3102,3103];
+	$activity_categories = array();
+	foreach ($categories as $category){
+		$activitycategory = Sku::category($category);
+		Helper::print_r($activitycategory);
+		// $activity_categories[] = array('activity_id' => 1, 
+		// 	'category_code' => $category,
+		// 	'category_desc' => $activitycategory->$category_desc);
 	}
+	var_dump($activity_categories);
+							
 });
 
 Route::get('testrole', function(){
@@ -59,6 +57,11 @@ Route::post('queue/push', function()
 
 
 Route::post('queue/pdf', function()
+{
+	return Queue::marshal();
+});
+
+Route::post('queue/allocreport', function()
 {
 	return Queue::marshal();
 });
@@ -213,6 +216,8 @@ Route::group(array('before' => 'auth'), function()
 	Route::post('reports/allocation/create', 'AllocationReportController@store');
 	Route::get('reports/allocation/{id}/generate', 'AllocationReportController@show');
 	Route::post('reports/allocation/{id}/generate', 'AllocationReportController@download');
+	Route::get('reports/allocation/{id}', 'AllocationReportController@edit');
+	Route::delete('reports/allocation/{id}', 'AllocationReportController@destroy');
 
 	Route::get('reports/activities', 'ReportController@activities');
 	Route::get('reports/{id}/preview', 'ReportController@preview');

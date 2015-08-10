@@ -58,25 +58,13 @@ class SchemeController extends \BaseController {
 				
 
 				$pr = str_replace(",", "", Input::get('pr'));
-				// if(!empty(Input::get('pr'))){
-					
-				// }else{
-				// 	$pr = 0;
-				// }
+
 				$scheme->pr = $pr;
 				$srp_p = str_replace(",", "", Input::get('srp_p'));
-				// if(!empty(Input::get('srp_p'))){
-				// 	$srp_p = str_replace(",", "", Input::get('srp_p'));
-				// }else{
-				// 	$srp_p = 0;
-				// }
+
 				$scheme->srp_p = $srp_p;
 				$other_cost = str_replace(",", "", Input::get('other_cost'));
-				// if(!empty(Input::get('other_cost'))){
-				// 	$other_cost = str_replace(",", "", Input::get('other_cost'));
-				// }else{
-				// 	$other_cost = 0;
-				// }
+
 				$scheme->other_cost = $other_cost;
 
 				$ulp = $srp_p + $other_cost;
@@ -91,12 +79,6 @@ class SchemeController extends \BaseController {
 				}else{
 					$scheme->cost_sale = 0;
 				}
-
-				// if(($ulp > 0) && ($pr > 0)){
-				// 	$scheme->cost_sale = ($ulp/$pr) * 100;
-				// }else{
-				// 	$scheme->cost_sale = 0;
-				// }
 				
 				$scheme->quantity = str_replace(",", "", Input::get('total_alloc'));
 				$activitytype = ActivityType::find($activity->activity_type_id);
@@ -141,36 +123,17 @@ class SchemeController extends \BaseController {
 
 				$scheme->save();
 
-				$skus = array();
-				foreach (Input::get('skus') as $sku){
-					$skus[] = array('scheme_id' => $scheme->id, 'sku' => $sku);
-				}
-				SchemeSku::insert($skus);
-
-				if (Input::has('involve')){
-					$hosts = array();
-					foreach (Input::get('involve') as $sap_code){
-						$hosts[] = array('scheme_id' => $scheme->id, 'sap_code' => $sap_code);
-					}
-					SchemeHostSku::insert($hosts);
-				}
+				// add scheme sku
+				SchemeRepository::addSchemeSku($scheme);
 				
+				// add scheme sku involve
+				SchemeRepository::addSchemeSkuInvole($scheme);
 
-				if (Input::has('premuim')){
-					$premuim = array();
-					foreach (Input::get('premuim') as $sap_code){
-						$premuim[] = array('scheme_id' => $scheme->id, 'sap_code' => $sap_code);
-					}
-					SchemePremuimSku::insert($hosts);
-				}
+				// add scheme sku involve
+				SchemeRepository::addSchemePremiumSku($scheme);
 				
-
 				// create allocation
 				SchemeAllocRepository::insertAlllocation($scheme);
-
-				// $scheme2 = Scheme::find($scheme->id);
-				// $scheme2->final_alloc = SchemeAllocation::finalallocation($scheme->id);
-				// $scheme2->update();
 
 				// update final alloc
 				$scheme2 = Scheme::find($scheme->id);
@@ -262,11 +225,6 @@ class SchemeController extends \BaseController {
 		$sel_skus =  SchemeSku::getSkus($scheme->id);
 		$sel_hosts = SchemeHostSku::getHosts($scheme->id);
 		$sel_premuim = SchemePremuimSku::getPremuim($scheme->id);
-
-		// $sku = Sku::getSku($sel_skus[0]);
-		// if(count($sel_hosts)>0){
-		// 	$host = Pricelist::getSku($sel_hosts[0]);
-		// }
 		
 
 		$premuim = array();
@@ -464,35 +422,14 @@ class SchemeController extends \BaseController {
 				$scheme->ulp_premium = Input::get('ulp_premium');
 				$scheme->update();
 
-				$skus = array();
-				SchemeSku::where('scheme_id',$scheme->id)->delete();
-				foreach (Input::get('skus') as $sku){
-					$skus[] = array('scheme_id' => $scheme->id, 'sku' => $sku);
-				}
-				SchemeSku::insert($skus);
-
-				$hosts = array();
-				SchemeHostSku::where('scheme_id',$scheme->id)->delete();
-				if (Input::has('involve'))
-				{
-					foreach (Input::get('involve') as $sap_code){
-						$hosts[] = array('scheme_id' => $scheme->id, 'sap_code' => $sap_code);
-					}
-					SchemeHostSku::insert($hosts);
-				}
+				// update scheme sku
+				SchemeRepository::addSchemeSku($scheme);
 				
+				// update scheme sku involve
+				SchemeRepository::addSchemeSkuInvole($scheme);
 
-				$premuim = array();
-				SchemePremuimSku::where('scheme_id',$scheme->id)->delete();
-
-				if (Input::has('premuim'))
-				{
-				    foreach (Input::get('premuim') as $sap_code){
-						$premuim[] = array('scheme_id' => $scheme->id, 'sap_code' => $sap_code);
-					}
-					SchemePremuimSku::insert($premuim);
-				}
-				
+				// update scheme sku involve
+				SchemeRepository::addSchemePremiumSku($scheme);
 
 				SchemeAllocRepository::updateAllocation($scheme);
 				
@@ -570,7 +507,7 @@ class SchemeController extends \BaseController {
 			DB::beginTransaction();
 
 			try {
-			   SchemeSku::where('scheme_id',$scheme->id)->delete();
+			   	SchemeSku::where('scheme_id',$scheme->id)->delete();
 				SchemeHostSku::where('scheme_id',$scheme->id)->delete();
 				SchemePremuimSku::where('scheme_id',$scheme->id)->delete();
 				SchemeAllocation::where('scheme_id',$scheme->id)->delete();
@@ -766,268 +703,21 @@ class SchemeController extends \BaseController {
 		});
 	}
 
+
+
 	public function duplicate($id){
-		DB::beginTransaction();
-
-		try {
-			$scheme = Scheme::find($id);
-			$new_scheme = new Scheme;
-			$new_scheme->activity_id = $scheme->activity_id;
-			$new_scheme->name = $scheme->name;
-			$new_scheme->item_code = $scheme->item_code;
-			$new_scheme->item_barcode = $scheme->item_barcode;
-			$new_scheme->item_casecode = $scheme->item_casecode;
-			$new_scheme->pr = $scheme->pr;
-			$new_scheme->srp_p = $scheme->srp_p;
-			$new_scheme->other_cost = $scheme->other_cost;
-			$new_scheme->ulp = $scheme->ulp;
-			$new_scheme->cost_sale = $scheme->cost_sale;
-			$new_scheme->quantity = $scheme->quantity;
-			$new_scheme->deals = $scheme->deals;
-			$new_scheme->total_deals = $scheme->total_deals;
-			$new_scheme->total_cases = $scheme->total_cases;
-			$new_scheme->tts_r = $scheme->tts_r;
-			$new_scheme->pe_r = $scheme->pe_r;
-			$new_scheme->lpat = $scheme->lpat;
-			$new_scheme->total_cost = $scheme->total_cost;
-			$new_scheme->user_id = Auth::id();
-			$new_scheme->final_alloc = $scheme->final_alloc;
-			$new_scheme->final_total_deals = $scheme->final_total_deals;
-			$new_scheme->final_total_cases = $scheme->final_total_cases;
-			$new_scheme->final_tts_r = $scheme->final_tts_r;
-			$new_scheme->final_pe_r = $scheme->final_pe_r;
-			$new_scheme->final_total_cost = $scheme->final_total_cost;
-			$new_scheme->ulp_premium = $scheme->ulp_premium;
-			$new_scheme->save();
-
-			// add skus
-			$scheme_skus = SchemeSku::where('scheme_id',$scheme->id)->get();
-			if(!empty($scheme_skus)){
-				foreach ($scheme_skus as $sku) {
-					SchemeSku::insert(array('scheme_id' => $new_scheme->id, 'sku' => $sku->sku));
-				}
-			}
-			// add host sku
-			$host_skus = SchemeHostSku::where('scheme_id',$scheme->id)->get();
-			if(!empty($host_skus)){
-				foreach ($host_skus as $sku) {
-					SchemeHostSku::insert(array('scheme_id' => $new_scheme->id, 'sap_code' => $sku->sap_code));
-				}
-			}
-
-			// add premuim sku
-			$premuim_skus = SchemePremuimSku::where('scheme_id',$scheme->id)->get();
-			if(!empty($premuim_skus)){
-				foreach ($premuim_skus as $sku) {
-					SchemePremuimSku::insert(array('scheme_id' => $new_scheme->id, 'sap_code' => $sku->sap_code));
-				}
-			}
-
-			$allocations = Allocation::schemeAllocations($scheme->id);
-			$last_area_id = 0;
-			$last_shipto_id = 0;
-			foreach ($allocations as $allocation) {
-				$scheme_alloc = new SchemeAllocation;
-
-				if((!empty($allocation->customer_id)) && (empty($allocation->shipto_id))){
-					$scheme_alloc->customer_id = $last_area_id;
-				}
-
-				if((!empty($allocation->customer_id)) && (!empty($allocation->shipto_id))){
-					$scheme_alloc->customer_id = $last_area_id;
-					$scheme_alloc->shipto_id = $last_shipto_id;
-				}	
-				
-				$scheme_alloc->scheme_id = $new_scheme->id;
-				$scheme_alloc->group = $allocation->group;
-				$scheme_alloc->area = $allocation->area;
-				$scheme_alloc->sold_to = $allocation->sold_to;
-				$scheme_alloc->ship_to = $allocation->ship_to;
-				$scheme_alloc->channel = $allocation->channel;
-				$scheme_alloc->account_group_name = $allocation->account_group_name;
-				$scheme_alloc->outlet = $allocation->outlet;
-				$scheme_alloc->sold_to_gsv = $allocation->sold_to_gsv;
-				$scheme_alloc->forced_sold_to_gsv = $allocation->forced_sold_to_gsv;
-				$scheme_alloc->sold_to_gsv_p = $allocation->sold_to_gsv_p;
-				$scheme_alloc->forced_sold_to_gsv_p = $allocation->forced_sold_to_gsv_p;
-				$scheme_alloc->sold_to_alloc = $allocation->sold_to_alloc;
-				$scheme_alloc->forced_sold_to_alloc = $allocation->forced_sold_to_alloc;
-				$scheme_alloc->ship_to_gsv = $allocation->ship_to_gsv;
-				$scheme_alloc->forced_ship_to_gsv = $allocation->forced_ship_to_gsv;
-				$scheme_alloc->ship_to_gsv_p = $allocation->ship_to_gsv_p;
-				$scheme_alloc->forced_ship_to_gsv_p = $allocation->forced_ship_to_gsv_p;
-				$scheme_alloc->ship_to_alloc = $allocation->ship_to_alloc;
-				$scheme_alloc->forced_ship_to_alloc = $allocation->forced_ship_to_alloc;
-				$scheme_alloc->outlet_to_gsv = $allocation->outlet_to_gsv;
-				$scheme_alloc->forced_outlet_to_gsv = $allocation->forced_outlet_to_gsv;
-				$scheme_alloc->outlet_to_gsv_p = $allocation->outlet_to_gsv_p;
-				$scheme_alloc->forced_outlet_to_gsv_p = $allocation->forced_outlet_to_gsv_p;
-				$scheme_alloc->outlet_to_alloc = $allocation->outlet_to_alloc;
-				$scheme_alloc->forced_outlet_to_alloc = $allocation->forced_outlet_to_alloc;
-				$scheme_alloc->multi = $allocation->multi;
-				$scheme_alloc->computed_alloc = $allocation->computed_alloc;
-				$scheme_alloc->force_alloc = $allocation->force_alloc;
-				$scheme_alloc->final_alloc = $allocation->final_alloc;
-				$scheme_alloc->in_deals = $allocation->in_deals;
-				$scheme_alloc->in_cases = $allocation->in_cases;
-				$scheme_alloc->tts_budget = $allocation->tts_budget;
-				$scheme_alloc->pe_budget = $allocation->pe_budget;
-				$scheme_alloc->save();
-
-				if((empty($allocation->customer_id)) && (empty($allocation->shipto_id))){
-					$last_area_id = $scheme_alloc->id;
-				}
-
-				if((!empty($allocation->customer_id)) && (!empty($allocation->shipto_id))){
-					$last_shipto_id = $scheme_alloc->id;
-				}
-			}
-			DB::commit();
-			$class = 'alert-success';
-			$message = 'Scheme  successfully duplicated.';
-		} catch (\Exception $e) {
-				DB::rollback();
-				// echo $e;
-			    $class = 'alert-danger';
-				$message = 'Cannot duplicate activity.';
-				// something went wrong
-		}
-
+		$scheme = Scheme::find($id);
+		$data = SchemeRepository::duplicate($id);
 		return Redirect::to(URL::action('ActivityController@edit', array('id' => $scheme->activity_id)) . "#schemes")
-				->with('class', $class )
-				->with('message', $message);	
+				->with('class', $data['class'] )
+				->with('message', $data['message']);	
 		
 	}
 
 	public function duplicatescheme($id){
-		DB::beginTransaction();
-
-		try {
-			$scheme = Scheme::find($id);
-			$new_scheme = new Scheme;
-			$new_scheme->activity_id = $scheme->activity_id;
-			$new_scheme->name = $scheme->name;
-			$new_scheme->item_code = $scheme->item_code;
-			$new_scheme->item_barcode = $scheme->item_barcode;
-			$new_scheme->item_casecode = $scheme->item_casecode;
-			$new_scheme->pr = $scheme->pr;
-			$new_scheme->srp_p = $scheme->srp_p;
-			$new_scheme->other_cost = $scheme->other_cost;
-			$new_scheme->ulp = $scheme->ulp;
-			$new_scheme->cost_sale = $scheme->cost_sale;
-			$new_scheme->quantity = $scheme->quantity;
-			$new_scheme->deals = $scheme->deals;
-			$new_scheme->total_deals = $scheme->total_deals;
-			$new_scheme->total_cases = $scheme->total_cases;
-			$new_scheme->tts_r = $scheme->tts_r;
-			$new_scheme->pe_r = $scheme->pe_r;
-			$new_scheme->lpat = $scheme->lpat;
-			$new_scheme->total_cost = $scheme->total_cost;
-			$new_scheme->user_id = Auth::id();
-			$new_scheme->final_alloc = $scheme->final_alloc;
-			$new_scheme->final_total_deals = $scheme->final_total_deals;
-			$new_scheme->final_total_cases = $scheme->final_total_cases;
-			$new_scheme->final_tts_r = $scheme->final_tts_r;
-			$new_scheme->final_pe_r = $scheme->final_pe_r;
-			$new_scheme->final_total_cost = $scheme->final_total_cost;
-			$new_scheme->ulp_premium = $scheme->ulp_premium;
-			$new_scheme->save();
-
-			// add skus
-			$scheme_skus = SchemeSku::where('scheme_id',$scheme->id)->get();
-			if(!empty($scheme_skus)){
-				foreach ($scheme_skus as $sku) {
-					SchemeSku::insert(array('scheme_id' => $new_scheme->id, 'sku' => $sku->sku));
-				}
-			}
-			// add host sku
-			$host_skus = SchemeHostSku::where('scheme_id',$scheme->id)->get();
-			if(!empty($host_skus)){
-				foreach ($host_skus as $sku) {
-					SchemeHostSku::insert(array('scheme_id' => $new_scheme->id, 'sap_code' => $sku->sap_code));
-				}
-			}
-
-			// add premuim sku
-			$premuim_skus = SchemePremuimSku::where('scheme_id',$scheme->id)->get();
-			if(!empty($premuim_skus)){
-				foreach ($premuim_skus as $sku) {
-					SchemePremuimSku::insert(array('scheme_id' => $new_scheme->id, 'sap_code' => $sku->sap_code));
-				}
-			}
-
-			$allocations = Allocation::schemeAllocations($scheme->id);
-			$last_area_id = 0;
-			$last_shipto_id = 0;
-			foreach ($allocations as $allocation) {
-				$scheme_alloc = new SchemeAllocation;
-
-				if((!empty($allocation->customer_id)) && (empty($allocation->shipto_id))){
-					$scheme_alloc->customer_id = $last_area_id;
-				}
-
-				if((!empty($allocation->customer_id)) && (!empty($allocation->shipto_id))){
-					$scheme_alloc->customer_id = $last_area_id;
-					$scheme_alloc->shipto_id = $last_shipto_id;
-				}
-				
-				$scheme_alloc->scheme_id = $new_scheme->id;
-				$scheme_alloc->group = $allocation->group;
-				$scheme_alloc->area = $allocation->area;
-				$scheme_alloc->sold_to = $allocation->sold_to;
-				$scheme_alloc->ship_to = $allocation->ship_to;
-				$scheme_alloc->channel = $allocation->channel;
-				$scheme_alloc->account_group_name = $allocation->account_group_name;
-				$scheme_alloc->outlet = $allocation->outlet;
-				$scheme_alloc->sold_to_gsv = $allocation->sold_to_gsv;
-				$scheme_alloc->forced_sold_to_gsv = $allocation->forced_sold_to_gsv;
-				$scheme_alloc->sold_to_gsv_p = $allocation->sold_to_gsv_p;
-				$scheme_alloc->forced_sold_to_gsv_p = $allocation->forced_sold_to_gsv_p;
-				$scheme_alloc->sold_to_alloc = $allocation->sold_to_alloc;
-				$scheme_alloc->forced_sold_to_alloc = $allocation->forced_sold_to_alloc;
-				$scheme_alloc->ship_to_gsv = $allocation->ship_to_gsv;
-				$scheme_alloc->forced_ship_to_gsv = $allocation->forced_ship_to_gsv;
-				$scheme_alloc->ship_to_gsv_p = $allocation->ship_to_gsv_p;
-				$scheme_alloc->forced_ship_to_gsv_p = $allocation->forced_ship_to_gsv_p;
-				$scheme_alloc->ship_to_alloc = $allocation->ship_to_alloc;
-				$scheme_alloc->forced_ship_to_alloc = $allocation->forced_ship_to_alloc;
-				$scheme_alloc->outlet_to_gsv = $allocation->outlet_to_gsv;
-				$scheme_alloc->forced_outlet_to_gsv = $allocation->forced_outlet_to_gsv;
-				$scheme_alloc->outlet_to_gsv_p = $allocation->outlet_to_gsv_p;
-				$scheme_alloc->forced_outlet_to_gsv_p = $allocation->forced_outlet_to_gsv_p;
-				$scheme_alloc->outlet_to_alloc = $allocation->outlet_to_alloc;
-				$scheme_alloc->forced_outlet_to_alloc = $allocation->forced_outlet_to_alloc;
-				$scheme_alloc->multi = $allocation->multi;
-				$scheme_alloc->computed_alloc = $allocation->computed_alloc;
-				$scheme_alloc->force_alloc = $allocation->force_alloc;
-				$scheme_alloc->final_alloc = $allocation->final_alloc;
-				$scheme_alloc->in_deals = $allocation->in_deals;
-				$scheme_alloc->in_cases = $allocation->in_cases;
-				$scheme_alloc->tts_budget = $allocation->tts_budget;
-				$scheme_alloc->pe_budget = $allocation->pe_budget;
-				$scheme_alloc->save();
-
-				if((empty($allocation->customer_id)) && (empty($allocation->shipto_id))){
-					$last_area_id = $scheme_alloc->id;
-				}
-
-				if((!empty($allocation->customer_id)) && (!empty($allocation->shipto_id))){
-					$last_shipto_id = $scheme_alloc->id;
-				}
-			}
-			DB::commit();
-			$class = 'alert-success';
-			$message = 'Scheme successfully duplicated.';
-		} catch (\Exception $e) {
-				DB::rollback();
-				// echo $e;
-			    $class = 'alert-danger';
-				$message = 'Cannot duplicate activity.';
-				// something went wrong
-		}
-
-		return Redirect::to(URL::action('SchemeController@edit', array('id' => $new_scheme->id)))
-				->with('class', $class )
-				->with('message', $message);
+		$data = SchemeRepository::duplicate($id);
+		return Redirect::to(URL::action('SchemeController@edit', array('id' => $data['scheme_id'])))
+				->with('class', $data['class'] )
+				->with('message', $data['message']);
 	} 
 }

@@ -42,12 +42,26 @@ class Sku extends \Eloquent {
 				->lists('division_desc', 'division_code');
 	}
 
+	public static function category($code){
+		return self::select('category_code', 'category_desc')
+			->where('category_code', $code)
+			->groupBy('category_code')
+			->first();
+	}
+
 	public static function categories($division_code){
 		return self::select('category_code', 'category_desc')
 			->where('division_code',$division_code)
 			->groupBy('category_code')
 			->orderBy('category_desc')
 			->lists('category_desc', 'category_code');
+	}
+
+	public static function brand($code){
+		return self::select('cpg_code', 'brand_desc')
+			->where('cpg_code', $code)
+			->groupBy('cpg_code')
+			->first();
 	}
 
 	public static function brands($categories){

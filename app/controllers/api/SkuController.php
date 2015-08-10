@@ -51,7 +51,7 @@ class SkuController extends \BaseController {
 			$filter = \Input::get('categories');
 			$data = array();
 			if($filter != ''){
-				$data = \Sku::select('cpg_code', \DB::raw('CONCAT(brand_desc, "- ", cpg_desc) AS brand_desc'))
+				$data = \Sku::select('cpg_code', \DB::raw('CONCAT(brand_desc, " - ", cpg_desc) AS brand_desc'))
 				->whereIn('category_code',$filter)
 				->groupBy('cpg_code')
 				->orderBy('brand_desc')->lists('brand_desc', 'cpg_code');
@@ -69,7 +69,7 @@ class SkuController extends \BaseController {
 			$data = array();
 			$data['selection']= array();
 			if($filter != ''){
-				$data['selection'] = \Sku::select('cpg_code', \DB::raw('CONCAT(brand_desc, "- ", cpg_desc) AS brand_desc'))
+				$data['selection'] = \Sku::select('cpg_code', \DB::raw('CONCAT(brand_desc, " - ", cpg_desc) AS brand_desc'))
 				->whereIn('category_code',$filter)
 				->groupBy('cpg_code')
 				->orderBy('brand_desc')->lists('brand_desc', 'cpg_code');

@@ -28,9 +28,14 @@ class SchemeAllocRepository
 		foreach ($allocations as $customer) {
 			$scheme_alloc = new SchemeAllocation;
 			$scheme_alloc->scheme_id = $scheme->id;
+
+			$scheme_alloc->group_code = $customer->group_code;
 			$scheme_alloc->group = $customer->group_name;
+			$scheme_alloc->area_code = $customer->area_code;
 			$scheme_alloc->area = $customer->area_name;
+			$scheme_alloc->sold_to_code = $customer->customer_code;
 			$scheme_alloc->sold_to = $customer->customer_name;
+
 			$scheme_alloc->ship_to = $customer->customer_name . ' TOTAL';
 
 			// sold to gsv
@@ -125,10 +130,15 @@ class SchemeAllocRepository
 					$shipto_alloc = new SchemeAllocation;
 					$shipto_alloc->scheme_id = $scheme->id;
 					$shipto_alloc->customer_id = $scheme_alloc->id;
+					$shipto_alloc->group_code = $customer->group_code;
 					$shipto_alloc->group = $customer->group_name;
+					$shipto_alloc->area_code = $customer->area_code;
 					$shipto_alloc->area = $customer->area_name;
+					$shipto_alloc->sold_to_code = $customer->customer_code;
 					$shipto_alloc->sold_to = $customer->customer_name;
+					$shipto_alloc->ship_to_code = $shipto['ship_to_code'];
 					$shipto_alloc->ship_to = $shipto['ship_to_name'];
+
 
 					if($shipto['gsv'] >0){
 						$shipto_alloc->ship_to_gsv = $shipto['gsv'];
@@ -242,13 +252,21 @@ class SchemeAllocRepository
 							$account_alloc->scheme_id = $scheme->id;
 							$account_alloc->customer_id = $scheme_alloc->id;
 							$account_alloc->shipto_id = $shipto_alloc->id;
+							$account_alloc->group_code = $customer->group_code;
 							$account_alloc->group = $customer->group_name;
+							$account_alloc->area_code = $customer->area_code;
 							$account_alloc->area = $customer->area_name;
+							$account_alloc->sold_to_code = $customer->customer_code;
 							$account_alloc->sold_to = $customer->customer_name;
+							$account_alloc->ship_to_code = $shipto['ship_to_code'];
 							$account_alloc->ship_to = $shipto['ship_to_name'];
+							$account_alloc->channel_code = $account['channel_code'];
 							$account_alloc->channel = $account['channel_name'];
+							$account_alloc->account_group_code = $account['account_group_code'];
 							$account_alloc->account_group_name = $account['account_group_name'];
 							$account_alloc->outlet = $account['account_name'];
+
+
 							if($account['gsv'] > 0){
 								$account_alloc->outlet_to_gsv = $account['gsv'];
 							}else{

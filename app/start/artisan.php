@@ -16,4 +16,5 @@ Artisan::add(new MakePdf);
 Artisan::add(new ScheduleActivity);
 Artisan::add(new TestMail);
 Artisan::add(new SendMail);
+Artisan::add(new MakeAllocReport);
 
