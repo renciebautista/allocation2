@@ -1,6 +1,6 @@
 <?php
 
-class ActivityNoBudget extends \Eloquent {
+class ActivityNobudget extends \Eloquent {
 	protected $fillable = [];
 
 	public function budgettype()
