@@ -18,7 +18,9 @@
 		"alchemy/zippy": "0.2.1",
 		"kevbaldwyn/image":"dev-master",
 		"maxxscho/laravel-tcpdf": "0.*",
-		"iron-io/iron_mq": "1.*"
+		"iron-io/iron_mq": "1.*",
+		"box/spout": "~2.0",
+		"phpoffice/phpword": "dev-master"
 		
 	},
 	"autoload": {

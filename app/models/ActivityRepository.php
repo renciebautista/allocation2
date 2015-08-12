@@ -49,10 +49,13 @@ class ActivityRepository extends \Eloquent {
 		if(Input::has('planner')){
 			$planner = Input::get('planner');
 			$user = User::find($planner);
-			ActivityPlanner::insert(array('activity_id' => $activity->id, 
+			if(!empty($user)){
+				ActivityPlanner::insert(array('activity_id' => $activity->id, 
 				'user_id' => $planner,
 				'planner_desc' => $user->getFullname(),
 				'contact_no' => $user->contact_no));
+			}
+			
 		}
 	}
 
@@ -62,11 +65,14 @@ class ActivityRepository extends \Eloquent {
 			$activity_planner = array();
 			foreach (Input::get('approver') as $approver) {
 				$user = User::find($approver);
-				$activity_approver[] = array('activity_id' => $activity->id, 
-					'user_id' => $approver,
-					'approver_desc' => $user->getFullname(),
-					'contact_no' => $user->contact_no,
-					'group_id' => $user->roles[0]->id);
+				if(!empty($user)){
+					$activity_approver[] = array('activity_id' => $activity->id, 
+						'user_id' => $approver,
+						'approver_desc' => $user->getFullname(),
+						'contact_no' => $user->contact_no,
+						'group_id' => $user->roles[0]->id);
+				}
+				
 			}
 			if(count($activity_approver)>0){
 				ActivityApprover::insert($activity_approver);
@@ -77,11 +83,14 @@ class ActivityRepository extends \Eloquent {
 			$cmd = User::GetPlanners(['CMD DIRECTOR']);
 			if(!ActivityApprover::ApproverExist($activity->id,$cmd[0]->user_id)){
 				$user = User::find($cmd[0]->user_id);
-				ActivityApprover::insert(array('activity_id' => $activity->id, 
+				if(!empty($user)){
+					ActivityApprover::insert(array('activity_id' => $activity->id, 
 					'user_id' => $cmd[0]->user_id,
 					'approver_desc' => $user->getFullname(),
 					'contact_no' => $user->contact_no,
 					'group_id' => $user->roles[0]->id));
+				}
+				
 			}
 		}
 	}

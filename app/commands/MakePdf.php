@@ -149,7 +149,7 @@ class MakePdf extends Command {
 					$pdf->SetXY($x, $y);
 					$cnt++;
 
-					$image_file = $path = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/'.$artwork->hash_name;
+					$image_file =  storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/'.$artwork->hash_name;
 					$pdf->Image($image_file, $x, $y, 30, 0, '', '', '', true, 150, '', false, false, 0, false, false, false);
 					if($max_h < $pdf->getImageRBY() - $y){
 						$max_h = $pdf->getImageRBY() - $y;

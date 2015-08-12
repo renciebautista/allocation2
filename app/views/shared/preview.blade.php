@@ -453,8 +453,8 @@
 							<table class="sub-table timing">
 								<tr>
 									<th>Activity</th>
-									<th>Start Date</th>
-									<th>End Date</th>
+									<th style="width:14%">Start Date</th>
+									<th style="width:14%">End Date</th>
 								</tr>
 								<?php $last_date; ?>
 								@foreach($networks as $network)
