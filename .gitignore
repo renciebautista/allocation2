@@ -4,6 +4,7 @@
 /app/storage/zipped/*
 /app/database/seeds/seed_files/*
 /app/storage/exports/*
+/public/barcoded/*
 composer.phar
 composer.lock
 .env.*.php
