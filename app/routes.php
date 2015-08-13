@@ -18,30 +18,33 @@ Route::get('testpdf', function(){
 	$cnt = 0;
 	$str= "";
 	foreach ($schemes as $scheme) {
-		if($scheme->item_barcode  !== ""){
+		if(($scheme->item_barcode  !== "") || ($scheme->item_casecode !== "")){
+			if($scheme->item_barcode  !== ""){
 			$barcode[$cnt] = $scheme->item_barcode;
-		}
+			}
 
-		if($scheme->item_casecode !== ""){
-			$casecode[$cnt] = $scheme->item_casecode;
+			if($scheme->item_casecode !== ""){
+				$casecode[$cnt] = $scheme->item_casecode;
+				
+			}
 			
+
+			if($scheme->item_barcode !== ""){
+				$str .='<tr nobr="true"><td align="center">'.$scheme->name.'<br>
+				<tcpdf method="write1DBarcode" params="'.$barcode[$cnt] .'" />
+				</td>';
+			}else{
+				$str .='<tr nobr="true"><td align="center"></td>';
+			}
+			if($scheme->item_casecode !== ""){
+				$str .='<td align="center">'.$scheme->name.'<br>
+				<tcpdf method="write1DBarcode" params="'.$casecode[$cnt] .'" />
+				</td></tr>';
+			}else{
+				$str .='<tr nobr="true"><td align="center"></td>';
+			}
 		}
 		
-
-		if($scheme->item_barcode !== ""){
-			$str .='<tr nobr="true"><td align="center">'.$scheme->name.'<br>
-			<tcpdf method="write1DBarcode" params="'.$barcode[$cnt] .'" />
-			</td>';
-		}else{
-			$str .='<tr nobr="true"><td align="center"></td>';
-		}
-		if($scheme->item_casecode !== ""){
-			$str .='<td align="center">'.$scheme->name.'<br>
-			<tcpdf method="write1DBarcode" params="'.$casecode[$cnt] .'" />
-			</td></tr>';
-		}else{
-			$str .='<tr nobr="true"><td align="center"></td>';
-		}
 		$cnt++;
 	}
 

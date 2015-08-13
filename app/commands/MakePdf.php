@@ -151,23 +151,31 @@ class MakePdf extends Command {
 
 					$image_file =  storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/'.$artwork->hash_name;
 					$pdf->Image($image_file, $x, $y, 30, 0, '', '', '', true, 150, '', false, false, 0, false, false, false);
-					if($max_h < $pdf->getImageRBY() - $y){
+
+					if($max_h < ($pdf->getImageRBY() - $y)){
 						$max_h = $pdf->getImageRBY() - $y;
 					}
 
 					
 					$x+=31;
+
 					if($x > 165){
 						$y+=$max_h;
+						$y++;
 						$x = 10;
 						$max_h = 0;
+					}else{
+						$y = $pdf->getY();
 					}
 
 					if($h-$y < 40){
 						$pdf->AddPage();
+						$x = $pdf->getX();
+						$y = $pdf->getY();
 					}
 				
 				}
+
 				$y = $pdf->getY();
 				
 				if($max_h < 31){
@@ -219,30 +227,31 @@ class MakePdf extends Command {
 					// $style['cellfitalign'] = 'C';
 					foreach ($schemes as $scheme) {
 						$y = $pdf->GetY();
+						if(($scheme->item_barcode  !== "") || ($scheme->item_casecode !== "")){
+							if($scheme->item_barcode  !== ""){
+								$barcode[$cnt] = $pdf->serializeTCPDFtagParameters(array($scheme->item_barcode, 'EAN13', '', '', '', 18, 0.4, $style, ''));       
+							}
 
-						if($scheme->item_barcode  !== ""){
-							$barcode[$cnt] = $pdf->serializeTCPDFtagParameters(array($scheme->item_barcode, 'EAN13', '', '', '', 18, 0.4, $style, ''));       
-						}
-
-						if($scheme->item_casecode !== ""){
-							$casecode[$cnt] = $pdf->serializeTCPDFtagParameters(array($scheme->item_casecode, 'I25', '', '', '', 18, 0.4, $style, '')); 
+							if($scheme->item_casecode !== ""){
+								$casecode[$cnt] = $pdf->serializeTCPDFtagParameters(array($scheme->item_casecode, 'I25', '', '', '', 18, 0.4, $style, '')); 
+								
+							}
 							
-						}
-						
 
-						if($scheme->item_barcode !== ""){
-							$str .='<tr nobr="true"><td align="center">'.$scheme->name.'<br>
-							<tcpdf method="write1DBarcode" params="'.$barcode[$cnt] .'" />
-							</td>';
-						}else{
-							$str .='<tr nobr="true"><td align="center"></td>';
-						}
-						if($scheme->item_casecode !== ""){
-							$str .='<td align="center">'.$scheme->name.'<br>
-							<tcpdf method="write1DBarcode" params="'.$casecode[$cnt] .'" />
-							</td></tr>';
-						}else{
-							$str .='<tr nobr="true"><td align="center"></td>';
+							if($scheme->item_barcode !== ""){
+								$str .='<tr nobr="true"><td align="center">'.$scheme->name.'<br>
+								<tcpdf method="write1DBarcode" params="'.$barcode[$cnt] .'" />
+								</td>';
+							}else{
+								$str .='<tr nobr="true"><td align="center"></td>';
+							}
+							if($scheme->item_casecode !== ""){
+								$str .='<td align="center">'.$scheme->name.'<br>
+								<tcpdf method="write1DBarcode" params="'.$casecode[$cnt] .'" />
+								</td></tr>';
+							}else{
+								$str .='<tr nobr="true"><td align="center"></td>';
+							}
 						}
 						$cnt++;
 					}
@@ -272,10 +281,12 @@ class MakePdf extends Command {
 					$y = $pdf->getY();
 					$image_file = $path = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/'.$fdapermit->hash_name;
 					$pdf->Image($image_file, $x, $y, 0, 200, '', '', '', true, 150, '', false, false, 0, false, false, true,false);
+					$pdf->AddPage();
 				}
 			}
 				
 			if(count($pis) > 0){
+
 				$pis_view = "";
 				$pis_view .= View::make('pdf.style')->render();
 				$pis_view .= View::make('pdf.pis',compact('activity','pis'))->render();

@@ -103,8 +103,7 @@ class WordDoc {
 		$header = $section->createHeader();
 		$header->addText("Unilever Philippines, Inc.",array('bold'=>true,'size' => 13),array('spaceAfter' => 0));
 		$header->addText("Customer Marketing Department",array('size' => 10),array('spaceAfter' => 0));
-		$header->addImage(
-		    'logo.png',
+		$header->addImage(storage_path().'/uploads/tempfiles/logo.png',
 		    array(
 		        'width'            => \PhpOffice\PhpWord\Shared\Converter::cmToPixel(3),
 		        'height'           => \PhpOffice\PhpWord\Shared\Converter::cmToPixel(3),
