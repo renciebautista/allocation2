@@ -134,10 +134,11 @@ class ActivityRepository extends \Eloquent {
 		if (Input::has('brand')){
 			$activity_brands = array();
 			foreach (Input::get('brand') as $brand){
+
 				$activity_brand = Sku::brand($brand);
 				$activity_brands[] = array('activity_id' => $activity->id, 
 					'brand_code' => $brand,
-					'brand_desc' => $activity_brand->brand_desc);
+					'brand_desc' => $activity_brand->brand_desc.' - '.$activity_brand->cpg_desc);
 			}
 			if(count($activity_brands)>0){
 				ActivityBrand::insert($activity_brands);

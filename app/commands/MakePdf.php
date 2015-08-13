@@ -186,7 +186,7 @@ class MakePdf extends Command {
 			if(count($schemes) > 0){
 				$w_codes = false;
 				foreach ($schemes as $scheme) {
-					if($scheme->item_casecode !== ""){
+					if($scheme->item_barcode !== ""){
 						$w_codes = true;
 					}
 					if($scheme->item_casecode !== ""){
@@ -220,15 +220,17 @@ class MakePdf extends Command {
 					foreach ($schemes as $scheme) {
 						$y = $pdf->GetY();
 
-						if($scheme->item_casecode !== ""){
-							$casecode[$cnt] = $pdf->serializeTCPDFtagParameters(array($scheme->item_casecode, 'I25', '', '', '', 18, 0.4, $style, '')); 
-							
-						}
 						if($scheme->item_barcode  !== ""){
 							$barcode[$cnt] = $pdf->serializeTCPDFtagParameters(array($scheme->item_barcode, 'EAN13', '', '', '', 18, 0.4, $style, ''));       
 						}
 
 						if($scheme->item_casecode !== ""){
+							$casecode[$cnt] = $pdf->serializeTCPDFtagParameters(array($scheme->item_casecode, 'I25', '', '', '', 18, 0.4, $style, '')); 
+							
+						}
+						
+
+						if($scheme->item_barcode !== ""){
 							$str .='<tr nobr="true"><td align="center">'.$scheme->name.'<br>
 							<tcpdf method="write1DBarcode" params="'.$barcode[$cnt] .'" />
 							</td>';
@@ -242,8 +244,6 @@ class MakePdf extends Command {
 						}else{
 							$str .='<tr nobr="true"><td align="center"></td>';
 						}
-						
-					
 						$cnt++;
 					}
 

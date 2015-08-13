@@ -11,7 +11,7 @@ class FixActivityBrandTableSeeder extends Seeder {
 		foreach($activitybrands  as $activitybrand){
 			$brand = Sku::brand($activitybrand->brand_code);
 			if(!empty($brand)){
-				$activitybrand->brand_desc = $brand->cpg_desc;
+				$activitybrand->brand_desc = $brand->brand_desc.' - '.$brand->cpg_desc;
 				$activitybrand->update();
 			}
 			

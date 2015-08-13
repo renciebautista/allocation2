@@ -667,7 +667,6 @@
 								@for($x1 = $x; $x1 < count($pis); $x1++)
 									<?php if($pis[$x1][1] == "Product Dimension (MM)"){
 										break;
-										
 									} ?>
 									@if($pis[$x1][0] != "")
 									<tr>
