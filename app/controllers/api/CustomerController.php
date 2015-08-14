@@ -110,6 +110,7 @@ class CustomerController extends \BaseController {
 			->groupBy('customers.area_code')
 			->orderBy('areas.id')
 			->get();
+			
 			$group_children = array();
 			foreach ($areas as $area) {
 				$customers = \DB::table('customers')

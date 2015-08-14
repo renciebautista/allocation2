@@ -31,8 +31,10 @@ class SchemeAllocRepository
 
 			$scheme_alloc->group_code = $customer->group_code;
 			$scheme_alloc->group = $customer->group_name;
+
 			$scheme_alloc->area_code = $customer->area_code;
 			$scheme_alloc->area = $customer->area_name;
+
 			$scheme_alloc->sold_to_code = $customer->customer_code;
 			$scheme_alloc->sold_to = $customer->customer_name;
 
@@ -130,12 +132,16 @@ class SchemeAllocRepository
 					$shipto_alloc = new SchemeAllocation;
 					$shipto_alloc->scheme_id = $scheme->id;
 					$shipto_alloc->customer_id = $scheme_alloc->id;
+
 					$shipto_alloc->group_code = $customer->group_code;
 					$shipto_alloc->group = $customer->group_name;
+
 					$shipto_alloc->area_code = $customer->area_code;
 					$shipto_alloc->area = $customer->area_name;
+
 					$shipto_alloc->sold_to_code = $customer->customer_code;
 					$shipto_alloc->sold_to = $customer->customer_name;
+
 					$shipto_alloc->ship_to_code = $shipto['ship_to_code'];
 					$shipto_alloc->ship_to = $shipto['ship_to_name'];
 
@@ -252,18 +258,25 @@ class SchemeAllocRepository
 							$account_alloc->scheme_id = $scheme->id;
 							$account_alloc->customer_id = $scheme_alloc->id;
 							$account_alloc->shipto_id = $shipto_alloc->id;
+
 							$account_alloc->group_code = $customer->group_code;
 							$account_alloc->group = $customer->group_name;
+
 							$account_alloc->area_code = $customer->area_code;
 							$account_alloc->area = $customer->area_name;
+
 							$account_alloc->sold_to_code = $customer->customer_code;
 							$account_alloc->sold_to = $customer->customer_name;
+
 							$account_alloc->ship_to_code = $shipto['ship_to_code'];
 							$account_alloc->ship_to = $shipto['ship_to_name'];
+
 							$account_alloc->channel_code = $account['channel_code'];
 							$account_alloc->channel = $account['channel_name'];
+
 							$account_alloc->account_group_code = $account['account_group_code'];
 							$account_alloc->account_group_name = $account['account_group_name'];
+
 							$account_alloc->outlet = $account['account_name'];
 
 
@@ -367,10 +380,19 @@ class SchemeAllocRepository
 							$others_alloc->scheme_id = $scheme->id;
 							$others_alloc->customer_id = $scheme_alloc->id;
 							$others_alloc->shipto_id = $shipto_alloc->id;
+
+							$others_alloc->group_code = $customer->group_code;
 							$others_alloc->group = $customer->group_name;
+
+							$others_alloc->area_code = $customer->area_code;
 							$others_alloc->area = $customer->area_name;
+
+							$others_alloc->sold_to_code = $customer->customer_code;
 							$others_alloc->sold_to = $customer->customer_name;
-							$others_alloc->ship_to = $shipto['ship_to_name'];
+
+							$others_alloc->ship_to_code = $shipto['ship_to_code'];
+							$others_alloc->ship_to = $shipto['ship_to_name'];							
+							
 							$others_alloc->outlet = 'OTHERS';
 							// $others_alloc->outlet_to_gsv = $account['gsv'];
 							$others_alloc->outlet_to_gsv = 0;

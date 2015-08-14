@@ -65,31 +65,31 @@ class AllocationReportController extends \BaseController {
 			->orderBy('brand_desc')
 			->lists('brand_desc', 'brand_code');
 
-		$groups = SchemeAllocation::select('group','group_code')
-			->groupBy('group_code')
-			->orderBy('group')
-			->get();
+		// $groups = SchemeAllocation::select('group','group_code')
+		// 	->groupBy('group_code')
+		// 	->orderBy('group')
+		// 	->get();
 
-		$areas = SchemeAllocation::select('area','area_code')
-			->groupBy('area_code')
-			->orderBy('area')
-			->get();
+		// $areas = SchemeAllocation::select('area','area_code')
+		// 	->groupBy('area_code')
+		// 	->orderBy('area')
+		// 	->get();
 
-		$soldtos = SchemeAllocation::select('sold_to','sold_to_code')
-			->groupBy('sold_to_code')
-			->orderBy('sold_to')
-			->get();
+		// $soldtos = SchemeAllocation::select('sold_to','sold_to_code')
+		// 	->groupBy('sold_to_code')
+		// 	->orderBy('sold_to')
+		// 	->get();
 
-		$shiptos = SchemeAllocation::select('ship_to','ship_to_code')
-			->groupBy('ship_to_code')
-			->orderBy('ship_to')
-			->get();
+		// $shiptos = SchemeAllocation::select('ship_to','ship_to_code')
+		// 	->groupBy('ship_to_code')
+		// 	->orderBy('ship_to')
+		// 	->get();
 
-		$outlets = SchemeAllocation::select('outlet')
-			->whereNotNull('outlet')
-			->groupBy('outlet')
-			->orderBy('outlet')
-			->get();
+		// $outlets = SchemeAllocation::select('outlet')
+		// 	->whereNotNull('outlet')
+		// 	->groupBy('outlet')
+		// 	->orderBy('outlet')
+		// 	->get();
 
 		// Helper::print_r($groups);
 		$schemefields = SchemesField::all();

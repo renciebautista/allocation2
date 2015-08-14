@@ -12,54 +12,56 @@ Queue::getIron()->ssl_verifypeer = false;
 |
 */
 
-Route::get('testpdf', function(){
-	$activity = Activity::find(79);
-	$schemes = Scheme::getList($activity->id);
-	$cnt = 0;
-	$str= "";
-	foreach ($schemes as $scheme) {
-		if(($scheme->item_barcode  !== "") || ($scheme->item_casecode !== "")){
-			if($scheme->item_barcode  !== ""){
-			$barcode[$cnt] = $scheme->item_barcode;
+Route::get('testreport', function(){
+	$groups = SchemeAllocation::select('group','group_code')
+			->groupBy('group_code')
+			->orderBy('id')
+			->get();
+
+	foreach ($groups as $group) {
+		$areas = SchemeAllocation::select('area','area_code')
+			->where('group_code',$group->group_code)
+			->groupBy('area_code')
+			->orderBy('id')
+			->get();
+		echo $group->group.'</br>';
+		foreach ($areas as $area) {
+			$soldtos = SchemeAllocation::select('sold_to','sold_to_code')
+				->where('area_code',$area->area_code)
+				->groupBy('sold_to_code')
+				->orderBy('id')
+				->get();
+			echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$area->area.'</br>';
+			foreach ($soldtos as $soldto) {
+				$shiptos = SchemeAllocation::select('ship_to','ship_to_code')
+					->where('sold_to_code',$soldto->sold_to_code)
+					->whereNotNull('ship_to_code')
+					->groupBy('ship_to_code')
+					->orderBy('id')
+					->get();
+				echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$soldto->sold_to.'</br>';
+				foreach ($shiptos as $shipto) {
+					if($shipto->ship_to_code != ''){
+						$outlets = SchemeAllocation::select('outlet')
+							->where('area_code',$area->area_code)
+							->where('sold_to_code',$soldto->sold_to_code)
+							->where('ship_to_code',$shipto->ship_to_code)
+							->whereNotNull('outlet')
+							->groupBy('outlet')
+							->orderBy('outlet')
+							->get();
+						echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$shipto->ship_to.'</br>';
+						foreach ($outlets as $outlet) {
+							echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$outlet->outlet.'</br>';
+						}
+					}
+				}
 			}
 
-			if($scheme->item_casecode !== ""){
-				$casecode[$cnt] = $scheme->item_casecode;
-				
-			}
-			
-
-			if($scheme->item_barcode !== ""){
-				$str .='<tr nobr="true"><td align="center">'.$scheme->name.'<br>
-				<tcpdf method="write1DBarcode" params="'.$barcode[$cnt] .'" />
-				</td>';
-			}else{
-				$str .='<tr nobr="true"><td align="center"></td>';
-			}
-			if($scheme->item_casecode !== ""){
-				$str .='<td align="center">'.$scheme->name.'<br>
-				<tcpdf method="write1DBarcode" params="'.$casecode[$cnt] .'" />
-				</td></tr>';
-			}else{
-				$str .='<tr nobr="true"><td align="center"></td>';
-			}
 		}
-		
-		$cnt++;
 	}
-
-	var_dump($barcode);
-	var_dump($casecode);
-
-	$str_table='<table cellspacing="0" cellpadding="2" border=".1px;">            
-					<tr nobr="true">
-						<td align="center" style="background-color: #000000;color: #FFFFFF;">Barcode</td>
-						<td align="center" style="background-color: #000000;color: #FFFFFF;">Case Code</td>
-					</tr>';
-					$str_table .= $str;
-					$str_table .='</table>';
-
-	echo $str_table;	
 });
 
 
