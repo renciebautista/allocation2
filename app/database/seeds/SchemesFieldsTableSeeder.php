@@ -99,6 +99,26 @@ class SchemesFieldsTableSeeder extends Seeder {
 		}
 		AllocReportPerGroup::insert($proponent_filter);
 
+		// insert pmog
+		$pmog_filter = array();
+		for ($i=1; $i <= $fields ; $i++) { 
+			if(($i != 36) && ($i != 40) &&
+				($i != 41) &&
+				($i != 42) &&
+				($i != 43) &&
+				($i != 44) &&
+				($i != 45) &&
+				($i != 46) &&
+				($i != 47) &&
+				($i != 48) &&
+				($i != 50) &&
+				($i != 51) &&
+				($i != 52)){
+				$pmog_filter[] = array('role_id' => 3, 'filter_id' => $i);
+			}
+		}
+		AllocReportPerGroup::insert($pmog_filter);
+
 		// insert field
 		$field_filter = array();
 		for ($i=1; $i <= $fields ; $i++) { 

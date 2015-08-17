@@ -1520,6 +1520,8 @@ class ActivityController extends BaseController {
 
 		if ($validator->fails())
 		{
+			// remove uploaded file
+
 			$arr['mesage'] = 'Invalid file type.';
 			return Response::json($arr, 400);
 		} else{
@@ -1528,7 +1530,7 @@ class ActivityController extends BaseController {
 
 			try {
 				$pis = Excel::selectSheets('Output')->load(storage_path().'/uploads/'.$path."/".$upload->file_name)->get();
-				if($pis[1][0] != "031988"){
+				if($pis[1][0] != "0319881"){
 
 					$path_delete = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/';
 					File::delete($path_delete.$upload->file_name);
