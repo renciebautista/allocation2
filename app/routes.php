@@ -71,7 +71,7 @@ Route::get('testreport', function(){
 });
 
 Route::get('allocreport', function(){
-	$template = AllocationReportTemplate::findOrFail(7);
+	$template = AllocationReportTemplate::findOrFail(13);
 	$headers = AllocSchemeField::getFields($template->id);
 	$data['cycles'] = array(7);
 	$data['status'] = AllocationReportFilter::getList($template->id,1);

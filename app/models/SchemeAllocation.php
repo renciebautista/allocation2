@@ -346,7 +346,7 @@ class SchemeAllocation extends \Eloquent {
 		foreach ($channels as $channel) {
 			$data[] = array(
 				'title' => $channel->channel,
-				'key' => $channel->channel,
+				'key' => $channel->channel_code,
 				);
 		}
 		return $data;
