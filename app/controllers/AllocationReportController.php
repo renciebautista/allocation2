@@ -64,35 +64,8 @@ class AllocationReportController extends \BaseController {
 			->groupBy('activity_brands.brand_code')
 			->orderBy('brand_desc')
 			->lists('brand_desc', 'brand_code');
-
-		// $groups = SchemeAllocation::select('group','group_code')
-		// 	->groupBy('group_code')
-		// 	->orderBy('group')
-		// 	->get();
-
-		// $areas = SchemeAllocation::select('area','area_code')
-		// 	->groupBy('area_code')
-		// 	->orderBy('area')
-		// 	->get();
-
-		// $soldtos = SchemeAllocation::select('sold_to','sold_to_code')
-		// 	->groupBy('sold_to_code')
-		// 	->orderBy('sold_to')
-		// 	->get();
-
-		// $shiptos = SchemeAllocation::select('ship_to','ship_to_code')
-		// 	->groupBy('ship_to_code')
-		// 	->orderBy('ship_to')
-		// 	->get();
-
-		// $outlets = SchemeAllocation::select('outlet')
-		// 	->whereNotNull('outlet')
-		// 	->groupBy('outlet')
-		// 	->orderBy('outlet')
-		// 	->get();
-
 		// Helper::print_r($groups);
-		$schemefields = SchemesField::all();
+		$schemefields = AllocReportPerGroup::getAvailableFields(Auth::user()->roles[0]->id);
 		return View::make('allocationreport.create',compact('proponents', 'planners', 'statuses',
 			'approvers', 'activitytypes', 'scopes', 'divisions', 'brands', 'categories', 'schemefields',
 			'groups','areas', 'soldtos', 'shiptos', 'outlets'));

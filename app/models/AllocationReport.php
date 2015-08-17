@@ -43,6 +43,7 @@ class AllocationReport extends \Eloquent {
 		$shiptos = "";
 		$outlets = "";
 		$channels = "";
+		$fields = "";
 		if(count($data['cycles']) > 1){			
 			$query_list= '"'.implode('","', $data['cycles']).'"';
 			$cycles = " AND activities.cycle_id IN (".$query_list.")";
@@ -92,17 +93,22 @@ class AllocationReport extends \Eloquent {
 		if(!empty($data['customers'])){
 			foreach ($data['customers'] as $selected_customer) {
 				$_selected_customer = explode(".", $selected_customer);
-				$_grps[] = $_selected_customer[0];
+				if(count($_selected_customer)>0){
+					$_grps[] = $_selected_customer[0];
+				}else{
+					$_grps[] = $selected_customer;
+				}
+				
 				if(!empty($_selected_customer[1])){
-					$_areas[$_selected_customer[0]][] = $_selected_customer[1];
+					$_areas[] = $_selected_customer[1];
 				}
 
 				if(!empty($_selected_customer[2])){
-					$_cust[$_selected_customer[1]][] = $_selected_customer[2];
+					$_cust[] = $_selected_customer[2];
 				}
 
 				if(!empty($_selected_customer[3])){
-					$_shp[$_selected_customer[2]][] = $_selected_customer[3];
+					$_shp[] = $_selected_customer[3];
 				}
 			}
 		}
@@ -112,7 +118,7 @@ class AllocationReport extends \Eloquent {
 		}
 
 		if(!empty($_areas)){
-			$areas = self::generateQuery($_grps,"allocations.area_code");
+			$areas = self::generateQuery($_areas,"allocations.area_code");
 		}
 
 		if(!empty($_cust)){
@@ -122,48 +128,60 @@ class AllocationReport extends \Eloquent {
 		if(!empty($_shp)){
 			$shiptos = self::generateQuery($_shp,"allocations.ship_to_code");
 		}
+
+		if(!empty($data['fields'])){
+			$fieldList = array();
+			foreach ($data['fields'] as $field) {
+				$fieldList[] = $field->field_name;
+			}
+
+			$fields .= implode(",",$fieldList);
+		}
+
+		// allocations.id as alloc_id, allocations.customer_id as alloc_cid, allocations.shipto_id as alloc_sid, 
+		// activities.cycle_id, activities.cycle_desc,
+		// activities.circular_name,activities.id as activity_id,
+		// activities.status_id, activity_statuses.status,
+		// activities.scope_type_id,activities.scope_desc,
+		// activities.created_by as proponent_user_id,activities.proponent_name,
+		// planner_tbl.user_id as planner_user_id,planner_tbl.planner_desc as planner_name,
+		// approver_tbl.approver_ids,approver_tbl.approvers,
+		// activities.activity_type_id,activities.activitytype_desc,
+		// divison_tbl.division_codes,divison_tbl.divisions,
+		// category_tbl.category_codes,category_tbl.categories,
+		// brands_tbl.brand_codes,brands_tbl.brands,
+		// schemes.name as scheme_name,
+		// scheme_skus.sku as ref_sku, scheme_skus.sku_desc,
+		// hostsku_tbl.hostsku_codes,hostsku_tbl.hostskus,
+		// premiumsku_tbl.premiumsku_codes,premiumsku_tbl.premiumskus,
+		// schemes.ulp_premium as non_ulp_premium,
+		// schemes.item_code,schemes.item_barcode,schemes.item_casecode,
+		// schemes.srp_p as cost_of_premium,
+		// schemes.other_cost as other_cost_per_deal,
+		// schemes.pr as purchase_requirement,
+		// schemes.ulp as total_unilever_cost,
+		// schemes.lpat as list_price_after_tax,
+		// schemes.lpat/1.12 as list_price_before_tax,
+		// schemes.cost_sale as cost_to_sale,
+		// allocations.group_code,allocations.group,
+		// allocations.area_code,allocations.area,
+		// allocations.sold_to_code,allocations.sold_to,
+		// allocations.ship_to_code,allocations.ship_to,
+		// allocations.channel_code,allocations.channel,
+		// allocations.outlet,
+		// allocations.sold_to_gsv as sold_to_sales,allocations.sold_to_gsv_p as sold_to_sales_p,allocations.sold_to_alloc,
+		// allocations.ship_to_gsv as ship_to_sales,allocations.ship_to_gsv_p as ship_to_sales_p,allocations.ship_to_alloc,
+		// allocations.outlet_to_gsv as outlet_sales,allocations.outlet_to_gsv_p as outlet_sales_p,allocations.outlet_to_alloc as outlet_alloc,
+		// activities.uom_desc,
+		// allocations.computed_alloc,allocations.force_alloc,allocations.final_alloc,
+		// allocations.in_deals as no_of_deals, allocations.in_cases as no_of_cases,
+		// allocations.tts_budget as tts_requirement,
+		// allocations.pe_budget as pe_requirement,
+		// allocations.pe_budget + allocations.pe_budget as total_cost
+
+
 	
-		$query = sprintf("SELECT 
-			allocations.id as alloc_id, allocations.customer_id as alloc_cid, allocations.shipto_id as alloc_sid, 
-			activities.cycle_id, activities.cycle_desc,
-			activities.circular_name,activities.id as activity_id,
-			activities.status_id, activity_statuses.status,
-			activities.scope_type_id,activities.scope_desc,
-			activities.created_by as proponent_user_id,activities.proponent_name,
-			planner_tbl.user_id as planner_user_id,planner_tbl.planner_desc as planner_name,
-			approver_tbl.approver_ids,approver_tbl.approvers,
-			activities.activity_type_id,activities.activitytype_desc,
-			divison_tbl.division_codes,divison_tbl.divisions,
-			category_tbl.category_codes,category_tbl.categories,
-			brands_tbl.brand_codes,brands_tbl.brands,
-			schemes.name as scheme_name,
-			scheme_skus.sku as ref_sku, scheme_skus.sku_desc,
-			hostsku_tbl.hostsku_codes,hostsku_tbl.hostskus,
-			premiumsku_tbl.premiumsku_codes,premiumsku_tbl.premiumskus,
-			schemes.ulp_premium as non_ulp_premium,
-			schemes.item_code,schemes.item_barcode,schemes.item_casecode,
-			schemes.srp_p as cost_of_premium,
-			schemes.other_cost as other_cost_per_deal,
-			schemes.pr as purchase_requirement,
-			schemes.ulp as total_unilever_cost,
-			schemes.lpat as list_price_after_tax,
-			schemes.lpat/1.12 as list_price_before_tax,
-			schemes.cost_sale as cost_to_sale,
-			allocations.group_code,allocations.group,
-			allocations.area_code,allocations.area,
-			allocations.sold_to_code,allocations.sold_to,
-			allocations.ship_to_code,allocations.ship_to,
-			allocations.channel_code,allocations.channel,
-			allocations.outlet,
-			allocations.sold_to_gsv as sold_to_sales,allocations.sold_to_gsv_p as sold_to_sales_p,allocations.sold_to_alloc,
-			allocations.ship_to_gsv as ship_to_sales,allocations.ship_to_gsv_p as ship_to_sales_p,allocations.ship_to_alloc,
-			allocations.outlet_to_gsv as outlet_sales,allocations.outlet_to_gsv_p as outlet_sales_p,allocations.outlet_to_alloc as outlet_alloc,
-			activities.uom_desc,
-			allocations.computed_alloc,allocations.force_alloc,allocations.final_alloc,
-			allocations.in_deals as no_of_deals, allocations.in_cases as no_of_cases,
-			allocations.tts_budget as tts_requirement,
-			allocations.pe_budget as pe_requirement,
-			allocations.pe_budget + allocations.pe_budget as total_cost
+		$query = sprintf("SELECT %s
 			FROM 
 			allocations
 			LEFT JOIN schemes on allocations.scheme_id = schemes.id 
@@ -217,12 +235,13 @@ class AllocationReport extends \Eloquent {
 			) as premiumsku_tbl ON schemes.id = premiumsku_tbl.scheme_id
 			WHERE allocations.show = 1
 			%s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s ORDER BY allocations.id LIMIT %s,%s ",
+			$fields,
 			$cycles,
 			$status,$scopes,$proponents,$planners,$approvers,
 			$activitytypes,$divisions,$categories,$brands,
 			$groups,$areas,$soldtos,$shiptos,$channels,$outlets,$counter,$take);
-	// var_dump($query);
-		return DB::select( DB::raw($query));
+	// var_dump($areas);
+		return DB::select(DB::raw($query));
 	}
 
 	

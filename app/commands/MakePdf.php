@@ -250,7 +250,7 @@ class MakePdf extends Command {
 								<tcpdf method="write1DBarcode" params="'.$casecode[$cnt] .'" />
 								</td></tr>';
 							}else{
-								$str .='<tr nobr="true"><td align="center"></td>';
+								$str .='<td align="center"></td></tr>';
 							}
 						}
 						$cnt++;

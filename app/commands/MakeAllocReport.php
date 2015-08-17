@@ -48,6 +48,7 @@ class MakeAllocReport extends Command {
 		$cycles = $this->argument('cycles');
 		$user = User::find($user_id);
 		$template = AllocationReportTemplate::findOrFail($id);
+		$headers = AllocSchemeField::getFields($template->id);
 
 		$this->line('Template name' . $template->name);
 
@@ -64,7 +65,7 @@ class MakeAllocReport extends Command {
 		$data['customers'] = AllocationReportFilter::getList($template->id,10);
 		$data['outlets'] = AllocationReportFilter::getList($template->id,11);
 		$data['channels'] = AllocationReportFilter::getList($template->id,12);
-
+		$data['fields'] = $headers;
 		$token = md5(uniqid(mt_rand(), true));
 		
 		$timeFirst  = strtotime(date('Y-m-d H:i:s'));
@@ -74,32 +75,13 @@ class MakeAllocReport extends Command {
 		$writer->openToFile($filePath); // write data to a file or to a PHP stream
 		$take = 1000; // adjust this however you choose
 		$counter = 0; // used to skip over the ones you've already processed
-		$header = array('alloc_id','alloc_cid','alloc_sid',
-			'cycle_id','cycle_desc','circular_name','activity_id',
-			'status_id','status','scope_type_id','scope_desc',
-			'proponent_user_id','proponent_name','planner_user_id','planner_name',
-			'approver_ids','approvers',
-			'activity_type_id','activitytype_desc',
-			'division_codes','divisions',
-			'category_codes','categories',
-			'brand_codes','brands',
-			'scheme_name','ref_sku','sku_desc',
-			'hostsku_codes','hostskus','premiumsku_codes','premiumskus',
-			'non_ulp_premium','item_code','item_barcode','item_casecode',
-			'cost_of_premium','other_cost_per_deal','purchase_requirement',
-			'total_unilever_cost','list_price_after_tax','list_price_before_tax',
-			'cost_to_sale','group_code','group',
-			'area_code','area',
-			'sold_to_code','sold_to',
-			'ship_to_code','ship_to',
-			'channel_code','channel',
-			'outlet',
-			'sold_to_sales','sold_to_sales_p','sold_to_alloc',
-			'ship_to_sales','ship_to_sales_p','ship_to_alloc',
-			'outlet_sales','outlet_sales_p', 'outlet_alloc',
-			'uom_desc','computed_alloc','force_alloc','final_alloc',
-			'no_of_deals','no_of_cases',
-			'tts_requirement','pe_requirement','total_cost');
+
+		
+		$header = array();
+		foreach ($headers as $value) {
+			$header[] = $value->desc_name;
+		}
+		
 		$writer->addRow($header); // add multiple rows at a time
 		while($rows = AllocationReport::getReport($data,$take,$counter))
 		{
@@ -133,11 +115,11 @@ class MakeAllocReport extends Command {
 		$data['user'] = $user;
 		$name = $template->name;
 		
-		// $this->line($newfile->file_name);
-		Mail::send('emails.allocreport', $data, function($message) use ($user, $name){
-			$message->to($user->email, $user->first_name);
-			$message->subject('Allocation Report - '.$name);
-		});
+		$this->line($newfile->file_name);
+		// Mail::send('emails.allocreport', $data, function($message) use ($user, $name){
+		// 	$message->to($user->email, $user->first_name);
+		// 	$message->subject('Allocation Report - '.$name);
+		// });
 	}
 
 	/**

@@ -55,8 +55,6 @@ class SchemeController extends \BaseController {
 				$scheme->item_barcode = Input::get('item_barcode');
 				$scheme->item_casecode = Input::get('item_casecode');
 
-				
-
 				$pr = str_replace(",", "", Input::get('pr'));
 
 				$scheme->pr = $pr;

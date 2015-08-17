@@ -70,13 +70,116 @@ Route::get('testreport', function(){
 	}
 });
 
+Route::get('allocreport', function(){
+	$template = AllocationReportTemplate::findOrFail(7);
+	$headers = AllocSchemeField::getFields($template->id);
+	$data['cycles'] = array(7);
+	$data['status'] = AllocationReportFilter::getList($template->id,1);
+	$data['scopes'] = AllocationReportFilter::getList($template->id,2);
+	$data['proponents'] = AllocationReportFilter::getList($template->id,3);
+	$data['planners'] = AllocationReportFilter::getList($template->id,4);
+	$data['approvers'] = AllocationReportFilter::getList($template->id,5);
+	$data['activitytypes'] = AllocationReportFilter::getList($template->id,6);
+	$data['divisions'] = AllocationReportFilter::getList($template->id,7);
+	$data['categories'] = AllocationReportFilter::getList($template->id,8);
+	$data['brands'] = AllocationReportFilter::getList($template->id,9);
+	$data['customers'] = AllocationReportFilter::getList($template->id,10);
+	$data['outlets'] = AllocationReportFilter::getList($template->id,11);
+	$data['channels'] = AllocationReportFilter::getList($template->id,12);
+	$data['fields'] = $headers;
+	$take = 1000; // adjust this however you choose
+	$counter = 0;
+
+	AllocationReport::getReport($data,$take,$counter);
+	// Helper::print_r(Auth::user()->roles[0]->id);
+});
+
+Route::get('testpdf',function(){
+	$activity = Activity::find(34);
+	$schemes = Scheme::getList($activity->id);
+	if(count($schemes) > 0){
+	$w_codes = false;
+	foreach ($schemes as $scheme) {
+		if($scheme->item_barcode !== ""){
+			$w_codes = true;
+		}
+		if($scheme->item_casecode !== ""){
+			$w_codes = true;
+		}
+	}
+	if($w_codes){
+		
+		$style = array(
+	    'position' => '',
+	    'align' => 'C',
+	    'stretch' => false,
+	    'fitwidth' => true,
+	    'cellfitalign' => 'C',
+	    'border' => false,
+	    'hpadding' => 'auto',
+	    'vpadding' => 'auto',
+	    'fgcolor' => array(0,0,0),
+	    'bgcolor' => false, //array(255,255,255),
+	    'text' => true,
+	    'font' => 'helvetica',
+	    'fontsize' => 8,
+	    'stretchtext' => 4
+		);
+		$str= "";
+		$cnt= 1;
+		// $style['cellfitalign'] = 'C';
+		foreach ($schemes as $scheme) {
+			
+			if(($scheme->item_barcode  !== "") || ($scheme->item_casecode !== "")){
+				if($scheme->item_barcode  !== ""){
+					$barcode[$cnt] = $scheme->item_barcode;       
+				}
+
+				if($scheme->item_casecode !== ""){
+					$casecode[$cnt] = $scheme->item_casecode; 
+					
+				}
+				
+
+				if($scheme->item_barcode !== ""){
+					$str .='<tr nobr="true"><td align="center">'.$scheme->name.'<br>
+					<tcpdf method="write1DBarcode" params="'.$barcode[$cnt] .'" />
+					</td>';
+				}else{
+					$str .='<tr nobr="true"><td align="center"></td>';
+				}
+
+				if($scheme->item_casecode !== ""){
+					$str .='<td align="center">'.$scheme->name.'<br>
+					<tcpdf method="write1DBarcode" params="'.$casecode[$cnt] .'" />
+					</td></tr>';
+				}else{
+					$str .='<td align="center"></td></tr>';
+				}
+			}
+			$cnt++;
+		}
+
+
+		$str_table='<table cellspacing="0" cellpadding="2" border=".1px;">            
+		<tr nobr="true">
+			<td align="center" style="background-color: #000000;color: #FFFFFF;">Barcode</td>
+			<td align="center" style="background-color: #000000;color: #FFFFFF;">Case Code</td>
+		</tr>';
+		$str_table .= $str;
+		$str_table .='</table>';
+		echo $str_table;
+
+	}
+	
+}			
+});
+
 
 Route::get('testword',function(){
 	$activity = Activity::find(79);
 	$worddoc = new WordDoc($activity->id);
-	$worddoc->download("Rencie.docx");
-
-							
+	$worddoc->download("Rencie.docx");					
 });
 
 Route::get('testrole', function(){
