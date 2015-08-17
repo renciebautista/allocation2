@@ -13,13 +13,16 @@ Queue::getIron()->ssl_verifypeer = false;
 */
 
 Route::get('testreport', function(){
+	$scheme_id = 111;
 	$groups = SchemeAllocation::select('group','group_code')
+			// ->where('scheme_id',$scheme_id)
 			->groupBy('group_code')
 			->orderBy('id')
 			->get();
 
 	foreach ($groups as $group) {
 		$areas = SchemeAllocation::select('area','area_code')
+			// ->where('scheme_id',$scheme_id)
 			->where('group_code',$group->group_code)
 			->groupBy('area_code')
 			->orderBy('id')
@@ -27,6 +30,7 @@ Route::get('testreport', function(){
 		echo $group->group.'</br>';
 		foreach ($areas as $area) {
 			$soldtos = SchemeAllocation::select('sold_to','sold_to_code')
+				// ->where('scheme_id',$scheme_id)
 				->where('area_code',$area->area_code)
 				->groupBy('sold_to_code')
 				->orderBy('id')
@@ -34,6 +38,7 @@ Route::get('testreport', function(){
 			echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$area->area.'</br>';
 			foreach ($soldtos as $soldto) {
 				$shiptos = SchemeAllocation::select('ship_to','ship_to_code')
+					// ->where('scheme_id',$scheme_id)
 					->where('sold_to_code',$soldto->sold_to_code)
 					->whereNotNull('ship_to_code')
 					->groupBy('ship_to_code')
@@ -43,12 +48,13 @@ Route::get('testreport', function(){
 				foreach ($shiptos as $shipto) {
 					if($shipto->ship_to_code != ''){
 						$outlets = SchemeAllocation::select('outlet')
+							// ->where('scheme_id',$scheme_id)
 							->where('area_code',$area->area_code)
 							->where('sold_to_code',$soldto->sold_to_code)
 							->where('ship_to_code',$shipto->ship_to_code)
 							->whereNotNull('outlet')
 							->groupBy('outlet')
-							->orderBy('outlet')
+							->orderBy('id')
 							->get();
 						echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$shipto->ship_to.'</br>';
@@ -63,7 +69,6 @@ Route::get('testreport', function(){
 		}
 	}
 });
-
 
 
 Route::get('testword',function(){
@@ -259,7 +264,9 @@ Route::group(array('before' => 'auth'), function()
 	Route::resource('holidays', 'HolidaysController');
 
 	// Route::resource('job','JobController');	
-
+	Route::get('reports/customer', 'AllocationReportController@customer');
+	Route::get('reports/outlets', 'AllocationReportController@outlets');
+	Route::get('reports/channels', 'AllocationReportController@channels');
 	Route::get('reports/allocation', 'AllocationReportController@index');
 	Route::get('reports/allocation/create', 'AllocationReportController@create');
 	Route::post('reports/allocation/create', 'AllocationReportController@store');

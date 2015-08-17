@@ -20,11 +20,9 @@ class AllocationReportTemplateFilterTableSeeder extends Seeder {
 			('DIVISION'),
 			('CATEGORY'),
 			('BRAND'),
-			('GROUP'),
-			('AREA'),
-			('SOLDTO'),
-			('SHIPTO'),
-			('OUTLET');");
+			('CUSTOMERS'),
+			('OUTLETS'),
+			('CHANNELS');");
 		DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 	}
 

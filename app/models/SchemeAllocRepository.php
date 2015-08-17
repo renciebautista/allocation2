@@ -123,7 +123,12 @@ class SchemeAllocRepository
 			$scheme_alloc->in_cases = $in_cases;
 			$scheme_alloc->tts_budget = $tts_budget;
 			$scheme_alloc->pe_budget = $scheme_alloc->final_alloc *  $scheme->other_cost;
-			
+
+			if(empty($customer->shiptos)){
+				$scheme_alloc->show = true;
+			}
+
+
 			$scheme_alloc->save();
 
 			if(!empty($customer->shiptos)){
@@ -248,9 +253,13 @@ class SchemeAllocRepository
 				   		
 				   	}
 
+				   	if(empty($shipto['accounts'])){
+				   		$shipto_alloc->show = true;
+				   	}
+				   	
 					$shipto_alloc->save();  
 
-					if(!empty($shipto['accounts'] )){
+					if(!empty($shipto['accounts'])){
 						$others = $shipto_alloc->ship_to_alloc;
 						$fothers = $shipto_alloc->force_alloc;
 						foreach($shipto['accounts'] as $account){
@@ -370,6 +379,7 @@ class SchemeAllocRepository
 							$account_alloc->in_cases = $in_cases;
 							$account_alloc->tts_budget = $tts_budget;
 							$account_alloc->pe_budget = $account_alloc->final_alloc *  $scheme->other_cost;   
+							$account_alloc->show = true;
 							$account_alloc->save();
 						}
 
@@ -391,7 +401,10 @@ class SchemeAllocRepository
 							$others_alloc->sold_to = $customer->customer_name;
 
 							$others_alloc->ship_to_code = $shipto['ship_to_code'];
-							$others_alloc->ship_to = $shipto['ship_to_name'];							
+							$others_alloc->ship_to = $shipto['ship_to_name'];	
+
+							$others_alloc->channel_code = 'OTHERS';
+							$others_alloc->channel = 'OTHERS';				
 							
 							$others_alloc->outlet = 'OTHERS';
 							// $others_alloc->outlet_to_gsv = $account['gsv'];
@@ -443,7 +456,7 @@ class SchemeAllocRepository
 							$others_alloc->in_cases = $in_cases;
 							$others_alloc->tts_budget = $tts_budget;
 							$others_alloc->pe_budget = $others_alloc->final_alloc *  $scheme->other_cost; 
-							
+							$others_alloc->show = true;
 							$others_alloc->save();
 						}
 						

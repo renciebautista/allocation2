@@ -137,6 +137,51 @@
 	</div>
 </div>
 
+<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Customer Details</h3>
+			</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-lg-12">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-4">
+									{{ Form::label('tree3', 'Select Customers', array('class' => 'control-label' )) }}<br>
+									<a href="#" id="btnCSelectAll">Select all</a> |
+									<a href="#" id="btnCDeselectAll">Deselect all</a>
+									<div id="tree3"></div>
+									{{ Form::hidden('customers', null, array('id' => 'customers')) }}
+								</div>
+								<div class="col-lg-4">
+									{{ Form::label('tree4', 'Select Outlets', array('class' => 'control-label' )) }}<br>
+									<div id="chOtlets">
+										<a href="#" id="btnChSelectAll">Select all</a> |
+										<a href="#" id="btnChDeselectAll">Deselect all</a>
+									</div>
+									
+									<div id="tree4"></div>
+									{{ Form::hidden('outlets_involved', null, array('id' => 'outlets_involved')) }}
+								</div>
+
+								<div class="col-lg-4">
+									{{ Form::label('tree5', 'Select DT Channels', array('class' => 'control-label' )) }}<br>
+									<div id="chSel">
+										<a href="#" id="btnChSelectAll">Select all</a> |
+										<a href="#" id="btnChDeselectAll">Deselect all</a>
+									</div>
+									
+									<div id="tree5"></div>
+									{{ Form::hidden('channels_involved', null, array('id' => 'channels_involved')) }}
+								</div>
+							</div>	
+							
+							
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 
 <div class="filters panel panel-default">
 	<div class="panel-heading">Show Fields</div>
@@ -164,5 +209,91 @@
 
 @section('page-script')
 
+$("#tree3").fancytree({
+	checkbox: true,
+	selectMode: 3,
+	source: {
+		url: "{{ URL::action('AllocationReportController@customer') }}"
+	},
+	select: function(event, data) {
+		// Get a list of all selected nodes, and convert to a key array:
+		var selKeys = $.map(data.tree.getSelectedNodes(), function(node){
+			 return node.key;
+		});
+		selectedkeys = selKeys;
+		//console.log(selKeys);
+		// $("#echoSelection3").text(selKeys.join(", "));
+
+
+		// Get a list of all selected TOP nodes
+		var selRootNodes = data.tree.getSelectedNodes(true);
+		// ... and convert to a key array:
+		var selRootKeys = $.map(selRootNodes, function(node){
+		  return node.key;
+		});
+
+		var keys = selRootKeys.join(".").split(".");
+		
+		$("#customers").val(selRootKeys.join(", "));
+	}
+});
+
+$("#tree4").fancytree({
+	checkbox: true,
+	selectMode: 3,
+	source: {
+		url: "{{ URL::action('AllocationReportController@outlets') }}"
+	},
+	select: function(event, data) {
+		// Get a list of all selected nodes, and convert to a key array:
+		var selKeys = $.map(data.tree.getSelectedNodes(), function(node){
+			 return node.key;
+		});
+		selectedkeys = selKeys;
+		//console.log(selKeys);
+		// $("#echoSelection3").text(selKeys.join(", "));
+
+
+		// Get a list of all selected TOP nodes
+		var selRootNodes = data.tree.getSelectedNodes(true);
+		// ... and convert to a key array:
+		var selRootKeys = $.map(selRootNodes, function(node){
+		  return node.key;
+		});
+
+		var keys = selRootKeys.join(".").split(".");
+		
+		$("#outlets_involved").val(selRootKeys.join(", "));
+	}
+});
+
+$("#tree5").fancytree({
+	checkbox: true,
+	selectMode: 3,
+	source: {
+		url: "{{ URL::action('AllocationReportController@channels') }}"
+	},
+	select: function(event, data) {
+		// Get a list of all selected nodes, and convert to a key array:
+		var selKeys = $.map(data.tree.getSelectedNodes(), function(node){
+			 return node.key;
+		});
+		selectedkeys = selKeys;
+		//console.log(selKeys);
+		// $("#echoSelection3").text(selKeys.join(", "));
+
+
+		// Get a list of all selected TOP nodes
+		var selRootNodes = data.tree.getSelectedNodes(true);
+		// ... and convert to a key array:
+		var selRootKeys = $.map(selRootNodes, function(node){
+		  return node.key;
+		});
+
+		var keys = selRootKeys.join(".").split(".");
+		
+		$("#channels_involved").val(selRootKeys.join(", "));
+	}
+});
 
 @stop

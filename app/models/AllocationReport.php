@@ -42,11 +42,12 @@ class AllocationReport extends \Eloquent {
 		$soldtos = "";
 		$shiptos = "";
 		$outlets = "";
+		$channels = "";
 		if(count($data['cycles']) > 1){			
 			$query_list= '"'.implode('","', $data['cycles']).'"';
-			$cycles = " WHERE activities.cycle_id IN (".$query_list.")";
+			$cycles = " AND activities.cycle_id IN (".$query_list.")";
 		}else{
-			$cycles = ' WHERE activities.cycle_id = "'.$data['cycles'][0].'"';
+			$cycles = ' AND activities.cycle_id = "'.$data['cycles'][0].'"';
 		}
 
 		if(!empty($data['status'])){
@@ -76,20 +77,50 @@ class AllocationReport extends \Eloquent {
 		if(!empty($data['brands'])){
 			$brands = self::generateQuery($data['brands'],"brands_tbl.brand_codes",true);
 		}
-		if(!empty($data['groups'])){
-			$groups = self::generateQuery($data['groups'],"allocations.group_code");
-		}
-		if(!empty($data['areas'])){
-			$areas = self::generateQuery($data['areas'],"allocations.area_code");
-		}
-		if(!empty($data['soldtos'])){
-			$soldtos = self::generateQuery($data['soldtos'],"allocations.sold_to_code");
-		}
-		if(!empty($data['shiptos'])){
-			$shiptos = self::generateQuery($data['shiptos'],"allocations.ship_to_code");
-		}
+
 		if(!empty($data['outlets'])){
 			$outlets = self::generateQuery($data['outlets'],"allocations.outlet");
+		}
+		if(!empty($data['channels'])){
+			$channels = self::generateQuery($data['channels'],"allocations.channel_code");
+		}
+
+		$_grps = array();
+		$_areas = array();
+		$_cust = array();
+		$_shp = array();
+		if(!empty($data['customers'])){
+			foreach ($data['customers'] as $selected_customer) {
+				$_selected_customer = explode(".", $selected_customer);
+				$_grps[] = $_selected_customer[0];
+				if(!empty($_selected_customer[1])){
+					$_areas[$_selected_customer[0]][] = $_selected_customer[1];
+				}
+
+				if(!empty($_selected_customer[2])){
+					$_cust[$_selected_customer[1]][] = $_selected_customer[2];
+				}
+
+				if(!empty($_selected_customer[3])){
+					$_shp[$_selected_customer[2]][] = $_selected_customer[3];
+				}
+			}
+		}
+
+		if(!empty($_grps)){
+			$groups = self::generateQuery($_grps,"allocations.group_code");
+		}
+
+		if(!empty($_areas)){
+			$areas = self::generateQuery($_grps,"allocations.area_code");
+		}
+
+		if(!empty($_cust)){
+			$soldtos = self::generateQuery($_cust,"allocations.sold_to_code");
+		}
+		
+		if(!empty($_shp)){
+			$shiptos = self::generateQuery($_shp,"allocations.ship_to_code");
 		}
 	
 		$query = sprintf("SELECT 
@@ -184,11 +215,12 @@ class AllocationReport extends \Eloquent {
 				FROM scheme_premuim_skus 
 				GROUP BY scheme_id
 			) as premiumsku_tbl ON schemes.id = premiumsku_tbl.scheme_id
-			%s %s %s %s %s %s %s %s %s %s %s %s %s %s %s ORDER BY allocations.id LIMIT %s,%s ",
+			WHERE allocations.show = 1
+			%s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s ORDER BY allocations.id LIMIT %s,%s ",
 			$cycles,
 			$status,$scopes,$proponents,$planners,$approvers,
-			$activitytypes,$divisions,$categories,$brands,$groups,
-			$areas,$soldtos,$shiptos,$outlets,$counter,$take);
+			$activitytypes,$divisions,$categories,$brands,
+			$groups,$areas,$soldtos,$shiptos,$channels,$outlets,$counter,$take);
 	// var_dump($query);
 		return DB::select( DB::raw($query));
 	}

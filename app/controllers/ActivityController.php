@@ -2342,6 +2342,7 @@ class ActivityController extends BaseController {
 							$scheme_alloc->in_cases = $allocation->in_cases;
 							$scheme_alloc->tts_budget = $allocation->tts_budget;
 							$scheme_alloc->pe_budget = $allocation->pe_budget;
+							$scheme_alloc->show = $allocation->show;
 							$scheme_alloc->save();
 
 							if((empty($allocation->customer_id)) && (empty($allocation->shipto_id))){

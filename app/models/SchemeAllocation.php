@@ -260,4 +260,95 @@ class SchemeAllocation extends \Eloquent {
 			->where('shipto_id',null)
 			->sum('sold_to_gsv');;
 	}
+
+	public static function customerTree(){
+		$groups = self::select('group','group_code')->groupBy('group_code')->orderBy('id')->get();
+		$data = array();
+		foreach ($groups as $group) {
+			$areas = SchemeAllocation::select('area','area_code')
+				->where('group_code',$group->group_code)
+				->groupBy('area_code')
+				->orderBy('id')
+				->get();
+			$group_children = array();
+			foreach ($areas as $area) {
+				$soldtos = SchemeAllocation::select('sold_to','sold_to_code')
+					->where('area_code',$area->area_code)
+					->groupBy('sold_to_code')
+					->orderBy('id')
+					->get();
+				$area_children = array();
+				foreach ($soldtos as $soldto){
+					$shiptos = SchemeAllocation::select('ship_to','ship_to_code')
+						->where('sold_to_code',$soldto->sold_to_code)
+						->whereNotNull('ship_to_code')
+						->groupBy('ship_to_code')
+						->orderBy('id')
+						->get();
+					$customer_children = array();
+					foreach ($shiptos as $shipto) {
+						if($shipto->ship_to_code != ''){
+							$customer_children[] = array(
+							'title' => $shipto->ship_to,
+							'key' => $group->group_code.".".$area->area_code.".".$soldto->sold_to_code.".".$shipto->ship_to_code,
+							);
+							
+						}
+						
+					}
+					$area_children[] = array(
+					'title' => $soldto->sold_to,
+					'key' => $group->group_code.".".$area->area_code.".".$soldto->sold_to_code,
+					'children' => $customer_children,
+					);
+				}
+				$group_children[] = array(
+					'select' => true,
+					'title' => $area->area,
+					'isFolder' => true,
+					'key' => $group->group_code.".".$area->area_code,
+					'children' => $area_children,
+					);
+			}
+			$data[] = array(
+				'title' => $group->group,
+				'isFolder' => true,
+				'key' => $group->group_code,
+				'children' => $group_children,
+				);
+		}
+		return $data;
+	}
+
+	public static function outletsTree(){
+		$outlets = self::select('outlet')
+			->whereNotNull('outlet')
+			->groupBy('outlet')
+			->orderBy('id')
+			->get();
+		$data = array();
+		foreach ($outlets as $outlet) {
+			$data[] = array(
+				'title' => $outlet->outlet,
+				'key' => $outlet->outlet,
+				);
+		}
+		return $data;
+	}
+
+	public static function channelsTree(){
+		$channels = self::select('channel_code', 'channel')
+			->whereNotNull('channel')
+			->groupBy('channel')
+			->orderBy('id')
+			->get();
+		$data = array();
+		foreach ($channels as $channel) {
+			$data[] = array(
+				'title' => $channel->channel,
+				'key' => $channel->channel,
+				);
+		}
+		return $data;
+	}
 }

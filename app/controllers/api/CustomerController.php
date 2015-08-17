@@ -110,7 +110,7 @@ class CustomerController extends \BaseController {
 			->groupBy('customers.area_code')
 			->orderBy('areas.id')
 			->get();
-			
+
 			$group_children = array();
 			foreach ($areas as $area) {
 				$customers = \DB::table('customers')
@@ -132,6 +132,7 @@ class CustomerController extends \BaseController {
 							$accounts = \DB::table('accounts')
 								->where('ship_to_code',$ship_to->ship_to_code )
 								->where('area_code',$area->area_code)
+								->where('accounts.active',1)
 								->get();
 								
 							if(count($accounts)>0){

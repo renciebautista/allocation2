@@ -61,11 +61,9 @@ class MakeAllocReport extends Command {
 		$data['divisions'] = AllocationReportFilter::getList($template->id,7);
 		$data['categories'] = AllocationReportFilter::getList($template->id,8);
 		$data['brands'] = AllocationReportFilter::getList($template->id,9);
-		$data['groups'] = AllocationReportFilter::getList($template->id,10);
-		$data['areas'] = AllocationReportFilter::getList($template->id,11);
-		$data['soldtos'] = AllocationReportFilter::getList($template->id,12);
-		$data['shiptos'] = AllocationReportFilter::getList($template->id,13);
-		$data['outlets'] = AllocationReportFilter::getList($template->id,14);
+		$data['customers'] = AllocationReportFilter::getList($template->id,10);
+		$data['outlets'] = AllocationReportFilter::getList($template->id,11);
+		$data['channels'] = AllocationReportFilter::getList($template->id,12);
 
 		$token = md5(uniqid(mt_rand(), true));
 		
@@ -106,16 +104,16 @@ class MakeAllocReport extends Command {
 		while($rows = AllocationReport::getReport($data,$take,$counter))
 		{
 			if(count($rows) == 0){
-		    	break;
-		    }
-		    $counter += $take;
-		    foreach($rows as $key => $value)
+				break;
+			}
+			$counter += $take;
+			foreach($rows as $key => $value)
 			{
-			    $rows[$key] = (array) $value;
+				$rows[$key] = (array) $value;
 			} 
 			$export_data = $rows;
 
-		    $writer->addRows($export_data); // add multiple rows at a time
+			$writer->addRows($export_data); // add multiple rows at a time
 		}
 		$writer->close();
 		$timeSecond = strtotime(date('Y-m-d H:i:s'));
@@ -131,11 +129,12 @@ class MakeAllocReport extends Command {
 		$newfile->save();
 
 		$data['template'] = $template;
-    	$data['token'] = $token;
-    	$data['user'] = $user;
-    	$name = $template->name;
-    	
-    	Mail::send('emails.allocreport', $data, function($message) use ($user, $name){
+		$data['token'] = $token;
+		$data['user'] = $user;
+		$name = $template->name;
+		
+		// $this->line($newfile->file_name);
+		Mail::send('emails.allocreport', $data, function($message) use ($user, $name){
 			$message->to($user->email, $user->first_name);
 			$message->subject('Allocation Report - '.$name);
 		});
