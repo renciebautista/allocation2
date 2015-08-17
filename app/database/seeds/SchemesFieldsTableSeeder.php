@@ -178,8 +178,6 @@ class SchemesFieldsTableSeeder extends Seeder {
 			}
 		}
 		AllocReportPerGroup::insert($cmd_filter);
-
-
 		DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
 

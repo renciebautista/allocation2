@@ -23,52 +23,18 @@ class AllocationReportController extends \BaseController {
 	public function create()
 	{
 		$statuses = ActivityStatus::getLists();
-		$scopes = Activity::select('scope_desc','scope_type_id')
-			->groupBy('scope_type_id')
-			->lists('scope_desc', 'scope_type_id');
-
-		$proponents = Activity::select('proponent_name','created_by')
-			->groupBy('created_by')
-			->lists('proponent_name', 'created_by');
-
-		$planners = Activity::select('planner_desc','user_id')
-			->join('activity_planners', 'activities.id', '=', 'activity_planners.activity_id')
-			->groupBy('user_id')
-			->orderBy('planner_desc')
-			->lists('planner_desc', 'user_id');
-
-		$approvers = Activity::select('approver_desc','user_id')
-			->join('activity_approvers', 'activities.id', '=', 'activity_approvers.activity_id')
-			->groupBy('user_id')
-			->orderBy('approver_desc')
-			->lists('approver_desc', 'user_id');
-		
-		$activitytypes = Activity::select('activitytype_desc','activity_type_id')
-			->groupBy('activity_type_id')
-			->lists('activitytype_desc', 'activity_type_id');
-		
-		$divisions = Activity::select('division_desc','activity_divisions.division_code')
-			->join('activity_divisions', 'activities.id', '=', 'activity_divisions.activity_id')
-			->groupBy('activity_divisions.division_code')
-			->orderBy('division_desc')
-			->lists('division_desc', 'division_code');
-
-		$categories = Activity::select('category_desc','activity_categories.category_code')
-			->join('activity_categories', 'activities.id', '=', 'activity_categories.activity_id')
-			->groupBy('activity_categories.category_code')
-			->orderBy('category_desc')
-			->lists('category_desc', 'category_code');
-
-		$brands = Activity::select('brand_desc','activity_brands.brand_code')
-			->join('activity_brands', 'activities.id', '=', 'activity_brands.activity_id')
-			->groupBy('activity_brands.brand_code')
-			->orderBy('brand_desc')
-			->lists('brand_desc', 'brand_code');
+		$scopes = Activity::getScopes();
+		$proponents = Activity::getProponents();
+		$planners = Activity::getPlanners();
+		$approvers = Activity::getApprovers();
+		$activitytypes = Activity::getActivityType();
+		$divisions = Activity::getDivision();
+		$categories = Activity::getCategory();
+		$brands = Activity::getBrand();
 		// Helper::print_r($groups);
 		$schemefields = AllocReportPerGroup::getAvailableFields(Auth::user()->roles[0]->id);
 		return View::make('allocationreport.create',compact('proponents', 'planners', 'statuses',
-			'approvers', 'activitytypes', 'scopes', 'divisions', 'brands', 'categories', 'schemefields',
-			'groups','areas', 'soldtos', 'shiptos', 'outlets'));
+			'approvers', 'activitytypes', 'scopes', 'divisions', 'brands', 'categories', 'schemefields'));
 	}
 
 	/**
@@ -320,7 +286,83 @@ class AllocationReportController extends \BaseController {
 	 */
 	public function edit($id)
 	{
-		//
+		$template = AllocationReportTemplate::findOrFail($id);
+		if ((is_null($template)) && ($template->created_by != Auth::id()))
+		{
+			$class = 'alert-danger';
+			$message = 'Template does not exist.';
+			return Redirect::to(URL::action('AllocationReportController@index'))
+				->with('class', $class )
+				->with('message', $message);
+		}else{
+			$statuses = ActivityStatus::getLists();
+			$sel_status =  AllocationReportFilter::getList($template->id,1);
+			$scopes = Activity::getScopes();
+			$sel_scopes =  AllocationReportFilter::getList($template->id,2);
+			$proponents = Activity::getProponents();
+			$sel_proponents =  AllocationReportFilter::getList($template->id,3);
+			$planners = Activity::getPlanners();
+			$sel_planners =  AllocationReportFilter::getList($template->id,4);
+			$approvers = Activity::getApprovers();
+			$sel_approvers =  AllocationReportFilter::getList($template->id,5);
+			$activitytypes = Activity::getActivityType();
+			$sel_activitytypes =  AllocationReportFilter::getList($template->id,6);
+			$divisions = Activity::getDivision();
+			$sel_divisions =  AllocationReportFilter::getList($template->id,7);
+			$categories = Activity::getCategory();
+			$sel_categories =  AllocationReportFilter::getList($template->id,8);
+			$brands = Activity::getBrand();
+			$sel_brands =  AllocationReportFilter::getList($template->id,9);
+			$schemefields = AllocReportPerGroup::getAvailableFields(Auth::user()->roles[0]->id);
+			$sel_schemefields = AllocSchemeField::getFieldList($template->id);
+			return View::make('allocationreport.edit',compact('template',
+				'statuses','sel_status',
+				'scopes','sel_scopes',
+				'proponents', 'sel_proponents',
+				'planners', 'sel_planners',
+				'approvers', 'approvers',
+				'activitytypes', 'sel_activitytypes',
+				'divisions', 'sel_divisions',
+				'categories','sel_categories',
+				'brands', 'sel_brands',
+				'schemefields','sel_schemefields'));
+		}
+	}
+
+	public function customerselected(){
+		$id = Input::get('id');
+		$data = array();
+		$sel = AllocationReportFilter::getList($id,10);
+		if(!empty($sel)){
+			foreach ($sel as $row) {
+				$data[] = $row;
+			}
+		}
+		return Response::json($data,200);
+	}
+
+	public function channelsselected(){
+		$id = Input::get('id');
+		$data = array();
+		$sel = AllocationReportFilter::getList($id,11);
+		if(!empty($sel)){
+			foreach ($sel as $row) {
+				$data[] = $row;
+			}
+		}
+		return Response::json($data,200);
+	}
+
+	public function outletsselected(){
+		$id = Input::get('id');
+		$data = array();
+		$sel = AllocationReportFilter::getList($id,12);
+		if(!empty($sel)){
+			foreach ($sel as $row) {
+				$data[] = $row;
+			}
+		}
+		return Response::json($data,200);
 	}
 
 	/**
@@ -344,7 +386,41 @@ class AllocationReportController extends \BaseController {
 	 */
 	public function destroy($id)
 	{
-		//
+		$template = AllocationReportTemplate::findOrFail($id);
+		if ((is_null($template)) && ($template->created_by != Auth::id()))
+		{
+			$class = 'alert-danger';
+			$message = 'Template does not exist.';
+			return Redirect::to(URL::action('AllocationReportController@index'))
+				->with('class', $class )
+				->with('message', $message);
+		}else{
+
+			DB::beginTransaction();
+			try {
+
+				AllocationReportFilter::where('template_id',$template->id)->delete();
+				AllocSchemeField::where('template_id',$template->id)->delete();
+				$template->delete();
+				DB::commit();
+
+				$class = 'alert-success';
+				$message = $template->name ." template is successfully deleted.";
+				return Redirect::to(URL::action('AllocationReportController@index'))
+					->with('class', $class )
+					->with('message', $message);
+			} catch (Exception $e) {
+				DB::rollback();
+				$class = 'alert-danger';
+				$message = 'Cannot delete activity.';
+
+				return Redirect::to(URL::action('ActivityController@index'))
+				->with('class', $class )
+				->with('message', $message);
+			}
+
+			
+		}
 	}
 
 	public function customer(){

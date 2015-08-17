@@ -657,57 +657,61 @@ class Activity extends \Eloquent {
 	}
 
 
-	public static function activitiesForAllocReport($filters){
-		// $status = $filters['status'];
-		// return self::join('activity_planners', 'activities.id','=','activity_planners.activity_id', 'left')
-		// 	->join('activity_approvers', 'activities.id','=','activity_approvers.activity_id', 'left')
-		// 	->join('activity_categories', 'activities.id','=','activity_categories.activity_id', 'left')
-		// 	->join('activity_brands', 'activities.id','=','activity_brands.activity_id', 'left')
-		// 	->where(function($query) use ($status){
-		// 		if(count($status) > 0){
-		// 			$query->whereIn('activities.status_id', $status);
-		// 		}
-		// 	})
-		// 	// ->where(function($query) use ($data['scopes']){
-		// 	// 	if(count($data['scopes']) > 0){
-		// 	// 		$query->whereIn('activities.scope_type_id', $data['scopes']);
-		// 	// 	}
-		// 	// })
-		// 	// ->where(function($query) use ($data['proponents']){
-		// 	// 	if(count($data['proponents']) > 0){
-		// 	// 		$query->whereIn('activities.created_by', $data['proponents']);
-		// 	// 	}
-		// 	// })
-		// 	// ->where(function($query) use ($data['planners']){
-		// 	// 	if(count($data['planners']) > 0){
-		// 	// 		$query->whereIn('activity_planners.user_id', $data['planners']);
-		// 	// 	}
-		// 	// })
-		// 	// ->where(function($query) use ($data['approvers']){
-		// 	// 	if(count(data['approvers']) > 0){
-		// 	// 		$query->whereIn('activity_approvers.user_id', $data['approvers']);
-		// 	// 	}
-		// 	// })
-		// 	// ->where(function($query) use ($data['activitytypes']){
-		// 	// 	if(count($data['activitytypes']) > 0){
-		// 	// 		$query->whereIn('activities.activity_type_id', $data['activitytypes']);
-		// 	// 	}
-		// 	// })
-		// 	// ->where(function($query) use ($data['divisions']){
-		// 	// 	if(count($data['divisions']) > 0){
-		// 	// 		$query->whereIn('activities.division_code', $data['divisions']);
-		// 	// 	}
-		// 	// })
-		// 	// ->where(function($query) use ($data['categories']){
-		// 	// 	if(count($data['categories']) > 0){
-		// 	// 		$query->whereIn('activity_categories.category_code', $data['categories']);
-		// 	// 	}
-		// 	// })
-		// 	// ->where(function($query) use ($data['brands']){
-		// 	// 	if(count($data['brands']) > 0){
-		// 	// 		$query->whereIn('activity_brands.brand_code', $data['brands']);
-		// 	// 	}
-		// 	// })
-		// 	->get();
+	public static function getScopes(){
+		return self::select('scope_desc','scope_type_id')
+				->groupBy('scope_type_id')
+				->lists('scope_desc', 'scope_type_id');
+	}
+
+	public static function getProponents(){
+		return self::select('proponent_name','created_by')
+				->groupBy('created_by')
+				->lists('proponent_name', 'created_by');
+	}
+
+	public static function getPlanners(){
+		return self::select('planner_desc','user_id')
+				->join('activity_planners', 'activities.id', '=', 'activity_planners.activity_id')
+				->groupBy('user_id')
+				->orderBy('planner_desc')
+				->lists('planner_desc', 'user_id');
+	}
+
+	public static function getApprovers(){
+		return self::select('approver_desc','user_id')
+				->join('activity_approvers', 'activities.id', '=', 'activity_approvers.activity_id')
+				->groupBy('user_id')
+				->orderBy('approver_desc')
+				->lists('approver_desc', 'user_id');
+	}
+
+	public static function getActivityType(){
+		return self::select('activitytype_desc','activity_type_id')
+				->groupBy('activity_type_id')
+				->lists('activitytype_desc', 'activity_type_id');
+	}
+
+	public static function getDivision(){
+		return self::select('division_desc','activity_divisions.division_code')
+				->join('activity_divisions', 'activities.id', '=', 'activity_divisions.activity_id')
+				->groupBy('activity_divisions.division_code')
+				->orderBy('division_desc')
+				->lists('division_desc', 'division_code');
+	}
+
+	public static function getCategory(){
+		return self::select('category_desc','activity_categories.category_code')
+				->join('activity_categories', 'activities.id', '=', 'activity_categories.activity_id')
+				->groupBy('activity_categories.category_code')
+				->orderBy('category_desc')
+				->lists('category_desc', 'category_code');
+	}
+
+	public static function getBrand(){
+		return self::select('brand_desc','activity_brands.brand_code')
+				->join('activity_brands', 'activities.id', '=', 'activity_brands.activity_id')
+				->groupBy('activity_brands.brand_code')
+				->orderBy('brand_desc')
+				->lists('brand_desc', 'brand_code');
 	}
 }
