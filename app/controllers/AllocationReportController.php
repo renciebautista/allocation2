@@ -681,13 +681,13 @@ class AllocationReportController extends \BaseController {
 				
 			} catch (Exception $e) {
 				DB::rollback();
-				var_dump($e);
-				// $class = 'alert-danger';
-				// $message = 'Cannot duplicate template.';
+				// var_dump($e);
+				$class = 'alert-danger';
+				$message = 'Cannot duplicate template.';
 
-				// return Redirect::to(URL::action('AllocationReportController@index'))
-				// ->with('class', $class )
-				// ->with('message', $message);
+				return Redirect::to(URL::action('AllocationReportController@index'))
+				->with('class', $class )
+				->with('message', $message);
 			}
 		}
 	}
