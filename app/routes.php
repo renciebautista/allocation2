@@ -171,10 +171,8 @@ Route::get('testpdf',function(){
 		echo $str_table;
 
 	}
-	
 }			
 });
-
 
 Route::get('testword',function(){
 	$activity = Activity::find(79);
@@ -203,7 +201,6 @@ Route::get('testrole', function(){
 	$data['activities'] = Activity::Released($cycle_ids);
 
 	return View::make('emails.mail4', $data);
-	
 });
 
 Route::post('queue/push', function()
@@ -373,6 +370,7 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('reports/outlets', 'AllocationReportController@outlets');
 	Route::get('reports/channels', 'AllocationReportController@channels');
 	Route::get('reports/channelsselected', 'AllocationReportController@channelsselected');
+
 	Route::get('reports/allocation', 'AllocationReportController@index');
 	Route::get('reports/allocation/create', 'AllocationReportController@create');
 	Route::post('reports/allocation/create', 'AllocationReportController@store');
@@ -380,7 +378,9 @@ Route::group(array('before' => 'auth'), function()
 	Route::post('reports/allocation/{id}/generate', 'AllocationReportController@generate');
 	Route::get('reports/allocation/{id}', 'AllocationReportController@edit');
 	Route::delete('reports/allocation/{id}', 'AllocationReportController@destroy');
-	Route::delete('reports/allocation/{id}', 'AllocationReportController@destroy');
+	Route::put('reports/allocation/{id}', 'AllocationReportController@update');
+	Route::post('reports/allocation/{id}/duplicate', 'AllocationReportController@duplicate');
+
 	Route::get('reports/activities', 'ReportController@activities');
 	Route::get('reports/{id}/preview', 'ReportController@preview');
 	Route::get('reports/{id}/download', 'ReportController@download');

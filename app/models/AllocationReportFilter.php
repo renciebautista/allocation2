@@ -16,4 +16,10 @@ class AllocationReportFilter extends \Eloquent {
 		}
 		return $list;
 	}
+
+	public static function clearFilter($template_id,$filter_type){
+		self::where('template_id',$template_id)
+						->where('filter_type_id',$filter_type)
+						->delete();
+	}
 }

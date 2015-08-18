@@ -1,0 +1,6 @@
+launch
+	- add option to set cycle as launch
+	- involve user can only see circular on report
+	- circular will be visible if released
+	- masterfile be uploaded by admin and select valid proponets/planner
+

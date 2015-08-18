@@ -5,14 +5,14 @@
 <div class="page-header" id="banner">
 	<div class="row">
 		<div class="col-lg-8 col-md-7 col-sm-6">
-			<h1>New Allocation Report Template</h1>
+			<h1>{{ $template->name }}</h1>
 		</div>
 	</div>
 </div>
 
 @include('partials.notification')
 
-{{ Form::open(array('action' => 'AllocationReportController@store','class' => 'bs-component')) }}
+{{ Form::open(array('action' => array('AllocationReportController@update',$template->id), 'method' => 'PUT', 'class' => 'bs-component')) }}
 <div class="panel panel-default">
 	<div class="panel-heading">General Filters</div>
 	<div class="panel-body">
@@ -156,8 +156,8 @@
 								<div class="col-lg-4">
 									{{ Form::label('tree4', 'Select Outlets', array('class' => 'control-label' )) }}<br>
 									<div id="chOtlets">
-										<a href="#" id="btnChSelectAll">Select all</a> |
-										<a href="#" id="btnChDeselectAll">Deselect all</a>
+										<a href="#" id="btnOutSelectAll">Select all</a> |
+										<a href="#" id="btnOutDeselectAll">Deselect all</a>
 									</div>
 									
 									<div id="tree4"></div>
@@ -199,7 +199,7 @@
 </div>
 
 <div class="form-group">
-	{{ Form::submit('Submit', array('class' => 'btn btn-primary')) }}
+	{{ Form::submit('Update', array('class' => 'btn btn-primary')) }}
 	{{ HTML::linkAction('AllocationReportController@index', 'Back', array(), array('class' => 'btn btn-default')) }}
 </div>
 {{ Form::close() }}
@@ -235,7 +235,9 @@ $("#tree3").fancytree({
 		var keys = selRootKeys.join(".").split(".");
 		
 		$("#customers").val(selRootKeys.join(", "));
-	}
+	},
+	cookieId: "fancytree-tree3",
+    idPrefix: "fancytree-tree3-"
 });
 
 function getCustomer(){
@@ -249,6 +251,20 @@ function getCustomer(){
 		}
 	});
 }
+
+$("#btnCDeselectAll").click(function(){
+
+  	$("#tree3").fancytree("getTree").visit(function(node){
+    	node.setSelected(false);
+  	});
+  	return false;
+});
+$("#btnCSelectAll").click(function(){
+  	$("#tree3").fancytree("getTree").visit(function(node){
+    	node.setSelected(true);
+  	});
+  	return false;
+});
 
 
 $("#tree4").fancytree({
@@ -277,8 +293,11 @@ $("#tree4").fancytree({
 		var keys = selRootKeys.join(".").split(".");
 		
 		$("#outlets_involved").val(selRootKeys.join(", "));
-	}
+	},
+	cookieId: "fancytree-tree4",
+    idPrefix: "fancytree-tree4-"
 });
+
 
 function getOutlets(){
 	$.ajax({
@@ -291,6 +310,20 @@ function getOutlets(){
 		}
 	});
 }
+
+$("#btnOutDeselectAll").click(function(){
+
+  	$("#tree4").fancytree("getTree").visit(function(node){
+    	node.setSelected(false);
+  	});
+  	return false;
+});
+$("#btnOutSelectAll").click(function(){
+  	$("#tree4").fancytree("getTree").visit(function(node){
+    	node.setSelected(true);
+  	});
+  	return false;
+});
 
 $("#tree5").fancytree({
 	checkbox: true,
@@ -318,7 +351,9 @@ $("#tree5").fancytree({
 		var keys = selRootKeys.join(".").split(".");
 		
 		$("#channels_involved").val(selRootKeys.join(", "));
-	}
+	},
+	cookieId: "fancytree-tree5",
+    idPrefix: "fancytree-tree5-"
 });
 
 function getChannels(){
@@ -332,6 +367,20 @@ function getChannels(){
 		}
 	});
 }
+
+$("#btnChDeselectAll").click(function(){
+
+  	$("#tree5").fancytree("getTree").visit(function(node){
+    	node.setSelected(false);
+  	});
+  	return false;
+});
+$("#btnChSelectAll").click(function(){
+  	$("#tree5").fancytree("getTree").visit(function(node){
+    	node.setSelected(true);
+  	});
+  	return false;
+});
 
 getCustomer();
 getOutlets();

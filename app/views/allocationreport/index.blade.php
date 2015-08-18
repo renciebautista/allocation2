@@ -52,7 +52,9 @@
 							{{ HTML::linkAction('AllocationReportController@edit','Edit', $template->id, array('class' => 'btn btn-info btn-xs')) }}
 						</td>
 						<td class="action">
-							{{ HTML::linkAction('AllocationReportController@edit','Duplicate', $template->id, array('class' => 'btn btn-info btn-xs')) }}
+							{{ Form::open(array('action' => array('AllocationReportController@duplicate', $template->id))) }}                       
+							{{ Form::submit('Duplicate', array('class'=> 'btn btn-info btn-xs','onclick' => "if(!confirm('Are you sure to duplicate this record?')){return false;};")) }}
+							{{ Form::close() }}
 						</td>
 						<td class="action">
 							{{ HTML::linkAction('AllocationReportController@show','Generate Report', $template->id, array('class' => 'btn btn-success btn-xs')) }}
