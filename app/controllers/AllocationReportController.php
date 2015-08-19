@@ -22,19 +22,73 @@ class AllocationReportController extends \BaseController {
 	 */
 	public function create()
 	{
-		$statuses = ActivityStatus::getLists();
-		$scopes = Activity::getScopes();
-		$proponents = Activity::getProponents();
-		$planners = Activity::getPlanners();
-		$approvers = Activity::getApprovers();
-		$activitytypes = Activity::getActivityType();
-		$divisions = Activity::getDivision();
-		$categories = Activity::getCategory();
-		$brands = Activity::getBrand();
-		// Helper::print_r($groups);
-		$schemefields = AllocReportPerGroup::getAvailableFields(Auth::user()->roles[0]->id);
-		return View::make('allocationreport.create',compact('proponents', 'planners', 'statuses',
+		if(Auth::user()->inRoles(['ADMINISTRATOR'])){
+			$statuses = ActivityStatus::getLists();
+			$scopes = Activity::getScopes();
+			$proponents = Activity::getProponents();
+			$planners = Activity::getPlanners();
+			$approvers = Activity::getApprovers();
+			$activitytypes = Activity::getActivityType();
+			$divisions = Activity::getDivision();
+			$categories = Activity::getCategory();
+			$brands = Activity::getBrand();
+
+			$schemefields = AllocReportPerGroup::getAvailableFields(Auth::user()->roles[0]->id);
+
+			return View::make('allocationreport.create',compact('proponents', 'planners', 'statuses',
 			'approvers', 'activitytypes', 'scopes', 'divisions', 'brands', 'categories', 'schemefields'));
+		}
+
+		if(Auth::user()->inRoles(['PROPONENT'])){
+			$statuses = ActivityStatus::getLists();
+			$scopes = Activity::getScopes();
+			$planners = Activity::getPlanners();
+			$approvers = Activity::getApprovers();
+			$activitytypes = Activity::getActivityType();
+			$divisions = Activity::getDivision();
+			$categories = Activity::getCategory();
+			$brands = Activity::getBrand();
+
+			$schemefields = AllocReportPerGroup::getAvailableFields(Auth::user()->roles[0]->id);
+
+			return View::make('allocationreport.createpro',compact('planners', 'statuses',
+			'approvers', 'activitytypes', 'scopes', 'divisions', 'brands', 'categories', 'schemefields'));
+		}
+
+		if(Auth::user()->inRoles('PMOG PLANNER')){
+			$statuses = ActivityStatus::getLists();
+			$scopes = Activity::getScopes();
+			$proponents = Activity::getProponents();
+			$approvers = Activity::getApprovers();
+			$activitytypes = Activity::getActivityType();
+			$divisions = Activity::getDivision();
+			$categories = Activity::getCategory();
+			$brands = Activity::getBrand();
+
+			$schemefields = AllocReportPerGroup::getAvailableFields(Auth::user()->roles[0]->id);
+
+			return View::make('allocationreport.createplan',compact('proponents', 'statuses',
+			'approvers', 'activitytypes', 'scopes', 'divisions', 'brands', 'categories', 'schemefields'));
+		}
+
+		if(Auth::user()->inRoles(['FIELD SALES','CMD DIRECTOR','CD OPS APPROVER','GCOM APPROVER'])){
+			$scopes = Activity::getScopes();
+			$proponents = Activity::getProponents();
+			$planners = Activity::getPlanners();
+			$approvers = Activity::getApprovers();
+			$activitytypes = Activity::getActivityType();
+			$divisions = Activity::getDivision();
+			$categories = Activity::getCategory();
+			$brands = Activity::getBrand();
+
+			$schemefields = AllocReportPerGroup::getAvailableFields(Auth::user()->roles[0]->id);
+
+			return View::make('allocationreport.createfield',compact('proponents','planners',
+			'approvers', 'activitytypes', 'scopes', 'divisions', 'brands', 'categories', 'schemefields'));
+		}
+		
+
+		
 	}
 
 	/**
@@ -233,6 +287,7 @@ class AllocationReportController extends \BaseController {
 	public function show($id)
 	{
 		$template = AllocationReportTemplate::findOrFail($id);
+		
 		$cycles = Activity::select('cycle_desc','cycle_id')
 			->groupBy('cycle_id')
 			->orderBy('cycle_desc')

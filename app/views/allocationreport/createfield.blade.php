@@ -30,16 +30,7 @@
 		</div>
 
 		<div class="row">
-			<div class="col-lg-6">
-				<div class="form-group">
-					<div class="row">
-						<div class="col-lg-12">
-						{{ Form::label('st', 'Status', array('class' => 'control-label')) }}
-						{{ Form::select('st[]', $statuses, null, array('id' => 'st','class' => 'form-control', 'multiple' => 'multiple')) }}
-						</div>
-					</div>
-				</div>
-			</div>
+
 			<div class="col-lg-6">
 				<div class="form-group">
 					<div class="row">
@@ -50,9 +41,7 @@
 					</div>
 				</div>
 			</div>
-		</div>
 
-		<div class="row">
 			<div class="col-lg-6">
 				<div class="form-group">
 					<div class="row">
@@ -63,6 +52,10 @@
 					</div>
 				</div>
 			</div>
+		</div>
+
+		<div class="row">
+			
 			<div class="col-lg-6">
 				<div class="form-group">
 					<div class="row">
@@ -73,9 +66,7 @@
 					</div>
 				</div>
 			</div>
-		</div>
 
-		<div class="row">
 			<div class="col-lg-6">
 				<div class="form-group">
 					<div class="row">
@@ -86,6 +77,10 @@
 					</div>
 				</div>
 			</div>
+		</div>
+
+		<div class="row">
+			
 			<div class="col-lg-6">
 				<div class="form-group">
 					<div class="row">
@@ -96,9 +91,7 @@
 					</div>
 				</div>
 			</div>
-		</div>
 
-		<div class="row">
 			<div class="col-lg-6">
 				<div class="form-group">
 					<div class="row">
@@ -109,6 +102,10 @@
 					</div>
 				</div>
 			</div>
+		</div>
+
+		<div class="row">
+			
 			<div class="col-lg-6">
 				<div class="form-group">
 					<div class="row">
@@ -119,9 +116,7 @@
 					</div>
 				</div>
 			</div>
-		</div>
 
-		<div class="row">
 			<div class="col-lg-6">
 				<div class="form-group">
 					<div class="row">
@@ -133,7 +128,6 @@
 				</div>
 			</div>
 		</div>
-
 	</div>
 </div>
 

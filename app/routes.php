@@ -1,5 +1,11 @@
 <?php
 use Imagecow\Image;
+
+
+use Box\Spout\Writer\WriterFactory;
+use Box\Spout\Common\Type;
+
+
 Queue::getIron()->ssl_verifypeer = false;
 /*
 |--------------------------------------------------------------------------
@@ -71,7 +77,7 @@ Route::get('testreport', function(){
 });
 
 Route::get('allocreport', function(){
-	$template = AllocationReportTemplate::findOrFail(13);
+	$template = AllocationReportTemplate::findOrFail(7);
 	$headers = AllocSchemeField::getFields($template->id);
 	$data['cycles'] = array(7);
 	$data['status'] = AllocationReportFilter::getList($template->id,1);
@@ -89,9 +95,52 @@ Route::get('allocreport', function(){
 	$data['fields'] = $headers;
 	$take = 1000; // adjust this however you choose
 	$counter = 0;
+	$user = User::find(1);
+	// var_dump($user->roles[0]->name);
+	$token = md5(uniqid(mt_rand(), true));
+		
+		$timeFirst  = strtotime(date('Y-m-d H:i:s'));
+		$filePath = storage_path('exports/'.$token.'.xlsx');
+		$writer = WriterFactory::create(Type::XLSX);
+		$writer->setShouldCreateNewSheetsAutomatically(true); // default value
+		$writer->openToFile($filePath); // write data to a file or to a PHP stream
+		$take = 1000; // adjust this however you choose
+		$counter = 0; // used to skip over the ones you've already processed
 
-	AllocationReport::getReport($data,$take,$counter);
-	// Helper::print_r(Auth::user()->roles[0]->id);
+		
+		$header = array();
+		foreach ($headers as $value) {
+			$header[] = $value->desc_name;
+		}
+		
+		$writer->addRow($header); // add multiple rows at a time
+
+		while($rows = AllocationReport::getReport($data,$take,$counter,$user))
+		{
+			if(count($rows) == 0){
+				break;
+			}
+			$counter += $take;
+			foreach($rows as $key => $value)
+			{
+				$rows[$key] = (array) $value;
+			} 
+			$export_data = $rows;
+
+			$writer->addRows($export_data); // add multiple rows at a time
+		}
+		$writer->close();
+		$timeSecond = strtotime(date('Y-m-d H:i:s'));
+		$differenceInSeconds = $timeSecond - $timeFirst;
+	
+
+		$data['template'] = $template;
+		$data['token'] = $token;
+		$data['user'] = $user;
+		$name = $template->name;
+
+		
+		
 });
 
 Route::get('testpdf',function(){

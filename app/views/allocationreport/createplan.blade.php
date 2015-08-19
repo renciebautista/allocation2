@@ -12,7 +12,7 @@
 
 @include('partials.notification')
 
-{{ Form::open(array('action' => 'AllocationReportController@store','class' => 'bs-component','id' => 'myform')) }}
+{{ Form::open(array('action' => 'AllocationReportController@store','class' => 'bs-component', 'id' => 'myform')) }}
 <div class="panel panel-default">
 	<div class="panel-heading">General Filters</div>
 	<div class="panel-body">
@@ -63,19 +63,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="col-lg-6">
-				<div class="form-group">
-					<div class="row">
-						<div class="col-lg-12">
-						{{ Form::label('planner', 'PMOG Planner', array('class' => 'control-label')) }}
-						{{ Form::select('planner[]', $planners, null, array('id' => 'planner','class' => 'form-control', 'multiple' => 'multiple')) }}
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
 
-		<div class="row">
 			<div class="col-lg-6">
 				<div class="form-group">
 					<div class="row">
@@ -86,6 +74,10 @@
 					</div>
 				</div>
 			</div>
+		</div>
+
+		<div class="row">
+			
 			<div class="col-lg-6">
 				<div class="form-group">
 					<div class="row">
@@ -96,9 +88,7 @@
 					</div>
 				</div>
 			</div>
-		</div>
 
-		<div class="row">
 			<div class="col-lg-6">
 				<div class="form-group">
 					<div class="row">
@@ -109,6 +99,10 @@
 					</div>
 				</div>
 			</div>
+		</div>
+
+		<div class="row">
+			
 			<div class="col-lg-6">
 				<div class="form-group">
 					<div class="row">
@@ -119,9 +113,7 @@
 					</div>
 				</div>
 			</div>
-		</div>
 
-		<div class="row">
 			<div class="col-lg-6">
 				<div class="form-group">
 					<div class="row">
@@ -132,6 +124,7 @@
 					</div>
 				</div>
 			</div>
+
 		</div>
 
 	</div>
@@ -208,6 +201,7 @@
 @stop
 
 @section('page-script')
+
 
 
 @stop

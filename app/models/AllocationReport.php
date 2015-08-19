@@ -26,7 +26,7 @@ class AllocationReport extends \Eloquent {
 		return $query;
 	}
 
-	public static function getReport($data,$take,$counter){
+	public static function getReport($data,$take,$counter,$user){
 		$cycles = "";
 		$status = "";
 		$scopes = "";
@@ -51,18 +51,35 @@ class AllocationReport extends \Eloquent {
 			$cycles = ' AND activities.cycle_id = "'.$data['cycles'][0].'"';
 		}
 
-		if(!empty($data['status'])){
-			$status = self::generateQuery($data['status'],"activities.status_id");
-		}
+		if($user->inRoles(['FIELD SALES','CMD DIRECTOR','CD OPS APPROVER','GCOM APPROVER'])){
+			$status = ' AND activities.status_id = "9"';
+		}else{
+			if(!empty($data['status'])){
+				$status = self::generateQuery($data['status'],"activities.status_id");
+			}
+		}	
+		
 		if(!empty($data['scopes'])){
 			$scopes = self::generateQuery($data['scopes'],"activities.scope_type_id");
 		}
-		if(!empty($data['proponents'])){
-			$proponents = self::generateQuery($data['proponents'],"activities.created_by");
+
+		if($user->inRoles(['PROPONENT'])){
+			$proponents =  sprintf(' AND activities.created_by = "%s"',$user->id);
+		}else{
+			if(!empty($data['proponents'])){
+				$proponents = self::generateQuery($data['proponents'],"activities.created_by");
+			}
 		}
-		if(!empty($data['planners'])){
-			$planners = self::generateQuery($data['planners'],"planner_tbl.user_id");
+
+		if($user->inRoles(['PMOG PLANNER'])){
+			$planners = sprintf(' AND planner_tbl.user_id = "%s"',$user->id);
+		}else{
+			if(!empty($data['planners'])){
+				$planners = self::generateQuery($data['planners'],"planner_tbl.user_id");
+			}
 		}
+		
+		
 		if(!empty($data['approvers'])){
 			$approvers = self::generateQuery($data['approvers'],"approver_tbl.approver_ids",true);
 		}
@@ -240,7 +257,7 @@ class AllocationReport extends \Eloquent {
 			$status,$scopes,$proponents,$planners,$approvers,
 			$activitytypes,$divisions,$categories,$brands,
 			$groups,$areas,$soldtos,$shiptos,$channels,$outlets,$counter,$take);
-	// var_dump($areas);
+	// var_dump($query);
 		return DB::select(DB::raw($query));
 	}
 

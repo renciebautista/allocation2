@@ -50,7 +50,7 @@ class MakeAllocReport extends Command {
 		$template = AllocationReportTemplate::findOrFail($id);
 		$headers = AllocSchemeField::getFields($template->id);
 
-		$this->line('Template name' . $template->name);
+		$this->line('Template name ' . $template->name);
 
 		$data['cycles'] = explode(",", $cycles);
 		$data['status'] = AllocationReportFilter::getList($template->id,1);
@@ -83,7 +83,7 @@ class MakeAllocReport extends Command {
 		}
 		
 		$writer->addRow($header); // add multiple rows at a time
-		while($rows = AllocationReport::getReport($data,$take,$counter))
+		while($rows = AllocationReport::getReport($data,$take,$counter,$user))
 		{
 			if(count($rows) == 0){
 				break;
@@ -116,6 +116,7 @@ class MakeAllocReport extends Command {
 		$name = $template->name;
 		
 		$this->line($newfile->file_name);
+
 		Mail::send('emails.allocreport', $data, function($message) use ($user, $name){
 			$message->to($user->email, $user->first_name);
 			$message->subject('Allocation Report - '.$name);

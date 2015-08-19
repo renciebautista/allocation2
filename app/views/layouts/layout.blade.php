@@ -102,7 +102,6 @@
 								<li><a href="#">Activity Details Report</a></li>  
 								<li><a href="#">Activity Timings Report</a></li>
 								<li><a href="#">PIS Summary Report</a></li>
-								<li>{{ HTML::linkAction('AllocationReportController@index' , 'Allocation Report') }}</li>
 								@endif
 
 								@if(Auth::user()->inRoles(['FIELD SALES']))
@@ -110,7 +109,10 @@
 	
 								@endif
 								@if(Auth::user()->inRoles(['ADMINISTRATOR']))
-								<li>{{ HTML::linkAction('ReportController@activities' , 'All Activities') }}</li> 								@endif
+								<li>{{ HTML::linkAction('ReportController@activities' , 'All Activities') }}</li>
+								@endif
+
+								<li>{{ HTML::linkAction('AllocationReportController@index' , 'Allocation Report') }}</li>
 							</ul>
 						</li>
 
