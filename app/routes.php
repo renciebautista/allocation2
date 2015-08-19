@@ -77,7 +77,7 @@ Route::get('testreport', function(){
 });
 
 Route::get('allocreport', function(){
-	$template = AllocationReportTemplate::findOrFail(7);
+	$template = AllocationReportTemplate::findOrFail(27);
 	$headers = AllocSchemeField::getFields($template->id);
 	$data['cycles'] = array(7);
 	$data['status'] = AllocationReportFilter::getList($template->id,1);
@@ -138,8 +138,22 @@ Route::get('allocreport', function(){
 		$data['token'] = $token;
 		$data['user'] = $user;
 		$name = $template->name;
+		// $grayfield = array('HOST SKU CODE','HOST SKU DESC','PREMIUM SKU CODE','PREMIUM SKU DESC','NON-ULP PREMIUM'); 
+		// $greenfield = array('ITEM CODE','BARCODE','CASECODE'); 
+		// $yellowfield = array('GROUP','AREA','SOLD TO','SHIP TO CODE','CUSTOMER SHIP TO NAME','CHANNEL','ACCOUNT NAME');
+		// $blackfield = array('UOM',)
 
-		
+		$excel2 = PHPExcel_IOFactory::createReader('Excel2007');
+		$excel2 = $excel2->load($filePath); // Empty Sheet
+		$excel2->setActiveSheetIndex(0);
+		$excel2->getActiveSheet()
+			->getStyle('A1:B1')->getFill()
+			->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
+			->getStartColor()->setARGB('FFE8E5E5');
+
+
+		$objWriter = PHPExcel_IOFactory::createWriter($excel2, 'Excel2007');
+		$objWriter->save(storage_path('exports/'.$token.'_2.xlsx'));
 		
 });
 
