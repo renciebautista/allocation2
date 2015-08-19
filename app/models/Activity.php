@@ -714,4 +714,12 @@ class Activity extends \Eloquent {
 				->orderBy('brand_desc')
 				->lists('brand_desc', 'brand_code');
 	}
+
+	public static function cycleUsed($id){
+		$count =  self::where('cycle_id',$id)->count();
+		if($count>0){
+			return true;
+		}
+		return false;
+	}
 }

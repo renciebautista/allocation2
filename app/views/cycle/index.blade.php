@@ -42,6 +42,7 @@
 						<th class="center">Release Date</th>
 						<th class="center">Implementation Date</th>
 						<th class="center">Emergency</th>
+						<th class="center">Launch</th>
 						<th colspan="3" class="dash-action">Action</th>
 					</tr>
 				</thead>
@@ -64,6 +65,13 @@
 						<td class="center">{{ date_format(date_create($cycle->implemintation_date),'m/d/Y')  }}</td>
 						<td class="center">
 							@if($cycle->emergency) 
+							TRUE
+							@else
+							FALSE
+							@endif
+						</td>
+						<td class="center">
+							@if($cycle->launch) 
 							TRUE
 							@else
 							FALSE

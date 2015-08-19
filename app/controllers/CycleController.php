@@ -72,6 +72,7 @@ class CycleController extends \BaseController {
 				$cycle->release_date = date('Y-m-d',strtotime(Input::get('release_date')));
 				$cycle->implemintation_date = date('Y-m-d',strtotime(Input::get('implemintation_date')));
 				$cycle->emergency = (Input::has('emergency')) ? 1 : 0;
+				$cycle->launch = (Input::has('launch')) ? 1 : 0;
 				$cycle->save();
 
 				// $types = ActivityType::all();
@@ -150,6 +151,7 @@ class CycleController extends \BaseController {
 			$cycle->release_date = date('Y-m-d',strtotime(Input::get('release_date')));
 			$cycle->implemintation_date = date('Y-m-d',strtotime(Input::get('implemintation_date')));
 			$cycle->emergency = (Input::has('emergency')) ? 1 : 0;
+			$cycle->launch = (Input::has('launch')) ? 1 : 0;
 			$cycle->save();
 
 			// $old_path = storage_path().'/uploads/'.$old_name;
@@ -177,15 +179,16 @@ class CycleController extends \BaseController {
 	 */
 	public function destroy($id)
 	{
-		$cycle = Cycle::find($id)->delete();
-		if (is_null($cycle))
-		{
-			$class = 'alert-danger';
-			$message = 'Record does not exist.';
-		}else{
+		$cycle = Cycle::findOrFail($id);
+		if(!Activity::cycleUsed($cycle->id)){
+			$cycle->delete();
 			$class = 'alert-success';
 			$message = 'Record successfully deleted.';
+		}else{
+			$class = 'alert-danger';
+			$message = 'Cannot delete cycle.';
 		}
+		
 		return Redirect::route('cycle.index')
 				->with('class', $class )
 				->with('message', $message);

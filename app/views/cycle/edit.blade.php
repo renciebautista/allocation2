@@ -63,6 +63,14 @@
 		</div>
 
 		<div class="form-group">
+			<div class="checkbox">
+				<label>
+					{{ Form::checkbox('launch', 1,$cycle->launch) }} Launch
+				</label>
+			</div>
+		</div>
+
+		<div class="form-group">
 			{{ Form::submit('Update', array('class' => 'btn btn-primary')) }}
 			{{ HTML::linkAction('CycleController@index', 'Back', array(), array('class' => 'btn btn-default')) }}
 		</div>
