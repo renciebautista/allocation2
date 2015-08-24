@@ -55,7 +55,7 @@ class AllocationReportController extends \BaseController {
 			'approvers', 'activitytypes', 'scopes', 'divisions', 'brands', 'categories', 'schemefields'));
 		}
 
-		if(Auth::user()->inRoles('PMOG PLANNER')){
+		if(Auth::user()->inRoles(['PMOG PLANNER'])){
 			$statuses = ActivityStatus::getLists();
 			$scopes = Activity::getScopes();
 			$proponents = Activity::getProponents();
