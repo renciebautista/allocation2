@@ -156,8 +156,8 @@
 								<div class="col-lg-4">
 									{{ Form::label('tree4', 'Select Outlets', array('class' => 'control-label' )) }}<br>
 									<div id="chOtlets">
-										<a href="#" id="btnChSelectAll">Select all</a> |
-										<a href="#" id="btnChDeselectAll">Deselect all</a>
+										<a href="#" id="btnOutSelectAll">Select all</a> |
+										<a href="#" id="btnOutDeselectAll">Deselect all</a>
 									</div>
 									
 									<div id="tree4"></div>

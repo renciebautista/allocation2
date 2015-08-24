@@ -31,7 +31,7 @@
 		enableFiltering: true,
 	});
 
-	$("#tree3").fancytree({
+$("#tree3").fancytree({
 	checkbox: true,
 	selectMode: 3,
 	source: {
@@ -59,6 +59,21 @@
 		$("#customers").val(selRootKeys.join(", "));
 	}
 });
+
+$("#btnCDeselectAll").click(function(){
+
+  	$("#tree3").fancytree("getTree").visit(function(node){
+    	node.setSelected(false);
+  	});
+  	return false;
+});
+$("#btnCSelectAll").click(function(){
+  	$("#tree3").fancytree("getTree").visit(function(node){
+    	node.setSelected(true);
+  	});
+  	return false;
+});
+
 
 $("#tree4").fancytree({
 	checkbox: true,
@@ -89,6 +104,20 @@ $("#tree4").fancytree({
 	}
 });
 
+$("#btnOutDeselectAll").click(function(){
+
+  	$("#tree4").fancytree("getTree").visit(function(node){
+    	node.setSelected(false);
+  	});
+  	return false;
+});
+$("#btnOutSelectAll").click(function(){
+  	$("#tree4").fancytree("getTree").visit(function(node){
+    	node.setSelected(true);
+  	});
+  	return false;
+});
+
 $("#tree5").fancytree({
 	checkbox: true,
 	selectMode: 3,
@@ -116,6 +145,20 @@ $("#tree5").fancytree({
 		
 		$("#channels_involved").val(selRootKeys.join(", "));
 	}
+});
+
+$("#btnChDeselectAll").click(function(){
+
+  	$("#tree5").fancytree("getTree").visit(function(node){
+    	node.setSelected(false);
+  	});
+  	return false;
+});
+$("#btnChSelectAll").click(function(){
+  	$("#tree5").fancytree("getTree").visit(function(node){
+    	node.setSelected(true);
+  	});
+  	return false;
 });
 
 $("#myform").validate({

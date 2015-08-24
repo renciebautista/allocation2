@@ -66,7 +66,7 @@ class SchemesFieldsTableSeeder extends Seeder {
 			('allocations.in_deals as no_of_deals','DEALS'),
 			('allocations.in_cases as no_of_cases','CASES'),
 			('allocations.tts_budget as tts_requirement','TTS BUDGET'),
-			('allocations.pe_budget as pe_requirement','TTS BUDGET'),
+			('allocations.pe_budget as pe_requirement','PE BUDGET'),
 			('allocations.pe_budget + allocations.pe_budget as total_cost','TOTAL COST');");
 
 		DB::table('alloc_report_per_groups')->truncate();
@@ -122,7 +122,7 @@ class SchemesFieldsTableSeeder extends Seeder {
 		// insert field
 		$field_filter = array();
 		for ($i=1; $i <= $fields ; $i++) { 
-			if(($i != 10) && ($i != 16) && ($i != 17) &&
+			if(($i != 9) && ($i != 16) && ($i != 17) &&
 				($i != 30) && ($i != 31) && ($i != 32) &&
 				($i != 36) && ($i != 40) && ($i != 41) &&
 				($i != 42) && ($i != 43) && ($i != 44) &&
@@ -137,7 +137,7 @@ class SchemesFieldsTableSeeder extends Seeder {
 		// insert gcom
 		$gcom_filter = array();
 		for ($i=1; $i <= $fields ; $i++) { 
-			if(($i != 10) && ($i != 16) && ($i != 17) &&
+			if(($i != 9) && ($i != 16) && ($i != 17) &&
 				($i != 30) && ($i != 31) && ($i != 32) &&
 				($i != 36) && ($i != 40) && ($i != 41) &&
 				($i != 42) && ($i != 43) && ($i != 44) &&
@@ -152,7 +152,7 @@ class SchemesFieldsTableSeeder extends Seeder {
 		// insert cdops
 		$cdops_filter = array();
 		for ($i=1; $i <= $fields ; $i++) { 
-			if(($i != 10) && ($i != 16) && ($i != 17) &&
+			if(($i != 9) && ($i != 16) && ($i != 17) &&
 				($i != 30) && ($i != 31) && ($i != 32) &&
 				($i != 36) && ($i != 40) && ($i != 41) &&
 				($i != 42) && ($i != 43) && ($i != 44) &&
@@ -167,7 +167,7 @@ class SchemesFieldsTableSeeder extends Seeder {
 		// insert cmd
 		$cmd_filter = array();
 		for ($i=1; $i <= $fields ; $i++) { 
-			if(($i != 10) && ($i != 16) && ($i != 17) &&
+			if(($i != 9) && ($i != 16) && ($i != 17) &&
 				($i != 30) && ($i != 31) && ($i != 32) &&
 				($i != 36) && ($i != 40) && ($i != 41) &&
 				($i != 42) && ($i != 43) && ($i != 44) &&
