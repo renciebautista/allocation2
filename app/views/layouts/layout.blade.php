@@ -89,6 +89,8 @@
 								<li>{{ HTML::linkRoute('cycle.index', 'Cycle') }}</li>  
 								<li>{{ HTML::linkRoute('activitytype.index', 'Activity Type') }}</li>  
 								<li>{{ HTML::linkRoute('holidays.index', 'Holidays') }}</li>  
+
+								<li>{{ HTML::linkRoute('launchskus.index', 'Launch SKU') }}</li>  
 							</ul>
 						</li>
 						@endif
@@ -165,6 +167,8 @@
 				@yield('content')
 			</div>
 		</div>
+
+		
 	{{ HTML::script('assets/js/jquery-1.11.1.min.js') }}
 
 	{{ HTML::script('assets/plugins/jquery-ui-1.11.2/jquery-ui.min.js') }}

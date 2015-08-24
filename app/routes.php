@@ -301,6 +301,11 @@ Route::group(array('before' => 'auth'), function()
 {	
 	Route::pattern('id', '[0-9]+');
 
+	Route::get('launchskus/upload','LaunchSkuController@upload');
+	Route::post('launchskus/upload','LaunchSkuController@doupload');
+	Route::get('launchskus/{id}/access','LaunchSkuController@access');
+	Route::resource('launchskus','LaunchSkuController');
+
 	Route::get('help', 'HelpController@index');
 
 	Route::get('activity/{id}/timings', 'ActivityController@timings');

@@ -7,6 +7,8 @@ class SkusTableSeeder extends Seeder {
 
 	public function run()
 	{
+
+		// update only items
 		DB::table('skus')->truncate();
 		
 		Excel::selectSheets('sku')->load(app_path().'/database/seeds/seed_files/masterfile2.xlsx', function($reader) {

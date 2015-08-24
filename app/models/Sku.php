@@ -28,6 +28,44 @@ class Sku extends \Eloquent {
 		});
 	}
 
+	public static function insertLaunch($records){
+		$cnt = 0;
+		DB::beginTransaction();
+
+			try {
+			$records->each(function($row) use ($cnt) {
+				if(!is_null($row->sku_code)){
+					$cnt++;
+					$sku = self::where('sku_code',$row->sku_code)->first();
+					if(empty($sku)){
+						$sku = new Sku;
+						$sku->sku_code = $row->sku_code;
+						$sku->sku_desc = $row->sku_desc;
+						$sku->division_code = $row->division_code;
+						$sku->division_desc = $row->division_desc;
+						$sku->category_code = $row->category_code;
+						$sku->category_desc = $row->category_desc;
+						$sku->brand_code = $row->brand_code;
+						$sku->brand_desc = $row->brand_desc;
+						$sku->cpg_code = $row->cpg_code;
+						$sku->cpg_desc = $row->cpg_desc;
+						$sku->packsize_code = $row->packsize_code;
+						$sku->active = 1;
+						$sku->launch = 1;
+						$sku->save();	
+					}
+
+				}
+				
+			});
+			DB::commit();
+		} catch (\Exception $e) {
+			DB::rollback();
+		}
+
+		return $cnt;
+	}
+
 	public static function division($code){
 		return self::select('division_code', 'division_desc')
 			->where('division_code', $code)
