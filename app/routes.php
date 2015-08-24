@@ -238,7 +238,8 @@ Route::get('testpdf',function(){
 });
 
 Route::get('testword',function(){
-	$activity = Activity::find(79);
+	set_time_limit(0);
+	$activity = Activity::find(53);
 	$worddoc = new WordDoc($activity->id);
 	$worddoc->download("Rencie.docx");					
 });
@@ -276,6 +277,12 @@ Route::post('queue/pdf', function()
 {
 	return Queue::marshal();
 });
+
+Route::post('queue/word', function()
+{
+	return Queue::marshal();
+});
+
 
 Route::post('queue/allocreport', function()
 {
@@ -411,6 +418,7 @@ Route::group(array('before' => 'auth'), function()
 	
 	Route::post('cycle/release', 'CycleController@release');
 	Route::post('cycle/{id}/rerun', 'CycleController@rerun');
+	Route::post('cycle/{id}/rerundoc', 'CycleController@rerundoc');
 	Route::get('cycle/calendar', 'CycleController@calendar');
 	Route::resource('cycle', 'CycleController');
 
@@ -452,6 +460,7 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('reports/activities', 'ReportController@activities');
 	Route::get('reports/{id}/preview', 'ReportController@preview');
 	Route::get('reports/{id}/download', 'ReportController@download');
+	Route::get('reports/{id}/document', 'ReportController@document');
 
 
 

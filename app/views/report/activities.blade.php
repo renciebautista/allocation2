@@ -132,7 +132,8 @@
 						<th class="center">Start Date</th>
 						<th class="center">End Date</th>
 						<th class="center">Billing Deadline</th>
-						<th class="center">With PDF Attachment</th>
+						<th class="center">PDF Generated</th>
+						<th class="center">Doc Generated</th>
 						<th colspan="2" style="text-align:center;">Action</th>
 					</tr>
 				</thead>
@@ -160,6 +161,7 @@
 						<td></td>
 						@endif
 						<td>{{ ($activity->pdf) ? "YES":"NO" }}</td>
+						<td>{{ ($activity->word) ? "YES":"NO" }}</td>
 						<td class="action">
 							{{ HTML::linkAction('ReportController@download','Download', $activity->id, array('class' => 'btn btn-success btn-xs')) }}
 						</td>

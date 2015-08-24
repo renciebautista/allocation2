@@ -21,7 +21,9 @@
 		  	</div>
 		  	<button type="submit" class="btn btn-success"><i class="fa fa-search"></i> Search</button>
 		  	<a href="{{ URL::action('CycleController@create') }}" class="btn btn-primary"><i class="fa fa-plus"></i> Cycle</a>
-		  	<button id="release" type="button" class="btn btn-success"> Release</button>
+		  	<button id="release" type="button" class="btn btn-info"> Release</button>
+		  	<button id="pdf" type="button" class="btn btn-info"> Re-run PDF</button>
+		  	<button id="doc" type="button" class="btn btn-info"> Re-run Doc</button>
 		{{ Form::close() }}
 	</div>
 </div>
@@ -42,8 +44,7 @@
 						<th class="center">Release Date</th>
 						<th class="center">Implementation Date</th>
 						<th class="center">Emergency</th>
-						<th class="center">Launch</th>
-						<th colspan="3" class="dash-action">Action</th>
+						<th colspan="2" class="dash-action">Action</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -70,13 +71,6 @@
 							FALSE
 							@endif
 						</td>
-						<td class="center">
-							@if($cycle->launch) 
-							TRUE
-							@else
-							FALSE
-							@endif
-						</td>
 						<td class="action">
 							{{ Form::open(array('method' => 'DELETE', 'action' => array('CycleController@destroy', $cycle->id))) }}                       
 							{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}
@@ -85,12 +79,7 @@
 						<td class="action">
 							{{ HTML::linkAction('CycleController@edit','Edit', $cycle->id, array('class' => 'btn btn-info btn-xs')) }}
 						</td>
-						<td class="action">
-
-							{{ Form::open(array('action' => array('CycleController@rerun', $cycle->id))) }}                       
-							{{ Form::submit('Re-run PDF', array('class'=> 'btn btn-success btn-xs','onclick' => "if(!confirm('Are you sure to re-run this cycle?')){return false;};")) }}
-							{{ Form::close() }}
-						</td>
+						
 					</tr>
 					@endforeach
 					@endif
@@ -127,6 +116,80 @@ $(function() {
 						    data: { ids: data },
 						    success: function(data) {
 						        alert(data + ' activities released.');
+						    }
+						});
+					}
+					
+		      }
+		    },
+		    danger: {
+		      	label: "No",
+		      	className: "btn btn-default"
+		    },
+		  }
+		});
+   	});
+
+   	$("#pdf").click(function(e){
+
+		bootbox.dialog({
+		  message: "Do you want to re-run PDF this cycles?",
+		  title: "ETOP",
+		  buttons: {
+		    success: {
+		      	label: "Yes",
+		      	className: "btn btn-primary",
+		      	callback: function() {
+		        	var data = new Array();
+					$("input[name='cycle[]']:checked").each(function(i) {
+						data.push($(this).val());
+					});
+					if(data.length == 0){
+						alert("No cycle selected");
+					}else{
+						$.ajax({
+						    type: 'POST',
+						    url: "{{ URL::action('CycleController@rerun') }}",
+						    data: { ids: data },
+						    success: function(data) {
+						        alert(data + ' PDF regenerated.');
+						    }
+						});
+					}
+					
+		      }
+		    },
+		    danger: {
+		      	label: "No",
+		      	className: "btn btn-default"
+		    },
+		  }
+		});
+   	});
+
+   	$("#doc").click(function(e){
+
+		bootbox.dialog({
+		  message: "Do you want to re-run Doc this cycles?",
+		  title: "ETOP",
+		  buttons: {
+		    success: {
+		      	label: "Yes",
+		      	className: "btn btn-primary",
+		      	callback: function() {
+		        	var data = new Array();
+					$("input[name='cycle[]']:checked").each(function(i) {
+						data.push($(this).val());
+					});
+					if(data.length == 0){
+						alert("No cycle selected");
+					}else{
+						$.ajax({
+						    type: 'POST',
+						    url: "{{ URL::action('CycleController@rerundoc') }}",
+						    data: { ids: data },
+						    success: function(data) {
+						        alert(data + ' Doc regenerated.');
 						    }
 						});
 					}

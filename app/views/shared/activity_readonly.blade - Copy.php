@@ -30,7 +30,7 @@
 			@endif
 
 			
-			<a class="btn btn-info" target="_blank" href="{{ URL::action('ReportController@preview', $activity->id ) }}">Preview</a>
+			@include('partials.downloaddoc')
 		</div>
 	</div>
 

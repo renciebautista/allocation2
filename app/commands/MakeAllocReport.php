@@ -116,18 +116,6 @@ class MakeAllocReport extends Command {
 		$name = $template->name;
 		
 		$this->line($newfile->file_name);
-
-		// $excel2 = PHPExcel_IOFactory::createReader('Excel2007');
-		// $excel2 = $excel2->load($filePath); // Empty Sheet
-		// $excel2->setActiveSheetIndex(0);
-		// $excel2->getActiveSheet()
-		// 	->getStyle('A1:B1')->getFill()
-		// 	->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
-		// 	->getStartColor()->setARGB('FFE8E5E5');
-
-
-		// $objWriter = PHPExcel_IOFactory::createWriter($excel2, 'Excel2007');
-		// $objWriter->save(storage_path('exports/'.$token.'_2.xlsx'));
 		
 
 		Mail::send('emails.allocreport', $data, function($message) use ($user, $name){

@@ -49,8 +49,10 @@ class ScheduleActivity extends Command {
 		foreach ($activities as $activity) {
 			if($_ENV['MAIL_TEST']){
 				$job_id = Queue::push('Scheduler', array('string' => "Scheduling ".$activity->circular_name, 'id' => $activity->id),'pdf');
+				Queue::push('WordScheduler', array('string' => "Scheduling ".$activity->circular_name, 'id' => $activity->id),'word');
 			}else{
 				$job_id = Queue::push('Scheduler', array('string' => "Scheduling ".$activity->circular_name, 'id' => $activity->id),'p_pdf');
+				Queue::push('WordScheduler', array('string' => "Scheduling ".$activity->circular_name, 'id' => $activity->id),'p_word');
 			}
 			Job::create(array('job_id' => $job_id));
 			$this->line("Scheduling ".$activity->circular_name);

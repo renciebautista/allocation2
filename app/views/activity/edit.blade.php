@@ -19,7 +19,16 @@
 			<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myAction">
 			  	Actions
 			</button>
-			<a class="btn btn-info" target="_blank" href="{{ URL::action('ReportController@preview', $activity->id ) }}">Preview</a>
+
+			<div class="btn-group">
+                  <a href="#" class="btn btn-info">Options</a>
+                  <a href="#" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    <li><a target="_blank" href="{{ URL::action('ReportController@preview', $activity->id ) }}">HTML Preview</a></li>
+                    <li><a href="{{ URL::action('ReportController@document', $activity->id ) }}">Download as Document</a></li>
+                  </ul>
+            </div>
+			
 		</div>
 	</div>
 

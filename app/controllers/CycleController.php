@@ -270,6 +270,7 @@ class CycleController extends \BaseController {
 			
 			if($_ENV['MAIL_TEST']){
 				$job_id = Queue::push('Scheduler', array('string' => "Scheduling ".$activity->circular_name, 'id' => $activity->id),'pdf');
+				
 			}else{
 				$job_id = Queue::push('Scheduler', array('string' => "Scheduling ".$activity->circular_name, 'id' => $activity->id),'p_pdf');
 			}
@@ -279,5 +280,30 @@ class CycleController extends \BaseController {
 		return Redirect::route('cycle.index')
 				->with('class', 'alert-success')
 				->with('message', $cycle->cycle_name.' cycle pdf creation is successfuly initiated.');
+	}
+
+	public function rerunword($id){
+		// rerun activities
+		$cycle = Cycle::find($id);
+		$activities = Activity::select('activities.id', 'activities.circular_name')
+			->join('cycles', 'cycles.id', '=', 'activities.cycle_id')
+			->where('cycles.id',$id)
+			->where('status_id','>', 7)
+			->get();
+		foreach ($activities as $activity) {
+			$activity->pdf = 0;
+			$activity->update();
+			
+			if($_ENV['MAIL_TEST']){
+				$job_id = Queue::push('WordScheduler', array('string' => "Scheduling ".$activity->circular_name, 'id' => $activity->id),'word');
+			}else{
+				$job_id = Queue::push('WordScheduler', array('string' => "Scheduling ".$activity->circular_name, 'id' => $activity->id),'p_word');
+			}
+			Job::create(array('job_id' => $job_id));
+		}
+
+		return Redirect::route('cycle.index')
+				->with('class', 'alert-success')
+				->with('message', $cycle->cycle_name.' cycle word creation is successfuly initiated.');
 	}
 }

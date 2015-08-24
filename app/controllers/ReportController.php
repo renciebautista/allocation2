@@ -117,6 +117,15 @@ class ReportController extends \BaseController {
 		}
 	}
 
+	public function document($id){
+		set_time_limit(0);
+		ini_set('memory_limit', '256M');
+		$activity = Activity::find($id);
+		$word_name = preg_replace('/[^A-Za-z0-9 _ .-]/', '_', $activity->circular_name);
+		$worddoc = new WordDoc($activity->id);
+		$worddoc->download(str_replace(":","_", $word_name).'.docx');	
+	}
+
 	public function download($id){
 		$zippy = Zippy::load();
 		$activity = Activity::findOrFail($id);

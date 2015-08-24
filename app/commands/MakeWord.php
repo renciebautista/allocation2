@@ -38,6 +38,7 @@ class MakeWord extends Command {
 	public function fire()
 	{
 		set_time_limit(0);
+		ini_set('memory_limit', '256M');
 		$id = $this->argument('id');
 		$this->line("Generating Word via comamnd line using PHPWord");
 		$timeFirst  = strtotime(date('Y-m-d H:i:s'));
@@ -54,6 +55,9 @@ class MakeWord extends Command {
 			$timeSecond = strtotime(date('Y-m-d H:i:s'));
 			$differenceInSeconds = $timeSecond - $timeFirst;
 			$this->line( 'Time used ' . $differenceInSeconds . " sec");
+
+			$activity->word = 1;
+			$activity->update();
 		}
 	}
 

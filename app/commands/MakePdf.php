@@ -191,6 +191,7 @@ class MakePdf extends Command {
 				}
 			}
 			
+			//barcode
 			if(count($schemes) > 0){
 				$w_codes = false;
 				foreach ($schemes as $scheme) {
