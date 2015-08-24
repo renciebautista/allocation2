@@ -12,7 +12,7 @@
 </div>
 
 @include('partials.notification')
-
+{{ Form::open(array('route' => array('launchskus.update', $sku->sku_code), 'method' => 'PUT', 'class' => 'bs-component')) }}
 <div class="row">
 	<div class="col-lg-12">
 		<div class="table-responsive">
@@ -31,7 +31,7 @@
 					@else
 					@foreach($proponents as $proponent)
 					<tr>
-						<td style="width:30px;">{{ Form::checkbox('proponent[]', $proponent->user_id ) }}</td>
+						<td class="center" style="width:30px;">{{ Form::checkbox('proponent[]', $proponent->user_id,(in_array($proponent->user_id,$selecteduser) ? true : false) ) }}</td>
 						<td>{{ $proponent->getFullname() }}</td>
 					</tr>
 					@endforeach
@@ -41,7 +41,11 @@
 		</div>
 	</div>
 </div>
-
+<div class="form-group">
+	{{ Form::submit('Update', array('class' => 'btn btn-primary')) }}
+	{{ HTML::linkAction('LaunchSkuController@index', 'Back', array(), array('class' => 'btn btn-default')) }}
+</div>
+{{ Form::close() }}
 @stop
 
 @section('page-script')

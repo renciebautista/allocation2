@@ -11,16 +11,8 @@ class ReportController extends \BaseController {
 	public function activities()
 	{
 		Input::flash();
-		if(Auth::user()->hasRole("FIELD SALES")){
-			$cycles = Cycle::getLists();
-			$scopes = ScopeType::getLists();
-			$types = ActivityType::getLists();
-			$planners = User::getApprovers(['PMOG PLANNER']);
-			$proponents = User::getApprovers(['PROPONENT']);
-			$status = ['9'];
-			$activities = Activity::search(Input::get('pr'),$status,Input::get('cy'),Input::get('sc'),Input::get('ty'),Input::get('pm'),Input::get('title'));
-			return View::make('report.fieldactivities',compact('activities', 'cycles', 'scopes', 'types', 'planners', 'proponents'));
-		}else{
+		if(Auth::user()->hasRole("ADMINISTRATOR")){
+				
 			$statuses = ActivityStatus::getLists();
 			$cycles = Cycle::getLists();
 			$scopes = ScopeType::getLists();
@@ -29,6 +21,15 @@ class ReportController extends \BaseController {
 			$proponents = User::getApprovers(['PROPONENT']);
 			$activities = Activity::search(Input::get('pr'),Input::get('st'),Input::get('cy'),Input::get('sc'),Input::get('ty'),Input::get('pm'),Input::get('title'));
 			return View::make('report.activities',compact('statuses', 'activities', 'cycles', 'scopes', 'types', 'planners', 'proponents'));
+		}else{
+			$cycles = Cycle::getLists();
+			$scopes = ScopeType::getLists();
+			$types = ActivityType::getLists();
+			$planners = User::getApprovers(['PMOG PLANNER']);
+			$proponents = User::getApprovers(['PROPONENT']);
+			$status = ['9'];
+			$activities = Activity::search(Input::get('pr'),$status,Input::get('cy'),Input::get('sc'),Input::get('ty'),Input::get('pm'),Input::get('title'));
+			return View::make('report.fieldactivities',compact('activities', 'cycles', 'scopes', 'types', 'planners', 'proponents'));
 		}
 
 		

@@ -72,7 +72,6 @@ class CycleController extends \BaseController {
 				$cycle->release_date = date('Y-m-d',strtotime(Input::get('release_date')));
 				$cycle->implemintation_date = date('Y-m-d',strtotime(Input::get('implemintation_date')));
 				$cycle->emergency = (Input::has('emergency')) ? 1 : 0;
-				$cycle->launch = (Input::has('launch')) ? 1 : 0;
 				$cycle->save();
 
 				// $types = ActivityType::all();
@@ -151,7 +150,6 @@ class CycleController extends \BaseController {
 			$cycle->release_date = date('Y-m-d',strtotime(Input::get('release_date')));
 			$cycle->implemintation_date = date('Y-m-d',strtotime(Input::get('implemintation_date')));
 			$cycle->emergency = (Input::has('emergency')) ? 1 : 0;
-			$cycle->launch = (Input::has('launch')) ? 1 : 0;
 			$cycle->save();
 
 			// $old_path = storage_path().'/uploads/'.$old_name;

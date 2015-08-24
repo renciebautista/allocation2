@@ -129,4 +129,13 @@ class Sku extends \Eloquent {
 	public static function getSku($sku_code){
 		return self::where('sku_code',$sku_code)->first();
 	}
+
+	public static function getLaunchSku($sku_code){
+		return self::where('sku_code',$sku_code)
+			->where('launch',1)
+			->where('active',1)
+			->first();
+	}
+
+	
 }

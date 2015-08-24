@@ -33,9 +33,17 @@ class LaunchSkuController extends \BaseController {
 	}
 
 	public function access($id){
-		$sku = Sku::where('sku_code',$id)->first();
-		$proponents = User::GetPlanners(['PROPONENT']);
-		return View::make('launchsku.access', compact('proponents','sku'));
+		$sku = Sku::getLaunchSku($id);
+		if(!empty($sku)){	
+			$proponents = User::GetPlanners(['PROPONENT']);
+			$selecteduser = LaunchSkuAccess::selectedUser($id);
+			return View::make('launchsku.access', compact('sku','proponents','selecteduser'));
+		}else{
+			return Redirect::action('LaunchSkuController@index')
+				->with('class', 'alert-danger')
+				->with('message', 'Sku not found!');
+		}
+		
 	}
 	/**
 	 * Show the form for creating a new resource.
@@ -92,7 +100,29 @@ class LaunchSkuController extends \BaseController {
 	 */
 	public function update($id)
 	{
-		//
+		$sku = Sku::getLaunchSku($id);
+		if(!empty($sku)){	
+			LaunchSkuAccess::where('sku_code',$id)->delete();
+			if(Input::has('proponent')){
+				$user = array();
+				foreach (Input::get('proponent') as $proponent) {
+					$user[] = array('sku_code' => $id, 'user_id' => $proponent);
+				}
+
+				if(count($user) > 0){
+					LaunchSkuAccess::insert($user);
+				}
+			}
+			
+
+			return Redirect::action('LaunchSkuController@access',$id)
+				->with('class', 'alert-success')
+				->with('message', 'Sku access successfuly updated.');
+		}else{
+			return Redirect::action('LaunchSkuController@index')
+				->with('class', 'alert-danger')
+				->with('message', 'Sku not found!');
+		}
 	}
 
 	/**

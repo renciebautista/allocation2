@@ -52,12 +52,35 @@ class SkuController extends \BaseController {
 			$data = array();
 			if($filter != ''){
 				$data = \Sku::select('cpg_code', \DB::raw('CONCAT(brand_desc, " - ", cpg_desc) AS brand_desc'))
+				->where('active',1)
+				->where('launch',0)
 				->whereIn('category_code',$filter)
 				->groupBy('cpg_code')
-				->orderBy('brand_desc')->lists('brand_desc', 'cpg_code');
+				->orderBy('brand_desc')->get();
+
+				if(\Auth::user()->inRoles(['PROPONENT'])){
+					$user_id = \Auth::id();
+				}else{
+					
+				}
+
+				$data2 = \LaunchSkuAccess::select('cpg_code', \DB::raw('CONCAT(brand_desc, " - ", cpg_desc) AS brand_desc'))
+				->join('skus','skus.sku_code','=','launch_sku_access.sku_code','left')
+				->where('launch_sku_access.user_id',$user_id)
+				->where('active',1)
+				->where('launch',1)
+				->whereIn('category_code',$filter)
+				->groupBy('cpg_code')
+				->orderBy('brand_desc')->get();
+
+				foreach($data2 as $row) {
+				    $data->add($row);
+				}
 			}
 
-			return \Response::json($data,200);
+
+
+			return \Response::json($data->lists('brand_desc', 'cpg_code'),200);
 		}
 	}
 
@@ -69,10 +92,33 @@ class SkuController extends \BaseController {
 			$data = array();
 			$data['selection']= array();
 			if($filter != ''){
-				$data['selection'] = \Sku::select('cpg_code', \DB::raw('CONCAT(brand_desc, " - ", cpg_desc) AS brand_desc'))
+				$selection = \Sku::select('cpg_code', \DB::raw('CONCAT(brand_desc, " - ", cpg_desc) AS brand_desc'))
+				->whereIn('category_code',$filter)
+				->where('active',1)
+				->where('launch',0)
+				->groupBy('cpg_code')
+				->orderBy('brand_desc')->get();
+
+				if(\Auth::user()->inRoles(['PROPONENT'])){
+					$user_id = \Auth::id();
+				}else{
+					
+				}
+
+				$data2 = \LaunchSkuAccess::select('cpg_code', \DB::raw('CONCAT(brand_desc, " - ", cpg_desc) AS brand_desc'))
+				->join('skus','skus.sku_code','=','launch_sku_access.sku_code','left')
+				->where('launch_sku_access.user_id',$user_id)
+				->where('active',1)
+				->where('launch',1)
 				->whereIn('category_code',$filter)
 				->groupBy('cpg_code')
-				->orderBy('brand_desc')->lists('brand_desc', 'cpg_code');
+				->orderBy('brand_desc')->get();
+
+				foreach($data2 as $row) {
+				    $selection->add($row);
+				}
+
+				$data['selection'] = $selection->lists('brand_desc', 'cpg_code');
 			}
 
 			$data['selected'] = \ActivityBrand::selected_brand($id);
