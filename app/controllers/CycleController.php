@@ -223,7 +223,19 @@ class CycleController extends \BaseController {
 					$activity->scheduled = true;
 					$activity->status_id = 9;
 					$activity->update();
+
+					// relaase sku 
+					$activity_skus = ActivitySku::where('activity_id',$activity->id)->get();
+					foreach ($activity_skus as $activity_sku) {
+						$activity_sku->active = 1;
+						$activity_sku->launch = 0;
+						$activity_sku->update();
+					}
+
 				}
+
+
+
 
 				foreach ($users as $user) {
 					$data['activities'] = Activity::Released($cycle_ids);

@@ -299,7 +299,7 @@ Route::get('ar/{token}','AllocationReportController@download');
 
 Route::group(array('before' => 'auth'), function()
 {	
-	Route::pattern('id', '[0-9]+');
+	// Route::pattern('id', '[0-9]+');
 
 	Route::get('launchskus/upload','LaunchSkuController@upload');
 	Route::post('launchskus/upload','LaunchSkuController@doupload');

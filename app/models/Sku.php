@@ -50,6 +50,7 @@ class Sku extends \Eloquent {
 						$sku->cpg_code = $row->cpg_code;
 						$sku->cpg_desc = $row->cpg_desc;
 						$sku->packsize_code = $row->packsize_code;
+						$sku->packsize_desc = $row->packsize_desc;
 						$sku->active = 1;
 						$sku->launch = 1;
 						$sku->save();	

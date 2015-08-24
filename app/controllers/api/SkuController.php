@@ -88,7 +88,9 @@ class SkuController extends \BaseController {
 	{
 		if(\Request::ajax()){
 			$filter = \Input::get('categories');
+			
 			$id = \Input::get('id');
+			$activity = \Activity::find($id);
 			$data = array();
 			$data['selection']= array();
 			if($filter != ''){
@@ -102,7 +104,7 @@ class SkuController extends \BaseController {
 				if(\Auth::user()->inRoles(['PROPONENT'])){
 					$user_id = \Auth::id();
 				}else{
-					
+					$user_id = $activity->created_by;
 				}
 
 				$data2 = \LaunchSkuAccess::select('cpg_code', \DB::raw('CONCAT(brand_desc, " - ", cpg_desc) AS brand_desc'))
