@@ -53,3 +53,6 @@
     margin-right: 0;
 }
 
+.multiselect-container > li > a > label{
+    white-space: normal !important;
+}

@@ -230,6 +230,8 @@ $('select#category').multiselect({
 
 $('select#brand').multiselect({
 	maxHeight: 200,
+	numberDisplayed: 1,
+	numberDisplayed: 1,
 	includeSelectAllOption: true,
 	enableCaseInsensitiveFiltering: true,
 	enableFiltering: true,
@@ -251,6 +253,8 @@ $('select#brand').multiselect({
 
 $('select#skus').multiselect({
 	maxHeight: 200,
+	numberDisplayed: 1,
+	numberDisplayed: 1,
 	includeSelectAllOption: true,
 	enableCaseInsensitiveFiltering: true,
 	enableFiltering: true

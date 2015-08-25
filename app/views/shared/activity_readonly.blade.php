@@ -1156,6 +1156,7 @@ $('select#category').multiselect({
 
 $('select#brand').multiselect({
 	maxHeight: 200,
+	numberDisplayed: 1,
 	onDropdownShow: function(event) {
         $('select#brand option').each(function() {
           	var input = $('input[value="' + $(this).val() + '"]');
@@ -1171,6 +1172,7 @@ $('select#brand').multiselect({
 
 $('select#objective').multiselect({
 	maxHeight: 200,
+	numberDisplayed: 1,
 	onDropdownShow: function(event) {
         $('select#objective option').each(function() {
           	var input = $('input[value="' + $(this).val() + '"]');
