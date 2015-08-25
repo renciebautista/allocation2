@@ -486,21 +486,21 @@ class WordDoc {
 					$barcodeTable->addRow();
 					$innerCell = $cell->addTable('Inner Table');
 					$barcodeCell = $barcodeTable->addCell(5525);
-					// if($scheme->item_barcode  !== ""){
-					// 	DNS1D::getBarcodePNGPath($scheme->item_barcode, "EAN13",2,80);
+					if($scheme->item_barcode  !== ""){
+						DNS1D::getBarcodePNGPath($scheme->item_barcode, "EAN13",2,80);
 						
-					// 	$barcodeCell->addText($scheme->name,array('size' => 8,'align' => 'center'), $fontStyle);
-					// 	$barcodeCell->addImage('public/barcode/'.$scheme->item_barcode.'.png',array('align' => 'center'));
-					// 	$barcodeCell->addText($scheme->item_barcode,array('size' => 8,'align' => 'center'), $fontStyle);
-					// }
+						$barcodeCell->addText($scheme->name,array('size' => 8,'align' => 'center'), $fontStyle);
+						$barcodeCell->addImage(public_path().'/barcode/'.$scheme->item_barcode.'.png',array('align' => 'center'));
+						$barcodeCell->addText($scheme->item_barcode,array('size' => 8,'align' => 'center'), $fontStyle);
+					}
 
 					$casecodeCell = $barcodeTable->addCell(5525);
-					// if($scheme->item_casecode  !== ""){
-					// 	DNS1D::getBarcodePNGPath($scheme->item_casecode, "I25",2,80);
-					// 	$casecodeCell->addText($scheme->name,array('size' => 8,'align' => 'center'), $fontStyle);
-					// 	$casecodeCell->addImage('public/barcode/'.$scheme->item_casecode.'.png',array('align' => 'center','spaceAfter' => 0));
-					// 	$casecodeCell->addText($scheme->item_casecode,array('size' => 8,'align' => 'center'), $fontStyle);
-					// }	
+					if($scheme->item_casecode  !== ""){
+						DNS1D::getBarcodePNGPath($scheme->item_casecode, "I25",2,80);
+						$casecodeCell->addText($scheme->name,array('size' => 8,'align' => 'center'), $fontStyle);
+						$casecodeCell->addImage(public_path().'/barcode/'.$scheme->item_casecode.'.png',array('align' => 'center','spaceAfter' => 0));
+						$casecodeCell->addText($scheme->item_casecode,array('size' => 8,'align' => 'center'), $fontStyle);
+					}	
 				}
 			}
 		}
