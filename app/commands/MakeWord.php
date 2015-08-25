@@ -56,8 +56,8 @@ class MakeWord extends Command {
 			$differenceInSeconds = $timeSecond - $timeFirst;
 			$this->line( 'Time used ' . $differenceInSeconds . " sec");
 
-			// $activity->word = 1;
-			// $activity->update();
+			$activity->word = 1;
+			$activity->update();
 		}
 	}
 
