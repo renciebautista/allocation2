@@ -486,13 +486,13 @@ class WordDoc {
 					$barcodeTable->addRow();
 					$innerCell = $cell->addTable('Inner Table');
 					$barcodeCell = $barcodeTable->addCell(5525);
-					if($scheme->item_barcode  !== ""){
-						DNS1D::getBarcodePNGPath($scheme->item_barcode, "EAN13",2,80);
+					// if($scheme->item_barcode  !== ""){
+					// 	DNS1D::getBarcodePNGPath($scheme->item_barcode, "EAN13",2,80);
 						
-						$barcodeCell->addText($scheme->name,array('size' => 8,'align' => 'center'), $fontStyle);
-						$barcodeCell->addImage('public/barcode/'.$scheme->item_barcode.'.png',array('align' => 'center'));
-						$barcodeCell->addText($scheme->item_barcode,array('size' => 8,'align' => 'center'), $fontStyle);
-					}
+					// 	$barcodeCell->addText($scheme->name,array('size' => 8,'align' => 'center'), $fontStyle);
+					// 	$barcodeCell->addImage('public/barcode/'.$scheme->item_barcode.'.png',array('align' => 'center'));
+					// 	$barcodeCell->addText($scheme->item_barcode,array('size' => 8,'align' => 'center'), $fontStyle);
+					// }
 
 					$casecodeCell = $barcodeTable->addCell(5525);
 					// if($scheme->item_casecode  !== ""){
