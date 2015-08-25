@@ -230,6 +230,11 @@ class CycleController extends \BaseController {
 						$activity_sku->active = 1;
 						$activity_sku->launch = 0;
 						$activity_sku->update();
+
+						$sku = Pricelist::where('sap_code',$activity_sku->sap_code)->first();
+						$sku->active = 1;
+						$sku->launch = 0;
+						$sku->update();
 					}
 				}
 

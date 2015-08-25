@@ -19,6 +19,8 @@ class User extends Eloquent implements ConfideUserInterface {
 		'group_id' => 'required|integer|min:1'
 	);
 
+
+
 	public static function search($status,$type,$search){
 		return self::select('users.id', 'users.first_name', 'users.last_name','users.email','users.active')
 			->join('assigned_roles', 'users.id', '=', 'assigned_roles.user_id')

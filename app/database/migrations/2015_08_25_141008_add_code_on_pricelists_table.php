@@ -14,9 +14,9 @@ class AddCodeOnPricelistsTable extends Migration {
 	{
 		Schema::table('pricelists', function(Blueprint $table)
 		{
-			$table->string('division_code')->after('id');
-			$table->string('category_code')->after('division_code');
-			$table->string('cpg_code')->after('category_code');
+			$table->string('cpg_code')->after('id');
+			$table->boolean('active')->after('srp')->default(true);
+			$table->boolean('launch')->after('active');
 		});
 	}
 
@@ -30,7 +30,7 @@ class AddCodeOnPricelistsTable extends Migration {
 	{
 		Schema::table('pricelists', function(Blueprint $table)
 		{
-			$table->dropColumn(array('division_code', 'category_code', 'cpg_code'));
+			$table->dropColumn(array('cpg_code', 'active', 'launch'));
 		});
 	}
 

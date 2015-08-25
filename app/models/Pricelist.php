@@ -5,8 +5,11 @@ class Pricelist extends \Eloquent {
 	public $timestamps = false;
 
 	public static function items(){
-		return self::select('sap_code', DB::raw('CONCAT(sap_desc, "- ", sap_code) AS full_desc'))
-			->orderBy('sap_desc')->lists('full_desc', 'sap_code');
+		return self::select('sap_code', DB::raw('CONCAT(sap_desc, " - ", sap_code) AS full_desc'))
+			->orderBy('sap_desc')
+			->where('active', 1)
+			->where('launch', 0)
+			->lists('full_desc', 'sap_code');
 	}
 
 	public static function getSku($sap_code){

@@ -234,6 +234,18 @@ $('select#brand').multiselect({
 	enableCaseInsensitiveFiltering: true,
 	enableFiltering: true,
 	onDropdownHide: function(event) {
+		$.ajax({
+			type: "POST",
+			data: {brand: GetSelectValues($('select#brand :selected'))},
+			url: "../api/skusinvolve",
+			success: function(data){
+				$('select#skus').empty();
+				$.each(data, function(i, text) {
+					$('<option />', {value: i, text: text}).appendTo($('select#skus')); 
+				});
+			$('select#skus').multiselect('rebuild');
+		   }
+		});
 	}
 });
 

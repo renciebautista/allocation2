@@ -319,7 +319,8 @@ Route::group(array('before' => 'auth'), function()
 
 	Route::get('launchskus/upload','LaunchSkuController@upload');
 	Route::post('launchskus/upload','LaunchSkuController@doupload');
-	Route::get('launchskus/{id}/access','LaunchSkuController@access');
+	Route::post('launchskus/assignaccess','LaunchSkuController@assignaccess');
+	Route::post('launchskus/removeaccess','LaunchSkuController@removeaccess');
 	Route::resource('launchskus','LaunchSkuController');
 
 	Route::get('help', 'HelpController@index');
@@ -509,6 +510,10 @@ Route::group(array('before' => 'auth'), function()
 		Route::post('categories', 'api\SkuController@categories');
 		Route::post('brand', 'api\SkuController@brand');
 		Route::post('brand/getselected', 'api\SkuController@brandselected');
+
+		Route::post('skusinvolve', 'api\PriceListController@involve');
+		Route::post('sku/skuselected', 'api\PriceListController@skuselected');
+
 		Route::resource('network', 'api\NetworkController');
 		Route::get('budgettype', 'api\BudgetTypeController@gettype');
 		Route::get('materialsource', 'api\MaterialController@getsource');

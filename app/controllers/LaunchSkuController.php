@@ -10,10 +10,21 @@ class LaunchSkuController extends \BaseController {
 	 */
 	public function index()
 	{
-		$launchsku = Sku::where('launch',1)
-			->where('active',1)
-			->get();
-		return View::make('launchsku.index',compact('launchsku'));
+		$launchskus = Sku::where('launch',1)->where('active',1)->get();
+		foreach ($launchskus as $sku) {
+			$users = LaunchSkuAccess::select(DB::raw('CONCAT(first_name, " ", last_name) AS full_name'))
+				->where('sku_code',$sku->sku_code)
+				->join('users', 'users.id', '=', 'launch_sku_access.user_id')
+				->get();
+			$data = array();
+			foreach ($users as $user) {
+				$data[] = $user->full_name;
+			}
+			$sku->users = implode(", ", $data);
+		}
+		// Helper::print_r($launchskus);
+		$proponents = User::getApprovers(['PROPONENT']);
+		return View::make('launchsku.index',compact('launchskus','proponents'));
 	}
 
 
@@ -32,19 +43,61 @@ class LaunchSkuController extends \BaseController {
 				->with('message', 'Launch SKU/s successfuly updated');
 	}
 
-	public function access($id){
-		$sku = Sku::getLaunchSku($id);
-		if(!empty($sku)){	
-			$proponents = User::GetPlanners(['PROPONENT']);
-			$selecteduser = LaunchSkuAccess::selectedUser($id);
-			return View::make('launchsku.access', compact('sku','proponents','selecteduser'));
-		}else{
-			return Redirect::action('LaunchSkuController@index')
-				->with('class', 'alert-danger')
-				->with('message', 'Sku not found!');
+	public function assignaccess(){
+		if(Request::ajax()){
+			$skus = Input::get('skus');
+			$users = Input::get('users');
+			if((!empty($skus)) && (!empty($users))){
+				$data = array();
+				foreach ($users as $user) {
+					foreach ($skus as $sku) {
+						$skuaccess = LaunchSkuAccess::where('sku_code',$sku)
+							->where('user_id',$user)
+							->first();
+						if(empty($skuaccess)){
+							LaunchSkuAccess::insert(array('sku_code' => $sku, 'user_id' => $user));
+						}
+					}
+				}
+				Session::flash('class', 'alert-success');
+				Session::flash('message', 'User sku access is successfuly udpated.');
+
+				return Response::json(array('success' => 1));
+			}else{
+				Session::flash('class', 'alert-danger');
+				Session::flash('message', 'Error updating user sku access!');
+				return Response::json(array('success' => 0));
+			}
 		}
-		
 	}
+
+	public function removeaccess(){
+		if(Request::ajax()){
+			$skus = Input::get('skus');
+			$users = Input::get('users');
+			if((!empty($skus)) && (!empty($users))){
+				$data = array();
+				foreach ($users as $user) {
+					foreach ($skus as $sku) {
+						LaunchSkuAccess::where('sku_code',$sku)
+							->where('user_id',$user)->delete();
+					}
+				}
+				Session::flash('class', 'alert-success');
+				Session::flash('message', 'User sku access is successfuly udpated.');
+
+				return Response::json(array('success' => 1));
+			}else{
+				Session::flash('class', 'alert-danger');
+				Session::flash('message', 'Error updating user sku access!');
+				return Response::json(array('success' => 0));
+			}
+		}
+	}
+
+
+		
+	// }
 	/**
 	 * Show the form for creating a new resource.
 	 * GET /launchsku/create
@@ -64,7 +117,7 @@ class LaunchSkuController extends \BaseController {
 	 */
 	public function store()
 	{
-		//
+		// var_dump(Input::all());
 	}
 
 	/**
@@ -100,29 +153,29 @@ class LaunchSkuController extends \BaseController {
 	 */
 	public function update($id)
 	{
-		$sku = Sku::getLaunchSku($id);
-		if(!empty($sku)){	
-			LaunchSkuAccess::where('sku_code',$id)->delete();
-			if(Input::has('proponent')){
-				$user = array();
-				foreach (Input::get('proponent') as $proponent) {
-					$user[] = array('sku_code' => $id, 'user_id' => $proponent);
-				}
+		// $sku = Sku::getLaunchSku($id);
+		// if(!empty($sku)){	
+		// 	LaunchSkuAccess::where('sku_code',$id)->delete();
+		// 	if(Input::has('proponent')){
+		// 		$user = array();
+		// 		foreach (Input::get('proponent') as $proponent) {
+		// 			$user[] = array('sku_code' => $id, 'user_id' => $proponent);
+		// 		}
 
-				if(count($user) > 0){
-					LaunchSkuAccess::insert($user);
-				}
-			}
+		// 		if(count($user) > 0){
+		// 			LaunchSkuAccess::insert($user);
+		// 		}
+		// 	}
 			
 
-			return Redirect::action('LaunchSkuController@access',$id)
-				->with('class', 'alert-success')
-				->with('message', 'Sku access successfuly updated.');
-		}else{
-			return Redirect::action('LaunchSkuController@index')
-				->with('class', 'alert-danger')
-				->with('message', 'Sku not found!');
-		}
+		// 	return Redirect::action('LaunchSkuController@access',$id)
+		// 		->with('class', 'alert-success')
+		// 		->with('message', 'Sku access successfuly updated.');
+		// }else{
+		// 	return Redirect::action('LaunchSkuController@index')
+		// 		->with('class', 'alert-danger')
+		// 		->with('message', 'Sku not found!');
+		// }
 	}
 
 	/**

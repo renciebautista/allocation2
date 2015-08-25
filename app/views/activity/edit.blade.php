@@ -257,7 +257,7 @@
 							<div class="row">
 								<div class="col-lg-12">
 									{{ Form::label('skus', 'SKU/s Involved', array('class' => 'control-label')) }}
-									{{ Form::select('skus[]',  $involves, $sel_involves, array('id' => 'skus', 'class' => 'form-control multiselect' ,'multiple' => 'multiple' ,'data-placeholder' => 'SELECT SKU/s')) }}
+									<select class="form-control" data-placeholder="SELECT SKU/s" id="skus" name="skus[]" multiple="multiple" ></select>
 								</div>
 							</div>
 						</div>

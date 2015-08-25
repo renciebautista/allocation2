@@ -284,10 +284,29 @@ function updatebrand(){
 					$('<option '+sel_class+' value="'+i+'">'+text+'</option>').appendTo($('select#brand'));
 				});
 			$('select#brand').multiselect('rebuild');
+			updateskus();
 		   }
 		});
 }
 
+function updateskus(){
+	$.ajax({
+			type: "POST",
+			data: {brand: GetSelectValues($('select#brand :selected')),id: {{ $activity->id }}},
+			url: "../../api/sku/skuselected",
+			success: function(data){
+				$('select#skus').empty();
+				$.each(data.selection, function(i, text) {
+					var sel_class = '';
+					if($.inArray( i,data.selected ) > -1){
+						sel_class = 'selected="selected"';
+					}
+					$('<option '+sel_class+' value="'+i+'">'+text+'</option>').appendTo($('select#skus'));
+				});
+			$('select#skus').multiselect('rebuild');
+		   }
+		});
+}
 
 var div = $("select#division").val();
 if(parseInt(div) > 0) {
@@ -322,6 +341,7 @@ $('select#brand').multiselect({
 	enableCaseInsensitiveFiltering: true,
 	enableFiltering: true,
 	onDropdownHide: function(event) {
+		updateskus();
 	}
 });
 

@@ -25,12 +25,36 @@
 	</div>
 </div>
 <br>
+
+{{ Form::open(array('action' => 'LaunchSkuController@assignaccess','class' => 'bs-component')) }}
+<div class="panel panel-default">
+	<div class="panel-heading">Proponents</div>
+	<div class="panel-body">
+		<div class="row">
+			<div class="col-lg-6">
+				<div class="form-group">
+					<div class="row">
+						<div class="col-lg-12">
+						{{ Form::select('users[]', $proponents, null, array('id' => 'users','class' => 'form-control', 'multiple' => 'multiple')) }}
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-6">
+				<button id="assign" type="button" class="btn btn-info"> Assign Access</button>
+		  		<button id="remove" type="button" class="btn btn-danger"> Remove Access</button>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div class="row">
 	<div class="col-lg-12">
 		<div class="table-responsive">
 			<table class="table table-striped table-condensed table-hover table-bordered">
 				<thead>
 					<tr>
+						<th></th>
 						<th class="center">Sap Code</th>
 						<th class="center">Description</th>
 						
@@ -38,30 +62,25 @@
 						<th class="center">Category</th>
 						<th class="center">Brand</th>
 						<th class="center">CPG Description</th>
-						<th colspan="2" class="dash-action">Action</th>
+						<th class="center">Proponents</th>
 					</tr>
 				</thead>
 				<tbody>
-					@if(count($launchsku) == 0)
+					@if(count($launchskus) == 0)
 					<tr>
-						<td colspan="8">No record found!</td>
+						<td colspan="9">No record found!</td>
 					</tr>
 					@else
-					@foreach($launchsku as $launch)
+					@foreach($launchskus as $launch)
 					<tr>
+						<td class="center">{{ Form::checkbox('skus[]',  $launch->sku_code) }}</td>
 						<td>{{ $launch->sku_code }}</td>
 						<td>{{ $launch->sku_desc }}</td>
 						<td>{{ $launch->division_desc }}</td>
 						<td>{{ $launch->category_desc }}</td>
 						<td>{{ $launch->brand_desc }}</td>
 						<td>{{ $launch->cpg_desc }}</td>
-						<td class="action">
-							{{ Form::open(array('method' => 'DELETE', 'action' => array('LaunchSkuController@destroy', $launch->sku_code))) }}                       
-							{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}
-							{{ Form::close() }}
-						</td>
-						<td class="action">
-							{{ HTML::linkAction('LaunchSkuController@access','Proponent Access', $launch->sku_code, array('class' => 'btn btn-info btn-xs')) }}
+						<td>{{ $launch->users }}
 						</td>
 					</tr>
 					@endforeach
@@ -71,8 +90,99 @@
 		</div>
 	</div>
 </div>
-
+{{ Form::close() }}
 @stop
 
 @section('page-script')
+$('#users').multiselect({
+	maxHeight: 200,
+	includeSelectAllOption: true,
+	enableCaseInsensitiveFiltering: true,
+	enableFiltering: true
+});
+
+$("#assign").click(function(e){
+	bootbox.dialog({
+	  message: "Do you want to assign user access to this sku/s?",
+	  title: "ETOP",
+	  buttons: {
+	    success: {
+	      	label: "Yes",
+	      	className: "btn btn-primary",
+	      	callback: function() {
+	        	var skus = new Array();
+				$("input[name='skus[]']:checked").each(function(i) {
+					skus.push($(this).val());
+				});
+				var users = GetSelectValues($('select#users :selected'));
+				
+				if((skus.length == 0) || (users.length == 0)){
+					alert("No users or sku selected");
+				}else{
+					$.ajax({
+					    type: 'POST',
+					    url: "{{ URL::action('LaunchSkuController@assignaccess') }}",
+					    data: { skus: skus, users:users },
+					    success: function(data) {
+						    if(data.success == 1){
+						    	location.reload();
+							}else{
+								alert("Error updating records!");
+							}
+					        
+					    }
+					});
+				}
+	      }
+	    },
+	    danger: {
+	      	label: "No",
+	      	className: "btn btn-default"
+	    },
+	  }
+	});
+});
+
+$("#remove").click(function(e){
+	bootbox.dialog({
+	  message: "Do you want to remove user access to this sku/s?",
+	  title: "ETOP",
+	  buttons: {
+	    success: {
+	      	label: "Yes",
+	      	className: "btn btn-primary",
+	      	callback: function() {
+	        	var skus = new Array();
+				$("input[name='skus[]']:checked").each(function(i) {
+					skus.push($(this).val());
+				});
+				var users = GetSelectValues($('select#users :selected'));
+				
+				if((skus.length == 0) || (users.length == 0)){
+					alert("No users or sku selected");
+				}else{
+					$.ajax({
+					    type: 'POST',
+					    url: "{{ URL::action('LaunchSkuController@removeaccess') }}",
+					    data: { skus: skus, users:users },
+					    success: function(data) {
+						    if(data.success == 1){
+						    	location.reload();
+							}else{
+								alert("Error updating records!");
+							}
+					        
+					    }
+					});
+				}
+	      }
+	    },
+	    danger: {
+	      	label: "No",
+	      	className: "btn btn-default"
+	    },
+	  }
+	});
+});
+
 @stop

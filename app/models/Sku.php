@@ -6,6 +6,7 @@ class Sku extends \Eloquent {
 		'cpg_desc', 'packsize_code', 'packsize_desc'];
 	public $timestamps = false;
 
+
 	public static function batchInsert($records){
 		$records->each(function($row) {
 			if(!is_null($row->division_code)){

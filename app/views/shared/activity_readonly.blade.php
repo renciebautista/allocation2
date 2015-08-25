@@ -260,7 +260,7 @@
 							<div class="row">
 								<div class="col-lg-12">
 									{{ Form::label('skus', 'SKU/s Involved', array('class' => 'control-label')) }}
-									{{ Form::select('skus[]',  $involves, $sel_involves, array('id' => 'skus', 'class' => 'form-control' ,'multiple' => 'multiple' ,'data-placeholder' => 'SELECT SKU/s')) }}
+									<select class="form-control" data-placeholder="SELECT SKU/s" id="skus" name="skus[]" multiple="multiple" ></select>
 								</div>
 							</div>
 						</div>
@@ -1095,6 +1095,26 @@ function updatebrand(){
 					$('<option '+sel_class+' value="'+i+'">'+text+'</option>').appendTo($('select#brand'));
 				});
 			$('select#brand').multiselect('rebuild');
+			updateskus();
+		   }
+		});
+}
+
+function updateskus(){
+	$.ajax({
+			type: "POST",
+			data: {brand: GetSelectValues($('select#brand :selected')),id: {{ $activity->id }}},
+			url: "../../api/sku/skuselected",
+			success: function(data){
+				$('select#skus').empty();
+				$.each(data.selection, function(i, text) {
+					var sel_class = '';
+					if($.inArray( i,data.selected ) > -1){
+						sel_class = 'selected="selected"';
+					}
+					$('<option '+sel_class+' value="'+i+'">'+text+'</option>').appendTo($('select#skus'));
+				});
+			$('select#skus').multiselect('rebuild');
 		   }
 		});
 }
@@ -1144,6 +1164,7 @@ $('select#brand').multiselect({
         });
     },
 	onDropdownHide: function(event) {
+		updateskus();
 	}
 });
 
