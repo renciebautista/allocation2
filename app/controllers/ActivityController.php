@@ -62,7 +62,9 @@ class ActivityController extends BaseController {
 			$activity_types = ActivityType::getWithNetworks();
 			$cycles = Cycle::getLists();
 			$divisions = Sku::divisions();
+
 			$involves = Pricelist::items();
+			
 			$objectives = Objective::getLists();
 			return View::make('activity.create', compact('scope_types', 'planners', 'approvers', 'cycles', 'involves',
 			 'activity_types', 'divisions' , 'objectives',  'users'));
