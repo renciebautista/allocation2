@@ -308,10 +308,10 @@ class CycleController extends \BaseController {
 				->whereIn('activities.cycle_id',$cycle_ids)
 				->where('status_id','>', 7)
 				->get();
-				
+
 			$total_activities = count($activities);
 			foreach ($activities as $activity) {
-				$activity->pdf = 0;
+				$activity->word = 0;
 				$activity->update();
 				
 				if($_ENV['MAIL_TEST']){
