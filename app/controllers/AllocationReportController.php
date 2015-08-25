@@ -75,7 +75,6 @@ class AllocationReportController extends \BaseController {
 			$scopes = Activity::getScopes();
 			$proponents = Activity::getProponents();
 			$planners = Activity::getPlanners();
-			$approvers = Activity::getApprovers();
 			$activitytypes = Activity::getActivityType();
 			$divisions = Activity::getDivision();
 			$categories = Activity::getCategory();
@@ -84,7 +83,7 @@ class AllocationReportController extends \BaseController {
 			$schemefields = AllocReportPerGroup::getAvailableFields(Auth::user()->roles[0]->id);
 
 			return View::make('allocationreport.createfield',compact('proponents','planners',
-			'approvers', 'activitytypes', 'scopes', 'divisions', 'brands', 'categories', 'schemefields'));
+			'activitytypes', 'scopes', 'divisions', 'brands', 'categories', 'schemefields'));
 		}
 		
 

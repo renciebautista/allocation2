@@ -497,6 +497,7 @@ class WordDoc {
 					$casecodeCell = $barcodeTable->addCell(5525);
 					if($scheme->item_casecode  !== ""){
 						DNS1D::getBarcodePNGPath($scheme->item_casecode, "I25",2,80);
+						
 						$casecodeCell->addText($scheme->name,array('size' => 8,'align' => 'center'), $fontStyle);
 						$casecodeCell->addImage(public_path().'/barcode/'.$scheme->item_casecode.'.png',array('align' => 'center','spaceAfter' => 0));
 						$casecodeCell->addText($scheme->item_casecode,array('size' => 8,'align' => 'center'), $fontStyle);

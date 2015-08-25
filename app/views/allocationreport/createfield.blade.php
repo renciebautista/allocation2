@@ -71,26 +71,18 @@
 				<div class="form-group">
 					<div class="row">
 						<div class="col-lg-12">
-						{{ Form::label('app', 'Activity Approver', array('class' => 'control-label')) }}
-						{{ Form::select('app[]', $approvers, null, array('id' => 'app','class' => 'form-control', 'multiple' => 'multiple')) }}
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<div class="row">
-			
-			<div class="col-lg-6">
-				<div class="form-group">
-					<div class="row">
-						<div class="col-lg-12">
 						{{ Form::label('type', 'Activity Type', array('class' => 'control-label')) }}
 						{{ Form::select('type[]', $activitytypes, null, array('id' => 'type','class' => 'form-control', 'multiple' => 'multiple')) }}
 						</div>
 					</div>
 				</div>
 			</div>
+
+		</div>
+
+		<div class="row">
+			
+			
 
 			<div class="col-lg-6">
 				<div class="form-group">
@@ -102,10 +94,7 @@
 					</div>
 				</div>
 			</div>
-		</div>
 
-		<div class="row">
-			
 			<div class="col-lg-6">
 				<div class="form-group">
 					<div class="row">
@@ -116,7 +105,9 @@
 					</div>
 				</div>
 			</div>
+		</div>
 
+		<div class="row">
 			<div class="col-lg-6">
 				<div class="form-group">
 					<div class="row">
