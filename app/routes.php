@@ -267,7 +267,7 @@ Route::get('testrole', function(){
 
 Route::get('mailreport', function(){
 	$template = AllocationReportTemplate::findOrFail(27);
-	$user = User::find(1);
+	$user = User::find(11);
 	$data['template'] = $template;
 	$data['token'] = '1';
 	$data['user'] = $user;
