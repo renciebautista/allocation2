@@ -231,10 +231,7 @@ class CycleController extends \BaseController {
 						$activity_sku->launch = 0;
 						$activity_sku->update();
 					}
-
 				}
-
-
 
 
 				foreach ($users as $user) {
@@ -282,7 +279,7 @@ class CycleController extends \BaseController {
 				->with('message', $cycle->cycle_name.' cycle pdf creation is successfuly initiated.');
 	}
 
-	public function rerunword($id){
+	public function rerundoc($id){
 		// rerun activities
 		$cycle = Cycle::find($id);
 		$activities = Activity::select('activities.id', 'activities.circular_name')

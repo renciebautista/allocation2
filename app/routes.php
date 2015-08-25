@@ -154,7 +154,6 @@ Route::get('allocreport', function(){
 
 		$objWriter = PHPExcel_IOFactory::createWriter($excel2, 'Excel2007');
 		$objWriter->save(storage_path('exports/'.$token.'_2.xlsx'));
-		
 });
 
 Route::get('testpdf',function(){
@@ -233,8 +232,7 @@ Route::get('testpdf',function(){
 		$str_table .='</table>';
 		echo $str_table;
 
-	}
-}			
+	}}			
 });
 
 Route::get('testword',function(){
@@ -266,6 +264,17 @@ Route::get('testrole', function(){
 
 	return View::make('emails.mail4', $data);
 });
+
+Route::get('mailreport', function(){
+	$template = AllocationReportTemplate::findOrFail(27);
+	$user = User::find(1);
+	$data['template'] = $template;
+	$data['token'] = '1';
+	$data['user'] = $user;
+	return View::make('emails.allocreport',compact('data'));
+});
+
+//---------------------------------------------------
 
 Route::post('queue/push', function()
 {
