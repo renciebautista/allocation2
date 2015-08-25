@@ -255,52 +255,73 @@ class CycleController extends \BaseController {
 
 	public function rerun($id){
 		// rerun activities
-		$cycle = Cycle::find($id);
-		$activities = Activity::select('activities.id', 'activities.circular_name')
-			->join('cycles', 'cycles.id', '=', 'activities.cycle_id')
-			->where('cycles.id',$id)
-			->where('status_id','>', 7)
-			->get();
-		foreach ($activities as $activity) {
-			$activity->pdf = 0;
-			$activity->update();
-			
-			if($_ENV['MAIL_TEST']){
-				$job_id = Queue::push('Scheduler', array('string' => "Scheduling ".$activity->circular_name, 'id' => $activity->id),'pdf');
-				
-			}else{
-				$job_id = Queue::push('Scheduler', array('string' => "Scheduling ".$activity->circular_name, 'id' => $activity->id),'p_pdf');
+		if(Request::ajax()){
+			$ids = Input::get('ids');
+			$cycle_ids = array();
+			if(count($ids) > 0){
+				foreach ($ids as $value) {
+					$cycle_ids[] = $value;
+				}
 			}
-			Job::create(array('job_id' => $job_id));
-		}
 
-		return Redirect::route('cycle.index')
-				->with('class', 'alert-success')
-				->with('message', $cycle->cycle_name.' cycle pdf creation is successfuly initiated.');
+			$total_activities = 0;
+
+			$activities = Activity::select('activities.id', 'activities.circular_name')
+				->join('cycles', 'cycles.id', '=', 'activities.cycle_id')
+				->whereIn('activities.cycle_id',$cycle_ids)
+				->where('status_id','>', 7)
+				->get();
+
+			$total_activities = count($activities);
+			foreach ($activities as $activity) {
+
+				$activity->pdf = 0;
+				$activity->update();
+				
+				if($_ENV['MAIL_TEST']){
+					$job_id = Queue::push('Scheduler', array('string' => "Scheduling ".$activity->circular_name, 'id' => $activity->id),'pdf');
+					
+				}else{
+					$job_id = Queue::push('Scheduler', array('string' => "Scheduling ".$activity->circular_name, 'id' => $activity->id),'p_pdf');
+				}
+				Job::create(array('job_id' => $job_id));
+			}
+
+			echo $total_activities;
+		}
 	}
 
 	public function rerundoc($id){
-		// rerun activities
-		$cycle = Cycle::find($id);
-		$activities = Activity::select('activities.id', 'activities.circular_name')
-			->join('cycles', 'cycles.id', '=', 'activities.cycle_id')
-			->where('cycles.id',$id)
-			->where('status_id','>', 7)
-			->get();
-		foreach ($activities as $activity) {
-			$activity->pdf = 0;
-			$activity->update();
-			
-			if($_ENV['MAIL_TEST']){
-				$job_id = Queue::push('WordScheduler', array('string' => "Scheduling ".$activity->circular_name, 'id' => $activity->id),'word');
-			}else{
-				$job_id = Queue::push('WordScheduler', array('string' => "Scheduling ".$activity->circular_name, 'id' => $activity->id),'p_word');
+		if(Request::ajax()){
+			$ids = Input::get('ids');
+			$cycle_ids = array();
+			if(count($ids) > 0){
+				foreach ($ids as $value) {
+					$cycle_ids[] = $value;
+				}
 			}
-			Job::create(array('job_id' => $job_id));
-		}
 
-		return Redirect::route('cycle.index')
-				->with('class', 'alert-success')
-				->with('message', $cycle->cycle_name.' cycle word creation is successfuly initiated.');
+			$total_activities = 0;
+
+			$activities = Activity::select('activities.id', 'activities.circular_name')
+				->join('cycles', 'cycles.id', '=', 'activities.cycle_id')
+				->whereIn('activities.cycle_id',$cycle_ids)
+				->where('status_id','>', 7)
+				->get();
+				
+			$total_activities = count($activities);
+			foreach ($activities as $activity) {
+				$activity->pdf = 0;
+				$activity->update();
+				
+				if($_ENV['MAIL_TEST']){
+					$job_id = Queue::push('WordScheduler', array('string' => "Scheduling ".$activity->circular_name, 'id' => $activity->id),'word');
+				}else{
+					$job_id = Queue::push('WordScheduler', array('string' => "Scheduling ".$activity->circular_name, 'id' => $activity->id),'p_word');
+				}
+				Job::create(array('job_id' => $job_id));
+			}
+			echo $total_activities;
+		}
 	}
 }
