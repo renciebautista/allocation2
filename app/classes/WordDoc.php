@@ -471,39 +471,39 @@ class WordDoc {
 		}
 
 		// Barcodes / Case Codes
-		// if(count($schemes) > 0){
-		// 	$section->addTextBreak(1);
-		// 	$section->addText("Barcodes / Case Codes Per Scheme",array('bold'=>true,'size' => 10));
-		// 	$fontStyle = array('bold' => true, 'align' => 'center','spaceAfter' => 0);
-		// 	$styleFirstRow = array('borderBottomSize' => 18, 'borderBottomColor' => '0000FF', 'bgColor' => '000000','color' => 'ffffff');
-		// 	$phpWord->addTableStyle('Barcode Table', $styleTable, $styleFirstRow);
-		// 	$barcodeTable = $section->addTable('Barcode Table');
-		// 	$barcodeTable->addRow();
-		// 	$barcodeTable->addCell(5525)->addText("Source",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-		// 	$barcodeTable->addCell(5525)->addText("Materials",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-		// 	foreach ($schemes as $scheme) {
-		// 		if(($scheme->item_barcode  !== "") || ($scheme->item_casecode !== "")){
-		// 			$barcodeTable->addRow();
-		// 			$innerCell = $cell->addTable('Inner Table');
-		// 			$barcodeCell = $barcodeTable->addCell(5525);
-		// 			if($scheme->item_barcode  !== ""){
-		// 				DNS1D::getBarcodePNGPath($scheme->item_barcode, "EAN13",2,80);
+		if(count($schemes) > 0){
+			$section->addTextBreak(1);
+			$section->addText("Barcodes / Case Codes Per Scheme",array('bold'=>true,'size' => 10));
+			$fontStyle = array('bold' => true, 'align' => 'center','spaceAfter' => 0);
+			$styleFirstRow = array('borderBottomSize' => 18, 'borderBottomColor' => '0000FF', 'bgColor' => '000000','color' => 'ffffff');
+			$phpWord->addTableStyle('Barcode Table', $styleTable, $styleFirstRow);
+			$barcodeTable = $section->addTable('Barcode Table');
+			$barcodeTable->addRow();
+			$barcodeTable->addCell(5525)->addText("Source",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+			$barcodeTable->addCell(5525)->addText("Materials",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+			foreach ($schemes as $scheme) {
+				if(($scheme->item_barcode  !== "") || ($scheme->item_casecode !== "")){
+					$barcodeTable->addRow();
+					$innerCell = $cell->addTable('Inner Table');
+					$barcodeCell = $barcodeTable->addCell(5525);
+					if($scheme->item_barcode  !== ""){
+						DNS1D::getBarcodePNGPath($scheme->item_barcode, "EAN13",2,80);
 						
-		// 				$barcodeCell->addText($scheme->name,array('size' => 8,'align' => 'center'), $fontStyle);
-		// 				$barcodeCell->addImage('public/barcode/'.$scheme->item_barcode.'.png',array('align' => 'center'));
-		// 				$barcodeCell->addText($scheme->item_barcode,array('size' => 8,'align' => 'center'), $fontStyle);
-		// 			}
+						$barcodeCell->addText($scheme->name,array('size' => 8,'align' => 'center'), $fontStyle);
+						$barcodeCell->addImage('public/barcode/'.$scheme->item_barcode.'.png',array('align' => 'center'));
+						$barcodeCell->addText($scheme->item_barcode,array('size' => 8,'align' => 'center'), $fontStyle);
+					}
 
-		// 			$casecodeCell = $barcodeTable->addCell(5525);
-		// 			if($scheme->item_casecode  !== ""){
-		// 				DNS1D::getBarcodePNGPath($scheme->item_casecode, "I25",2,80);
-		// 				$casecodeCell->addText($scheme->name,array('size' => 8,'align' => 'center'), $fontStyle);
-		// 				$casecodeCell->addImage('public/barcode/'.$scheme->item_casecode.'.png',array('align' => 'center','spaceAfter' => 0));
-		// 				$casecodeCell->addText($scheme->item_casecode,array('size' => 8,'align' => 'center'), $fontStyle);
-		// 			}	
-		// 		}
-		// 	}
-		// }
+					$casecodeCell = $barcodeTable->addCell(5525);
+					if($scheme->item_casecode  !== ""){
+						DNS1D::getBarcodePNGPath($scheme->item_casecode, "I25",2,80);
+						$casecodeCell->addText($scheme->name,array('size' => 8,'align' => 'center'), $fontStyle);
+						$casecodeCell->addImage('public/barcode/'.$scheme->item_casecode.'.png',array('align' => 'center','spaceAfter' => 0));
+						$casecodeCell->addText($scheme->item_casecode,array('size' => 8,'align' => 'center'), $fontStyle);
+					}	
+				}
+			}
+		}
 		
 		
 
