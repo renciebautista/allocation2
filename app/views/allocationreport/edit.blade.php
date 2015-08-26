@@ -199,7 +199,7 @@
 </div>
 
 <div class="form-group">
-	{{ Form::submit('Update', array('class' => 'btn btn-primary')) }}
+	{{ Form::submit('Update', array('class' => 'btn btn-primary disable-button')) }}
 	{{ HTML::linkAction('AllocationReportController@index', 'Back', array(), array('class' => 'btn btn-default')) }}
 </div>
 {{ Form::close() }}
@@ -208,6 +208,8 @@
 @stop
 
 @section('page-script')
+
+$(".disable-button").disableButton();
 
 $("#tree3").fancytree({
 	checkbox: true,

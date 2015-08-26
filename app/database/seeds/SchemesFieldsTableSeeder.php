@@ -67,7 +67,9 @@ class SchemesFieldsTableSeeder extends Seeder {
 			('allocations.in_cases as no_of_cases','CASES'),
 			('allocations.tts_budget as tts_requirement','TTS BUDGET'),
 			('allocations.pe_budget as pe_requirement','PE BUDGET'),
-			('allocations.pe_budget + allocations.pe_budget as total_cost','TOTAL COST');");
+			('allocations.pe_budget + allocations.pe_budget as total_cost','TOTAL COST'),
+			('tts_budget.tts_io','TTS IO'),
+			('pe_budget.pe_io','PE IO');");
 
 		DB::table('alloc_report_per_groups')->truncate();
 

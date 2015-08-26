@@ -195,6 +195,8 @@ class AllocationReport extends \Eloquent {
 		// allocations.tts_budget as tts_requirement,
 		// allocations.pe_budget as pe_requirement,
 		// allocations.pe_budget + allocations.pe_budget as total_cost
+		// tts_budget.tts_io,
+		// pe_budget.pe_io,
 
 
 	
@@ -250,6 +252,20 @@ class AllocationReport extends \Eloquent {
 				FROM scheme_premuim_skus 
 				GROUP BY scheme_id
 			) as premiumsku_tbl ON schemes.id = premiumsku_tbl.scheme_id
+			LEFT JOIN ( 
+				SELECT activity_id, 
+			    GROUP_CONCAT(CONCAT(activity_budgets.io_number)) as tts_io 
+			    FROM activity_budgets
+			    WHERE budget_type_id = 1
+				GROUP BY activity_id 
+			) as tts_budget ON activities.id = tts_budget.activity_id 
+			LEFT JOIN ( 
+				SELECT activity_id, 
+			    GROUP_CONCAT(CONCAT(activity_budgets.io_number)) as pe_io 
+			    FROM activity_budgets
+			    WHERE budget_type_id = 2
+				GROUP BY activity_id 
+			) as pe_budget ON activities.id = pe_budget.activity_id 
 			WHERE allocations.show = 1
 			%s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s ORDER BY allocations.id LIMIT %s,%s ",
 			$fields,
