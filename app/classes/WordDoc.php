@@ -511,7 +511,7 @@ class WordDoc {
 	    // FDA Permit
 		if(!empty($fdapermit)){
 			$file = explode(".", $fdapermit->file_desc);
-			if($file[1] != "pdf"){
+			if(($file[1] != "pdf") &&  ($file[1] != "xps")){
 				$section->addPageBreak();
 				$section->addText("FDA Permit",array('bold'=>true,'size' => 10));
 				$section->addImage(storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/'.$fdapermit->hash_name,array('height'=>800));

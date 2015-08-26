@@ -37,6 +37,7 @@ class LaunchSkuController extends \BaseController {
 		$cnt = 0;
 		Excel::selectSheets('Sheet1')->load($file_path, function($reader) {
 			$cnt = Sku::insertLaunch($reader->get());
+			Pricelist::insertLaunch($reader->get());
 		});
 		return Redirect::action('LaunchSkuController@index')
 				->with('class', 'alert-success')

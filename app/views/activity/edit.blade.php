@@ -810,7 +810,7 @@
 						  	<div class="form-group">
 						    	{{ Form::file('file','',array('id'=>'','class'=>'')) }}
 						  	</div>
-						  	<p class="text-success">Uploadable file version/s: .jpg,.jpeg,.png,.gif,.pdf</p>
+						  	<p class="text-success">Uploadable file version/s: .jpg,.jpeg,.png,.gif,.pdf,.xps</p>
 						  	{{ Form::submit('Upload', array('class' => 'btn btn-primary')) }}
 					  	</div>
 				  	</div>

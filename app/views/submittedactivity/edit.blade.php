@@ -494,7 +494,7 @@
 
 						?>
 						<ul>
-						@if($file[1] != "pdf")
+						@if(($file[1] != "pdf") && ($file[1] != "xps"))
 						
 							<li>{{ HTML::image('fdapermit/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/'.$fdapermit->hash_name ,$fdapermit->file_desc) }}</li>
 						

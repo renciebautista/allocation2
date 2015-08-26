@@ -273,7 +273,7 @@ class MakePdf extends Command {
 			
 			if(count($fdapermit) > 0){
 				$file = explode(".", $fdapermit->file_desc);
-				if($file[1] != "pdf"){
+				if(($file[1] != "pdf") &&  ($file[1] != "xps")){
 					$pdf->AddPage();
 					$fdapermit_view = View::make('pdf.fdapermit')->render();
 					$pdf->writeHTML($fdapermit_view, $ln=true, $fill=false, $reset=false, $cell=false, $align='');
