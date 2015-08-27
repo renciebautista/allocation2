@@ -91,10 +91,64 @@ class MakeAllocReport extends Command {
 			$counter += $take;
 			foreach($rows as $key => $value)
 			{
+				if(isset($value->cost_of_premium)){
+					$value->cost_of_premium = (double) $value->cost_of_premium;
+				}
+				if(isset($value->other_cost_per_deal)){
+					$value->other_cost_per_deal = (double) $value->other_cost_per_deal;
+				}
+				if(isset($value->purchase_requirement)){
+					$value->purchase_requirement = (double) $value->purchase_requirement;
+				}
+				if(isset($value->total_unilever_cost)){
+					$value->total_unilever_cost = (double) $value->total_unilever_cost;
+				}
+
+				if(isset($value->list_price_after_tax)){
+					$value->list_price_after_tax = (double) $value->list_price_after_tax;
+				}
+				if(isset($value->list_price_before_tax)){
+					$value->list_price_before_tax = (double) $value->list_price_before_tax;
+				}
+				if(isset($value->cost_to_sale)){
+					$value->cost_to_sale = (double) $value->cost_to_sale;
+				}
+				if(isset($value->sold_to_sales)){
+					$value->sold_to_sales = (double) $value->sold_to_sales;
+				}
+
+				if(isset($value->sold_to_sales_p)){
+					$value->sold_to_sales_p = (double) $value->sold_to_sales_p;
+				}
+				if(isset($value->ship_to_sales)){
+					$value->ship_to_sales = (double) $value->ship_to_sales;
+				}
+				if(isset($value->ship_to_sales_p)){
+					$value->ship_to_sales_p = (double) $value->ship_to_sales_p;
+				}
+				if(isset($value->outlet_sales)){
+					$value->outlet_sales = (double) $value->outlet_sales;
+				}
+
+				if(isset($value->outlet_sales_p)){
+					$value->outlet_sales_p = (double) $value->outlet_sales_p;
+				}
+				
+				if(isset($value->tts_requirement)){
+					$value->tts_requirement = (double) $value->tts_requirement;
+				}
+				if(isset($value->pe_requirement)){
+					$value->pe_requirement = (double) $value->pe_requirement;
+				}
+
+				if(isset($value->total_cost)){
+					$value->total_cost = (double) $value->total_cost;
+				}
+
 				$rows[$key] = (array) $value;
 			} 
 			$export_data = $rows;
-
+			// var_dump($export_data);
 			$writer->addRows($export_data); // add multiple rows at a time
 		}
 		$writer->close();
@@ -117,10 +171,10 @@ class MakeAllocReport extends Command {
 		
 		$this->line($newfile->file_name);
 		
-		Mail::send('emails.allocreport', $data, function($message) use ($user, $name){
-			$message->to($user->email, $user->first_name);
-			$message->subject('Allocation Report - '.$name);
-		});
+		// Mail::send('emails.allocreport', $data, function($message) use ($user, $name){
+		// 	$message->to($user->email, $user->first_name);
+		// 	$message->subject('Allocation Report - '.$name);
+		// });
 	}
 
 	/**

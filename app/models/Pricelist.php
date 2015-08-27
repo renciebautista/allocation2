@@ -32,7 +32,6 @@ class Pricelist extends \Eloquent {
 	public static function insertLaunch($records){
 		$cnt = 0;
 		DB::beginTransaction();
-
 			try {
 			$records->each(function($row) use ($cnt) {
 				if(!is_null($row->sku_code)){
