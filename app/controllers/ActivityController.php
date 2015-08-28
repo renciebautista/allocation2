@@ -1425,15 +1425,31 @@ class ActivityController extends BaseController {
 	}
 
 	public function fdaupload($id){
+		
+		// Validator::extend('hashmatch', function($attribute, $value, $parameters)
+		// {
+		// 	Helper::print_r($parameters);
+		// 	Helper::print_r($attribute);
+		// 	Helper::print_r($value);
+		// 	echo $value->guessExtension();
+		//     // return Hash::check($value, Auth::user()->$parameters[0]);
+		// });
+		// $messages = array(
+		//     'hashmatch' => 'Your current password must match your account password.'
+		// );
+		// $rules = array(
+		//     'current_password' => 'required|hashmatch:password',
+		//     'password'         => 'required|confirmed|min:4|different:current_password'
+		// );
+
+		// $validation = Validator::make( Input::all(), $rules, $messages );
 
 		$activity = Activity::findOrFail($id);
 
 		$input = array('file' => Input::file('file'));
-		// echo '<pre>';
-		// var_dump(Input::file('file'));
-		// echo '</pre>';
+		// 'file' => 'required|mimes:jpg,jpeg,png,gif,pdf,xps'
 		$rules = array(
-			'file' => 'required|mimes:jpg,jpeg,png,gif,pdf,xps'
+			'file' => 'required'
 		);
 		// Now pass the input and rules into the validator
 		$validator = Validator::make($input, $rules);
