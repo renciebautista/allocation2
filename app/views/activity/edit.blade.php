@@ -1115,6 +1115,7 @@ $('INPUT[type="file"]').change(function () {
         case 'png':
         case 'gif':
         case 'pdf':
+        case 'xps':
             //$('#uploadButton').attr('disabled', false);
             break;
         default:

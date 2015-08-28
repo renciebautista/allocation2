@@ -559,6 +559,7 @@ class ActivityController extends BaseController {
 							$activity->duration = (Input::get('lead_time') == '') ? 0 : Input::get('lead_time');
 							$activity->edownload_date = date('Y-m-d',strtotime(Input::get('download_date')));
 							$activity->eimplementation_date = date('Y-m-d',strtotime(Input::get('implementation_date')));
+							$activity->end_date = date('Y-m-d',strtotime(Input::get('end_date')));
 							$activity->circular_name = strtoupper(Input::get('activity_title'));
 							$activity->background = Input::get('background');
 							$activity->instruction = Input::get('instruction');
@@ -1424,29 +1425,13 @@ class ActivityController extends BaseController {
 	}
 
 	public function fdaupload($id){
-		
-		// Validator::extend('hashmatch', function($attribute, $value, $parameters)
-		// {
-		// 	Helper::print_r($parameters);
-		// 	Helper::print_r($attribute);
-		// 	Helper::print_r($value);
-		// 	echo $value->guessExtension();
-		//     // return Hash::check($value, Auth::user()->$parameters[0]);
-		// });
-		// $messages = array(
-		//     'hashmatch' => 'Your current password must match your account password.'
-		// );
-		// $rules = array(
-		//     'current_password' => 'required|hashmatch:password',
-		//     'password'         => 'required|confirmed|min:4|different:current_password'
-		// );
-
-		// $validation = Validator::make( Input::all(), $rules, $messages );
 
 		$activity = Activity::findOrFail($id);
 
 		$input = array('file' => Input::file('file'));
-
+		// echo '<pre>';
+		// var_dump(Input::file('file'));
+		// echo '</pre>';
 		$rules = array(
 			'file' => 'required|mimes:jpg,jpeg,png,gif,pdf,xps'
 		);
