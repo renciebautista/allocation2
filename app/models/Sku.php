@@ -113,14 +113,15 @@ class Sku extends \Eloquent {
 	}
 
 	public static function items($division_code,$categories,$brands){
-		return self::select('sku_code', DB::raw('CONCAT(sku_desc, " - ", sku_code) AS full_desc'))
+		return self::select('sku_code', DB::raw('CONCAT(UPPER(sku_desc), " - ", sku_code) AS full_desc'))
 			->whereIn('division_code',$division_code)
 			->whereIn('category_code',$categories)
-			// ->whereIn('brand_code',$brands)
-			->whereIn('cpg_code',$brands)
+			->whereIn('brand_desc',$brands)
 			->orderBy('sku_desc')
 			->lists('full_desc', 'sku_code');
 	}
+
+
 
 	public static function divisions(){
 		return self::select('division_code', 'division_desc')

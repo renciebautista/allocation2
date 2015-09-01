@@ -12,4 +12,7 @@ class SchemeSku extends \Eloquent {
 
 		return $skus;
 	}
+
+
+	
 }

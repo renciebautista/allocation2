@@ -10,10 +10,10 @@ class LaunchSkuController extends \BaseController {
 	 */
 	public function index()
 	{
-		$launchskus = Sku::where('launch',1)->where('active',1)->get();
+		$launchskus = Pricelist::where('launch',1)->where('active',1)->get();
 		foreach ($launchskus as $sku) {
 			$users = LaunchSkuAccess::select(DB::raw('CONCAT(first_name, " ", last_name) AS full_name'))
-				->where('sku_code',$sku->sku_code)
+				->where('sku_code',$sku->sap_code)
 				->join('users', 'users.id', '=', 'launch_sku_access.user_id')
 				->get();
 			$data = array();
@@ -22,7 +22,6 @@ class LaunchSkuController extends \BaseController {
 			}
 			$sku->users = implode(", ", $data);
 		}
-		// Helper::print_r($launchskus);
 		$proponents = User::getApprovers(['PROPONENT']);
 		return View::make('launchsku.index',compact('launchskus','proponents'));
 	}
@@ -36,8 +35,7 @@ class LaunchSkuController extends \BaseController {
 		$file_path = Input::file('file')->move(storage_path().'/uploads/temp/',Input::file('file')->getClientOriginalName());
 		$cnt = 0;
 		Excel::selectSheets('Sheet1')->load($file_path, function($reader) {
-			$cnt = Sku::insertLaunch($reader->get());
-			Pricelist::insertLaunch($reader->get());
+			$cnt = Pricelist::insertLaunch($reader->get());
 		});
 		return Redirect::action('LaunchSkuController@index')
 				->with('class', 'alert-success')

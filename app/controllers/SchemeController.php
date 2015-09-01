@@ -28,8 +28,10 @@ class SchemeController extends \BaseController {
 		$brands = ActivityBrand::selected_brand($id);
 
 		$skus = Sku::items($divisions,$categories,$brands);
-		$involves = Pricelist::items();
-		return View::make('scheme.create', compact('activity','skus', 'involves'));
+
+		$host = Pricelist::involves($brands);
+		$premuim =  Pricelist::items();
+		return View::make('scheme.create', compact('activity','skus', 'host', 'premuim'));
 	}
 
 	/**
@@ -218,12 +220,18 @@ class SchemeController extends \BaseController {
 		$categories = ActivityCategory::selected_category($scheme->activity_id);
 		$brands = ActivityBrand::selected_brand($scheme->activity_id);
 		$skus = Sku::items($divisions,$categories,$brands);
-		$involves = Pricelist::items();
+		// $involves = Pricelist::items();
+
+		$host_sku = Pricelist::involves($brands);
+		$premuim_sku =  Pricelist::items();
 
 		$sel_skus =  SchemeSku::getSkus($scheme->id);
 		$sel_hosts = SchemeHostSku::getHosts($scheme->id);
 		$sel_premuim = SchemePremuimSku::getPremuim($scheme->id);
 		
+
+
+
 
 		$premuim = array();
 		if(!empty($sel_premuim)){
@@ -311,26 +319,29 @@ class SchemeController extends \BaseController {
 			}
 		}
 
-		// Helper::print_r($ac_groups);
+		$ref_sku = SchemeSku::where('scheme_id',$scheme->id)->first();
+		// Helper::print_r($ref_sku);
 		$total_gsv = SchemeAllocation::totalgsv($id);
 
 		if(Auth::user()->hasRole("PROPONENT")){
 			if($activity->status_id < 4){
-				return View::make('scheme.edit',compact('scheme', 'activity_schemes', 'id_index', 'activity', 'skus', 'involves', 'sel_skus', 'sel_hosts',
-					'sel_premuim','allocations', 'total_sales', 'qty','id','total_gsv', 'ac_groups', 'groups'));
+				return View::make('scheme.edit',compact('scheme', 'activity_schemes', 'id_index', 'activity', 'skus', 'sel_skus', 'sel_hosts',
+					'sel_premuim','allocations', 'total_sales', 'qty','id','total_gsv', 'ac_groups', 'groups','host_sku','premuim_sku'));
 			}else{
 				return View::make('scheme.read_only',compact('scheme', 'activity', 'activity_schemes', 'id_index', 'skus', 'involves', 'sel_skus', 'sel_hosts',
-					'sel_premuim','allocations', 'total_sales', 'qty','id', 'summary', 'total_gsv','sku', 'host', 'premuim','ac_groups','groups'));
+					'sel_premuim','allocations', 'total_sales', 'qty','id', 'summary', 'total_gsv','sku', 'host', 'premuim','ac_groups','groups',
+					'host_sku','premuim_sku','ref_sku'));
 			}
 		}
 
 		if(Auth::user()->hasRole("PMOG PLANNER")){
 			if($activity->status_id == 4){
-				return View::make('scheme.edit',compact('scheme', 'activity_schemes', 'id_index', 'activity', 'skus', 'involves', 'sel_skus', 'sel_hosts',
-					'sel_premuim','allocations', 'total_sales', 'qty','id', 'summary', 'total_gsv','ac_groups', 'groups'));
+				return View::make('scheme.edit',compact('scheme', 'activity_schemes', 'id_index', 'activity', 'skus', 'sel_skus', 'sel_hosts',
+					'sel_premuim','allocations', 'total_sales', 'qty','id', 'summary', 'total_gsv','ac_groups', 'groups','host_sku','premuim_sku'));
 			}else{
-				return View::make('scheme.read_only',compact('scheme', 'activity_schemes', 'id_index', 'activity', 'skus', 'involves', 'sel_skus', 'sel_hosts',
-					'sel_premuim','allocations', 'total_sales', 'qty','id', 'summary', 'total_gsv','sku', 'host', 'premuim','ac_groups','groups'));
+				return View::make('scheme.read_only',compact('scheme', 'activity_schemes', 'id_index', 'activity', 'skus', 'sel_skus', 'sel_hosts',
+					'sel_premuim','allocations', 'total_sales', 'qty','id', 'summary', 'total_gsv','sku', 'host', 'premuim','ac_groups','groups',
+					'host_sku','premuim_sku','ref_sku'));
 			}
 		}
 	}

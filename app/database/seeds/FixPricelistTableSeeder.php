@@ -7,8 +7,8 @@ class FixPricelistTableSeeder extends Seeder {
 
 	public function run()
 	{
-		Excel::selectSheets('cycles')->load(app_path().'/database/seeds/seed_files/pricelists_cpg.csv', function($reader) {
-			Pricelist::updateCpg($reader->ignoreEmpty());
+		Excel::selectSheets('Initial')->load(app_path().'/database/seeds/seed_files/pricelist2.xlsx', function($reader) {
+			Pricelist::updatePriceList($reader->ignoreEmpty());
 		});
 	}
 

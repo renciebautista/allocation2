@@ -61,12 +61,10 @@ class ActivityController extends BaseController {
 			$approvers = User::getApprovers(['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']);
 			$activity_types = ActivityType::getWithNetworks();
 			$cycles = Cycle::getLists();
-			$divisions = Sku::divisions();
-
-			$involves = Pricelist::items();
+			$divisions = Pricelist::divisions();
 			
 			$objectives = Objective::getLists();
-			return View::make('activity.create', compact('scope_types', 'planners', 'approvers', 'cycles', 'involves',
+			return View::make('activity.create', compact('scope_types', 'planners', 'approvers', 'cycles',
 			 'activity_types', 'divisions' , 'objectives',  'users'));
 		}
 
@@ -238,7 +236,7 @@ class ActivityController extends BaseController {
 			$sel_objectives = ActivityObjective::getList($activity->id);
 			$sel_divisions = ActivityDivision::getList($activity->id);
 			$sel_involves = ActivitySku::getSkus($activity->id);
-			$involves = Pricelist::items();
+			// $involves = Pricelist::items();
 			$approvers = User::getApprovers(['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']);
 			
 			$objectives = Objective::getLists();
@@ -278,12 +276,13 @@ class ActivityController extends BaseController {
 				$planners = User::getApprovers(['PMOG PLANNER']);
 				$activity_types = ActivityType::getWithNetworks();
 				$cycles = Cycle::getLists();
-				$divisions = Sku::getDivisionLists();
+				// $divisions = Sku::getDivisionLists();
+				$divisions = Pricelist::divisions();
 				
 
 				return View::make('activity.edit', compact('activity', 'scope_types', 'planners', 'approvers', 'cycles',
 				 'activity_types', 'divisions' , 'sel_divisions','objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
-				 'sel_objectives',  'schemes', 'scheme_summary', 'networks', 'areas', 'timings', 'involves' ,'sel_involves',
+				 'sel_objectives',  'schemes', 'scheme_summary', 'networks', 'areas', 'timings' ,'sel_involves',
 				 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings',
 				 'force_allocs', 'comments' ,'submitstatus'));
 			}
@@ -298,7 +297,7 @@ class ActivityController extends BaseController {
 				 'sel_divisions','divisions', 'timings',
 				 'objectives',  'users', 'budgets', 'nobudgets','sel_approver',
 				 'sel_objectives',  'schemes', 'scheme_summary', 'networks','areas',
-				 'scheme_customers', 'scheme_allcations', 'materials', 'force_allocs', 'involves' ,'sel_involves',
+				 'scheme_customers', 'scheme_allcations', 'materials', 'force_allocs','sel_involves',
 				 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings', 'comments' ,'submitstatus', 'route', 'recall', 'submit_action'));
 			}
 		}
@@ -314,7 +313,7 @@ class ActivityController extends BaseController {
 			$sel_objectives = ActivityObjective::getList($activity->id);
 			$sel_divisions = ActivityDivision::getList($activity->id);
 			$sel_involves = ActivitySku::getSkus($activity->id);
-			$involves = Pricelist::items();
+			// $involves = Pricelist::items();
 			$approvers = User::getApprovers(['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']);
 			// $channels = Channel::getList();
 			$objectives = Objective::getLists();
@@ -354,17 +353,12 @@ class ActivityController extends BaseController {
 				$planners = User::getApprovers(['PMOG PLANNER']);
 				$activity_types = ActivityType::getWithNetworks();
 				$cycles = Cycle::getLists();
-				$divisions = Sku::getDivisionLists();
-
-				// return View::make('downloadedactivity.edit', compact('activity', 'scope_types', 'planners', 'approvers', 'cycles',
-				//  'activity_types', 'sel_divisions','divisions' , 'objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
-				//  'sel_objectives',  'schemes', 'scheme_summary', 'networks', 'areas',
-				//  'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings',
-				//  'force_allocs','submitstatus', 'comments'));
+				// $divisions = Sku::getDivisionLists();
+				$divisions = Pricelist::divisions();
 
 				return View::make('downloadedactivity.edit', compact('activity', 'scope_types', 'planners', 'approvers', 'cycles',
 				 'activity_types', 'divisions' , 'sel_divisions','objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
-				 'sel_objectives',  'schemes', 'scheme_summary', 'networks', 'areas', 'timings', 'involves' ,'sel_involves',
+				 'sel_objectives',  'schemes', 'scheme_summary', 'networks', 'areas', 'timings' ,'sel_involves',
 				 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings',
 				 'force_allocs', 'comments' ,'submitstatus'));
 			}else{
@@ -376,7 +370,7 @@ class ActivityController extends BaseController {
 				return View::make('shared.activity_readonly', compact('activity', 'sel_planner', 'approvers', 'sel_divisions','divisions' ,
 				 'objectives',  'users', 'budgets', 'nobudgets','sel_approver',
 				 'sel_objectives',  'schemes', 'scheme_summary', 'networks', 'areas',
-				 'scheme_customers', 'scheme_allcations', 'materials', 'force_allocs', 'timings',  'involves' ,'sel_involves',
+				 'scheme_customers', 'scheme_allcations', 'materials', 'force_allocs', 'timings' ,'sel_involves',
 				 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings', 'comments' ,'submitstatus', 'route', 'recall', 'submit_action'));
 			}
 		}
@@ -1942,7 +1936,9 @@ class ActivityController extends BaseController {
 					foreach ($brands as $brand){
 						$activity_brand[] = array('activity_id' => $new_activity->id, 
 							'brand_code' => $brand->brand_code,
-							'brand_desc' => $brand->brand_desc);
+							'brand_desc' => $brand->brand_desc,
+							'b_desc' => $brand->b_desc,
+							);
 					}
 					if(!empty($activity_brand)){
 						ActivityBrand::insert($activity_brand);
@@ -2371,7 +2367,10 @@ class ActivityController extends BaseController {
 
 					$old_path = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
 					File::copyDirectory($old_path, $path2);
-					$myfile = storage_path().'/uploads/'.$new_activity->cycle_id.'/'.$new_activity->activity_type_id.'/'.$new_activity->id.'/'.$activity->circular_name.'.pdf';
+
+					$pdf_name = preg_replace('/[^A-Za-z0-9 _ .-]/', '_', $activity->circular_name);
+					
+					$myfile = storage_path().'/uploads/'.$new_activity->cycle_id.'/'.$new_activity->activity_type_id.'/'.$new_activity->id.'/'.str_replace(":","_", $pdf_name).'.pdf';
 					if (File::exists($myfile))
 					{
 					    File::delete($myfile);
@@ -2390,9 +2389,12 @@ class ActivityController extends BaseController {
 				$class = 'alert-success';
 				$message = 'Activity successfully duplicated.';
 
-				return Redirect::to(URL::action('ActivityController@index'))
-				->with('class', $class )
-				->with('message', $message);
+				// return Redirect::to(URL::action('ActivityController@index'))
+				// 	->with('class', $class )
+				// 	->with('message', $message);
+				return Redirect::route('activity.edit',$new_activity->id)
+					->with('class', 'alert-success')
+					->with('message', 'Activity "'.strtoupper($activity->circular_name).'" was successfuly created.');
 				
 			} catch (\Exception $e) {
 				DB::rollback();

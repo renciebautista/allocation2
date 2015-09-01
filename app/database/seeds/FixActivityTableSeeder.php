@@ -35,7 +35,9 @@ class FixActivityTableSeeder extends Seeder {
 		$this->call('AddCodeOnAllocationTableSeeder');
 		$this->call('SchemesFieldsTableSeeder');
 		$this->call('AllocationReportTemplateFilterTableSeeder');
-		
+
+		$this->call('FixPricelistTableSeeder');
+		$this->call('FixActivityBrandCodeTableSeeder');
 		
 
 		DB::statement('SET FOREIGN_KEY_CHECKS=1;');

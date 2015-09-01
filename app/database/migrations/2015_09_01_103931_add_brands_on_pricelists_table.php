@@ -14,6 +14,7 @@ class AddBrandsOnPricelistsTable extends Migration {
 	{
 		Schema::table('pricelists', function(Blueprint $table)
 		{
+			$table->string('cpg_desc')->after('cpg_code');
 			$table->string('division_code')->after('sap_desc');
 			$table->string('division_desc')->after('division_code');
 			$table->string('category_code')->after('division_desc');

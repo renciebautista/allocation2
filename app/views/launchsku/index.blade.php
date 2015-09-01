@@ -73,9 +73,9 @@
 					@else
 					@foreach($launchskus as $launch)
 					<tr>
-						<td class="center">{{ Form::checkbox('skus[]',  $launch->sku_code) }}</td>
-						<td>{{ $launch->sku_code }}</td>
-						<td>{{ $launch->sku_desc }}</td>
+						<td class="center">{{ Form::checkbox('skus[]',  $launch->sap_code) }}</td>
+						<td>{{ $launch->sap_code }}</td>
+						<td>{{ $launch->sap_desc }}</td>
 						<td>{{ $launch->division_desc }}</td>
 						<td>{{ $launch->category_desc }}</td>
 						<td>{{ $launch->brand_desc }}</td>

@@ -34,26 +34,34 @@ class Pricelist extends \Eloquent {
 		DB::beginTransaction();
 			try {
 			$records->each(function($row) use ($cnt) {
-				if(!is_null($row->sku_code)){
+				if(!is_null($row->sap_code)){
 					$cnt++;
-					$sku = self::where('sap_code',$row->sku_code)->first();
+					$sku = self::where('sap_code',$row->sap_code)->first();
 					if(empty($sku)){
 						$pricelist = new Pricelist;
 						$pricelist->cpg_code = $row->cpg_code;
-						$pricelist->sap_code = $row->sku_code;
-						$pricelist->sap_desc = $row->sku_desc;
+						$pricelist->cpg_desc = $row->cpg_desc;
+						$pricelist->sap_code = $row->sap_code;
+						$pricelist->sap_desc = $row->sap_desc;
+
+						$pricelist->division_code = $row->division_code;
+						$pricelist->division_desc = $row->division_desc;
+						$pricelist->category_code = $row->category_code;
+						$pricelist->category_desc = $row->category_desc;
+						$pricelist->brand_code = $row->brand_code;
+						$pricelist->brand_desc = $row->brand_desc;
+
 						$pricelist->pack_size = $row->pack_size;
 						$pricelist->barcode = $row->barcode;
 						$pricelist->case_code = $row->case_code;
 						$pricelist->price_case = $row->price_case;
 						$pricelist->price_case_tax = $row->price_case_tax;
-						$pricelist->price = $row->price_pc;
-						$pricelist->srp = $row->srp_pc;
+						$pricelist->price = $row->price;
+						$pricelist->srp = $row->srp;
 						$pricelist->active = 1;
 						$pricelist->launch = 1;
 						$pricelist->save();
 					}
-
 				}
 				
 			});
@@ -64,4 +72,126 @@ class Pricelist extends \Eloquent {
 
 		return $cnt;
 	}
+
+	public static function updatePriceList($records){
+		$cnt = 0;
+		DB::beginTransaction();
+			try {
+			$records->each(function($row) use ($cnt) {
+				if(!is_null($row->sap_code)){
+					$cnt++;
+					$sku = self::where('sap_code',$row->sap_code)->first();
+					if(empty($sku)){
+						$pricelist = new Pricelist;
+						$pricelist->cpg_code = $row->cpg_code;
+						$pricelist->cpg_desc = $row->cpg_desc;
+						$pricelist->sap_code = $row->sap_code;
+						$pricelist->sap_desc = $row->sap_desc;
+
+						$pricelist->division_code = $row->division_code;
+						$pricelist->division_desc = $row->division_desc;
+						$pricelist->category_code = $row->category_code;
+						$pricelist->category_desc = $row->category_desc;
+						$pricelist->brand_code = $row->brand_code;
+						$pricelist->brand_desc = $row->brand_desc;
+
+						$pricelist->pack_size = $row->pack_size;
+						$pricelist->barcode = $row->barcode;
+						$pricelist->case_code = $row->case_code;
+						$pricelist->price_case = $row->price_case;
+						$pricelist->price_case_tax = $row->price_case_tax;
+						$pricelist->price = $row->price;
+						$pricelist->srp = $row->srp;
+						$pricelist->active = 1;
+						$pricelist->launch = 0;
+						$pricelist->save();
+					}else{
+						$sku->cpg_code = $row->cpg_code;
+						$sku->cpg_desc = $row->cpg_desc;
+						$sku->sap_code = $row->sap_code;
+						$sku->sap_desc = $row->sap_desc;
+
+						$sku->division_code = $row->division_code;
+						$sku->division_desc = $row->division_desc;
+						$sku->category_code = $row->category_code;
+						$sku->category_desc = $row->category_desc;
+						$sku->brand_code = $row->brand_code;
+						$sku->brand_desc = $row->brand_desc;
+
+						$sku->pack_size = $row->pack_size;
+						$sku->barcode = $row->barcode;
+						$sku->case_code = $row->case_code;
+						$sku->price_case = $row->price_case;
+						$sku->price_case_tax = $row->price_case_tax;
+						$sku->price = $row->price;
+						$sku->srp = $row->srp;
+						$sku->active = 1;
+						$sku->launch = 0;
+						$sku->update();
+					}
+				}
+				
+			});
+			DB::commit();
+		} catch (\Exception $e) {
+			DB::rollback();
+		}
+
+		return $cnt;
+	}
+
+	public static function division($code){
+		return self::select('division_code', 'division_desc')
+			->where('division_code', $code)
+			->groupBy('division_code')
+			->first();
+	}
+
+	public static function divisions(){
+		return self::select('division_code', 'division_desc')
+			->groupBy('division_code')
+			->orderBy('division_desc')->lists('division_desc', 'division_code');
+	}
+
+	public static function category($code){
+		return self::select('category_code', 'category_desc')
+			->where('category_code', $code)
+			->groupBy('category_code')
+			->first();
+	}
+
+	public static function brand($code){
+		return self::select('cpg_code', 'brand_desc','cpg_desc')
+			->where('brand_desc', $code)
+			->groupBy('brand_desc')
+			->first();
+	}
+
+	public static function involves($filter){
+		$data = self::select('sap_code', DB::raw('CONCAT(sap_desc, " - ", sap_code) AS full_desc'))
+			->where('active',1)
+			->where('launch',0)
+			->whereIn('brand_desc',$filter)
+			->orderBy('full_desc')->get();
+
+			if(Auth::user()->inRoles(['PROPONENT'])){
+				$user_id = Auth::id();
+			}else{
+				$user_id = $activity->created_by;
+			}
+
+		$data2 = LaunchSkuAccess::select('sap_code', DB::raw('CONCAT(sap_desc, " - ", sap_code) AS full_desc'))
+		->join('pricelists','pricelists.sap_code','=','launch_sku_access.sku_code','left')
+		->where('launch_sku_access.user_id',$user_id)
+		->where('active',1)
+		->where('launch',1)
+		->whereIn('brand_desc',$filter)
+		->orderBy('full_desc')->get();
+
+		foreach($data2 as $row) {
+		    $data->add($row);
+		}
+		return $data->lists('full_desc', 'sap_code');
+	}
+
 }

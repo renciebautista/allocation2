@@ -210,19 +210,19 @@
 		</tr>
 		@endif
 		@if(count($networks) > 0)
-		<tr nobr="true">
+		<tr>
 			<td><b>Timings</b></td>
 			<td>
 				@if(count($networks)> 0)
 				<table class="sub-table timing">
-					<tr nobr="true">
+					<tr>
 						<th width="320">Activity</th>
 						<th width="75">Start Date</th>
 						<th width="75">End Date</th>
 					</tr>
 					<?php $last_date; ?>
 					@foreach($networks as $network)
-					<tr nobr="true">
+					<tr>
 						<td>{{ $network->task }}</td>
 						<td><?php echo ($network->final_start_date != null) ?  date_format(date_create($network->final_start_date),'M j, Y') : '';?></td>
 						<td><?php echo ($network->final_end_date != null) ?  date_format(date_create($network->final_end_date),'M j, Y') : '';?></td>

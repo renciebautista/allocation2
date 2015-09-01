@@ -5,11 +5,11 @@ class ActivityBrand extends \Eloquent {
 	public $timestamps = false;
 	
 	public static function selected_brand($id){
-		$brands = self::select('brand_code')->where('activity_id', $id)->get();
+		$brands = self::select('brand_code','b_desc')->where('activity_id', $id)->get();
 		$_brands = array();
 		if(!empty($brands)){
 			foreach ($brands as $brand) {
-				$_brands[] = $brand->brand_code;
+				$_brands[] = $brand->b_desc;
 			}
 		}
 

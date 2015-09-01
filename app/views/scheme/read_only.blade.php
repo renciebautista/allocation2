@@ -46,15 +46,15 @@
 						<div class="row">
 							<div class="col-lg-6">
 								{{ Form::label('skus', 'Reference Sales SKU', array('class' => 'control-label')) }}
-								@if(!empty($sku))
-								{{ Form::text('skus',$sku->sku_desc.' - '.$sku->sku_code, array('id' => 'skus', 'class' => 'form-control', 'placeholder' => 'Reference Sales SKU','readonly' => '')) }}
+								@if(!empty($ref_sku))
+								{{ Form::text('skus',$ref_sku->sku_desc.' - '.$ref_sku->sku, array('id' => 'skus', 'class' => 'form-control', 'placeholder' => 'Reference Sales SKU','readonly' => '')) }}
 								@else
 								{{ Form::text('skus',null, array('id' => 'skus', 'class' => 'form-control', 'placeholder' => 'Reference Sales SKU','readonly' => '')) }}
 								@endif
 							</div>
 							<div class="col-lg-6">
 								{{ Form::label('involve', 'Host SKU', array('class' => 'control-label')) }}
-								{{ Form::select('involve[]', $involves, $sel_hosts, array('id' => 'involve', 'class' => 'form-control multiselect', 'multiple' => 'multiple')) }}
+								{{ Form::select('involve[]', $host_sku, $sel_hosts, array('id' => 'involve', 'class' => 'form-control multiselect', 'multiple' => 'multiple')) }}
 							</div>
 						</div>
 					</div>
@@ -67,7 +67,7 @@
 						<div class="row">
 							<div class="col-lg-6">
 								{{ Form::label('premuim', 'Premium SKU', array('class' => 'control-label')) }}
-								{{ Form::select('premuim[]', $involves, $sel_premuim, array('id' => 'premuim', 'class' => 'form-control multiselect', 'multiple' => 'multiple')) }}
+								{{ Form::select('premuim[]', $premuim_sku, $sel_premuim, array('id' => 'premuim', 'class' => 'form-control multiselect', 'multiple' => 'multiple')) }}
 							</div>
 							<div class="col-lg-6">
 								{{ Form::label('ulp_premium', 'Non ULP Premium SKU', array('class' => 'control-label')) }}

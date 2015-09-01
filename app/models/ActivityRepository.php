@@ -18,7 +18,7 @@ class ActivityRepository extends \Eloquent {
 		if(count($division_code) > 1){
 			$code .= '_MULTI';
 		}else{
-			$division = Sku::select('division_code', 'division_desc')->where('division_code',$division_code)->first();
+			$division = Pricelist::select('division_code', 'division_desc')->where('division_code',$division_code)->first();
 			if(!empty($division)){
 				$code .= '_'.$division->division_desc;
 			}
@@ -28,7 +28,7 @@ class ActivityRepository extends \Eloquent {
 			if(count($category_code) > 1){
 				$code .= '_MULTI';
 			}else{
-				$category = Sku::select('category_code', 'category_desc')->where('category_code',$category_code[0])->first();
+				$category = Pricelist::select('category_code', 'category_desc')->where('category_code',$category_code[0])->first();
 				$code .= '_'.$category->category_desc;
 			}
 		}
@@ -36,7 +36,7 @@ class ActivityRepository extends \Eloquent {
 			if(count($brand_code) > 1){
 				$code .= '_MULTI';
 			}else{
-				$brand = Sku::select('cpg_code', 'brand_desc')->where('cpg_code',$brand_code[0])->first();
+				$brand = Pricelist::select('brand_desc')->where('brand_desc',$brand_code[0])->first();
 				$code .= '_'.$brand->brand_desc;
 			}
 		}
@@ -100,7 +100,7 @@ class ActivityRepository extends \Eloquent {
 		if (Input::has('division')){
 			$activity_division = array();
 			foreach (Input::get('division') as $division){
-				$activity_division = Sku::division($division);
+				$activity_division = Pricelist::division($division);
 				$activity_divisions[] = array('activity_id' => $activity->id, 
 					'division_code' => $division,
 					'division_desc' => $activity_division->division_desc);
@@ -117,7 +117,7 @@ class ActivityRepository extends \Eloquent {
 		if (Input::has('category')){
 			$activity_categories = array();
 			foreach (Input::get('category') as $category){
-				$activitycategory = Sku::category($category);
+				$activitycategory = Pricelist::category($category);
 				$activity_categories[] = array('activity_id' => $activity->id, 
 					'category_code' => $category,
 					'category_desc' => $activitycategory->category_desc);
@@ -135,10 +135,11 @@ class ActivityRepository extends \Eloquent {
 			$activity_brands = array();
 			foreach (Input::get('brand') as $brand){
 
-				$activity_brand = Sku::brand($brand);
+				$activity_brand = Pricelist::brand($brand);
 				$activity_brands[] = array('activity_id' => $activity->id, 
 					'brand_code' => $brand,
-					'brand_desc' => $activity_brand->brand_desc.' - '.$activity_brand->cpg_desc);
+					'brand_desc' => $activity_brand->brand_desc.' - '.$activity_brand->cpg_desc,
+					'b_desc' => $brand);
 			}
 			if(count($activity_brands)>0){
 				ActivityBrand::insert($activity_brands);

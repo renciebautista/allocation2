@@ -227,14 +227,12 @@ class CycleController extends \BaseController {
 					// relaase sku 
 					$activity_skus = ActivitySku::where('activity_id',$activity->id)->get();
 					foreach ($activity_skus as $activity_sku) {
-						$activity_sku->active = 1;
-						$activity_sku->launch = 0;
-						$activity_sku->update();
-
 						$sku = Pricelist::where('sap_code',$activity_sku->sap_code)->first();
 						$sku->active = 1;
 						$sku->launch = 0;
 						$sku->update();
+
+						LaunchSkuAccess::where('sku_code',$activity_sku->sap_code)->delete();
 					}
 				}
 
