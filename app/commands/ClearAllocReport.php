@@ -43,7 +43,7 @@ class ClearAllocReport extends Command {
 		    // echo (string)$file, "\n";
 		    $filecreated = filectime($file);
 		    // echo  $filecreated, "\n";
-		    $days = 86400 * 60  // 60 days
+		    $days = 86400 * 60;  // 60 days
 		    // $days = 60 * 1;
 		    if((time() - $filecreated) > $days)
 	        {
