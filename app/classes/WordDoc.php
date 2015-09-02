@@ -518,37 +518,36 @@ class WordDoc {
 		
 	    // FDA Permit
 		if(!empty($fdapermits)){
-			$section->addTextBreak(1);
-			$section->addText("FDA Permit",array('bold'=>true,'size' => 10));
-
-			// Add table
-			$permittable = $section->addTable('Permit Table'); 
-			$cnt = 0;
-			
+			$withfda = false;
 			foreach($fdapermits as $permit) { // Loop through cells
-				$permittable->addRow();
 				$file = explode(".", $permit->file_desc);
 				$file_ex = strtolower($file[1]);
 				if(($file_ex != "pdf") &&  ($file_ex != "xps")){
-					$cell = $permittable->addCell(900);
-					$textrun = $cell->createTextRun();
-					$textrun->addImage(storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/'.$permit->hash_name,array('width'=>800));
+					$withfda = true;
 				}
 				
 			}
 
-			// foreach ($fdapermits as $permit) {
-			// 	$file = explode(".", $permit->file_desc);
-			// 	if(($file[1] != "pdf") &&  ($file[1] != "xps")){
-			// 		$section->addPageBreak();
-			// 		$section->addText("FDA Permit",array('bold'=>true,'size' => 10));
-			// 		$section->addImage(storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/'.$permit->hash_name,array('height'=>800));
-			// 	}
-			// }
+			if($withfda){
+				$section->addTextBreak(1);
+				$section->addText("FDA Permit",array('bold'=>true,'size' => 10));
+
+				// Add table
+				$permittable = $section->addTable('Permit Table'); 
+				
+				foreach($fdapermits as $permit) { // Loop through cells
+					$file = explode(".", $permit->file_desc);
+					$file_ex = strtolower($file[1]);
+					if(($file_ex != "pdf") &&  ($file_ex != "xps")){
+						$permittable->addRow();
+						$cell = $permittable->addCell(900);
+						$textrun = $cell->createTextRun();
+						$textrun->addImage(storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/'.$permit->hash_name,array('width'=>800));
+					}
+				}
+			}
 			
 		}
-
-		
 
 		// Product Information Sheet
 		if(count($pis) > 0){
