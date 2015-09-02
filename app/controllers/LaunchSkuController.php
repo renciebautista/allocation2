@@ -10,7 +10,9 @@ class LaunchSkuController extends \BaseController {
 	 */
 	public function index()
 	{
-		$launchskus = Pricelist::where('launch',1)->where('active',1)->get();
+		Input::flash();
+		// $launchskus = Pricelist::where('launch',1)->where('active',1)->get();
+		$launchskus = Pricelist::search(Input::get('s'));
 		foreach ($launchskus as $sku) {
 			$users = LaunchSkuAccess::select(DB::raw('CONCAT(first_name, " ", last_name) AS full_name'))
 				->where('sku_code',$sku->sap_code)

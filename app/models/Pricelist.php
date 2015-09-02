@@ -4,6 +4,20 @@ class Pricelist extends \Eloquent {
 	protected $fillable = [];
 	public $timestamps = false;
 
+	public static function search($search){
+		return self::where('launch',1)
+			->where('active',1)
+			->where(function($query) use ($search){
+				$query->where('sap_code', 'LIKE' ,"%$search%")
+					->orwhere('sap_desc', 'LIKE' ,"%$search%")
+					->orwhere('division_desc', 'LIKE' ,"%$search%")
+					->orwhere('category_desc', 'LIKE' ,"%$search%")
+					->orwhere('brand_desc', 'LIKE' ,"%$search%")
+					->orwhere('cpg_desc', 'LIKE' ,"%$search%");
+			})
+			->get();	
+	}
+
 	public static function items(){
 		return self::select('sap_code', DB::raw('CONCAT(sap_desc, " - ", sap_code) AS full_desc'))
 			->orderBy('sap_desc')
