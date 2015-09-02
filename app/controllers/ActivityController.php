@@ -650,9 +650,7 @@ class ActivityController extends BaseController {
 			$class = 'alert-danger';
 			$message = 'Activity does not exist.';
 		}else{
-
 			DB::beginTransaction();
-
 			try {
 				ActivityTiming::where('activity_id',$activity->id)->delete();
 				ActivityRole::where('activity_id',$activity->id)->delete();
@@ -2368,12 +2366,23 @@ class ActivityController extends BaseController {
 					$old_path = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
 					File::copyDirectory($old_path, $path2);
 
+
+					// delete old pdf
 					$pdf_name = preg_replace('/[^A-Za-z0-9 _ .-]/', '_', $activity->circular_name);
 					
 					$myfile = storage_path().'/uploads/'.$new_activity->cycle_id.'/'.$new_activity->activity_type_id.'/'.$new_activity->id.'/'.str_replace(":","_", $pdf_name).'.pdf';
 					if (File::exists($myfile))
 					{
 					    File::delete($myfile);
+					}
+
+					// delete old word
+					$word_name = preg_replace('/[^A-Za-z0-9 _ .-]/', '_', $activity->circular_name);
+					
+					$docfile = storage_path().'/uploads/'.$new_activity->cycle_id.'/'.$new_activity->activity_type_id.'/'.$new_activity->id.'/'.str_replace(":","_", $word_name).'.docx';
+					if (File::exists($docfile))
+					{
+					    File::delete($docfile);
 					}
 				}
 

@@ -789,7 +789,6 @@
 		<div class="panel panel-default">
 		  	<div class="panel-heading">FDA Permit</div>
 		  	<div class="panel-body">
-		  		@if(count($fdapermits)==0)
 
 		  		{{ Form::open(array('action' => array('ActivityController@fdaupload', $activity->id),  'class' => 'bs-component','id' => 'fdaupload', 'files'=>true)) }}
 		  			<div class="row">
@@ -806,7 +805,6 @@
 					  	</div>
 				  	</div>
 				{{ Form::close() }}
-				@else
 					<table class="table table-striped table-hover ">
 					  	<thead>
 						    <tr>
@@ -835,7 +833,6 @@
 						    @endforeach
 					  	</tbody>
 					</table> 
-				@endif
 		  	</div>
 		</div>
 

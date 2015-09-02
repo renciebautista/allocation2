@@ -79,11 +79,11 @@ class WordDoc {
 		if($activity->billing_date != ""){
 			$billing_date = date_format(date_create($activity->billing_date),'M j, Y');
 		}
-		$permit_no = "";
-		$fdapermit = ActivityFdapermit::where('activity_id', $activity->id)->first();
-		if(!empty($fdapermit)){
-			$permit_no = $fdapermit->permit_no;
-		}
+		// $permit_no = "";
+		$fdapermits = ActivityFdapermit::where('activity_id', $activity->id)->get();
+		// if(!empty($fdapermit)){
+		// 	$permit_no = $fdapermit->permit_no;
+		// }
 		
 		$artworks = ActivityArtwork::getList($activity->id);
 		$fdapermit = ActivityFdapermit::where('activity_id', $activity->id)->first();
@@ -196,7 +196,7 @@ class WordDoc {
 			array('desc' => 'Timings', 'value' => $networks),
 			array('desc' => 'Roles and Responsibilities', 'value' => $activity_roles),
 			array('desc' => 'Material Sourcing', 'value' => $materials),
-			array('desc' => 'FDA Permit No.', 'value' => $permit_no),
+			array('desc' => 'FDA Permit No.', 'value' => $fdapermits),
 			array('desc' => 'Billing Requirements', 'value' => $activity->billing_remarks),
 			array('desc' => 'Billing Deadline', 'value' => $billing_date),
 			array('desc' => 'Special Instructions', 'value' => $activity->instruction),
@@ -391,8 +391,7 @@ class WordDoc {
 					$innerCell->addCell(1600)->addText($start_date,array('size' => 8,'align' => 'center'), $fontStyle);
 					$innerCell->addCell(1600)->addText($end_date,array('size' => 8,'align' => 'center'), $fontStyle);
 				}
-			}
-			elseif($title['desc'] == 'Roles and Responsibilities'){
+			}elseif($title['desc'] == 'Roles and Responsibilities'){
 				if(count($title['value'])>0){
 					$fontStyle = array('bold' => true, 'align' => 'center','spaceAfter' => 0);
 					$table->addRow();
@@ -430,8 +429,19 @@ class WordDoc {
 						$innerCell->addCell(3200)->addText(htmlspecialchars($material->material),array('size' => 8,'align' => 'center'), $fontStyle);
 					}
 				}
-			}
-			else{
+			}elseif($title['desc'] == 'FDA Permit No.'){
+				if(count($title['value'])>0){
+					$table->addRow();
+					$table->addCell(1800)->addText($title['desc'],array('bold'=>true,'size' => 8), $noSpace);
+					$cell = $table->addCell(9250);
+					foreach ($title['value'] as $permit) {
+						$innerCell = $cell->addTable('Permit Table');
+						$innerCell->addRow();
+						$innerCell->addCell(7350)->addText(htmlspecialchars($permit->permit_no),array('size' => 8), $noSpace);
+						
+					}
+				}
+			}else{
 				if(!empty($title['value'])){
 					$table->addRow();
 					$table->addCell(1800)->addText($title['desc'],array('bold'=>true,'size' => 8), $noSpace);
@@ -506,16 +516,36 @@ class WordDoc {
 			}
 		}
 		
-		
-
 	    // FDA Permit
-		if(!empty($fdapermit)){
-			$file = explode(".", $fdapermit->file_desc);
-			if(($file[1] != "pdf") &&  ($file[1] != "xps")){
-				$section->addPageBreak();
-				$section->addText("FDA Permit",array('bold'=>true,'size' => 10));
-				$section->addImage(storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/'.$fdapermit->hash_name,array('height'=>800));
+		if(!empty($fdapermits)){
+			$section->addTextBreak(1);
+			$section->addText("FDA Permit",array('bold'=>true,'size' => 10));
+
+			// Add table
+			$permittable = $section->addTable('Permit Table'); 
+			$cnt = 0;
+			
+			foreach($fdapermits as $permit) { // Loop through cells
+				$permittable->addRow();
+				$file = explode(".", $permit->file_desc);
+				$file_ex = strtolower($file[1]);
+				if(($file_ex != "pdf") &&  ($file_ex != "xps")){
+					$cell = $permittable->addCell(900);
+					$textrun = $cell->createTextRun();
+					$textrun->addImage(storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/'.$permit->hash_name,array('width'=>800));
+				}
+				
 			}
+
+			// foreach ($fdapermits as $permit) {
+			// 	$file = explode(".", $permit->file_desc);
+			// 	if(($file[1] != "pdf") &&  ($file[1] != "xps")){
+			// 		$section->addPageBreak();
+			// 		$section->addText("FDA Permit",array('bold'=>true,'size' => 10));
+			// 		$section->addImage(storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/'.$permit->hash_name,array('height'=>800));
+			// 	}
+			// }
+			
 		}
 
 		

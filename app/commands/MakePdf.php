@@ -89,7 +89,7 @@ class MakePdf extends Command {
 				->with('source')
 				->get();
 
-			$fdapermit = ActivityFdapermit::where('activity_id', $activity->id)->first();
+			$fdapermits = ActivityFdapermit::where('activity_id', $activity->id)->get();
 			$networks = ActivityTiming::getTimings($activity->id,true);
 			$activity_roles = ActivityRole::getListData($activity->id);
 			$artworks = ActivityArtwork::getList($activity->id);
@@ -126,7 +126,7 @@ class MakePdf extends Command {
 			$header .= View::make('pdf.style')->render();
 			$header .= View::make('pdf.title',compact('activity','approvers'))->render();
 			$header .= View::make('pdf.activity',compact('activity','schemes','networks','materials', 
-				'budgets','nobudgets', 'skuinvolves', 'areas', 'channels','fdapermit', 'sku_involves', 'activity_roles'))->render();
+				'budgets','nobudgets', 'skuinvolves', 'areas', 'channels','fdapermits', 'sku_involves', 'activity_roles'))->render();
 			
 			$pdf->writeHTML(iconv("UTF-8", "CP1252//TRANSLIT", $header) , $ln=true, $fill=false, $reset=false, $cell=false, $align='');
 
@@ -271,19 +271,27 @@ class MakePdf extends Command {
 				
 			}
 			
-			if(count($fdapermit) > 0){
-				$file = explode(".", $fdapermit->file_desc);
-				if(($file[1] != "pdf") &&  ($file[1] != "xps")){
-					$pdf->AddPage();
-					$fdapermit_view = View::make('pdf.fdapermit')->render();
-					$pdf->writeHTML($fdapermit_view, $ln=true, $fill=false, $reset=false, $cell=false, $align='');
-				
-					$x = $pdf->getX();
-					$y = $pdf->getY();
-					$image_file = $path = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/'.$fdapermit->hash_name;
-					$pdf->Image($image_file, $x, $y, 0, 200, '', '', '', true, 150, '', false, false, 0, false, false, true,false);
-					$pdf->AddPage();
+			if(count($fdapermits) > 0){
+				$artwork = View::make('pdf.fdapermit')->render();
+				$pdf->writeHTML($artwork , $ln=true, $fill=false, $reset=false, $cell=false, $align='');
+				$x = $pdf->getX();
+				$y = $pdf->getY();
+				$cnt = 0;
+				$max_h = 0;
+				foreach($fdapermits as $permit){
+					$file = explode(".", $permit->file_desc);
+					$file_ex = strtolower($file[1]);
+					if(($file_ex  != "pdf") &&  ($file_ex != "xps")){
+						$pdf->AddPage();
+						$x = $pdf->getX();
+						$y = $pdf->getY();
+						$image_file = $path = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/'.$permit->hash_name;
+						$pdf->Image($image_file, $x, $y, 0, 200, '', '', '', true, 150, '', false, false, 0, false, false, true,false);
+					}
 				}
+
+				
+				
 			}
 				
 			if(count($pis) > 0){

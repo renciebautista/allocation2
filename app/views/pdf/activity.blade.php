@@ -283,12 +283,16 @@
 			</td>
 		</tr>
 		@endif
-		@if(!empty($fdapermit))
+		@if(!empty($fdapermits))
 		<tr nobr="true">
 			<td><b>FDA Permit No.</b></td>
 			<td>
-				@if(!empty($fdapermit))
-				{{ $fdapermit->permit_no }}
+				@if(!empty($fdapermits))
+				<ul>
+					@foreach($fdapermits as $fdapermit)
+					<li>{{ $fdapermit->permit_no }}</li>
+					@endforeach
+				</ul>
 				@endif
 			</td>
 		</tr>
