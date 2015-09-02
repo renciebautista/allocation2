@@ -184,7 +184,7 @@ class WordDoc {
 		
 		$activityData = array(array('desc' => 'Activity Type', 'value' => $activity->activitytype->activity_type),
 			array('desc' => 'Activity Title', 'value' => $activity->circular_name),
-			array('desc' => 'Background', 'value' => nl2br($activity->background)),
+			array('desc' => 'Background', 'value' => $activity->background),
 			array('desc' => 'Objectives', 'value' => $activity->objectives),
 			array('desc' => 'Budget IO TTS', 'value' => $budgets),
 			array('desc' => 'Budget IO PE', 'value' => $budgets),
