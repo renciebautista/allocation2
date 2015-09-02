@@ -27,6 +27,14 @@
 		</div>
 
 		<div class="form-group">
+			<div class="checkbox">
+				<label>
+					{{ Form::checkbox('with_msource', 1,$activitytype->with_msource) }} With Material Sourcing
+				</label>
+			</div>
+		</div>
+
+		<div class="form-group">
 			{{ Form::label('activity_type', 'Activity Type', array('class' => 'control-label')) }}
 			{{ Form::text('activity_type', $activitytype->activity_type, array('class' => 'form-control', 'placeholder' => 'Activity Type')) }}
 		</div>

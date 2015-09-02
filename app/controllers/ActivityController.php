@@ -889,10 +889,14 @@ class ActivityController extends BaseController {
 
 						if($status == 1){
 							// check valdiation
+							$required_rules = array('budget','approver','cycle','activity','category','brand','objective','background','customer', 'submission_deadline');
+
 							if($activity->activitytype->with_scheme){
-								$required_rules = array('budget','approver','cycle','activity','category','brand','objective','background','customer','scheme', 'material_source', 'submission_deadline');
-							}else{
-								$required_rules = array('budget','approver','cycle','activity','category','brand','objective','background','customer', 'material_source', 'submission_deadline');
+								array_push($required_rules, 'scheme');
+							}
+
+							if($activity->activitytype->with_msource){
+								array_push($required_rules, 'material_source');
 							}
 							
 							$validation = Activity::validForDownload($activity,$required_rules);

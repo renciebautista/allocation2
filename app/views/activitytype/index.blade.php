@@ -35,6 +35,7 @@
 					<tr>
 						<th class="center" style="width:55%;">Activity Type Name</th>
 						<th class="center">With Scheme</th>
+						<th class="center">With Material Sourcing</th>
 						<th class="center">Unit of Measurement</th>
 						<th colspan="3" style="text-align:center;">Action</th>
 					</tr>
@@ -49,6 +50,7 @@
 					<tr>
 						<td>{{ $type->activity_type }}</td>
 						<td class="center">{{ ($type->with_scheme) ? 'TRUE' : 'FALSE' }}</td>
+						<td class="center">{{ ($type->with_msource) ? 'TRUE' : 'FALSE' }}</td>
 						<td class="center">{{ $type->uom }}</td>
 						<td class="action">
 							{{ HTML::linkAction('NetworkController@index','Manage Networks', $type->id, array('class' => 'btn btn-primary btn-xs')) }}

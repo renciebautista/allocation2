@@ -46,6 +46,7 @@ class ActivityTypeController extends \BaseController {
 				$activitytype->activity_type = strtoupper(Input::get('activity_type'));
 				$activitytype->uom = strtoupper(Input::get('uom'));
 				$activitytype->with_scheme = (Input::has('with_scheme')) ? 1 : 0;
+				$activitytype->with_msource = (Input::has('with_msource')) ? 1 : 0;
 				$activitytype->save();
 
 				// add required
@@ -125,6 +126,7 @@ class ActivityTypeController extends \BaseController {
 				$activitytype->activity_type = strtoupper(Input::get('activity_type'));
 				$activitytype->uom = strtoupper(Input::get('uom'));
 				$activitytype->with_scheme = (Input::has('with_scheme')) ? 1 : 0;
+				$activitytype->with_msource = (Input::has('with_msource')) ? 1 : 0;
 				$activitytype->update();
 
 				// add required
