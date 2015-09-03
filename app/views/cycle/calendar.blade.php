@@ -31,11 +31,11 @@
 				<thead>
 					<tr>
 						<th class="center">Cycle Name</th>
-						<th class="center">Cycle Month-Year</th>
-						
+						<th class="center">Start Date</th>
+						<th class="center">End Date</th>
 						<th class="center">Circular Submission Deadline</th>
 						<th class="center">Approval Deadline</th>
-						<th class="center">PDF and Attachment Creation Date</th>
+						<th class="center">PDF Creation Date</th>
 						<th class="center">Release Date</th>
 						<th class="center">Implementation Date</th>
 						<th class="center">Emergency</th>
@@ -50,8 +50,8 @@
 					@foreach($cycles as $cycle)
 					<tr>
 						<td>{{ $cycle->cycle_name }}</td>
-						<td class="center">{{ $cycle->month_year }}</td>
-						
+						<td class="center">{{ date_format(date_create($cycle->start_date),'m/d/Y')  }}</td>
+						<td class="center">{{ date_format(date_create($cycle->end_date),'m/d/Y')  }}</td>
 						<td class="center">{{ date_format(date_create($cycle->submission_deadline),'m/d/Y')  }}</td>
 						<td class="center">{{ date_format(date_create($cycle->approval_deadline),'m/d/Y')  }}</td>
 						<td class="center">{{ date_format(date_create($cycle->pdf_deadline),'m/d/Y')  }}</td>

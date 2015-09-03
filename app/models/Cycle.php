@@ -7,13 +7,20 @@ class Cycle extends \Eloquent {
 
 	public static $rules = array(
 		'cycle_name' => 'required',
-		'month_year' => 'required',
+		'start_date' => 'required|date',
+		'end_date' => 'required|date',
 		'submission_deadline' => 'required|date',
 		'approval_deadline' => 'required|date',
 		'pdf_deadline' => 'required|date',
 		'release_date' => 'required|date',
 		'implemintation_date' => 'required|date',
 	);
+
+	public static function availableCycle($date){
+		return self::select('id', 'cycle_name')
+			->whereRaw("'".$date ."' between start_date and end_date")
+			->lists('cycle_name', 'id');
+	}
 
 	public static function batchInsert($records){
 		$records->each(function($row) {

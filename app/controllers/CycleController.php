@@ -5,18 +5,12 @@ class CycleController extends \BaseController {
 	public function availableCycle(){
 		if(Request::ajax()){
 			$date = date('Y-m-d',strtotime(Input::get('date')));
-			$month = date("m", strtotime($date));
-			$year =  date("Y", strtotime($date));
 			if(Input::has('id')){
 				$activity = Activity::find(Input::get('id'));
-				$data['cycles'] = Cycle::select('id', 'cycle_name')
-				->where('month_year',$month."/".$year)
-				->orderBy('cycle_name')->lists('cycle_name', 'id');
+				$data['cycles'] = Cycle::availableCycle($date);
 				$data['sel'] = $activity->cycle_id;
 			}else{
-				$data['cycles'] = Cycle::select('id', 'cycle_name')
-				->where('month_year',$month."/".$year)
-				->orderBy('cycle_name')->lists('cycle_name', 'id');
+				$data['cycles'] = Cycle::availableCycle($date);
 			}
 			
 			return \Response::json($data,200);
@@ -65,7 +59,9 @@ class CycleController extends \BaseController {
 
 				$cycle = new Cycle;
 				$cycle->cycle_name = strtoupper(Input::get('cycle_name'));
-				$cycle->month_year = Input::get('month_year');
+				// $cycle->month_year = Input::get('month_year');
+				$cycle->start_date = date('Y-m-d',strtotime(Input::get('start_date')));
+				$cycle->end_date = date('Y-m-d',strtotime(Input::get('end_date')));
 				$cycle->submission_deadline = date('Y-m-d',strtotime(Input::get('submission_deadline')));
 				$cycle->approval_deadline = date('Y-m-d',strtotime(Input::get('approval_deadline')));
 				$cycle->pdf_deadline = date('Y-m-d',strtotime(Input::get('pdf_deadline')));
@@ -143,7 +139,9 @@ class CycleController extends \BaseController {
 
 
 			$cycle->cycle_name = strtoupper(Input::get('cycle_name'));
-			$cycle->month_year = Input::get('month_year');
+			// $cycle->month_year = Input::get('month_year');
+			$cycle->start_date = date('Y-m-d',strtotime(Input::get('start_date')));
+			$cycle->end_date = date('Y-m-d',strtotime(Input::get('end_date')));
 			$cycle->submission_deadline = date('Y-m-d',strtotime(Input::get('submission_deadline')));
 			$cycle->approval_deadline = date('Y-m-d',strtotime(Input::get('approval_deadline')));
 			$cycle->pdf_deadline = date('Y-m-d',strtotime(Input::get('pdf_deadline')));

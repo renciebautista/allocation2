@@ -23,10 +23,14 @@
 			{{ Form::text('cycle_name','',array('class' => 'form-control', 'placeholder' => 'Cycle Name')) }}
 		</div>
 
+		<div class="form-group">
+			{{ Form::label('start_date', 'Circular Start Date', array('class' => 'control-label')) }}
+			{{ Form::text('start_date','',array('class' => 'form-control', 'placeholder' => 'Circular Start Date')) }}
+		</div>
 
 		<div class="form-group">
-			{{ Form::label('month_year', 'Month/Year', array('class' => 'control-label')) }}
-			{{ Form::text('month_year','',array('class' => 'form-control', 'placeholder' => 'Month/Year')) }}
+			{{ Form::label('end_date', 'Circular End Date', array('class' => 'control-label')) }}
+			{{ Form::text('end_date','',array('class' => 'form-control', 'placeholder' => 'Circular End Date')) }}
 		</div>
 
 		<div class="form-group">
