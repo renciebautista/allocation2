@@ -493,11 +493,12 @@
 						{{ Form::textarea('activity_fda_ac','',array('rows' => 1, 'placeholder' => 'FDA Permit Remarks')) }}
 						@endif
 						@if(!empty($fdapermits))
-						<?php 
-							$file = explode(".", $fdapermit->file_desc);
-						?>
+						
 						<ul>
 							@foreach($fdapermits as $permit)
+							<?php 
+								$file = explode(".", $fdapermit->file_desc);
+							?>
 							<?php $file_ex = strtolower($file[1]); ?>
 							@if(($file_ex != "pdf") && ($file_ex != "xps"))
 								<li>{{ HTML::image('fdapermit/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/'.$permit->hash_name ,$permit->file_desc) }}</li>
