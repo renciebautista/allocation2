@@ -10,15 +10,20 @@ class SubmittedActivityController extends \BaseController {
 	 */
 	public function index()
 	{
-		Input::flash();
-		$statuses = ActivityStatus::availableStatus(1);
-		$cycles = Cycle::getLists();
-		$scopes = ScopeType::getLists();
-		$types = ActivityType::getLists();
-		$proponents = User::getApprovers(['PROPONENT']);
-		$activities = Activity::searchSubmitted(Input::get('pr'),Input::get('st'),Input::get('cy'),Input::get('sc'),
-			Input::get('ty'),Input::get('title'));
-		return View::make('submittedactivity.index',compact('statuses', 'activities', 'cycles', 'scopes', 'types', 'proponents'));
+		if(Auth::user()->inRoles(['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR'])){
+			Input::flash();
+			$statuses = ActivityStatus::availableStatus(1);
+			$cycles = Cycle::getLists();
+			$scopes = ScopeType::getLists();
+			$types = ActivityType::getLists();
+			$proponents = User::getApprovers(['PROPONENT']);
+			$activities = Activity::searchSubmitted(Input::get('pr'),Input::get('st'),Input::get('cy'),Input::get('sc'),
+				Input::get('ty'),Input::get('title'));
+			return View::make('submittedactivity.index',compact('statuses', 'activities', 'cycles', 'scopes', 'types', 'proponents'));
+		}else{
+			return Redirect::route('activity.index');
+		}
+		
 	}
 
 	/**

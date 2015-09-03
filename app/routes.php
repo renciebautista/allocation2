@@ -264,7 +264,7 @@ Route::get('testrole', function(){
 	
 	$data['activities'] = Activity::Released($cycle_ids);
 
-	return View::make('emails.mail4', $data);
+	return View::make('emails.mail31', $data);
 });
 
 Route::get('mailreport', function(){

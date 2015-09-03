@@ -122,19 +122,27 @@ class TestMail extends Command {
 				if($role_id  > 3){
 					$data['activities'] = Activity::ApproverActivities($user->id,$cycle_ids);
 				}
+
+				if($role_id > 3){
+					$mail_template = 'emails.mail31';
+				}else{
+					$mail_template = 'emails.mail3';
+				}
+
 				if(count($data['activities'])>0){
 					if($_ENV['MAIL_TEST']){
-						Mail::send('emails.mail3', $data, function($message) use ($data){
+						Mail::send($mail_template, $data, function($message) use ($data){
 							$message->to("rbautista@chasetech.com", $data['fullname']);
 							$message->bcc("rosarah.reyes@unilever.com");
 							$message->subject('TOP ACTIVITY STATUS');
 						});	
 					}else{
-						Mail::send('emails.mail3', $data, function($message) use ($data){
+						Mail::send($mail_template, $data, function($message) use ($data){
 							$message->to($data['email'], $data['fullname'])->subject('TOP ACTIVITY STATUS');
 						});
 					}
 				}
+				
 			break;
 
 			case 'mail4':

@@ -523,7 +523,7 @@ class Activity extends \Eloquent {
 	public static function ProponentActivitiesForApproval($user_id,$cycles){
 		return self::select('activities.id','activities.circular_name','activities.edownload_date',
 			'activities.eimplementation_date','activities.billing_date',
-			'activity_statuses.status','cycles.cycle_name','end_date',
+			'activity_statuses.status','cycles.cycle_name','activities.end_date',
 			'scope_types.scope_name','activity_types.activity_type','activities.status_id',
 			DB::raw('CONCAT(users.first_name, " ", users.last_name) AS planner'),
 			DB::raw('CONCAT(propo.first_name, " ", propo.last_name) AS proponent'))
@@ -546,7 +546,7 @@ class Activity extends \Eloquent {
 	public static function PmogActivitiesForApproval($user_id,$cycles){
 		return self::select('activities.id','activities.circular_name','activities.edownload_date',
 			'activities.eimplementation_date','activities.billing_date',
-			'activity_statuses.status','cycles.cycle_name','end_date',
+			'activity_statuses.status','cycles.cycle_name','activities.end_date',
 			'scope_types.scope_name','activity_types.activity_type', 'activities.status_id',
 			DB::raw('CONCAT(users.first_name, " ", users.last_name) AS planner'),
 			DB::raw('CONCAT(propo.first_name, " ", propo.last_name) AS proponent'))
@@ -571,7 +571,7 @@ class Activity extends \Eloquent {
 		$activities = ActivityApprover::getActivitiesForApproval($user_id);
 		return self::select('activities.id','activities.circular_name','activities.edownload_date',
 			'activities.eimplementation_date','activities.billing_date',
-			'activity_statuses.status','cycles.cycle_name','end_date',
+			'activity_statuses.status','cycles.cycle_name','activities.end_date',
 			'scope_types.scope_name','activity_types.activity_type', 'activities.status_id',
 			DB::raw('CONCAT(users.first_name, " ", users.last_name) AS planner'),
 			DB::raw('CONCAT(propo.first_name, " ", propo.last_name) AS proponent'))
@@ -596,7 +596,7 @@ class Activity extends \Eloquent {
 		$activities = ActivityApprover::getActivities($user_id);
 		return self::select('activities.id','activities.circular_name','activities.edownload_date',
 			'activities.eimplementation_date','activities.billing_date',
-			'activity_statuses.status','cycles.cycle_name','end_date',
+			'activity_statuses.status','cycles.cycle_name','activities.end_date',
 			'scope_types.scope_name','activity_types.activity_type',  'activities.status_id',
 			DB::raw('CONCAT(users.first_name, " ", users.last_name) AS planner'),
 			DB::raw('CONCAT(propo.first_name, " ", propo.last_name) AS proponent'))
@@ -620,7 +620,7 @@ class Activity extends \Eloquent {
 	public static function Released($cycles){
 		return self::select('activities.id','activities.circular_name','activities.edownload_date',
 			'activities.eimplementation_date','activities.billing_date',
-			'activity_statuses.status','cycles.cycle_name','end_date',
+			'activity_statuses.status','cycles.cycle_name','activities.end_date',
 			'scope_types.scope_name','activity_types.activity_type',  'activities.status_id',
 			DB::raw('CONCAT(users.first_name, " ", users.last_name) AS planner'),
 			DB::raw('CONCAT(propo.first_name, " ", propo.last_name) AS proponent'))
