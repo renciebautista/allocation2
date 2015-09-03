@@ -326,7 +326,7 @@ class Activity extends \Eloquent {
 		
 		return self::select('activities.id','activities.circular_name','activities.edownload_date',
 			'activities.eimplementation_date','activities.billing_date',
-			'activity_statuses.status','cycles.cycle_name','end_date',
+			'activity_statuses.status','cycles.cycle_name','activities.end_date',
 			'scope_types.scope_name','activity_types.activity_type',
 			DB::raw('CONCAT(propo.first_name, " ", propo.last_name) AS proponent'))
 			->join('activity_statuses', 'activities.status_id','=','activity_statuses.id')
