@@ -25,8 +25,13 @@
 
 		
 		<div class="form-group">
-			{{ Form::label('month_year', 'Month/Year', array('class' => 'control-label')) }}
-			{{ Form::text('month_year',$cycle->month_year,array('class' => 'form-control', 'placeholder' => 'Month/Year')) }}
+			{{ Form::label('start_date', 'Circular Start Date', array('class' => 'control-label')) }}
+			{{ Form::text('start_date', date_format(date_create($cycle->start_date),'m/d/Y'),array('class' => 'form-control', 'placeholder' => 'Circular Start Date')) }}
+		</div>
+
+		<div class="form-group">
+			{{ Form::label('end_date', 'Circular End Date', array('class' => 'control-label')) }}
+			{{ Form::text('end_date', date_format(date_create($cycle->end_date),'m/d/Y'),array('class' => 'form-control', 'placeholder' => 'Circular End Date')) }}
 		</div>
 
 		<div class="form-group">
