@@ -193,7 +193,7 @@ class SubmittedActivityController extends \BaseController {
 		$comments = ActivityComment::getList($activity->id);
 		return View::make('submittedactivity.edit',compact('activity','comments','approver', 'valid',
 			'activity' ,'approvers', 'planner','budgets','nobudgets','schemes','skuinvolves', 'sku_involves',
-			'materials','non_ulp','fdapermit', 'networks','artworks', 'pis' , 'areas','channels', 
+			'materials','non_ulp','networks','artworks', 'pis' , 'areas','channels', 
 			'fdapermits','fis', 'backgrounds', 'bandings' ,'activity_roles'));
 	}
 
