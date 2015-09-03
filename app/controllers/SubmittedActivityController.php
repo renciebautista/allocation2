@@ -155,7 +155,8 @@ class SubmittedActivityController extends \BaseController {
 			->with('source')
 			->get();
 
-		$fdapermits = ActivityFdapermit::where('activity_id', $activity->id)->get();
+		$fdapermits = ActivityFdapermit::getList($activity->id);
+
 		$networks = ActivityTiming::getTimings($activity->id,true);
 
 		$activity_roles = ActivityRole::getListData($activity->id);
@@ -183,7 +184,7 @@ class SubmittedActivityController extends \BaseController {
 		}
 
 		// attachments
-		$fdapermits = ActivityFdapermit::getList($activity->id);
+		
 		$fis = ActivityFis::getList($activity->id);
 		$artworks = ActivityArtwork::getList($activity->id);
 		$backgrounds = ActivityBackground::getList($activity->id);
