@@ -171,10 +171,10 @@ class MakeAllocReport extends Command {
 		
 		$this->line($newfile->file_name);
 		
-		// Mail::send('emails.allocreport', $data, function($message) use ($user, $name){
-		// 	$message->to($user->email, $user->first_name);
-		// 	$message->subject('Allocation Report - '.$name);
-		// });
+		Mail::send('emails.allocreport', $data, function($message) use ($user, $name){
+			$message->to($user->email, $user->first_name);
+			$message->subject('Allocation Report - '.$name);
+		});
 	}
 
 	/**
