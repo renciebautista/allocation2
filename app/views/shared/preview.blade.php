@@ -592,11 +592,12 @@
 			<div id="fdapermit">
 				<h2>FDA Permit</h2>
 				@if(!empty($fdapermits))
-				<?php 
-					$file = explode(".", $fdapermit->file_desc);
-				?>
+				
 				<ul>
 					@foreach($fdapermits as $permit)
+					<?php 
+						$file = explode(".", $fdapermit->file_desc);
+					?>
 					<?php $file_ex = strtolower($file[1]); ?>
 					@if(($file_ex != "pdf") && ($file_ex != "xps"))
 						<li>{{ HTML::image('fdapermit/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/'.$permit->hash_name ,$permit->file_desc) }}</li>
