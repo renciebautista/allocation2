@@ -699,82 +699,82 @@ class WordDoc {
 			}
 		}
 		
-		// // schemes
-		// if(count($schemes) > 0){
-		// 	$section->addPageBreak();
-		// 	// New landscape section
-		// 	$section = $phpWord->addSection(
-		// 	    array('paperSize' => 'Letter','orientation' => 'landscape','marginLeft' => 600, 'marginRight' => 600, 'marginTop' => 600, 'marginBottom' => 600)
-		// 	);
-		// 	$_ap = 0;
-		// 	foreach ($schemes as $scheme) {
+		// schemes
+		if(count($schemes) > 0){
+			$section->addPageBreak();
+			// New landscape section
+			$section = $phpWord->addSection(
+			    array('paperSize' => 'Letter','orientation' => 'landscape','marginLeft' => 600, 'marginRight' => 600, 'marginTop' => 600, 'marginBottom' => 600)
+			);
+			$_ap = 0;
+			foreach ($schemes as $scheme) {
 
-		// 		$count = count($scheme->allocations);
-		// 		$_all = $count * count($scheme);
-		// 		$loops = (int) ($count / 20);
+				$count = count($scheme->allocations);
+				$_all = $count * count($scheme);
+				$loops = (int) ($count / 20);
 				
-		// 		$cnt = 0;
-		// 		for ($i = 0; $i < $loops; $i++) { 
-		// 			$last_count =  $cnt+20;
-		// 			$x = $i +1;
-		// 			$_ap++;
-		// 			$section->addText($scheme->name,array('bold'=>true,'size' => 10));
-		// 			$section->addText($x.' of '.$loops,array('bold'=>true,'size' => 10));
+				$cnt = 0;
+				for ($i = 0; $i < $loops; $i++) { 
+					$last_count =  $cnt+20;
+					$x = $i +1;
+					$_ap++;
+					$section->addText((htmlspecialchars($scheme->name),array('bold'=>true,'size' => 10));
+					$section->addText($x.' of '.$loops,array('bold'=>true,'size' => 10));
 
-		// 			$styleTable = array('borderSize' => 6, 'borderColor' => '000000', 'cellMargin' => 60);
-		// 			$fontStyle = array('bold' => true, 'align' => 'center');
-		// 			$phpWord->addTableStyle('Schemes Table', $styleTable);
-		// 			$table = $section->addTable('Schemes Table');
-		// 			$scheme_style = array('size' => 6);
-		// 			$headStyle = array('spaceAfter' => 0,'align' => 'center');
+					$styleTable = array('borderSize' => 6, 'borderColor' => '000000', 'cellMargin' => 60);
+					$fontStyle = array('bold' => true, 'align' => 'center');
+					$phpWord->addTableStyle('Schemes Table', $styleTable);
+					$table = $section->addTable('Schemes Table');
+					$scheme_style = array('size' => 6);
+					$headStyle = array('spaceAfter' => 0,'align' => 'center');
 
-		// 			$table->addRow();
-		// 			$table->addCell(500)->addText('#',$scheme_style, $headStyle );
-		// 			$table->addCell(1000)->addText('GROUP',$scheme_style, $headStyle);
-		// 			$table->addCell(2000)->addText('AREA NAME',$scheme_style, $headStyle);
-		// 			$table->addCell(2000)->addText('CUSTOMER SOLD TO',$scheme_style, $headStyle );
-		// 			$table->addCell(2500)->addText('CUSTOMER SHIP TO NAME',$scheme_style, $headStyle);
-		// 			$table->addCell(1000)->addText('CHANNEL',$scheme_style, $headStyle);
-		// 			$table->addCell(2500)->addText('ACCOUNT NAME',$scheme_style, $headStyle);
-		// 			$table->addCell(1000)->addText('IN DEALS',$scheme_style, $headStyle);
-		// 			$table->addCell(1000)->addText('IN CASES',$scheme_style, $headStyle);
-		// 			$table->addCell(1000)->addText('TTS BUDGET',$scheme_style, $headStyle);
-		// 			$table->addCell(1000)->addText('PE BUDGET',$scheme_style, $headStyle);
+					$table->addRow();
+					$table->addCell(500)->addText('#',$scheme_style, $headStyle );
+					$table->addCell(1000)->addText('GROUP',$scheme_style, $headStyle);
+					$table->addCell(2000)->addText('AREA NAME',$scheme_style, $headStyle);
+					$table->addCell(2000)->addText('CUSTOMER SOLD TO',$scheme_style, $headStyle );
+					$table->addCell(2500)->addText('CUSTOMER SHIP TO NAME',$scheme_style, $headStyle);
+					$table->addCell(1000)->addText('CHANNEL',$scheme_style, $headStyle);
+					$table->addCell(2500)->addText('ACCOUNT NAME',$scheme_style, $headStyle);
+					$table->addCell(1000)->addText('IN DEALS',$scheme_style, $headStyle);
+					$table->addCell(1000)->addText('IN CASES',$scheme_style, $headStyle);
+					$table->addCell(1000)->addText('TTS BUDGET',$scheme_style, $headStyle);
+					$table->addCell(1000)->addText('PE BUDGET',$scheme_style, $headStyle);
 
-		// 			for ($x=$cnt; $x <= $last_count; $x++) { 
-		// 				if($cnt == $count){
-		// 					break;
-		// 				}
-		// 				$num = $x + 1;
-		// 				$rowstyle = array('bgColor' => 'FFFFFF');
-		// 				if((empty($scheme->allocations[$x]->customer_id)) && (empty($scheme->allocations[$x]->shipto_id))){
-		// 					$rowstyle = array('bgColor' => 'd9edf7');
-		// 				}
-		// 				if((!empty($scheme->allocations[$x]->customer_id)) && (!empty($scheme->allocations[$x]->shipto_id))){
+					for ($x=$cnt; $x <= $last_count; $x++) { 
+						if($cnt == $count){
+							break;
+						}
+						$num = $x + 1;
+						$rowstyle = array('bgColor' => 'FFFFFF');
+						if((empty($scheme->allocations[$x]->customer_id)) && (empty($scheme->allocations[$x]->shipto_id))){
+							$rowstyle = array('bgColor' => 'd9edf7');
+						}
+						if((!empty($scheme->allocations[$x]->customer_id)) && (!empty($scheme->allocations[$x]->shipto_id))){
 
-		// 					$rowstyle = array('bgColor' => 'fcf8e3');
-		// 				}
+							$rowstyle = array('bgColor' => 'fcf8e3');
+						}
 
-		// 				$table->addRow();
-		// 				$table->addCell(500,$rowstyle)->addText($num,$scheme_style, array('spaceAfter' => 0,'align' => 'right'));
-		// 				$table->addCell(1000,$rowstyle)->addText(htmlspecialchars($scheme->allocations[$x]->group),$scheme_style, array('spaceAfter' => 0));
-		// 				$table->addCell(2000,$rowstyle)->addText(htmlspecialchars($scheme->allocations[$x]->area),$scheme_style,array('spaceAfter' => 0));
-		// 				$table->addCell(2000,$rowstyle)->addText(htmlspecialchars($scheme->allocations[$x]->sold_to),$scheme_style, array('spaceAfter' => 0));
-		// 				$table->addCell(2500,$rowstyle)->addText(htmlspecialchars($scheme->allocations[$x]->ship_to),$scheme_style,array('spaceAfter' => 0));
-		// 				$table->addCell(1000,$rowstyle)->addText(htmlspecialchars($scheme->allocations[$x]->channel),$scheme_style, array('spaceAfter' => 0));
-		// 				$table->addCell(2500,$rowstyle)->addText(htmlspecialchars($scheme->allocations[$x]->outlet),$scheme_style,array('spaceAfter' => 0));
-		// 				$table->addCell(1000,$rowstyle)->addText(number_format($scheme->allocations[$x]->in_deals),$scheme_style, array('spaceAfter' => 0,'align' => 'right'));
-		// 				$table->addCell(1000,$rowstyle)->addText(number_format($scheme->allocations[$x]->in_cases),$scheme_style, array('spaceAfter' => 0,'align' => 'right'));
-		// 				$table->addCell(1000,$rowstyle)->addText(number_format($scheme->allocations[$x]->tts_budget,2),$scheme_style, array('spaceAfter' => 0,'align' => 'right'));
-		// 				$table->addCell(1000,$rowstyle)->addText(number_format($scheme->allocations[$x]->pe_budget,2),$scheme_style, array('spaceAfter' => 0,'align' => 'right'));
-		// 				$cnt++;
-		// 			}
-		// 			if($_ap < ($loops * count($schemes)) ){
-		// 				$section->addPageBreak();
-		// 			}
-		// 		}
-		// 	}
-		// }
+						$table->addRow();
+						$table->addCell(500,$rowstyle)->addText($num,$scheme_style, array('spaceAfter' => 0,'align' => 'right'));
+						$table->addCell(1000,$rowstyle)->addText(htmlspecialchars($scheme->allocations[$x]->group),$scheme_style, array('spaceAfter' => 0));
+						$table->addCell(2000,$rowstyle)->addText(htmlspecialchars($scheme->allocations[$x]->area),$scheme_style,array('spaceAfter' => 0));
+						$table->addCell(2000,$rowstyle)->addText(htmlspecialchars($scheme->allocations[$x]->sold_to),$scheme_style, array('spaceAfter' => 0));
+						$table->addCell(2500,$rowstyle)->addText(htmlspecialchars($scheme->allocations[$x]->ship_to),$scheme_style,array('spaceAfter' => 0));
+						$table->addCell(1000,$rowstyle)->addText(htmlspecialchars($scheme->allocations[$x]->channel),$scheme_style, array('spaceAfter' => 0));
+						$table->addCell(2500,$rowstyle)->addText(htmlspecialchars($scheme->allocations[$x]->outlet),$scheme_style,array('spaceAfter' => 0));
+						$table->addCell(1000,$rowstyle)->addText(number_format($scheme->allocations[$x]->in_deals),$scheme_style, array('spaceAfter' => 0,'align' => 'right'));
+						$table->addCell(1000,$rowstyle)->addText(number_format($scheme->allocations[$x]->in_cases),$scheme_style, array('spaceAfter' => 0,'align' => 'right'));
+						$table->addCell(1000,$rowstyle)->addText(number_format($scheme->allocations[$x]->tts_budget,2),$scheme_style, array('spaceAfter' => 0,'align' => 'right'));
+						$table->addCell(1000,$rowstyle)->addText(number_format($scheme->allocations[$x]->pe_budget,2),$scheme_style, array('spaceAfter' => 0,'align' => 'right'));
+						$cnt++;
+					}
+					if($_ap < ($loops * count($schemes)) ){
+						$section->addPageBreak();
+					}
+				}
+			}
+		}
 
 		return $phpWord;
 		
