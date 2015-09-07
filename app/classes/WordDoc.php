@@ -718,7 +718,7 @@ class WordDoc {
 					$last_count =  $cnt+20;
 					$x = $i +1;
 					$_ap++;
-					$section->addText((htmlspecialchars($scheme->name),array('bold'=>true,'size' => 10));
+					$section->addText(htmlspecialchars($scheme->name),array('bold'=>true,'size' => 10));
 					$section->addText($x.' of '.$loops,array('bold'=>true,'size' => 10));
 
 					$styleTable = array('borderSize' => 6, 'borderColor' => '000000', 'cellMargin' => 60);
