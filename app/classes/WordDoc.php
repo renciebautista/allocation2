@@ -516,188 +516,188 @@ class WordDoc {
 			}
 		}
 		
-	 //    // FDA Permit
-		// if(!empty($fdapermits)){
-		// 	$withfda = false;
-		// 	foreach($fdapermits as $permit) { // Loop through cells
-		// 		$file = explode(".", $permit->file_desc);
-		// 		$file_ex = strtolower($file[1]);
-		// 		if(($file_ex != "pdf") &&  ($file_ex != "xps")){
-		// 			$withfda = true;
-		// 		}
+	    // FDA Permit
+		if(!empty($fdapermits)){
+			$withfda = false;
+			foreach($fdapermits as $permit) { // Loop through cells
+				$file = explode(".", $permit->file_desc);
+				$file_ex = strtolower($file[1]);
+				if(($file_ex != "pdf") &&  ($file_ex != "xps")){
+					$withfda = true;
+				}
 				
-		// 	}
+			}
 
-		// 	if($withfda){
-		// 		$section->addTextBreak(1);
-		// 		$section->addText("FDA Permit",array('bold'=>true,'size' => 10));
+			if($withfda){
+				$section->addTextBreak(1);
+				$section->addText("FDA Permit",array('bold'=>true,'size' => 10));
 
-		// 		// Add table
-		// 		$permittable = $section->addTable('Permit Table'); 
+				// Add table
+				$permittable = $section->addTable('Permit Table'); 
 				
-		// 		foreach($fdapermits as $permit) { // Loop through cells
-		// 			$file = explode(".", $permit->file_desc);
-		// 			$file_ex = strtolower($file[1]);
-		// 			if(($file_ex != "pdf") &&  ($file_ex != "xps")){
-		// 				$permittable->addRow();
-		// 				$cell = $permittable->addCell(900);
-		// 				$textrun = $cell->createTextRun();
-		// 				$textrun->addImage(storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/'.$permit->hash_name,array('width'=>800));
-		// 			}
-		// 		}
-		// 	}
+				foreach($fdapermits as $permit) { // Loop through cells
+					$file = explode(".", $permit->file_desc);
+					$file_ex = strtolower($file[1]);
+					if(($file_ex != "pdf") &&  ($file_ex != "xps")){
+						$permittable->addRow();
+						$cell = $permittable->addCell(900);
+						$textrun = $cell->createTextRun();
+						$textrun->addImage(storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/'.$permit->hash_name,array('width'=>800));
+					}
+				}
+			}
 			
-		// }
-
-		// Product Information Sheet
-		if(count($pis) > 0){
-			$section->addPageBreak();
-			$section->addText("Product Information Sheet",array('bold'=>true,'size' => 10));
-
-			$styleTable = array('borderSize' => 6, 'borderColor' => '000000', 'cellMargin' => 30);
-			$fontStyle = array('bold' => true, 'align' => 'center');
-			$phpWord->addTableStyle('PIS Table', $styleTable);
-			$pistable = $section->addTable('PIS Table');
-
-			$pisTitleData = array(array('desc' => 'Product Category', 'value' => htmlspecialchars($pis[2][1])),
-				array('desc' => 'Sub Category', 'value' => htmlspecialchars($pis[3][1])),
-				array('desc' => 'Brand / Scheme', 'value' => htmlspecialchars($pis[4][1])),
-				array('desc' => 'Target Market', 'value' => htmlspecialchars($pis[5][1])),
-				array('desc' => 'Product Features', 'value' => htmlspecialchars($pis[6][1])),
-				array('desc' => 'Major Competitors', 'value' => htmlspecialchars($pis[7][1])),
-				array('desc' => 'Minor Competitors', 'value' => htmlspecialchars($pis[8][1])),
-				);
-			foreach ($pisTitleData as $title) {
-				$pistable->addRow();
-				$pistable->addCell(1800)->addText($title['desc'],array('bold'=>true,'size' => 8), $noSpace);
-				$pistable->addCell(9250)->addText($title['value'],array('size' => 8), $noSpace);
-			}
-			$pis_x = 0; 
-			for ($i=8; $i < count($pis); $i++) { 
-				if($pis[$i][7] == "Case Dimensions (MM)"){
-					$pis_x = $i+2;
-					break;
-				}
-			}
-
-			$pistable = $section->addTable('PIS Table');
-			$pistable->addRow();
-			$piscell =  $pistable->addCell(11050);
-			$fontStyle = array('bold' => true, 'align' => 'center','spaceAfter' => 0);
-			$styleFirstRow = array('borderBottomSize' => 18, 'borderBottomColor' => '0000FF', 'bgColor' => '000000','color' => 'ffffff');
-			$phpWord->addTableStyle('table 1_h', $styleTable,$styleFirstRow);
-			$t1_h = $piscell->addTable('table 1_h');
-			$t1_h->addRow();
-			$t1_h->addCell(9100)->addText("",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-			$t1_h->addCell(2000)->addText("Case Dimensions (MM)",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-			$phpWord->addTableStyle('table 1', $styleTable,$styleFirstRow);
-			$t1 = $piscell->addTable('table 1');
-			$t1->addRow();
-			$t1->addCell(3000)->addText("Item Description",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-			$t1->addCell(1000)->addText("Pack Size",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-			$t1->addCell(1000)->addText("Pack Color",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-			$t1->addCell(1000)->addText("Units/Case",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-			$t1->addCell(1500)->addText("Product Barcode",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-			$t1->addCell(1500)->addText("Product Code",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-			$t1->addCell(600)->addText("Case/Ton",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-			$t1->addCell(500)->addText("L",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-			$t1->addCell(500)->addText("W",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-			$t1->addCell(500)->addText("H",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-
-			for($x1 = $pis_x; $x1 < count($pis); $x1++){
-				if($pis[$x1][1] == "Product Dimension (MM)"){
-					break;
-				}
-				if($pis[$x1][0] != ""){
-					$t1->addRow();
-					$t1->addCell(3000)->addText(htmlspecialchars($pis[$x1][0]),array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					$t1->addCell(1000)->addText(htmlspecialchars($pis[$x1][1]),array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					$t1->addCell(1000)->addText(htmlspecialchars($pis[$x1][2]),array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					$t1->addCell(1000)->addText(htmlspecialchars($pis[$x1][3]),array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					$t1->addCell(1500)->addText(htmlspecialchars($pis[$x1][4]),array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					$t1->addCell(1500)->addText(htmlspecialchars($pis[$x1][5]),array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					$t1->addCell(600)->addText(number_format($pis[$x1][6],2),array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					$t1->addCell(500)->addText($pis[$x1][7],array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					$t1->addCell(500)->addText($pis[$x1][8],array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					$t1->addCell(500)->addText($pis[$x1][9],array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-				}
-				$pis_x = $x1;
-			}
-
-			$phpWord->addTableStyle('table 2_h', $styleTable,$styleFirstRow);
-			$t2_h = $piscell->addTable('table 2_h');
-			$t2_h->addRow();
-			$t2_h->addCell(3000)->addText("",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-			$t2_h->addCell(1500)->addText("Product Dimensions (MM)",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-			$t2_h->addCell(3700)->addText("",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-			$t2_h->addCell(2900)->addText("Maximum Case Stocking",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-			$phpWord->addTableStyle('table 2', $styleTable,$styleFirstRow);
-			$t2 = $piscell->addTable('table 2');
-			$t2->addRow();
-			$t2->addCell(3000)->addText("Item Description",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-			$t2->addCell(500)->addText("L",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-			$t2->addCell(500)->addText("W",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-			$t2->addCell(500)->addText("H",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-			$t2->addCell(1500)->addText("Product Casecode",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-			$t2->addCell(1000)->addText("Net Wgt Kg",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-			$t2->addCell(1200)->addText("Gross Wgt KG",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-			$t2->addCell(900)->addText("CS/Layer",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-			$t2->addCell(1000)->addText("Layer/Pallet",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-			$t2->addCell(1000)->addText("Pallets/Tier",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-
-			$pis_x = $pis_x+3;
-			for($x2 = $pis_x; $x2 < count($pis); $x2++){
-				if($pis[$x2][8] == "Trade margins"){
-					break;
-					$pis_x = $x2;
-				}
-				if($pis[$x2][0] != ""){
-					$t2->addRow();
-					$t2->addCell(3000)->addText(htmlspecialchars($pis[$x2][0]),array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					$t2->addCell(500)->addText($pis[$x2][1],array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					$t2->addCell(500)->addText($pis[$x2][2],array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					$t2->addCell(500)->addText($pis[$x2][3],array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					$t2->addCell(1500)->addText(htmlspecialchars($pis[$x2][4]),array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					$t2->addCell(1000)->addText(number_format($pis[$x2][5],2),array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					$t2->addCell(1200)->addText(number_format($pis[$x2][6],2),array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					$t2->addCell(1000)->addText($pis[$x2][7],array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					$t2->addCell(900)->addText($pis[$x2][8],array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					$t2->addCell(1000)->addText($pis[$x2][9],array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-				}
-				$pis_x = $x2;
-			}
-
-			$phpWord->addTableStyle('table 3', $styleTable,$styleFirstRow);
-			$t3 = $piscell->addTable('table 3');
-			$t3->addRow();
-			$t3->addCell(3000)->addText("Item Description",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-			$t3->addCell(500)->addText("Total Shelf Life (SLED in Days)",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-			$t3->addCell(500)->addText("Pieces/Inner Pack (regular SKU with inner pack/carton)",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-			$t3->addCell(1500)->addText("Product Barcode",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-			$t3->addCell(1500)->addText("Product Code",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-			$t3->addCell(1000)->addText("LPAT/CS",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-			$t3->addCell(800)->addText("LPAT per PC/MP",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-			$t3->addCell(800)->addText("SRP Per PC/MP",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-			$t3->addCell(500)->addText("%",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-			$t3->addCell(800)->addText("Absolute",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-
-			$pis_x = $pis_x+3;
-			for($x3 = $pis_x; $x3 < count($pis); $x3++){
-				if($pis[$x3][0] != ""){
-					$t3->addRow();
-					$t3->addCell(3000)->addText(htmlspecialchars($pis[$x3][0]),array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					$t3->addCell(500)->addText($pis[$x3][1],array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					$t3->addCell(500)->addText($pis[$x3][2],array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					$t3->addCell(1500)->addText($pis[$x3][3],array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					$t3->addCell(1500)->addText($pis[$x3][4],array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					$t3->addCell(1000)->addText($pis[$x3][5],array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					$t3->addCell(800)->addText($pis[$x3][6],array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					$t3->addCell(800)->addText($pis[$x3][7],array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					$t3->addCell(500)->addText(round(number_format($pis[$x3][8],2)),array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					$t3->addCell(800)->addText($pis[$x3][9],array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-				}
-			}
 		}
+
+		// // Product Information Sheet
+		// if(count($pis) > 0){
+		// 	$section->addPageBreak();
+		// 	$section->addText("Product Information Sheet",array('bold'=>true,'size' => 10));
+
+		// 	$styleTable = array('borderSize' => 6, 'borderColor' => '000000', 'cellMargin' => 30);
+		// 	$fontStyle = array('bold' => true, 'align' => 'center');
+		// 	$phpWord->addTableStyle('PIS Table', $styleTable);
+		// 	$pistable = $section->addTable('PIS Table');
+
+		// 	$pisTitleData = array(array('desc' => 'Product Category', 'value' => htmlspecialchars($pis[2][1])),
+		// 		array('desc' => 'Sub Category', 'value' => htmlspecialchars($pis[3][1])),
+		// 		array('desc' => 'Brand / Scheme', 'value' => htmlspecialchars($pis[4][1])),
+		// 		array('desc' => 'Target Market', 'value' => htmlspecialchars($pis[5][1])),
+		// 		array('desc' => 'Product Features', 'value' => htmlspecialchars($pis[6][1])),
+		// 		array('desc' => 'Major Competitors', 'value' => htmlspecialchars($pis[7][1])),
+		// 		array('desc' => 'Minor Competitors', 'value' => htmlspecialchars($pis[8][1])),
+		// 		);
+		// 	foreach ($pisTitleData as $title) {
+		// 		$pistable->addRow();
+		// 		$pistable->addCell(1800)->addText($title['desc'],array('bold'=>true,'size' => 8), $noSpace);
+		// 		$pistable->addCell(9250)->addText($title['value'],array('size' => 8), $noSpace);
+		// 	}
+		// 	$pis_x = 0; 
+		// 	for ($i=8; $i < count($pis); $i++) { 
+		// 		if($pis[$i][7] == "Case Dimensions (MM)"){
+		// 			$pis_x = $i+2;
+		// 			break;
+		// 		}
+		// 	}
+
+		// 	$pistable = $section->addTable('PIS Table');
+		// 	$pistable->addRow();
+		// 	$piscell =  $pistable->addCell(11050);
+		// 	$fontStyle = array('bold' => true, 'align' => 'center','spaceAfter' => 0);
+		// 	$styleFirstRow = array('borderBottomSize' => 18, 'borderBottomColor' => '0000FF', 'bgColor' => '000000','color' => 'ffffff');
+		// 	$phpWord->addTableStyle('table 1_h', $styleTable,$styleFirstRow);
+		// 	$t1_h = $piscell->addTable('table 1_h');
+		// 	$t1_h->addRow();
+		// 	$t1_h->addCell(9100)->addText("",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 	$t1_h->addCell(2000)->addText("Case Dimensions (MM)",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 	$phpWord->addTableStyle('table 1', $styleTable,$styleFirstRow);
+		// 	$t1 = $piscell->addTable('table 1');
+		// 	$t1->addRow();
+		// 	$t1->addCell(3000)->addText("Item Description",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 	$t1->addCell(1000)->addText("Pack Size",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 	$t1->addCell(1000)->addText("Pack Color",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 	$t1->addCell(1000)->addText("Units/Case",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 	$t1->addCell(1500)->addText("Product Barcode",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 	$t1->addCell(1500)->addText("Product Code",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 	$t1->addCell(600)->addText("Case/Ton",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 	$t1->addCell(500)->addText("L",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 	$t1->addCell(500)->addText("W",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 	$t1->addCell(500)->addText("H",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+
+		// 	for($x1 = $pis_x; $x1 < count($pis); $x1++){
+		// 		if($pis[$x1][1] == "Product Dimension (MM)"){
+		// 			break;
+		// 		}
+		// 		if($pis[$x1][0] != ""){
+		// 			$t1->addRow();
+		// 			$t1->addCell(3000)->addText(htmlspecialchars($pis[$x1][0]),array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 			$t1->addCell(1000)->addText(htmlspecialchars($pis[$x1][1]),array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 			$t1->addCell(1000)->addText(htmlspecialchars($pis[$x1][2]),array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 			$t1->addCell(1000)->addText(htmlspecialchars($pis[$x1][3]),array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 			$t1->addCell(1500)->addText(htmlspecialchars($pis[$x1][4]),array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 			$t1->addCell(1500)->addText(htmlspecialchars($pis[$x1][5]),array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 			$t1->addCell(600)->addText(number_format($pis[$x1][6],2),array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 			$t1->addCell(500)->addText($pis[$x1][7],array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 			$t1->addCell(500)->addText($pis[$x1][8],array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 			$t1->addCell(500)->addText($pis[$x1][9],array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 		}
+		// 		$pis_x = $x1;
+		// 	}
+
+		// 	$phpWord->addTableStyle('table 2_h', $styleTable,$styleFirstRow);
+		// 	$t2_h = $piscell->addTable('table 2_h');
+		// 	$t2_h->addRow();
+		// 	$t2_h->addCell(3000)->addText("",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 	$t2_h->addCell(1500)->addText("Product Dimensions (MM)",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 	$t2_h->addCell(3700)->addText("",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 	$t2_h->addCell(2900)->addText("Maximum Case Stocking",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 	$phpWord->addTableStyle('table 2', $styleTable,$styleFirstRow);
+		// 	$t2 = $piscell->addTable('table 2');
+		// 	$t2->addRow();
+		// 	$t2->addCell(3000)->addText("Item Description",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 	$t2->addCell(500)->addText("L",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 	$t2->addCell(500)->addText("W",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 	$t2->addCell(500)->addText("H",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 	$t2->addCell(1500)->addText("Product Casecode",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 	$t2->addCell(1000)->addText("Net Wgt Kg",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 	$t2->addCell(1200)->addText("Gross Wgt KG",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 	$t2->addCell(900)->addText("CS/Layer",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 	$t2->addCell(1000)->addText("Layer/Pallet",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 	$t2->addCell(1000)->addText("Pallets/Tier",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+
+		// 	$pis_x = $pis_x+3;
+		// 	for($x2 = $pis_x; $x2 < count($pis); $x2++){
+		// 		if($pis[$x2][8] == "Trade margins"){
+		// 			break;
+		// 			$pis_x = $x2;
+		// 		}
+		// 		if($pis[$x2][0] != ""){
+		// 			$t2->addRow();
+		// 			$t2->addCell(3000)->addText(htmlspecialchars($pis[$x2][0]),array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 			$t2->addCell(500)->addText($pis[$x2][1],array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 			$t2->addCell(500)->addText($pis[$x2][2],array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 			$t2->addCell(500)->addText($pis[$x2][3],array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 			$t2->addCell(1500)->addText(htmlspecialchars($pis[$x2][4]),array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 			$t2->addCell(1000)->addText(number_format($pis[$x2][5],2),array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 			$t2->addCell(1200)->addText(number_format($pis[$x2][6],2),array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 			$t2->addCell(1000)->addText($pis[$x2][7],array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 			$t2->addCell(900)->addText($pis[$x2][8],array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 			$t2->addCell(1000)->addText($pis[$x2][9],array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 		}
+		// 		$pis_x = $x2;
+		// 	}
+
+		// 	$phpWord->addTableStyle('table 3', $styleTable,$styleFirstRow);
+		// 	$t3 = $piscell->addTable('table 3');
+		// 	$t3->addRow();
+		// 	$t3->addCell(3000)->addText("Item Description",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 	$t3->addCell(500)->addText("Total Shelf Life (SLED in Days)",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 	$t3->addCell(500)->addText("Pieces/Inner Pack (regular SKU with inner pack/carton)",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 	$t3->addCell(1500)->addText("Product Barcode",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 	$t3->addCell(1500)->addText("Product Code",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 	$t3->addCell(1000)->addText("LPAT/CS",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 	$t3->addCell(800)->addText("LPAT per PC/MP",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 	$t3->addCell(800)->addText("SRP Per PC/MP",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 	$t3->addCell(500)->addText("%",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 	$t3->addCell(800)->addText("Absolute",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+
+		// 	$pis_x = $pis_x+3;
+		// 	for($x3 = $pis_x; $x3 < count($pis); $x3++){
+		// 		if($pis[$x3][0] != ""){
+		// 			$t3->addRow();
+		// 			$t3->addCell(3000)->addText(htmlspecialchars($pis[$x3][0]),array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 			$t3->addCell(500)->addText($pis[$x3][1],array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 			$t3->addCell(500)->addText($pis[$x3][2],array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 			$t3->addCell(1500)->addText($pis[$x3][3],array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 			$t3->addCell(1500)->addText($pis[$x3][4],array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 			$t3->addCell(1000)->addText($pis[$x3][5],array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 			$t3->addCell(800)->addText($pis[$x3][6],array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 			$t3->addCell(800)->addText($pis[$x3][7],array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 			$t3->addCell(500)->addText(round(number_format($pis[$x3][8],2)),array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 			$t3->addCell(800)->addText($pis[$x3][9],array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 		}
+		// 	}
+		// }
 		
 		// schemes
 		if(count($schemes) > 0){
