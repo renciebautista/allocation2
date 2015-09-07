@@ -182,303 +182,303 @@ class WordDoc {
 		$phpWord->addTableStyle('Activity Table', $styleTable);
 		$table = $section->addTable('Activity Table');
 		
-		$activityData = array(array('desc' => 'Activity Type', 'value' => $activity->activitytype->activity_type),
-			array('desc' => 'Activity Title', 'value' => $activity->circular_name),
-			array('desc' => 'Background', 'value' => $activity->background),
-			array('desc' => 'Objectives', 'value' => $activity->objectives),
-			array('desc' => 'Budget IO TTS', 'value' => $budgets),
-			array('desc' => 'Budget IO PE', 'value' => $budgets),
-			array('desc' => 'SKU/s Involved', 'value' => $sku_involves),
-			array('desc' => 'Area/s Involved', 'value' => $areas),
-			array('desc' => 'DT Channel/s Involved', 'value' => $channels),
-			array('desc' => 'Schemes', 'value' => $schemes),
-			array('desc' => 'SKU/s Involved Per Scheme', 'value' => $skuinvolves),
-			array('desc' => 'Timings', 'value' => $networks),
-			array('desc' => 'Roles and Responsibilities', 'value' => $activity_roles),
-			array('desc' => 'Material Sourcing', 'value' => $materials),
-			array('desc' => 'FDA Permit No.', 'value' => $fdapermits),
-			array('desc' => 'Billing Requirements', 'value' => $activity->billing_remarks),
-			array('desc' => 'Billing Deadline', 'value' => $billing_date),
-			array('desc' => 'Special Instructions', 'value' => $activity->instruction),
-			);
-		foreach ($activityData as $title) {
-			if($title['desc'] == 'Objectives'){
-				if(count($title['value'])>0){
-					$table->addRow();
-					$table->addCell(1800)->addText($title['desc'],array('bold'=>true,'size' => 8), $noSpace);
-					$cell = $table->addCell(9250);
-					foreach ($title['value'] as $objective) {
-						$innerCell = $cell->addTable('Areas Table');
-						$innerCell->addRow();
-						$innerCell->addCell(7350)->addText(htmlspecialchars($objective->objective),array('size' => 8), $noSpace);
+		// $activityData = array(array('desc' => 'Activity Type', 'value' => $activity->activitytype->activity_type),
+		// 	array('desc' => 'Activity Title', 'value' => $activity->circular_name),
+		// 	array('desc' => 'Background', 'value' => $activity->background),
+		// 	array('desc' => 'Objectives', 'value' => $activity->objectives),
+		// 	array('desc' => 'Budget IO TTS', 'value' => $budgets),
+		// 	array('desc' => 'Budget IO PE', 'value' => $budgets),
+		// 	array('desc' => 'SKU/s Involved', 'value' => $sku_involves),
+		// 	array('desc' => 'Area/s Involved', 'value' => $areas),
+		// 	array('desc' => 'DT Channel/s Involved', 'value' => $channels),
+		// 	array('desc' => 'Schemes', 'value' => $schemes),
+		// 	array('desc' => 'SKU/s Involved Per Scheme', 'value' => $skuinvolves),
+		// 	array('desc' => 'Timings', 'value' => $networks),
+		// 	array('desc' => 'Roles and Responsibilities', 'value' => $activity_roles),
+		// 	array('desc' => 'Material Sourcing', 'value' => $materials),
+		// 	array('desc' => 'FDA Permit No.', 'value' => $fdapermits),
+		// 	array('desc' => 'Billing Requirements', 'value' => $activity->billing_remarks),
+		// 	array('desc' => 'Billing Deadline', 'value' => $billing_date),
+		// 	array('desc' => 'Special Instructions', 'value' => $activity->instruction),
+		// 	);
+		// foreach ($activityData as $title) {
+		// 	if($title['desc'] == 'Objectives'){
+		// 		if(count($title['value'])>0){
+		// 			$table->addRow();
+		// 			$table->addCell(1800)->addText($title['desc'],array('bold'=>true,'size' => 8), $noSpace);
+		// 			$cell = $table->addCell(9250);
+		// 			foreach ($title['value'] as $objective) {
+		// 				$innerCell = $cell->addTable('Areas Table');
+		// 				$innerCell->addRow();
+		// 				$innerCell->addCell(7350)->addText(htmlspecialchars($objective->objective),array('size' => 8), $noSpace);
 						
-					}
-				}
-			}elseif($title['desc'] == 'Budget IO TTS'){
-				if(count($title['value'])>0){
-					$first = false;
-					foreach ($title['value'] as $budget) {
-						if($budget->budget_type_id == 1){
-							$table->addRow();
-							if(!$first){
-								$table->addCell(1800)->addText($title['desc'],array('bold'=>true,'size' => 8), $noSpace);
-							}else{
-								$table->addCell(1800)->addText('',array('bold'=>true,'size' => 8), $noSpace);
-							}
-							if(!empty($budget->remarks)){
-								$value = $budget->io_number.' - '.$budget->remarks;
-							}else{
-								$value = $budget->io_number;
-							}
-							$table->addCell(9250)->addText(htmlspecialchars($value),array('size' => 8), $noSpace);
-						}
-						
-					}
-				}
-			}elseif($title['desc'] == 'Budget IO PE'){
-				if(count($title['value'])>0){
-					$first = false;
-					foreach ($title['value'] as $budget) {
-						if($budget->budget_type_id == 2){
-							$table->addRow();
-							if(!$first){
-								$table->addCell(1800)->addText($title['desc'],array('bold'=>true,'size' => 8), $noSpace);
-							}else{
-								$table->addCell(1800)->addText('',array('bold'=>true,'size' => 8), $noSpace);
-							}
-							if(!empty($budget->remarks)){
-								$value = $budget->io_number.' - '.$budget->remarks;
-							}else{
-								$value = $budget->io_number;
-							}
-							$table->addCell(9250)->addText(htmlspecialchars($value),array('size' => 8), $noSpace);
-						}
-						
-					}
-				}
-			}elseif($title['desc'] == 'SKU/s Involved'){
-				if(count($title['value'])>0){
-					$fontStyle = array('bold' => true, 'align' => 'center','spaceAfter' => 0);
-					$table->addRow();
-					$table->addCell(1800)->addText($title['desc'],array('bold'=>true,'size' => 8), $noSpace);
-					$cell = $table->addCell(9250);
-					$styleFirstRow = array('borderBottomSize' => 18, 'borderBottomColor' => '0000FF', 'bgColor' => '000000','color' => 'ffffff');
-					$phpWord->addTableStyle('Inner Table', $styleTable, $styleFirstRow);
-					$innerCell = $cell->addTable('Inner Table');
-					$innerCell->addRow();
-					$innerCell->addCell(1800)->addText("SKU Code",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					$innerCell->addCell(1800)->addText("Description",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					foreach($sku_involves as $sku_involve){
-						$innerCell->addRow();
-						$innerCell->addCell(1800)->addText($sku_involve->sap_code,array('size' => 8,'align' => 'center'), $fontStyle);
-						$innerCell->addCell(7350)->addText(htmlspecialchars($sku_involve->sap_desc),array('size' => 8,'align' => 'center'), $fontStyle);
-					}
-				}
-			}elseif($title['desc'] == 'Area/s Involved'){
-				if(count($title['value'])>0){
-					$table->addRow();
-					$table->addCell(1800)->addText($title['desc'],array('bold'=>true,'size' => 8), $noSpace);
-					$cell = $table->addCell(9250);
-					foreach ($title['value'] as $area) {
-						$innerCell = $cell->addTable('Areas Table');
-						$innerCell->addRow();
-						$innerCell->addCell(7350)->addText(htmlspecialchars($area),array('size' => 8), $noSpace);
-						
-					}
-				}
-			}elseif($title['desc'] == 'DT Channel/s Involved'){
-				if(count($title['value'])>0){
-					$table->addRow();
-					$table->addCell(1800)->addText($title['desc'],array('bold'=>true,'size' => 8), $noSpace);
-					$cell = $table->addCell(9250);
-					foreach ($title['value'] as $channel) {
-						$innerCell = $cell->addTable('Areas Table');
-						$innerCell->addRow();
-						$innerCell->addCell(7350)->addText(htmlspecialchars($channel),array('size' => 8), $noSpace);
-					}
-				}
-			}elseif($title['desc'] == 'Schemes'){
-				if(count($title['value'])>0){
-					$fontStyle = array('bold' => true, 'align' => 'center','spaceAfter' => 0);
-					$table->addRow();
-					$table->addCell(1800)->addText($title['desc'],array('bold'=>true,'size' => 8), $noSpace);
-					$cell = $table->addCell(9250);
-					$styleFirstRow = array('borderBottomSize' => 18, 'borderBottomColor' => '0000FF', 'bgColor' => '000000','color' => 'ffffff');
-					$phpWord->addTableStyle('Inner Table', $styleTable, $styleFirstRow);
-					$innerCell = $cell->addTable('Inner Table');
-					$innerCell->addRow();
-					$innerCell->addCell(300)->addText("",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					$innerCell->addCell(2450)->addText("Scheme Desc.",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					$innerCell->addCell(1600)->addText("Item Code",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					$innerCell->addCell(1600)->addText("Cost per Deal",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					$innerCell->addCell(1600)->addText("Cost of Premium",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					$innerCell->addCell(1600)->addText("Shopper Purchase Requirement",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					$cnt = 1;
-					foreach($title['value'] as $scheme){
-						$innerCell->addRow();
-						$innerCell->addCell(300)->addText($cnt,array('size' => 8,'align' => 'center'), $fontStyle);
-						$innerCell->addCell(2450)->addText(htmlspecialchars($scheme->name),array('size' => 8,'align' => 'center'), $fontStyle);
-						$innerCell->addCell(1600)->addText(($scheme->item_code == '') ? 'N/A' :  $scheme->item_code,array('size' => 8,'align' => 'center'), $fontStyle);
-						$innerCell->addCell(1600)->addText(number_format($scheme->ulp,2),array('size' => 8,'align' => 'center'), $fontStyle);
-						$innerCell->addCell(1600)->addText(number_format($scheme->srp_p,2),array('size' => 8,'align' => 'center'), $fontStyle);
-						$innerCell->addCell(1600)->addText(number_format($scheme->pr,2),array('size' => 8,'align' => 'center'), $fontStyle);
-						$cnt++;
-					}
-					
-				}
-			}elseif($title['desc'] == 'SKU/s Involved Per Scheme'){
-				if(count($title['value'])>0){
-					$fontStyle = array('bold' => true, 'align' => 'center','spaceAfter' => 0);
-					$table->addRow();
-					$table->addCell(1800)->addText($title['desc'],array('bold'=>true,'size' => 8), $noSpace);
-					$cell = $table->addCell(9250);
-					$styleFirstRow = array('borderBottomSize' => 18, 'borderBottomColor' => '0000FF', 'bgColor' => '000000','color' => 'ffffff');
-					$phpWord->addTableStyle('Inner Table', $styleTable, $styleFirstRow);
-					$innerCell = $cell->addTable('Inner Table');
-					$innerCell->addRow();
-					$innerCell->addCell(300)->addText("",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					$innerCell->addCell(2450)->addText("Host SKU Code - Description",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					$innerCell->addCell(3200)->addText("Premium SKU Code - Description",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					$innerCell->addCell(3200)->addText("Non ULP Premium",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					$cnt = 1;
-					foreach($title['value'] as $key => $sku){
-						$innerCell->addRow();
-						$innerCell->addCell(300)->addText($cnt,array('size' => 8,'align' => 'center'), $fontStyle);
-						$_involves = "";
-						foreach($sku['involves'] as $involve){
-							$_involves .= $involve->sap_code.' - '.$involve->sap_desc;
-						}
-						$_premiums = "";
-						foreach($sku['premiums'] as $premium){
-							$_premiums .= $premium->sap_code.' - '.$premium->sap_desc;
-						}
-						$_nonulp = "";
-						foreach($sku['non_ulp'] as $_non_ulp){
-							$_nonulp .= $_non_ulp;
-						}
-						$innerCell->addCell(2450)->addText(htmlspecialchars($_involves),array('size' => 8,'align' => 'center'), $fontStyle);
-						$innerCell->addCell(3200)->addText(htmlspecialchars($_premiums),array('size' => 8,'align' => 'center'), $fontStyle);
-						$innerCell->addCell(3200)->addText(htmlspecialchars($_nonulp),array('size' => 8,'align' => 'center'), $fontStyle);
-						$cnt++;
-					}
-					
-				}
-			}elseif($title['desc'] == 'Timings'){
-				if(count($title['value'])>0){
-					$fontStyle = array('bold' => true, 'align' => 'center','spaceAfter' => 0);
-					$table->addRow();
-					$table->addCell(1800)->addText($title['desc'],array('bold'=>true,'size' => 8), $noSpace);
-					$cell = $table->addCell(9250);
-					$styleFirstRow = array('borderBottomSize' => 18, 'borderBottomColor' => '0000FF', 'bgColor' => '000000','color' => 'ffffff');
-					$phpWord->addTableStyle('Inner Table', $styleTable, $styleFirstRow);
-					$innerCell = $cell->addTable('Inner Table');
-					$innerCell->addRow();
-					$innerCell->addCell(5950)->addText("Activity",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					$innerCell->addCell(1600)->addText("Start Date",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					$innerCell->addCell(1600)->addText("End Date",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					foreach($title['value'] as $network){
-						$innerCell->addRow();
-						$innerCell->addCell(5950)->addText(htmlspecialchars($network->task),array('size' => 8,'align' => 'center'), $fontStyle);
-						$start_date = ($network->final_start_date != null) ?  date_format(date_create($network->final_start_date),'M j, Y') : '';
-						$end_date = ($network->final_end_date != null) ?  date_format(date_create($network->final_end_date),'M j, Y') : '';
-						$innerCell->addCell(1600)->addText($start_date,array('size' => 8,'align' => 'center'), $fontStyle);
-						$innerCell->addCell(1600)->addText($end_date,array('size' => 8,'align' => 'center'), $fontStyle);
-					}
-					$innerCell->addRow();
-					$innerCell->addCell(5950)->addText('IMPLEMENTATION DATE',array('size' => 8,'align' => 'center'), $fontStyle);
-					$start_date = date_format(date_create($activity->eimplementation_date),'M j, Y');
-					$end_date = date_format(date_create($activity->end_date),'M j, Y');
-					$innerCell->addCell(1600)->addText($start_date,array('size' => 8,'align' => 'center'), $fontStyle);
-					$innerCell->addCell(1600)->addText($end_date,array('size' => 8,'align' => 'center'), $fontStyle);
-				}
-			}elseif($title['desc'] == 'Roles and Responsibilities'){
-				if(count($title['value'])>0){
-					$fontStyle = array('bold' => true, 'align' => 'center','spaceAfter' => 0);
-					$table->addRow();
-					$table->addCell(1800)->addText($title['desc'],array('bold'=>true,'size' => 8), $noSpace);
-					$cell = $table->addCell(9250);
-					$styleFirstRow = array('borderBottomSize' => 18, 'borderBottomColor' => '0000FF', 'bgColor' => '000000','color' => 'ffffff');
-					$phpWord->addTableStyle('Inner Table', $styleTable, $styleFirstRow);
-					$innerCell = $cell->addTable('Inner Table');
-					$innerCell->addRow();
-					$innerCell->addCell(2750)->addText("Process Owner",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					$innerCell->addCell(3200)->addText("Action Points",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					$innerCell->addCell(3200)->addText("Timings",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					foreach($title['value'] as $activity_role){
-						$innerCell->addRow();
-						$innerCell->addCell(2750)->addText(htmlspecialchars($activity_role->owner),array('size' => 8,'align' => 'center'), $fontStyle);
-						$innerCell->addCell(3200)->addText(htmlspecialchars($activity_role->point),array('size' => 8,'align' => 'center'), $fontStyle);
-						$innerCell->addCell(3200)->addText(htmlspecialchars($activity_role->timing),array('size' => 8,'align' => 'center'), $fontStyle);
-					}	
-				}
-			}elseif($title['desc'] == 'Material Sourcing'){
-				if(count($title['value'])>0){
-					$fontStyle = array('bold' => true, 'align' => 'center','spaceAfter' => 0);
-					$table->addRow();
-					$table->addCell(1800)->addText($title['desc'],array('bold'=>true,'size' => 8), $noSpace);
-					$cell = $table->addCell(9250);
-					$styleFirstRow = array('borderBottomSize' => 18, 'borderBottomColor' => '0000FF', 'bgColor' => '000000','color' => 'ffffff');
-					$phpWord->addTableStyle('Inner Table', $styleTable, $styleFirstRow);
-					$innerCell = $cell->addTable('Inner Table');
-					$innerCell->addRow();
-					$innerCell->addCell(5950)->addText("Source",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					$innerCell->addCell(3200)->addText("Materials",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					foreach($title['value'] as $material){
-						$innerCell->addRow();
-						$innerCell->addCell(5950)->addText(htmlspecialchars($material->source->source),array('size' => 8,'align' => 'center'), $fontStyle);
-						$innerCell->addCell(3200)->addText(htmlspecialchars($material->material),array('size' => 8,'align' => 'center'), $fontStyle);
-					}
-				}
-			}elseif($title['desc'] == 'FDA Permit No.'){
-				if(count($title['value'])>0){
-					$table->addRow();
-					$table->addCell(1800)->addText($title['desc'],array('bold'=>true,'size' => 8), $noSpace);
-					$cell = $table->addCell(9250);
-					foreach ($title['value'] as $permit) {
-						$innerCell = $cell->addTable('Permit Table');
-						$innerCell->addRow();
-						$innerCell->addCell(7350)->addText(htmlspecialchars($permit->permit_no),array('size' => 8), $noSpace);
-						
-					}
-				}
-			}else{
-				if(!empty($title['value'])){
-					$table->addRow();
-					$table->addCell(1800)->addText($title['desc'],array('bold'=>true,'size' => 8), $noSpace);
-					$cell = $table->addCell(9250);
-					$text = explode("\r\n", $title['value']);
-					foreach($text as $line) {
-						$innerCell = $cell->addTable();
-						$innerCell->addRow();
-						$innerCell->addCell(7350)->addText(htmlspecialchars($line),array('size' => 8), $noSpace);
-						
-					}
-				}
-			}
-		}
-
-		// Artworks
-		// if(count($artworks) > 0){
-		// 	$section->addTextBreak(1);
-		// 	$section->addText("Artworks",array('bold'=>true,'size' => 10));
-
-		// 	// Add table
-		// 	$arttable = $section->addTable('Artwork Table'); 
-		// 	$cnt = 0;
-			
-		// 	foreach($artworks as $artwork) { // Loop through cells
-		// 		if($cnt == 0){
-		// 			$arttable->addRow();
+		// 			}
 		// 		}
-		// 		$cell = $arttable->addCell(900);
-		// 		$textrun = $cell->createTextRun();
-		// 		$textrun->addImage(storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/'.$artwork->hash_name,array('width'=>150));
-		// 		$cnt++;
-		// 		if($cnt == 4){
-		// 			$cnt=0;
+		// 	}elseif($title['desc'] == 'Budget IO TTS'){
+		// 		if(count($title['value'])>0){
+		// 			$first = false;
+		// 			foreach ($title['value'] as $budget) {
+		// 				if($budget->budget_type_id == 1){
+		// 					$table->addRow();
+		// 					if(!$first){
+		// 						$table->addCell(1800)->addText($title['desc'],array('bold'=>true,'size' => 8), $noSpace);
+		// 					}else{
+		// 						$table->addCell(1800)->addText('',array('bold'=>true,'size' => 8), $noSpace);
+		// 					}
+		// 					if(!empty($budget->remarks)){
+		// 						$value = $budget->io_number.' - '.$budget->remarks;
+		// 					}else{
+		// 						$value = $budget->io_number;
+		// 					}
+		// 					$table->addCell(9250)->addText(htmlspecialchars($value),array('size' => 8), $noSpace);
+		// 				}
+						
+		// 			}
+		// 		}
+		// 	}elseif($title['desc'] == 'Budget IO PE'){
+		// 		if(count($title['value'])>0){
+		// 			$first = false;
+		// 			foreach ($title['value'] as $budget) {
+		// 				if($budget->budget_type_id == 2){
+		// 					$table->addRow();
+		// 					if(!$first){
+		// 						$table->addCell(1800)->addText($title['desc'],array('bold'=>true,'size' => 8), $noSpace);
+		// 					}else{
+		// 						$table->addCell(1800)->addText('',array('bold'=>true,'size' => 8), $noSpace);
+		// 					}
+		// 					if(!empty($budget->remarks)){
+		// 						$value = $budget->io_number.' - '.$budget->remarks;
+		// 					}else{
+		// 						$value = $budget->io_number;
+		// 					}
+		// 					$table->addCell(9250)->addText(htmlspecialchars($value),array('size' => 8), $noSpace);
+		// 				}
+						
+		// 			}
+		// 		}
+		// 	}elseif($title['desc'] == 'SKU/s Involved'){
+		// 		if(count($title['value'])>0){
+		// 			$fontStyle = array('bold' => true, 'align' => 'center','spaceAfter' => 0);
+		// 			$table->addRow();
+		// 			$table->addCell(1800)->addText($title['desc'],array('bold'=>true,'size' => 8), $noSpace);
+		// 			$cell = $table->addCell(9250);
+		// 			$styleFirstRow = array('borderBottomSize' => 18, 'borderBottomColor' => '0000FF', 'bgColor' => '000000','color' => 'ffffff');
+		// 			$phpWord->addTableStyle('Inner Table', $styleTable, $styleFirstRow);
+		// 			$innerCell = $cell->addTable('Inner Table');
+		// 			$innerCell->addRow();
+		// 			$innerCell->addCell(1800)->addText("SKU Code",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 			$innerCell->addCell(1800)->addText("Description",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 			foreach($sku_involves as $sku_involve){
+		// 				$innerCell->addRow();
+		// 				$innerCell->addCell(1800)->addText($sku_involve->sap_code,array('size' => 8,'align' => 'center'), $fontStyle);
+		// 				$innerCell->addCell(7350)->addText(htmlspecialchars($sku_involve->sap_desc),array('size' => 8,'align' => 'center'), $fontStyle);
+		// 			}
+		// 		}
+		// 	}elseif($title['desc'] == 'Area/s Involved'){
+		// 		if(count($title['value'])>0){
+		// 			$table->addRow();
+		// 			$table->addCell(1800)->addText($title['desc'],array('bold'=>true,'size' => 8), $noSpace);
+		// 			$cell = $table->addCell(9250);
+		// 			foreach ($title['value'] as $area) {
+		// 				$innerCell = $cell->addTable('Areas Table');
+		// 				$innerCell->addRow();
+		// 				$innerCell->addCell(7350)->addText(htmlspecialchars($area),array('size' => 8), $noSpace);
+						
+		// 			}
+		// 		}
+		// 	}elseif($title['desc'] == 'DT Channel/s Involved'){
+		// 		if(count($title['value'])>0){
+		// 			$table->addRow();
+		// 			$table->addCell(1800)->addText($title['desc'],array('bold'=>true,'size' => 8), $noSpace);
+		// 			$cell = $table->addCell(9250);
+		// 			foreach ($title['value'] as $channel) {
+		// 				$innerCell = $cell->addTable('Areas Table');
+		// 				$innerCell->addRow();
+		// 				$innerCell->addCell(7350)->addText(htmlspecialchars($channel),array('size' => 8), $noSpace);
+		// 			}
+		// 		}
+		// 	}elseif($title['desc'] == 'Schemes'){
+		// 		if(count($title['value'])>0){
+		// 			$fontStyle = array('bold' => true, 'align' => 'center','spaceAfter' => 0);
+		// 			$table->addRow();
+		// 			$table->addCell(1800)->addText($title['desc'],array('bold'=>true,'size' => 8), $noSpace);
+		// 			$cell = $table->addCell(9250);
+		// 			$styleFirstRow = array('borderBottomSize' => 18, 'borderBottomColor' => '0000FF', 'bgColor' => '000000','color' => 'ffffff');
+		// 			$phpWord->addTableStyle('Inner Table', $styleTable, $styleFirstRow);
+		// 			$innerCell = $cell->addTable('Inner Table');
+		// 			$innerCell->addRow();
+		// 			$innerCell->addCell(300)->addText("",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 			$innerCell->addCell(2450)->addText("Scheme Desc.",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 			$innerCell->addCell(1600)->addText("Item Code",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 			$innerCell->addCell(1600)->addText("Cost per Deal",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 			$innerCell->addCell(1600)->addText("Cost of Premium",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 			$innerCell->addCell(1600)->addText("Shopper Purchase Requirement",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 			$cnt = 1;
+		// 			foreach($title['value'] as $scheme){
+		// 				$innerCell->addRow();
+		// 				$innerCell->addCell(300)->addText($cnt,array('size' => 8,'align' => 'center'), $fontStyle);
+		// 				$innerCell->addCell(2450)->addText(htmlspecialchars($scheme->name),array('size' => 8,'align' => 'center'), $fontStyle);
+		// 				$innerCell->addCell(1600)->addText(($scheme->item_code == '') ? 'N/A' :  $scheme->item_code,array('size' => 8,'align' => 'center'), $fontStyle);
+		// 				$innerCell->addCell(1600)->addText(number_format($scheme->ulp,2),array('size' => 8,'align' => 'center'), $fontStyle);
+		// 				$innerCell->addCell(1600)->addText(number_format($scheme->srp_p,2),array('size' => 8,'align' => 'center'), $fontStyle);
+		// 				$innerCell->addCell(1600)->addText(number_format($scheme->pr,2),array('size' => 8,'align' => 'center'), $fontStyle);
+		// 				$cnt++;
+		// 			}
+					
+		// 		}
+		// 	}elseif($title['desc'] == 'SKU/s Involved Per Scheme'){
+		// 		if(count($title['value'])>0){
+		// 			$fontStyle = array('bold' => true, 'align' => 'center','spaceAfter' => 0);
+		// 			$table->addRow();
+		// 			$table->addCell(1800)->addText($title['desc'],array('bold'=>true,'size' => 8), $noSpace);
+		// 			$cell = $table->addCell(9250);
+		// 			$styleFirstRow = array('borderBottomSize' => 18, 'borderBottomColor' => '0000FF', 'bgColor' => '000000','color' => 'ffffff');
+		// 			$phpWord->addTableStyle('Inner Table', $styleTable, $styleFirstRow);
+		// 			$innerCell = $cell->addTable('Inner Table');
+		// 			$innerCell->addRow();
+		// 			$innerCell->addCell(300)->addText("",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 			$innerCell->addCell(2450)->addText("Host SKU Code - Description",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 			$innerCell->addCell(3200)->addText("Premium SKU Code - Description",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 			$innerCell->addCell(3200)->addText("Non ULP Premium",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 			$cnt = 1;
+		// 			foreach($title['value'] as $key => $sku){
+		// 				$innerCell->addRow();
+		// 				$innerCell->addCell(300)->addText($cnt,array('size' => 8,'align' => 'center'), $fontStyle);
+		// 				$_involves = "";
+		// 				foreach($sku['involves'] as $involve){
+		// 					$_involves .= $involve->sap_code.' - '.$involve->sap_desc;
+		// 				}
+		// 				$_premiums = "";
+		// 				foreach($sku['premiums'] as $premium){
+		// 					$_premiums .= $premium->sap_code.' - '.$premium->sap_desc;
+		// 				}
+		// 				$_nonulp = "";
+		// 				foreach($sku['non_ulp'] as $_non_ulp){
+		// 					$_nonulp .= $_non_ulp;
+		// 				}
+		// 				$innerCell->addCell(2450)->addText(htmlspecialchars($_involves),array('size' => 8,'align' => 'center'), $fontStyle);
+		// 				$innerCell->addCell(3200)->addText(htmlspecialchars($_premiums),array('size' => 8,'align' => 'center'), $fontStyle);
+		// 				$innerCell->addCell(3200)->addText(htmlspecialchars($_nonulp),array('size' => 8,'align' => 'center'), $fontStyle);
+		// 				$cnt++;
+		// 			}
+					
+		// 		}
+		// 	}elseif($title['desc'] == 'Timings'){
+		// 		if(count($title['value'])>0){
+		// 			$fontStyle = array('bold' => true, 'align' => 'center','spaceAfter' => 0);
+		// 			$table->addRow();
+		// 			$table->addCell(1800)->addText($title['desc'],array('bold'=>true,'size' => 8), $noSpace);
+		// 			$cell = $table->addCell(9250);
+		// 			$styleFirstRow = array('borderBottomSize' => 18, 'borderBottomColor' => '0000FF', 'bgColor' => '000000','color' => 'ffffff');
+		// 			$phpWord->addTableStyle('Inner Table', $styleTable, $styleFirstRow);
+		// 			$innerCell = $cell->addTable('Inner Table');
+		// 			$innerCell->addRow();
+		// 			$innerCell->addCell(5950)->addText("Activity",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 			$innerCell->addCell(1600)->addText("Start Date",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 			$innerCell->addCell(1600)->addText("End Date",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 			foreach($title['value'] as $network){
+		// 				$innerCell->addRow();
+		// 				$innerCell->addCell(5950)->addText(htmlspecialchars($network->task),array('size' => 8,'align' => 'center'), $fontStyle);
+		// 				$start_date = ($network->final_start_date != null) ?  date_format(date_create($network->final_start_date),'M j, Y') : '';
+		// 				$end_date = ($network->final_end_date != null) ?  date_format(date_create($network->final_end_date),'M j, Y') : '';
+		// 				$innerCell->addCell(1600)->addText($start_date,array('size' => 8,'align' => 'center'), $fontStyle);
+		// 				$innerCell->addCell(1600)->addText($end_date,array('size' => 8,'align' => 'center'), $fontStyle);
+		// 			}
+		// 			$innerCell->addRow();
+		// 			$innerCell->addCell(5950)->addText('IMPLEMENTATION DATE',array('size' => 8,'align' => 'center'), $fontStyle);
+		// 			$start_date = date_format(date_create($activity->eimplementation_date),'M j, Y');
+		// 			$end_date = date_format(date_create($activity->end_date),'M j, Y');
+		// 			$innerCell->addCell(1600)->addText($start_date,array('size' => 8,'align' => 'center'), $fontStyle);
+		// 			$innerCell->addCell(1600)->addText($end_date,array('size' => 8,'align' => 'center'), $fontStyle);
+		// 		}
+		// 	}elseif($title['desc'] == 'Roles and Responsibilities'){
+		// 		if(count($title['value'])>0){
+		// 			$fontStyle = array('bold' => true, 'align' => 'center','spaceAfter' => 0);
+		// 			$table->addRow();
+		// 			$table->addCell(1800)->addText($title['desc'],array('bold'=>true,'size' => 8), $noSpace);
+		// 			$cell = $table->addCell(9250);
+		// 			$styleFirstRow = array('borderBottomSize' => 18, 'borderBottomColor' => '0000FF', 'bgColor' => '000000','color' => 'ffffff');
+		// 			$phpWord->addTableStyle('Inner Table', $styleTable, $styleFirstRow);
+		// 			$innerCell = $cell->addTable('Inner Table');
+		// 			$innerCell->addRow();
+		// 			$innerCell->addCell(2750)->addText("Process Owner",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 			$innerCell->addCell(3200)->addText("Action Points",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 			$innerCell->addCell(3200)->addText("Timings",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 			foreach($title['value'] as $activity_role){
+		// 				$innerCell->addRow();
+		// 				$innerCell->addCell(2750)->addText(htmlspecialchars($activity_role->owner),array('size' => 8,'align' => 'center'), $fontStyle);
+		// 				$innerCell->addCell(3200)->addText(htmlspecialchars($activity_role->point),array('size' => 8,'align' => 'center'), $fontStyle);
+		// 				$innerCell->addCell(3200)->addText(htmlspecialchars($activity_role->timing),array('size' => 8,'align' => 'center'), $fontStyle);
+		// 			}	
+		// 		}
+		// 	}elseif($title['desc'] == 'Material Sourcing'){
+		// 		if(count($title['value'])>0){
+		// 			$fontStyle = array('bold' => true, 'align' => 'center','spaceAfter' => 0);
+		// 			$table->addRow();
+		// 			$table->addCell(1800)->addText($title['desc'],array('bold'=>true,'size' => 8), $noSpace);
+		// 			$cell = $table->addCell(9250);
+		// 			$styleFirstRow = array('borderBottomSize' => 18, 'borderBottomColor' => '0000FF', 'bgColor' => '000000','color' => 'ffffff');
+		// 			$phpWord->addTableStyle('Inner Table', $styleTable, $styleFirstRow);
+		// 			$innerCell = $cell->addTable('Inner Table');
+		// 			$innerCell->addRow();
+		// 			$innerCell->addCell(5950)->addText("Source",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 			$innerCell->addCell(3200)->addText("Materials",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+		// 			foreach($title['value'] as $material){
+		// 				$innerCell->addRow();
+		// 				$innerCell->addCell(5950)->addText(htmlspecialchars($material->source->source),array('size' => 8,'align' => 'center'), $fontStyle);
+		// 				$innerCell->addCell(3200)->addText(htmlspecialchars($material->material),array('size' => 8,'align' => 'center'), $fontStyle);
+		// 			}
+		// 		}
+		// 	}elseif($title['desc'] == 'FDA Permit No.'){
+		// 		if(count($title['value'])>0){
+		// 			$table->addRow();
+		// 			$table->addCell(1800)->addText($title['desc'],array('bold'=>true,'size' => 8), $noSpace);
+		// 			$cell = $table->addCell(9250);
+		// 			foreach ($title['value'] as $permit) {
+		// 				$innerCell = $cell->addTable('Permit Table');
+		// 				$innerCell->addRow();
+		// 				$innerCell->addCell(7350)->addText(htmlspecialchars($permit->permit_no),array('size' => 8), $noSpace);
+						
+		// 			}
+		// 		}
+		// 	}else{
+		// 		if(!empty($title['value'])){
+		// 			$table->addRow();
+		// 			$table->addCell(1800)->addText($title['desc'],array('bold'=>true,'size' => 8), $noSpace);
+		// 			$cell = $table->addCell(9250);
+		// 			$text = explode("\r\n", $title['value']);
+		// 			foreach($text as $line) {
+		// 				$innerCell = $cell->addTable();
+		// 				$innerCell->addRow();
+		// 				$innerCell->addCell(7350)->addText(htmlspecialchars($line),array('size' => 8), $noSpace);
+						
+		// 			}
 		// 		}
 		// 	}
 		// }
+
+		// Artworks
+		if(count($artworks) > 0){
+			$section->addTextBreak(1);
+			$section->addText("Artworks",array('bold'=>true,'size' => 10));
+
+			// Add table
+			$arttable = $section->addTable('Artwork Table'); 
+			$cnt = 0;
+			
+			foreach($artworks as $artwork) { // Loop through cells
+				if($cnt == 0){
+					$arttable->addRow();
+				}
+				$cell = $arttable->addCell(900);
+				$textrun = $cell->createTextRun();
+				$textrun->addImage(storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/'.$artwork->hash_name,array('width'=>150));
+				$cnt++;
+				if($cnt == 4){
+					$cnt=0;
+				}
+			}
+		}
 
 		// Barcodes / Case Codes
 		if(count($schemes) > 0){
