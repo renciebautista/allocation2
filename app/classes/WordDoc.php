@@ -457,28 +457,28 @@ class WordDoc {
 			}
 		}
 
-		// // Artworks
-		// if(count($artworks) > 0){
-		// 	$section->addTextBreak(1);
-		// 	$section->addText("Artworks",array('bold'=>true,'size' => 10));
+		// Artworks
+		if(count($artworks) > 0){
+			$section->addTextBreak(1);
+			$section->addText("Artworks",array('bold'=>true,'size' => 10));
 
-		// 	// Add table
-		// 	$arttable = $section->addTable('Artwork Table'); 
-		// 	$cnt = 0;
+			// Add table
+			$arttable = $section->addTable('Artwork Table'); 
+			$cnt = 0;
 			
-		// 	foreach($artworks as $artwork) { // Loop through cells
-		// 		if($cnt == 0){
-		// 			$arttable->addRow();
-		// 		}
-		// 		$cell = $arttable->addCell(900);
-		// 		$textrun = $cell->createTextRun();
-		// 		$textrun->addImage(storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/'.$artwork->hash_name,array('width'=>150));
-		// 		$cnt++;
-		// 		if($cnt == 4){
-		// 			$cnt=0;
-		// 		}
-		// 	}
-		// }
+			foreach($artworks as $artwork) { // Loop through cells
+				if($cnt == 0){
+					$arttable->addRow();
+				}
+				$cell = $arttable->addCell(900);
+				$textrun = $cell->createTextRun();
+				$textrun->addImage(storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/'.$artwork->hash_name,array('width'=>150));
+				$cnt++;
+				if($cnt == 4){
+					$cnt=0;
+				}
+			}
+		}
 
 		// // Barcodes / Case Codes
 		// if(count($schemes) > 0){
