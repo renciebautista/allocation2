@@ -29,7 +29,7 @@ class SchemeController extends \BaseController {
 
 		$skus = Sku::items($divisions,$categories,$brands);
 
-		$host = Pricelist::involves($brands);
+		$host = Pricelist::involves($brands,$activity);
 		$premuim =  Pricelist::items();
 		return View::make('scheme.create', compact('activity','skus', 'host', 'premuim'));
 	}
@@ -222,7 +222,7 @@ class SchemeController extends \BaseController {
 		$skus = Sku::items($divisions,$categories,$brands);
 		// $involves = Pricelist::items();
 
-		$host_sku = Pricelist::involves($brands);
+		$host_sku = Pricelist::involves($brands,$activity);
 		$premuim_sku =  Pricelist::items();
 
 		$sel_skus =  SchemeSku::getSkus($scheme->id);
@@ -550,6 +550,7 @@ class SchemeController extends \BaseController {
 	}
 
 	public function updateallocation(){
+		// dd(Input::all());
 		if(Request::ajax()){
 			$id = Input::get('scheme_id');
 			$new_alloc = Input::get('new_alloc');

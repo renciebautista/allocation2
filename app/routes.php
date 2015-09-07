@@ -388,6 +388,7 @@ Route::group(array('before' => 'auth'), function()
 	Route::resource('activity', 'ActivityController');
 	
 
+	Route::put('scheme/updatealloc', 'SchemeController@updateallocation');
 	Route::get('scheme/{id}/export', 'SchemeController@export');
 	Route::get('scheme/{id}/allocation', 'SchemeController@allocation');
 	Route::get('scheme/{id}', 'SchemeController@show');
@@ -395,7 +396,6 @@ Route::group(array('before' => 'auth'), function()
 	Route::delete('scheme/{id}', 'SchemeController@destroy');
 	Route::put('scheme/{id}', 'SchemeController@update');
 	Route::post('scheme/{id}/duplicate','SchemeController@duplicate');
-	Route::put('scheme/updatealloc', 'SchemeController@updateallocation');
 	Route::post('scheme/{id}/duplicatescheme', 'SchemeController@duplicatescheme');
 
 	// Route::post('downloadedactivity/{id}/submittogcm', 'DownloadedActivityController@submittogcm');

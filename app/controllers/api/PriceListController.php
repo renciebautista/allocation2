@@ -20,7 +20,7 @@ class PriceListController extends \BaseController {
 			$data = array();
 			$data['selection']= array();
 			if($filter != ''){
-				$data['selection'] = \Pricelist::involves($filter);
+				$data['selection'] = \Pricelist::involves($filter,$activity);
 			}
 
 			$data['selected'] = \ActivitySku::getSkus($id);

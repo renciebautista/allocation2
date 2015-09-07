@@ -181,7 +181,7 @@ class Pricelist extends \Eloquent {
 			->first();
 	}
 
-	public static function involves($filter){
+	public static function involves($filter,$activity = null){
 		$data = self::select('sap_code', DB::raw('CONCAT(sap_desc, " - ", sap_code) AS full_desc'))
 			->where('active',1)
 			->where('launch',0)
@@ -194,17 +194,20 @@ class Pricelist extends \Eloquent {
 				$user_id = $activity->created_by;
 			}
 
-		$data2 = LaunchSkuAccess::select('sap_code', DB::raw('CONCAT(sap_desc, " - ", sap_code) AS full_desc'))
-		->join('pricelists','pricelists.sap_code','=','launch_sku_access.sku_code','left')
-		->where('launch_sku_access.user_id',$user_id)
-		->where('active',1)
-		->where('launch',1)
-		->whereIn('brand_desc',$filter)
-		->orderBy('full_desc')->get();
+		if(!is_null($activity)){
+			$data2 = LaunchSkuAccess::select('sap_code', DB::raw('CONCAT(sap_desc, " - ", sap_code) AS full_desc'))
+			->join('pricelists','pricelists.sap_code','=','launch_sku_access.sku_code','left')
+			->where('launch_sku_access.user_id',$user_id)
+			->where('active',1)
+			->where('launch',1)
+			->whereIn('brand_desc',$filter)
+			->orderBy('full_desc')->get();
 
-		foreach($data2 as $row) {
-		    $data->add($row);
+			foreach($data2 as $row) {
+			    $data->add($row);
+			}
 		}
+		
 		return $data->lists('full_desc', 'sap_code');
 	}
 
