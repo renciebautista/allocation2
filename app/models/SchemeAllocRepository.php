@@ -341,25 +341,13 @@ class SchemeAllocRepository
 								}
 								$account_alloc->forced_outlet_to_alloc = $forced_account_alloc;
 								$account_alloc->force_alloc = $forced_account_alloc;
-								$account_alloc->final_alloc = $_account_alloc;
+								$account_alloc->final_alloc = $forced_account_alloc;
 							}else{
 								$account_alloc->forced_outlet_to_alloc = 0;
 								$account_alloc->force_alloc = 0;
 								$account_alloc->final_alloc = $_account_alloc;
 							}
 
-							// if(!$activity->allow_force){
-							// 	$account_alloc->force_alloc = 0;
-							// 	$account_alloc->final_alloc = $_account_alloc;
-							// }else{
-							// 	$f_account_alloc = round(($p * $shipto_alloc->force_alloc)/100);
-							// 	$account_alloc->force_alloc = $f_account_alloc;
-								// if($f_account_alloc > 0){
-								// 	$fothers -= $f_account_alloc;
-								// }
-
-							// 	$account_alloc->final_alloc = $f_account_alloc;
-							// }
 							
 							$in_deals = 0;
 							$in_cases = 0;

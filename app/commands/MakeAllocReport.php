@@ -159,12 +159,12 @@ class MakeAllocReport extends Command {
 		
 		// $newfile = new AllocationReportFile;
 		// $newfile->created_by = $user->id;
-		// $newfile->token = $token;
+		// $newfile->token = $token;AllocationReportFile
 		// $newfile->file_name = $token.'.xlsx';
 		// $newfile->template_name = $template->name.'_'.date('Y_m_d').'.xlsx';
 		// $newfile->save();
 		
-		$template->token = $token;
+		// $template->token = $token;
 		$template->token = $token;
 		$template->file_name = $token.'.xlsx';
 		$template->template_name = $template->name.'_'.date('Y_m_d').'.xlsx';
