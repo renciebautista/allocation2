@@ -157,12 +157,20 @@ class MakeAllocReport extends Command {
 		$this->line( 'Time used ' . $differenceInSeconds . " sec");
 
 		
-		$newfile = new AllocationReportFile;
-		$newfile->created_by = $user->id;
-		$newfile->token = $token;
-		$newfile->file_name = $token.'.xlsx';
-		$newfile->template_name = $template->name.'_'.date('Y_m_d').'.xlsx';
-		$newfile->save();
+		// $newfile = new AllocationReportFile;
+		// $newfile->created_by = $user->id;
+		// $newfile->token = $token;
+		// $newfile->file_name = $token.'.xlsx';
+		// $newfile->template_name = $template->name.'_'.date('Y_m_d').'.xlsx';
+		// $newfile->save();
+		
+		$template->token = $token;
+		$template->token = $token;
+		$template->file_name = $token.'.xlsx';
+		$template->template_name = $template->name.'_'.date('Y_m_d').'.xlsx';
+		$template->report_generated = date('Y-m-d H:i:s');
+		$template->update();
+
 
 		$data['template'] = $template;
 		$data['token'] = $token;

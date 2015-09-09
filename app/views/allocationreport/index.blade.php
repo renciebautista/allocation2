@@ -30,7 +30,9 @@
 			<table class="table table-striped table-condensed table-hover table-bordered">
 				<thead>
 					<tr>
+						<th>Date Created</th>
 						<th class="center">Template Name</th>
+						<th>Last Generated Report</th>
 						<th colspan="4" style="width:25%;" class="dash-action">Action</th>
 					</tr>
 				</thead>
@@ -42,7 +44,17 @@
 					@else
 					@foreach($templates as $template)
 					<tr>
+						<td>{{ date_format(date_create($template->created_at),'M j, Y') }}</td>
 						<td>{{ $template->name }}</td>
+						<td>
+							@if($template->report_generated != "0000-00-00 00:00:00")
+							<a href='{{ URL::to('ar/'.$template->token) }}'>
+							    {{ date_format(date_create($template->report_generated),'M j, Y H:m:s') }}
+							</a>
+
+							@endif
+							
+						</td>
 						<td class="action">
 							{{ Form::open(array('method' => 'DELETE', 'action' => array('AllocationReportController@destroy', $template->id))) }}                       
 							{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}
