@@ -1529,7 +1529,7 @@ class ActivityController extends BaseController {
 
 			try {
 				$pis = Excel::selectSheets('Output')->load(storage_path().'/uploads/'.$path."/".$upload->file_name)->get();
-				if($pis[1][0] != "0319881"){
+				if($pis[1][0] != "031988"){
 
 					$path_delete = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/';
 					File::delete($path_delete.$upload->file_name);
