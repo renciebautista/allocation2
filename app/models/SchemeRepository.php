@@ -239,4 +239,27 @@ class SchemeRepository extends \Eloquent {
 
 		return $data;
 	}
+
+	public static function newSkus($scheme){
+		$old_skus = array();
+		$records = SchemeSku::select('sku')->where('scheme_id',$scheme->id)->get();
+		foreach ($records as $value) {
+			$old_skus[] = $value->sku;
+		}
+		foreach (Input::get('skus') as $sku){
+			if(in_array($sku, $old_skus)){
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	public static function newValue($old_value,$new_value){
+		if($old_value != $new_value){
+			return true;
+		}
+
+		return false;
+	}
 }

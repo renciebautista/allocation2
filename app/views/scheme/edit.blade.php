@@ -247,9 +247,22 @@
 			<div class="row">
 				<div class="col-lg-12">
 					<div class="form-group">
+						<div class="checkbox">
+							<label>
+								{{ Form::checkbox('compute', true,$scheme->compute) }} Use System Generated Allocation
+							</label>
+						</div>
+					</div>	
+				</div>
+			</div>	
+
+
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="form-group">
 						<div class="row">
 							<div class="col-lg-12">
-								{{ Form::submit('Update', array('class' => 'btn btn-primary')) }}
+								{{ Form::submit('Update', array('class' => 'btn btn-primary', 'id'=>'update')) }}
 								<button type="button" class="btn btn-info" data-toggle="modal" data-target="#myCalculator">Deal Calculator</button>
 							</div>
 						</div>
@@ -261,6 +274,7 @@
 	</div>
 </div>
 
+@if($scheme->compute)
 <div class="panel panel-warning">
 	<div class="panel-heading">
 		<h3 class="panel-title">Final Allocation</h3>
@@ -432,7 +446,7 @@
 	</div>
 </div>
 
-
+@endif
 <!-- Modal -->
 <div class="modal fade" id="myCalculator" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog">

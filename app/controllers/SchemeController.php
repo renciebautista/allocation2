@@ -121,6 +121,8 @@ class SchemeController extends \BaseController {
 				
 				$scheme->ulp_premium = Input::get('ulp_premium');
 
+				$scheme->compute = (Input::has('compute')) ? 1 : 0;
+
 				$scheme->save();
 
 				// add scheme sku
@@ -132,47 +134,61 @@ class SchemeController extends \BaseController {
 				// add scheme sku involve
 				SchemeRepository::addSchemePremiumSku($scheme);
 				
-				// create allocation
-				SchemeAllocRepository::insertAlllocation($scheme);
+				if($scheme->compute){
+					// create allocation
+					SchemeAllocRepository::insertAlllocation($scheme);
 
-				// update final alloc
-				$scheme2 = Scheme::find($scheme->id);
-				$final_alloc = SchemeAllocation::finalallocation($scheme->id);
-				$total_cases = 0;
-				$total_deals = 0;
-				if($scheme->activity->activitytype->uom == 'CASES'){
-					$total_deals = $final_alloc * $scheme->deals;
-					$total_cases = $final_alloc;
-					$final_tts = $final_alloc * $scheme->deals * $scheme->srp_p; 
-				}else{
-					
-					if($final_alloc > 0){
-						$total_cases = round($final_alloc/$scheme->deals);
-						$total_deals = $final_alloc;
+					// update final alloc
+					$scheme2 = Scheme::find($scheme->id);
+					$final_alloc = SchemeAllocation::finalallocation($scheme->id);
+					$total_cases = 0;
+					$total_deals = 0;
+					if($scheme->activity->activitytype->uom == 'CASES'){
+						$total_deals = $final_alloc * $scheme->deals;
+						$total_cases = $final_alloc;
+						$final_tts = $final_alloc * $scheme->deals * $scheme->srp_p; 
+					}else{
+						
+						if($final_alloc > 0){
+							$total_cases = round($final_alloc/$scheme->deals);
+							$total_deals = $final_alloc;
+						}
+						$final_tts = $final_alloc * $scheme->srp_p; 
 					}
-					$final_tts = $final_alloc * $scheme->srp_p; 
-				}
-				
-				$final_pe = $total_deals *  $scheme->other_cost;
-				
-				$scheme2->final_alloc = $final_alloc;
-				$scheme2->final_total_deals = $total_deals;
-				$scheme2->final_total_cases = $total_cases;
+					
+					$final_pe = $total_deals *  $scheme->other_cost;
+					
+					$scheme2->final_alloc = $final_alloc;
+					$scheme2->final_total_deals = $total_deals;
+					$scheme2->final_total_cases = $total_cases;
 
-				$per = 0;
-				if(Input::get('ulp_premium') != ""){
-					$scheme2->final_tts_r = 0;
-					$non = $srp_p * $total_deals;
-					$per = $total_deals * $other_cost;
-					$scheme2->final_pe_r = $non+$per;
+					$per = 0;
+					if(Input::get('ulp_premium') != ""){
+						$scheme2->final_tts_r = 0;
+						$non = $srp_p * $total_deals;
+						$per = $total_deals * $other_cost;
+						$scheme2->final_pe_r = $non+$per;
+					}else{
+						$scheme2->final_tts_r = $final_tts;
+						$scheme2->final_pe_r = $per;
+					}
+					
+					
+					$scheme2->final_total_cost = $scheme2->final_tts_r+$scheme2->final_pe_r;
+					$scheme2->update();
 				}else{
-					$scheme2->final_tts_r = $final_tts;
-					$scheme2->final_pe_r = $per;
+					// update final alloc
+					$scheme2 = Scheme::find($scheme->id);
+					$scheme2->final_alloc = $scheme->quantity;
+					$scheme2->final_total_deals = $scheme->total_deals;
+					$scheme2->final_total_cases = $scheme->total_cases;
+					$scheme2->final_tts_r = $scheme->tts_r;;
+					$scheme2->final_pe_r = $scheme->pe_r;;
+					$scheme2->final_total_cost = $scheme2->total_cost;
+
+					$scheme2->update();
 				}
 				
-				
-				$scheme2->final_total_cost = $scheme2->final_tts_r+$scheme2->final_pe_r;
-				$scheme2->update();
 
 				return $scheme->id;
 			});
@@ -360,8 +376,18 @@ class SchemeController extends \BaseController {
 		if($validation->passes())
 		{
 			DB::transaction(function() use ($id)  {
-
 				$scheme = Scheme::find($id);
+
+				// check if reference sku is changed
+				$update_alloc = SchemeRepository::newSkus($scheme);
+				$old_srp = $scheme->srp_p;
+				$old_other_cost = $scheme->other_cost;
+				$old_pr = $scheme->pr;
+				$old_lpat = $scheme->lpat;
+				$old_quantity = $scheme->quantity;
+				$old_deals = $scheme->deals;
+				// echo $update_alloc;
+
 				$activity = Activity::find($scheme->activity_id);
 				$scheme->name = strtoupper(Input::get('scheme_name'));
 				$scheme->item_code = Input::get('item_code');
@@ -429,6 +455,9 @@ class SchemeController extends \BaseController {
 				$scheme->final_pe_r = $scheme->pe_r;
 				$scheme->final_total_cost = $scheme->total_cost;
 				$scheme->ulp_premium = Input::get('ulp_premium');
+				$scheme->compute = (Input::has('compute')) ? 1 : 0;
+
+
 				$scheme->update();
 
 				// update scheme sku
@@ -440,48 +469,73 @@ class SchemeController extends \BaseController {
 				// update scheme sku involve
 				SchemeRepository::addSchemePremiumSku($scheme);
 
-				SchemeAllocRepository::updateAllocation($scheme);
+
+				$scheme2 = Scheme::find($scheme->id);
+
+				$update_alloc = $update_alloc || SchemeRepository::newValue($old_srp,$scheme2->srp_p);
+				$update_alloc = $update_alloc || SchemeRepository::newValue($old_other_cost,$scheme2->other_cost);
+				$update_alloc = $update_alloc || SchemeRepository::newValue($old_pr,$scheme2->pr);
+				$update_alloc = $update_alloc || SchemeRepository::newValue($old_lpat,$scheme2->lpat);
+				$update_alloc = $update_alloc || SchemeRepository::newValue($old_quantity,$scheme2->quantity);
+				$update_alloc = $update_alloc || SchemeRepository::newValue($old_deals,$scheme2->deals);
+				// echo $old_srp .'=>'.$scheme2->srp_p;
+				// echo $update_alloc;
+
+				if($scheme->compute) {
+					if($update_alloc){
+						SchemeAllocRepository::updateAllocation($scheme);
 				
-				// update final alloc
-				$scheme2 = Scheme::find($id);
-				$final_alloc = SchemeAllocation::finalallocation($scheme->id);
-				$total_cases = 0;
-				$total_deals = 0;
-				if($scheme->activity->activitytype->uom == 'CASES'){
-					$total_deals = $final_alloc * $scheme->deals;
-					$total_cases = $final_alloc;
-					$final_tts = $final_alloc * $scheme->deals * $scheme->srp_p; 
-				}else{
-					
-					if($final_alloc > 0){
-						$total_cases = round($final_alloc/$scheme->deals);
-						$total_deals = $final_alloc;
+						// update final alloc
+						$final_alloc = SchemeAllocation::finalallocation($scheme->id);
+						$total_cases = 0;
+						$total_deals = 0;
+						if($scheme->activity->activitytype->uom == 'CASES'){
+							$total_deals = $final_alloc * $scheme->deals;
+							$total_cases = $final_alloc;
+							$final_tts = $final_alloc * $scheme->deals * $scheme->srp_p; 
+						}else{
+							
+							if($final_alloc > 0){
+								$total_cases = round($final_alloc/$scheme->deals);
+								$total_deals = $final_alloc;
+							}
+							$final_tts = $final_alloc * $scheme->srp_p; 
+						}
+						
+						$final_pe = $total_deals *  $scheme->other_cost;
+						
+						$scheme2->final_alloc = $final_alloc;
+						$scheme2->final_total_deals = $total_deals;
+						$scheme2->final_total_cases = $total_cases;
+
+						$per = 0;
+						if(Input::get('ulp_premium') != ""){
+							$scheme2->final_tts_r = 0;
+							$non = $srp_p * $total_deals;
+							$per = $total_deals * $other_cost;
+							$scheme2->final_pe_r = $non+$per;
+						}else{
+							$scheme2->final_tts_r = $final_tts;
+							$scheme2->final_pe_r = $final_pe;
+						}
+						
+						
+						$scheme2->final_total_cost = $scheme2->final_tts_r+$scheme2->final_pe_r;
+						$scheme2->update();
 					}
-					$final_tts = $final_alloc * $scheme->srp_p; 
-				}
-				
-				$final_pe = $total_deals *  $scheme->other_cost;
-				
-				$scheme2->final_alloc = $final_alloc;
-				$scheme2->final_total_deals = $total_deals;
-				$scheme2->final_total_cases = $total_cases;
-
-				$per = 0;
-				if(Input::get('ulp_premium') != ""){
-					$scheme2->final_tts_r = 0;
-					$non = $srp_p * $total_deals;
-					$per = $total_deals * $other_cost;
-					$scheme2->final_pe_r = $non+$per;
+					
 				}else{
-					$scheme2->final_tts_r = $final_tts;
-					$scheme2->final_pe_r = $final_pe;
-				}
-				
-				
-				$scheme2->final_total_cost = $scheme2->final_tts_r+$scheme2->final_pe_r;
-				$scheme2->update();
+					SchemeAllocation::where('scheme_id',$scheme->id)->delete();
+					// update final alloc
+					$scheme2->final_alloc = $scheme->quantity;
+					$scheme2->final_total_deals = $scheme->total_deals;
+					$scheme2->final_total_cases = $scheme->total_cases;
+					$scheme2->final_tts_r = $scheme->tts_r;;
+					$scheme2->final_pe_r = $scheme->pe_r;;
+					$scheme2->final_total_cost = $scheme2->total_cost;
 
-				
+					$scheme2->update();
+				}
 			});
 			// #schemes
 			return Redirect::action('SchemeController@edit', array('id' => $id))

@@ -226,6 +226,19 @@
 			</div>
 		</div>
 	</div>
+
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="form-group">
+				<div class="checkbox">
+					<label>
+						{{ Form::checkbox('compute', true,true) }} Use System Generated Allocation
+					</label>
+				</div>
+			</div>	
+		</div>
+	</div>	
+	
 	
 	<div class="row">
 		<div class="col-lg-12">

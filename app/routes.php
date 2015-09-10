@@ -406,7 +406,8 @@ Route::group(array('before' => 'auth'), function()
 	Route::resource('submittedactivity', 'SubmittedActivityController');
 
 	Route::get('downloads/cycles', 'DownloadsController@cycles');
-	Route::get('downloads/{id}/download', 'DownloadsController@download');
+	Route::get('downloads/{id}/all', 'DownloadsController@downloadall');
+	Route::get('downloads/{id}/approved', 'DownloadsController@download');
 
 	Route::resource('group', 'GroupController');
 

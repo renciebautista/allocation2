@@ -117,22 +117,41 @@ class Cycle extends \Eloquent {
 
 	public static function getReleasedCycles($filter){
 		return DB::table('activities')
-                 ->select('cycles.cycle_name', 'cycles.id',DB::raw('count(activities.id) as total'))
-                 ->join('cycles','activities.cycle_id','=','cycles.id')
-                 ->where('cycles.cycle_name', 'LIKE' ,"%$filter%")
-                 ->where('activities.status_id',9)
-                 ->groupBy('activities.cycle_id')
-                 ->orderBy('cycles.release_date')
-                 ->get();
+				 ->select('cycles.cycle_name', 'cycles.id',DB::raw('count(activities.id) as total'))
+				 ->join('cycles','activities.cycle_id','=','cycles.id')
+				 ->where('cycles.cycle_name', 'LIKE' ,"%$filter%")
+				 ->where('activities.status_id',9)
+				 ->groupBy('activities.cycle_id')
+				 ->orderBy('cycles.release_date')
+				 ->get();
 	}
 
 	public static function getAllCycles($filter){
-		return DB::table('activities')
-                 ->select('cycles.cycle_name', 'cycles.id',DB::raw('count(activities.id) as total'))
-                 ->join('cycles','activities.cycle_id','=','cycles.id')
-                 ->where('cycles.cycle_name', 'LIKE' ,"%$filter%")
-                 ->groupBy('activities.cycle_id')
-                 ->orderBy('cycles.release_date')
-                 ->get();
+		$query = sprintf("select cycles.id, cycles.cycle_name,
+			count(activities.id) as total_cycle,
+			COALESCE(tbl.total_released,0) as total_released
+			from activities
+			left join (
+			select cycles.id, cycles.cycle_name,
+			count(activities.id) as total_released
+			from activities
+			join cycles on activities.cycle_id = cycles.id
+			where activities.status_id > 7
+			group by activities.cycle_id
+			)as tbl on activities.cycle_id = tbl.id
+			join cycles on activities.cycle_id = cycles.id
+			where cycles.cycle_name LIKE '%%s%%'
+			group by activities.cycle_id
+			",$filter);
+		return DB::select(DB::raw($query));
+		// return DB::table('activities')
+		// 		 ->select('cycles.cycle_name', 'cycles.id',DB::raw('count(activities.id) as total'))
+		// 		 ->join('cycles','activities.cycle_id','=','cycles.id')
+		// 		 ->where('cycles.cycle_name', 'LIKE' ,"%$filter%")
+		// 		 ->groupBy('activities.cycle_id')
+		// 		 ->orderBy('cycles.release_date')
+		// 		 ->get();
 	}
+
+	
 }

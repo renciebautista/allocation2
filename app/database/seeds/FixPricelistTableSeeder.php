@@ -7,7 +7,11 @@ class FixPricelistTableSeeder extends Seeder {
 
 	public function run()
 	{
-		Excel::selectSheets('Initial')->load(app_path().'/database/seeds/seed_files/pricelist2.xlsx', function($reader) {
+		// Excel::selectSheets('Initial')->load(app_path().'/database/seeds/seed_files/pricelist2.xlsx', function($reader) {
+		// 	Pricelist::updatePriceList($reader->ignoreEmpty());
+		// });
+
+		Excel::selectSheets('Initial')->load(app_path().'/database/seeds/seed_files/Pricelist2_V2.xlsx', function($reader) {
 			Pricelist::updatePriceList($reader->ignoreEmpty());
 		});
 	}

@@ -104,11 +104,12 @@ class AllocationReportController extends \BaseController {
 		if($validation->passes())
 		{
 			DB::beginTransaction();
-
 			try {
 				$template = new AllocationReportTemplate;
 				$template->created_by = Auth::id();
 				$template->name = strtoupper(Input::get('name'));
+				$template->created_at = date('Y-m-d H:i:s');
+				$template->updated_at = date('Y-m-d H:i:s');
 				$template->save();
 
 				if(Input::has('st')){
@@ -423,6 +424,7 @@ class AllocationReportController extends \BaseController {
 				try {
 
 					$template->name = strtoupper(Input::get('name'));
+					$template->updated_at = date('Y-m-d H:i:s');
 					$template->update();
 
 					AllocationReportFilter::clearFilter($template->id,1);
