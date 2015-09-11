@@ -386,6 +386,7 @@ class SchemeController extends \BaseController {
 				$old_lpat = $scheme->lpat;
 				$old_quantity = $scheme->quantity;
 				$old_deals = $scheme->deals;
+				$old_compute = $scheme->compute;
 				// echo $update_alloc;
 
 				$activity = Activity::find($scheme->activity_id);
@@ -478,6 +479,9 @@ class SchemeController extends \BaseController {
 				$update_alloc = $update_alloc || SchemeRepository::newValue($old_lpat,$scheme2->lpat);
 				$update_alloc = $update_alloc || SchemeRepository::newValue($old_quantity,$scheme2->quantity);
 				$update_alloc = $update_alloc || SchemeRepository::newValue($old_deals,$scheme2->deals);
+
+				$update_alloc = $update_alloc || SchemeRepository::newValue($old_compute,$scheme2->compute);
+
 				// echo $old_srp .'=>'.$scheme2->srp_p;
 				// echo $update_alloc;
 
@@ -518,7 +522,6 @@ class SchemeController extends \BaseController {
 							$scheme2->final_tts_r = $final_tts;
 							$scheme2->final_pe_r = $final_pe;
 						}
-						
 						
 						$scheme2->final_total_cost = $scheme2->final_tts_r+$scheme2->final_pe_r;
 						$scheme2->update();

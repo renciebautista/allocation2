@@ -453,4 +453,20 @@ class SchemeAllocRepository
 			}
 		}
 	}
+
+	private static function updateCosting($scheme){
+		$allocations = SchemeAllocation::where('scheme_id',$scheme->id)->get();
+		foreach ($allocations as $allocation) {
+			if($scheme->activity->activitytype->uom == 'CASES'){
+				$tts_budget = $allocation->final_alloc * $scheme->deals * $scheme->srp_p; 
+			}else{
+				$tts_budget = $allocation->final_alloc * $scheme->srp_p; 
+			}
+
+			$allocation->tts_budget = $tts_budget;
+			$allocation->pe_budget = $allocation->final_alloc *  $scheme->other_cost; 
+
+			$allocation->update();
+		}
+	}
 }
