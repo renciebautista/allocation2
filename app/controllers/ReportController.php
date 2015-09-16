@@ -132,7 +132,9 @@ class ReportController extends \BaseController {
 		$activity = Activity::findOrFail($id);
 		$folders = array();
 		// $zip_path = storage_path().'/zipped/activities/'.$activity->id.'_'.strtoupper(Helper::sanitize($activity->circular_name)).'.zip';
-		$zip_path = storage_path().'/zipped/activities/'.strtoupper(Helper::sanitize($activity->circular_name)).'.zip';
+		$foldername = preg_replace('/[^A-Za-z0-9 _ .-]/', '_', $activity->circular_name);
+		$folder_name = str_replace(":","_", $foldername);
+		$zip_path = storage_path().'/zipped/activities/'.strtoupper(Helper::sanitize($folder_name)).'.zip';
 		File::delete($zip_path);
 		$nofile = 'public/nofile/robots.txt';
 		$path = '/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;

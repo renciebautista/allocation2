@@ -151,12 +151,18 @@ class AllocationRepository  {
 		
 		if(in_array("E1397", $_grps)){	
 		// get all DT Secondary Sales
+		// dd($channels);
 		$this->_dt_secondary_sales =DB::table('dt_secondary_sales')
 					->select(DB::raw("dt_secondary_sales.area_code,dt_secondary_sales.customer_code, SUM(gsv) as gsv"))
 					->join('sub_channels', 'dt_secondary_sales.coc_03_code', '=', 'sub_channels.coc_03_code')
 					->join(DB::raw("(SELECT DISTINCT(customer_code) FROM customers) customers"), 'dt_secondary_sales.customer_code', '=', 'customers.customer_code')
 					->whereIn('child_sku_code', $child_skus)
-					->whereIn('channel_code', $channels)
+					// ->whereIn('channel_code', $channels)
+					->where(function($query) use ($channels) {
+						if(!empty($channels)){
+							$query->whereIn('channel_code', $channels);
+						}		
+					})
 					->where(function($query) use ($_areas) {
 						if(!empty($_areas['E1397'])){
 							$query->whereIn('dt_secondary_sales.area_code', $_areas['E1397']);

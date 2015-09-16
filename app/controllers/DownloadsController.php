@@ -57,7 +57,9 @@ class DownloadsController extends \BaseController {
 						}
 						$with_files = true;
 						// $folders[strtoupper(Helper::sanitize($type->activity_type)).'/'.$activity->id.'_'.strtoupper(Helper::sanitize($activity->circular_name))] = $folder;
-						$folders[strtoupper(Helper::sanitize($type->activity_type)).'/'.strtoupper(Helper::sanitize($activity->circular_name))] = $folder;
+						$foldername = preg_replace('/[^A-Za-z0-9 _ .-]/', '_', $activity->circular_name);
+						$folder_name = str_replace(":","_", $foldername);
+						$folders[strtoupper(Helper::sanitize($type->activity_type)).'/'.strtoupper(Helper::sanitize($folder_name))] = $folder;
 					}else{
 						// $with_files = true;
 						// $folder = $nofile;
@@ -112,7 +114,9 @@ class DownloadsController extends \BaseController {
 						}
 						$with_files = true;
 						// $folders[strtoupper(Helper::sanitize($type->activity_type)).'/'.$activity->id.'_'.strtoupper(Helper::sanitize($activity->circular_name))] = $folder;
-						$folders[strtoupper(Helper::sanitize($type->activity_type)).'/'.strtoupper(Helper::sanitize($activity->circular_name))] = $folder;
+						$foldername = preg_replace('/[^A-Za-z0-9 _ .-]/', '_', $activity->circular_name);
+						$folder_name = str_replace(":","_", $foldername);
+						$folders[strtoupper(Helper::sanitize($type->activity_type)).'/'.strtoupper(Helper::sanitize($folder_name))] = $folder;
 					}else{
 						// $with_files = true;
 						// $folder = $nofile;
@@ -168,7 +172,9 @@ class DownloadsController extends \BaseController {
 						}
 						$with_files = true;
 						// $folders[strtoupper(Helper::sanitize($type->activity_type)).'/'.$activity->id.'_'.strtoupper(Helper::sanitize($activity->circular_name))] = $folder;
-						$folders[strtoupper(Helper::sanitize($type->activity_type)).'/'.strtoupper(Helper::sanitize($activity->circular_name))] = $folder;
+						$foldername = preg_replace('/[^A-Za-z0-9 _ .-]/', '_', $activity->circular_name);
+						$folder_name = str_replace(":","_", $foldername);
+						$folders[strtoupper(Helper::sanitize($type->activity_type)).'/'.strtoupper(Helper::sanitize($folder_name))] = $folder;
 					}else{
 						// $with_files = true;
 						// $folder = $nofile;
