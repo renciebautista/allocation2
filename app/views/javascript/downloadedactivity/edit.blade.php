@@ -478,7 +478,8 @@ $('select#channel').multiselect({
 });
 
 $('select#channel').multiselect('disable');
- 
+
+var selectedkeys;
 // fancy tree
 $("#tree3").fancytree({
 	extensions: [],
@@ -489,9 +490,11 @@ $("#tree3").fancytree({
 	},
 	select: function(event, data) {
 		// Get a list of all selected nodes, and convert to a key array:
-		// var selKeys = $.map(data.tree.getSelectedNodes(), function(node){
-		//  return node.key;
-		// });
+		var selKeys = $.map(data.tree.getSelectedNodes(), function(node){
+			 return node.key;
+		});
+		selectedkeys = selKeys;
+		//console.log(selKeys);
 		// $("#echoSelection3").text(selKeys.join(", "));
 
 
@@ -501,7 +504,6 @@ $("#tree3").fancytree({
 		var selRootKeys = $.map(selRootNodes, function(node){
 		  return node.key;
 		});
-
 		// $("#echoSelectionRootKeys3").text(selRootKeys.join("."));
 		// $("#echoSelectionRootKeys3").text(selRootKeys.join(", "));
 
@@ -515,14 +517,25 @@ $("#tree3").fancytree({
 		        node.setSelected(false);
 		    });
 			$("#tree4").fancytree("disable");
-
 		}
 		$("#customers").val(selRootKeys.join(", "));
+		show_alloc();
 	},
 	click: function(event, data) {
         $("#updateCustomer").addClass("dirty");
-    },
+        if(data.targetType == "checkbox"){
+        	//console.log(data.node.tree);
+	        var keys = data.node.key.split(".");
+	        if($.inArray('E1397', keys) != -1){
+				$("#tree4").fancytree("getTree").visit(function(node){
+			        node.setSelected(true);
+			    });
+			}
+    	}
+       
+    }
 });
+
 
 $("#btnCDeselectAll").click(function(){
 
@@ -628,76 +641,53 @@ $("form[id='updateCustomer']").on("submit",function(e){
 	e.preventDefault();
 });
 
-$("#force_alloc").on('click',"button",function(e) {
-	e.preventDefault();
-	var id = $(this).closest("tr").attr('data-link');
-	var percent = $(this).closest("tr").find('td:eq(2)').text();
-	$('#forcealloc td[field="area_name"]').text($(this).closest("tr").find('td:eq(1)').text());
+<!-- force alloc -->
 
-	$('#f_id').val(id); 
-	$("#f_percent").val($(this).closest("tr").find('td:eq(2)').text());
-	$('#myForceAlloc').modal('show');
-
-	$('#f_percent').rules('remove', 'max');
-    $('#f_percent').rules('add', { 
-    	required: true, 
-    	min:0, 
-    	max: function() { return 100 - sumOfColumns($('#force_alloc'), 3) + parseInt(percent) },
-    	messages: {
-			required: "Required force allocation percentage.",
-		    max: "Total force allocation percentage is above 100"
-		}
-    } );
-
-});
-
-$("#myForceAlloc").on("hidden.bs.modal", function(){
-    $('.modal-body').removeClass("has-error");
-    $('.modal-body span').remove();
-});
+$('.input-number').inputmask({'mask':["9{0,5}.9{0,2}", "99999"]});
 
 
-$("form[id='updateforcealloc']").on("submit",function(e){
-	var form = $(this);
-	var url = form.prop('action');
-	if(form.valid()){
-		$.ajax({
-			url: url,
-			data: form.serialize(),
-			method: 'POST',
-			dataType: "json",
-			success: function(data){
-				if(data.success == "1"){
-					$('#force_alloc tr[data-link="'+data.id+'"]').find('td:eq(2)').text(data.f_percent);
-					bootbox.alert("Force Allocation was successfully updated."); 
-					$('#myForceAlloc').modal('hide');
-				}else{
-					bootbox.alert("An error occured while updating."); 
-				}
-			}
-		});
+function show_alloc(){
+	var force_alloc = $('input[name="allow_force"]:checked').length > 0;
+	if(force_alloc){
+		show_force_alloc();
+	}else{
+		$('#force_alloc').find('input').attr('disabled','disabled');
 	}
-	
+}
 
-	e.preventDefault();
+
+
+$('#allow_force').click(function() {
+    var $this = $(this);
+    // $this will contain a reference to the checkbox   
+    if ($this.is(':checked')) {
+        // the checkbox was checked 
+        //$('#force_alloc').find('input').removeAttr('disabled');
+       	show_force_alloc();
+    } else {
+        // the checkbox was unchecked
+        $('#force_alloc').find('input').attr('disabled','disabled');
+    }
 });
 
+function show_force_alloc(){
+	var a = [];
+    $.each( selectedkeys, function( key, value ) {
+    	var arr = value.split('.');
+    	$.each( arr, function( key, value2 ) {
+    		a.push(value2);
+    	});
+	});
 
-$("#updateforcealloc").validate({
-	errorElement: "span", 
-	errorClass : "has-error",
-	errorPlacement: function(error, element) {            
-		error.insertAfter("#forcealloc");
-	},
-	highlight: function( element, errorClass, validClass ) {
-    	$(element).closest('div').addClass(errorClass).removeClass(validClass);
-  	},
-  	unhighlight: function( element, errorClass, validClass ) {
-    	$(element).closest('div').removeClass(errorClass).addClass(validClass);
-  	}
-});
-
-$('#f_percent').inputNumber();
+	$('input', $('#force_alloc')).each(function () {
+		if($.inArray($(this).attr("id"), a) != -1){
+			$(this).removeAttr('disabled');
+		}else{
+			$(this).attr('disabled','disabled');
+		}
+	});
+}
+<!-- schemes -->
 <!-- schemes -->
 
 <!-- Budget details -->
@@ -845,7 +835,8 @@ $container.handsontable({
       type: 'text',
     }],
 	afterChange: function (change, source) {
-		console.log(source);
+		//console.log(source);
+		$("#updatetimings").addClass("dirty");
 	}
 });
 var handsontable = $container.data('handsontable');

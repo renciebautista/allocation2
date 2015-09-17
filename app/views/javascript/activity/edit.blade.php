@@ -528,10 +528,19 @@ $("#tree3").fancytree({
 		$("#customers").val(selRootKeys.join(", "));
 		show_alloc();
 	},
-
 	click: function(event, data) {
         $("#updateCustomer").addClass("dirty");
-    },
+        if(data.targetType == "checkbox"){
+        	//console.log(data.node.tree);
+	        var keys = data.node.key.split(".");
+	        if($.inArray('E1397', keys) != -1){
+				$("#tree4").fancytree("getTree").visit(function(node){
+			        node.setSelected(true);
+			    });
+			}
+    	}
+       
+    }
 });
 
 $("#btnCDeselectAll").click(function(){
