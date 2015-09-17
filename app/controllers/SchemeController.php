@@ -473,10 +473,10 @@ class SchemeController extends \BaseController {
 
 				$scheme2 = Scheme::find($scheme->id);
 
-				$update_alloc = $update_alloc || SchemeRepository::newValue($old_srp,$scheme2->srp_p);
-				$update_alloc = $update_alloc || SchemeRepository::newValue($old_other_cost,$scheme2->other_cost);
-				$update_alloc = $update_alloc || SchemeRepository::newValue($old_pr,$scheme2->pr);
-				$update_alloc = $update_alloc || SchemeRepository::newValue($old_lpat,$scheme2->lpat);
+				// $update_alloc = $update_alloc || SchemeRepository::newValue($old_srp,$scheme2->srp_p);
+				// $update_alloc = $update_alloc || SchemeRepository::newValue($old_other_cost,$scheme2->other_cost);
+				// $update_alloc = $update_alloc || SchemeRepository::newValue($old_pr,$scheme2->pr);
+				// $update_alloc = $update_alloc || SchemeRepository::newValue($old_lpat,$scheme2->lpat);
 				$update_alloc = $update_alloc || SchemeRepository::newValue($old_quantity,$scheme2->quantity);
 				$update_alloc = $update_alloc || SchemeRepository::newValue($old_deals,$scheme2->deals);
 
@@ -488,7 +488,6 @@ class SchemeController extends \BaseController {
 				if($scheme->compute) {
 					if($update_alloc){
 						SchemeAllocRepository::updateAllocation($scheme);
-				
 						// update final alloc
 						$final_alloc = SchemeAllocation::finalallocation($scheme->id);
 						$total_cases = 0;
@@ -539,6 +538,8 @@ class SchemeController extends \BaseController {
 
 					$scheme2->update();
 				}
+
+				SchemeAllocRepository::updateCosting($scheme);
 			});
 			// #schemes
 			return Redirect::action('SchemeController@edit', array('id' => $id))

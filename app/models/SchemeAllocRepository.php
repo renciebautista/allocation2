@@ -454,7 +454,7 @@ class SchemeAllocRepository
 		}
 	}
 
-	private static function updateCosting($scheme){
+	public static function updateCosting($scheme){
 		$allocations = SchemeAllocation::where('scheme_id',$scheme->id)->get();
 		foreach ($allocations as $allocation) {
 			if($scheme->activity->activitytype->uom == 'CASES'){
