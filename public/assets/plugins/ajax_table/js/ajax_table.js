@@ -181,12 +181,13 @@ $(document).ready(function(){
 		//alert(str);
 		var input = '';
 		if(obj[i].type == "text"){
-			input = '<input class="form-control" type='+obj[i].type+' name='+obj[i].id+' id='+obj[i].id+' placeholder="'+obj[i].placeholder+'" value='+str+' >';
+			input = '<input class="form-control" type="'+obj[i].type+'" name="'+obj[i].id+'" id='+obj[i].id+' placeholder="'+obj[i].placeholder+'" value="'+str+'">';
+			console.log(input);
 		}else if(obj[i].type == "textarea"){
-			input = '<textarea name='+obj[i].id+' id='+obj[i].id+' placeholder="'+obj[i].placeholder+'">'+str+'</textarea>';
+			input = '<textarea name="'+obj[i].id+'" id="'+obj[i].id+'" placeholder="'+obj[i].placeholder+'">'+str+'</textarea>';
 		}
 		else if(obj[i].type == "select"){
-			input = '<select class="form-control" name='+obj[i].id+' id='+obj[i].id+'>';
+			input = '<select class="form-control" name="'+obj[i].id+'" id="'+obj[i].id+'">';
 			selected = "";
 			if (obj[i].ajax_url !== undefined) {
 				$.ajax({
