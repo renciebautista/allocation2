@@ -403,7 +403,10 @@ Route::group(array('before' => 'auth'), function()
 
 
 	Route::post('submittedactivity/{id}/updateactivity', 'SubmittedActivityController@updateactivity');
-	Route::resource('submittedactivity', 'SubmittedActivityController');
+	Route::get('submittedactivity/{id}/edit', 'SubmittedActivityController@edit');
+	Route::get('submittedactivity', array('as' => 'submittedactivity.index', 'uses' => 'SubmittedActivityController@index'));
+	// Route::get('submittedactivity', 'SubmittedActivityController@index');
+	// Route::resource('submittedactivity', 'SubmittedActivityController');
 
 	Route::get('downloads/cycles', 'DownloadsController@cycles');
 	Route::get('downloads/{id}/all', 'DownloadsController@downloadall');

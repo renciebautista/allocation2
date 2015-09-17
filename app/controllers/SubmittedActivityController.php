@@ -17,9 +17,10 @@ class SubmittedActivityController extends \BaseController {
 			$scopes = ScopeType::getLists();
 			$types = ActivityType::getLists();
 			$proponents = User::getApprovers(['PROPONENT']);
+			$s = Input::get('st');
 			$activities = Activity::searchSubmitted(Input::get('pr'),Input::get('st'),Input::get('cy'),Input::get('sc'),
 				Input::get('ty'),Input::get('title'));
-			return View::make('submittedactivity.index',compact('statuses', 'activities', 'cycles', 'scopes', 'types', 'proponents'));
+			return View::make('submittedactivity.index',compact('statuses', 'activities', 'cycles', 'scopes', 'types', 'proponents','s'));
 		}else{
 			return Redirect::route('activity.index');
 		}
@@ -35,6 +36,11 @@ class SubmittedActivityController extends \BaseController {
 	 */
 	public function edit($id)
 	{
+		$status = Input::get('s');
+
+		$activityIdList = Activity::getIdList($status);
+		$id_index = array_search($id, $activityIdList);
+
 		$activity = Activity::findOrFail($id);
 		if(!ActivityApprover::myActivity($activity->id)){
 			return Response::make(View::make('shared/404'), 404);
@@ -59,56 +65,6 @@ class SubmittedActivityController extends \BaseController {
 		}
 
 		$approver = ActivityApprover::getApprover($id,Auth::id());
-
-		// $planner = ActivityPlanner::where('activity_id', $activity->id)->first();
-		// $budgets = ActivityBudget::with('budgettype')
-		// 		->where('activity_id', $id)
-		// 		->get();
-
-		// $nobudgets = ActivityNobudget::with('budgettype')
-		// 	->where('activity_id', $id)
-		// 	->get();
-
-		// $schemes = Scheme::getList($id);
-
-		// $skuinvolves = array();
-		// foreach ($schemes as $scheme) {
-		// 	$involves = SchemeHostSku::where('scheme_id',$scheme->id)
-		// 		->join('pricelists', 'scheme_host_skus.sap_code', '=', 'pricelists.sap_code')
-		// 		->get();
-		// 	foreach ($involves as $value) {
-		// 		$skuinvolves[] = $value;
-		// 	}
-
-		// 	$scheme->allocations = SchemeAllocation::getAllocations($scheme->id);
-		// 	$non_ulp = explode(",", $scheme->ulp_premium);
-			
-		// }
-
-		// // Helper::print_r($schemes);
-
-		// $materials = ActivityMaterial::where('activity_id', $activity->id)
-		// 	->with('source')
-		// 	->get();
-
-		// $fdapermit = ActivityFdapermit::where('activity_id', $activity->id)->first();
-		// $networks = ActivityTiming::getTimings($activity->id,true);
-		// $artworks = ActivityArtwork::getList($activity->id);
-		// $pispermit = ActivityFis::where('activity_id', $activity->id)->first();
-
-		// $fdapermits = ActivityFdapermit::getList($activity->id);
-		// $fis = ActivityFis::getList($activity->id);
-		// // $artworks = ActivityArtwork::getList($activity->id);
-		// $backgrounds = ActivityBackground::getList($activity->id);
-		// $bandings = ActivityBanding::getList($activity->id);
-
-		// // $scheme_customers = SchemeAllocation::getCustomers($activity->id);
-
-		// //Involved Area
-		// $areas = ActivityCustomer::getSelectedAreas($activity->id);
-		// // $channels = ActivityChannel::getSelectecdChannels($activity->id);
-		// $channels = ActivityChannel2::getSelectecdChannels($activity->id);
-		// // Helper::print_array($areas);
 
 		$planner = ActivityPlanner::where('activity_id', $activity->id)->first();
 		$approvers = ActivityApprover::getNames($activity->id);
@@ -194,7 +150,8 @@ class SubmittedActivityController extends \BaseController {
 		return View::make('submittedactivity.edit',compact('activity','comments','approver', 'valid',
 			'activity' ,'approvers', 'planner','budgets','nobudgets','schemes','skuinvolves', 'sku_involves',
 			'materials','non_ulp','networks','artworks', 'pis' , 'areas','channels', 
-			'fdapermits','fis', 'backgrounds', 'bandings' ,'activity_roles'));
+			'fdapermits','fis', 'backgrounds', 'bandings' ,'activity_roles',
+			'activityIdList','id_index','status'));
 	}
 
 	public function updateactivity($id)
@@ -409,13 +366,14 @@ class SubmittedActivityController extends \BaseController {
 				$comment->save();
 
 				DB::commit();
-
-				return Redirect::to(URL::action('SubmittedActivityController@edit', $id))
+				// {{ HTML::linkAction('SubmittedActivityController@edit','View', array('id' => $activity->id, 's' => $s), array('class' => 'btn btn-success btn-xs')) }}
+				return Redirect::to(URL::action('SubmittedActivityController@edit', array('id' => $d, 's' => $status)))
 					->with('class', "alert-success" )
 					->with('message', $message);
 			} catch (q $e) {
 				DB::rollback();
-				return Redirect::to(URL::action('SubmittedActivityController@edit', $id))
+				// return Redirect::to(URL::action('SubmittedActivityController@edit', $id))
+				return Redirect::to(URL::action('SubmittedActivityController@edit', array('id' => $d, 's' => $status)))
 					->with('class', "alert-danger" )
 					->with('message', "Error updating activity.");
 			}

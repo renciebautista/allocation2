@@ -4,13 +4,14 @@
 
 <div class="page-header" id="banner">
 	<div class="row">
-	  	<div class="col-lg-8 col-md-7 col-sm-6">
+	  	<div class="col-lg-12 col-md-12 col-sm-12">
 			<h1>Edit {{ $activity->circular_name }}</h1>
 	  	</div>
 	</div>
 </div>
 
 @include('partials.notification')
+
 
 {{ Form::open(array('action' => array('SubmittedActivityController@updateactivity', $activity->id), 'class' => 'bs-component','id' => 'updateactivity')) }}
 <div class="row">
@@ -30,11 +31,44 @@
 			<?php $read_only = false; ?>
 
 			@endif
+
+			@if(count($activityIdList) > 1)
+				@if($activityIdList[0] == $activity->id)
+					{{ HTML::linkAction('SubmittedActivityController@edit','Previous', array('id' => $activity->id, 's' => $status), array('class' => 'btn btn-primary disabled')) }}
+				@else
+					<?php 
+						$id = $id_index - 1;
+					?>
+					{{ HTML::linkAction('SubmittedActivityController@edit','Previous', array('id' => $activityIdList[$id], 's' => $status), array('class' => 'btn btn-primary')) }}
+				@endif
+				
+				<?php 
+					$last_cnt = count($activityIdList);
+				?>
+
+				@if($activityIdList[$last_cnt - 1] == $activity->id)
+					{{ HTML::linkAction('SubmittedActivityController@edit','Next', array('id' => $activity->id, 's' => $status), array('class' => 'btn btn-primary disabled')) }}
+				@else
+					<?php 
+						$id = $id_index + 1;
+					?>
+					{{ HTML::linkAction('SubmittedActivityController@edit','Next', array('id' => $activityIdList[$id], 's' => $status), array('class' => 'btn btn-primary')) }}
+				@endif
+			@endif
+
 		</div>
 	</div>
 
 </div>
 
+@if(($approver->status_id == 0) && ($valid) && (strtotime($activity->cycle->approval_deadline) < strtotime(date('Y-m-d'))))
+<div class="row">
+  	<div class="expired col-lg-12 col-md-12 col-sm-12 center">
+		<h2 style="color:#f00;">Approval Deadline already lapsed on {{ date_format(date_create($activity->cycle->approval_deadline),'M j, Y') }}</h2>
+  	</div>
+</div>
+
+@endif
 
 <ul class="nav nav-tabs">
 	<li class="active"><a aria-expanded="true" href="#activty">Activity Preview</a></li>

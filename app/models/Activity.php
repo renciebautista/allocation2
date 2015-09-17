@@ -722,4 +722,31 @@ class Activity extends \Eloquent {
 		}
 		return false;
 	}
+
+
+	public static function getIdList($status){
+		$activities = ActivityApprover::getActivities(Auth::id());
+
+		$data = array();
+		$records = self::select('activities.id as id')
+			->join('activity_types', 'activities.activity_type_id','=','activity_types.id')
+			->where('activities.status_id','>',1)
+			->where(function($query) use ($status){
+				if($status > 0){
+					$query->whereIn('activities.status_id', $status);
+				}
+			})
+			->whereIn('activities.id',$activities)
+			->orderBy('activity_types.activity_type')
+			->orderBy('activities.circular_name')
+			->orderBy('activities.id')
+			->get();
+		if(!empty($records)){
+			foreach ($records as $row) {
+				$data[] = $row->id;
+			}
+		}
+
+		return $data;
+	}
 }

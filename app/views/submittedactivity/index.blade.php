@@ -141,7 +141,7 @@
 						<td></td>
 						@endif
 						<td class="action">
-							{{ HTML::linkAction('SubmittedActivityController@edit','View', $activity->id, array('class' => 'btn btn-success btn-xs')) }}
+							{{ HTML::linkAction('SubmittedActivityController@edit','View', array('id' => $activity->id, 's' => $s), array('class' => 'btn btn-success btn-xs')) }}
 						</td>
 						<td class="action">
 							<a class="btn btn-info btn-xs" target="_blank" href="{{ URL::action('ReportController@preview', $activity->id ) }}">Preview</a>							
