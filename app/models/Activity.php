@@ -639,6 +639,29 @@ class Activity extends \Eloquent {
 			->get();
 	}
 
+	public static function ReleasedCyles($cycles){
+		return self::select('activities.id','activities.circular_name','activities.edownload_date',
+			'activities.eimplementation_date','activities.billing_date',
+			'activity_statuses.status','cycles.cycle_name','activities.end_date',
+			'scope_types.scope_name','activity_types.activity_type',  'activities.status_id',
+			DB::raw('CONCAT(users.first_name, " ", users.last_name) AS planner'),
+			DB::raw('CONCAT(propo.first_name, " ", propo.last_name) AS proponent'))
+			->join('activity_statuses', 'activities.status_id','=','activity_statuses.id')
+			->join('cycles', 'activities.cycle_id','=','cycles.id')
+			->join('scope_types', 'activities.scope_type_id','=','scope_types.id')
+			->join('activity_types', 'activities.activity_type_id','=','activity_types.id')
+			->join('activity_planners', 'activities.id','=','activity_planners.activity_id','left')
+			->join('users', 'activity_planners.user_id','=','users.id','left')
+			->join('users as propo', 'activities.created_by','=','propo.id')
+			->where('activities.status_id', 9)
+			->whereIn('activities.cycle_id',$cycles)
+			->orderBy('activity_types.activity_type')
+			->orderBy('activities.circular_name')
+			->orderBy('activities.id')
+			->groupBy('cycles.cycle_name')
+			->get();
+	}
+
 	public static function forRelease($cycles){
 		return self::where('activities.status_id', 8)
 			->where('activities.pdf', 1)

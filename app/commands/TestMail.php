@@ -151,16 +151,23 @@ class TestMail extends Command {
 				$cycle_names = "";
 				foreach ($cycles as $value) {
 					$cycle_ids[] = $value->id;
-					$cycle_names .= $value->cycle_name ." - ";
+					// $cycle_names .= $value->cycle_name ." - ";
 				}
-				$data['cycles'] = $cycles;
+				// $data['cycles'] = $cycles;
 				$data['user'] = $user->first_name;
 				$data['email'] = $user->email;
 				$data['fullname'] = $user->getFullname();
 				$data['cycle_ids'] = $cycle_ids;
-				$data['cycle_names'] = $cycle_names;
+				// $data['cycle_names'] = $cycle_names;
 				
 				$data['activities'] = Activity::Released($cycle_ids);
+
+				$data['cycles'] = Activity::ReleasedCyles($cycle_ids);
+				foreach ($data['cycles'] as $value) {
+					$cycle_names .= $value->cycle_name ." - ";
+				}
+
+				$data['cycle_names'] = $cycle_names;
 
 				if(count($data['activities'])>0){
 					if($_ENV['MAIL_TEST']){
@@ -186,20 +193,6 @@ class TestMail extends Command {
 							}
 							
 						});
-
-
-						// Mail::send('emails.mail4', $data, function($message) use ($data){
-						// 	if(count($data['cycles']) > 1){
-						// 		$message->to('grace.erum@unilever.com', $data['fullname']);
-						// 		$message->bcc("rbautista@chasetech.com");
-						// 		$message->subject('TOP ACTIVITIES FOR: ('.$data['cycle_names'].')');
-						// 	}else{
-						// 		$message->to('grace.erum@unilever.com', $data['fullname']);
-						// 		$message->bcc("rbautista@chasetech.com");
-						// 		$message->subject('TOP ACTIVITIES FOR: '.$data['cycle_names']);
-						// 	}
-							
-						// });
 					}
 				}
 			break;

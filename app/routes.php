@@ -253,18 +253,25 @@ Route::get('testrole', function(){
 	$cycle_names = "";
 	foreach ($cycles as $value) {
 		$cycle_ids[] = $value->id;
-		$cycle_names .= $value->cycle_name ." - ";
+		// $cycle_names .= $value->cycle_name ." - ";
 	}
-	$data['cycles'] = $cycles;
+	// $data['cycles'] = $cycles;
 	$data['user'] = $user->first_name;
 	$data['email'] = $user->email;
 	$data['fullname'] = $user->getFullname();
 	$data['cycle_ids'] = $cycle_ids;
-	$data['cycle_names'] = $cycle_names;
+	// $data['cycle_names'] = $cycle_names;
 	
 	$data['activities'] = Activity::Released($cycle_ids);
 
-	return View::make('emails.mail31', $data);
+	$data['cycles'] = Activity::ReleasedCyles($cycle_ids);
+	foreach ($data['cycles'] as $value) {
+		$cycle_names .= $value->cycle_name ." - ";
+	}
+
+	$data['cycle_names'] = $cycle_names;
+
+	return View::make('emails.mail4', $data);
 });
 
 Route::get('mailreport', function(){
