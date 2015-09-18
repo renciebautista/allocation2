@@ -49,7 +49,7 @@
 						<td>
 							@if($template->report_generated != "0000-00-00 00:00:00")
 							<a href='{{ URL::to('ar/'.$template->token) }}'>
-							    {{ date_format(date_create($template->report_generated),'M j, Y H:m:s') }}
+							    {{ date_format(date_create($template->report_generated),'M j, Y H:i:s') }}
 							</a>
 
 							@endif
