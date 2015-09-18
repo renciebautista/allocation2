@@ -177,12 +177,23 @@ class MakeAllocReport extends Command {
 		$data['user'] = $user;
 		$name = $template->name;
 		
-		$this->line($newfile->file_name);
+		$this->line($template->file_name);
 		
-		Mail::send('emails.allocreport', $data, function($message) use ($user, $name){
-			$message->to($user->email, $user->first_name);
-			$message->subject('Allocation Report - '.$name);
-		});
+		if($_ENV['MAIL_TEST']){
+			Mail::send('emails.allocreport', $data, function($message) use ($user, $name){
+				$message->to('grace.erum@unilever.com', $user->first_name);
+				$message->subject('Allocation Report - '.$name);
+			});
+
+		}else{
+			Mail::send('emails.allocreport', $data, function($message) use ($user, $name){
+				$message->to($user->email, $user->first_name);
+				$message->subject('Allocation Report - '.$name);
+			});
+		}
+						
+
+		
 	}
 
 	/**
