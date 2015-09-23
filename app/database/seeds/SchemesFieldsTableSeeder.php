@@ -69,7 +69,8 @@ class SchemesFieldsTableSeeder extends Seeder {
 			('allocations.pe_budget as pe_requirement','PE BUDGET'),
 			('allocations.pe_budget + allocations.pe_budget as total_cost','TOTAL COST'),
 			('tts_budget.tts_io','TTS IO'),
-			('pe_budget.pe_io','PE IO');");
+			('pe_budget.pe_io','PE IO'),
+			('activities.allow_force as forced_alloc','ALLOW FORCE ALLOC');");
 
 		DB::table('alloc_report_per_groups')->truncate();
 
@@ -95,7 +96,8 @@ class SchemesFieldsTableSeeder extends Seeder {
 				($i != 48) &&
 				($i != 50) &&
 				($i != 51) &&
-				($i != 52)){
+				($i != 52) &&
+				($i != 60)){
 				$proponent_filter[] = array('role_id' => 2, 'filter_id' => $i);
 			}
 		}
@@ -115,7 +117,8 @@ class SchemesFieldsTableSeeder extends Seeder {
 				($i != 48) &&
 				($i != 50) &&
 				($i != 51) &&
-				($i != 52)){
+				($i != 52) &&
+				($i != 60)){
 				$pmog_filter[] = array('role_id' => 3, 'filter_id' => $i);
 			}
 		}
@@ -130,7 +133,8 @@ class SchemesFieldsTableSeeder extends Seeder {
 				($i != 42) && ($i != 43) && ($i != 44) &&
 				($i != 45) && ($i != 46) && ($i != 47) &&
 				($i != 48) && ($i != 50) && ($i != 51) &&
-				($i != 52) ){
+				($i != 52) &&
+				($i != 60)){
 				$field_filter[] = array('role_id' => 7, 'filter_id' => $i);
 			}
 		}
@@ -145,7 +149,8 @@ class SchemesFieldsTableSeeder extends Seeder {
 				($i != 42) && ($i != 43) && ($i != 44) &&
 				($i != 45) && ($i != 46) && ($i != 47) &&
 				($i != 48) && ($i != 50) && ($i != 51) &&
-				($i != 52) ){
+				($i != 52) &&
+				($i != 60)){
 				$gcom_filter[] = array('role_id' => 4, 'filter_id' => $i);
 			}
 		}
@@ -160,7 +165,8 @@ class SchemesFieldsTableSeeder extends Seeder {
 				($i != 42) && ($i != 43) && ($i != 44) &&
 				($i != 45) && ($i != 46) && ($i != 47) &&
 				($i != 48) && ($i != 50) && ($i != 51) &&
-				($i != 52) ){
+				($i != 52) &&
+				($i != 60)){
 				$cdops_filter[] = array('role_id' => 5, 'filter_id' => $i);
 			}
 		}
@@ -175,7 +181,8 @@ class SchemesFieldsTableSeeder extends Seeder {
 				($i != 42) && ($i != 43) && ($i != 44) &&
 				($i != 45) && ($i != 46) && ($i != 47) &&
 				($i != 48) && ($i != 50) && ($i != 51) &&
-				($i != 52) ){
+				($i != 52) &&
+				($i != 60)){
 				$cmd_filter[] = array('role_id' => 6, 'filter_id' => $i);
 			}
 		}
