@@ -333,9 +333,14 @@ class AllocationReportController extends \BaseController {
 	public function download($token){
 		// $file = AllocationReportFile::where('token',$token)->first();
 		$file = AllocationReportTemplate::where('token',$token)->first();
+		// dd($file);
 		if(!empty($file)){
 			$path = storage_path().'/exports/'.$file->file_name;
-			return Response::download($path, $file->template_name);
+
+			$filename = preg_replace('/[^A-Za-z0-9 _ .-]/', '_', $file->template_name);
+			$file_name = str_replace(":","_", $filename);
+
+			return Response::download($path, $file_name);
 		}else{
 			echo 'File not found';
 		}

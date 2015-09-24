@@ -200,7 +200,7 @@ class AllocationReport extends \Eloquent {
 
 
 	
-		$query = sprintf("SELECT %s
+		$query = sprintf('SELECT %s
 			FROM 
 			allocations
 			LEFT JOIN schemes on allocations.scheme_id = schemes.id 
@@ -267,13 +267,14 @@ class AllocationReport extends \Eloquent {
 				GROUP BY activity_id 
 			) as pe_budget ON activities.id = pe_budget.activity_id 
 			WHERE allocations.show = 1
-			%s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s ORDER BY allocations.id LIMIT %s,%s ",
+			%s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s ORDER BY allocations.id LIMIT %s,%s ',
 			$fields,
 			$cycles,
 			$status,$scopes,$proponents,$planners,$approvers,
 			$activitytypes,$divisions,$categories,$brands,
 			$groups,$areas,$soldtos,$shiptos,$channels,$outlets,$counter,$take);
 	// var_dump($query);
+		// dd($query);
 		return DB::select(DB::raw($query));
 	}
 
