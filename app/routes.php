@@ -20,268 +20,268 @@ Queue::getIron()->ssl_verifypeer = false;
 
 
 
-Route::get('testreport', function(){
-	$scheme_id = 111;
-	$groups = SchemeAllocation::select('group','group_code')
-			// ->where('scheme_id',$scheme_id)
-			->groupBy('group_code')
-			->orderBy('id')
-			->get();
+// Route::get('testreport', function(){
+// 	$scheme_id = 111;
+// 	$groups = SchemeAllocation::select('group','group_code')
+// 			// ->where('scheme_id',$scheme_id)
+// 			->groupBy('group_code')
+// 			->orderBy('id')
+// 			->get();
 
-	foreach ($groups as $group) {
-		$areas = SchemeAllocation::select('area','area_code')
-			// ->where('scheme_id',$scheme_id)
-			->where('group_code',$group->group_code)
-			->groupBy('area_code')
-			->orderBy('id')
-			->get();
-		echo $group->group.'</br>';
-		foreach ($areas as $area) {
-			$soldtos = SchemeAllocation::select('sold_to','sold_to_code')
-				// ->where('scheme_id',$scheme_id)
-				->where('area_code',$area->area_code)
-				->groupBy('sold_to_code')
-				->orderBy('id')
-				->get();
-			echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$area->area.'</br>';
-			foreach ($soldtos as $soldto) {
-				$shiptos = SchemeAllocation::select('ship_to','ship_to_code')
-					// ->where('scheme_id',$scheme_id)
-					->where('sold_to_code',$soldto->sold_to_code)
-					->whereNotNull('ship_to_code')
-					->groupBy('ship_to_code')
-					->orderBy('id')
-					->get();
-				echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$soldto->sold_to.'</br>';
-				foreach ($shiptos as $shipto) {
-					if($shipto->ship_to_code != ''){
-						$outlets = SchemeAllocation::select('outlet')
-							// ->where('scheme_id',$scheme_id)
-							->where('area_code',$area->area_code)
-							->where('sold_to_code',$soldto->sold_to_code)
-							->where('ship_to_code',$shipto->ship_to_code)
-							->whereNotNull('outlet')
-							->groupBy('outlet')
-							->orderBy('id')
-							->get();
-						echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$shipto->ship_to.'</br>';
-						foreach ($outlets as $outlet) {
-							echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$outlet->outlet.'</br>';
-						}
-					}
-				}
-			}
+// 	foreach ($groups as $group) {
+// 		$areas = SchemeAllocation::select('area','area_code')
+// 			// ->where('scheme_id',$scheme_id)
+// 			->where('group_code',$group->group_code)
+// 			->groupBy('area_code')
+// 			->orderBy('id')
+// 			->get();
+// 		echo $group->group.'</br>';
+// 		foreach ($areas as $area) {
+// 			$soldtos = SchemeAllocation::select('sold_to','sold_to_code')
+// 				// ->where('scheme_id',$scheme_id)
+// 				->where('area_code',$area->area_code)
+// 				->groupBy('sold_to_code')
+// 				->orderBy('id')
+// 				->get();
+// 			echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$area->area.'</br>';
+// 			foreach ($soldtos as $soldto) {
+// 				$shiptos = SchemeAllocation::select('ship_to','ship_to_code')
+// 					// ->where('scheme_id',$scheme_id)
+// 					->where('sold_to_code',$soldto->sold_to_code)
+// 					->whereNotNull('ship_to_code')
+// 					->groupBy('ship_to_code')
+// 					->orderBy('id')
+// 					->get();
+// 				echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$soldto->sold_to.'</br>';
+// 				foreach ($shiptos as $shipto) {
+// 					if($shipto->ship_to_code != ''){
+// 						$outlets = SchemeAllocation::select('outlet')
+// 							// ->where('scheme_id',$scheme_id)
+// 							->where('area_code',$area->area_code)
+// 							->where('sold_to_code',$soldto->sold_to_code)
+// 							->where('ship_to_code',$shipto->ship_to_code)
+// 							->whereNotNull('outlet')
+// 							->groupBy('outlet')
+// 							->orderBy('id')
+// 							->get();
+// 						echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+// 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$shipto->ship_to.'</br>';
+// 						foreach ($outlets as $outlet) {
+// 							echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+// 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$outlet->outlet.'</br>';
+// 						}
+// 					}
+// 				}
+// 			}
 
-		}
-	}
-});
+// 		}
+// 	}
+// });
 
-Route::get('allocreport', function(){
-	$template = AllocationReportTemplate::findOrFail(27);
-	$headers = AllocSchemeField::getFields($template->id);
-	$data['cycles'] = array(7);
-	$data['status'] = AllocationReportFilter::getList($template->id,1);
-	$data['scopes'] = AllocationReportFilter::getList($template->id,2);
-	$data['proponents'] = AllocationReportFilter::getList($template->id,3);
-	$data['planners'] = AllocationReportFilter::getList($template->id,4);
-	$data['approvers'] = AllocationReportFilter::getList($template->id,5);
-	$data['activitytypes'] = AllocationReportFilter::getList($template->id,6);
-	$data['divisions'] = AllocationReportFilter::getList($template->id,7);
-	$data['categories'] = AllocationReportFilter::getList($template->id,8);
-	$data['brands'] = AllocationReportFilter::getList($template->id,9);
-	$data['customers'] = AllocationReportFilter::getList($template->id,10);
-	$data['outlets'] = AllocationReportFilter::getList($template->id,11);
-	$data['channels'] = AllocationReportFilter::getList($template->id,12);
-	$data['fields'] = $headers;
-	$take = 1000; // adjust this however you choose
-	$counter = 0;
-	$user = User::find(1);
-	// var_dump($user->roles[0]->name);
-	$token = md5(uniqid(mt_rand(), true));
+// Route::get('allocreport', function(){
+// 	$template = AllocationReportTemplate::findOrFail(27);
+// 	$headers = AllocSchemeField::getFields($template->id);
+// 	$data['cycles'] = array(7);
+// 	$data['status'] = AllocationReportFilter::getList($template->id,1);
+// 	$data['scopes'] = AllocationReportFilter::getList($template->id,2);
+// 	$data['proponents'] = AllocationReportFilter::getList($template->id,3);
+// 	$data['planners'] = AllocationReportFilter::getList($template->id,4);
+// 	$data['approvers'] = AllocationReportFilter::getList($template->id,5);
+// 	$data['activitytypes'] = AllocationReportFilter::getList($template->id,6);
+// 	$data['divisions'] = AllocationReportFilter::getList($template->id,7);
+// 	$data['categories'] = AllocationReportFilter::getList($template->id,8);
+// 	$data['brands'] = AllocationReportFilter::getList($template->id,9);
+// 	$data['customers'] = AllocationReportFilter::getList($template->id,10);
+// 	$data['outlets'] = AllocationReportFilter::getList($template->id,11);
+// 	$data['channels'] = AllocationReportFilter::getList($template->id,12);
+// 	$data['fields'] = $headers;
+// 	$take = 1000; // adjust this however you choose
+// 	$counter = 0;
+// 	$user = User::find(1);
+// 	// var_dump($user->roles[0]->name);
+// 	$token = md5(uniqid(mt_rand(), true));
 		
-		$timeFirst  = strtotime(date('Y-m-d H:i:s'));
-		$filePath = storage_path('exports/'.$token.'.xlsx');
-		$writer = WriterFactory::create(Type::XLSX);
-		$writer->setShouldCreateNewSheetsAutomatically(true); // default value
-		$writer->openToFile($filePath); // write data to a file or to a PHP stream
-		$take = 1000; // adjust this however you choose
-		$counter = 0; // used to skip over the ones you've already processed
+// 		$timeFirst  = strtotime(date('Y-m-d H:i:s'));
+// 		$filePath = storage_path('exports/'.$token.'.xlsx');
+// 		$writer = WriterFactory::create(Type::XLSX);
+// 		$writer->setShouldCreateNewSheetsAutomatically(true); // default value
+// 		$writer->openToFile($filePath); // write data to a file or to a PHP stream
+// 		$take = 1000; // adjust this however you choose
+// 		$counter = 0; // used to skip over the ones you've already processed
 
 		
-		$header = array();
-		foreach ($headers as $value) {
-			$header[] = $value->desc_name;
-		}
+// 		$header = array();
+// 		foreach ($headers as $value) {
+// 			$header[] = $value->desc_name;
+// 		}
 		
-		$writer->addRow($header); // add multiple rows at a time
+// 		$writer->addRow($header); // add multiple rows at a time
 
-		while($rows = AllocationReport::getReport($data,$take,$counter,$user))
-		{
-			if(count($rows) == 0){
-				break;
-			}
-			$counter += $take;
-			foreach($rows as $key => $value)
-			{
-				$rows[$key] = (array) $value;
-			} 
-			$export_data = $rows;
+// 		while($rows = AllocationReport::getReport($data,$take,$counter,$user))
+// 		{
+// 			if(count($rows) == 0){
+// 				break;
+// 			}
+// 			$counter += $take;
+// 			foreach($rows as $key => $value)
+// 			{
+// 				$rows[$key] = (array) $value;
+// 			} 
+// 			$export_data = $rows;
 
-			$writer->addRows($export_data); // add multiple rows at a time
-		}
-		$writer->close();
-		$timeSecond = strtotime(date('Y-m-d H:i:s'));
-		$differenceInSeconds = $timeSecond - $timeFirst;
+// 			$writer->addRows($export_data); // add multiple rows at a time
+// 		}
+// 		$writer->close();
+// 		$timeSecond = strtotime(date('Y-m-d H:i:s'));
+// 		$differenceInSeconds = $timeSecond - $timeFirst;
 	
 
-		$data['template'] = $template;
-		$data['token'] = $token;
-		$data['user'] = $user;
-		$name = $template->name;
-		// $grayfield = array('HOST SKU CODE','HOST SKU DESC','PREMIUM SKU CODE','PREMIUM SKU DESC','NON-ULP PREMIUM'); 
-		// $greenfield = array('ITEM CODE','BARCODE','CASECODE'); 
-		// $yellowfield = array('GROUP','AREA','SOLD TO','SHIP TO CODE','CUSTOMER SHIP TO NAME','CHANNEL','ACCOUNT NAME');
-		// $blackfield = array('UOM',)
+// 		$data['template'] = $template;
+// 		$data['token'] = $token;
+// 		$data['user'] = $user;
+// 		$name = $template->name;
+// 		// $grayfield = array('HOST SKU CODE','HOST SKU DESC','PREMIUM SKU CODE','PREMIUM SKU DESC','NON-ULP PREMIUM'); 
+// 		// $greenfield = array('ITEM CODE','BARCODE','CASECODE'); 
+// 		// $yellowfield = array('GROUP','AREA','SOLD TO','SHIP TO CODE','CUSTOMER SHIP TO NAME','CHANNEL','ACCOUNT NAME');
+// 		// $blackfield = array('UOM',)
 
-		$excel2 = PHPExcel_IOFactory::createReader('Excel2007');
-		$excel2 = $excel2->load($filePath); // Empty Sheet
-		$excel2->setActiveSheetIndex(0);
-		$excel2->getActiveSheet()
-			->getStyle('A1:B1')->getFill()
-			->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
-			->getStartColor()->setARGB('FFE8E5E5');
+// 		$excel2 = PHPExcel_IOFactory::createReader('Excel2007');
+// 		$excel2 = $excel2->load($filePath); // Empty Sheet
+// 		$excel2->setActiveSheetIndex(0);
+// 		$excel2->getActiveSheet()
+// 			->getStyle('A1:B1')->getFill()
+// 			->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
+// 			->getStartColor()->setARGB('FFE8E5E5');
 
 
-		$objWriter = PHPExcel_IOFactory::createWriter($excel2, 'Excel2007');
-		$objWriter->save(storage_path('exports/'.$token.'_2.xlsx'));
-});
+// 		$objWriter = PHPExcel_IOFactory::createWriter($excel2, 'Excel2007');
+// 		$objWriter->save(storage_path('exports/'.$token.'_2.xlsx'));
+// });
 
-Route::get('testpdf',function(){
-	$activity = Activity::find(34);
-	$schemes = Scheme::getList($activity->id);
-	if(count($schemes) > 0){
-	$w_codes = false;
-	foreach ($schemes as $scheme) {
-		if($scheme->item_barcode !== ""){
-			$w_codes = true;
-		}
-		if($scheme->item_casecode !== ""){
-			$w_codes = true;
-		}
-	}
-	if($w_codes){
+// Route::get('testpdf',function(){
+// 	$activity = Activity::find(34);
+// 	$schemes = Scheme::getList($activity->id);
+// 	if(count($schemes) > 0){
+// 	$w_codes = false;
+// 	foreach ($schemes as $scheme) {
+// 		if($scheme->item_barcode !== ""){
+// 			$w_codes = true;
+// 		}
+// 		if($scheme->item_casecode !== ""){
+// 			$w_codes = true;
+// 		}
+// 	}
+// 	if($w_codes){
 		
-		$style = array(
-	    'position' => '',
-	    'align' => 'C',
-	    'stretch' => false,
-	    'fitwidth' => true,
-	    'cellfitalign' => 'C',
-	    'border' => false,
-	    'hpadding' => 'auto',
-	    'vpadding' => 'auto',
-	    'fgcolor' => array(0,0,0),
-	    'bgcolor' => false, //array(255,255,255),
-	    'text' => true,
-	    'font' => 'helvetica',
-	    'fontsize' => 8,
-	    'stretchtext' => 4
-		);
-		$str= "";
-		$cnt= 1;
-		// $style['cellfitalign'] = 'C';
-		foreach ($schemes as $scheme) {
+// 		$style = array(
+// 	    'position' => '',
+// 	    'align' => 'C',
+// 	    'stretch' => false,
+// 	    'fitwidth' => true,
+// 	    'cellfitalign' => 'C',
+// 	    'border' => false,
+// 	    'hpadding' => 'auto',
+// 	    'vpadding' => 'auto',
+// 	    'fgcolor' => array(0,0,0),
+// 	    'bgcolor' => false, //array(255,255,255),
+// 	    'text' => true,
+// 	    'font' => 'helvetica',
+// 	    'fontsize' => 8,
+// 	    'stretchtext' => 4
+// 		);
+// 		$str= "";
+// 		$cnt= 1;
+// 		// $style['cellfitalign'] = 'C';
+// 		foreach ($schemes as $scheme) {
 			
-			if(($scheme->item_barcode  !== "") || ($scheme->item_casecode !== "")){
-				if($scheme->item_barcode  !== ""){
-					$barcode[$cnt] = $scheme->item_barcode;       
-				}
+// 			if(($scheme->item_barcode  !== "") || ($scheme->item_casecode !== "")){
+// 				if($scheme->item_barcode  !== ""){
+// 					$barcode[$cnt] = $scheme->item_barcode;       
+// 				}
 
-				if($scheme->item_casecode !== ""){
-					$casecode[$cnt] = $scheme->item_casecode; 
+// 				if($scheme->item_casecode !== ""){
+// 					$casecode[$cnt] = $scheme->item_casecode; 
 					
-				}
+// 				}
 				
 
-				if($scheme->item_barcode !== ""){
-					$str .='<tr nobr="true"><td align="center">'.$scheme->name.'<br>
-					<tcpdf method="write1DBarcode" params="'.$barcode[$cnt] .'" />
-					</td>';
-				}else{
-					$str .='<tr nobr="true"><td align="center"></td>';
-				}
+// 				if($scheme->item_barcode !== ""){
+// 					$str .='<tr nobr="true"><td align="center">'.$scheme->name.'<br>
+// 					<tcpdf method="write1DBarcode" params="'.$barcode[$cnt] .'" />
+// 					</td>';
+// 				}else{
+// 					$str .='<tr nobr="true"><td align="center"></td>';
+// 				}
 
-				if($scheme->item_casecode !== ""){
-					$str .='<td align="center">'.$scheme->name.'<br>
-					<tcpdf method="write1DBarcode" params="'.$casecode[$cnt] .'" />
-					</td></tr>';
-				}else{
-					$str .='<td align="center"></td></tr>';
-				}
-			}
-			$cnt++;
-		}
+// 				if($scheme->item_casecode !== ""){
+// 					$str .='<td align="center">'.$scheme->name.'<br>
+// 					<tcpdf method="write1DBarcode" params="'.$casecode[$cnt] .'" />
+// 					</td></tr>';
+// 				}else{
+// 					$str .='<td align="center"></td></tr>';
+// 				}
+// 			}
+// 			$cnt++;
+// 		}
 
 
-		$str_table='<table cellspacing="0" cellpadding="2" border=".1px;">            
-		<tr nobr="true">
-			<td align="center" style="background-color: #000000;color: #FFFFFF;">Barcode</td>
-			<td align="center" style="background-color: #000000;color: #FFFFFF;">Case Code</td>
-		</tr>';
-		$str_table .= $str;
-		$str_table .='</table>';
-		echo $str_table;
+// 		$str_table='<table cellspacing="0" cellpadding="2" border=".1px;">            
+// 		<tr nobr="true">
+// 			<td align="center" style="background-color: #000000;color: #FFFFFF;">Barcode</td>
+// 			<td align="center" style="background-color: #000000;color: #FFFFFF;">Case Code</td>
+// 		</tr>';
+// 		$str_table .= $str;
+// 		$str_table .='</table>';
+// 		echo $str_table;
 
-	}}			
-});
+// 	}}			
+// });
 
-Route::get('testword',function(){
-	set_time_limit(0);
-	$activity = Activity::find(53);
-	$worddoc = new WordDoc($activity->id);
-	$worddoc->download("Rencie.docx");					
-});
+// Route::get('testword',function(){
+// 	set_time_limit(0);
+// 	$activity = Activity::find(53);
+// 	$worddoc = new WordDoc($activity->id);
+// 	$worddoc->download("Rencie.docx");					
+// });
 
-Route::get('testrole', function(){
-	// $filename = preg_replace('/[^A-Za-z0-9 _ .-]/', '_', "SNOWBALL 2015 PREBANDED PACKS 470ML/700ML SCHEMES");
-	// echo strtoupper(Helper::sanitize("SNOWBALL-2015-LADY’S-CHOICE-CATEGORY-EXPERTS"));
-	$user = User::find(2);
-	$cycles = Cycle::getByReleaseDate();
-	$cycle_ids = array();
-	$cycle_names = "";
-	foreach ($cycles as $value) {
-		$cycle_ids[] = $value->id;
-		// $cycle_names .= $value->cycle_name ." - ";
-	}
-	// $data['cycles'] = $cycles;
-	$data['user'] = $user->first_name;
-	$data['email'] = $user->email;
-	$data['fullname'] = $user->getFullname();
-	$data['cycle_ids'] = $cycle_ids;
-	// $data['cycle_names'] = $cycle_names;
+// Route::get('testrole', function(){
+// 	// $filename = preg_replace('/[^A-Za-z0-9 _ .-]/', '_', "SNOWBALL 2015 PREBANDED PACKS 470ML/700ML SCHEMES");
+// 	// echo strtoupper(Helper::sanitize("SNOWBALL-2015-LADY’S-CHOICE-CATEGORY-EXPERTS"));
+// 	$user = User::find(2);
+// 	$cycles = Cycle::getByReleaseDate();
+// 	$cycle_ids = array();
+// 	$cycle_names = "";
+// 	foreach ($cycles as $value) {
+// 		$cycle_ids[] = $value->id;
+// 		// $cycle_names .= $value->cycle_name ." - ";
+// 	}
+// 	// $data['cycles'] = $cycles;
+// 	$data['user'] = $user->first_name;
+// 	$data['email'] = $user->email;
+// 	$data['fullname'] = $user->getFullname();
+// 	$data['cycle_ids'] = $cycle_ids;
+// 	// $data['cycle_names'] = $cycle_names;
 	
-	$data['activities'] = Activity::Released($cycle_ids);
+// 	$data['activities'] = Activity::Released($cycle_ids);
 
-	$data['cycles'] = Activity::ReleasedCyles($cycle_ids);
-	foreach ($data['cycles'] as $value) {
-		$cycle_names .= $value->cycle_name ." - ";
-	}
+// 	$data['cycles'] = Activity::ReleasedCyles($cycle_ids);
+// 	foreach ($data['cycles'] as $value) {
+// 		$cycle_names .= $value->cycle_name ." - ";
+// 	}
 
-	$data['cycle_names'] = $cycle_names;
+// 	$data['cycle_names'] = $cycle_names;
 
-	return View::make('emails.mail4', $data);
-});
+// 	return View::make('emails.mail4', $data);
+// });
 
-Route::get('mailreport', function(){
-	$template = AllocationReportTemplate::findOrFail(27);
-	$user = User::find(11);
-	$data['template'] = $template;
-	$data['token'] = '1';
-	$data['user'] = $user;
-	return View::make('emails.allocreport',compact('data'));
-});
+// Route::get('mailreport', function(){
+// 	$template = AllocationReportTemplate::findOrFail(27);
+// 	$user = User::find(11);
+// 	$data['template'] = $template;
+// 	$data['token'] = '1';
+// 	$data['user'] = $user;
+// 	return View::make('emails.allocreport',compact('data'));
+// });
 
 //---------------------------------------------------
 
