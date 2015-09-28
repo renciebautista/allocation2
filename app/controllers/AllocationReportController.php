@@ -316,7 +316,7 @@ class AllocationReportController extends \BaseController {
 				$report_id = Queue::push('AllocReportScheduler', array('temp_id' => $temp_id, 
 				'user_id' => $user_id,'cycles' => (string)$_cycles),'allocreport');
 			}else{
-				$report_id = Queue::push('	', array('temp_id' => $temp_id, 
+				$report_id = Queue::push('AllocReportScheduler', array('temp_id' => $temp_id, 
 				'user_id' => $user_id,'cycles' => (string)$_cycles),'p_allocreport');
 			}
 
