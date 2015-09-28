@@ -162,15 +162,16 @@ class SubmittedActivityController extends \BaseController {
 		if((empty($activity)) || (!ActivityApprover::myActivity($activity->id))){
 			return Response::make(View::make('shared/404'), 404);
 		}else{
-			$status = [5];
+			$status = [];
 			DB::beginTransaction();
 
 			try {
-				
+
 				$planner = ActivityPlanner::getPlanner($activity->id);
 				$activity_status = $activity->status_id;
 				if(Input::get('action') == "approve"){
 					if(Auth::user()->hasRole("GCOM APPROVER")){
+						$status = [5];
 						$approver = ActivityApprover::getCurrentApprover($activity->id);
 						if(count($approver) > 0 ){
 							$approver->status_id = 2;
@@ -199,6 +200,7 @@ class SubmittedActivityController extends \BaseController {
 					}
 
 					if(Auth::user()->hasRole("CD OPS APPROVER")){
+						$status = [6];
 						$approver = ActivityApprover::getCurrentApprover($activity->id);
 						if(count($approver) > 0 ){
 							$approver->status_id = 2;
@@ -223,6 +225,7 @@ class SubmittedActivityController extends \BaseController {
 					}
 
 					if(Auth::user()->hasRole("CMD DIRECTOR")){
+						$status = [7];
 						$approver = ActivityApprover::getCurrentApprover($activity->id);
 						if(count($approver) > 0 ){
 							$approver->status_id = 2;
@@ -246,6 +249,17 @@ class SubmittedActivityController extends \BaseController {
 					$class = "text-success";
 					$message = "Activity successfully approved.";
 				}else{
+					if(Auth::user()->hasRole("GCOM APPROVER")){
+						$status = [5];
+					}
+
+					if(Auth::user()->hasRole("CD OPS APPROVER")){
+						$status = [6];
+					}
+
+					if(Auth::user()->hasRole("CMD DIRECTOR")){
+						$status = [7];
+					}
 					$comment_status = "DENIED";
 					$class = "text-danger";
 					$pro_recall = 0;
