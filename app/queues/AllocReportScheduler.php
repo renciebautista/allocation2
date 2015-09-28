@@ -9,7 +9,7 @@ class AllocReportScheduler{
 			'cycles' => $data['cycles']));
 		$job->delete();
 
-		File::append(storage_path().'/queue.txt',$data['temp_id'].'=>'.$data['user_id'].'=>'.$data['cycles'].'=>'.$job_id.PHP_EOL); //Add content to file
+		// File::append(storage_path().'/queue.txt',$data['temp_id'].'=>'.$data['user_id'].'=>'.$data['cycles'].'=>'.$job_id.PHP_EOL); //Add content to file
 		return true;
 	}
 }	
