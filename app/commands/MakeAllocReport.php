@@ -179,24 +179,24 @@ class MakeAllocReport extends Command {
 		
 		$this->line($template->file_name);
 
-		Mail::send('emails.allocreport', $data, function($message) use ($user, $template){
-				$message->to("rbautista@chasetech.com", $user->first_name);
-				$message->bcc("grace.erum@unilever.com");
-				$message->subject('Allocation Report - '.$template->name);
-			});	
-
-		// if($_ENV['MAIL_TEST']){
-		// 	Mail::send('emails.allocreport', $data, function($message) use ($user, $template){
+		// Mail::send('emails.allocreport', $data, function($message) use ($user, $template){
 		// 		$message->to("rbautista@chasetech.com", $user->first_name);
 		// 		$message->bcc("grace.erum@unilever.com");
 		// 		$message->subject('Allocation Report - '.$template->name);
 		// 	});	
-		// }else{
-		// 	Mail::send('emails.allocreport', $data, function($message) use ($user, $template){
-		// 		$message->to($user->email, $user->first_name);
-		// 		$message->subject('Allocation Report - '.$template->name);
-		// 	});	
-		// }
+
+		if($_ENV['MAIL_TEST']){
+			Mail::send('emails.allocreport', $data, function($message) use ($user, $template){
+				$message->to("rbautista@chasetech.com", $user->first_name);
+				$message->bcc("grace.erum@unilever.com");
+				$message->subject('Allocation Report - '.$template->name);
+			});	
+		}else{
+			Mail::send('emails.allocreport', $data, function($message) use ($user, $template){
+				$message->to($user->email, $user->first_name);
+				$message->subject('Allocation Report - '.$template->name);
+			});	
+		}
 		
 	}
 
