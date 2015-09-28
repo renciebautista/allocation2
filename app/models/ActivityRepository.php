@@ -70,6 +70,8 @@ class ActivityRepository extends \Eloquent {
 						'user_id' => $approver,
 						'approver_desc' => $user->getFullname(),
 						'contact_no' => $user->contact_no,
+						'status_id' => 0,
+						'for_approval' => 0,
 						'group_id' => $user->roles[0]->id);
 				}
 				

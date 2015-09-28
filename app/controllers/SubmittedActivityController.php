@@ -157,14 +157,16 @@ class SubmittedActivityController extends \BaseController {
 	public function updateactivity($id)
 	{
 		$activity = Activity::findOrFail($id);
+
 		
 		if((empty($activity)) || (!ActivityApprover::myActivity($activity->id))){
 			return Response::make(View::make('shared/404'), 404);
 		}else{
-
+			$status = [5];
 			DB::beginTransaction();
 
 			try {
+				
 				$planner = ActivityPlanner::getPlanner($activity->id);
 				$activity_status = $activity->status_id;
 				if(Input::get('action') == "approve"){
@@ -367,13 +369,13 @@ class SubmittedActivityController extends \BaseController {
 
 				DB::commit();
 				// {{ HTML::linkAction('SubmittedActivityController@edit','View', array('id' => $activity->id, 's' => $s), array('class' => 'btn btn-success btn-xs')) }}
-				return Redirect::to(URL::action('SubmittedActivityController@edit', array('id' => $d, 's' => $status)))
+				return Redirect::to(URL::action('SubmittedActivityController@edit', array('id' => $id, 's' => $status)))
 					->with('class', "alert-success" )
 					->with('message', $message);
 			} catch (q $e) {
 				DB::rollback();
 				// return Redirect::to(URL::action('SubmittedActivityController@edit', $id))
-				return Redirect::to(URL::action('SubmittedActivityController@edit', array('id' => $d, 's' => $status)))
+				return Redirect::to(URL::action('SubmittedActivityController@edit', array('id' => $id, 's' => $status)))
 					->with('class', "alert-danger" )
 					->with('message', "Error updating activity.");
 			}

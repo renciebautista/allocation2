@@ -14,6 +14,7 @@
 
 
 {{ Form::open(array('action' => array('SubmittedActivityController@updateactivity', $activity->id), 'class' => 'bs-component','id' => 'updateactivity')) }}
+
 <div class="row">
 	<div class="col-lg-12">
 		<div class="form-group">
