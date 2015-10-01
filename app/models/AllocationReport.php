@@ -66,23 +66,29 @@ class AllocationReport extends \Eloquent {
 		if($user->inRoles(['PROPONENT'])){
 			$proponents =  sprintf(' AND activities.created_by = "%s"',$user->id);
 		}else{
-			if(!empty($data['proponents'])){
-				$proponents = self::generateQuery($data['proponents'],"activities.created_by");
+			if(!$user->inRoles(['FIELD SALES','CMD DIRECTOR','CD OPS APPROVER','GCOM APPROVER'])){
+				if(!empty($data['proponents'])){
+					$proponents = self::generateQuery($data['proponents'],"activities.created_by");
+				}
 			}
 		}
 
 		if($user->inRoles(['PMOG PLANNER'])){
 			$planners = sprintf(' AND planner_tbl.user_id = "%s"',$user->id);
 		}else{
-			if(!empty($data['planners'])){
-				$planners = self::generateQuery($data['planners'],"planner_tbl.user_id");
+			if(!$user->inRoles(['FIELD SALES','CMD DIRECTOR','CD OPS APPROVER','GCOM APPROVER'])){
+				if(!empty($data['planners'])){
+					$planners = self::generateQuery($data['planners'],"planner_tbl.user_id");
+				}
 			}
 		}
-		
-		
-		if(!empty($data['approvers'])){
-			$approvers = self::generateQuery($data['approvers'],"approver_tbl.approver_ids",true);
+
+		if(!$user->inRoles(['FIELD SALES','CMD DIRECTOR','CD OPS APPROVER','GCOM APPROVER'])){
+			if(!empty($data['approvers'])){
+				$approvers = self::generateQuery($data['approvers'],"approver_tbl.approver_ids",true);
+			}
 		}
+
 		if(!empty($data['activitytypes'])){
 			$activitytypes = self::generateQuery($data['activitytypes'],"activities.activity_type_id");
 		}

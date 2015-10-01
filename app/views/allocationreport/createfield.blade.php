@@ -46,38 +46,13 @@
 				<div class="form-group">
 					<div class="row">
 						<div class="col-lg-12">
-						{{ Form::label('pro', 'Proponent', array('class' => 'control-label')) }}
-						{{ Form::select('pro[]', $proponents, null, array('id' => 'pro','class' => 'form-control', 'multiple' => 'multiple')) }}
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<div class="row">
-			
-			<div class="col-lg-6">
-				<div class="form-group">
-					<div class="row">
-						<div class="col-lg-12">
-						{{ Form::label('planner', 'PMOG Planner', array('class' => 'control-label')) }}
-						{{ Form::select('planner[]', $planners, null, array('id' => 'planner','class' => 'form-control', 'multiple' => 'multiple')) }}
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div class="col-lg-6">
-				<div class="form-group">
-					<div class="row">
-						<div class="col-lg-12">
 						{{ Form::label('type', 'Activity Type', array('class' => 'control-label')) }}
 						{{ Form::select('type[]', $activitytypes, null, array('id' => 'type','class' => 'form-control', 'multiple' => 'multiple')) }}
 						</div>
 					</div>
 				</div>
 			</div>
-
+			
 		</div>
 
 		<div class="row">
