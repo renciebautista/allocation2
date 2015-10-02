@@ -41,6 +41,10 @@ class SubmittedActivityController extends \BaseController {
 		$activityIdList = Activity::getIdList($status);
 		$id_index = array_search($id, $activityIdList);
 
+		// var_dump($activityIdList);
+		// var_dump($id_index);
+
+
 		$activity = Activity::findOrFail($id);
 		if(!ActivityApprover::myActivity($activity->id)){
 			return Response::make(View::make('shared/404'), 404);

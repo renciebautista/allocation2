@@ -34,26 +34,31 @@
 			@endif
 
 			@if(count($activityIdList) > 1)
-				@if($activityIdList[0] == $activity->id)
+				@if(!$id_index)
 					{{ HTML::linkAction('SubmittedActivityController@edit','Previous', array('id' => $activity->id, 's' => $status), array('class' => 'btn btn-primary disabled')) }}
+					{{ HTML::linkAction('SubmittedActivityController@edit','Next', array('id' => $activityIdList[0], 's' => $status), array('class' => 'btn btn-primary')) }}
 				@else
+					@if($activityIdList[0] == $activity->id)
+						{{ HTML::linkAction('SubmittedActivityController@edit','Previous', array('id' => $activity->id, 's' => $status), array('class' => 'btn btn-primary disabled')) }}
+					@else
+						<?php 
+							$id = $id_index - 1;
+						?>
+						{{ HTML::linkAction('SubmittedActivityController@edit','Previous', array('id' => $activityIdList[$id], 's' => $status), array('class' => 'btn btn-primary')) }}
+					@endif
+					
 					<?php 
-						$id = $id_index - 1;
+						$last_cnt = count($activityIdList);
 					?>
-					{{ HTML::linkAction('SubmittedActivityController@edit','Previous', array('id' => $activityIdList[$id], 's' => $status), array('class' => 'btn btn-primary')) }}
-				@endif
-				
-				<?php 
-					$last_cnt = count($activityIdList);
-				?>
 
-				@if($activityIdList[$last_cnt - 1] == $activity->id)
-					{{ HTML::linkAction('SubmittedActivityController@edit','Next', array('id' => $activity->id, 's' => $status), array('class' => 'btn btn-primary disabled')) }}
-				@else
-					<?php 
-						$id = $id_index + 1;
-					?>
-					{{ HTML::linkAction('SubmittedActivityController@edit','Next', array('id' => $activityIdList[$id], 's' => $status), array('class' => 'btn btn-primary')) }}
+					@if($activityIdList[$last_cnt - 1] == $activity->id)
+						{{ HTML::linkAction('SubmittedActivityController@edit','Next', array('id' => $activity->id, 's' => $status), array('class' => 'btn btn-primary disabled')) }}
+					@else
+						<?php 
+							$id = $id_index + 1;
+						?>
+						{{ HTML::linkAction('SubmittedActivityController@edit','Next', array('id' => $activityIdList[$id], 's' => $status), array('class' => 'btn btn-primary')) }}
+					@endif
 				@endif
 			@endif
 
