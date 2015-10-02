@@ -140,8 +140,9 @@ class Cycle extends \Eloquent {
 			group by activities.cycle_id
 			)as tbl on activities.cycle_id = tbl.id
 			join cycles on activities.cycle_id = cycles.id
-			where cycles.cycle_name LIKE '%%s%%'
+			where cycles.cycle_name LIKE '%%%s%%'
 			group by activities.cycle_id
+			order by cycles.id
 			",$filter);
 		return DB::select(DB::raw($query));
 		// return DB::table('activities')
