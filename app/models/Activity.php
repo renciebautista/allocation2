@@ -644,6 +644,7 @@ class Activity extends \Eloquent {
 			'activities.eimplementation_date','activities.billing_date',
 			'activity_statuses.status','cycles.cycle_name','activities.end_date',
 			'scope_types.scope_name','activity_types.activity_type',  'activities.status_id',
+			'cycles.id',
 			DB::raw('CONCAT(users.first_name, " ", users.last_name) AS planner'),
 			DB::raw('CONCAT(propo.first_name, " ", propo.last_name) AS proponent'))
 			->join('activity_statuses', 'activities.status_id','=','activity_statuses.id')
