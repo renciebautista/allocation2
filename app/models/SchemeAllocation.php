@@ -351,4 +351,53 @@ class SchemeAllocation extends \Eloquent {
 		}
 		return $data;
 	}
+
+	public static function uploadAlloc($records){
+		DB::beginTransaction();
+			try {
+			
+			$idList = array();
+			foreach ($records as $row) {
+				$alloc = new SchemeAllocation;
+				$alloc->scheme_id = $row->scheme_id;
+
+				if(!is_null($row->customer_id)){
+					$alloc->customer_id = $idList[$row->customer_id];
+				}
+
+				if(!is_null($row->shipto_id)){
+					$alloc->shipto_id = $idList[$row->shipto_id];
+				}
+
+				$alloc->group_code = $row->group_code;
+				$alloc->group = $row->group;
+				$alloc->area_code = $row->area_code;
+				$alloc->sold_to_code = $row->sold_to_code;
+				$alloc->sold_to = $row->sold_to;
+				$alloc->ship_to_code = $row->ship_to_code;
+				$alloc->ship_to = $row->ship_to;
+				$alloc->channel_code = $row->channel_code;
+				$alloc->channel = $row->channel;
+				$alloc->account_group_code = $row->account_group_code;
+				$alloc->account_group_name = $row->account_group_name;
+				$alloc->outlet = $row->outlet;
+				$alloc->final_alloc = $row->allocation;
+
+				$alloc->in_deals = 1;
+				$alloc->in_cases = 1;
+				$alloc->tts_budget = 1;
+				$alloc->pe_budget = 1;
+				$alloc->show = $row->show;
+				$alloc->save();
+
+				$idList[$row->id] = $alloc->id;
+			}
+			// dd($idList);
+			
+			DB::commit();
+		} catch (\Exception $e) {
+			// dd($e);
+			DB::rollback();
+		}
+	}
 }

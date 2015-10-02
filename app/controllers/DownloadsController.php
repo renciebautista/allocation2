@@ -13,7 +13,7 @@ class DownloadsController extends \BaseController {
 	{
 		Input::flash();
 		if(Auth::user()->hasRole("ADMINISTRATOR")){
-			$cycles = (array)Cycle::getAllCycles(Input::get('search'));
+			$cycles = Cycle::getAllCycles(Input::get('search'));
 			// var_dump($cycles);
 			return View::make('downloads.cycleadmin',compact('cycles'));
 		}else{

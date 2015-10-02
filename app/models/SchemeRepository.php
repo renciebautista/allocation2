@@ -104,6 +104,8 @@ class SchemeRepository extends \Eloquent {
 			$new_scheme->final_pe_r = $scheme->final_pe_r;
 			$new_scheme->final_total_cost = $scheme->final_total_cost;
 			$new_scheme->ulp_premium = $scheme->ulp_premium;
+			$new_scheme->compute = $scheme->compute;
+			$new_scheme->with_upload = $scheme->with_upload;
 			$new_scheme->save();
 
 			// add skus

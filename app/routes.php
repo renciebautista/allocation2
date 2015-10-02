@@ -283,6 +283,14 @@ Queue::getIron()->ssl_verifypeer = false;
 // 	return View::make('emails.allocreport',compact('data'));
 // });
 
+Route::get('temp', function(){
+	$scheme = Scheme::find('188');
+	echo '<pre>';
+	// dd(SchemeAllocRepository::gettemplate($scheme));
+	print_r(SchemeAllocRepository::gettemplate($scheme));
+	echo '</pre>';
+});
+
 //---------------------------------------------------
 
 Route::post('queue/push', function()
@@ -394,12 +402,13 @@ Route::group(array('before' => 'auth'), function()
 	
 	Route::resource('activity', 'ActivityController');
 	
-
+	
 	Route::put('scheme/updatealloc', 'SchemeController@updateallocation');
+	Route::get('scheme/{id}/gettemplate', 'SchemeController@gettemplate');
 	Route::get('scheme/{id}/export', 'SchemeController@export');
 	Route::get('scheme/{id}/allocation', 'SchemeController@allocation');
-	Route::get('scheme/{id}', 'SchemeController@show');
 	Route::get('scheme/{id}/edit', 'SchemeController@edit');
+	Route::get('scheme/{id}', 'SchemeController@show');
 	Route::delete('scheme/{id}', 'SchemeController@destroy');
 	Route::put('scheme/{id}', 'SchemeController@update');
 	Route::post('scheme/{id}/duplicate','SchemeController@duplicate');

@@ -34,7 +34,7 @@
 	<div class="panel-heading">Scheme Details</div>
 	<div class="panel-body">
 
-			{{ Form::open(array('action' => array('SchemeController@update', $scheme->id), 'method' => 'PUT', 'id' => 'updatescheme', 'class' => 'bs-component')) }}
+			{{ Form::open(array('action' => array('SchemeController@update', $scheme->id), 'files'=>true, 'method' => 'PUT', 'id' => 'updatescheme', 'class' => 'bs-component')) }}
 			<div class="row">
 				<div class="col-lg-12">
 					<div class="form-group">
@@ -256,7 +256,38 @@
 				</div>
 			</div>	
 
+			<div class="row">
+				<div class="col-lg-4">
+					<div class="form-group">
+						<div class="row">
+							<div class="col-lg-12">
+								{{ Form::label('alloc_ref', 'Allocation Reference', array('class' => 'control-label')) }}
+								{{ Form::select('alloc_ref', $alloc_refs, 1, array('id' => 'alloc_ref', 'class' => 'form-control')) }}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 
+			@if(!$scheme->compute)
+			<div class="row">
+				<div class="col-lg-12">
+				  	<div class="form-group">
+				  		{{ HTML::linkAction('SchemeController@gettemplate','Download Manual Allocation Template', $scheme->id, array('target' => '_blank')) }}
+				  	</div>
+		  		</div>
+		  		
+			</div>
+
+			<div class="row">
+				<div class="col-lg-6">
+				  	<div class="form-group">
+				    	{{ Form::file('file','',array('id'=>'','class'=>'')) }}
+				  	</div>
+			  	</div>
+		  	</div>
+			@endif
+			<br>
 			<div class="row">
 				<div class="col-lg-12">
 					<div class="form-group">
@@ -274,7 +305,8 @@
 	</div>
 </div>
 
-@if($scheme->compute)
+
+
 <div class="panel panel-warning">
 	<div class="panel-heading">
 		<h3 class="panel-title">Final Allocation</h3>
@@ -351,7 +383,7 @@
 		</div>
 	</div>
 </div>
-
+@if($count > 0)
 <div class="row">
 	<div class="col-lg-12">
 		<h2>Allocation Summary</h2>

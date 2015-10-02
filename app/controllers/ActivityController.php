@@ -1893,6 +1893,8 @@ class ActivityController extends BaseController {
 							'user_id' => $approver->user_id,
 							'approver_desc' => $approver->approver_desc,
 							'contact_no' => $approver->contact_no,
+							'status_id' => 0,
+							'for_approval' => 0,
 							'group_id' => $approver->group_id);
 					}
 					if(!empty($activity_approver)){
@@ -2235,6 +2237,8 @@ class ActivityController extends BaseController {
 						$new_scheme->final_pe_r = $scheme->final_pe_r;
 						$new_scheme->final_total_cost = $scheme->final_total_cost;
 						$new_scheme->ulp_premium = $scheme->ulp_premium;
+						$new_scheme->compute = $scheme->compute;
+						$new_scheme->with_upload = $scheme->with_upload;
 						$new_scheme->save();
 
 						// add skus

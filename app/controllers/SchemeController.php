@@ -31,7 +31,12 @@ class SchemeController extends \BaseController {
 
 		$host = Pricelist::involves($brands,$activity);
 		$premuim =  Pricelist::items();
-		return View::make('scheme.create', compact('activity','skus', 'host', 'premuim'));
+
+		$alloc_refs = array('1' => 'USE SYSTEM GENERATED',
+			'2' => 'USE MANUAL UPLOAD',
+			'3' => 'NO ALLOCATION');
+
+		return View::make('scheme.create', compact('activity','skus', 'host', 'premuim', 'alloc_refs'));
 	}
 
 	/**
@@ -121,7 +126,7 @@ class SchemeController extends \BaseController {
 				
 				$scheme->ulp_premium = Input::get('ulp_premium');
 
-				$scheme->compute = (Input::has('compute')) ? 1 : 0;
+				$scheme->compute = Input::get('alloc_ref');
 
 				$scheme->save();
 
@@ -134,7 +139,7 @@ class SchemeController extends \BaseController {
 				// add scheme sku involve
 				SchemeRepository::addSchemePremiumSku($scheme);
 				
-				if($scheme->compute){
+				if($scheme->compute == 1){
 					// create allocation
 					SchemeAllocRepository::insertAlllocation($scheme);
 
@@ -245,8 +250,11 @@ class SchemeController extends \BaseController {
 		$sel_hosts = SchemeHostSku::getHosts($scheme->id);
 		$sel_premuim = SchemePremuimSku::getPremuim($scheme->id);
 		
+		$count = SchemeAllocation::where('scheme_id',$scheme->id)->count();
 
-
+		$alloc_refs = array('1' => 'USE SYSTEM GENERATED',
+			'2' => 'USE MANUAL UPLOAD',
+			'3' => 'NO ALLOCATION');
 
 
 		$premuim = array();
@@ -342,22 +350,24 @@ class SchemeController extends \BaseController {
 		if(Auth::user()->hasRole("PROPONENT")){
 			if($activity->status_id < 4){
 				return View::make('scheme.edit',compact('scheme', 'activity_schemes', 'id_index', 'activity', 'skus', 'sel_skus', 'sel_hosts',
-					'sel_premuim','allocations', 'total_sales', 'qty','id','total_gsv', 'ac_groups', 'groups','host_sku','premuim_sku'));
+					'sel_premuim','allocations', 'total_sales', 'qty','id','total_gsv', 'ac_groups', 'groups','host_sku','premuim_sku',
+					'count','alloc_refs'));
 			}else{
 				return View::make('scheme.read_only',compact('scheme', 'activity', 'activity_schemes', 'id_index', 'skus', 'involves', 'sel_skus', 'sel_hosts',
 					'sel_premuim','allocations', 'total_sales', 'qty','id', 'summary', 'total_gsv','sku', 'host', 'premuim','ac_groups','groups',
-					'host_sku','premuim_sku','ref_sku'));
+					'host_sku','premuim_sku','ref_sku','count', 'alloc_refs'));
 			}
 		}
 
 		if(Auth::user()->hasRole("PMOG PLANNER")){
 			if($activity->status_id == 4){
 				return View::make('scheme.edit',compact('scheme', 'activity_schemes', 'id_index', 'activity', 'skus', 'sel_skus', 'sel_hosts',
-					'sel_premuim','allocations', 'total_sales', 'qty','id', 'summary', 'total_gsv','ac_groups', 'groups','host_sku','premuim_sku'));
+					'sel_premuim','allocations', 'total_sales', 'qty','id', 'summary', 'total_gsv','ac_groups', 'groups','host_sku','premuim_sku', 'count',
+					'alloc_refs'));
 			}else{
 				return View::make('scheme.read_only',compact('scheme', 'activity_schemes', 'id_index', 'activity', 'skus', 'sel_skus', 'sel_hosts',
 					'sel_premuim','allocations', 'total_sales', 'qty','id', 'summary', 'total_gsv','sku', 'host', 'premuim','ac_groups','groups',
-					'host_sku','premuim_sku','ref_sku'));
+					'host_sku','premuim_sku','ref_sku', 'count', 'alloc_refs'));
 			}
 		}
 	}
@@ -371,6 +381,7 @@ class SchemeController extends \BaseController {
 	 */
 	public function update($id)
 	{
+		// dd(Input::all());
 		$validation = Validator::make(Input::all(), Scheme::$rules);
 
 		if($validation->passes())
@@ -529,16 +540,27 @@ class SchemeController extends \BaseController {
 					$scheme2->update();
 					
 				}else{
-					SchemeAllocation::where('scheme_id',$scheme->id)->delete();
-					// update final alloc
-					$scheme2->final_alloc = $scheme->quantity;
-					$scheme2->final_total_deals = $scheme->total_deals;
-					$scheme2->final_total_cases = $scheme->total_cases;
-					$scheme2->final_tts_r = $scheme->tts_r;;
-					$scheme2->final_pe_r = $scheme->pe_r;;
-					$scheme2->final_total_cost = $scheme2->total_cost;
 
-					$scheme2->update();
+					if(Input::hasFile('file')){
+						SchemeAllocation::where('scheme_id',$scheme->id)->delete();
+					
+						$token = md5(uniqid(mt_rand(), true));
+						$file_path = Input::file('file')->move(storage_path().'/uploads/temp/',$token.".xls");
+
+						Excel::selectSheets('allocations')->load($file_path, function($reader) {
+							SchemeAllocation::uploadAlloc($reader->get());
+						});
+
+						// update final alloc
+						$scheme2->final_alloc = $scheme->quantity;
+						$scheme2->final_total_deals = $scheme->total_deals;
+						$scheme2->final_total_cases = $scheme->total_cases;
+						$scheme2->final_tts_r = $scheme->tts_r;;
+						$scheme2->final_pe_r = $scheme->pe_r;;
+						$scheme2->final_total_cost = $scheme2->total_cost;
+
+						$scheme2->update();
+					}
 				}
 
 				SchemeAllocRepository::updateCosting($scheme);
@@ -790,4 +812,20 @@ class SchemeController extends \BaseController {
 				->with('class', $data['class'] )
 				->with('message', $data['message']);
 	} 
+
+	public function gettemplate($id){
+		$scheme = Scheme::find($id);
+		$allocations = SchemeAllocRepository::gettemplate($scheme);
+
+		foreach ($allocations as &$allocation) {
+		    $allocation = (array)$allocation;
+		}
+
+		Excel::create('Manual Allocation Template', function($excel) use($allocations){
+			$excel->sheet('allocations', function($sheet) use($allocations) {
+				$sheet->fromArray($allocations,null, 'A1', true);
+			})->download('xls');
+
+		});
+	}
 }
