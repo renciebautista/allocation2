@@ -70,7 +70,7 @@ class UpdateScheme extends Command {
 				$scheme->final_total_cases = $total_cases;
 
 				$per = 0;
-				if(Input::get('ulp_premium') != ""){
+				if($scheme->ulp_premium != ""){
 					$scheme->final_tts_r = 0;
 					$non = $srp_p * $total_deals;
 					$per = $total_deals * $other_cost;
