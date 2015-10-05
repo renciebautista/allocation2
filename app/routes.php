@@ -274,22 +274,36 @@ Queue::getIron()->ssl_verifypeer = false;
 // 	return View::make('emails.mail4', $data);
 // });
 
-// Route::get('mailreport', function(){
-// 	$template = AllocationReportTemplate::findOrFail(27);
-// 	$user = User::find(11);
-// 	$data['template'] = $template;
-// 	$data['token'] = '1';
-// 	$data['user'] = $user;
-// 	return View::make('emails.allocreport',compact('data'));
-// });
+Route::get('mail4', function(){
+	$cycles = Cycle::getByReleaseDate();
+	$cycle_ids = array();
+	$cycle_names = "";
+	foreach ($cycles as $value) {
+		$cycle_ids[] = $value->id;
+	}
+	
+	$user = User::find(1);
 
-Route::get('temp', function(){
-	$scheme = Scheme::find('188');
-	echo '<pre>';
-	// dd(SchemeAllocRepository::gettemplate($scheme));
-	print_r(SchemeAllocRepository::gettemplate($scheme));
-	echo '</pre>';
+	$data['user'] = $user->first_name;
+	$data['email'] = $user->email;
+	$data['fullname'] = $user->getFullname();
+	$data['cycle_ids'] = $cycle_ids;
+
+	$data['activities'] = Activity::Released($cycle_ids);
+
+	$data['cycles'] = Activity::ReleasedCyles($cycle_ids);
+
+
+	foreach ($data['cycles'] as $value) {
+
+		$cycle_names .= $value->cycle_name ." - ";
+	}
+
+	$data['cycle_names'] = $cycle_names;
+
+	dd($cycle_names);
 });
+
 
 //---------------------------------------------------
 

@@ -163,6 +163,7 @@ class TestMail extends Command {
 				$data['activities'] = Activity::Released($cycle_ids);
 
 				$data['cycles'] = Activity::ReleasedCyles($cycle_ids);
+				
 				foreach ($data['cycles'] as $value) {
 					$cycle_names .= $value->cycle_name ." - ";
 				}
