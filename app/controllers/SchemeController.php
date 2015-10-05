@@ -252,9 +252,7 @@ class SchemeController extends \BaseController {
 		
 		$count = SchemeAllocation::where('scheme_id',$scheme->id)->count();
 
-		$alloc_refs = array('1' => 'USE SYSTEM GENERATED',
-			'2' => 'USE MANUAL UPLOAD',
-			'3' => 'NO ALLOCATION');
+		$alloc_refs = AllocationSource::lists('alloc_ref', 'id');
 
 
 		$premuim = array();
@@ -269,6 +267,7 @@ class SchemeController extends \BaseController {
 
 		$allocations = Allocation::schemeAllocations($id);
 
+		$alloref = AllocationSource::find($scheme->compute);
 		$ac_groups = AccountGroup::where('show_in_summary',1)->get();
 
 		if(!empty($ac_groups)){
@@ -355,7 +354,7 @@ class SchemeController extends \BaseController {
 			}else{
 				return View::make('scheme.read_only',compact('scheme', 'activity', 'activity_schemes', 'id_index', 'skus', 'involves', 'sel_skus', 'sel_hosts',
 					'sel_premuim','allocations', 'total_sales', 'qty','id', 'summary', 'total_gsv','sku', 'host', 'premuim','ac_groups','groups',
-					'host_sku','premuim_sku','ref_sku','count', 'alloc_refs'));
+					'host_sku','premuim_sku','ref_sku','count', 'alloc_refs','alloref'));
 			}
 		}
 
@@ -367,7 +366,7 @@ class SchemeController extends \BaseController {
 			}else{
 				return View::make('scheme.read_only',compact('scheme', 'activity_schemes', 'id_index', 'activity', 'skus', 'sel_skus', 'sel_hosts',
 					'sel_premuim','allocations', 'total_sales', 'qty','id', 'summary', 'total_gsv','sku', 'host', 'premuim','ac_groups','groups',
-					'host_sku','premuim_sku','ref_sku', 'count', 'alloc_refs'));
+					'host_sku','premuim_sku','ref_sku', 'count', 'alloc_refs','alloref'));
 			}
 		}
 	}
@@ -386,7 +385,8 @@ class SchemeController extends \BaseController {
 
 		if($validation->passes())
 		{
-			DB::transaction(function() use ($id)  {
+			$isError = false;
+			DB::transaction(function() use ($id,&$isError)  {
 				$scheme = Scheme::find($id);
 
 				// check if reference sku is changed
@@ -467,7 +467,7 @@ class SchemeController extends \BaseController {
 				$scheme->final_pe_r = $scheme->pe_r;
 				$scheme->final_total_cost = $scheme->total_cost;
 				$scheme->ulp_premium = Input::get('ulp_premium');
-				$scheme->compute = (Input::has('compute')) ? 1 : 0;
+				$scheme->compute = Input::get('alloc_ref');
 
 
 				$scheme->update();
@@ -495,8 +495,8 @@ class SchemeController extends \BaseController {
 
 				// echo $old_srp .'=>'.$scheme2->srp_p;
 				// echo $update_alloc;
-
-				if($scheme->compute) {
+				
+				if($scheme->compute == 1) {
 					if($update_alloc){
 						SchemeAllocRepository::updateAllocation($scheme);
 						
@@ -539,36 +539,101 @@ class SchemeController extends \BaseController {
 					$scheme2->final_total_cost = $scheme2->final_tts_r+$scheme2->final_pe_r;
 					$scheme2->update();
 					
-				}else{
+				}else if($scheme->compute == 2){
+					if($update_alloc){
+						SchemeAllocation::where('scheme_id',$scheme->id)->delete();
+					}
 
 					if(Input::hasFile('file')){
-						SchemeAllocation::where('scheme_id',$scheme->id)->delete();
-					
+						
 						$token = md5(uniqid(mt_rand(), true));
 						$file_path = Input::file('file')->move(storage_path().'/uploads/temp/',$token.".xls");
 
-						Excel::selectSheets('allocations')->load($file_path, function($reader) {
-							SchemeAllocation::uploadAlloc($reader->get());
-						});
+						Excel::selectSheets('allocations')->load($file_path, function($reader) use (&$isError,$scheme){
+							$firstrow = $reader->first()->toArray();
+					       	if (isset($firstrow['scheme_id'])) {
+					            $rows = $reader->all();
+					            if($rows[0]->scheme_id != $scheme->id){
+					            	$isError = true;
+					            }
+					        }
 
-						// update final alloc
-						$scheme2->final_alloc = $scheme->quantity;
-						$scheme2->final_total_deals = $scheme->total_deals;
-						$scheme2->final_total_cases = $scheme->total_cases;
-						$scheme2->final_tts_r = $scheme->tts_r;;
-						$scheme2->final_pe_r = $scheme->pe_r;;
-						$scheme2->final_total_cost = $scheme2->total_cost;
+					    });
 
-						$scheme2->update();
+					    if (!$isError) {
+					    	SchemeAllocation::where('scheme_id',$scheme->id)->delete();
+
+							Excel::selectSheets('allocations')->load($file_path, function($reader) use ($scheme) {
+								SchemeAllocation::uploadAlloc($reader->get(),$scheme);
+							});
+					        
+					    }
 					}
+
+					// update final alloc
+					$final_alloc = SchemeAllocation::finalallocation($scheme->id);
+					$total_cases = 0;
+					$total_deals = 0;
+					if($scheme->activity->activitytype->uom == 'CASES'){
+						$total_deals = $final_alloc * $scheme->deals;
+						$total_cases = $final_alloc;
+						$final_tts = $final_alloc * $scheme->deals * $scheme->srp_p; 
+					}else{
+						
+						if($final_alloc > 0){
+							$total_cases = round($final_alloc/$scheme->deals);
+							$total_deals = $final_alloc;
+						}
+						$final_tts = $final_alloc * $scheme->srp_p; 
+					}
+					
+					$final_pe = $total_deals *  $scheme->other_cost;
+					
+					$scheme2->final_alloc = $final_alloc;
+					$scheme2->final_total_deals = $total_deals;
+					$scheme2->final_total_cases = $total_cases;
+
+					$per = 0;
+					if(Input::get('ulp_premium') != ""){
+						$scheme2->final_tts_r = 0;
+						$non = $srp_p * $total_deals;
+						$per = $total_deals * $other_cost;
+						$scheme2->final_pe_r = $non+$per;
+					}else{
+						$scheme2->final_tts_r = $final_tts;
+						$scheme2->final_pe_r = $final_pe;
+					}
+					
+					$scheme2->final_total_cost = $scheme2->final_tts_r+$scheme2->final_pe_r;
+					$scheme2->update();
+					
+				}else{
+					SchemeAllocation::where('scheme_id',$scheme->id)->delete();
+					// update final alloc
+					$scheme2->final_alloc = $scheme->quantity;
+					$scheme2->final_total_deals = $scheme->total_deals;
+					$scheme2->final_total_cases = $scheme->total_cases;
+					$scheme2->final_tts_r = $scheme->tts_r;;
+					$scheme2->final_pe_r = $scheme->pe_r;;
+					$scheme2->final_total_cost = $scheme2->total_cost;
+
+					$scheme2->update();
 				}
 
 				SchemeAllocRepository::updateCosting($scheme);
 			});
-			// #schemes
-			return Redirect::action('SchemeController@edit', array('id' => $id))
-				->with('class', 'alert-success')
-				->with('message', 'Scheme "'.Input::get('scheme_name').'" was successfuly updated.');
+
+			if ($isError) {
+				return Redirect::action('SchemeController@edit', array('id' => $id))
+					->withInput()
+					->with('class', 'alert-danger')
+					->with('message', 'Invalid manual upload template for this scheme.');
+			}else{
+				return Redirect::action('SchemeController@edit', array('id' => $id))
+					->with('class', 'alert-success')
+					->with('message', 'Scheme "'.Input::get('scheme_name').'" was successfuly updated.');
+			}
+			
 			
 		}
 

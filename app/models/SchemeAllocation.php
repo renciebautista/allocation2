@@ -352,7 +352,7 @@ class SchemeAllocation extends \Eloquent {
 		return $data;
 	}
 
-	public static function uploadAlloc($records){
+	public static function uploadAlloc($records,$scheme){
 		DB::beginTransaction();
 			try {
 			
@@ -381,10 +381,25 @@ class SchemeAllocation extends \Eloquent {
 				$alloc->account_group_code = $row->account_group_code;
 				$alloc->account_group_name = $row->account_group_name;
 				$alloc->outlet = $row->outlet;
-				$alloc->final_alloc = $row->allocation;
+				
 
-				$alloc->in_deals = 1;
-				$alloc->in_cases = 1;
+				$in_deals = 0;
+				$in_cases = 0;
+				if($scheme->activity->activitytype->uom == 'CASES'){
+					$in_deals = $row->allocation * $scheme->deals;
+					$in_cases = $row->allocation;
+				}else{
+					if($row->allocation > 0){
+						$in_deals =  $row->allocation;
+						$in_cases = round($row->allocation/$scheme->deals);
+						
+					}
+				}
+				$alloc->computed_alloc = 0;
+				$alloc->force_alloc = 0;
+				$alloc->final_alloc = $row->allocation;
+				$alloc->in_deals = $in_deals;
+				$alloc->in_cases = $in_cases;
 				$alloc->tts_budget = 1;
 				$alloc->pe_budget = 1;
 				$alloc->show = $row->show;
@@ -396,7 +411,7 @@ class SchemeAllocation extends \Eloquent {
 			
 			DB::commit();
 		} catch (\Exception $e) {
-			// dd($e);
+			dd($e);
 			DB::rollback();
 		}
 	}

@@ -31,7 +31,7 @@ class InitDatabaseTableSeeder extends Seeder {
 		$this->call('ShipToSalesTableSeeder');
 		$this->call('OutletSalesTableSeeder');
 
-		
+		$this->call('FixSchemeAllocationRefTableSeeder');
 			//
 		DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 	}

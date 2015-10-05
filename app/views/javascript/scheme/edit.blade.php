@@ -332,6 +332,7 @@ var table = $("#customer-allocation").dataTable({
 	leftColumns: 6
 } );*/
 
+@if($scheme->compute != 2)
 table.on('dblclick',"tr[data-link]",function() {
 	$(this).find('td').each (function() {
 		field = $(this).attr('field');
@@ -346,6 +347,7 @@ table.on('dblclick',"tr[data-link]",function() {
 	$('#myModal').modal('show');
 });
 
+@endif
 
 $("form[id='updateAlloc']").on("submit",function(e){
 	var form = $(this);

@@ -245,31 +245,19 @@
 			</div>
 
 			<div class="row">
-				<div class="col-lg-12">
-					<div class="form-group">
-						<div class="checkbox">
-							<label>
-								{{ Form::checkbox('compute', true,$scheme->compute) }} Use System Generated Allocation
-							</label>
-						</div>
-					</div>	
-				</div>
-			</div>	
-
-			<div class="row">
 				<div class="col-lg-4">
 					<div class="form-group">
 						<div class="row">
 							<div class="col-lg-12">
 								{{ Form::label('alloc_ref', 'Allocation Reference', array('class' => 'control-label')) }}
-								{{ Form::select('alloc_ref', $alloc_refs, 1, array('id' => 'alloc_ref', 'class' => 'form-control')) }}
+								{{ Form::select('alloc_ref', $alloc_refs, $scheme->compute, array('id' => 'alloc_ref', 'class' => 'form-control')) }}
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 
-			@if(!$scheme->compute)
+			@if($scheme->compute == 2)
 			<div class="row">
 				<div class="col-lg-12">
 				  	<div class="form-group">
