@@ -35,6 +35,7 @@ class DownloadsController extends \BaseController {
 			$activities = Activity::where('activity_type_id',$type->id)
 				->where('cycle_id',$cycle->id)
 				->where('status_id','>',7)
+				->where('disable',0)
 				->get();
 			if (App::isLocal())
 			{
@@ -150,6 +151,7 @@ class DownloadsController extends \BaseController {
 			$activities = Activity::where('activity_type_id',$type->id)
 				->where('cycle_id',$cycle->id)
 				->where('status_id','>',7)
+				->where('disable',0)
 				->get();
 			if (App::isLocal())
 			{

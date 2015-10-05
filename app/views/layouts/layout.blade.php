@@ -90,7 +90,9 @@
 								<li>{{ HTML::linkRoute('activitytype.index', 'Activity Type') }}</li>  
 								<li>{{ HTML::linkRoute('holidays.index', 'Holidays') }}</li>  
 
-								<li>{{ HTML::linkRoute('launchskus.index', 'Launch SKU') }}</li>  
+								<li>{{ HTML::linkRoute('launchskus.index', 'Launch SKU') }}</li> 
+
+								<li>{{ HTML::linkRoute('activity.index', 'Activities') }}</li>  
 							</ul>
 						</li>
 						@endif

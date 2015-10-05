@@ -204,7 +204,7 @@ class Activity extends \Eloquent {
 			'scope_types.scope_name','activity_types.activity_type',
 			DB::raw('CONCAT(users.first_name, " ", users.last_name) AS planner'),
 			DB::raw('CONCAT(propo.first_name, " ", propo.last_name) AS proponent'),
-			'activities.status_id')
+			'activities.status_id','activities.disable')
 			->join('activity_statuses', 'activities.status_id','=','activity_statuses.id')
 			->join('cycles', 'activities.cycle_id','=','cycles.id')
 			->join('scope_types', 'activities.scope_type_id','=','scope_types.id')
@@ -245,6 +245,61 @@ class Activity extends \Eloquent {
 					$query->whereIn('activity_planners.user_id', $pmog);
 				}
 			})
+			->orderBy('activity_types.activity_type')
+			->orderBy('activities.circular_name')
+			->orderBy('activities.id')
+			->get();
+	}
+
+	public static function search2($user_id = 0,$status,$cycle,$scope,$type,$pmog,$title){
+		return self::select('activities.id','activities.circular_name','activities.edownload_date',
+			'activities.eimplementation_date','activities.end_date','activities.billing_date',
+			'activity_statuses.status','cycles.cycle_name','pdf','word',
+			'scope_types.scope_name','activity_types.activity_type',
+			DB::raw('CONCAT(users.first_name, " ", users.last_name) AS planner'),
+			DB::raw('CONCAT(propo.first_name, " ", propo.last_name) AS proponent'),
+			'activities.status_id','activities.disable')
+			->join('activity_statuses', 'activities.status_id','=','activity_statuses.id')
+			->join('cycles', 'activities.cycle_id','=','cycles.id')
+			->join('scope_types', 'activities.scope_type_id','=','scope_types.id')
+			->join('activity_types', 'activities.activity_type_id','=','activity_types.id')
+			->join('activity_planners', 'activities.id','=','activity_planners.activity_id', 'left')
+			->join('users', 'activity_planners.user_id','=','users.id', 'left')	
+			->join('users as propo', 'activities.created_by','=','propo.id')
+			->where(function($query) use ($user_id){
+				if($user_id > 0){
+					$query->where('activities.created_by', $user_id);
+				}
+			})
+			->where(function($query) use ($title){
+				$query->where('activities.circular_name', 'LIKE' ,"%$title%");
+			})
+			->where(function($query) use ($status){
+				if($status > 0){
+					$query->whereIn('activities.status_id', $status);
+				}
+			})
+			->where(function($query) use ($cycle){
+				if($cycle > 0){
+					$query->whereIn('activities.cycle_id', $cycle);
+				}
+			})
+			->where(function($query) use ($scope){
+				if($scope > 0){
+					$query->whereIn('activities.scope_type_id', $scope);
+				}
+			})
+			->where(function($query) use ($type){
+				if($type > 0){
+					$query->whereIn('activities.activity_type_id', $type);
+				}
+			})
+			->where(function($query) use ($pmog){
+				if($pmog > 0){
+					$query->whereIn('activity_planners.user_id', $pmog);
+				}
+			})
+			->where('activities.disable', 0)
 			->orderBy('activity_types.activity_type')
 			->orderBy('activities.circular_name')
 			->orderBy('activities.id')

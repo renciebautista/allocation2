@@ -100,3 +100,4 @@ Entrust::routeNeedsRole( 'users', 'ADMINISTRATOR',Redirect::to('/') );
 // Entrust::routeNeedsRole( 'submittedactivity', ['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR'],Redirect::to('/activity') );
 // Entrust::routeNeedsRole( 'activity*', 'PROPONENT',Redirect::to('/') );
 // Entrust::routeNeedsRole( 'downloadedactivity*', 'PMOG PLANNER',Redirect::to('/') );
+

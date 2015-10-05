@@ -121,6 +121,7 @@ class Cycle extends \Eloquent {
 				 ->join('cycles','activities.cycle_id','=','cycles.id')
 				 ->where('cycles.cycle_name', 'LIKE' ,"%$filter%")
 				 ->where('activities.status_id',9)
+				 ->where('activities.disable',0)
 				 ->groupBy('activities.cycle_id')
 				 ->orderBy('cycles.release_date')
 				 ->get();

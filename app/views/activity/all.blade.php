@@ -5,7 +5,7 @@
 <div class="page-header" id="banner">
 	<div class="row">
 		<div class="col-lg-8 col-md-7 col-sm-6">
-			<h1>All Activities Report</h1>
+			<h1>All Activities </h1>
 		</div>
 	</div>
 </div>
@@ -19,24 +19,12 @@
 				<div class="form-group">
 					<div class="row">
 						<div class="col-lg-12">
-						{{ Form::label('st', 'Status', array('class' => 'control-label')) }}
-						{{ Form::select('st[]', $statuses, null, array('id' => 'st','class' => 'form-control', 'multiple' => 'multiple')) }}
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="col-lg-6">
-				<div class="form-group">
-					<div class="row">
-						<div class="col-lg-12">
 						{{ Form::label('cy', 'TOP Cycle', array('class' => 'control-label')) }}
 						{{ Form::select('cy[]', $cycles, null, array('id' => 'cy','class' => 'form-control', 'multiple' => 'multiple')) }}
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-		<div class="row">
 			<div class="col-lg-6">
 				<div class="form-group">
 					<div class="row">
@@ -47,6 +35,9 @@
 					</div>
 				</div>
 			</div>
+		</div>
+		<div class="row">
+			
 			<div class="col-lg-6">
 				<div class="form-group">
 					<div class="row">
@@ -57,8 +48,6 @@
 					</div>
 				</div>
 			</div>
-		</div>
-		<div class="row">
 			<div class="col-lg-6">
 				<div class="form-group">
 					<div class="row">
@@ -69,6 +58,9 @@
 					</div>
 				</div>
 			</div>
+		</div>
+		<div class="row">
+			
 			<div class="col-lg-6">
 				<div class="form-group">
 					<div class="row">
@@ -79,9 +71,6 @@
 					</div>
 				</div>
 			</div>
-		</div>
-
-		<div class="row">
 			<div class="col-lg-6">
 				<div class="form-group">
 					<div class="row">
@@ -107,6 +96,7 @@
 				</div>
 			</div>
 		</div>
+
 		{{ Form::close() }}
 	</div>
 </div>
@@ -135,7 +125,7 @@
 						<th class="center">PDF Generated</th>
 						<th class="center">Doc Generated</th>
 						<th class="center">Deactivated Circular</th>
-						<th colspan="2" style="text-align:center;">Action</th>
+						<th style="text-align:center;">Action</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -165,10 +155,7 @@
 						<td>{{ ($activity->word) ? "YES":"NO" }}</td>
 						<td>{{ ($activity->disable) ? "YES":"NO" }}</td>
 						<td class="action">
-							{{ HTML::linkAction('ReportController@download','Download', $activity->id, array('class' => 'btn btn-success btn-xs')) }}
-						</td>
-						<td class="action">
-							<a class="btn btn-info btn-xs" target="_blank" href="{{ URL::action('ReportController@preview', $activity->id ) }}">Preview</a>							
+							{{ HTML::linkAction('ActivityController@active','Edit', $activity->id, array('class' => 'btn btn-info btn-xs')) }}
 						</td>
 					</tr>
 					@endforeach

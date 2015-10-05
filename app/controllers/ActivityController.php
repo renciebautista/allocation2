@@ -45,6 +45,17 @@ class ActivityController extends BaseController {
 			return View::make('downloadedactivity.index',compact('statuses', 'activities', 'cycles', 'scopes', 'types', 'proponents'));
 		}
 
+		if(Auth::user()->hasRole("ADMINISTRATOR")){
+			Input::flash();
+			$cycles = Cycle::getLists();
+			$scopes = ScopeType::getLists();
+			$types = ActivityType::getLists();
+			$planners = User::getApprovers(['PMOG PLANNER']);
+			$proponents = User::getApprovers(['PROPONENT']);
+			$activities = Activity::search(Input::get('pr'),array(9),Input::get('cy'),Input::get('sc'),Input::get('ty'),Input::get('pm'),Input::get('title'));
+			return View::make('activity.all',compact('statuses', 'activities', 'cycles', 'scopes', 'types', 'planners', 'proponents'));
+		}
+
 	}
 
 	/**
@@ -2538,6 +2549,37 @@ class ActivityController extends BaseController {
 		$data['d'] = ActivityRole::getListData($id);
 		$data['msg'] = 'success';
 		return json_encode($data);
+	}
+
+	public function active($id){
+		if(Auth::user()->hasRole("ADMINISTRATOR")){
+			$activity = Activity::findOrFail($id);
+			if($activity->status_id == 9){
+				return View::make('activity.active',compact('activity'));
+			}
+				return View::make('shared.404');
+		}
+		else{
+			return Redirect::to('/dashboard');
+		}
+	}
+
+	public function setactive($id){
+		if(Auth::user()->hasRole("ADMINISTRATOR")){
+			$activity = Activity::findOrFail($id);
+			if($activity->status_id == 9){
+				$activity->disable = (Input::has('deactivated')) ? 1 : 0;
+				$activity->update();
+
+				return Redirect::action('ActivityController@index')
+					->with('class', 'alert-success')
+					->with('message', 'Activity successfuly updated.');
+			}
+				return View::make('shared.404');
+		}
+		else{
+			return Redirect::to('/dashboard');
+		}
 	}
 
 }
