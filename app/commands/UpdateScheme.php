@@ -44,7 +44,15 @@ class UpdateScheme extends Command {
 		$scheme = Scheme::find($id);
 		if(!empty($scheme)){
 			if($scheme->compute == 1){
-				SchemeAllocRepository::updateAllocation($scheme);
+				$this->line("Compute");
+				$skulist = SchemeSku::select('sku')
+					->where('scheme_id',$scheme->id)->get();
+
+				$skus = array();
+				foreach ($skulist as $list) {
+					$skus[] = $list->sku;
+				}
+				SchemeAllocRepository::updateAllocation($skus,$scheme);
 
 				// update final alloc
 				$final_alloc = SchemeAllocation::finalallocation($scheme->id);

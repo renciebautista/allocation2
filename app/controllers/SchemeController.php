@@ -141,7 +141,7 @@ class SchemeController extends \BaseController {
 				
 				if($scheme->compute == 1){
 					// create allocation
-					SchemeAllocRepository::insertAlllocation($scheme);
+					SchemeAllocRepository::insertAlllocation(Input::get('skus'),$scheme);
 
 					// update final alloc
 					$scheme2 = Scheme::find($scheme->id);
@@ -498,7 +498,7 @@ class SchemeController extends \BaseController {
 				
 				if($scheme->compute == 1) {
 					if($update_alloc){
-						SchemeAllocRepository::updateAllocation($scheme);
+						SchemeAllocRepository::updateAllocation(Input::get('skus'),$scheme);
 						
 					}
 

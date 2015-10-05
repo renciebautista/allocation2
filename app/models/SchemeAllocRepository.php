@@ -2,13 +2,13 @@
 
 class SchemeAllocRepository
 {
-	public static function insertAlllocation($scheme){
+	public static function insertAlllocation($skus,$scheme){
 		self::save($scheme);
 	}
 
-	public static function updateAllocation($scheme){
+	public static function updateAllocation($skus,$scheme){
 		SchemeAllocation::where('scheme_id',$scheme->id)->delete();
-		self::save($scheme);
+		self::save($skus,$scheme);
 	}
 
 	public static function gettemplate($scheme){
@@ -171,7 +171,7 @@ class SchemeAllocRepository
 		return $list;
 	}
 
-	private static function save($scheme){
+	private static function save($skus,$scheme){
 		$activity = Activity::find($scheme->activity_id);
 		$forced_areas = ForceAllocation::getForcedAreas($scheme->activity_id);
 		$customers = ActivityCustomer::customers($scheme->activity_id);
@@ -179,7 +179,7 @@ class SchemeAllocRepository
 
 
 		$_allocation = new AllocationRepository;
-		$allocations = $_allocation->customers(Input::get('skus'), $_channels, $customers,$forced_areas);
+		$allocations = $_allocation->customers($skus, $_channels, $customers,$forced_areas);
 		$_areasales =  $_allocation->area_sales();
 	   	// Helper::print_r($allocations);
 		$total_sales = $_allocation->total_gsv();
