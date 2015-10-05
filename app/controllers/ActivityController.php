@@ -1214,6 +1214,25 @@ class ActivityController extends BaseController {
 					}
 					ActivityChannelList::addChannel($activity->id,$activity_channels);
 
+					// update all schemes
+					$schemes = Scheme::getList($activity->id);
+					foreach ($schemes as $scheme) {
+						if($scheme->compute == 1){
+							$scheme->updating = 1;
+							$scheme->update();
+							if($_ENV['MAIL_TEST']){
+								Queue::push('SchemeScheduler', array('id' => $scheme->id),'scheme');
+							}else{
+								Queue::push('SchemeScheduler', array('id' => $scheme->id),'p_scheme');
+							}
+						}else{
+							$scheme->updating = 0;
+							$scheme->update();
+						}
+						
+					}
+					// end update
+
 					DB::commit();
 					$arr['success'] = 1;
 					Session::flash('class', 'alert-success');

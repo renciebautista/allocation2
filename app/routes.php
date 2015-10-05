@@ -315,6 +315,10 @@ Route::post('queue/allocreport', function()
 	return Queue::marshal();
 });
 
+Route::post('queue/scheme', function()
+{
+	return Queue::marshal();
+});
 
 Route::get('/','LoginController@index');
 Route::get('login','LoginController@index');

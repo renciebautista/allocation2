@@ -19,4 +19,5 @@ Artisan::add(new SendMail);
 Artisan::add(new MakeAllocReport);
 Artisan::add(new MakeWord);
 Artisan::add(new ClearAllocReport);
+Artisan::add(new UpdateScheme);
 
