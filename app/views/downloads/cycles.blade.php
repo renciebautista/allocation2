@@ -67,7 +67,7 @@
 						<td>{{ $cycle->cycle_name }}</td>
 						<td style="width:10%;text-align:center;">{{ $cycle->total }}</td>
 						<td class="action">
-							{{ HTML::linkAction('DownloadsController@download','Download Zip', $cycle->id, array('class' => 'btn btn-success btn-xs')) }}						
+							{{ HTML::linkAction('DownloadsController@released','Download Zip', $cycle->id, array('class' => 'btn btn-success btn-xs')) }}						
 						</td>
 					</tr>
 					@endforeach

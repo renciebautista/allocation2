@@ -451,6 +451,8 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('downloads/{id}/all', 'DownloadsController@downloadall');
 	Route::get('downloads/{id}/approved', 'DownloadsController@download');
 
+	Route::get('downloads/{id}/released', 'DownloadsController@released');
+
 	Route::resource('group', 'GroupController');
 
 	Route::get('dashboard', 'DashboardController@index');

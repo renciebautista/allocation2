@@ -83,6 +83,65 @@ class DownloadsController extends \BaseController {
 
 	}
 
+	public function released($id){
+		$zippy = Zippy::load();
+		$cycle = Cycle::where('id',$id)->first();
+		$activity_types = ActivityType::all();
+		$zip_path = storage_path().'/zipped/cycles/'.$cycle->cycle_name.'.zip';
+		File::delete($zip_path);
+		$with_files = false;
+		foreach ($activity_types as $type) {
+			$activities = Activity::where('activity_type_id',$type->id)
+				->where('cycle_id',$cycle->id)
+				->where('status_id','>',7)
+				->where('disable',0)
+				->get();
+			if (App::isLocal())
+			{
+			    $nofile = 'public/nofile';
+			}else{
+				$nofile = storage_path().'/nofile';
+			}
+			
+			if(count($activities) > 0){
+				foreach ($activities as $activity) {
+					$path = '/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
+					$distination = storage_path().$path ;
+					$files = File::files($distination);
+					if(count($files)>0){
+						if (App::isLocal())
+						{
+						    $folder = 'app/storage/'.$path.'/';
+						}else{
+							$folder = storage_path().$path.'/';
+						}
+						$with_files = true;
+						// $folders[strtoupper(Helper::sanitize($type->activity_type)).'/'.$activity->id.'_'.strtoupper(Helper::sanitize($activity->circular_name))] = $folder;
+						$foldername = preg_replace('/[^A-Za-z0-9 _ .-]/', '_', $activity->circular_name);
+						$folder_name = str_replace(":","_", $foldername);
+						$folders[strtoupper(Helper::sanitize($type->activity_type)).'/'.strtoupper(Helper::sanitize($folder_name))] = $folder;
+					}else{
+						// $with_files = true;
+						// $folder = $nofile;
+						// $folders[strtoupper(Helper::sanitize($type->activity_type)).'/'.$activity->id.'_'.strtoupper(Helper::sanitize($activity->circular_name))] = $folder;
+					}
+					
+				}
+			}else{
+				//$folders[strtoupper(Helper::sanitize($type->activity_type))] = $nofile;
+			}
+			
+		}
+		if($with_files){
+				
+			$archive = $zippy->create($zip_path,$folders, true);
+			return Response::download($zip_path);
+		}else{
+			return View::make('downloads.norecordfound');
+		}
+
+	}
+
 	public function downloadall($id){
 		$zippy = Zippy::load();
 		$cycle = Cycle::where('id',$id)->first();
