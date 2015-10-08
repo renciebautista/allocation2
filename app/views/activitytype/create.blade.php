@@ -34,6 +34,14 @@
 				</label>
 			</div>
 		</div>
+
+		<div class="form-group">
+			<div class="checkbox">
+				<label>
+					{{ Form::checkbox('with_sob', 1,false) }} With SOB
+				</label>
+			</div>
+		</div>
 		
 		<div class="form-group">
 			{{ Form::label('activity_type', 'Activity Type', array('class' => 'control-label')) }}

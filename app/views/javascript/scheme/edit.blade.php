@@ -1,5 +1,41 @@
 @section('scripts')
+//sob tab
 
+if(location.hash.length > 0){
+	var activeTab = $('[href=' + location.hash + ']');
+	activeTab && activeTab.tab('show');
+}
+
+// Change hash for page-reload
+$('.nav-tabs a').on('shown', function (e) {
+    window.location.hash = e.target.hash;
+})
+
+$('.nav-tabs a').click(function (e) {
+	pre = "#details";
+	if(window.location.hash.length > 0){
+		pre = window.location.hash;
+	}
+	var target = $(this);
+	target_id = $(pre).find('form').attr('id');	
+	checkDirty(target_id,function(){
+			$(target).tab('show');
+		});
+});
+
+$('#start_date').datetimepicker({
+	pickTime: false,
+	calendarWeeks: true,
+	minDate: moment(),
+	daysOfWeekDisabled: [0,2,3,4,5,6]
+});
+
+$('#start_date').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
+
+
+$('#weeks').inputNumber({ allowDecimals: true });
+
+// details tab
 $("#updatescheme").disableButton();
 
 $(".disable-button").disableButton();

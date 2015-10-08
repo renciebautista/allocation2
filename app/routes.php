@@ -304,6 +304,27 @@ Route::get('mail4', function(){
 	dd($cycle_names);
 });
 
+Route::get('sob', function(){
+	$query1 = sprintf("SELECT 
+		GROUP_CONCAT(DISTINCT 
+			CONCAT('MAX(IF(weekno = ', weekno, ',allocation,NULL)) AS wek_', weekno)
+	  ) as query_sting
+	 FROM allocation_sobs;");
+	
+	$x = DB::select(DB::raw($query1));
+	// echo $x[0]->query_sting;
+
+	$query = sprintf("SELECT  allocation_id,allocations.ship_to, ".$x[0]->query_sting."
+		FROM allocation_sobs
+		join allocations on allocations.id = allocation_sobs.allocation_id
+		GROUP BY allocation_id");
+	
+	dd($query);
+
+	$records = DB::select(DB::raw($query));
+	var_dump($records);
+});
+
 
 //---------------------------------------------------
 
@@ -434,6 +455,7 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('scheme/{id}', 'SchemeController@show');
 	Route::delete('scheme/{id}', 'SchemeController@destroy');
 	Route::put('scheme/{id}', 'SchemeController@update');
+	Route::put('scheme/{id}/sob', 'SchemeController@updatesob');
 	Route::post('scheme/{id}/duplicate','SchemeController@duplicate');
 	Route::post('scheme/{id}/duplicatescheme', 'SchemeController@duplicatescheme');
 

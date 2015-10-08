@@ -790,3 +790,12 @@ h2, .h2 {
   	max-height: 300px;
   	overflow-y: scroll;
 }
+.sob_alloc_header {
+	width: 2%;
+	text-align: center;
+}
+
+.sob_alloc {
+	width: 2%;
+	text-align: center;
+}

@@ -343,30 +343,45 @@ class SchemeController extends \BaseController {
 		}
 
 		$ref_sku = SchemeSku::where('scheme_id',$scheme->id)->first();
-		// Helper::print_r($ref_sku);
+		
 		$total_gsv = SchemeAllocation::totalgsv($id);
+
+		$sobs = AllocationSob::getSob($scheme->id);
+
+		$sob_header = array();
+		if(count($sobs) >0){
+			$cnt = 0;
+			foreach ($sobs[0] as $key => $value) {
+				if($cnt > 1){
+					$sob_header[] = $key;
+				}
+				$cnt++;
+			}
+		}
+		
+
 
 		if(Auth::user()->hasRole("PROPONENT")){
 			if($activity->status_id < 4){
 				return View::make('scheme.edit',compact('scheme', 'activity_schemes', 'id_index', 'activity', 'skus', 'sel_skus', 'sel_hosts',
 					'sel_premuim','allocations', 'total_sales', 'qty','id','total_gsv', 'ac_groups', 'groups','host_sku','premuim_sku',
-					'count','alloc_refs'));
+					'count','alloc_refs', 'sobs','sob_header'));
 			}else{
 				return View::make('scheme.read_only',compact('scheme', 'activity', 'activity_schemes', 'id_index', 'skus', 'involves', 'sel_skus', 'sel_hosts',
 					'sel_premuim','allocations', 'total_sales', 'qty','id', 'summary', 'total_gsv','sku', 'host', 'premuim','ac_groups','groups',
-					'host_sku','premuim_sku','ref_sku','count', 'alloc_refs','alloref'));
+					'host_sku','premuim_sku','ref_sku','count', 'alloc_refs','alloref', 'sobs', 'sob_header'));
 			}
 		}
 
 		if(Auth::user()->hasRole("PMOG PLANNER")){
 			if($activity->status_id == 4){
 				return View::make('scheme.edit',compact('scheme', 'activity_schemes', 'id_index', 'activity', 'skus', 'sel_skus', 'sel_hosts',
-					'sel_premuim','allocations', 'total_sales', 'qty','id', 'summary', 'total_gsv','ac_groups', 'groups','host_sku','premuim_sku', 'count',
-					'alloc_refs'));
+					'sel_premuim','allocations', 'total_sales', 'qty','id', 'summary', 'total_gsv','ac_groups', 'groups','host_sku','premuim_sku',
+					'count','alloc_refs', 'sobs', 'sob_header'));
 			}else{
 				return View::make('scheme.read_only',compact('scheme', 'activity_schemes', 'id_index', 'activity', 'skus', 'sel_skus', 'sel_hosts',
 					'sel_premuim','allocations', 'total_sales', 'qty','id', 'summary', 'total_gsv','sku', 'host', 'premuim','ac_groups','groups',
-					'host_sku','premuim_sku','ref_sku', 'count', 'alloc_refs','alloref'));
+					'host_sku','premuim_sku','ref_sku', 'count', 'alloc_refs','alloref', 'sobs', 'sob_header'));
 			}
 		}
 	}
@@ -766,7 +781,6 @@ class SchemeController extends \BaseController {
 				$arr['final_pe_r'] = $final_pe;
 				$arr['final_total_cost'] = $scheme->final_total_cost;
 				$arr['success'] = 1;	
-				
 			}
 			
 			$arr['id'] = $id;
@@ -867,8 +881,7 @@ class SchemeController extends \BaseController {
 		$data = SchemeRepository::duplicate($id);
 		return Redirect::to(URL::action('ActivityController@edit', array('id' => $scheme->activity_id)) . "#schemes")
 				->with('class', $data['class'] )
-				->with('message', $data['message']);	
-		
+				->with('message', $data['message']);
 	}
 
 	public function duplicatescheme($id){
@@ -892,5 +905,98 @@ class SchemeController extends \BaseController {
 			})->download('xls');
 
 		});
+	}
+
+	public function updatesob($id){
+
+		$rules = array(
+			'start_date' => 'required',
+			'weeks' => 'required'
+		);
+
+		$validation = Validator::make(Input::all(),$rules);
+
+		if($validation->passes())
+		{
+			$scheme = Scheme::findOrFail($id);
+			$scheme->sob_start_date = date('Y-m-d',strtotime(Input::get('start_date')));
+			$scheme->weeks = Input::get('weeks');
+			$scheme->update();
+
+			AllocationSob::where('scheme_id', $scheme->id)->delete();
+
+			// plot sob allocation
+			$customers = Allocation::where('scheme_id',$scheme->id)
+				->where('group_code','E1397')
+				->whereNull('customer_id')
+				->whereNull('shipto_id')
+				->orderBy('id', 'asc')
+				->get();
+			foreach ($customers as $customer) {
+				$data = array();
+				$_shiptos = Allocation::where('customer_id',$customer->id)
+					->whereNull('shipto_id')
+					->orderBy('id', 'asc')
+					->get();
+				if(count($_shiptos) == 0){
+					$total_alloc = $customer->final_alloc;
+					$total_weeks = $scheme->weeks;
+
+					$data = array();
+					$running_value = 0;
+					for($i = 0; $i < $scheme->weeks; $i++){
+						$week_no = $i+1;
+						if($week_no == $scheme->weeks){
+							$wek_value = $total_alloc - $running_value;
+						}else{
+							$wek_value = round($total_alloc/$total_weeks);
+							$running_value += $wek_value;
+						}
+						
+						$data[] = array('scheme_id' => $scheme->id, 'allocation_id' => $customer->id, 'weekno' => $i+1, 'allocation' => $wek_value);
+
+					}
+					AllocationSob::insert($data);
+				}else{
+					foreach ($_shiptos as $_shipto) {
+						$total_alloc = $_shipto->final_alloc;
+						$total_weeks = $scheme->weeks;
+
+						$data = array();
+						$running_value = 0;
+						for($i = 0; $i < $scheme->weeks; $i++){
+							$week_no = $i+1;
+							if($week_no == $scheme->weeks){
+								$wek_value = $total_alloc - $running_value;
+							}else{
+								$wek_value = round($total_alloc/$total_weeks);
+								$running_value += $wek_value;
+							}
+							
+							$data[] = array('scheme_id' => $scheme->id, 'allocation_id' => $_shipto->id, 'weekno' => $i+1, 'allocation' => $wek_value);
+							
+						}
+						AllocationSob::insert($data);
+					}
+				}
+
+				
+
+				
+				
+			}
+			// end plotting
+
+			return Redirect::to(URL::action('SchemeController@edit', array('id' => $id)) . "#sob")
+			// return Redirect::action('SchemeController@edit', array('id' => $id))
+					->with('class', 'alert-success')
+					->with('message', 'SOB plotting was successfuly updated.');
+		}
+		return Redirect::to(URL::action('SchemeController@edit', array('id' => $id)) . "#sob")
+		// return Redirect::action('SchemeController@edit', array('id' => $id))
+			->withErrors($validation)
+			->with('class', 'alert-danger')
+			->with('message', 'There were validation errors.');
+
 	}
 }

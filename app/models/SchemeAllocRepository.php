@@ -3,7 +3,7 @@
 class SchemeAllocRepository
 {
 	public static function insertAlllocation($skus,$scheme){
-		self::save($scheme);
+		self::save($skus,$scheme);
 	}
 
 	public static function updateAllocation($skus,$scheme){
