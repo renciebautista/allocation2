@@ -932,6 +932,8 @@ class SchemeController extends \BaseController {
 				->whereNull('shipto_id')
 				->orderBy('id', 'asc')
 				->get();
+
+			$total_weeks = $scheme->weeks;
 			foreach ($customers as $customer) {
 				$data = array();
 				$_shiptos = Allocation::where('customer_id',$customer->id)
@@ -939,50 +941,12 @@ class SchemeController extends \BaseController {
 					->orderBy('id', 'asc')
 					->get();
 				if(count($_shiptos) == 0){
-					$total_alloc = $customer->final_alloc;
-					$total_weeks = $scheme->weeks;
-
-					$data = array();
-					$running_value = 0;
-					for($i = 0; $i < $scheme->weeks; $i++){
-						$week_no = $i+1;
-						if($week_no == $scheme->weeks){
-							$wek_value = $total_alloc - $running_value;
-						}else{
-							$wek_value = round($total_alloc/$total_weeks);
-							$running_value += $wek_value;
-						}
-						
-						$data[] = array('scheme_id' => $scheme->id, 'allocation_id' => $customer->id, 'weekno' => $i+1, 'allocation' => $wek_value);
-
-					}
-					AllocationSob::insert($data);
+					AllocationSob::createAllocation($customer,$scheme);
 				}else{
 					foreach ($_shiptos as $_shipto) {
-						$total_alloc = $_shipto->final_alloc;
-						$total_weeks = $scheme->weeks;
-
-						$data = array();
-						$running_value = 0;
-						for($i = 0; $i < $scheme->weeks; $i++){
-							$week_no = $i+1;
-							if($week_no == $scheme->weeks){
-								$wek_value = $total_alloc - $running_value;
-							}else{
-								$wek_value = round($total_alloc/$total_weeks);
-								$running_value += $wek_value;
-							}
-							
-							$data[] = array('scheme_id' => $scheme->id, 'allocation_id' => $_shipto->id, 'weekno' => $i+1, 'allocation' => $wek_value);
-							
-						}
-						AllocationSob::insert($data);
+						AllocationSob::createAllocation($_shipto,$scheme);
 					}
 				}
-
-				
-
-				
 				
 			}
 			// end plotting

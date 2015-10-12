@@ -432,7 +432,7 @@
 								<div class="row">
 									<div class="col-lg-12">
 										{{ Form::label('start_date', 'Start Date', array('class' => 'control-label')) }}
-										{{ Form::text('start_date','',array('class' => 'form-control', 'placeholder' => 'Start Date')) }}
+										{{ Form::text('start_date',date_format(date_create($scheme->sob_start_date),'m/d/Y'),array('class' => 'form-control', 'placeholder' => 'Start Date')) }}
 									</div>
 								</div>
 							</div>
@@ -445,7 +445,7 @@
 								<div class="row">
 									<div class="col-lg-12">
 										{{ Form::label('weeks', 'No. of Weeks', array('class' => 'control-label')) }}
-										{{ Form::text('weeks','',array('class' => 'form-control', 'placeholder' => 'No. of Weeks')) }}
+										{{ Form::text('weeks',$scheme->weeks,array('class' => 'form-control', 'placeholder' => 'No. of Weeks')) }}
 									</div>
 								</div>
 							</div>
@@ -479,13 +479,18 @@
 											@foreach($sob_header as $header)
 											<td class="sob_alloc_header">{{ strtoupper($header)}}</td>
 											@endforeach
+											<td class="sob_alloc_header">Total</td>
 										</tr>
+										
 										@foreach($sobs as $sob)
+										<?php $sum = 0; ?>
 										<tr>
 											<td>{{ $sob->ship_to }}</td>
 											@foreach($sob_header as $header)
+											<?php $sum += $sob->$header; ?>
 											<td class="sob_alloc">{{ $sob->$header }}</td>
 											@endforeach
+											<td class="sob_alloc_header">{{ $sum }}</td>
 											
 										</tr>
 										@endforeach
