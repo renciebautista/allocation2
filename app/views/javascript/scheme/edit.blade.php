@@ -11,6 +11,7 @@ $('.nav-tabs a').on('shown', function (e) {
     window.location.hash = e.target.hash;
 })
 
+
 $('.nav-tabs a').click(function (e) {
 	pre = "#details";
 	if(window.location.hash.length > 0){
@@ -21,6 +22,7 @@ $('.nav-tabs a').click(function (e) {
 	checkDirty(target_id,function(){
 			$(target).tab('show');
 		});
+
 });
 
 $('#start_date').datetimepicker({

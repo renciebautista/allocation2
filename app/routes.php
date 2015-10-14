@@ -305,24 +305,9 @@ Route::get('mail4', function(){
 });
 
 Route::get('sob', function(){
-	$query1 = sprintf("SELECT 
-		GROUP_CONCAT(DISTINCT 
-			CONCAT('MAX(IF(weekno = ', weekno, ',allocation,NULL)) AS wek_', weekno)
-	  ) as query_sting
-	 FROM allocation_sobs;");
-	
-	$x = DB::select(DB::raw($query1));
-	// echo $x[0]->query_sting;
-
-	$query = sprintf("SELECT  allocation_id,allocations.ship_to, ".$x[0]->query_sting."
-		FROM allocation_sobs
-		join allocations on allocations.id = allocation_sobs.allocation_id
-		GROUP BY allocation_id");
-	
-	dd($query);
-
-	$records = DB::select(DB::raw($query));
-	var_dump($records);
+	$scheme = Scheme::find(192);
+	echo idate('W', strtotime($scheme->sob_start_date));
+	dd($scheme->sob_start_date);
 });
 
 

@@ -472,15 +472,26 @@
 					<div class="row mytable">
 						<div class="col-lg-12">
 							<div class="allocation_total table-responsive">
-								<table class="table table-condensed display compact ">
-									<tbody>
-										<tr class="blue">
-											<td>Ship To Name </td>
+								<table id="sob-allocation" class="table table-condensed table-bordered display compact">
+									<thead>
+										<tr>
+											<th>Ship To Name </th>
 											@foreach($sob_header as $header)
-											<td class="sob_alloc_header">{{ strtoupper($header)}}</td>
+											<th class="alloc_per">{{ strtoupper($header)}}</th>
 											@endforeach
-											<td class="sob_alloc_header">Total</td>
+											<th class="sob_alloc_header">Total</th>
 										</tr>
+										<tr>
+											<th>Percentage</th>
+											@foreach($sob_header as $header)
+											<th class="alloc_per">
+												{{ Form::text('ulp_premium',$sobs[0]->share,array('id' => 'ulp_premium')) }}
+											</th>
+											@endforeach
+											<th>100%</th>
+										</tr>
+									</thead>
+									<tbody>
 										
 										@foreach($sobs as $sob)
 										<?php $sum = 0; ?>
@@ -610,6 +621,15 @@
 @stop
 
 @section('page-script')
+	$('.nav-tabs a').on( 'shown.bs.tab', function (e) {
+        $.fn.dataTable.tables( {visible: true, api: true} ).columns.adjust();
+    } );
 
 
+	$('#sob-allocation').DataTable({
+		"scrollY": "500px",
+		"scrollCollapse": true,
+		"paging": false,
+		"bSort": false
+	});
 @stop

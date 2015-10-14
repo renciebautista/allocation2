@@ -799,3 +799,11 @@ h2, .h2 {
 	width: 2%;
 	text-align: center;
 }
+
+.alloc_per {
+	text-align: center;
+
+}
+.alloc_per input{
+		width: 40px;
+}

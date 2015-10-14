@@ -352,7 +352,7 @@ class SchemeController extends \BaseController {
 		if(count($sobs) >0){
 			$cnt = 0;
 			foreach ($sobs[0] as $key => $value) {
-				if($cnt > 1){
+				if($cnt > 2){
 					$sob_header[] = $key;
 				}
 				$cnt++;
@@ -941,10 +941,10 @@ class SchemeController extends \BaseController {
 					->orderBy('id', 'asc')
 					->get();
 				if(count($_shiptos) == 0){
-					AllocationSob::createAllocation($customer,$scheme);
+					AllocationSob::createAllocation($id,$customer);
 				}else{
 					foreach ($_shiptos as $_shipto) {
-						AllocationSob::createAllocation($_shipto,$scheme);
+						AllocationSob::createAllocation($id,$_shipto);
 					}
 				}
 				
