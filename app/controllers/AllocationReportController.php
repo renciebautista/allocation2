@@ -111,186 +111,186 @@ class AllocationReportController extends \BaseController {
 	 */
 	public function store()
 	{
-		echo '<pre>';
-		print_r(Input::all());
-		echo '</pre>';
-		// $input = Input::all();
-		// $validation = Validator::make($input, AllocationReportTemplate::$rules);
+		// echo '<pre>';
+		// print_r(Input::all());
+		// echo '</pre>';
+		$input = Input::all();
+		$validation = Validator::make($input, AllocationReportTemplate::$rules);
 
-		// if($validation->passes())
-		// {
-		// 	DB::beginTransaction();
-		// 	try {
-		// 		$template = new AllocationReportTemplate;
-		// 		$template->created_by = Auth::id();
-		// 		$template->name = strtoupper(Input::get('name'));
-		// 		$template->created_at = date('Y-m-d H:i:s');
-		// 		$template->updated_at = date('Y-m-d H:i:s');
-		// 		$template->save();
+		if($validation->passes())
+		{
+			DB::beginTransaction();
+			try {
+				$template = new AllocationReportTemplate;
+				$template->created_by = Auth::id();
+				$template->name = strtoupper(Input::get('name'));
+				$template->created_at = date('Y-m-d H:i:s');
+				$template->updated_at = date('Y-m-d H:i:s');
+				$template->save();
 
-		// 		if(Input::has('st')){
-		// 			$data = array();
-		// 			foreach (Input::get('st') as $value) {
-		// 				$data[] = ['template_id' => $template->id, 'filter_type_id' => 1, 'filter_id' => $value];
-		// 			}
-		// 			if(count($data) > 0){
-		// 				AllocationReportFilter::insert($data);
-		// 			}
-		// 		}	
+				if(Input::has('st')){
+					$data = array();
+					foreach (Input::get('st') as $value) {
+						$data[] = ['template_id' => $template->id, 'filter_type_id' => 1, 'filter_id' => $value];
+					}
+					if(count($data) > 0){
+						AllocationReportFilter::insert($data);
+					}
+				}	
 
-		// 		if(Input::has('scope')){
-		// 			$data = array();
-		// 			foreach (Input::get('scope') as $value) {
-		// 				$data[] = ['template_id' => $template->id, 'filter_type_id' => 2, 'filter_id' => $value];
-		// 			}
-		// 			if(count($data) > 0){
-		// 				AllocationReportFilter::insert($data);
-		// 			}
-		// 		}	
+				if(Input::has('scope')){
+					$data = array();
+					foreach (Input::get('scope') as $value) {
+						$data[] = ['template_id' => $template->id, 'filter_type_id' => 2, 'filter_id' => $value];
+					}
+					if(count($data) > 0){
+						AllocationReportFilter::insert($data);
+					}
+				}	
 
-		// 		if(Input::has('pro')){
-		// 			$data = array();
-		// 			foreach (Input::get('pro') as $value) {
-		// 				$data[] = ['template_id' => $template->id, 'filter_type_id' => 3, 'filter_id' => $value];
-		// 			}
-		// 			if(count($data) > 0){
-		// 				AllocationReportFilter::insert($data);
-		// 			}
-		// 		}	
+				if(Input::has('pro')){
+					$data = array();
+					foreach (Input::get('pro') as $value) {
+						$data[] = ['template_id' => $template->id, 'filter_type_id' => 3, 'filter_id' => $value];
+					}
+					if(count($data) > 0){
+						AllocationReportFilter::insert($data);
+					}
+				}	
 
-		// 		if(Input::has('planner')){
-		// 			$data = array();
-		// 			foreach (Input::get('planner') as $value) {
-		// 				$data[] = ['template_id' => $template->id, 'filter_type_id' => 4, 'filter_id' => $value];
-		// 			}
-		// 			if(count($data) > 0){
-		// 				AllocationReportFilter::insert($data);
-		// 			}
-		// 		}	
+				if(Input::has('planner')){
+					$data = array();
+					foreach (Input::get('planner') as $value) {
+						$data[] = ['template_id' => $template->id, 'filter_type_id' => 4, 'filter_id' => $value];
+					}
+					if(count($data) > 0){
+						AllocationReportFilter::insert($data);
+					}
+				}	
 
-		// 		if(Input::has('app')){
-		// 			$data = array();
-		// 			foreach (Input::get('app') as $value) {
-		// 				$data[] = ['template_id' => $template->id, 'filter_type_id' => 5, 'filter_id' => $value];
-		// 			}
-		// 			if(count($data) > 0){
-		// 				AllocationReportFilter::insert($data);
-		// 			}
-		// 		}	
+				if(Input::has('app')){
+					$data = array();
+					foreach (Input::get('app') as $value) {
+						$data[] = ['template_id' => $template->id, 'filter_type_id' => 5, 'filter_id' => $value];
+					}
+					if(count($data) > 0){
+						AllocationReportFilter::insert($data);
+					}
+				}	
 
-		// 		if(Input::has('type')){
-		// 			$data = array();
-		// 			foreach (Input::get('type') as $value) {
-		// 				$data[] = ['template_id' => $template->id, 'filter_type_id' => 6, 'filter_id' => $value];
-		// 			}
-		// 			if(count($data) > 0){
-		// 				AllocationReportFilter::insert($data);
-		// 			}
-		// 		}	
+				if(Input::has('type')){
+					$data = array();
+					foreach (Input::get('type') as $value) {
+						$data[] = ['template_id' => $template->id, 'filter_type_id' => 6, 'filter_id' => $value];
+					}
+					if(count($data) > 0){
+						AllocationReportFilter::insert($data);
+					}
+				}	
 
-		// 		if(Input::has('division')){
-		// 			$data = array();
-		// 			foreach (Input::get('division') as $value) {
-		// 				$data[] = ['template_id' => $template->id, 'filter_type_id' => 7, 'filter_id' => $value];
-		// 			}
-		// 			if(count($data) > 0){
-		// 				AllocationReportFilter::insert($data);
-		// 			}
-		// 		}
+				if(Input::has('division')){
+					$data = array();
+					foreach (Input::get('division') as $value) {
+						$data[] = ['template_id' => $template->id, 'filter_type_id' => 7, 'filter_id' => $value];
+					}
+					if(count($data) > 0){
+						AllocationReportFilter::insert($data);
+					}
+				}
 
-		// 		if(Input::has('category')){
-		// 			$data = array();
-		// 			foreach (Input::get('category') as $value) {
-		// 				$data[] = ['template_id' => $template->id, 'filter_type_id' => 8, 'filter_id' => $value];
-		// 			}
-		// 			if(count($data) > 0){
-		// 				AllocationReportFilter::insert($data);
-		// 			}
-		// 		}
+				if(Input::has('category')){
+					$data = array();
+					foreach (Input::get('category') as $value) {
+						$data[] = ['template_id' => $template->id, 'filter_type_id' => 8, 'filter_id' => $value];
+					}
+					if(count($data) > 0){
+						AllocationReportFilter::insert($data);
+					}
+				}
 
-		// 		if(Input::has('brand')){
-		// 			$data = array();
-		// 			foreach (Input::get('brand') as $value) {
-		// 				$data[] = ['template_id' => $template->id, 'filter_type_id' => 9, 'filter_id' => $value];
-		// 			}
-		// 			if(count($data) > 0){
-		// 				AllocationReportFilter::insert($data);
-		// 			}
-		// 		}
+				if(Input::has('brand')){
+					$data = array();
+					foreach (Input::get('brand') as $value) {
+						$data[] = ['template_id' => $template->id, 'filter_type_id' => 9, 'filter_id' => $value];
+					}
+					if(count($data) > 0){
+						AllocationReportFilter::insert($data);
+					}
+				}
 
-		// 		if(Input::has('customers')){
-		// 			$data = array();
-		// 			$customers = explode(",", Input::get('customers'));
-		// 			if(!empty($customers)){
-		// 				foreach ($customers as $value) {
-		// 					$data[] = ['template_id' => $template->id, 'filter_type_id' => 10, 'filter_id' => trim($value)];
-		// 				}
-		// 				if(count($data) > 0){
-		// 					AllocationReportFilter::insert($data);
-		// 				}
-		// 			}
+				if(Input::has('customers')){
+					$data = array();
+					$customers = explode(",", Input::get('customers'));
+					if(!empty($customers)){
+						foreach ($customers as $value) {
+							$data[] = ['template_id' => $template->id, 'filter_type_id' => 10, 'filter_id' => trim($value)];
+						}
+						if(count($data) > 0){
+							AllocationReportFilter::insert($data);
+						}
+					}
 					
-		// 		}
+				}
 
-		// 		if(Input::has('outlets_involved')){
-		// 			$data = array();
-		// 			$outlets = explode(",", Input::get('outlets_involved'));
-		// 			if(!empty($outlets)){
-		// 				foreach ($outlets as $value) {
-		// 					$data[] = ['template_id' => $template->id, 'filter_type_id' => 11, 'filter_id' => trim($value)];
-		// 				}
-		// 				if(count($data) > 0){
-		// 					AllocationReportFilter::insert($data);
-		// 				}
-		// 			}
-		// 		}
+				if(Input::has('outlets_involved')){
+					$data = array();
+					$outlets = explode(",", Input::get('outlets_involved'));
+					if(!empty($outlets)){
+						foreach ($outlets as $value) {
+							$data[] = ['template_id' => $template->id, 'filter_type_id' => 11, 'filter_id' => trim($value)];
+						}
+						if(count($data) > 0){
+							AllocationReportFilter::insert($data);
+						}
+					}
+				}
 
-		// 		if(Input::has('channels_involved')){
-		// 			$data = array();
-		// 			$channels = explode(",", Input::get('channels_involved'));
-		// 			if(!empty($channels)){
-		// 				foreach ($channels as $value) {
-		// 					$data[] = ['template_id' => $template->id, 'filter_type_id' => 12, 'filter_id' => trim($value)];
-		// 				}
-		// 				if(count($data) > 0){
-		// 					AllocationReportFilter::insert($data);
-		// 				}
-		// 			}
-		// 		}
+				if(Input::has('channels_involved')){
+					$data = array();
+					$channels = explode(",", Input::get('channels_involved'));
+					if(!empty($channels)){
+						foreach ($channels as $value) {
+							$data[] = ['template_id' => $template->id, 'filter_type_id' => 12, 'filter_id' => trim($value)];
+						}
+						if(count($data) > 0){
+							AllocationReportFilter::insert($data);
+						}
+					}
+				}
 					
 
-		// 		if(Input::has('field')){
-		// 			$scheme_fields = array();
-		// 			foreach (Input::get('field') as $value) {
-		// 				$scheme_fields[] = ['template_id' => $template->id, 'field_id' => $value];
-		// 			}
-		// 			if(count($scheme_fields) > 0){
-		// 				AllocSchemeField::insert($scheme_fields);
-		// 			}
-		// 		}
+				if(Input::has('field')){
+					$scheme_fields = array();
+					foreach (Input::get('field') as $value) {
+						$scheme_fields[] = ['template_id' => $template->id, 'field_id' => $value];
+					}
+					if(count($scheme_fields) > 0){
+						AllocSchemeField::insert($scheme_fields);
+					}
+				}
 				
 
-		// 		DB::commit();
-		// 		return Redirect::action('AllocationReportController@index')
-		// 			->with('class', 'alert-success')
-		// 			->with('message', 'Template successfuly created.');
+				DB::commit();
+				return Redirect::action('AllocationReportController@index')
+					->with('class', 'alert-success')
+					->with('message', 'Template successfuly created.');
 
-		// 	} catch (Exception $e) {
-		// 		DB::rollback();
-		// 		return Redirect::action('AllocationReportController@create')
-		// 		->withInput()
-		// 		->withErrors($validation)
-		// 		->with('class', 'alert-danger')
-		// 		->with('message', 'There were validation errors.');
+			} catch (Exception $e) {
+				DB::rollback();
+				return Redirect::action('AllocationReportController@create')
+				->withInput()
+				->withErrors($validation)
+				->with('class', 'alert-danger')
+				->with('message', 'There were validation errors.');
 				
-		// 	}
-		// }
+			}
+		}
 
-		// return Redirect::action('AllocationReportController@create')
-		// 	->withInput()
-		// 	->withErrors($validation)
-		// 	->with('class', 'alert-danger')
-		// 	->with('message', 'There were validation errors.');
+		return Redirect::action('AllocationReportController@create')
+			->withInput()
+			->withErrors($validation)
+			->with('class', 'alert-danger')
+			->with('message', 'There were validation errors.');
 	}
 
 	/**
