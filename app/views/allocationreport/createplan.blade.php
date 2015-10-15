@@ -69,7 +69,7 @@
 					<div class="row">
 						<div class="col-lg-12">
 						{{ Form::label('app', 'Activity Approver', array('class' => 'control-label')) }}
-						{{ Form::select('app[]', $approvers, null, array('id' => 'app','class' => 'form-control', 'multiple' => 'multiple')) }}
+						{{ Form::select('app[]', array('0' => 'NONE') + $planners, null, array('id' => 'app','class' => 'form-control', 'multiple' => 'multiple')) }}
 						</div>
 					</div>
 				</div>

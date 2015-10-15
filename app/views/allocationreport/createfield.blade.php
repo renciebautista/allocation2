@@ -12,6 +12,11 @@
 
 @include('partials.notification')
 
+<div class="form-group">
+	{{ HTML::linkAction('AllocationReportController@index', 'Back', array(), array('class' => 'btn btn-default')) }}
+</div>
+
+
 {{ Form::open(array('action' => 'AllocationReportController@store','class' => 'bs-component','id' => 'myform')) }}
 <div class="panel panel-default">
 	<div class="panel-heading">General Filters</div>
@@ -169,5 +174,16 @@
 
 @section('page-script')
 
+	$('#st,#scope,#pro,#planner,#app,#type').multiselect('selectAll', false);
+	$('#st,#scope,#pro,#planner,#app,#type').multiselect('updateButtonText');
+
+	$('#division').multiselect('selectAll', false);
+	$('#division').multiselect('updateButtonText');
+
+	$('#category').multiselect('selectAll', false);
+	$('#category').multiselect('updateButtonText');
+
+	$('#brand').multiselect('selectAll', false);
+	$('#brand').multiselect('updateButtonText');
 
 @stop

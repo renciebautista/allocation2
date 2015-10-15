@@ -14,12 +14,31 @@ class AllocationReport extends \Eloquent {
 				}
 				// WHERE CONCAT(",", `setcolumn`, ",") REGEXP ",(val1|val2|val3),"'
 				$query = ' AND CONCAT(",", '.$field.', ",") REGEXP ",('.$query_list.'),"';
+				
 			}else{
-				if(count($data_field) > 1){			
-					$query_list= '"'.implode('","', $data_field).'"';
-					$query = " AND ".$field." IN (".$query_list.")";
-				}else{
-					$query = ' AND '.$field.' = "'.$data_field[0].'"';
+				$with_zero = false;
+				if(in_array(0, $data_field)){
+					$with_zero = true;
+				}
+				if(count($data_field) > 1){		
+					if($with_zero){
+						$array_without_zero = array_diff($data_field, array(0));
+						$query_list = '"'.implode('","', $array_without_zero).'"';
+						$query = " AND ( ".$field." IN (".$query_list.") or ".$field." is NULL)";
+					}else{
+						$query_list= '"'.implode('","', $data_field).'"';
+						$query = " AND ".$field." IN (".$query_list.")";
+					}
+					
+				}else{	
+
+					if($with_zero){
+						$query = ' AND '.$field.' is NULL';
+					}else{
+						$query = ' AND '.$field.' = "'.$data_field[0].'"';
+					}
+
+					
 				}
 			}
 		}
@@ -51,43 +70,57 @@ class AllocationReport extends \Eloquent {
 			$cycles = ' AND activities.cycle_id = "'.$data['cycles'][0].'"';
 		}
 
-		if($user->inRoles(['FIELD SALES','CMD DIRECTOR','CD OPS APPROVER','GCOM APPROVER'])){
-			$status = ' AND activities.status_id = "9"';
+
+		if(!$user->inRoles(['ADMINISTRATOR'])){
+			$status = ' AND activities.status_id = "9" AND activities.disable = "0"';
 		}else{
 			if(!empty($data['status'])){
 				$status = self::generateQuery($data['status'],"activities.status_id");
 			}
+
+			if(!empty($data['proponents'])){
+				$proponents = self::generateQuery($data['proponents'],"activities.created_by");
+			}
+
+			if(!empty($data['planners'])){
+				$planners = self::generateQuery($data['planners'],"planner_tbl.user_id");
+			}
+
+			if(!empty($data['approvers'])){
+				$approvers = self::generateQuery($data['approvers'],"approver_tbl.approver_ids",true);
+			}
+
 		}	
 		
 		if(!empty($data['scopes'])){
 			$scopes = self::generateQuery($data['scopes'],"activities.scope_type_id");
 		}
 
-		if($user->inRoles(['PROPONENT'])){
-			$proponents =  sprintf(' AND activities.created_by = "%s"',$user->id);
-		}else{
-			if(!$user->inRoles(['FIELD SALES','CMD DIRECTOR','CD OPS APPROVER','GCOM APPROVER'])){
-				if(!empty($data['proponents'])){
-					$proponents = self::generateQuery($data['proponents'],"activities.created_by");
-				}
-			}
-		}
+		// if($user->inRoles(['PROPONENT'])){
+		// 	$proponents =  sprintf(' AND activities.created_by = "%s"',$user->id);
+		// }else{
+		// 	if(!$user->inRoles(['FIELD SALES','CMD DIRECTOR','CD OPS APPROVER','GCOM APPROVER'])){
+		// 		if(!empty($data['proponents'])){
+		// 			$proponents = self::generateQuery($data['proponents'],"activities.created_by");
+		// 		}
+		// 	}
+		// }
 
-		if($user->inRoles(['PMOG PLANNER'])){
-			$planners = sprintf(' AND planner_tbl.user_id = "%s"',$user->id);
-		}else{
-			if(!$user->inRoles(['FIELD SALES','CMD DIRECTOR','CD OPS APPROVER','GCOM APPROVER'])){
-				if(!empty($data['planners'])){
-					$planners = self::generateQuery($data['planners'],"planner_tbl.user_id");
-				}
-			}
-		}
+		// if($user->inRoles(['PMOG PLANNER'])){
+		// 	$planners = sprintf(' AND planner_tbl.user_id = "%s"',$user->id);
+		// }else{
+		// 	if(!$user->inRoles(['FIELD SALES','CMD DIRECTOR','CD OPS APPROVER','GCOM APPROVER'])){
+		// 		if(!empty($data['planners'])){
+		// 			$planners = self::generateQuery($data['planners'],"planner_tbl.user_id");
+		// 		}
+		// 	}
+		// }
 
-		if(!$user->inRoles(['FIELD SALES','CMD DIRECTOR','CD OPS APPROVER','GCOM APPROVER'])){
-			if(!empty($data['approvers'])){
-				$approvers = self::generateQuery($data['approvers'],"approver_tbl.approver_ids",true);
-			}
-		}
+		// if(!$user->inRoles(['FIELD SALES','CMD DIRECTOR','CD OPS APPROVER','GCOM APPROVER'])){
+		// 	if(!empty($data['approvers'])){
+		// 		$approvers = self::generateQuery($data['approvers'],"approver_tbl.approver_ids",true);
+		// 	}
+		// }
 
 		if(!empty($data['activitytypes'])){
 			$activitytypes = self::generateQuery($data['activitytypes'],"activities.activity_type_id");

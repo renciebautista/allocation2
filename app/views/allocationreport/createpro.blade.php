@@ -12,6 +12,10 @@
 
 @include('partials.notification')
 
+<div class="form-group">
+	{{ HTML::linkAction('AllocationReportController@index', 'Back', array(), array('class' => 'btn btn-default')) }}
+</div>
+
 {{ Form::open(array('action' => 'AllocationReportController@store','class' => 'bs-component', 'id' => 'myform')) }}
 <div class="panel panel-default">
 	<div class="panel-heading">General Filters</div>
@@ -58,7 +62,7 @@
 					<div class="row">
 						<div class="col-lg-12">
 						{{ Form::label('planner', 'PMOG Planner', array('class' => 'control-label')) }}
-						{{ Form::select('planner[]', $planners, null, array('id' => 'planner','class' => 'form-control', 'multiple' => 'multiple')) }}
+						{{ Form::select('planner[]', array('0' => 'NONE') + $planners, null, array('id' => 'planner','class' => 'form-control', 'multiple' => 'multiple')) }}
 						</div>
 					</div>
 				</div>

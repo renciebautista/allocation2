@@ -1,35 +1,37 @@
 @section('scripts')
 
-	$('#st,#scope,#pro,#planner,#app,#type').multiselect({
-		maxHeight: 200,
-		includeSelectAllOption: true,
-		enableCaseInsensitiveFiltering: true,
-		enableFiltering: true
-	});
+$(".disable-button").disableButton();
 
-	$('select#division').multiselect({
-		maxHeight: 200,
-		includeSelectAllOption: true,
-		enableCaseInsensitiveFiltering: true,
-		enableFiltering: true,
-		
-	});
+$('#st,#scope,#pro,#planner,#app,#type').multiselect({
+	maxHeight: 200,
+	includeSelectAllOption: true,
+	enableCaseInsensitiveFiltering: true,
+	enableFiltering: true
+});
 
+$('select#division').multiselect({
+	maxHeight: 200,
+	includeSelectAllOption: true,
+	enableCaseInsensitiveFiltering: true,
+	enableFiltering: true,
+	
+});
 
-	$('select#category').multiselect({
-		maxHeight: 200,
-		includeSelectAllOption: true,
-		enableCaseInsensitiveFiltering: true,
-		enableFiltering: true,
-		
-	});
+$('select#category').multiselect({
+	maxHeight: 200,
+	includeSelectAllOption: true,
+	enableCaseInsensitiveFiltering: true,
+	enableFiltering: true,
+	
+});
 
-	$('select#brand').multiselect({
-		maxHeight: 200,
-		includeSelectAllOption: true,
-		enableCaseInsensitiveFiltering: true,
-		enableFiltering: true,
-	});
+$('select#brand').multiselect({
+	maxHeight: 200,
+	includeSelectAllOption: true,
+	enableCaseInsensitiveFiltering: true,
+	enableFiltering: true,
+});
+
 
 $("#tree3").fancytree({
 	checkbox: true,

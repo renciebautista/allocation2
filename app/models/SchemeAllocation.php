@@ -326,13 +326,17 @@ class SchemeAllocation extends \Eloquent {
 			->groupBy('outlet')
 			->orderBy('id')
 			->get();
-		$data = array();
+		$data = array(array(
+				'title' => 'NONE',
+				'key' => 'NONE',
+				));
 		foreach ($outlets as $outlet) {
 			$data[] = array(
 				'title' => $outlet->outlet,
 				'key' => $outlet->outlet,
 				);
 		}
+
 		return $data;
 	}
 
@@ -342,7 +346,10 @@ class SchemeAllocation extends \Eloquent {
 			->groupBy('channel')
 			->orderBy('id')
 			->get();
-		$data = array();
+		$data = array(array(
+				'title' => 'NONE',
+				'key' => 'NONE',
+				));
 		foreach ($channels as $channel) {
 			$data[] = array(
 				'title' => $channel->channel,

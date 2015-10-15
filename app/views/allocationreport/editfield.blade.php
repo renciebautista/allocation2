@@ -12,6 +12,11 @@
 
 @include('partials.notification')
 
+<div class="form-group">
+	{{ HTML::linkAction('AllocationReportController@index', 'Back', array(), array('class' => 'btn btn-default')) }}
+</div>
+
+
 {{ Form::open(array('action' => array('AllocationReportController@update',$template->id), 'method' => 'PUT', 'class' => 'bs-component')) }}
 <div class="panel panel-default">
 	<div class="panel-heading">General Filters</div>
@@ -165,39 +170,6 @@
 
 @section('page-script')
 
-$(".disable-button").disableButton();
-
-$("#tree3").fancytree({
-	checkbox: true,
-	selectMode: 3,
-	source: {
-		url: "{{ URL::action('AllocationReportController@customer') }}"
-	},
-	select: function(event, data) {
-		// Get a list of all selected nodes, and convert to a key array:
-		var selKeys = $.map(data.tree.getSelectedNodes(), function(node){
-			 return node.key;
-		});
-		selectedkeys = selKeys;
-		//console.log(selKeys);
-		// $("#echoSelection3").text(selKeys.join(", "));
-
-
-		// Get a list of all selected TOP nodes
-		var selRootNodes = data.tree.getSelectedNodes(true);
-		// ... and convert to a key array:
-		var selRootKeys = $.map(selRootNodes, function(node){
-		  return node.key;
-		});
-
-		var keys = selRootKeys.join(".").split(".");
-		
-		$("#customers").val(selRootKeys.join(", "));
-	},
-	cookieId: "fancytree-tree3",
-    idPrefix: "fancytree-tree3-"
-});
-
 function getCustomer(){
 	$.ajax({
 		type: "GET",
@@ -209,52 +181,6 @@ function getCustomer(){
 		}
 	});
 }
-
-$("#btnCDeselectAll").click(function(){
-
-  	$("#tree3").fancytree("getTree").visit(function(node){
-    	node.setSelected(false);
-  	});
-  	return false;
-});
-$("#btnCSelectAll").click(function(){
-  	$("#tree3").fancytree("getTree").visit(function(node){
-    	node.setSelected(true);
-  	});
-  	return false;
-});
-
-
-$("#tree4").fancytree({
-	checkbox: true,
-	selectMode: 3,
-	source: {
-		url: "{{ URL::action('AllocationReportController@outlets') }}"
-	},
-	select: function(event, data) {
-		// Get a list of all selected nodes, and convert to a key array:
-		var selKeys = $.map(data.tree.getSelectedNodes(), function(node){
-			 return node.key;
-		});
-		selectedkeys = selKeys;
-		//console.log(selKeys);
-		// $("#echoSelection3").text(selKeys.join(", "));
-
-
-		// Get a list of all selected TOP nodes
-		var selRootNodes = data.tree.getSelectedNodes(true);
-		// ... and convert to a key array:
-		var selRootKeys = $.map(selRootNodes, function(node){
-		  return node.key;
-		});
-
-		var keys = selRootKeys.join(".").split(".");
-		
-		$("#outlets_involved").val(selRootKeys.join(", "));
-	},
-	cookieId: "fancytree-tree4",
-    idPrefix: "fancytree-tree4-"
-});
 
 
 function getOutlets(){
@@ -269,51 +195,6 @@ function getOutlets(){
 	});
 }
 
-$("#btnOutDeselectAll").click(function(){
-
-  	$("#tree4").fancytree("getTree").visit(function(node){
-    	node.setSelected(false);
-  	});
-  	return false;
-});
-$("#btnOutSelectAll").click(function(){
-  	$("#tree4").fancytree("getTree").visit(function(node){
-    	node.setSelected(true);
-  	});
-  	return false;
-});
-
-$("#tree5").fancytree({
-	checkbox: true,
-	selectMode: 3,
-	source: {
-		url: "{{ URL::action('AllocationReportController@channels') }}"
-	},
-	select: function(event, data) {
-		// Get a list of all selected nodes, and convert to a key array:
-		var selKeys = $.map(data.tree.getSelectedNodes(), function(node){
-			 return node.key;
-		});
-		selectedkeys = selKeys;
-		//console.log(selKeys);
-		// $("#echoSelection3").text(selKeys.join(", "));
-
-
-		// Get a list of all selected TOP nodes
-		var selRootNodes = data.tree.getSelectedNodes(true);
-		// ... and convert to a key array:
-		var selRootKeys = $.map(selRootNodes, function(node){
-		  return node.key;
-		});
-
-		var keys = selRootKeys.join(".").split(".");
-		
-		$("#channels_involved").val(selRootKeys.join(", "));
-	},
-	cookieId: "fancytree-tree5",
-    idPrefix: "fancytree-tree5-"
-});
-
 function getChannels(){
 	$.ajax({
 		type: "GET",
@@ -326,19 +207,7 @@ function getChannels(){
 	});
 }
 
-$("#btnChDeselectAll").click(function(){
 
-  	$("#tree5").fancytree("getTree").visit(function(node){
-    	node.setSelected(false);
-  	});
-  	return false;
-});
-$("#btnChSelectAll").click(function(){
-  	$("#tree5").fancytree("getTree").visit(function(node){
-    	node.setSelected(true);
-  	});
-  	return false;
-});
 
 getCustomer();
 getOutlets();

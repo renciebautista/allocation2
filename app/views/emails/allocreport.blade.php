@@ -16,7 +16,7 @@
 <body>
 	<h1>Hi {{ ucwords(strtolower($user['first_name'])) }}!</h1>
 
-<p>Your report with a template name {{ $template->name }} is ready for download.</p>
+<p>Your report with a name of {{ $name }} is ready for download.</p>
 <p>Click the link below to download the report</p>
 <a href='{{ URL::to('ar/'.$token) }}'>
     {{ URL::to('ar/'.$token)  }}

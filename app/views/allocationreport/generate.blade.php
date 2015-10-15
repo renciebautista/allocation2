@@ -12,11 +12,26 @@
 
 @include('partials.notification')
 
-{{ Form::open(array('action' => array('AllocationReportController@generate', $template->id) ,'class' => 'bs-component')) }}
+{{ Form::open(array('action' => array('AllocationReportController@generate', $template->id),'class' => 'bs-component','id' => 'myform')) }}
+
 {{ Form::hidden('temp_id', $template->id) }}
 <div class="panel panel-default">
 	<div class="panel-heading">Cycle Filter</div>
 	<div class="panel-body">
+
+		<div class="row">
+			<div class="col-lg-6">
+				<div class="form-group">
+					<div class="row">
+						<div class="col-lg-12">
+						{{ Form::label('desc', 'Report Name', array('class' => 'control-label')) }}
+						{{ Form::text('desc','',array('id' => 'desc', 'class' => 'form-control', 'placeholder' => 'Report Name' ,'maxlength' => 80)) }}
+						</div>
+					</div>
+				</div>
+			</div>
+			
+		</div>
 
 		<div class="row">
 			<div class="col-lg-6">
@@ -36,7 +51,7 @@
 </div>
 
 <div class="form-group">
-	{{ Form::submit('Generate Report', array('class' => 'btn btn-primary')) }}
+	{{ Form::submit('Request Report', array('class' => 'btn btn-primary')) }}
 	{{ HTML::linkAction('AllocationReportController@index', 'Back', array(), array('class' => 'btn btn-default')) }}
 </div>
 {{ Form::close() }}
@@ -49,6 +64,33 @@ $('#cy').multiselect({
 	includeSelectAllOption: true,
 	enableCaseInsensitiveFiltering: true,
 	enableFiltering: true
+});
+
+$("#myform").validate({
+	ignore: ':hidden:not(".multiselect")',
+	errorElement: "span", 
+	errorClass : "has-error",
+	rules: {
+		desc: {
+			required: true,
+			maxlength: 80
+			}
+	},
+	errorPlacement: function(error, element) {               
+		
+	},
+	highlight: function( element, errorClass, validClass ) {
+    	$(element).closest('div').addClass(errorClass).removeClass(validClass);
+  	},
+  	unhighlight: function( element, errorClass, validClass ) {
+    	$(element).closest('div').removeClass(errorClass).addClass(validClass);
+  	},
+  	invalidHandler: function(form, validator) {
+        var errors = validator.numberOfInvalids();
+        if (errors) {
+              $("html, body").animate({ scrollTop: 0 }, "fast");
+        }
+    }
 });
 
 

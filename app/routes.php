@@ -78,85 +78,85 @@ Queue::getIron()->ssl_verifypeer = false;
 // 	}
 // });
 
-// Route::get('allocreport', function(){
-// 	$template = AllocationReportTemplate::findOrFail(27);
-// 	$headers = AllocSchemeField::getFields($template->id);
-// 	$data['cycles'] = array(7);
-// 	$data['status'] = AllocationReportFilter::getList($template->id,1);
-// 	$data['scopes'] = AllocationReportFilter::getList($template->id,2);
-// 	$data['proponents'] = AllocationReportFilter::getList($template->id,3);
-// 	$data['planners'] = AllocationReportFilter::getList($template->id,4);
-// 	$data['approvers'] = AllocationReportFilter::getList($template->id,5);
-// 	$data['activitytypes'] = AllocationReportFilter::getList($template->id,6);
-// 	$data['divisions'] = AllocationReportFilter::getList($template->id,7);
-// 	$data['categories'] = AllocationReportFilter::getList($template->id,8);
-// 	$data['brands'] = AllocationReportFilter::getList($template->id,9);
-// 	$data['customers'] = AllocationReportFilter::getList($template->id,10);
-// 	$data['outlets'] = AllocationReportFilter::getList($template->id,11);
-// 	$data['channels'] = AllocationReportFilter::getList($template->id,12);
-// 	$data['fields'] = $headers;
-// 	$take = 1000; // adjust this however you choose
-// 	$counter = 0;
-// 	$user = User::find(1);
-// 	// var_dump($user->roles[0]->name);
-// 	$token = md5(uniqid(mt_rand(), true));
+Route::get('allocreport', function(){
+	$template = AllocationReportTemplate::findOrFail(21);
+	$headers = AllocSchemeField::getFields($template->id);
+	$data['cycles'] = array(7);
+	$data['status'] = AllocationReportFilter::getList($template->id,1);
+	$data['scopes'] = AllocationReportFilter::getList($template->id,2);
+	$data['proponents'] = AllocationReportFilter::getList($template->id,3);
+	$data['planners'] = AllocationReportFilter::getList($template->id,4);
+	$data['approvers'] = AllocationReportFilter::getList($template->id,5);
+	$data['activitytypes'] = AllocationReportFilter::getList($template->id,6);
+	$data['divisions'] = AllocationReportFilter::getList($template->id,7);
+	$data['categories'] = AllocationReportFilter::getList($template->id,8);
+	$data['brands'] = AllocationReportFilter::getList($template->id,9);
+	$data['customers'] = AllocationReportFilter::getList($template->id,10);
+	$data['outlets'] = AllocationReportFilter::getList($template->id,11);
+	$data['channels'] = AllocationReportFilter::getList($template->id,12);
+	$data['fields'] = $headers;
+	$take = 1000; // adjust this however you choose
+	$counter = 0;
+	$user = User::find(1);
+	// var_dump($user->roles[0]->name);
+	$token = md5(uniqid(mt_rand(), true));
 		
-// 		$timeFirst  = strtotime(date('Y-m-d H:i:s'));
-// 		$filePath = storage_path('exports/'.$token.'.xlsx');
-// 		$writer = WriterFactory::create(Type::XLSX);
-// 		$writer->setShouldCreateNewSheetsAutomatically(true); // default value
-// 		$writer->openToFile($filePath); // write data to a file or to a PHP stream
-// 		$take = 1000; // adjust this however you choose
-// 		$counter = 0; // used to skip over the ones you've already processed
+		$timeFirst  = strtotime(date('Y-m-d H:i:s'));
+		$filePath = storage_path('exports/'.$token.'.xlsx');
+		$writer = WriterFactory::create(Type::XLSX);
+		$writer->setShouldCreateNewSheetsAutomatically(true); // default value
+		$writer->openToFile($filePath); // write data to a file or to a PHP stream
+		$take = 1000; // adjust this however you choose
+		$counter = 0; // used to skip over the ones you've already processed
 
 		
-// 		$header = array();
-// 		foreach ($headers as $value) {
-// 			$header[] = $value->desc_name;
-// 		}
+		$header = array();
+		foreach ($headers as $value) {
+			$header[] = $value->desc_name;
+		}
 		
-// 		$writer->addRow($header); // add multiple rows at a time
+		$writer->addRow($header); // add multiple rows at a time
 
-// 		while($rows = AllocationReport::getReport($data,$take,$counter,$user))
-// 		{
-// 			if(count($rows) == 0){
-// 				break;
-// 			}
-// 			$counter += $take;
-// 			foreach($rows as $key => $value)
-// 			{
-// 				$rows[$key] = (array) $value;
-// 			} 
-// 			$export_data = $rows;
+		while($rows = AllocationReport::getReport($data,$take,$counter,$user))
+		{
+			if(count($rows) == 0){
+				break;
+			}
+			$counter += $take;
+			foreach($rows as $key => $value)
+			{
+				$rows[$key] = (array) $value;
+			} 
+			$export_data = $rows;
 
-// 			$writer->addRows($export_data); // add multiple rows at a time
-// 		}
-// 		$writer->close();
-// 		$timeSecond = strtotime(date('Y-m-d H:i:s'));
-// 		$differenceInSeconds = $timeSecond - $timeFirst;
+			$writer->addRows($export_data); // add multiple rows at a time
+		}
+		$writer->close();
+		$timeSecond = strtotime(date('Y-m-d H:i:s'));
+		$differenceInSeconds = $timeSecond - $timeFirst;
 	
 
-// 		$data['template'] = $template;
-// 		$data['token'] = $token;
-// 		$data['user'] = $user;
-// 		$name = $template->name;
-// 		// $grayfield = array('HOST SKU CODE','HOST SKU DESC','PREMIUM SKU CODE','PREMIUM SKU DESC','NON-ULP PREMIUM'); 
-// 		// $greenfield = array('ITEM CODE','BARCODE','CASECODE'); 
-// 		// $yellowfield = array('GROUP','AREA','SOLD TO','SHIP TO CODE','CUSTOMER SHIP TO NAME','CHANNEL','ACCOUNT NAME');
-// 		// $blackfield = array('UOM',)
+		$data['template'] = $template;
+		$data['token'] = $token;
+		$data['user'] = $user;
+		$name = $template->name;
+		// $grayfield = array('HOST SKU CODE','HOST SKU DESC','PREMIUM SKU CODE','PREMIUM SKU DESC','NON-ULP PREMIUM'); 
+		// $greenfield = array('ITEM CODE','BARCODE','CASECODE'); 
+		// $yellowfield = array('GROUP','AREA','SOLD TO','SHIP TO CODE','CUSTOMER SHIP TO NAME','CHANNEL','ACCOUNT NAME');
+		// $blackfield = array('UOM',)
 
-// 		$excel2 = PHPExcel_IOFactory::createReader('Excel2007');
-// 		$excel2 = $excel2->load($filePath); // Empty Sheet
-// 		$excel2->setActiveSheetIndex(0);
-// 		$excel2->getActiveSheet()
-// 			->getStyle('A1:B1')->getFill()
-// 			->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
-// 			->getStartColor()->setARGB('FFE8E5E5');
+		$excel2 = PHPExcel_IOFactory::createReader('Excel2007');
+		$excel2 = $excel2->load($filePath); // Empty Sheet
+		$excel2->setActiveSheetIndex(0);
+		$excel2->getActiveSheet()
+			->getStyle('A1:B1')->getFill()
+			->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
+			->getStartColor()->setARGB('FFE8E5E5');
 
 
-// 		$objWriter = PHPExcel_IOFactory::createWriter($excel2, 'Excel2007');
-// 		$objWriter->save(storage_path('exports/'.$token.'_2.xlsx'));
-// });
+		$objWriter = PHPExcel_IOFactory::createWriter($excel2, 'Excel2007');
+		$objWriter->save(storage_path('exports/'.$token.'_2.xlsx'));
+});
 
 // Route::get('testpdf',function(){
 // 	$activity = Activity::find(34);
@@ -514,6 +514,7 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('reports/allocation', 'AllocationReportController@index');
 	Route::get('reports/allocation/create', 'AllocationReportController@create');
 	Route::post('reports/allocation/create', 'AllocationReportController@store');
+	Route::get('reports/allocation/{id}/history', 'AllocationReportController@history');
 	Route::get('reports/allocation/{id}/generate', 'AllocationReportController@show');
 	Route::post('reports/allocation/{id}/generate', 'AllocationReportController@generate');
 	Route::get('reports/allocation/{id}', 'AllocationReportController@edit');

@@ -12,6 +12,10 @@
 
 @include('partials.notification')
 
+<div class="form-group">
+	{{ HTML::linkAction('AllocationReportController@index', 'Back', array(), array('class' => 'btn btn-default')) }}
+</div>
+
 {{ Form::open(array('action' => 'AllocationReportController@store','class' => 'bs-component','id' => 'myform')) }}
 <div class="panel panel-default">
 	<div class="panel-heading">General Filters</div>
@@ -68,7 +72,7 @@
 					<div class="row">
 						<div class="col-lg-12">
 						{{ Form::label('planner', 'PMOG Planner', array('class' => 'control-label')) }}
-						{{ Form::select('planner[]', $planners, null, array('id' => 'planner','class' => 'form-control', 'multiple' => 'multiple')) }}
+						{{ Form::select('planner[]', array('0' => 'NONE') + $planners, null, array('id' => 'planner','class' => 'form-control', 'multiple' => 'multiple')) }}
 						</div>
 					</div>
 				</div>
@@ -209,5 +213,16 @@
 
 @section('page-script')
 
-$(".disable-button").disableButton();
+	$('#st,#scope,#pro,#planner,#app,#type').multiselect('selectAll', false);
+	$('#st,#scope,#pro,#planner,#app,#type').multiselect('updateButtonText');
+
+	$('#division').multiselect('selectAll', false);
+	$('#division').multiselect('updateButtonText');
+
+	$('#category').multiselect('selectAll', false);
+	$('#category').multiselect('updateButtonText');
+
+	
+	$('#brand').multiselect('selectAll', false);
+	$('#brand').multiselect('updateButtonText');
 @stop

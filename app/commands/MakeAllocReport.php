@@ -46,6 +46,7 @@ class MakeAllocReport extends Command {
 		$id = $this->argument('temp_id');
 		$user_id = $this->argument('user_id');
 		$cycles = $this->argument('cycles');
+		$fileName = $this->argument('name');
 		$user = User::find($user_id);
 		$template = AllocationReportTemplate::findOrFail($id);
 		$headers = AllocSchemeField::getFields($template->id);
@@ -157,44 +158,39 @@ class MakeAllocReport extends Command {
 		$this->line( 'Time used ' . $differenceInSeconds . " sec");
 
 		
-		// $newfile = new AllocationReportFile;
-		// $newfile->created_by = $user->id;
-		// $newfile->token = $token;AllocationReportFile
-		// $newfile->file_name = $token.'.xlsx';
-		// $newfile->template_name = $template->name.'_'.date('Y_m_d').'.xlsx';
-		// $newfile->save();
+		$newfile = new AllocationReportFile;
+		$newfile->created_by = $user->id;
+		$newfile->template_id = $template->id;
+		$newfile->token = $token;
+		$newfile->file_name = $token.'.xlsx';
+		$newfile->template_name = $fileName.'.xlsx';
+		$newfile->save();
 		
 		// $template->token = $token;
-		$template->token = $token;
-		$template->file_name = $token.'.xlsx';
-		$template->template_name = $template->name.'_'.date('Y_m_d').'.xlsx';
-		$template->report_generated = date('Y-m-d H:i:s');
-		$template->update();
+		// $template->token = $token;
+		// $template->file_name = $token.'.xlsx';
+		// $template->template_name = $template->name.'_'.date('Y_m_d').'.xlsx';
+		// $template->report_generated = date('Y-m-d H:i:s');
+		// $template->update();
 
 
 		$data['template'] = $template;
 		$data['token'] = $token;
 		$data['user'] = $user;
-		$name = $template->name;
+		$data['name'] = $fileName;
 		
 		$this->line($template->file_name);
-
-		// Mail::send('emails.allocreport', $data, function($message) use ($user, $template){
-		// 		$message->to("rbautista@chasetech.com", $user->first_name);
-		// 		$message->bcc("grace.erum@unilever.com");
-		// 		$message->subject('Allocation Report - '.$template->name);
-		// 	});	
 
 		if($_ENV['MAIL_TEST']){
 			Mail::send('emails.allocreport', $data, function($message) use ($user, $template){
 				$message->to("rbautista@chasetech.com", $user->first_name);
 				$message->bcc("grace.erum@unilever.com");
-				$message->subject('Allocation Report - '.$template->name);
+				$message->subject('Allocation Report - '.$fileName);
 			});	
 		}else{
 			Mail::send('emails.allocreport', $data, function($message) use ($user, $template){
 				$message->to($user->email, $user->first_name);
-				$message->subject('Allocation Report - '.$template->name);
+				$message->subject('Allocation Report - '.$$fileName;
 			});	
 		}
 		
@@ -211,6 +207,7 @@ class MakeAllocReport extends Command {
 			array('temp_id', InputArgument::REQUIRED, 'Template Id'),
 			array('user_id', InputArgument::REQUIRED, 'User Id'),
 			array('cycles', InputArgument::REQUIRED, 'Selected Cycles'),
+			array('name', InputArgument::REQUIRED, 'Template Name'),
 		);
 	}
 

@@ -30,31 +30,22 @@
 			<table class="table table-striped table-condensed table-hover table-bordered">
 				<thead>
 					<tr>
-						<th>Date Created</th>
-						<th class="center">Template Name</th>
-						<th>Last Generated Report</th>
-						<th colspan="4" style="width:25%;" class="dash-action">Action</th>
+						<th>Template Name</th>
+						<th style="width:10%;">Date Created</th>
+						<th colspan="5" style="width:25%;" class="dash-action">Action</th>
 					</tr>
 				</thead>
 				<tbody>
 					@if(count($templates) == 0)
 					<tr>
-						<td colspan="4">No record found!</td>
+						<td colspan="7">No record found!</td>
 					</tr>
 					@else
 					@foreach($templates as $template)
 					<tr>
-						<td>{{ date_format(date_create($template->created_at),'M j, Y') }}</td>
+						
 						<td>{{ $template->name }}</td>
-						<td>
-							@if($template->report_generated != "0000-00-00 00:00:00")
-							<a href='{{ URL::to('ar/'.$template->token) }}'>
-							    {{ date_format(date_create($template->report_generated),'M j, Y H:i:s') }}
-							</a>
-
-							@endif
-							
-						</td>
+						<td>{{ date_format(date_create($template->created_at),'M j, Y') }}</td>
 						<td class="action">
 							{{ Form::open(array('method' => 'DELETE', 'action' => array('AllocationReportController@destroy', $template->id))) }}                       
 							{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}
@@ -64,12 +55,15 @@
 							{{ HTML::linkAction('AllocationReportController@edit','Edit', $template->id, array('class' => 'btn btn-info btn-xs')) }}
 						</td>
 						<td class="action">
+							{{ HTML::linkAction('AllocationReportController@history','History', $template->id, array('class' => 'btn btn-info btn-xs')) }}
+						</td>
+						<td class="action">
 							{{ Form::open(array('action' => array('AllocationReportController@duplicate', $template->id))) }}                       
 							{{ Form::submit('Duplicate', array('class'=> 'btn btn-info btn-xs','onclick' => "if(!confirm('Are you sure to duplicate this record?')){return false;};")) }}
 							{{ Form::close() }}
 						</td>
 						<td class="action">
-							{{ HTML::linkAction('AllocationReportController@show','Generate Report', $template->id, array('class' => 'btn btn-success btn-xs')) }}
+							{{ HTML::linkAction('AllocationReportController@show','Request Report', $template->id, array('class' => 'btn btn-success btn-xs')) }}
 						</td>
 					</tr>
 					@endforeach
