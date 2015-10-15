@@ -332,10 +332,10 @@ class AllocationReportController extends \BaseController {
 			
 			if($_ENV['MAIL_TEST']){
 				$report_id = Queue::push('AllocReportScheduler', array('temp_id' => $temp_id, 
-				'user_id' => $user_id,'cycles' => (string)$_cycles),$filename,'allocreport');
+				'user_id' => $user_id,'cycles' => (string)$_cycles),(string)$filename,'allocreport');
 			}else{
 				$report_id = Queue::push('AllocReportScheduler', array('temp_id' => $temp_id, 
-				'user_id' => $user_id,'cycles' => (string)$_cycles),$filename,'p_allocreport');
+				'user_id' => $user_id,'cycles' => (string)$_cycles),(string)$filename,'p_allocreport');
 			}
 
 			return Redirect::to(URL::action('AllocationReportController@show', array('id' => $template->id)))

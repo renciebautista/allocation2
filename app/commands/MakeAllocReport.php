@@ -47,6 +47,7 @@ class MakeAllocReport extends Command {
 		$user_id = $this->argument('user_id');
 		$cycles = $this->argument('cycles');
 		$fileName = $this->argument('name');
+		
 		$user = User::find($user_id);
 		$template = AllocationReportTemplate::findOrFail($id);
 		$headers = AllocSchemeField::getFields($template->id);
