@@ -869,6 +869,28 @@ class SchemeController extends \BaseController {
 		Excel::create($scheme->name, function($excel) use($allocations){
 			$excel->sheet('allocations', function($sheet) use($allocations) {
 				$sheet->fromModel($allocations,null, 'A1', true);
+				$sheet->row(1, array(
+				    'GROUP',
+					'AREA',
+					'SOLD TO',
+					'SHIP TO',	
+					'CHANNEL',	
+					'OUTLET',	
+					'SOLD TO GSV',	
+					'SOLD TO GSV PERCENTAGE',	
+					'SOLD TO ALLOCATION',
+					'SHIP TO GSV',
+					'SHIP TO GSV PERCENTAGE',	
+					'SHIP TO ALLOCATION',
+					'OUTLET GSV',
+					'OUTLET GSV PERCENTAGE',	
+					'OUTLET ALLOCATION',
+					'MULTIPLIER',
+					'COMPUTED ALLOCATION',	
+					'FORCE ALLOCATION',
+					'FINAL ALLOCATION'
+				));
+
 			})->download('xls');
 
 		});

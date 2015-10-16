@@ -42,7 +42,42 @@ class SchemeAllocation extends \Eloquent {
 	}
 
 	public static function getExportAllocations($id){
-		return self::select('schemes.name','allocations.*')
+		return self::select('allocations.id','schemes.name',
+			'allocations.group', 
+			'allocations.area',
+			'allocations.sold_to_code',
+			'allocations.sold_to',
+			'allocations.ship_to_code',
+			'allocations.ship_to',
+			'allocations.channel',
+			'allocations.outlet',
+			'allocations.sold_to_gsv',
+			'allocations.forced_sold_to_gsv',
+			'allocations.sold_to_gsv_p',
+			'allocations.forced_sold_to_gsv_p',
+			'allocations.sold_to_alloc',
+			'allocations.forced_sold_to_alloc',
+			'allocations.ship_to_gsv',
+			'allocations.forced_ship_to_gsv',
+			'allocations.ship_to_gsv_p',
+			'allocations.forced_ship_to_gsv_p',
+			'allocations.ship_to_alloc',
+			'allocations.forced_ship_to_alloc',
+			'allocations.outlet_to_gsv',
+			'allocations.forced_outlet_to_gsv',
+			'allocations.outlet_to_gsv_p',
+			'allocations.forced_outlet_to_gsv_p',
+			'allocations.outlet_to_alloc',
+			'allocations.forced_outlet_to_alloc',
+			'allocations.multi',
+			'allocations.computed_alloc',
+			'allocations.force_alloc',
+			'allocations.final_alloc',
+			'allocations.in_deals',
+			'allocations.in_cases',
+			'allocations.tts_budget',
+			'allocations.pe_budget',
+			'allocations.show')
 		->join('schemes', 'allocations.scheme_id','=','schemes.id')
 		->where('activity_id', $id)
 		->orderBy('allocations.id')

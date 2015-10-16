@@ -1,5 +1,8 @@
 <?php
 
+use Box\Spout\Writer\WriterFactory;
+use Box\Spout\Common\Type;
+
 class ActivityController extends BaseController {
 
 	/**
@@ -1807,16 +1810,99 @@ class ActivityController extends BaseController {
 	}
 
 	public function allocsummary($id){
-		$filepath = storage_path().'/uploads/tempfiles/Allocation Summary.xls';
-		$scheme_allcations = SchemeAllocation::getExportAllocations($id);
-		// // Helper::print_r($scheme_allcations);
+		$activity = Activity::findOrFail($id);
+		$scheme_allcations = SchemeAllocation::getExportAllocations($id)->toArray();
 
-		Excel::load($filepath, function($excel) use($scheme_allcations)
+		$header = ['RECORD ID', 
+			'SCHEME','GROUP', 'AREA', 'SOLD TO CODE', 'SOLD TO', 'SHIP TO CODE', 'SHIP TO',
+			'CHANNEL', 'OUTLET', 
+			'SOLD TO GSV', 'FORCED SOLD TO GSV', 'SOLD TO GSV PERCENTAGE', 'FORCED SOLD TO GSV PERCENTAGE', 'SOLD TO ALLOCATION', 'FORCED SOLD TO ALLOCATION',
+			'SHIP TO GSV', 'FORCED SHIP TO GSV', 'SHIP TO GSV PERCENTAGE', 'FORCED SHIP TO GSV PERCENTAGE', 'SHIP TO ALLOCATION', 'FORCED SHIP TO ALLOCATION',
+			'OUTLET GSV', 'FORCED OUTLET GSV', 'OUTLET GSV PERCENTAGE', 'FORCED OUTLET GSV PERCENTAGE', 'OUTLET ALLOCATION', 'FORCED OUTLET ALLOCATION',
+			'FINAM MULTIPLIER', 'COMPUTED ALLOCATION', 'FORCED ALLOCATION', 'FINAL ALLOCATION', 'DEAL', 'CASES', 'TTS BUDGET', 'PE BUDGET', 'SHOW IN REPORT'];
+
+		$writer = WriterFactory::create(Type::XLSX);
+		$writer->setShouldCreateNewSheetsAutomatically(true); // default value
+		$writer->openToBrowser($activity->circular_name.' Allocation Summary.xlsx'); // write data to a file or to a PHP stream
+		$writer->addRow($header); // add multiple rows at a time
+
+		foreach($scheme_allcations as $key => $value)
 		{
-			$excel->sheet('data', function($sheet) use($scheme_allcations) {
-				$sheet->fromModel($scheme_allcations);
-			});
-		}) -> download('xls');
+			// dd($value['sold_to_gsv']);
+			if(isset($value['sold_to_gsv'])){
+				$value['sold_to_gsv'] = (double) $value['sold_to_gsv'];
+			}
+			
+			if(isset($value['forced_sold_to_gsv'])){
+				$value['forced_sold_to_gsv'] = (double) $value['forced_sold_to_gsv'];
+			}
+
+			if(isset($value['sold_to_gsv_p'])){
+				$value['sold_to_gsv_p'] = (double) $value['sold_to_gsv_p'];
+			}
+
+			if(isset($value['forced_sold_to_gsv_p'])){
+				$value['forced_sold_to_gsv_p'] = (double) $value['forced_sold_to_gsv_p'];
+			}
+
+			if(isset($value['ship_to_gsv'])){
+				$value['ship_to_gsv'] = (double) $value['ship_to_gsv'];
+			}
+
+			if(isset($value['forced_ship_to_gsv'])){
+				$value['forced_ship_to_gsv'] = (double) $value['forced_ship_to_gsv'];
+			}
+
+			if(isset($value['ship_to_gsv_p'])){
+				$value['ship_to_gsv_p'] = (double) $value['ship_to_gsv_p'];
+			}
+
+			if(isset($value['forced_ship_to_gsv_p'])){
+				$value['forced_ship_to_gsv_p'] = (double) $value['forced_ship_to_gsv_p'];
+			}
+
+			if(isset($value['outlet_to_gsv'])){
+				$value['outlet_to_gsv'] = (double) $value['outlet_to_gsv'];
+			}
+
+			if(isset($value['outlet_to_gsv_p'])){
+				$value['outlet_to_gsv_p'] = (double) $value['outlet_to_gsv_p'];
+			}
+
+			if(isset($value['forced_outlet_to_gsv_p'])){
+				$value['forced_outlet_to_gsv_p'] = (double) $value['forced_outlet_to_gsv_p'];
+			}
+
+			if(isset($value['multi'])){
+				$value['multi']= (double) $value['multi'];
+			}
+
+			if(isset($value['tts_budget'])){
+				$value['tts_budget'] = (double) $value['tts_budget'];
+			}
+
+			if(isset($value['pe_budget'])){
+				$value['pe_budget'] = (double) $value['pe_budget'];
+			}
+			$writer->addRow($value); // add multiple rows at a time
+
+			// $scheme_allcations[$key] = (array) $value;
+		} 
+		// $export_data = $scheme_allcations;
+		// dd($export_data);
+		// echo '<pre>';
+		// print_r($export_data);
+		// echo '</pre>';
+		// dd($export_data);
+		// $writer->addRows($scheme_allcations); // add multiple rows at a time
+		$writer->close();
+
+		// Excel::create($activity->circular_name.' Allocation Summary', function($excel) use($scheme_allcations)
+		// {
+		// 	$excel->sheet('data', function($sheet) use($scheme_allcations) {
+		// 		$sheet->fromModel($scheme_allcations);
+		// 	});
+		// }) -> download('xls');
 	}
 
 	public function pistemplate(){
