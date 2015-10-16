@@ -271,8 +271,8 @@ class AllocationReport extends \Eloquent {
 			)as category_tbl ON activities.id = category_tbl.activity_id
 			LEFT JOIN (
 			SELECT activity_id,
-				GROUP_CONCAT(CONCAT(activity_brands.brand_code)) as brand_codes,
-				GROUP_CONCAT(CONCAT(activity_brands.brand_desc)) as brands
+				GROUP_CONCAT(CONCAT(activity_brands.b_desc)) as brand_codes,
+				GROUP_CONCAT(CONCAT(activity_brands.b_desc)) as brands
 				FROM activity_brands 
 				GROUP BY activity_id
 			) as brands_tbl ON activities.id = brands_tbl.activity_id

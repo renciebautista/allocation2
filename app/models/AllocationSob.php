@@ -28,7 +28,7 @@ class AllocationSob extends \Eloquent {
 				$wek_value = 0;
 			}
 			$weekno = $i;
-			if($i > 53){
+			if($i > 52){
 				$weekno = $new_count;
 				$new_count++;
 			}

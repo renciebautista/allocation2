@@ -787,11 +787,11 @@ class Activity extends \Eloquent {
 	}
 
 	public static function getBrand(){
-		return self::select('brand_desc','activity_brands.brand_code')
+		return self::select('b_desc')
 				->join('activity_brands', 'activities.id', '=', 'activity_brands.activity_id')
-				->groupBy('activity_brands.brand_code')
-				->orderBy('brand_desc')
-				->lists('brand_desc', 'brand_code');
+				->groupBy('activity_brands.b_desc')
+				->orderBy('b_desc')
+				->lists('b_desc', 'b_desc');
 	}
 
 	public static function cycleUsed($id){

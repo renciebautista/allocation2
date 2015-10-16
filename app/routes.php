@@ -305,9 +305,7 @@ Route::get('mail4', function(){
 });
 
 Route::get('sob', function(){
-	$scheme = Scheme::find(192);
-	echo idate('W', strtotime($scheme->sob_start_date));
-	dd($scheme->sob_start_date);
+	echo date("W", mktime(0,0,0,12,28,2015));
 });
 
 
