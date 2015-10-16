@@ -17,29 +17,50 @@ class AllocationReport extends \Eloquent {
 				
 			}else{
 				$with_zero = false;
-				if(in_array(0, $data_field)){
-					$with_zero = true;
-				}
-				if(count($data_field) > 1){		
-					if($with_zero){
-						$array_without_zero = array_diff($data_field, array(0));
-						$query_list = '"'.implode('","', $array_without_zero).'"';
-						$query = " AND ( ".$field." IN (".$query_list.") or ".$field." is NULL)";
-					}else{
-						$query_list= '"'.implode('","', $data_field).'"';
-						$query = " AND ".$field." IN (".$query_list.")";
-					}
-					
-				}else{	
 
-					if($with_zero){
-						$query = ' AND '.$field.' is NULL';
-					}else{
-						$query = ' AND '.$field.' = "'.$data_field[0].'"';
+				$type = gettype($data_field[0]);
+				if($type == "string"){
+					if(in_array("NONE", $data_field)){
+						$with_zero = true;
 					}
-
-					
+					if(count($data_field) > 1){		
+						if($with_zero){
+							$array_without_zero = array_diff($data_field, array("NONE"));
+							$query_list = '"'.implode('","', $array_without_zero).'"';
+							$query = " AND ( ".$field." IN (".$query_list.") or ".$field." is NULL)";
+						}else{
+							$query_list= '"'.implode('","', $data_field).'"';
+							$query = " AND ".$field." IN (".$query_list.")";
+						}
+					}else{	
+						if($with_zero){
+							$query = ' AND '.$field.' is NULL';
+						}else{
+							$query = ' AND '.$field.' = "'.$data_field[0].'"';
+						}
+					}
+				}else{
+					if(in_array(0, $data_field)){
+						$with_zero = true;
+					}
+					if(count($data_field) > 1){		
+						if($with_zero){
+							$array_without_zero = array_diff($data_field, array(0));
+							$query_list = '"'.implode('","', $array_without_zero).'"';
+							$query = " AND ( ".$field." IN (".$query_list.") or ".$field." is NULL)";
+						}else{
+							$query_list= '"'.implode('","', $data_field).'"';
+							$query = " AND ".$field." IN (".$query_list.")";
+						}
+					}else{	
+						if($with_zero){
+							$query = ' AND '.$field.' is NULL';
+						}else{
+							$query = ' AND '.$field.' = "'.$data_field[0].'"';
+						}
+					}
 				}
+				
 			}
 		}
 		return $query;
@@ -313,7 +334,7 @@ class AllocationReport extends \Eloquent {
 			$activitytypes,$divisions,$categories,$brands,
 			$groups,$areas,$soldtos,$shiptos,$channels,$outlets,$counter,$take);
 	// var_dump($query);
-		// dd($query);
+		dd($query);
 		return DB::select(DB::raw($query));
 	}
 
