@@ -93,6 +93,7 @@
 								<li>{{ HTML::linkRoute('launchskus.index', 'Launch SKU') }}</li> 
 
 								<li>{{ HTML::linkRoute('activity.index', 'Activities') }}</li>  
+								<li>{{ HTML::linkRoute('sobfilter.index', 'SOB Filters') }}</li>  
 							</ul>
 						</li>
 						@endif
@@ -117,6 +118,8 @@
 								@endif
 
 								<li>{{ HTML::linkAction('AllocationReportController@index' , 'Allocation Report') }}</li>
+
+								<li>{{ HTML::linkAction('SobController@index' , 'Sales Order Booking Report') }}</li>
 							</ul>
 						</li>
 
@@ -125,7 +128,8 @@
 						<li class="dropdown">
 							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="report">Exports <span class="caret"></span></a>
 							<ul class="dropdown-menu" aria-labelledby="report">
-								<li>{{ HTML::linkAction('DownloadsController@cycles' , 'Download Released Activities by Cycle') }}</li>  
+								<li>{{ HTML::linkAction('DownloadsController@cycles' , 'Download Released Activities') }}</li>  
+								<li>{{ HTML::linkAction('DownloadsController@cycles' , 'Download Sales Order Booking') }}</li>  
 							</ul>
 						</li>
 

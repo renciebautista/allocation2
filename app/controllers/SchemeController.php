@@ -352,7 +352,7 @@ class SchemeController extends \BaseController {
 		if(count($sobs) >0){
 			$cnt = 0;
 			foreach ($sobs[0] as $key => $value) {
-				if($cnt > 2){
+				if($cnt > 4){
 					$sob_header[] = $key;
 				}
 				$cnt++;
@@ -949,26 +949,80 @@ class SchemeController extends \BaseController {
 
 			// plot sob allocation
 			$customers = Allocation::where('scheme_id',$scheme->id)
-				->where('group_code','E1397')
+				// ->where('group_code','E1397')
 				->whereNull('customer_id')
 				->whereNull('shipto_id')
 				->orderBy('id', 'asc')
 				->get();
 
+			$group_code = array();
+			$area_code = array();
+			$sold_to_code = array();
+
+			$filters = SobFilter::all();
+			foreach ($filters as $filter) {
+				if($filter->group_code != "0"){
+					if (!in_array($filter->group_code, $group_code)) {
+					    $group_code[] = $filter->group_code;
+					}
+					
+				}else{
+					// $grpFilters = Group::all();
+					// foreach ($grpFilters as $row) {
+					// 	if (!in_array($row->group_code, $group_code)) {
+					// 	    $group_code[] = $row->group_code;
+					// 	}
+					// }
+				}
+
+				if($filter->area_code != "0"){
+					if (!in_array($filter->area_code, $area_code)) {
+					    $area_code[] = $filter->area_code;
+					}
+					
+				}else{
+					// $areaFilters = Area::all();
+					// foreach ($areaFilters as $row) {
+					// 	if (!in_array($row->area_code, $area_code)) {
+					// 	    $area_code[] = $row->area_code;
+					// 	}
+					// }
+				}
+
+				if($filter->customer_code != "0"){
+					if (!in_array($filter->customer_code, $sold_to_code)) {
+					    $sold_to_code[] = $filter->customer_code	;
+					}
+					
+				}else{
+					// $soldFilters = Customer::all();
+					// foreach ($soldFilters as $row) {
+					// 	if (!in_array($row->customer_code, $sold_to_code)) {
+					// 	    $sold_to_code[] = $row->customer_code;
+					// 	}
+					// }
+				}
+			}
+
+			// dd($group_code);
+
 			$total_weeks = $scheme->weeks;
 			foreach ($customers as $customer) {
-				$data = array();
-				$_shiptos = Allocation::where('customer_id',$customer->id)
-					->whereNull('shipto_id')
-					->orderBy('id', 'asc')
-					->get();
-				if(count($_shiptos) == 0){
-					AllocationSob::createAllocation($id,$customer);
-				}else{
-					foreach ($_shiptos as $_shipto) {
-						AllocationSob::createAllocation($id,$_shipto);
+				if((in_array($customer->group_code, $group_code)) || (in_array($customer->area_code, $area_code))|| (in_array($customer->sold_to_code, $sold_to_code))){
+					$data = array();
+					$_shiptos = Allocation::where('customer_id',$customer->id)
+						->whereNull('shipto_id')
+						->orderBy('id', 'asc')
+						->get();
+					if(count($_shiptos) == 0){
+						AllocationSob::createAllocation($id,$customer);
+					}else{
+						foreach ($_shiptos as $_shipto) {
+							AllocationSob::createAllocation($id,$_shipto);
+						}
 					}
 				}
+				
 				
 			}
 			// end plotting

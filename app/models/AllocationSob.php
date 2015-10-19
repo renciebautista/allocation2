@@ -61,7 +61,7 @@ class AllocationSob extends \Eloquent {
 			$x = DB::select(DB::raw($query1));
 			// echo $x[0]->query_sting;
 
-			$query = sprintf("SELECT allocation_id,allocations.ship_to,allocation_sobs.share,".$x[0]->query_sting."
+			$query = sprintf("SELECT allocation_id,allocations.group,allocations.area,allocations.ship_to,allocation_sobs.share,".$x[0]->query_sting."
 				FROM allocation_sobs
 				join allocations on allocations.id = allocation_sobs.allocation_id
 				WHERE allocation_sobs.scheme_id = '".$id."'
@@ -71,5 +71,9 @@ class AllocationSob extends \Eloquent {
 			return DB::select(DB::raw($query));
 		}
 		return array();
+	}
+
+	public static function getByCycle($cysles){
+		
 	}
 }

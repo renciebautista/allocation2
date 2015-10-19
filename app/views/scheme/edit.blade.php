@@ -474,15 +474,17 @@
 							<div class="allocation_total table-responsive">
 								<table id="sob-allocation" class="table table-condensed table-bordered display compact">
 									<thead>
-										<tr>
-											<th>Ship To Name </th>
+										<tr class="sob-header">
+											<th>GROUP</th>
+											<th>AREA</th>
+											<th>SHIP TO</th>
 											@foreach($sob_header as $header)
-											<th class="alloc_per">{{ strtoupper($header)}}</th>
+											<th class="alloc_per">{{ str_replace("_"," ",strtoupper($header))}}</th>
 											@endforeach
 											<th class="sob_alloc_header">Total</th>
 										</tr>
 										<tr>
-											<th>Percentage</th>
+											<th colspan="3"></th>
 											@foreach($sob_header as $header)
 											<th class="alloc_per">
 												{{ Form::text('ulp_premium',$sobs[0]->share,array('id' => 'ulp_premium')) }}
@@ -496,6 +498,8 @@
 										@foreach($sobs as $sob)
 										<?php $sum = 0; ?>
 										<tr>
+											<td>{{ $sob->group }}</td>
+											<td>{{ $sob->area }}</td>
 											<td>{{ $sob->ship_to }}</td>
 											@foreach($sob_header as $header)
 											<?php $sum += $sob->$header; ?>

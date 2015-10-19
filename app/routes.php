@@ -525,7 +525,10 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('reports/{id}/download', 'ReportController@download');
 	Route::get('reports/{id}/document', 'ReportController@document');
 
+	Route::get('sob', ['as' => 'sob.index', 'uses' => 'SobController@index']);
+	Route::post('sob/generate', ['as' => 'sob.generate', 'uses' => 'SobController@generate']);
 
+	Route::resource('sobfilter', 'SobfilterController');
 
 	Route::get('images/{cycle_id}/{type_id}/{activity_id}/{name}', function($cycle_id = null,$type_id = null,$activity_id = null,$name = null)
 	{

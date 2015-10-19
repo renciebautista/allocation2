@@ -790,9 +790,17 @@ h2, .h2 {
   	max-height: 300px;
   	overflow-y: scroll;
 }
+#sob-allocation{
+	font-size: 10px;
+}
+
+.sob-header {
+	font-size: 10px;
+}
 .sob_alloc_header {
-	width: 2%;
+	/*width: 2%;*/
 	text-align: center;
+	font-size: 10px;
 }
 
 .sob_alloc {
@@ -805,5 +813,14 @@ h2, .h2 {
 
 }
 .alloc_per input{
-		width: 40px;
+	width: 35px;
+}
+.sob-header th{
+	text-align: center;
+}
+.sob-header {
+	color: #ffffff;
+    background-color: #008cba;
+    border-color: #008cba;
+  	border: 1px solid #dddddd;
 }
