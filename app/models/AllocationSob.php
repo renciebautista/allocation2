@@ -73,7 +73,34 @@ class AllocationSob extends \Eloquent {
 		return array();
 	}
 
-	public static function getByCycle($cysles){
-		
+	public static function getByCycle($cycles){
+		$query = sprintf("select allocation_sobs.id, activities.activitytype_desc,
+category_tbl.categories,brands_tbl.brands,
+schemes.name,schemes.item_code,
+allocations.group, allocations.area, allocations.sold_to, 
+COALESCE(allocations.ship_to_code,allocations.ship_to_code,allocations.sold_to_code) as ship_to_code,
+allocations.ship_to, allocation_sobs.weekno, allocation_sobs.allocation
+from allocation_sobs
+join allocations on allocations.id = allocation_sobs.allocation_id
+join schemes on allocation_sobs.scheme_id = schemes.id
+join activities on schemes.activity_id = activities.id
+LEFT JOIN (
+				SELECT activity_id,
+			    GROUP_CONCAT(CONCAT(activity_categories.category_code)) as category_codes,
+				GROUP_CONCAT(CONCAT(activity_categories.category_desc)) as categories
+				FROM activity_categories 
+				GROUP BY activity_id
+			)as category_tbl ON activities.id = category_tbl.activity_id
+			LEFT JOIN (
+			SELECT activity_id,
+				GROUP_CONCAT(CONCAT(activity_brands.b_desc)) as brand_codes,
+				GROUP_CONCAT(CONCAT(activity_brands.b_desc)) as brands
+				FROM activity_brands 
+				GROUP BY activity_id
+			) as brands_tbl ON activities.id = brands_tbl.activity_id
+where activities.cycle_id in (".implode(",", $cycles).")
+order by allocation_sobs.id");
+
+			return DB::select(DB::raw($query));
 	}
 }
