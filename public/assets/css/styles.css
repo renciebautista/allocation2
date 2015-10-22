@@ -813,7 +813,8 @@ h2, .h2 {
 
 }
 .alloc_per input{
-	width: 35px;
+	margin-right: -12px;
+	width: 45px;
 }
 .sob-header th{
 	text-align: center;
@@ -823,4 +824,7 @@ h2, .h2 {
     background-color: #008cba;
     border-color: #008cba;
   	border: 1px solid #dddddd;
+}
+.num-week{
+	width: 100%;
 }

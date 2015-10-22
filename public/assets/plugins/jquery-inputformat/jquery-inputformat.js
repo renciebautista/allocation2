@@ -103,7 +103,7 @@ $.inputformat = {
 	     var _decimalSep = $.inputformat.getDecimalSep(field);
    	     var _isAllowLeadingZero = $.inputformat.isAllowLeadingZero(field);	
 
-	     if(original=='0') return '0';	
+
 	     // find decimal is exists
              var dot = original.indexOf(_decimalSep);
              if(dot == -1){
@@ -133,12 +133,11 @@ $.inputformat = {
              return result;
         },
         format: function(field, original){
-             var unformatted = (original=='0') ? 0 : $.inputformat.unformat(field, original);
+             var unformatted = $.inputformat.unformat(field, original);
 	     var rounded = '';
              var decimals = '';
 	     var _thousandSep = $.inputformat.getThousandSep(field);	
 	     var _decimalSep = $.inputformat.getDecimalSep(field);
-	
 	
              // find decimal is exists
              var dot = unformatted.indexOf(_decimalSep);
@@ -222,18 +221,18 @@ $.fn.inputNumber = function(options){
 	},0);
    });
    $(this).keyup(function(event){
+ 	 // console.log(event);
+
 	 var pos = $.inputformat.getCaretPosition(this);
          var that = this;
          var value = $(that).val();
-
 	 if(event.ctrlKey){
-	 	
 	      switch(event.keyCode){
-			case 65: // Ctrl A
-        	case 67: // Ctrl C
-			case 88: // Ctrl X
-			// case 86: // Ctrl V
-            return;
+		case 65: // Ctrl A
+                case 67: // Ctrl C
+		case 88: // Ctrl X
+		case 86: // Ctrl V
+                   return;
 	      }
          }
   	 switch(event.keyCode){
@@ -244,13 +243,6 @@ $.fn.inputNumber = function(options){
 		case 37: // LEFT ARROW
 		case 39: // RIGHT ARROW			
                     break;
-
-		case 96: // from numpad 0    
-
-		// Number from Numlock 1-9
-		case 97: case 98: case 99: case 100: case 101: case 102:
-		case 103: case 104: case 105:
-
 		// Only do formatting if input numbers, BKSPACE, DELETE
  		case 48: case 49: case 50: case 51: case 52: case 53: case 54:
                 case 55: case 56: case 57:
@@ -260,13 +252,14 @@ $.fn.inputNumber = function(options){
 			 setTimeout( function(){
 		             var formatted = $.inputformat.format(that, value);
 			     var diff = formatted.length - value.length;
+	 		
 			     $(that).val( formatted );
 			     $.inputformat.setCaretPosition(that, pos + diff); 
 			 }, 0); 
 	 }
    });
    $(this).keydown(function(event){
-
+         // console.log(event);
          var pos = $.inputformat.getCaretPosition(this);
 	 	 var value = $(this).val();
 	 	 var _thousandSep = $.inputformat.getThousandSep(this);
@@ -284,7 +277,7 @@ $.fn.inputNumber = function(options){
 					event.preventDefault();
 					break;
 				case 86: // Ctrl V
-					// event.preventDefault();
+					event.preventDefault();
 					break;			
 				default:
 					event.preventDefault();
@@ -300,12 +293,8 @@ $.fn.inputNumber = function(options){
 			if(!_isAllowLeadingZero){
 				if($.inputformat.getSelectionText()==value){}
 				// leading zero is not allowed
-				else if(pos===0 && value!=='') {
-					event.preventDefault();
-				}	
-				else if(pos==1 && value==='0') {
-					event.preventDefault();
-				}
+				else if(pos===0 && value!=='') event.preventDefault();
+				else if(pos==1 && value==='0') event.preventDefault();
 			}
 
 			// If type number behind ., limit by maxDecimalDigits

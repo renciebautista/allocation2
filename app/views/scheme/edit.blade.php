@@ -483,14 +483,15 @@
 											@endforeach
 											<th class="sob_alloc_header">Total</th>
 										</tr>
-										<tr>
+										<tr class="sob-percent">
 											<th colspan="3"></th>
 											@foreach($sob_header as $header)
 											<th class="alloc_per">
-												{{ Form::text('ulp_premium',$sobs[0]->share,array('id' => 'ulp_premium')) }}
+												<?php $wek = explode("_", $header); ?>
+												{{ Form::text('wek['.$wek[1].']',$sobs[0]->share,array('id' => 'wek', 'class' => 'numweek')) }}
 											</th>
 											@endforeach
-											<th>100%</th>
+											<th><span id="sum">100%</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -505,7 +506,7 @@
 											<?php $sum += $sob->$header; ?>
 											<td class="sob_alloc">{{ $sob->$header }}</td>
 											@endforeach
-											<td class="sob_alloc_header">{{ $sum }}</td>
+											<td class="sob_alloc_header wek_sum">{{ $sum }}</td>
 											
 										</tr>
 										@endforeach
@@ -636,4 +637,32 @@
 		"paging": false,
 		"bSort": false
 	});
+
+	$('.numweek').inputNumber({ 
+		allowDecimals: true,
+		maxDecimalDigits: 2
+	});
+
+	$('.numweek').blur(function(){
+		if(Number($(this).val()) == ""){
+			$(this).val(.01);
+		}
+		var sum = 0;
+	    $('.dataTables_scrollHead input').each(function() {
+	        sum += Number($(this).val());
+	    });
+
+	    if(sum > 100){
+	    	alert('Total percentage is above 100%!');
+	    	$(this).val(.01);
+	    	sum = 0;
+	    	$('.dataTables_scrollHead input').each(function() {
+		        sum += Number($(this).val());
+		    });
+		}
+
+
+
+	    $('#sum').text(sum.toFixed(2));
+	})
 @stop
