@@ -3,7 +3,7 @@
 class AllocationSob extends \Eloquent {
 	protected $fillable = [];
 
-	public static function createAllocation($id,$ship_to){
+	public static function createAllocation($id,$ship_to,$wek_multi = null){
 		$scheme = Scheme::find($id);
 		$total_alloc = $ship_to->final_alloc;
 		$total_weeks = $scheme->weeks;
@@ -17,7 +17,18 @@ class AllocationSob extends \Eloquent {
 		$new_count = 1;
 		for($i = $start_week; $i < $last_week; $i++){
 			if(!$zero){
-				$wek_value = ceil($total_alloc/$total_weeks);
+				if(!empty($wek_multi)){
+					// dd($wek_multi);
+					$multi = $wek_multi[$i]/100;
+					// dd($multi);
+					$wek_value = $total_alloc * $multi;
+					$share = $wek_multi[$i];
+				}else{
+					$wek_value = ceil($total_alloc/$total_weeks);
+					$share = (1/$total_weeks) * 100;
+				}
+
+				
 				$running_value += $wek_value;
 				if($running_value > $total_alloc){
 					$x = $running_value - $total_alloc;
@@ -28,19 +39,26 @@ class AllocationSob extends \Eloquent {
 				$wek_value = 0;
 			}
 			$weekno = $i;
+			$year = idate('Y', strtotime($scheme->sob_start_date));
+
 			if($i > 52){
 				$weekno = $new_count;
 				$new_count++;
+				$year = $year+ 1;
 			}
 			
+			// echo $share;/
 			
 			$data[] = array('scheme_id' => $scheme->id, 
 				'allocation_id' => $ship_to->id, 
 				'weekno' => $weekno, 
-				'share' => (1/$total_weeks) * 100,
+				'year' => $year,
+				'share' => $share,
 				'allocation' => $wek_value);
 
 		}
+
+		// dd($data);
 		if(count($data) > 0){
 			self::insert($data);
 		}
@@ -75,31 +93,33 @@ class AllocationSob extends \Eloquent {
 
 	public static function getByCycle($cycles){
 		$query = sprintf("select allocation_sobs.id, activities.activitytype_desc,
-category_tbl.categories,brands_tbl.brands,
-schemes.name,schemes.item_code,
-allocations.group, allocations.area, allocations.sold_to, 
-COALESCE(allocations.ship_to_code,allocations.ship_to_code,allocations.sold_to_code) as ship_to_code,
-allocations.ship_to, allocation_sobs.weekno, allocation_sobs.allocation
-from allocation_sobs
-join allocations on allocations.id = allocation_sobs.allocation_id
-join schemes on allocation_sobs.scheme_id = schemes.id
-join activities on schemes.activity_id = activities.id
-LEFT JOIN (
-				SELECT activity_id,
-			    GROUP_CONCAT(CONCAT(activity_categories.category_code)) as category_codes,
-				GROUP_CONCAT(CONCAT(activity_categories.category_desc)) as categories
-				FROM activity_categories 
-				GROUP BY activity_id
-			)as category_tbl ON activities.id = category_tbl.activity_id
+			category_tbl.categories,brands_tbl.brands,
+			schemes.name,schemes.item_code,schemes.item_desc,
+			allocations.group, allocations.area, allocations.sold_to, 
+			COALESCE(allocations.ship_to_code,allocations.ship_to_code,allocations.sold_to_code) as ship_to_code,
+			allocations.ship_to, allocation_sobs.weekno, allocation_sobs.year,
+			allocation_sobs.allocation,
+			((schemes.lpat/ 1.12) * allocation_sobs.allocation) as value
+			from allocation_sobs
+			join allocations on allocations.id = allocation_sobs.allocation_id
+			join schemes on allocation_sobs.scheme_id = schemes.id
+			join activities on schemes.activity_id = activities.id
 			LEFT JOIN (
-			SELECT activity_id,
-				GROUP_CONCAT(CONCAT(activity_brands.b_desc)) as brand_codes,
-				GROUP_CONCAT(CONCAT(activity_brands.b_desc)) as brands
-				FROM activity_brands 
-				GROUP BY activity_id
-			) as brands_tbl ON activities.id = brands_tbl.activity_id
-where activities.cycle_id in (".implode(",", $cycles).")
-order by allocation_sobs.id");
+				SELECT activity_id,
+				    GROUP_CONCAT(CONCAT(activity_categories.category_code)) as category_codes,
+					GROUP_CONCAT(CONCAT(activity_categories.category_desc)) as categories
+					FROM activity_categories 
+					GROUP BY activity_id
+				)as category_tbl ON activities.id = category_tbl.activity_id
+				LEFT JOIN (
+				SELECT activity_id,
+					GROUP_CONCAT(CONCAT(activity_brands.b_desc)) as brand_codes,
+					GROUP_CONCAT(CONCAT(activity_brands.b_desc)) as brands
+					FROM activity_brands 
+					GROUP BY activity_id
+				) as brands_tbl ON activities.id = brands_tbl.activity_id
+			where activities.cycle_id in (".implode(",", $cycles).")
+			order by allocation_sobs.id");
 
 			return DB::select(DB::raw($query));
 	}

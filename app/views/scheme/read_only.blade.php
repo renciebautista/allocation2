@@ -88,6 +88,20 @@
 								{{ Form::label('item_code', 'Item Code', array('class' => 'control-label')) }}
 								{{ Form::text('item_code',$scheme->item_code, array('class' => 'form-control', 'placeholder' => 'Item Code','readonly' => '')) }}
 							</div>
+
+							<div class="col-lg-8">
+								{{ Form::label('item_desc', 'Item Description', array('class' => 'control-label')) }}
+								{{ Form::text('item_desc',$scheme->item_desc,array('id' => 'item_desc', 'class' => 'form-control', 'placeholder' => 'Item Description','readonly' => '')) }}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="form-group">
+						<div class="row">
 							<div class="col-lg-4">
 								{{ Form::label('item_barcode', 'Item Barcode', array('class' => 'control-label')) }}
 								{{ Form::text('item_barcode',$scheme->item_barcode, array('class' => 'form-control', 'placeholder' => 'Item Barcode','readonly' => '')) }}

@@ -102,6 +102,22 @@
 										{{ Form::label('item_code', 'Item Code', array('class' => 'control-label')) }}
 										{{ Form::text('item_code',$scheme->item_code, array('class' => 'form-control', 'placeholder' => 'Item Code','maxlength' => 8)) }}
 									</div>
+									
+
+									<div class="col-lg-8">
+										{{ Form::label('item_desc', 'Item Description', array('class' => 'control-label')) }}
+										{{ Form::text('item_desc',$scheme->item_desc,array('id' => 'item_desc', 'class' => 'form-control', 'placeholder' => 'Item Description','maxlength' => 80)) }}
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="form-group">
+								<div class="row">
 									<div class="col-lg-4">
 										{{ Form::label('item_barcode', 'Item Barcode', array('class' => 'control-label')) }}
 										{{ Form::text('item_barcode',$scheme->item_barcode, array('class' => 'form-control', 'placeholder' => 'Item Barcode','maxlength' => 13)) }}
@@ -424,15 +440,18 @@
 			<div class="panel-heading">SOB Details</div>
 			<div class="panel-body">
 
-					{{ Form::open(array('action' => array('SchemeController@updatesob', $scheme->id), 'files'=>true, 'method' => 'PUT', 'id' => 'updatescheme', 'class' => 'bs-component')) }}
-					
+					{{ Form::open(array('action' => array('SchemeController@updatesob', $scheme->id), 'files'=>true, 'method' => 'PUT', 'id' => 'updatesob', 'class' => 'bs-component')) }}
+					@foreach($sob_header as $header)
+						<?php $wek = explode("_", $header); ?>
+						{{ Form::hidden('_wek['.$wek[1].']', $sobs[0]->share, ['id' => '_wek'.$wek[1]]) }}
+					@endforeach
 					<div class="row">
 						<div class="col-lg-4">
 							<div class="form-group">
 								<div class="row">
 									<div class="col-lg-12">
 										{{ Form::label('start_date', 'Start Date', array('class' => 'control-label')) }}
-										{{ Form::text('start_date',date_format(date_create($scheme->sob_start_date),'m/d/Y'),array('class' => 'form-control', 'placeholder' => 'Start Date')) }}
+										{{ Form::text('start_date',date_format(date_create($scheme->sob_start_date),'m/d/Y'),array('id' => 'start_date', 'class' => 'form-control', 'placeholder' => 'Start Date')) }}
 									</div>
 								</div>
 							</div>
@@ -445,7 +464,7 @@
 								<div class="row">
 									<div class="col-lg-12">
 										{{ Form::label('weeks', 'No. of Weeks', array('class' => 'control-label')) }}
-										{{ Form::text('weeks',$scheme->weeks,array('class' => 'form-control', 'placeholder' => 'No. of Weeks')) }}
+										{{ Form::text('weeks',$scheme->weeks,array('id' => 'weeks', 'class' => 'form-control', 'placeholder' => 'No. of Weeks')) }}
 									</div>
 								</div>
 							</div>
@@ -458,7 +477,7 @@
 							<div class="form-group">
 								<div class="row">
 									<div class="col-lg-12">
-										{{ Form::submit('Plot', array('class' => 'btn btn-primary', 'id'=>'plotsob')) }}
+										{{ Form::submit('Plot', array('class' => 'btn btn-primary disable-button', 'id'=>'plotsob')) }}
 									</div>
 								</div>
 							</div>
@@ -474,6 +493,17 @@
 							<div class="allocation_total table-responsive">
 								<table id="sob-allocation" class="table table-condensed table-bordered display compact">
 									<thead>
+										
+										<tr class="sob-percent">
+											<th colspan="3"></th>
+											@foreach($sob_header as $header)
+											<th class="alloc_per">
+												<?php $wek = explode("_", $header); ?>
+												{{ Form::text('wek['.$wek[1].']',$sobs[0]->share,array('id' => 'wek_'.$wek[1], 'class' => 'numweek')) }}
+											</th>
+											@endforeach
+											<th><span id="sum">100%</th>
+										</tr>
 										<tr class="sob-header">
 											<th>GROUP</th>
 											<th>AREA</th>
@@ -482,16 +512,6 @@
 											<th class="alloc_per">{{ str_replace("_"," ",strtoupper($header))}}</th>
 											@endforeach
 											<th class="sob_alloc_header">Total</th>
-										</tr>
-										<tr class="sob-percent">
-											<th colspan="3"></th>
-											@foreach($sob_header as $header)
-											<th class="alloc_per">
-												<?php $wek = explode("_", $header); ?>
-												{{ Form::text('wek['.$wek[1].']',$sobs[0]->share,array('id' => 'wek', 'class' => 'numweek')) }}
-											</th>
-											@endforeach
-											<th><span id="sum">100%</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -516,6 +536,8 @@
 							</div>
 						</div>
 					</div>
+
+					
 			</div>
 		</div>
 
@@ -660,9 +682,44 @@
 		        sum += Number($(this).val());
 		    });
 		}
-
-
+		var arr = $(this).attr("id").split('_');
+		//console.log($("#_wek"+arr[1]));
+		$("#_wek"+arr[1]).val($(this).val());
 
 	    $('#sum').text(sum.toFixed(2));
 	})
+
+	$("#updatesob").validate({
+		ignore: ':hidden:not(".multiselect")',
+		errorElement: "span", 
+		errorClass : "has-error",
+		rules: {
+			weeks: {
+				required: true,
+				max: 14,
+				min:1
+			},
+			start_date: {
+				required: true
+			}
+
+		},
+		errorPlacement: function(error, element) {    
+		
+		},
+		highlight: function( element, errorClass, validClass ) {
+	    	$(element).closest('div').addClass(errorClass).removeClass(validClass);
+	    	
+	  	},
+	  	unhighlight: function( element, errorClass, validClass ) {
+	    	$(element).closest('div').removeClass(errorClass).addClass(validClass);
+	  	},
+	  	invalidHandler: function(form, validator) {
+	        var errors = validator.numberOfInvalids();
+	        if (errors) {
+	            $("html, body").animate({ scrollTop: 0 }, "fast");
+	           
+	        }
+	    }
+});
 @stop

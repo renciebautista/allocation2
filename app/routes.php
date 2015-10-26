@@ -304,8 +304,22 @@ Route::get('mail4', function(){
 	dd($cycle_names);
 });
 
-Route::get('sob', function(){
-	echo date("W", mktime(0,0,0,12,28,2015));
+Route::get('sobtemplate', function(){
+	
+	Excel::create('SOB FROM', function($excel) {
+		$excel->sheet('Sales Order', function($sheet) {
+	        $sheet->row(1, array('SOB FORM', '', '', '', '', '', '', '','Row 5 should include the word SPLIT, all item codes and TOTAL'));
+	       	$sheet->row(2, array('Rev. 6/30/2006', '', '', '', '', '', '', '','ROW 8 is the start of SOB DATA;  ONE WORKSHEET : ONE FILE ONLY'));
+	       	$sheet->row(3, array('', '', '', '', '', '', '', '','TOTAL AT THE BOTTOM SHOULD BE AT COLUMN D'));
+	       	$sheet->row(4, array('Sales Org', 'RT', 'REMARKS'));
+	       	$sheet->mergeCells('C4:E4');
+	       	$sheet->row(5, array('PURCHASE', 'LOADING', 'RECEIPT', '', '', '', '', '', 'SHIP', 'SPLIT'));
+	       	$sheet->row(6, array('ORDER#', 'DATE', 'DATE', 'WHSE', 'AREA', 'DIST', 'CUST#', 'CUSTOMER NAME', 'TO'));
+	       	$sheet->row(7, array('', '', '',  'no receiveing / holiday'));
+	       	$sheet->mergeCells('D7:E7');
+	    });
+	})->export('xls');
+
 });
 
 
@@ -527,6 +541,8 @@ Route::group(array('before' => 'auth'), function()
 
 	Route::get('sob', ['as' => 'sob.index', 'uses' => 'SobController@index']);
 	Route::post('sob/generate', ['as' => 'sob.generate', 'uses' => 'SobController@generate']);
+	Route::get('sob/weekly', ['as' => 'sob.weekly', 'uses' => 'SobController@weekly']);
+	Route::post('sob/generateweekly', ['as' => 'sob.generateweekly', 'uses' => 'SobController@generateweekly']);
 
 	Route::resource('sobfilter', 'SobfilterController');
 

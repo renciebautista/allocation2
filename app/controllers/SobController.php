@@ -27,7 +27,10 @@ class SobController extends \BaseController {
 		$allocations = AllocationSob::getByCycle($cycles);
 		$data = array();
 		foreach ($allocations as $result) {
-		   $data[] = (array)$result;  
+			if(isset($result->value)){
+				$result->value = (double) $result->value;
+			}
+		   	$data[] = (array)$result;  
 		   #or first convert it and then change its properties using 
 		   #an array syntax, it's up to you
 		}
@@ -44,18 +47,25 @@ class SobController extends \BaseController {
 					'BRAND',	
 					'SCHEME',	
 					'ITEM CODE',	
+					'ITEM DESCRIPTION',
 					'GROUP',	
 					'AREA',	
 					'SOLD TO',
 					'SHIP TO CODE',
 					'CUSTOMER SHIP TO NAME',	
 					'WEEK #',
-					'ALLOCATION'
+					'YEAR',
+					'ALLOCATION',
+					'VALUE'
 				));
 
 			})->download('xls');
 
 		});
+	}
+
+	public function weekly(){
+		return View::make('sob.weekly');
 	}
 
 }

@@ -81,6 +81,7 @@ class SchemeRepository extends \Eloquent {
 			$new_scheme->activity_id = $scheme->activity_id;
 			$new_scheme->name = $scheme->name;
 			$new_scheme->item_code = $scheme->item_code;
+			$new_scheme->item_desc = $scheme->item_desc;
 			$new_scheme->item_barcode = $scheme->item_barcode;
 			$new_scheme->item_casecode = $scheme->item_casecode;
 			$new_scheme->pr = $scheme->pr;

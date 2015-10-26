@@ -59,6 +59,7 @@ class SchemeController extends \BaseController {
 				$scheme->activity_id = $activity->id;
 				$scheme->name = strtoupper(Input::get('scheme_name'));
 				$scheme->item_code = Input::get('item_code');
+				$scheme->item_desc = strtoupper(Input::get('item_desc'));
 				$scheme->item_barcode = Input::get('item_barcode');
 				$scheme->item_casecode = Input::get('item_casecode');
 
@@ -359,7 +360,7 @@ class SchemeController extends \BaseController {
 			}
 		}
 		
-
+		// dd($sobs);
 
 		if(Auth::user()->hasRole("PROPONENT")){
 			if($activity->status_id < 4){
@@ -418,6 +419,7 @@ class SchemeController extends \BaseController {
 				$activity = Activity::find($scheme->activity_id);
 				$scheme->name = strtoupper(Input::get('scheme_name'));
 				$scheme->item_code = Input::get('item_code');
+				$scheme->item_desc = strtoupper(Input::get('item_desc'));
 				$scheme->item_barcode = Input::get('item_barcode');
 				$scheme->item_casecode = Input::get('item_casecode');
 				
@@ -931,109 +933,152 @@ class SchemeController extends \BaseController {
 
 	public function updatesob($id){
 
+		// dd(Input::all());
+
 		$rules = array(
 			'start_date' => 'required',
-			'weeks' => 'required'
+			'weeks' => 'required|numeric|max:14'
 		);
 
 		$validation = Validator::make(Input::all(),$rules);
 
 		if($validation->passes())
 		{
+
 			$scheme = Scheme::findOrFail($id);
-			$scheme->sob_start_date = date('Y-m-d',strtotime(Input::get('start_date')));
-			$scheme->weeks = Input::get('weeks');
-			$scheme->update();
+			if(($scheme->weeks == Input::get('weeks')) && ($scheme->sob_start_date == date('Y-m-d',strtotime(Input::get('start_date'))))){
+				$scheme->sob_start_date = date('Y-m-d',strtotime(Input::get('start_date')));
+				$scheme->weeks = Input::get('weeks');
+				$scheme->update();
 
-			AllocationSob::where('scheme_id', $scheme->id)->delete();
+				AllocationSob::where('scheme_id', $scheme->id)->delete();
+				// plot sob allocation
+				$customers = Allocation::where('scheme_id',$scheme->id)
+					// ->where('group_code','E1397')
+					->whereNull('customer_id')
+					->whereNull('shipto_id')
+					->orderBy('id', 'asc')
+					->get();
 
-			// plot sob allocation
-			$customers = Allocation::where('scheme_id',$scheme->id)
-				// ->where('group_code','E1397')
-				->whereNull('customer_id')
-				->whereNull('shipto_id')
-				->orderBy('id', 'asc')
-				->get();
+				$group_code = array();
+				$area_code = array();
+				$sold_to_code = array();
 
-			$group_code = array();
-			$area_code = array();
-			$sold_to_code = array();
-
-			$filters = SobFilter::all();
-			foreach ($filters as $filter) {
-				if($filter->group_code != "0"){
-					if (!in_array($filter->group_code, $group_code)) {
-					    $group_code[] = $filter->group_code;
+				$filters = SobFilter::all();
+				foreach ($filters as $filter) {
+					if($filter->group_code != "0"){
+						if (!in_array($filter->group_code, $group_code)) {
+						    $group_code[] = $filter->group_code;
+						}
+						
 					}
-					
-				}else{
-					// $grpFilters = Group::all();
-					// foreach ($grpFilters as $row) {
-					// 	if (!in_array($row->group_code, $group_code)) {
-					// 	    $group_code[] = $row->group_code;
-					// 	}
-					// }
+
+					if($filter->area_code != "0"){
+						if (!in_array($filter->area_code, $area_code)) {
+						    $area_code[] = $filter->area_code;
+						}
+						
+					}
+
+					if($filter->customer_code != "0"){
+						if (!in_array($filter->customer_code, $sold_to_code)) {
+						    $sold_to_code[] = $filter->customer_code	;
+						}
+						
+					}
 				}
 
-				if($filter->area_code != "0"){
-					if (!in_array($filter->area_code, $area_code)) {
-					    $area_code[] = $filter->area_code;
-					}
-					
-				}else{
-					// $areaFilters = Area::all();
-					// foreach ($areaFilters as $row) {
-					// 	if (!in_array($row->area_code, $area_code)) {
-					// 	    $area_code[] = $row->area_code;
-					// 	}
-					// }
-				}
-
-				if($filter->customer_code != "0"){
-					if (!in_array($filter->customer_code, $sold_to_code)) {
-					    $sold_to_code[] = $filter->customer_code	;
-					}
-					
-				}else{
-					// $soldFilters = Customer::all();
-					// foreach ($soldFilters as $row) {
-					// 	if (!in_array($row->customer_code, $sold_to_code)) {
-					// 	    $sold_to_code[] = $row->customer_code;
-					// 	}
-					// }
-				}
-			}
-
-			// dd($group_code);
-
-			$total_weeks = $scheme->weeks;
-			foreach ($customers as $customer) {
-				if((in_array($customer->group_code, $group_code)) || (in_array($customer->area_code, $area_code))|| (in_array($customer->sold_to_code, $sold_to_code))){
-					$data = array();
-					$_shiptos = Allocation::where('customer_id',$customer->id)
-						->whereNull('shipto_id')
-						->orderBy('id', 'asc')
-						->get();
-					if(count($_shiptos) == 0){
-						AllocationSob::createAllocation($id,$customer);
-					}else{
-						foreach ($_shiptos as $_shipto) {
-							AllocationSob::createAllocation($id,$_shipto);
+				$total_weeks = $scheme->weeks;
+				foreach ($customers as $customer) {
+					if((in_array($customer->group_code, $group_code)) || (in_array($customer->area_code, $area_code))|| (in_array($customer->sold_to_code, $sold_to_code))){
+						$data = array();
+						$_shiptos = Allocation::where('customer_id',$customer->id)
+							->whereNull('shipto_id')
+							->orderBy('id', 'asc')
+							->get();
+						if(count($_shiptos) == 0){
+							AllocationSob::createAllocation($id,$customer,Input::get('_wek'));
+						}else{
+							foreach ($_shiptos as $_shipto) {
+								AllocationSob::createAllocation($id,$_shipto,Input::get('_wek'));
+							}
 						}
 					}
+					
+					
 				}
-				
-				
-			}
-			// end plotting
 
-			return Redirect::to(URL::action('SchemeController@edit', array('id' => $id)) . "#sob")
-			// return Redirect::action('SchemeController@edit', array('id' => $id))
-					->with('class', 'alert-success')
-					->with('message', 'SOB plotting was successfuly updated.');
+				
+
+			}else{
+				$scheme->sob_start_date = date('Y-m-d',strtotime(Input::get('start_date')));
+				$scheme->weeks = Input::get('weeks');
+				$scheme->update();
+
+				AllocationSob::where('scheme_id', $scheme->id)->delete();
+				// plot sob allocation
+				$customers = Allocation::where('scheme_id',$scheme->id)
+					// ->where('group_code','E1397')
+					->whereNull('customer_id')
+					->whereNull('shipto_id')
+					->orderBy('id', 'asc')
+					->get();
+
+				$group_code = array();
+				$area_code = array();
+				$sold_to_code = array();
+
+				$filters = SobFilter::all();
+				foreach ($filters as $filter) {
+					if($filter->group_code != "0"){
+						if (!in_array($filter->group_code, $group_code)) {
+						    $group_code[] = $filter->group_code;
+						}
+						
+					}
+
+					if($filter->area_code != "0"){
+						if (!in_array($filter->area_code, $area_code)) {
+						    $area_code[] = $filter->area_code;
+						}
+						
+					}
+
+					if($filter->customer_code != "0"){
+						if (!in_array($filter->customer_code, $sold_to_code)) {
+						    $sold_to_code[] = $filter->customer_code	;
+						}
+						
+					}
+				}
+
+				$total_weeks = $scheme->weeks;
+				foreach ($customers as $customer) {
+					if((in_array($customer->group_code, $group_code)) || (in_array($customer->area_code, $area_code))|| (in_array($customer->sold_to_code, $sold_to_code))){
+						$data = array();
+						$_shiptos = Allocation::where('customer_id',$customer->id)
+							->whereNull('shipto_id')
+							->orderBy('id', 'asc')
+							->get();
+						if(count($_shiptos) == 0){
+							AllocationSob::createAllocation($id,$customer);
+						}else{
+							foreach ($_shiptos as $_shipto) {
+								AllocationSob::createAllocation($id,$_shipto);
+							}
+						}
+					}
+					
+					
+				}
+
+				return Redirect::to(URL::action('SchemeController@edit', array('id' => $id)) . "#sob")
+						->with('class', 'alert-success')
+						->with('message', 'SOB plotting was successfuly updated.');
+				}
+			
 		}
 		return Redirect::to(URL::action('SchemeController@edit', array('id' => $id)) . "#sob")
-		// return Redirect::action('SchemeController@edit', array('id' => $id))
 			->withErrors($validation)
 			->with('class', 'alert-danger')
 			->with('message', 'There were validation errors.');
