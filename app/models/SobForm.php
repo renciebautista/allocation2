@@ -197,8 +197,9 @@ class SobForm extends \Eloquent {
 					date_isodate_set($date, $soldto->year, $soldto->weekno,$shipTo->dayofweek);
 					date_format($date, 'Y-m-d');
 					$loading_date = date_format($date, 'Y-m-d');
-					dd($loading_date);
-					$receipt_date = date('Y-m-d', strtotime($loading_date .' +'.$shipTo->leadtime.' day'));
+					
+					$receipt_date = date('Y-m-d', strtotime(date_create($loading_date) .' +'.$shipTo->leadtime.' day'));
+					dd($receipt_date);
 					// dd($loading_date.'=>'.$receipt_date);
 					AllocationSob::where('weekno',$weekno)
 						->where('year', $year)
