@@ -189,7 +189,7 @@ class SobForm extends \Eloquent {
 		       	$row = 8;
 		       	foreach ($soldtos as $soldto) {
 
-		       		$shipTo = Shipto::where('ship_to_code',$soldto->ship_to_code)->first();
+		       		$shipTo = ShipTo::where('ship_to_code',$soldto->ship_to_code)->first();
 					$week_start = new DateTime();
 					$week_start->setISODate($soldto->year,$soldto->weekno,$shipTo->dayofweek);
 					$loading_date = $week_start->format('Y-m-d');
