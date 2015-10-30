@@ -188,6 +188,7 @@ class SobForm extends \Eloquent {
 		       	// add ship to
 		       	$row = 8;
 		       	Helper::print_r($soldtos);
+		       	dd(1);
 		       	foreach ($soldtos as $soldto) {
 
 		       		$shipTo = ShipTo::where('ship_to_code',$soldto->ship_to_code)->first();
