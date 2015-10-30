@@ -4,7 +4,7 @@ class SobForm extends \Eloquent {
 	protected $fillable = [];
 
 	public static function download($year, $weekno, $filename){
-		self::generate($year, $weekno, $filename);
+		self::generate($year, $weekno, $filename)->export('xls');
 	}
 
 	public static function generate($year, $weekno, $filename){
