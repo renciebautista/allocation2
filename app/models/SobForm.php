@@ -198,7 +198,7 @@ class SobForm extends \Eloquent {
 					date_format($date, 'Y-m-d');
 					$loading_date = date_format($date, 'Y-m-d');
 					
-					$receipt_date = date('Y-m-d', strtotime($loading_date);
+					$receipt_date = date('Y-m-d', strtotime($loading_date));
 					dd($receipt_date);
 					// dd($loading_date.'=>'.$receipt_date);
 					AllocationSob::where('weekno',$weekno)
