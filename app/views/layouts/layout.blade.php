@@ -94,6 +94,9 @@
 
 								<li>{{ HTML::linkRoute('activity.index', 'Activities') }}</li>  
 								<li>{{ HTML::linkRoute('sobfilter.index', 'SOB Filters') }}</li>  
+
+
+								<li>{{ HTML::linkRoute('shipto.index', 'Ship To') }}</li>  
 							</ul>
 						</li>
 						@endif

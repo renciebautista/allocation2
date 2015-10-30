@@ -3,7 +3,11 @@
 class AllocationSob extends \Eloquent {
 	protected $fillable = [];
 
+	public $timestamps = false;
+
 	public static function createAllocation($id,$ship_to,$wek_multi = null){
+		
+
 		$scheme = Scheme::find($id);
 		$total_alloc = $ship_to->final_alloc;
 		$total_weeks = $scheme->weeks;
@@ -18,9 +22,7 @@ class AllocationSob extends \Eloquent {
 		for($i = $start_week; $i < $last_week; $i++){
 			if(!$zero){
 				if(!empty($wek_multi)){
-					// dd($wek_multi);
 					$multi = $wek_multi[$i]/100;
-					// dd($multi);
 					$wek_value = $total_alloc * $multi;
 					$share = $wek_multi[$i];
 				}else{
@@ -46,19 +48,17 @@ class AllocationSob extends \Eloquent {
 				$new_count++;
 				$year = $year+ 1;
 			}
-			
-			// echo $share;/
+
 			
 			$data[] = array('scheme_id' => $scheme->id, 
 				'allocation_id' => $ship_to->id, 
+				'ship_to_code' => $ship_to->ship_to_code,
 				'weekno' => $weekno, 
 				'year' => $year,
 				'share' => $share,
 				'allocation' => $wek_value);
-
 		}
 
-		// dd($data);
 		if(count($data) > 0){
 			self::insert($data);
 		}

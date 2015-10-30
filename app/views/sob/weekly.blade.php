@@ -12,7 +12,7 @@
 
 @include('partials.notification')
 
-{{ Form::open(array('action' => array('SobController@generate'),'class' => 'bs-component','id' => 'myform')) }}
+{{ Form::open(array('action' => array('SobController@generateweekly'),'class' => 'bs-component','id' => 'myform')) }}
 <div class="panel panel-default">
 	<div class="panel-heading">Filter</div>
 	<div class="panel-body">
@@ -22,8 +22,36 @@
 				<div class="form-group">
 					<div class="row">
 						<div class="col-lg-12">
-						{{ Form::label('desc', 'Report Name', array('class' => 'control-label')) }}
-						{{ Form::text('desc','',array('id' => 'desc', 'class' => 'form-control', 'placeholder' => 'Report Name' ,'maxlength' => 80)) }}
+						{{ Form::label('filename', 'Filename', array('class' => 'control-label')) }}
+						{{ Form::text('filename','',array('id' => 'filename', 'class' => 'form-control', 'placeholder' => 'Filename' ,'maxlength' => 80)) }}
+						</div>
+					</div>
+				</div>
+			</div>
+			
+		</div>
+
+		<div class="row">
+			<div class="col-lg-6">
+				<div class="form-group">
+					<div class="row">
+						<div class="col-lg-12">
+						{{ Form::label('year', 'Year', array('class' => 'control-label')) }}
+						{{ Form::select('year', array('0' => 'PLEASE SELECT') + $years, null, array('class' => 'form-control')) }}
+						</div>
+					</div>
+				</div>
+			</div>
+			
+		</div>
+
+		<div class="row">
+			<div class="col-lg-6">
+				<div class="form-group">
+					<div class="row">
+						<div class="col-lg-12">
+						{{ Form::label('week', 'Week No.', array('class' => 'control-label')) }}
+						{{ Form::select('week', array('0' => 'PLEASE SELECT') + $weeks, null, array('class' => 'form-control')) }}
 						</div>
 					</div>
 				</div>

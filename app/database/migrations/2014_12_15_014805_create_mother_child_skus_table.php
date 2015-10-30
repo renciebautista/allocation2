@@ -33,5 +33,6 @@ class CreateMotherChildSkusTable extends Migration {
 	{
 		Schema::drop('mother_child_skus');
 	}
+	
 
 }

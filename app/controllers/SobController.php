@@ -65,7 +65,40 @@ class SobController extends \BaseController {
 	}
 
 	public function weekly(){
-		return View::make('sob.weekly');
+		$weeks = AllocationSob::select('weekno')
+			->groupBy('weekno')
+			->orderBy('weekno')
+			->lists('weekno', 'weekno');
+		$years = AllocationSob::select('year')
+			->groupBy('year')
+			->orderBy('year')
+			->lists('year', 'year');
+		return View::make('sob.weekly',compact('years', 'weeks'));
+	}
+
+	public function generateweekly(){
+		$input = Input::all();
+		$rules = array(
+	        'filename' => 'required|between:4,128',
+	        'year' => 'required|integer|min:1',
+	        'week' => 'required|integer|min:1'
+	    );
+		$validation = Validator::make($input,$rules);
+
+		if($validation->passes())
+		{
+			SobForm::download(Input::get('year'),Input::get('week'), Input::get('filename'));
+		}else{
+			return Redirect::route('sob.weekly')
+			->withInput()
+			->withErrors($validation)
+			->with('class', 'alert-danger')
+			->with('message', 'There were validation errors.');
+		}
+
+		
+
+		
 	}
 
 }

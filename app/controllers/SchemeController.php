@@ -932,9 +932,6 @@ class SchemeController extends \BaseController {
 	}
 
 	public function updatesob($id){
-
-		// dd(Input::all());
-
 		$rules = array(
 			'start_date' => 'required',
 			'weeks' => 'required|numeric|max:14'
