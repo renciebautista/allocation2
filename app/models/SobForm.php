@@ -195,7 +195,7 @@ class SobForm extends \Eloquent {
 					// $loading_date = $week_start->format('Y-m-d');
 					$date = date_create();
 					date_isodate_set($date, $soldto->year, $soldto->weekno,$shipTo->dayofweek);
-					$loading_date = date_format($date, 'Y-m-d');
+					$loading_date = date_format(date_create($date), 'Y-m-d');
 					// dD($loading_date);
 					
 					$receipt_date = date('Y-m-d', strtotime($loading_date . '+ 1 days'));
