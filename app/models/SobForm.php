@@ -4,7 +4,7 @@ class SobForm extends \Eloquent {
 	protected $fillable = [];
 
 	public static function download($year, $weekno, $filename){
-		self::generate($year, $weekno, $filename)->export('xls');
+		self::generate($year, $weekno, $filename);
 	}
 
 	public static function generate($year, $weekno, $filename){
@@ -190,6 +190,7 @@ class SobForm extends \Eloquent {
 		       	foreach ($soldtos as $soldto) {
 
 		       		$shipTo = ShipTo::where('ship_to_code',$soldto->ship_to_code)->first();
+		       		echo $ship_to_code;
 					$week_start = new DateTime();
 					$week_start->setISODate($soldto->year,$soldto->weekno,$shipTo->dayofweek);
 					$loading_date = $week_start->format('Y-m-d');
