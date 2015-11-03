@@ -34,6 +34,7 @@
 				<thead>
 					<tr>
 						<th class="center" style="width:55%;">Activity Type Name</th>
+						<th class="center">Prefix</th>
 						<th class="center">With Scheme</th>
 						<th class="center">With Material Sourcing</th>
 						<th class="center">With SOB</th>
@@ -50,9 +51,10 @@
 					@foreach($activitytypes as $type)
 					<tr>
 						<td>{{ $type->activity_type }}</td>
-						<td class="center">{{ ($type->with_scheme) ? 'TRUE' : 'FALSE' }}</td>
-						<td class="center">{{ ($type->with_msource) ? 'TRUE' : 'FALSE' }}</td>
-						<td class="center">{{ ($type->with_sob) ? 'TRUE' : 'FALSE' }}</td>
+						<td class="center">{{ ($type->prefix)}}</td>
+						<td class="center">{{ ($type->with_scheme) ? '<i class="fa fa-check"></i>' : '' }}</td>
+						<td class="center">{{ ($type->with_msource) ? '<i class="fa fa-check"></i>' : '' }}</td>
+						<td class="center">{{ ($type->with_sob) ? '<i class="fa fa-check"></i>' : '' }}</td>
 						<td class="center">{{ $type->uom }}</td>
 						<td class="action">
 							{{ HTML::linkAction('NetworkController@index','Manage Networks', $type->id, array('class' => 'btn btn-primary btn-xs')) }}

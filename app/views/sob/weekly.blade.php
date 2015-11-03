@@ -36,6 +36,20 @@
 				<div class="form-group">
 					<div class="row">
 						<div class="col-lg-12">
+						{{ Form::label('type', 'Activity Type', array('class' => 'control-label')) }}
+						{{ Form::select('type', array('0' => 'PLEASE SELECT') + $types, null, array('class' => 'form-control')) }}
+						</div>
+					</div>
+				</div>
+			</div>
+			
+		</div>
+
+		<div class="row">
+			<div class="col-lg-6">
+				<div class="form-group">
+					<div class="row">
+						<div class="col-lg-12">
 						{{ Form::label('year', 'Year', array('class' => 'control-label')) }}
 						{{ Form::select('year', array('0' => 'PLEASE SELECT') + $years, null, array('class' => 'form-control')) }}
 						</div>

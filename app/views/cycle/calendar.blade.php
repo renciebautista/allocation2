@@ -57,13 +57,7 @@
 						<td class="center">{{ date_format(date_create($cycle->pdf_deadline),'m/d/Y')  }}</td>
 						<td class="center">{{ date_format(date_create($cycle->release_date),'m/d/Y')  }}</td>
 						<td class="center">{{ date_format(date_create($cycle->implemintation_date),'m/d/Y')  }}</td>
-						<td class="center">
-							@if($cycle->emergency) 
-							TRUE
-							@else
-							FALSE
-							@endif
-						</td>
+						<td class="center">{{ ($cycle->emergency) ? '<i class="fa fa-check"></i>' : '' }}</td>
 					</tr>
 					@endforeach
 					@endif

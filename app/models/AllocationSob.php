@@ -133,6 +133,7 @@ class AllocationSob extends \Eloquent {
 					GROUP BY activity_id
 				) as brands_tbl ON activities.id = brands_tbl.activity_id
 			where activities.cycle_id in (".implode(",", $cycles).")
+			and activities.disable = '0'
 			order by allocation_sobs.id");
 
 			return DB::select(DB::raw($query));

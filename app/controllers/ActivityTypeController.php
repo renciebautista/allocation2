@@ -45,6 +45,7 @@ class ActivityTypeController extends \BaseController {
 				$activitytype = new ActivityType();
 				$activitytype->activity_type = strtoupper(Input::get('activity_type'));
 				$activitytype->uom = strtoupper(Input::get('uom'));
+				$activitytype->prefix = strtoupper(Input::get('prefix'));
 				$activitytype->with_scheme = (Input::has('with_scheme')) ? 1 : 0;
 				$activitytype->with_msource = (Input::has('with_msource')) ? 1 : 0;
 				$activitytype->with_sob = (Input::has('with_sob')) ? 1 : 0;
@@ -126,6 +127,7 @@ class ActivityTypeController extends \BaseController {
 				$activitytype = ActivityType::findOrFail($id);
 				$activitytype->activity_type = strtoupper(Input::get('activity_type'));
 				$activitytype->uom = strtoupper(Input::get('uom'));
+				$activitytype->prefix = strtoupper(Input::get('prefix'));
 				$activitytype->with_scheme = (Input::has('with_scheme')) ? 1 : 0;
 				$activitytype->with_msource = (Input::has('with_msource')) ? 1 : 0;
 				$activitytype->with_sob = (Input::has('with_sob')) ? 1 : 0;

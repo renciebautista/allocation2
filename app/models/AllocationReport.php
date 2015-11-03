@@ -334,7 +334,7 @@ class AllocationReport extends \Eloquent {
 			$activitytypes,$divisions,$categories,$brands,
 			$groups,$areas,$soldtos,$shiptos,$channels,$outlets,$counter,$take);
 	// var_dump($query);
-		dd($query);
+		// dd($query);
 		return DB::select(DB::raw($query));
 	}
 

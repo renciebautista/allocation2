@@ -3,47 +3,73 @@
 class SobForm extends \Eloquent {
 	protected $fillable = [];
 
-	public static function download($year, $weekno, $filename){
-		self::generate($year, $weekno, $filename)->export('xls');
+	public static function download($year, $weekno, $type, $filename){
+		self::generate($year, $weekno,  $type, $filename)->export('xls');
 	}
 
-	public static function generate($year, $weekno, $filename){
-		$schemes = AllocationSob::select('schemes.item_code', 'schemes.item_desc', 'allocation_sobs.scheme_id')
+	public static function generate($year, $weekno,$type, $filename){
+
+		$activitytype = ActivityType::find($type);
+		// dd($activitytype);
+		$prefix = $activitytype->prefix;
+		// dd($prefix);
+		$brand = 'MULTI';
+
+		$brands = array();
+
+		$schemes = AllocationSob::select('schemes.item_code', 'schemes.item_desc', 'allocation_sobs.scheme_id', 'schemes.activity_id')
 			->join('schemes', 'schemes.id', '=', 'allocation_sobs.scheme_id')
+			->join('activities', 'activities.id' , '=', 'schemes.activity_id')
 			->where('weekno', $weekno)
 			->where('year', $year)
+			->where('activities.activity_type_id',$type)
+			->where('activities.disable',0)
 			->groupBy('scheme_id')
 			->orderBy('allocation_sobs.scheme_id')
 			->get();
 
+		$scheme_ids = array();
+		foreach ($schemes as $value) {
+			$scheme_ids[] = $value->scheme_id;
+			$activity = Activity::find($value->activity_id);
+			$activity_brands = $activity->getBrand();
+			foreach ($activity_brands as $activity_brand) {
+				$brands[] = $activity_brand;
+			}
+			// dd($brands);
+		}
+
+		if(count($brands) == 1){
+			$brand = $brands[0];
+		}
+
 		$soldtos = AllocationSob::select('sold_to_code', 'sold_to', 'allocation_sobs.ship_to_code', 'ship_to', 
 			DB::raw('sum(allocation_sobs.allocation) as allocations'),
 			'allocation_sobs.loading_date', 'allocation_sobs.receipt_date' ,'allocation_sobs.year',
-			'allocation_sobs.weekno'
-			)
-			->join('allocations', 'allocations.id', '=', 'allocation_sobs.allocation_id')
-			->where('weekno', $weekno)
-			->where('year', $year)
-			->groupBy('allocation_sobs.ship_to_code')
-			->orderBy('allocation_sobs.id')
-			->get();
+			'allocation_sobs.weekno')
+				->join('allocations', 'allocations.id', '=', 'allocation_sobs.allocation_id')
+				->where('weekno', $weekno)
+				->where('year', $year)
+				->whereIn('allocation_sobs.scheme_id',$scheme_ids)
+				->groupBy('allocation_sobs.ship_to_code')
+				->orderBy('allocation_sobs.id')
+				->get();
 
 		$allocations = array();
+
 		foreach ($schemes as $scheme) {
 		 	$allocations[$scheme->scheme_id] = AllocationSob::select(DB::raw('sum(allocation_sobs.allocation) as allocations'))
-					->join('allocations', 'allocations.id', '=', 'allocation_sobs.allocation_id')
-					->where('weekno', $weekno)
-					->where('year', $year)
-					->where('allocation_sobs.scheme_id', $scheme->scheme_id)
-					->groupBy('allocation_sobs.ship_to_code')
-					->orderBy('allocation_sobs.id')
-					->get();
-		 } 
-		// Helper::print_r($allocations);
-		// dd($allocations);
+				->join('allocations', 'allocations.id', '=', 'allocation_sobs.allocation_id')
+				->where('weekno', $weekno)
+				->where('year', $year)
+				->where('allocation_sobs.scheme_id', $scheme->scheme_id)
+				->groupBy('allocation_sobs.ship_to_code')
+				->orderBy('allocation_sobs.id')
+				->get();
+		} 
 
-		return  Excel::create($filename, function($excel) use ($schemes,$soldtos, $weekno, $year, $allocations) {
-			$excel->sheet('Sales Order', function($sheet)  use ($schemes, $soldtos, $weekno, $year, $allocations) {
+		return  Excel::create($filename, function($excel) use ($schemes,$soldtos, $weekno, $year, $prefix, $brand, $allocations) {
+			$excel->sheet('Sales Order', function($sheet)  use ($schemes, $soldtos, $weekno, $year, $prefix, $brand, $allocations) {
 
 				$sheet->setWidth('A', 30);
 				$sheet->setWidth('B', 15);
@@ -146,6 +172,9 @@ class SobForm extends \Eloquent {
 			       		$first_column = PHPExcel_Cell::stringFromColumnIndex(10);
 			       		$last_column = PHPExcel_Cell::stringFromColumnIndex($sum_col-1);
 			       		foreach ($allocations[$scheme->scheme_id] as $value) {
+			       			$uid = $row_num - 7;
+			       			$po = $prefix.$brand.'_'.$weekno.'_'.$uid;
+			       			$sheet->setCellValueByColumnAndRow(0,$row_num, $po);
 			       			$sheet->setCellValueByColumnAndRow($col,$row_num, $value->allocations);
 			       			$sum = "=SUM(".$first_column.$row_num.":".$last_column.$row_num.")";
 			       			// dd($sum);

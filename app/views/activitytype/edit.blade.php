@@ -49,8 +49,14 @@
 
 		<div class="form-group">
 			{{ Form::label('uom', 'Unit of Measurement', array('class' => 'control-label')) }}
-			{{ Form::text('uom', $activitytype ->uom ,array('class' => 'form-control', 'placeholder' => 'Unit of Measurement')) }}
+			{{ Form::text('uom', $activitytype->uom ,array('class' => 'form-control', 'placeholder' => 'Unit of Measurement')) }}
 		</div>
+
+		<div class="form-group">
+			{{ Form::label('prefix', 'Prefix', array('class' => 'control-label')) }}
+			{{ Form::text('prefix', $activitytype->prefix ,array('class' => 'form-control', 'placeholder' => 'Prefix')) }}
+		</div>
+
 		<div class="form-group">
 			{{ Form::label('budget_type', 'Required Budget Type', array('class' => 'control-label')) }}
 

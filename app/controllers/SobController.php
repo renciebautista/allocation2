@@ -19,9 +19,6 @@ class SobController extends \BaseController {
 	}
 
 	public function generate(){
-		// dd(Input::all());
-		// $soballocations = 
-
 		$cycles = Input::get('cy');
 		$fileName = Input::get('desc');
 		$allocations = AllocationSob::getByCycle($cycles);
@@ -31,11 +28,7 @@ class SobController extends \BaseController {
 				$result->value = (double) $result->value;
 			}
 		   	$data[] = (array)$result;  
-		   #or first convert it and then change its properties using 
-		   #an array syntax, it's up to you
 		}
-
-		// dd($data);
 		
 		Excel::create($fileName, function($excel) use($data){
 			$excel->sheet('SOB Allocation', function($sheet) use($data) {
@@ -73,13 +66,22 @@ class SobController extends \BaseController {
 			->groupBy('year')
 			->orderBy('year')
 			->lists('year', 'year');
-		return View::make('sob.weekly',compact('years', 'weeks'));
+
+		$types = AllocationSob::orderBy('activitytype_desc')
+			->join('schemes', 'schemes.id', '=', 'allocation_sobs.scheme_id')
+			->join('activities', 'activities.id', '=', 'schemes.activity_id')
+			->groupBy('activity_type_id')
+			->lists('activitytype_desc', 'activity_type_id');
+
+
+		return View::make('sob.weekly',compact('years', 'weeks', 'types'));
 	}
 
 	public function generateweekly(){
 		$input = Input::all();
 		$rules = array(
 	        'filename' => 'required|between:4,128',
+	        'type' => 'required|integer|min:1',
 	        'year' => 'required|integer|min:1',
 	        'week' => 'required|integer|min:1'
 	    );
@@ -87,7 +89,7 @@ class SobController extends \BaseController {
 
 		if($validation->passes())
 		{
-			SobForm::download(Input::get('year'),Input::get('week'), Input::get('filename'));
+			SobForm::download(Input::get('year'),Input::get('week'),Input::get('type'), Input::get('filename'));
 		}else{
 			return Redirect::route('sob.weekly')
 			->withInput()
