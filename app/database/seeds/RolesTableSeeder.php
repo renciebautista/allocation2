@@ -17,7 +17,8 @@ class RolesTableSeeder extends Seeder {
 			(4, 'GCOM APPROVER'),
 			(5, 'CD OPS APPROVER'),
 			(6, 'CMD DIRECTOR'),
-			(7, 'FIELD SALES');");
+			(7, 'FIELD SALES'),
+			(8, 'SOB');");
 		DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 	}
 
