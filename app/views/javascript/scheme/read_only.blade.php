@@ -1,5 +1,28 @@
 @section('scripts')
 
+//sob tab
+
+if(location.hash.length > 0){
+	var activeTab = $('[href=' + location.hash + ']');
+	activeTab && activeTab.tab('show');
+}
+
+// Change hash for page-reload
+$('.nav-tabs a').on('shown', function (e) {
+    window.location.hash = e.target.hash;
+})
+
+
+$('.nav-tabs a').click(function (e) {
+	pre = "#details";
+	if(window.location.hash.length > 0){
+		pre = window.location.hash;
+	}
+	var target = $(this);
+	target_id = $(pre).find('form').attr('id');	
+	$(target).tab('show');
+});
+
 // calculator
 $('#calculate').on( "click", function() {
 	var avg_wk_sales = accounting.unformat($('#weekly_sales').val()) || 0;
