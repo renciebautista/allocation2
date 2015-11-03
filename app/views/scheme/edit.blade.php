@@ -33,7 +33,9 @@
 
 <ul class="nav nav-tabs">
 	<li class="active"><a id="tab-details" aria-expanded="true" href="#details">Scheme Details</a></li>
+	@if($scheme->activity->activitytype->with_sob)
 	<li class=""><a id="tab-sob" aria-expanded="false" href="#sob">SOB Details</a></li>
+	@endif
 </ul>
 
 
@@ -433,7 +435,7 @@
 			</div>
 		</div>
 	</div>
-
+	@if($scheme->activity->activitytype->with_sob)
 	<div class="tab-pane fade" id="sob">
 		<br>
 		<div class="panel panel-primary">
@@ -441,9 +443,8 @@
 			<div class="panel-body">
 
 					{{ Form::open(array('action' => array('SchemeController@updatesob', $scheme->id), 'files'=>true, 'method' => 'PUT', 'id' => 'updatesob', 'class' => 'bs-component')) }}
-					@foreach($sob_header as $header)
-						<?php $wek = explode("_", $header); ?>
-						{{ Form::hidden('_wek['.$wek[1].']', $sobs[0]->share, ['id' => '_wek'.$wek[1]]) }}
+					@foreach($sob_header as $key => $header)
+						{{ Form::hidden('_wek['.$key.']', $header, ['id' => '_wek'.$key, 'class' => 'week-sum']) }}
 					@endforeach
 					<div class="row">
 						<div class="col-lg-4">
@@ -496,20 +497,21 @@
 										
 										<tr class="sob-percent">
 											<th colspan="3"></th>
-											@foreach($sob_header as $header)
+											<?php $total = 0; ?>
+											@foreach($sob_header as $key => $header)
 											<th class="alloc_per">
-												<?php $wek = explode("_", $header); ?>
-												{{ Form::text('wek['.$wek[1].']',$sobs[0]->share,array('id' => 'wek_'.$wek[1], 'class' => 'numweek')) }}
+												{{ Form::text('wek['.$key.']',$header,array('id' => 'wek_'.$key, 'class' => 'numweek')) }}
 											</th>
+											<?php $total += $header; ?>
 											@endforeach
-											<th><span id="sum">100%</th>
+											<th><span id="sum">{{ number_format($total,2) }}%</th>
 										</tr>
 										<tr class="sob-header">
 											<th>GROUP</th>
 											<th>AREA</th>
 											<th>SHIP TO</th>
-											@foreach($sob_header as $header)
-											<th class="alloc_per">{{ str_replace("_"," ",strtoupper($header))}}</th>
+											@foreach($sob_header as $key => $header)
+											<th class="alloc_per">WK {{ $key }}</th>
 											@endforeach
 											<th class="sob_alloc_header">Total</th>
 										</tr>
@@ -522,11 +524,12 @@
 											<td>{{ $sob->group }}</td>
 											<td>{{ $sob->area }}</td>
 											<td>{{ $sob->ship_to }}</td>
-											@foreach($sob_header as $header)
-											<?php $sum += $sob->$header; ?>
-											<td class="sob_alloc">{{ $sob->$header }}</td>
+											@foreach($sob_header as $key => $header)
+											<?php $col = "wk_".$key; ?>
+											<td class="sob_alloc">{{ $sob->$col }}</td>
+											<?php $sum += $sob->$col; ?>
 											@endforeach
-											<td class="sob_alloc_header wek_sum">{{ $sum }}</td>
+											<td class="sob_alloc_header wek_sum"><span id="sum_alloc">{{ $sum }}</span></td>
 											
 										</tr>
 										@endforeach
@@ -540,9 +543,8 @@
 					
 			</div>
 		</div>
-
-
 	</div>
+	@endif
 </div>
 
 
@@ -686,7 +688,7 @@
 		//console.log($("#_wek"+arr[1]));
 		$("#_wek"+arr[1]).val($(this).val());
 
-	    $('#sum').text(sum.toFixed(2));
+	    $('#sum').text(sum.toFixed(2) +'%');
 	})
 
 	$("#updatesob").validate({
@@ -721,5 +723,17 @@
 	           
 	        }
 	    }
-});
+
+	});
+
+	$.validator.addMethod("sum", function(value, element, params) {
+		console.log(value);
+		var sumOfVals = 0;
+	        var parent = $(element).parent(".parentDiv");
+	        $(parent).find("input").each(function () {
+	            sumOfVals = sumOfVals + parseInt($(this).val(), 10);
+	        });
+	        if (sumOfVals == params) return true;
+	        return false;
+	}, "Sum must be {0}");
 @stop

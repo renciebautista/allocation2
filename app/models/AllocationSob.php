@@ -6,7 +6,7 @@ class AllocationSob extends \Eloquent {
 	public $timestamps = false;
 
 	public static function createAllocation($id,$ship_to,$wek_multi = null){
-		
+		// dd($wek_multi);
 
 		$scheme = Scheme::find($id);
 		$total_alloc = $ship_to->final_alloc;
@@ -18,13 +18,22 @@ class AllocationSob extends \Eloquent {
 
 		$start_week = idate('W', strtotime($scheme->sob_start_date));
 		$last_week = $start_week + $total_weeks;
-		$new_count = 1;
+		$new_count = $start_week;
 		for($i = $start_week; $i < $last_week; $i++){
+
+			if($i > 52){
+				if($new_count > 52){
+					$new_count = 1;
+				}
+				$weekno = $new_count;
+				$year = $year+ 1;
+			}
+
 			if(!$zero){
 				if(!empty($wek_multi)){
-					$multi = $wek_multi[$i]/100;
-					$wek_value = $total_alloc * $multi;
-					$share = $wek_multi[$i];
+					$multi = $wek_multi[$new_count]/100;
+					$wek_value = ceil($total_alloc * $multi);
+					$share = $wek_multi[$new_count];
 				}else{
 					$wek_value = ceil($total_alloc/$total_weeks);
 					$share = (1/$total_weeks) * 100;
@@ -40,14 +49,11 @@ class AllocationSob extends \Eloquent {
 			}else{
 				$wek_value = 0;
 			}
-			$weekno = $i;
+			$weekno = $new_count;
 			$year = idate('Y', strtotime($scheme->sob_start_date));
+			$new_count++;
 
-			if($i > 52){
-				$weekno = $new_count;
-				$new_count++;
-				$year = $year+ 1;
-			}
+			
 
 			
 			$data[] = array('scheme_id' => $scheme->id, 
@@ -89,6 +95,14 @@ class AllocationSob extends \Eloquent {
 			return DB::select(DB::raw($query));
 		}
 		return array();
+	}
+
+	public static function getHeader($id){
+		return self::select('weekno', 'share')
+			->where('scheme_id', $id)
+			->groupBy('weekno')
+			->orderBy('allocation_id')
+			->get();
 	}
 
 	public static function getByCycle($cycles){

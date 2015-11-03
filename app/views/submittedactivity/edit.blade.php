@@ -79,6 +79,9 @@
 <ul class="nav nav-tabs">
 	<li class="active"><a aria-expanded="true" href="#activty">Activity Preview</a></li>
 	<li class=""><a aria-expanded="false" href="#attachment">Attachments</a></li>
+	@if($activity->activitytype->with_sob)
+	<li class=""><a aria-expanded="false" href="#sob">SOB Details</a></li>
+	@endif
 	<li class=""><a aria-expanded="false" href="#comments">Comments</a></li>
 	
 </ul>
@@ -956,6 +959,18 @@
 		  	</div>
 		</div>
 	</div>
+
+	@if($scheme->activity->activitytype->with_sob)
+	<div class="tab-pane fade" id="sob">
+		<br>
+		<div class="panel panel-default">
+			<div class="panel-heading">SOB Details</div>
+			<div class="panel-body">
+
+			</div>
+		</div>
+	</div>
+	@endif
 
 	<div class="tab-pane fade" id="comments">
 		<br>

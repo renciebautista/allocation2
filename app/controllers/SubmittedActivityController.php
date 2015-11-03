@@ -149,6 +149,10 @@ class SubmittedActivityController extends \BaseController {
 		$artworks = ActivityArtwork::getList($activity->id);
 		$backgrounds = ActivityBackground::getList($activity->id);
 		$bandings = ActivityBanding::getList($activity->id);
+
+		// sob
+
+		
 		// comments
 		$comments = ActivityComment::getList($activity->id);
 		return View::make('submittedactivity.edit',compact('activity','comments','approver', 'valid',
