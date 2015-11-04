@@ -178,6 +178,9 @@
 			</div>
 
 			<div id="page">
+				@if($_ENV['MAIL_TEST'])
+			<h1 class="center" style="color:#f00; font-size: 30px;">Test Enviroment</h1>
+			@endif
 				@yield('content')
 			</div>
 		</div>
