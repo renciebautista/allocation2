@@ -960,15 +960,71 @@
 		</div>
 	</div>
 
-	@if($scheme->activity->activitytype->with_sob)
+	@if($activity->activitytype->with_sob)
 	<div class="tab-pane fade" id="sob">
 		<br>
-		<div class="panel panel-default">
-			<div class="panel-heading">SOB Details</div>
-			<div class="panel-body">
 
+		@foreach($schemes as $scheme)
+		@if(count($scheme->sobs) > 0)
+		<div class="panel panel-default">
+			<div class="panel-heading">{{ $scheme->name }} - SOB Details</div>
+			<div class="panel-body">
+					<br>
+					<div class="row mytable">
+						<div class="col-lg-12">
+							<div class="allocation_total table-responsive">
+								<table class="table table-condensed table-bordered display compact datatable">
+									<thead>
+										
+										<tr class="sob-percent">
+											<th colspan="3"></th>
+											<?php $total = 0; ?>
+											@foreach($scheme->sob_header as $key => $header)
+											<th class="alloc_per">
+												{{ Form::text('wek['.$key.']',$header,array('id' => 'wek_'.$key, 'class' => 'numweek', 'readonly' => '')) }}
+											</th>
+											<?php $total += $header; ?>
+											@endforeach
+											<th><span id="sum">{{ number_format($total,2) }}%</span></th>
+										</tr>
+										<tr class="sob-header">
+											<th>GROUP</th>
+											<th>AREA</th>
+											<th>SHIP TO</th>
+											@foreach($scheme->sob_header as $key => $header)
+											<th class="alloc_per">WK {{ $key }}</th>
+											@endforeach
+											<th class="sob_alloc_header">Total</th>
+										</tr>
+									</thead>
+									<tbody>
+										
+										@foreach($scheme->sobs as $sob)
+										<?php $sum = 0; ?>
+										<tr>
+											<td>{{ $sob->group }}</td>
+											<td>{{ $sob->area }}</td>
+											<td>{{ $sob->ship_to }}</td>
+											@foreach($scheme->sob_header as $key => $header)
+											<?php $col = "wk_".$key; ?>
+											<td class="sob_alloc">{{ $sob->$col }}</td>
+											<?php $sum += $sob->$col; ?>
+											@endforeach
+											<td class="sob_alloc_header wek_sum"><span id="sum_alloc">{{ $sum }}</span></td>
+											
+										</tr>
+										@endforeach
+										
+									</tbody>
+								</table> 
+							</div>
+						</div>
+					</div>					
 			</div>
 		</div>
+		@endif
+		@endforeach
+
 	</div>
 	@endif
 
@@ -1025,4 +1081,14 @@ if(location.hash.length > 0){
 
 $("#updateactivity").disableButton();
 
+$('.nav-tabs a').on( 'shown.bs.tab', function (e) {
+    $.fn.dataTable.tables( {visible: true, api: true} ).columns.adjust();
+} );
+
+$('.datatable').DataTable({
+	"scrollY": "500px",
+	"scrollCollapse": true,
+	"paging": false,
+	"bSort": false
+});
 @stop

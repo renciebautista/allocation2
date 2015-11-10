@@ -138,4 +138,28 @@ class AllocationSob extends \Eloquent {
 
 			return DB::select(DB::raw($query));
 	}
+
+	public static function getByActivity($id){
+		$schemes = Scheme::where('activity_id',$id)->get();
+		// return $schemes;
+		foreach ($schemes as $key => $scheme) {
+			$sobs = AllocationSob::getSob($scheme->id);
+			if(count($sobs) > 0){
+				$header = AllocationSob::getHeader($scheme->id);
+				$sob_header = array();
+				if(count($header) >0){
+					foreach ($header as $value) {
+						$sob_header[$value->weekno] = $value->share;
+					}
+				}
+
+				$schemes[$key]->sobs = $sobs;
+				$schemes[$key]->sob_header = $sob_header;
+			}
+
+			
+		}
+
+		return $schemes;
+	}
 }

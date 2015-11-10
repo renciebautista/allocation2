@@ -52,6 +52,7 @@ class Activity extends \Eloquent {
         return $this->belongsToMany('User', 'activity_planners', 'activity_id', 'user_id');
     }
 
+
     // static function
 	public static function validForDownload($activity,$required_array){
 		$return = array();

@@ -41,10 +41,6 @@ class SubmittedActivityController extends \BaseController {
 		$activityIdList = Activity::getIdList($status);
 		$id_index = array_search($id, $activityIdList);
 
-		// var_dump($activityIdList);
-		// var_dump($id_index);
-
-
 		$activity = Activity::findOrFail($id);
 		if(!ActivityApprover::myActivity($activity->id)){
 			return Response::make(View::make('shared/404'), 404);
@@ -152,14 +148,16 @@ class SubmittedActivityController extends \BaseController {
 
 		// sob
 
-		
+		$schemes = AllocationSob::getByActivity($activity->id);
+		// Helper::print_r($schemes);
+		// dd($schemes);
 		// comments
 		$comments = ActivityComment::getList($activity->id);
 		return View::make('submittedactivity.edit',compact('activity','comments','approver', 'valid',
 			'activity' ,'approvers', 'planner','budgets','nobudgets','schemes','skuinvolves', 'sku_involves',
 			'materials','non_ulp','networks','artworks', 'pis' , 'areas','channels', 
 			'fdapermits','fis', 'backgrounds', 'bandings' ,'activity_roles',
-			'activityIdList','id_index','status'));
+			'activityIdList','id_index','status', 'schemes'));
 	}
 
 	public function updateactivity($id)

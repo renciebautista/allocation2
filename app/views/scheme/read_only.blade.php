@@ -404,6 +404,7 @@
 			<div class="panel-heading">SOB Details</div>
 			<div class="panel-body">
 					<br>
+					@if(count($sobs) > 0)
 					<div class="row mytable">
 						<div class="col-lg-12">
 							<div class="allocation_total table-responsive">
@@ -453,7 +454,8 @@
 								</table> 
 							</div>
 						</div>
-					</div>					
+					</div>	
+					@endif				
 			</div>
 		</div>
 	</div>
@@ -516,14 +518,14 @@
 
 @section('page-script')
 $('.nav-tabs a').on( 'shown.bs.tab', function (e) {
-        $.fn.dataTable.tables( {visible: true, api: true} ).columns.adjust();
-    } );
+    $.fn.dataTable.tables( {visible: true, api: true} ).columns.adjust();
+} );
 
 
-	$('#sob-allocation').DataTable({
-		"scrollY": "500px",
-		"scrollCollapse": true,
-		"paging": false,
-		"bSort": false
-	});
+$('#sob-allocation').DataTable({
+	"scrollY": "500px",
+	"scrollCollapse": true,
+	"paging": false,
+	"bSort": false
+});
 @stop
