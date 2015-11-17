@@ -15,6 +15,8 @@ class ChannelController extends \BaseController {
 		foreach ($channels as $channel) {
 			$subgroups = \Account::getChannelGroup($channel->channel_code);
 			$group_children = array();
+
+			// mpk
 			// if(count($subgroups)>0){
 			// 	foreach ($subgroups as $subgroup) {
 			// 		$group_children[] = array(
@@ -27,6 +29,7 @@ class ChannelController extends \BaseController {
 			// 			'key' => $channel->channel_code.".OTHERS",
 			// 			);
 			// }
+			// end
 			
 			
 			$data[] = array(

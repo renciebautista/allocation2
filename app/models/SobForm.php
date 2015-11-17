@@ -100,6 +100,10 @@ class SobForm extends \Eloquent {
 					$cell->setFontWeight('bold');
 				});
 
+				$sheet->cell('A3', function($cell) {
+					$cell->setFontWeight('bold');
+				});
+
 				$sheet->cell('I1', function($cell) {
 					$cell->setFontColor('#ff0000');
 					$cell->setFontSize(12);
@@ -113,7 +117,7 @@ class SobForm extends \Eloquent {
 
 		        $sheet->row(1, array('SOB FORM', '', '', '', '', '', '', '','Row 5 should include the word SPLIT, all item codes and TOTAL'));
 		       	$sheet->row(2, array('Rev. 6/30/2006', '', '', '', '', '', '', '','ROW 8 is the start of SOB DATA;  ONE WORKSHEET : ONE FILE ONLY'));
-		       	$sheet->row(3, array('', '', '', '', '', '', '', '','TOTAL AT THE BOTTOM SHOULD BE AT COLUMN D'));
+		       	$sheet->row(3, array('Downloaded Date : '.date('Y-m-d H:i:s'), '', '', '', '', '', '', '','TOTAL AT THE BOTTOM SHOULD BE AT COLUMN D'));
 		       	$sheet->row(4, array('Sales Org', 'RT', '', '', 'REMARKS'));
 		       	$sheet->mergeCells('E4:G4');
 		       	$sheet->row(5, array('PURCHASE', 'LOADING', 'RECEIPT', '', '', '', '', '', 'SHIP', 'SPLIT'));
