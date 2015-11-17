@@ -14,29 +14,36 @@ class AllocationSob extends \Eloquent {
 
 		$data = array();
 		$running_value = 0;
+		$running_share = 0;
 		$zero = false;
 
 		$start_week = idate('W', strtotime($scheme->sob_start_date));
 		$last_week = $start_week + $total_weeks;
 		$new_count = $start_week;
+
+		// $start_year = $scheme->sob_start_date;
+		$year = idate('Y', strtotime($scheme->sob_start_date));
+
+
 		for($i = $start_week; $i < $last_week; $i++){
 
 			if($i > 52){
 				if($new_count > 52){
 					$new_count = 1;
+					$year++;
 				}
 				$weekno = $new_count;
-				$year = $year+ 1;
+				
 			}
 
 			if(!$zero){
 				if(!empty($wek_multi)){
-					$multi = $wek_multi[$new_count]/100;
+					$multi = ceil($wek_multi[$new_count]/100);
 					$wek_value = ceil($total_alloc * $multi);
 					$share = $wek_multi[$new_count];
 				}else{
 					$wek_value = ceil($total_alloc/$total_weeks);
-					$share = (1/$total_weeks) * 100;
+					$share = round((1/$total_weeks) * 100,2);
 				}
 
 				
@@ -50,11 +57,16 @@ class AllocationSob extends \Eloquent {
 				$wek_value = 0;
 			}
 			$weekno = $new_count;
-			$year = idate('Y', strtotime($scheme->sob_start_date));
+			// $year = idate('Y', strtotime($scheme->sob_start_date));
 			$new_count++;
 
-			
+			$x = $last_week - 1;
+			if($i == $x){
+				// dd($running_share);
+				$share = 100 - $running_share;
+			}
 
+			$running_share += $share;
 			
 			$data[] = array('scheme_id' => $scheme->id, 
 				'allocation_id' => $ship_to->id, 
@@ -101,7 +113,8 @@ class AllocationSob extends \Eloquent {
 		return self::select('weekno', 'share')
 			->where('scheme_id', $id)
 			->groupBy('weekno')
-			->orderBy('allocation_id')
+			->orderBy('year')
+			->orderBy('weekno')
 			->get();
 	}
 
