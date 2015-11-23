@@ -125,4 +125,45 @@ class ShiptoController extends \BaseController {
 		//
 	}
 
+	public function export(){
+		$shiptos = ShipTo::all();
+
+		Excel::create("Ship To", function($excel) use($shiptos){
+			$excel->sheet('Sheet1', function($sheet) use($shiptos) {
+				$sheet->fromModel($shiptos,null, 'A1', true);
+
+			})->download('xls');
+
+		});
+	}
+
+	public function import(){
+		return View::make('shipto.import');
+	}
+
+	public function upload(){
+		if(Input::hasFile('file')){
+			$file_path = Input::file('file')->move(storage_path().'/uploads/temp/',Input::file('file')->getClientOriginalName());
+			Excel::selectSheets('Sheet1')->load($file_path, function($reader) {
+				ShipTo::import($reader->get());
+			});
+
+
+			if (File::exists($file_path))
+			{
+			    File::delete($file_path);
+			}
+			
+			return Redirect::action('ShiptoController@index')
+					->with('class', 'alert-success')
+					->with('message', 'Ship To list successfuly updated');
+		}else{
+
+			return Redirect::action('ShiptoController@import')
+				->with('class', 'alert-danger')
+				->with('message', 'A file upload is required.');
+		}
+		
+	}
+
 }

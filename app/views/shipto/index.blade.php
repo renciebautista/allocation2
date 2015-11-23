@@ -21,6 +21,8 @@
         </div>
         <button type="submit" class="btn btn-success"><i class="fa fa-search"></i> Search</button>
         <a href="{{ URL::action('ShiptoController@create') }}" class="btn btn-primary"><i class="fa fa-plus"></i> Ship To</a>
+        <a href="{{ URL::action('ShiptoController@export') }}" class="btn btn-info"><i class="fa fa-download"></i> Export Ship To</a>
+        <a href="{{ URL::action('ShiptoController@import') }}" class="btn btn-info"><i class="fa fa-upload"></i> Import Ship To</a>
     {{ Form::close() }}
   </div>
 </div>

@@ -106,6 +106,13 @@ class CustomerController extends \BaseController {
 			Excel::selectSheets('Sheet1')->load($file_path, function($reader) {
 				Customer::import($reader->get());
 			});
+
+
+			if (File::exists($file_path))
+			{
+			    File::delete($file_path);
+			}
+			
 			return Redirect::action('CustomerController@index')
 					->with('class', 'alert-success')
 					->with('message', 'Customer list successfuly updated');
