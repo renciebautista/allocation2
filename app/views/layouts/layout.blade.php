@@ -95,7 +95,10 @@
 								<li>{{ HTML::linkRoute('activity.index', 'Activities') }}</li>  
 								<li>{{ HTML::linkRoute('sobfilter.index', 'SOB Filters') }}</li>  
 
-
+								<li class="divider"></li>
+								<li>{{ HTML::linkRoute('brand.index', 'Brand') }}</li> 
+								<li class="divider"></li>
+								<li>{{ HTML::linkRoute('customer.index', 'Customer') }}</li>  
 								<li>{{ HTML::linkRoute('shipto.index', 'Ship To') }}</li>  
 							</ul>
 						</li>

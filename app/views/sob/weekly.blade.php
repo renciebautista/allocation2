@@ -45,6 +45,21 @@
 			
 		</div>
 
+
+		<div class="row">
+			<div class="col-lg-6">
+				<div class="form-group">
+					<div class="row">
+						<div class="col-lg-12">
+						{{ Form::label('brand', 'SOB Allocation Brand', array('class' => 'control-label')) }}
+						{{ Form::select('brand', array('0' => 'PLEASE SELECT') + $brands, null, array('class' => 'form-control')) }}
+						</div>
+					</div>
+				</div>
+			</div>
+			
+		</div>
+
 		<div class="row">
 			<div class="col-lg-6">
 				<div class="form-group">

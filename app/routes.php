@@ -274,6 +274,11 @@ Route::get('allocreport', function(){
 // 	return View::make('emails.mail4', $data);
 // });
 
+Route::get('test', function(){
+	$date=date("W");
+ 	echo $date." Week Number";
+});
+
 Route::get('mail4', function(){
 	$cycles = Cycle::getByReleaseDate();
 	$cycle_ids = array();
@@ -435,7 +440,7 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('scheme/{id}', 'SchemeController@show');
 	Route::delete('scheme/{id}', 'SchemeController@destroy');
 	Route::put('scheme/{id}', 'SchemeController@update');
-	Route::put('scheme/{id}/sob', 'SchemeController@updatesob');
+	Route::post('scheme/{id}/updatesob', 'SchemeController@updatesob');
 	Route::post('scheme/{id}/duplicate','SchemeController@duplicate');
 	Route::post('scheme/{id}/duplicatescheme', 'SchemeController@duplicatescheme');
 
@@ -531,6 +536,17 @@ Route::group(array('before' => 'auth'), function()
 
 
 	Route::resource('shipto', 'ShiptoController');
+
+	Route::get('customer/export', 'CustomerController@export');
+	Route::get('customer/import', 'CustomerController@import');
+	Route::post('customer/upload', 'CustomerController@upload');
+	Route::resource('customer', 'CustomerController');
+
+	Route::get('brand/export', 'BrandController@export');
+	Route::get('brand/import', 'BrandController@import');
+	Route::post('brand/upload', 'BrandController@upload');
+	Route::resource('brand', 'BrandController');
+
 
 	Route::get('images/{cycle_id}/{type_id}/{activity_id}/{name}', function($cycle_id = null,$type_id = null,$activity_id = null,$name = null)
 	{

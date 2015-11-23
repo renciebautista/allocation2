@@ -4,6 +4,15 @@ class Customer extends \Eloquent {
 	protected $fillable = ['area_code', 'area_code_two','customer_code', 'customer_name', 'active', 'multiplier','from_dt'];
 	public $timestamps = false;
 
+	public static function getAll(){
+		return self::select('customers.id', 'customers.area_code',
+			'areas.area_name',
+			'customers.area_code_two', 'customers.customer_code', 'customers.sob_customer_code','customers.customer_name',
+			'customers.multiplier', 'customers.from_dt', 'customers.active')
+			->join('areas', 'areas.area_code' , '=', 'customers.area_code')
+			->get();
+	}
+
 	public static function batchInsert($records){
 		$records->each(function($row) {
 			if(!is_null($row->area_code)){
@@ -112,5 +121,46 @@ class Customer extends \Eloquent {
 				);
 		}
 		return $data;
+	}
+
+
+	public static function import($records){
+		DB::beginTransaction();
+			try {
+			$records->each(function($row)  {
+				if(!is_null($row->customer_name)){
+					$customer = self::where('customer_name',$row->customer_name)
+						->where('area_code',$row->area_code)
+						->first();
+					if(empty($customer)){
+						$customer = new Customer;
+						$customer->area_code = $row->area_code;
+						$customer->area_code_two = $row->area_code_two;
+						$customer->customer_code = $row->customer_code;
+						$customer->sob_customer_code = $row->sob_customer_code;
+						$customer->customer_name = $row->customer_name;
+						$customer->active = $row->active;
+						$customer->multiplier = $row->multiplier;
+						$customer->from_dt = $row->from_dt;
+						$customer->save();
+					}else{
+						$customer->area_code = $row->area_code;
+						$customer->area_code_two = $row->area_code_two;
+						$customer->customer_code = $row->customer_code;
+						$customer->sob_customer_code = $row->sob_customer_code;
+						$customer->customer_name = $row->customer_name;
+						$customer->active = $row->active;
+						$customer->multiplier = $row->multiplier;
+						$customer->from_dt = $row->from_dt;
+						$customer->update();
+					}
+				}
+				
+			});
+			DB::commit();
+		} catch (\Exception $e) {
+			// dd($e);
+			DB::rollback();
+		}
 	}
 }

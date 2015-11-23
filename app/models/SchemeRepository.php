@@ -183,6 +183,7 @@ class SchemeRepository extends \Eloquent {
 				$scheme_alloc->area_code = $allocation->area_code;
 				$scheme_alloc->area = $allocation->area;
 				$scheme_alloc->sold_to_code = $allocation->sold_to_code;
+				$scheme_alloc->sob_customer_code = $allocation->sob_customer_code;
 				$scheme_alloc->sold_to = $allocation->sold_to;
 				$scheme_alloc->ship_to_code = $allocation->ship_to_code;
 				$scheme_alloc->ship_to = $allocation->ship_to;

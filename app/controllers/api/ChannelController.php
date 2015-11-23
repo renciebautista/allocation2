@@ -17,18 +17,18 @@ class ChannelController extends \BaseController {
 			$group_children = array();
 
 			// mpk
-			// if(count($subgroups)>0){
-			// 	foreach ($subgroups as $subgroup) {
-			// 		$group_children[] = array(
-			// 			'title' => $subgroup->account_group_name,
-			// 			'key' => $channel->channel_code.".".$subgroup->account_group_code,
-			// 			);
-			// 	}
-			// 	$group_children[] = array(
-			// 			'title' => 'OTHERS',
-			// 			'key' => $channel->channel_code.".OTHERS",
-			// 			);
-			// }
+			if(count($subgroups)>0){
+				foreach ($subgroups as $subgroup) {
+					$group_children[] = array(
+						'title' => $subgroup->account_group_name,
+						'key' => $channel->channel_code.".".$subgroup->account_group_code,
+						);
+				}
+				$group_children[] = array(
+						'title' => 'OTHERS',
+						'key' => $channel->channel_code.".OTHERS",
+						);
+			}
 			// end
 			
 			

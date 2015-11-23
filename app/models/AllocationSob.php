@@ -21,11 +21,12 @@ class AllocationSob extends \Eloquent {
 		$last_week = $start_week + $total_weeks;
 		$new_count = $start_week;
 
-		// $start_year = $scheme->sob_start_date;
 		$year = idate('Y', strtotime($scheme->sob_start_date));
 
 
 		for($i = $start_week; $i < $last_week; $i++){
+			$wek_value = 0;
+			$share = 0;
 
 			if($i > 52){
 				if($new_count > 52){
@@ -36,38 +37,46 @@ class AllocationSob extends \Eloquent {
 				
 			}
 
-			if(!$zero){
+			// if(!$zero){
 				if(!empty($wek_multi)){
-					$multi = ceil($wek_multi[$new_count]/100);
-					$wek_value = ceil($total_alloc * $multi);
-					$share = $wek_multi[$new_count];
+					$multi = $wek_multi[$new_count]/100;
+					if($multi != 0){
+						$wek_value = ceil($total_alloc * $multi);
+						$share = $wek_multi[$new_count];
+					}
+
 				}else{
 					$wek_value = ceil($total_alloc/$total_weeks);
 					$share = round((1/$total_weeks) * 100,2);
+
 				}
 
-				
+				// echo $wek_value;
 				$running_value += $wek_value;
 				if($running_value > $total_alloc){
+					// dd($running_value);
 					$x = $running_value - $total_alloc;
 					$wek_value = $wek_value - $x;
-					$zero = true;
+					// $zero = true;
 				}
-			}else{
-				$wek_value = 0;
-			}
+
+				if($wek_value < 1){
+					$wek_value = 0;
+				}
+			// }else{
+			// 	$wek_value = 0;
+			// }
+
 			$weekno = $new_count;
-			// $year = idate('Y', strtotime($scheme->sob_start_date));
 			$new_count++;
 
 			$x = $last_week - 1;
 			if($i == $x){
-				// dd($running_share);
 				$share = 100 - $running_share;
 			}
 
-			$running_share += $share;
-			
+			$running_share += $share;	
+
 			$data[] = array('scheme_id' => $scheme->id, 
 				'allocation_id' => $ship_to->id, 
 				'ship_to_code' => $ship_to->ship_to_code,

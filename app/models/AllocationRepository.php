@@ -25,7 +25,7 @@ class AllocationRepository  {
 		$customers_list =  DB::table('customers')
 			->select('areas.group_code as group_code','group_name','area_name',
 				'customer_name','customer_code','customers.area_code as area_code',
-				'customers.area_code_two as area_code_two','multiplier','active')
+				'customers.area_code_two as area_code_two','multiplier','active','from_dt','sob_customer_code')
 			->join('areas', 'customers.area_code', '=', 'areas.area_code')
 			->join('groups', 'areas.group_code', '=', 'groups.group_code')
 			// ->where('customers.active', 1)
@@ -36,7 +36,7 @@ class AllocationRepository  {
 		$customers =  DB::table('customers')
 			->select('areas.group_code as group_code','group_name','area_name',
 				'customer_name','customer_code','customers.area_code as area_code',
-				'customers.area_code_two as area_code_two','multiplier','active', 'from_dt')
+				'customers.area_code_two as area_code_two','multiplier','active', 'from_dt', 'sob_customer_code')
 			->join('areas', 'customers.area_code', '=', 'areas.area_code')
 			->join('groups', 'areas.group_code', '=', 'groups.group_code')
 			->where('customers.active', 1)

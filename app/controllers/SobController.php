@@ -73,8 +73,13 @@ class SobController extends \BaseController {
 			->groupBy('activity_type_id')
 			->lists('activitytype_desc', 'activity_type_id');
 
+		$brands = AllocationSob::orderBy('brand_desc')
+			->join('schemes', 'schemes.id', '=', 'allocation_sobs.scheme_id')
+			->groupBy('brand_desc')
+			->lists('brand_desc', 'brand_desc');
 
-		return View::make('sob.weekly',compact('years', 'weeks', 'types'));
+
+		return View::make('sob.weekly',compact('years', 'weeks', 'types', 'brands'));
 	}
 
 	public function generateweekly(){
@@ -83,13 +88,14 @@ class SobController extends \BaseController {
 	        'filename' => 'required|between:4,128',
 	        'type' => 'required|integer|min:1',
 	        'year' => 'required|integer|min:1',
-	        'week' => 'required|integer|min:1'
+	        'week' => 'required|integer|min:1',
+	        'brand' => 'required'
 	    );
 		$validation = Validator::make($input,$rules);
 
 		if($validation->passes())
 		{
-			SobForm::download(Input::get('year'),Input::get('week'),Input::get('type'), Input::get('filename'));
+			SobForm::download(Input::get('year'),Input::get('week'),Input::get('type'), Input::get('brand'), Input::get('filename'));
 		}else{
 			return Redirect::route('sob.weekly')
 			->withInput()

@@ -361,6 +361,7 @@
 							</div>
 						</div>
 					</div>
+
 				</div>
 
 				<div class="row">
@@ -436,16 +437,30 @@
 		</div>
 	</div>
 	@if($scheme->activity->activitytype->with_sob)
-	<div class="tab-pane fade" id="sob">
+	<div class="tab-pane fade active in" id="sob">
 		<br>
 		<div class="panel panel-primary">
 			<div class="panel-heading">SOB Details</div>
 			<div class="panel-body">
 
-					{{ Form::open(array('action' => array('SchemeController@updatesob', $scheme->id), 'files'=>true, 'method' => 'PUT', 'id' => 'updatesob', 'class' => 'bs-component')) }}
+					{{ Form::open(array('action' => array('SchemeController@updatesob', $scheme->id), 'files'=>true, 'id' => 'updatesob', 'class' => 'bs-component')) }}
 					@foreach($sob_header as $key => $header)
 						{{ Form::hidden('_wek['.$key.']', $header, ['id' => '_wek'.$key, 'class' => 'week-sum']) }}
 					@endforeach
+
+					<div class="row">
+						<div class="col-lg-4">
+							<div class="form-group">
+								<div class="row">
+									<div class="col-lg-12">
+										{{ Form::label('brand', 'Brand', array('class' => 'control-label')) }}
+										{{ Form::select('brand', array('0' => '') + $brands, $scheme->brand_code, array('data-placeholder' => 'Select Brand','id' => 'brand', 'class' => 'form-control')) }}
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
 					<div class="row">
 						<div class="col-lg-4">
 							<div class="form-group">
@@ -472,19 +487,22 @@
 						</div>
 					</div>
 
+
+
+					
+
 					<br>
 					<div class="row">
 						<div class="col-lg-12">
 							<div class="form-group">
 								<div class="row">
 									<div class="col-lg-12">
-										{{ Form::submit('Plot', array('class' => 'btn btn-primary disable-button', 'id'=>'plotsob')) }}
+										{{ Form::submit('Plot', array('class' => 'btn btn-primary disable-button', 'id'=>'plotsob' , 'name' => 'submit')) }}
 									</div>
 								</div>
 							</div>
 						</div>
 					</div>
-					{{ Form::close() }}
 
 					<br>
 
@@ -496,7 +514,7 @@
 									<thead>
 										
 										<tr class="sob-percent">
-											<th colspan="3"></th>
+											<th colspan="3" >{{ Form::submit('Update SOB', array('class' => 'btn btn-primary btn-xs disable-button', 'id'=>'updatesob' , 'name' => 'submit' )) }}</th>
 											<?php $total = 0; ?>
 											@foreach($sob_header as $key => $header)
 											<th class="alloc_per">
@@ -504,7 +522,7 @@
 											</th>
 											<?php $total += $header; ?>
 											@endforeach
-											<th><span id="sum">{{ number_format($total,2) }}%</th>
+											<th><span id="sum">{{ number_format($total,2) }}% </span></th>
 										</tr>
 										<tr class="sob-header">
 											<th>GROUP</th>
@@ -540,7 +558,7 @@
 						</div>
 					</div>
 
-					
+					{{ Form::close() }}
 			</div>
 		</div>
 	</div>
@@ -655,6 +673,13 @@
     } );
 
 
+    $("#brand").chosen({
+		search_contains: true,
+		allow_single_deselect: true
+	});
+    
+
+
 	$('#sob-allocation').DataTable({
 		"scrollY": "500px",
 		"scrollCollapse": true,
@@ -669,23 +694,24 @@
 
 	$('.numweek').blur(function(){
 		if(Number($(this).val()) == ""){
-			$(this).val(.01);
+			$(this).val(0.00);
 		}
 		var sum = 0;
-	    $('.dataTables_scrollHead input').each(function() {
+	    $('.dataTables_scrollHead .numweek').each(function() {
 	        sum += Number($(this).val());
+	        console.log($(this).val());
 	    });
 
 	    if(sum > 100){
 	    	alert('Total percentage is above 100%!');
-	    	$(this).val(.01);
+	    	$(this).val(0);
 	    	sum = 0;
 	    	$('.dataTables_scrollHead input').each(function() {
 		        sum += Number($(this).val());
 		    });
 		}
+
 		var arr = $(this).attr("id").split('_');
-		//console.log($("#_wek"+arr[1]));
 		$("#_wek"+arr[1]).val($(this).val());
 
 	    $('#sum').text(sum.toFixed(2) +'%');

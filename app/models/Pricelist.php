@@ -30,6 +30,32 @@ class Pricelist extends \Eloquent {
 		return self::where('sap_code',$sap_code)->first();
 	}
 
+	public static function getBrands(){
+		return self::select('brand_code','division_desc', 'category_desc', 'brand_desc', 'brand_shortcut')
+			->groupBy('brand_desc')
+			->orderBy('division_desc')
+			->orderBy('category_desc')
+			->orderBy('brand_desc')
+			->get();
+	}
+
+	public static function getBrand($brand_code){
+		return self::select('brand_code', 'brand_desc', 'brand_shortcut')
+			->where('brand_code', $brand_code)
+			->groupBy('brand_desc')
+			->orderBy('division_desc')
+			->orderBy('category_desc')
+			->orderBy('brand_desc')
+			->first();
+	}
+
+	public static function getBrandLists(){
+		return self::select('brand_code', 'brand_desc')
+			->groupBy('brand_desc')
+			->orderBy('brand_desc')
+			->lists('brand_desc', 'brand_code');
+	}
+
 	public static function updateCpg($records){
 		$records->each(function($row){
 				if(!is_null($row->id)){
@@ -64,6 +90,7 @@ class Pricelist extends \Eloquent {
 						$pricelist->category_desc = $row->category_desc;
 						$pricelist->brand_code = $row->brand_code;
 						$pricelist->brand_desc = $row->brand_desc;
+						$pricelist->brand_shortcut = $row->brand_shortcut;
 
 						$pricelist->pack_size = $row->pack_size;
 						$pricelist->barcode = $row->barcode;
@@ -209,6 +236,16 @@ class Pricelist extends \Eloquent {
 		}
 		
 		return $data->lists('full_desc', 'sap_code');
+	}
+
+	public static function updateBrand($records){
+		$records->each(function($row){
+			if(!is_null($row->brand_desc)){
+				self::where('brand_desc', $row->brand_desc)
+				->update(['brand_shortcut' => $row->brand_shortcut]);
+			}
+			
+		});
 	}
 
 }

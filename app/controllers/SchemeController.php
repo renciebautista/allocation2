@@ -357,17 +357,17 @@ class SchemeController extends \BaseController {
 			}
 		}
 
-		// dd($sobs);
+		$brands = $brands = Pricelist::getBrandLists();
 
 		if(Auth::user()->hasRole("PROPONENT")){
 			if($activity->status_id < 4){
 				return View::make('scheme.edit',compact('scheme', 'activity_schemes', 'id_index', 'activity', 'skus', 'sel_skus', 'sel_hosts',
 					'sel_premuim','allocations', 'total_sales', 'qty','id','total_gsv', 'ac_groups', 'groups','host_sku','premuim_sku',
-					'count','alloc_refs', 'sobs','sob_header'));
+					'count','alloc_refs', 'sobs','sob_header', 'brands'));
 			}else{
 				return View::make('scheme.read_only',compact('scheme', 'activity', 'activity_schemes', 'id_index', 'skus', 'involves', 'sel_skus', 'sel_hosts',
 					'sel_premuim','allocations', 'total_sales', 'qty','id', 'summary', 'total_gsv','sku', 'host', 'premuim','ac_groups','groups',
-					'host_sku','premuim_sku','ref_sku','count', 'alloc_refs','alloref', 'sobs', 'sob_header'));
+					'host_sku','premuim_sku','ref_sku','count', 'alloc_refs','alloref', 'sobs', 'sob_header', 'brands'));
 			}
 		}
 
@@ -375,11 +375,11 @@ class SchemeController extends \BaseController {
 			if($activity->status_id == 4){
 				return View::make('scheme.edit',compact('scheme', 'activity_schemes', 'id_index', 'activity', 'skus', 'sel_skus', 'sel_hosts',
 					'sel_premuim','allocations', 'total_sales', 'qty','id', 'summary', 'total_gsv','ac_groups', 'groups','host_sku','premuim_sku',
-					'count','alloc_refs', 'sobs', 'sob_header'));
+					'count','alloc_refs', 'sobs', 'sob_header', 'brands'));
 			}else{
 				return View::make('scheme.read_only',compact('scheme', 'activity_schemes', 'id_index', 'activity', 'skus', 'sel_skus', 'sel_hosts',
 					'sel_premuim','allocations', 'total_sales', 'qty','id', 'summary', 'total_gsv','sku', 'host', 'premuim','ac_groups','groups',
-					'host_sku','premuim_sku','ref_sku', 'count', 'alloc_refs','alloref', 'sobs', 'sob_header'));
+					'host_sku','premuim_sku','ref_sku', 'count', 'alloc_refs','alloref', 'sobs', 'sob_header', 'brands'));
 			}
 		}
 	}
@@ -929,7 +929,7 @@ class SchemeController extends \BaseController {
 	}
 
 	public function updatesob($id){
-
+		// dd(Input::all());
 		$scheme = Scheme::findOrFail($id);
 
 		$today = date('m/d/Y');
@@ -937,12 +937,15 @@ class SchemeController extends \BaseController {
 		if($scheme->sob_start_date == date('Y-m-d',strtotime(Input::get('start_date')))){
 			$rules = array(
 				'start_date' => 'required|date|date_format:m/d/Y',
-				'weeks' => 'required|numeric|max:14'
+				'weeks' => 'required|numeric|max:14',
+				'brand' => 'required|integer|min:1'
+
 			);
 		}else{
 			$rules = array(
 				'start_date' => 'required|date|date_format:m/d/Y|after:'.$today,
-				'weeks' => 'required|numeric|max:14'
+				'weeks' => 'required|numeric|max:14',
+				'brand' => 'required|integer|min:1'
 			);
 		}
 
@@ -952,18 +955,27 @@ class SchemeController extends \BaseController {
 
 
 		if($validation->passes())
-		{
-			
-			if(($scheme->weeks == Input::get('weeks')) && ($scheme->sob_start_date == date('Y-m-d',strtotime(Input::get('start_date'))))){
-				$total = 0;
-				
+		{	
+			if(Input::get('submit') == 'Update SOB'){
+				// dd(1);
+			// if(($scheme->weeks == Input::get('weeks')) && ($scheme->sob_start_date == date('Y-m-d',strtotime(Input::get('start_date'))))){
+				$total = 0.0;
+				$per = 100.00;
+				// dd(Input::all());
 				foreach (Input::get('_wek') as $week) {
 					$total += $week;
 				}
+				// dd($total);
+				// if($total == 100.00){
+				if(number_format((float)$total, 2) == number_format((float)$per, 2)) {
 
-				if($total == 100){
+					$brand = Pricelist::getBrand(Input::get('brand'));
+					
 					$scheme->sob_start_date = date('Y-m-d',strtotime(Input::get('start_date')));
 					$scheme->weeks = Input::get('weeks');
+					$scheme->brand_code = $brand->brand_code;
+					$scheme->brand_desc = $brand->brand_desc;
+					$scheme->brand_shortcut = $brand->brand_shortcut;
 					$scheme->update();
 
 					AllocationSob::where('scheme_id', $scheme->id)->delete();
@@ -1026,16 +1038,28 @@ class SchemeController extends \BaseController {
 							->with('message', 'SOB plotting was successfuly updated.');
 					
 				}else{
+					// dd($total);
+					// echo $total . '=>';
+					// dd($total);
 					return Redirect::to(URL::action('SchemeController@edit', array('id' => $id)) . "#sob")
 					->withErrors($validation)
 					->with('class', 'alert-danger')
 					->with('message', "Percentage Total doesn't add up to 100%!");
 				}
+
+
 				
 
 			}else{
+				// dd(1);
+				$brand = Pricelist::getBrand(Input::get('brand'));
+
+
 				$scheme->sob_start_date = date('Y-m-d',strtotime(Input::get('start_date')));
 				$scheme->weeks = Input::get('weeks');
+				$scheme->brand_code = $brand->brand_code;
+				$scheme->brand_desc = $brand->brand_desc;
+				$scheme->brand_shortcut = $brand->brand_shortcut;
 				$scheme->update();
 
 				AllocationSob::where('scheme_id', $scheme->id)->delete();

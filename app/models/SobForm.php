@@ -3,25 +3,24 @@
 class SobForm extends \Eloquent {
 	protected $fillable = [];
 
-	public static function download($year, $weekno, $type, $filename){
-		self::generate($year, $weekno,  $type, $filename)->export('xls');
+	public static function download($year, $weekno, $type, $brand, $filename){
+		self::generate($year, $weekno,  $type, $brand, $filename)->export('xls');
 	}
 
-	public static function generate($year, $weekno,$type, $filename){
+	public static function generate($year, $weekno,$type, $brand, $filename){
 
 		$activitytype = ActivityType::find($type);
-		// dd($activitytype);
 		$prefix = $activitytype->prefix;
-		// dd($prefix);
-		$brand = 'MULTI';
+		// $_brand = Pricelist::getBrand($brand_code);
 
-		$brands = array();
+		// $brands = array();
 
-		$schemes = AllocationSob::select('schemes.item_code', 'schemes.item_desc', 'allocation_sobs.scheme_id', 'schemes.activity_id')
+		$schemes = AllocationSob::select('schemes.item_code', 'schemes.item_desc', 'allocation_sobs.scheme_id', 'schemes.activity_id', 'schemes.brand_shortcut')
 			->join('schemes', 'schemes.id', '=', 'allocation_sobs.scheme_id')
 			->join('activities', 'activities.id' , '=', 'schemes.activity_id')
 			->where('weekno', $weekno)
 			->where('year', $year)
+			->where('brand_desc', $brand)
 			->where('activities.activity_type_id',$type)
 			->where('activities.disable',0)
 			->groupBy('scheme_id')
@@ -32,18 +31,17 @@ class SobForm extends \Eloquent {
 		foreach ($schemes as $value) {
 			$scheme_ids[] = $value->scheme_id;
 			$activity = Activity::find($value->activity_id);
-			$activity_brands = $activity->getBrand();
-			foreach ($activity_brands as $activity_brand) {
-				$brands[] = $activity_brand;
-			}
-			// dd($brands);
+			// $activity_brands = $activity->getBrand();
+			// foreach ($activity_brands as $activity_brand) {
+			// 	$brands[] = $activity_brand;
+			// }
 		}
 
-		if(count($brands) == 1){
-			$brand = $brands[0];
-		}
+		// if(count($brands) == 1){
+		// 	$brand = $brands[0];
+		// }
 
-		$soldtos = AllocationSob::select('sold_to_code', 'sold_to', 'allocation_sobs.ship_to_code', 'ship_to', 
+		$soldtos = AllocationSob::select('sold_to_code', 'sold_to', 'allocations.sob_customer_code', 'allocation_sobs.ship_to_code', 'ship_to', 
 			DB::raw('sum(allocation_sobs.allocation) as allocations'),
 			'allocation_sobs.loading_date', 'allocation_sobs.receipt_date' ,'allocation_sobs.year',
 			'allocation_sobs.weekno')
@@ -68,8 +66,8 @@ class SobForm extends \Eloquent {
 				->get();
 		} 
 
-		return  Excel::create($filename, function($excel) use ($schemes,$soldtos, $weekno, $year, $prefix, $brand, $allocations) {
-			$excel->sheet('Sales Order', function($sheet)  use ($schemes, $soldtos, $weekno, $year, $prefix, $brand, $allocations) {
+		return  Excel::create($filename, function($excel) use ($schemes,$soldtos, $weekno, $year, $prefix, $allocations) {
+			$excel->sheet('Sales Order', function($sheet)  use ($schemes, $soldtos, $weekno, $year, $prefix, $allocations) {
 
 				$sheet->setWidth('A', 30);
 				$sheet->setWidth('B', 15);
@@ -177,7 +175,7 @@ class SobForm extends \Eloquent {
 			       		$last_column = PHPExcel_Cell::stringFromColumnIndex($sum_col-1);
 			       		foreach ($allocations[$scheme->scheme_id] as $value) {
 			       			$uid = $row_num - 7;
-			       			$po = $prefix.$brand.'_'.$weekno.'_'.$uid;
+			       			$po = $prefix.'_'.$scheme->brand_shortcut.'_'.$weekno.'_'.$uid;
 			       			$sheet->setCellValueByColumnAndRow(0,$row_num, $po);
 			       			$sheet->setCellValueByColumnAndRow($col,$row_num, $value->allocations);
 			       			$sum = "=SUM(".$first_column.$row_num.":".$last_column.$row_num.")";
@@ -220,28 +218,37 @@ class SobForm extends \Eloquent {
 
 		       	// add ship to
 		       	$row = 8;
-		       	// Helper::print_r($soldtos);
-		       	// dd(1);
 		       	foreach ($soldtos as $soldto) {
 
 		       		$shipTo = ShipTo::where('ship_to_code',$soldto->ship_to_code)->first();
-		       		// echo $soldto->ship_to_code;
-					$week_start = new DateTime();
-					$week_start->setISODate($soldto->year,$soldto->weekno,$shipTo->dayofweek);
-					$loading_date = $week_start->format('Y-m-d');
-					$receipt_date = date('Y-m-d', strtotime($loading_date . '+ 1 days'));
-					// dd($loading_date.'=>'.$receipt_date);s
-					AllocationSob::where('weekno',$weekno)
-						->where('year', $year)
-						->where('ship_to_code', $soldto->ship_to_code)
-						->update(array('loading_date' => $loading_date, 'receipt_date' => $receipt_date));
 
-		       		$sheet->setCellValueByColumnAndRow(1,$row, date_format(date_create($loading_date),'m/d/Y'));
-		       		$sheet->setCellValueByColumnAndRow(2,$row, date_format(date_create($receipt_date),'m/d/Y'));
-		       		$sheet->setCellValueByColumnAndRow(6,$row, $soldto->sold_to_code);
-		       		$sheet->setCellValueByColumnAndRow(7,$row, $soldto->ship_to);
-		       		$sheet->setCellValueByColumnAndRow(8,$row, $soldto->ship_to_code);
-		       		$row++;
+		       		$week_no = date("W");
+		       		if($week_no >= $weekno) {
+			       		$sheet->setCellValueByColumnAndRow(1,$row, $soldto->loading_date);
+			       		$sheet->setCellValueByColumnAndRow(2,$row, $soldto->receipt_date);
+			       		$sheet->setCellValueByColumnAndRow(6,$row, $soldto->sob_customer_code);
+			       		$sheet->setCellValueByColumnAndRow(7,$row, $soldto->ship_to);
+			       		$sheet->setCellValueByColumnAndRow(8,$row, $soldto->ship_to_code);
+			       		$row++;
+		       		}else{
+		       			$week_start = new DateTime();
+						$week_start->setISODate($soldto->year,$soldto->weekno,$shipTo->dayofweek);
+						$loading_date = $week_start->format('Y-m-d');
+						$receipt_date = date('Y-m-d', strtotime($loading_date . '+ '.$shipTo->leadtime.' days'));
+
+						AllocationSob::where('weekno',$weekno)
+							->where('year', $year)
+							->where('ship_to_code', $soldto->ship_to_code)
+							->update(array('loading_date' => $loading_date, 'receipt_date' => $receipt_date));
+
+			       		$sheet->setCellValueByColumnAndRow(1,$row, date_format(date_create($loading_date),'m/d/Y'));
+			       		$sheet->setCellValueByColumnAndRow(2,$row, date_format(date_create($receipt_date),'m/d/Y'));
+			       		$sheet->setCellValueByColumnAndRow(6,$row, $soldto->sob_customer_code);
+			       		$sheet->setCellValueByColumnAndRow(7,$row, $soldto->ship_to);
+			       		$sheet->setCellValueByColumnAndRow(8,$row, $soldto->ship_to_code);
+			       		$row++;
+		       		}
+					
 		       	}
 		       	// end ship to
 
@@ -250,7 +257,7 @@ class SobForm extends \Eloquent {
 
 		       	$sheet->setCellValueByColumnAndRow(3,$row + 4, "TOTAL CDC WAREHOUSE");
 
-		       	$final_row = $last_row+5;
+		       	$final_row = $row+5;
 		       	$string2 = 'A4:'.PHPExcel_Cell::stringFromColumnIndex($sum_col).$final_row;
 		       	$sheet->setBorder($string2, 'thin');
 
