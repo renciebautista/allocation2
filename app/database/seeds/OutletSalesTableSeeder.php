@@ -8,7 +8,19 @@ class OutletSalesTableSeeder extends CsvSeeder {
 	public function __construct()
 	{
 		$this->table = 'outlet_sales';
-		$this->filename = app_path().'/database/seeds/seed_files/outletsales.csv';
+		$folderpath = app_path().'/database/seeds/seed_files/Sales/';
+		$folders = File::directories($folderpath);
+		$latest = '';
+		foreach ($folders as $value) {
+			$_dir = explode("/", $value);
+			$cnt = count($_dir);
+			$name = $_dir[$cnt -1];
+			if(strtotime($name) > strtotime($latest)){
+				$latest = $name;
+			}
+		}
+		$this->filename = app_path().$folderpath.$latest.'/outletsales.csv';
+		// $this->filename = app_path().'/database/seeds/seed_files/outletsales.csv';
 	}
 
 	public function run()

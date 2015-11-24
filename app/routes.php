@@ -275,8 +275,19 @@ Route::get('allocreport', function(){
 // });
 
 Route::get('test', function(){
-	$date=date("W");
- 	echo $date." Week Number";
+	$folderpath = app_path().'/database/seeds/seed_files/Sales/';
+	$folders = File::directories($folderpath);
+	$latest = '';
+	foreach ($folders as $value) {
+		$_dir = explode("/", $value);
+		$cnt = count($_dir);
+		$name = $_dir[$cnt -1];
+		if(strtotime($name) > strtotime($latest)){
+			$latest = $name;
+		}
+	}
+
+	echo $name;
 });
 
 Route::get('mail4', function(){

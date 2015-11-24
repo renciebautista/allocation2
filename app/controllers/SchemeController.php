@@ -938,14 +938,14 @@ class SchemeController extends \BaseController {
 			$rules = array(
 				'start_date' => 'required|date|date_format:m/d/Y',
 				'weeks' => 'required|numeric|max:14',
-				'brand' => 'required|integer|min:1'
+				'brand' => 'required'
 
 			);
 		}else{
 			$rules = array(
 				'start_date' => 'required|date|date_format:m/d/Y|after:'.$today,
 				'weeks' => 'required|numeric|max:14',
-				'brand' => 'required|integer|min:1'
+				'brand' => 'required'
 			);
 		}
 

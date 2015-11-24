@@ -48,6 +48,8 @@ class SobController extends \BaseController {
 					'CUSTOMER SHIP TO NAME',	
 					'WEEK #',
 					'YEAR',
+					'LOADING DATE',
+					'RECEIVING DATE',
 					'ALLOCATION',
 					'VALUE'
 				));
@@ -95,7 +97,7 @@ class SobController extends \BaseController {
 
 		if($validation->passes())
 		{
-			SobForm::download(Input::get('year'),Input::get('week'),Input::get('type'), Input::get('brand'), Input::get('filename'));
+			SobForm::download(Input::get('year'),Input::get('week'),Input::get('type'), Input::get('brand'), Auth::user(), Input::get('filename'));
 		}else{
 			return Redirect::route('sob.weekly')
 			->withInput()

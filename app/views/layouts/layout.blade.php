@@ -124,9 +124,10 @@
 								@endif
 
 								<li>{{ HTML::linkAction('AllocationReportController@index' , 'Allocation Report') }}</li>
+
 								<li>{{ HTML::linkAction('SobController@index' , 'Sales Order Booking Report') }}</li>
 
-								@if(Auth::user()->inRoles(['SOB ASSISTANT', 'ADMINISTRATOR']))
+								@if(Auth::user()->inRoles(['SOB ASSISTANT', 'ADMINISTRATOR' , 'PROPONENT', 'PMOG PLANNER']))
 								
 								<li>{{ HTML::linkAction('SobController@weekly' , 'Sales Order Booking Weekly Report') }}</li>
 								@endif
