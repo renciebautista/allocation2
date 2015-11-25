@@ -361,27 +361,38 @@ class CustomerController extends \BaseController {
 					->get();
 				$area_children = array();
 				foreach ($customers as $customer){
-					$ship_tos =  \ActivityCutomerList::where('activity_id',$id)
-						->where('parent_id', $area->key)
+					$ship_tos = \ActivityCutomerList::where('activity_id',$id)
+						->where('parent_id', $customer->key)
 						->orderBy('id')
 						->get();
 					$customer_children = array();
-					foreach ($ship_tos as $ship_tos){
-						// $ship_tos =  \ActivityCutomerList::where('activity_id',$id)
-						// 	->where('parent_id', $area->key)
-						// 	->orderBy('id')
-						// 	->get();
-						// $customer_children = array();
+					foreach ($ship_tos as $ship_to) {
+						$outlets = \ActivityCutomerList::where('activity_id',$id)
+							->where('parent_id', $ship_to->key)
+							->orderBy('id')
+							->get();
+						$ship_to_children = array();
+						foreach ($outlets as $outlet) {
+							$ship_to_children[] = array(
+								'title' => $outlet->title,
+								'isFolder' => $outlet->isfolder,
+								'key' => $outlet->key,
+								'unselectable' => $outlet->unselectable,
+								'selected' => $outlet->selected,
+								// 'children' => $ship_to_children
+								);
+						}
+
+
 						$customer_children[] = array(
-							'title' => $ship_tos->title,
-							'isFolder' => $ship_tos->isfolder,
-							'key' => $ship_tos->key,
-							'unselectable' => $ship_tos->unselectable,
-							'selected' => $ship_tos->selected,
-							// 'children' => $customer_children
+							'title' => $ship_to->title,
+							'isFolder' => $ship_to->isfolder,
+							'key' => $ship_to->key,
+							'unselectable' => $ship_to->unselectable,
+							'selected' => $ship_to->selected,
+							'children' => $ship_to_children
 							);
 					}
-
 					$area_children[] = array(
 						'title' => $customer->title,
 						'isFolder' => $customer->isfolder,

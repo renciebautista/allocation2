@@ -182,7 +182,7 @@ $(document).ready(function(){
 		var input = '';
 		if(obj[i].type == "text"){
 			input = '<input class="form-control" type="'+obj[i].type+'" name="'+obj[i].id+'" id='+obj[i].id+' placeholder="'+obj[i].placeholder+'" value="'+str+'">';
-			console.log(input);
+			// console.log(input);
 		}else if(obj[i].type == "textarea"){
 			input = '<textarea name="'+obj[i].id+'" id="'+obj[i].id+'" placeholder="'+obj[i].placeholder+'">'+str+'</textarea>';
 		}

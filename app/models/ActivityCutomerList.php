@@ -25,6 +25,7 @@ class ActivityCutomerList extends \Eloquent {
 		
 		$groups = Customer::getCustomerList();
 		$data = array();
+		// dd($groups);
 		foreach ($groups as $group) {
 			$grp_selected = self::isSelected($group['key'],$selected_customers);
 			$data[] = array('activity_id' => $activity_id,
@@ -36,7 +37,8 @@ class ActivityCutomerList extends \Eloquent {
 				'selected' => $grp_selected);
 			if(count($group['children'])>0){
 				foreach ($group['children'] as $area) {
-					$area_selceted = self::isSelected($group['key'].".".$area['key'],$selected_customers) || $grp_selected;
+					// $area_selceted = self::isSelected($group['key'].".".$area['key'],$selected_customers) || $grp_selected;
+					$area_selceted = self::isSelected($area['key'],$selected_customers) || $grp_selected;
 					$data[] = array('activity_id' => $activity_id,
 						'parent_id' => $group['key'],
 						'title' => $area['title'], 
@@ -46,7 +48,8 @@ class ActivityCutomerList extends \Eloquent {
 						'selected' =>  $area_selceted);
 					if(count($area['children'])>0){
 						foreach ($area['children'] as $soldto) {
-							$soldto_selected  = self::isSelected($group['key'].".".$area['key'].".".$soldto['key'],$selected_customers) || $area_selceted;
+							// $soldto_selected  = self::isSelected($group['key'].".".$area['key'].".".$soldto['key'],$selected_customers) || $area_selceted;
+							$soldto_selected  = self::isSelected($soldto['key'],$selected_customers) || $area_selceted;
 							$data[] =  array('activity_id' => $activity_id,
 								'parent_id' => $area['key'],
 								'title' => $soldto['title'], 
@@ -56,7 +59,8 @@ class ActivityCutomerList extends \Eloquent {
 								'selected' => $soldto_selected);
 							if(count($soldto['children'])>0){
 								foreach ($soldto['children'] as $shipto) {
-									$shipto_selected = self::isSelected($group['key'].".".$area['key'].".".$soldto['key'].".".$shipto['key'],$selected_customers) || $soldto_selected;
+									// $shipto_selected = self::isSelected($group['key'].".".$area['key'].".".$soldto['key'].".".$shipto['key'],$selected_customers) || $soldto_selected;
+									$shipto_selected = self::isSelected($shipto['key'],$selected_customers) || $soldto_selected;
 									$data[] = array('activity_id' => $activity_id,
 										'parent_id' => $soldto['key'],
 										'title' => $shipto['title'], 
@@ -65,9 +69,11 @@ class ActivityCutomerList extends \Eloquent {
 										'unselectable' => $shipto['unselectable'],
 										'selected' => $shipto_selected );
 									if(isset($shipto['children'])){
-										if(count($shipto['children']	)>0){
+										if(count($shipto['children'])>0){
 											foreach ($shipto['children'] as $account) {
-												$account_selected = self::isSelected($group['key'].".".$area['key'].".".$soldto['key'].".".$shipto['key'].".".$account['key'],$selected_customers) ||  $shipto_selected;
+
+												// $account_selected = self::isSelected($group['key'].".".$area['key'].".".$soldto['key'].".".$shipto['key'].".".$account['key'],$selected_customers) ||  $shipto_selected;
+												$account_selected = self::isSelected($account['key'],$selected_customers) ||  $shipto_selected;
 												$data[] = array('activity_id' => $activity_id,
 													'parent_id' => $shipto['key'],
 													'title' => $account['title'], 

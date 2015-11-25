@@ -107,6 +107,7 @@ class SchemeRepository extends \Eloquent {
 			$new_scheme->ulp_premium = $scheme->ulp_premium;
 			$new_scheme->compute = $scheme->compute;
 			$new_scheme->with_upload = $scheme->with_upload;
+			$new_scheme->m_remarks = $scheme->m_remarks;
 			$new_scheme->save();
 
 			// add skus

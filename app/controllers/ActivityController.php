@@ -1188,6 +1188,8 @@ class ActivityController extends BaseController {
 							}
 							ActivityCustomer::insert($activity_customers);
 
+
+							// dd($activity_customers);
 							ActivityCutomerList::addCustomer($activity->id,$activity_customers);
 
 							ForceAllocation::where('activity_id',$id)->delete();
@@ -2358,6 +2360,7 @@ class ActivityController extends BaseController {
 						$new_scheme->ulp_premium = $scheme->ulp_premium;
 						$new_scheme->compute = $scheme->compute;
 						$new_scheme->with_upload = $scheme->with_upload;
+						$new_scheme->m_remarks = $scheme->m_remarks;
 						$new_scheme->save();
 
 						// add skus
@@ -2483,17 +2486,17 @@ class ActivityController extends BaseController {
 
 
 						// update all schemes
-						if($scheme->compute == 1){
-							$scheme->updating = 1;
-							$scheme->update();
+						if($new_scheme->compute == 1){
+							$new_scheme->updating = 1;
+							$new_scheme->update();
 							if($_ENV['MAIL_TEST']){
 								Queue::push('SchemeScheduler', array('id' => $scheme->id),'scheme');
 							}else{
 								Queue::push('SchemeScheduler', array('id' => $scheme->id),'p_scheme');
 							}
 						}else{
-							$scheme->updating = 0;
-							$scheme->update();
+							$new_scheme->updating = 0;
+							$new_scheme->update();
 						}
 						// end update
 					}

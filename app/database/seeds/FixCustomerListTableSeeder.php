@@ -8,6 +8,7 @@ class FixCustomerListTableSeeder extends Seeder {
 	public function run()
 	{
 		$activities = Activity::all();
+		DB::table('activity_customer_lists')->truncate();
 		foreach ($activities as $activity) {
 			$activity_customers = ActivityCustomer::where('activity_id',$activity->id)->get();
 			ActivityCutomerList::addCustomer($activity->id,$activity_customers);
