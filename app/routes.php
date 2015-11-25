@@ -369,8 +369,6 @@ Route::group(array('before' => 'auth'), function()
 {	
 	// Route::pattern('id', '[0-9]+');
 
-	
-
 	Route::get('launchskus/upload','LaunchSkuController@upload');
 	Route::post('launchskus/upload','LaunchSkuController@doupload');
 	Route::post('launchskus/assignaccess','LaunchSkuController@assignaccess');
@@ -559,6 +557,11 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('brand/import', 'BrandController@import');
 	Route::post('brand/upload', 'BrandController@upload');
 	Route::resource('brand', 'BrandController');
+
+	Route::get('topsku/export', 'TopskuController@export');
+	Route::get('topsku/import', 'TopskuController@import');
+	Route::post('topsku/upload', 'TopskuController@upload');
+	Route::resource('topsku', 'TopskuController');
 
 
 	Route::get('images/{cycle_id}/{type_id}/{activity_id}/{name}', function($cycle_id = null,$type_id = null,$activity_id = null,$name = null)

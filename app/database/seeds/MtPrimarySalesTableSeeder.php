@@ -15,25 +15,25 @@ class MtPrimarySalesTableSeeder extends CsvSeeder {
 			$_dir = explode("/", $value);
 			$cnt = count($_dir);
 			$name = $_dir[$cnt - 1];
-			$latest = DateTime::createFromFormat('mdY', $latest);
+			$latest_date = DateTime::createFromFormat('mdY', $latest);
 			$now = DateTime::createFromFormat('mdY', $name);
-			if(strtotime($name) > strtotime($latest)){
+			if($now > $latest_date){
 				$latest = $name;
 			}
 		}
-		// echo $latest;
-		// $this->filename = app_path().$folderpath.$latest.'/mtprimarysales.csv';
+		$this->filename = $folderpath.$latest.'/mtprimarysales.csv';
+
 	}
 
 	public function run()
 	{
-		// // Recommended when importing larger CSVs
-		// DB::disableQueryLog();
+		// Recommended when importing larger CSVs
+		DB::disableQueryLog();
 
-		// // Uncomment the below to wipe the table clean before populating
-		// DB::table($this->table)->truncate();
+		// Uncomment the below to wipe the table clean before populating
+		DB::table($this->table)->truncate();
 
-		// parent::run();
+		parent::run();
 	}
 
 }

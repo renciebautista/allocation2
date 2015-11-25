@@ -10,17 +10,20 @@ class DtSecondarySalesTableSeeder extends CsvSeeder {
 		$this->table = 'dt_secondary_sales';
 		$folderpath = app_path().'/database/seeds/seed_files/Sales/';
 		$folders = File::directories($folderpath);
-		$latest = '';
+		$latest = '11232015';
 		foreach ($folders as $value) {
 			$_dir = explode("/", $value);
 			$cnt = count($_dir);
-			$name = $_dir[$cnt -1];
-			if(strtotime($name) > strtotime($latest)){
+			$name = $_dir[$cnt - 1];
+			$latest_date = DateTime::createFromFormat('mdY', $latest);
+			$now = DateTime::createFromFormat('mdY', $name);
+			if($now > $latest_date){
 				$latest = $name;
 			}
 		}
-		$this->filename = app_path().$folderpath.$latest.'/dtsecondarysales.csv';
+		$this->filename = $folderpath.$latest.'/dtsecondarysales.csv';
 		// $this->filename = app_path().'/database/seeds/seed_files/dtsecondarysales.csv';
+		
 	}
 
 	public function run()

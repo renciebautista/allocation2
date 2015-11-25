@@ -606,6 +606,7 @@ class SchemeController extends \BaseController {
 					$scheme2->final_alloc = $final_alloc;
 					$scheme2->final_total_deals = $total_deals;
 					$scheme2->final_total_cases = $total_cases;
+					$scheme2->m_remarks = Input::get('remarks');
 
 					$per = 0;
 					if(Input::get('ulp_premium') != ""){

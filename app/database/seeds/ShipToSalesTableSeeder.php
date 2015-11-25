@@ -10,17 +10,20 @@ class ShipToSalesTableSeeder extends CsvSeeder {
 		$this->table = 'ship_to_sales';
 		$folderpath = app_path().'/database/seeds/seed_files/Sales/';
 		$folders = File::directories($folderpath);
-		$latest = '';
+		$latest = '11232015';
 		foreach ($folders as $value) {
 			$_dir = explode("/", $value);
 			$cnt = count($_dir);
-			$name = $_dir[$cnt -1];
-			if(strtotime($name) > strtotime($latest)){
+			$name = $_dir[$cnt - 1];
+			$latest_date = DateTime::createFromFormat('mdY', $latest);
+			$now = DateTime::createFromFormat('mdY', $name);
+			if($now > $latest_date){
 				$latest = $name;
 			}
 		}
-		$this->filename = app_path().$folderpath.$latest.'/shiptosales.csv';
+		$this->filename = $folderpath.$latest.'/shiptosales.csv';
 		// $this->filename = app_path().'/database/seeds/seed_files/shiptosales.csv';
+		// echo $this->filename;
 	}
 
 	public function run()

@@ -9,11 +9,14 @@ class UpdateLatestSalesTableSeeder extends Seeder {
 	{
 		Eloquent::unguard();
 		DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-
+		$timeFirst  = strtotime(date('Y-m-d H:i:s'));
 		$this->call('MtPrimarySalesTableSeeder');
 		$this->call('DtSecondarySalesTableSeeder');
 		$this->call('ShipToSalesTableSeeder');
 		$this->call('OutletSalesTableSeeder');
+		$timeSecond = strtotime(date('Y-m-d H:i:s'));
+		$differenceInSeconds = $timeSecond - $timeFirst;
+		echo  'Time used ' . $differenceInSeconds . " sec";
 
 		DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 	}

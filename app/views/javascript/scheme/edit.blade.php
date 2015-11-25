@@ -257,6 +257,9 @@ $("#updatescheme").validate({
 			required: true,
 			maxlength: 80
 			},
+		remarks: {
+			required: true
+			},
 		item_code: {
 			minlength: 8,
 			maxlength: 8

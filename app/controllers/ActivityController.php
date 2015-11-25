@@ -2478,6 +2478,22 @@ class ActivityController extends BaseController {
 								$last_shipto_id = $scheme_alloc->id;
 							}
 						}
+
+
+						// update all schemes
+						if($scheme->compute == 1){
+							$scheme->updating = 1;
+							$scheme->update();
+							if($_ENV['MAIL_TEST']){
+								Queue::push('SchemeScheduler', array('id' => $scheme->id),'scheme');
+							}else{
+								Queue::push('SchemeScheduler', array('id' => $scheme->id),'p_scheme');
+							}
+						}else{
+							$scheme->updating = 0;
+							$scheme->update();
+						}
+						// end update
 					}
 				}
 				// copy all file

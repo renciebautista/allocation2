@@ -295,10 +295,21 @@
 				  		
 					</div>
 
+
+
 					<div class="row">
 						<div class="col-lg-6">
 						  	<div class="form-group">
 						    	{{ Form::file('file','',array('id'=>'','class'=>'')) }}
+						  	</div>
+					  	</div>
+				  	</div>
+
+				  	<div class="row">
+						<div class="col-lg-12">
+						  	<div class="form-group">
+						    	{{ Form::label('remarks', 'Manual Uplaod Remarks', array('class' => 'control-label')) }}
+								{{ Form::textarea('remarks',$scheme->m_remarks,array('class' => 'form-control', 'placeholder' => 'Manual Uplaod Remarks')) }}
 						  	</div>
 					  	</div>
 				  	</div>
@@ -668,6 +679,9 @@
 @stop
 
 @section('page-script')
+
+ 	$("html, body").animate({ scrollTop: 0 }, "fast");
+ 	
 	$('.nav-tabs a').on( 'shown.bs.tab', function (e) {
         $.fn.dataTable.tables( {visible: true, api: true} ).columns.adjust();
     } );
