@@ -249,7 +249,6 @@ class CustomerController extends \BaseController {
 			->get();
 		$data = array();
 		foreach ($groups as $group) {
-			// $areas = \DB::table('areas')->where('group_code',$group->group_code)->orderBy('id')->get();
 			$areas = \DB::table('customers')
 			->select('areas.group_code as group_code','customers.area_code as area_code','area_name')
 			->join('areas', 'customers.area_code', '=', 'areas.area_code')
@@ -311,6 +310,7 @@ class CustomerController extends \BaseController {
 							}
 						}
 					}
+
 					$area_children[] = array(
 					'title' => $customer->customer_name,
 					'key' => $group->group_code.".".$area->area_code.".".$customer->customer_code,
@@ -327,8 +327,6 @@ class CustomerController extends \BaseController {
 					'children' => $area_children,
 					);
 			}
-
-
 			$data[] = array(
 				'title' => $group->group_name,
 				'isFolder' => true,
@@ -336,6 +334,80 @@ class CustomerController extends \BaseController {
 				'unselectable' => $unselectable,
 				'children' => $group_children,
 
+				);
+		}
+		return \Response::json($data,200);
+	}
+
+
+	public function getpostedcustomers(){
+		$id = \Input::get('id');
+		
+		$groups = \ActivityCutomerList::where('activity_id',$id)
+			->whereNull('parent_id')
+			->orderBy('id')
+			->get();
+		$data = array();
+		foreach ($groups as $group) {
+			$areas = \ActivityCutomerList::where('activity_id',$id)
+				->where('parent_id', $group->key)
+				->orderBy('id')
+				->get();
+			$group_children = array();
+			foreach ($areas as $area) {
+				$customers = \ActivityCutomerList::where('activity_id',$id)
+					->where('parent_id', $area->key)
+					->orderBy('id')
+					->get();
+				$area_children = array();
+				foreach ($customers as $customer){
+					$ship_tos =  \ActivityCutomerList::where('activity_id',$id)
+						->where('parent_id', $area->key)
+						->orderBy('id')
+						->get();
+					$customer_children = array();
+					foreach ($ship_tos as $ship_tos){
+						// $ship_tos =  \ActivityCutomerList::where('activity_id',$id)
+						// 	->where('parent_id', $area->key)
+						// 	->orderBy('id')
+						// 	->get();
+						// $customer_children = array();
+						$customer_children[] = array(
+							'title' => $ship_tos->title,
+							'isFolder' => $ship_tos->isfolder,
+							'key' => $ship_tos->key,
+							'unselectable' => $ship_tos->unselectable,
+							'selected' => $ship_tos->selected,
+							// 'children' => $customer_children
+							);
+					}
+
+					$area_children[] = array(
+						'title' => $customer->title,
+						'isFolder' => $customer->isfolder,
+						'key' => $customer->key,
+						'unselectable' => $customer->unselectable,
+						'selected' => $customer->selected,
+						'children' => $customer_children
+						);
+				}
+
+				$group_children[] = array(
+					'title' => $area->title,
+					'isFolder' => $area->isfolder,
+					'key' => $area->key,
+					'unselectable' => $area->unselectable,
+					'selected' => $area->selected,
+					'children' => $area_children
+					);
+			}
+			$data[] = array(
+				'title' => $group->title,
+				'isFolder' => $group->isfolder,
+				'key' => $group->key,
+				'unselectable' => $group->unselectable,
+				'selected' => $group->selected,
+				'children' => $group_children
 				);
 		}
 		return \Response::json($data,200);
