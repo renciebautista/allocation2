@@ -231,35 +231,44 @@
 					</tr>
 					<tr>
 						<td>Proponent Name</td>
-						<td>: {{ $activity->proponent_name }} 
-							@if(!empty($activity->contact_no))
-							/ {{ $activity->contact_no }}
+						<td>: {{ $activity->createdby->getFullname() }} 
+							@if(!empty($activity->createdby->contact_no))
+							/ {{ $activity->createdby->contact_no }}
 							@endif
 						</td>
 					</tr>
 					<tr>
 						<td>PMOG Partner</td>
 
-						<td>: {{  $planner->planner_desc }} 
-							@if(!empty($planner->contact_no))
-							/ {{ $planner->contact_no }}
+						@if(!empty($activity->pmog[0]))
+						<td>: {{  $activity->pmog[0]->getFullname() }} 
+							@if(!empty($activity->pmog[0]->contact_no))
+							/ {{ $activity->pmog[0]->contact_no }}
 							@endif
 						</td>
+						@else
+						<td>:</td>
+						@endif
 					</tr>
 
 					<tr>
 						<td>Approvers</td>
+						@if(!empty($approvers))
 						<td>
-							<ul style="list-style:none; margin-top:0px;margin-bottom:0px;margin-left:-40px;">
+							<?php $first = false; ?>
 							@foreach($approvers as $approver)
-							<li>: {{$approver->approver_desc}} 
-								@if(!empty($approver->contact_no))
-									/ {{ $approver->contact_no }}
-									@endif
-								</li>
+							@if(!$first)
+							:
+							<?php $first = true; ?>
+							@else
+							&nbsp
+							@endif
+							 {{$approver->first_name}} {{$approver->last_name}}</br>
 							@endforeach
-							</ul>
-						</td>	
+						</td>
+						@else
+						<td>:</td>
+						@endif
 					</tr>
 					
 				</table>
@@ -269,7 +278,7 @@
 				<table class="bordered">
 					<tr>
 						<td>Activity Type</td>
-						<td>{{ $activity->activitytype_desc }}</td>
+						<td>{{ $activity->activitytype-> activity_type }}</td>
 					</tr>
 					<tr>
 						<td>Activity Title</td>
@@ -283,8 +292,8 @@
 						<td>Objectives</td>
 						<td>
 							<ul>
-							@foreach($objectives as $objective)
-							<li>{{ $objective->objective_desc }}</li>
+							@foreach($activity->objectives as $objective)
+							<li>{{ $objective->objective }}</li>
 							@endforeach
 							</ul>
 						</td>

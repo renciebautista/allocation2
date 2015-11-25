@@ -124,7 +124,7 @@ class MakePdf extends Command {
 
 			$header = "";
 			$header .= View::make('pdf.style')->render();
-			$header .= View::make('pdf.title',compact('activity','approvers'))->render();
+			$header .= View::make('pdf.title',compact('activity','approvers', 'planner'))->render();
 			$header .= View::make('pdf.activity',compact('activity','schemes','networks','materials', 
 				'budgets','nobudgets', 'skuinvolves', 'areas', 'channels','fdapermits', 'sku_involves', 'activity_roles'))->render();
 			

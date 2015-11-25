@@ -8,6 +8,7 @@ class FixActivityChannelListTableSeeder extends Seeder {
 	public function run()
 	{
 		$activities = Activity::all();
+		DB::table('activity_channel_list')->truncate();
 		foreach ($activities as $activity) {
 			$activity_channels = ActivityChannel2::where('activity_id',$activity->id)->get();
 			ActivityChannelList::addChannel($activity->id,$activity_channels);

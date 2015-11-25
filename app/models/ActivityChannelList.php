@@ -36,11 +36,11 @@ class ActivityChannelList extends \Eloquent {
 				'selected' => $chn_selected);
 			if(count($channel['children'])>0){
 				foreach ($channel['children'] as $subgroup) {
-					$subgroup_selected = self::isSelected($channel['key'].".".$subgroup['key'],$selected_channels) || $chn_selected;
+					$subgroup_selected = self::isSelected($subgroup['key'],$selected_channels) || $chn_selected;
 					$data[] = array('activity_id' => $activity_id,
-						'parent_id' => $subgroup['key'],
+						'parent_id' => $channel['key'],
 						'title' => $subgroup['title'], 
-						'isfolder' => $subgroup['isfolder'], 
+						'isfolder' => isset($subgroup['isfolder']) ? $subgroup['isfolder'] : null, 
 						'key' => $subgroup['key'], 
 						'unselectable' => $subgroup['unselectable'],
 						'selected' =>  $subgroup_selected);
@@ -51,9 +51,10 @@ class ActivityChannelList extends \Eloquent {
 	}
 
 	public static function getSelectecdChannels($id){
+
 		$channels = array();
 
-		$channel_nodes = ActivityChannel2::where('activity_id',$id)->get();
+		$channel_nodes = ActivityChannel2::where('activity_id',$id)->orderBy('id')->get();
 		// Helper::print_r($channel_nodes);
 		if(!empty($channel_nodes)){
 			foreach ($channel_nodes as $channel_node) {

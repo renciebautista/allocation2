@@ -14,19 +14,19 @@
 		</tr>
 		<tr>
 			<td><b>Proponent Name</b></td>
-			<td>: {{ $activity->proponent_name }} 
-				@if(!empty($activity->contact_no))
-				/ {{ $activity->contact_no }}
+			<td>: {{ $activity->createdby->getFullname() }} 
+				@if(!empty($activity->createdby->contact_no))
+				/ {{ $activity->createdby->contact_no }}
 				@endif
 			</td>
 		</tr>
 		<tr>
 			<td><b>PMOG Partner</b></td>
 
-			@if(!empty($planner))
-			<td>: {{  $planner->planner_desc }} 
-				@if(!empty($planner->contact_no))
-				/ {{ $planner->contact_no }}
+			@if(!empty($activity->pmog[0]))
+			<td>: {{  $activity->pmog[0]->getFullname() }} 
+				@if(!empty($activity->pmog[0]->contact_no))
+				/ {{ $activity->pmog[0]->contact_no }}
 				@endif
 			</td>
 			@else
@@ -40,11 +40,7 @@
 			<td>
 				<ul>
 				@foreach($approvers as $approver)
-				<li>: {{$approver->approver_desc}} 
-					@if(!empty($approver->contact_no))
-						/ {{ $approver->contact_no }}
-						@endif
-					</li>
+				<li>: {{$approver->first_name}} {{$approver->last_name}}</li>
 				@endforeach
 				</ul>
 			</td>

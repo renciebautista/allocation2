@@ -594,6 +594,7 @@ Route::group(array('before' => 'auth'), function()
 		Route::get('customers', 'api\CustomerController@index');
 		Route::get('cycles', 'CycleController@availableCycle');
 
+		Route::get('getpostedchannels', 'api\ChannelController@getpostedchannels');
 		Route::get('channelselected', 'api\ChannelController@channelselected');
 		Route::get('channels', 'api\ChannelController@index');
 

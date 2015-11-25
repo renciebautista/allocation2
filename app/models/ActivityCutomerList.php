@@ -96,19 +96,19 @@ class ActivityCutomerList extends \Eloquent {
 	}
 
 	public static function getSelectedAreas($id){
+
 		$selected = ActivityCustomer::customers($id);
 		$areas = array();
 		foreach ($selected as $row) {
 			$_selected_customer = explode(".", $row);
 
 			if(!empty($_selected_customer[1])){
-				$sel_area = self::where('key',$_selected_customer[1])->first();
+				$sel_area = self::where('key',$_selected_customer[0].'.'.$_selected_customer[1])->first();
 				$areas[$sel_area->key] = $sel_area->title;
 			}else{
 				//get all areas
 				$sel_areas = self::where('parent_id',$_selected_customer[0])->get();
 				foreach ($sel_areas as $sel_area) {
-					// echo $sel_area->area_name;
 					$areas[$sel_area->key] = $sel_area->title;
 				}
 

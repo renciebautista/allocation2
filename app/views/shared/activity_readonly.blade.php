@@ -1231,7 +1231,7 @@ $("#tree4").fancytree({
 	checkbox: true,
 	selectMode: 3,
 	source: {
-		url: "../../api/channels?id={{$activity->id}}"
+		url: "../../api/getpostedchannels?id={{$activity->id}}"
 	}
 });
 

@@ -55,4 +55,41 @@ class ChannelController extends \BaseController {
 	}
 
 
+	public function getpostedchannels(){
+		$id = \Input::get('id');
+		
+		$channels = \ActivityChannelList::where('activity_id',$id)
+			->whereNull('parent_id')
+			->orderBy('id')
+			->get();
+
+		$data = array();
+		foreach ($channels as $channel) {
+			$subgroups = \ActivityChannelList::where('activity_id',$id)
+				->where('parent_id', $channel->key)
+				->orderBy('id')
+				->get();
+			$channel_children = array();
+			foreach ($subgroups as $subgroup) {
+				$channel_children[] = array(
+				'title' => $subgroup->title,
+				'isFolder' => $subgroup->isfolder,
+				'key' => $subgroup->key,
+				'unselectable' => $subgroup->unselectable,
+				'selected' => $subgroup->selected,
+				// 'children' => $channel_children
+				);
+			}
+			$data[] = array(
+				'title' => $channel->title,
+				'isFolder' => $channel->isfolder,
+				'key' => $channel->key,
+				'unselectable' => $channel->unselectable,
+				'selected' => $channel->selected,
+				'children' => $channel_children
+				);
+		}
+		return \Response::json($data,200);
+	}
+
 }

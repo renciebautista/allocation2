@@ -3,7 +3,7 @@
 	<table class="bordered">
 		<tr nobr="true">
 			<td width="80"><b>Activity Type</b></td>
-			<td>{{ $activity->activitytype_desc }}</td>
+			<td>{{ $activity->activitytype->activity_type }}</td>
 		</tr>
 		<tr nobr="true">
 			<td><b>Activity Title</b></td>

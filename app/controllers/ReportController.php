@@ -40,25 +40,19 @@ class ReportController extends \BaseController {
 		if(!empty($activity)){
 			$planner = ActivityPlanner::where('activity_id', $activity->id)->first();
 			$approvers = ActivityApprover::getNames($activity->id);
-			$budgets = ActivityBudget::with('budgettype')
-					->where('activity_id', $id)
-					->get();
 
-			$nobudgets = ActivityNobudget::with('budgettype')
-				->where('activity_id', $id)
-				->get();
+			$objectives = ActivityObjective::where('activity_id', $activity->id)->get();
+
+			$budgets = ActivityBudget::with('budgettype')->where('activity_id', $id)->get();
+			$nobudgets = ActivityNobudget::with('budgettype')->where('activity_id', $id)->get();
 
 			$schemes = Scheme::getList($id);
 
 			$skuinvolves = array();
 			foreach ($schemes as $scheme) {
-				$involves = SchemeHostSku::where('scheme_id',$scheme->id)
-					->join('pricelists', 'scheme_host_skus.sap_code', '=', 'pricelists.sap_code')
-					->get();
+				$involves = SchemeHostSku::where('scheme_id',$scheme->id)->get();
 
-				$premiums = SchemePremuimSku::where('scheme_id',$scheme->id)
-					->join('pricelists', 'scheme_premuim_skus.sap_code', '=', 'pricelists.sap_code')
-					->get();
+				$premiums = SchemePremuimSku::where('scheme_id',$scheme->id)->get();
 				
 				$_involves = array();
 				foreach ($involves as $value) {
@@ -78,10 +72,12 @@ class ReportController extends \BaseController {
 				$skuinvolves[$scheme->id]['non_ulp'] = $non_ulp;
 			}
 
+			//Involved Area
+			$areas = ActivityCutomerList::getSelectedAreas($activity->id);
+			$channels = ActivityChannelList::getSelectecdChannels($activity->id);
+
 			
-			$materials = ActivityMaterial::where('activity_id', $activity->id)
-				->with('source')
-				->get();
+			$materials = ActivityMaterial::where('activity_id', $activity->id)->get();
 
 			$fdapermits = ActivityFdapermit::where('activity_id', $activity->id)->get();
 
@@ -92,9 +88,7 @@ class ReportController extends \BaseController {
 			$artworks = ActivityArtwork::getList($activity->id);
 			$pispermit = ActivityFis::where('activity_id', $activity->id)->first();
 
-			//Involved Area
-			$areas = ActivityCustomer::getSelectedAreas($activity->id);
-			$channels = ActivityChannel2::getSelectecdChannels($activity->id);
+			
 
 			$sku_involves = ActivitySku::getInvolves($activity->id);
 			
@@ -112,7 +106,7 @@ class ReportController extends \BaseController {
 			}
 
 			// Helper::print_r($skuinvolves);
-			return View::make('shared.preview', compact('activity' ,'planner','budgets','nobudgets',
+			return View::make('shared.preview', compact('activity' ,'planner', 'objectives', 'budgets','nobudgets',
 				'schemes','skuinvolves', 'activity_roles','materials','fdapermits', 'networks','artworks', 
 				'pis' , 'areas','channels', 'approvers' , 'sku_involves'));
 		}

@@ -1228,9 +1228,8 @@ class ActivityController extends BaseController {
 
 						}
 					}
-					ActivityChannelList::addChannel($activity->id,$activity_channels);
 
-					
+					ActivityChannelList::addChannel($activity->id,$activity_channels);
 
 					DB::commit();
 
@@ -1257,6 +1256,7 @@ class ActivityController extends BaseController {
 					Session::flash('message', 'Activity customer successfully updated.');
 				} catch (Exception $e) {
 					DB::rollback();
+					echo $e;
 					$arr['success'] = 0;
 					Session::flash('class', 'alert-danger');
 					Session::flash('message', 'An error occcured while updating activity customers.');
