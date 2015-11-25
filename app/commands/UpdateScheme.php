@@ -81,7 +81,7 @@ class UpdateScheme extends Command {
 				if($scheme->ulp_premium != ""){
 					$scheme->final_tts_r = 0;
 					$non = $scheme->srp_p * $total_deals;
-					$per = $total_deals * $other_cost;
+					$per = $total_deals * $scheme->other_cost;
 					$scheme->final_pe_r = $non+$per;
 				}else{
 					$scheme->final_tts_r = $final_tts;
