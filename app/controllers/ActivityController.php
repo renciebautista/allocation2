@@ -1228,6 +1228,10 @@ class ActivityController extends BaseController {
 					}
 					ActivityChannelList::addChannel($activity->id,$activity_channels);
 
+					
+
+					DB::commit();
+
 					// update all schemes
 					$schemes = Scheme::getList($activity->id);
 					foreach ($schemes as $scheme) {
@@ -1246,8 +1250,6 @@ class ActivityController extends BaseController {
 						
 					}
 					// end update
-
-					DB::commit();
 					$arr['success'] = 1;
 					Session::flash('class', 'alert-success');
 					Session::flash('message', 'Activity customer successfully updated.');
