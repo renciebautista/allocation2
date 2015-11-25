@@ -39,21 +39,17 @@ class Pricelist extends \Eloquent {
 			->get();
 	}
 
-	public static function getBrand($brand_code){
+	public static function getBrand($brand_desc){
 		return self::select('brand_code', 'brand_desc', 'brand_shortcut')
-			->where('brand_code', $brand_code)
-			->groupBy('brand_desc')
-			->orderBy('division_desc')
-			->orderBy('category_desc')
-			->orderBy('brand_desc')
+			->where('brand_desc', $brand_code)
 			->first();
 	}
 
 	public static function getBrandLists(){
-		return self::select('brand_code', 'brand_desc')
+		return self::select('brand_desc', 'brand_desc')
 			->groupBy('brand_desc')
 			->orderBy('brand_desc')
-			->lists('brand_desc', 'brand_code');
+			->lists('brand_desc', 'brand_desc');
 	}
 
 	public static function updateCpg($records){

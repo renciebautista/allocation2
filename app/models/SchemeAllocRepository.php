@@ -74,6 +74,7 @@ class SchemeAllocRepository
 					$shipto_alloc->area = $customer->area_name;
 
 					$shipto_alloc->sold_to_code = $customer->customer_code;
+					$shipto_alloc->sob_customer_code = $customer->sob_customer_code;
 					$shipto_alloc->sold_to = $customer->customer_name;
 
 					$shipto_alloc->ship_to_code = $shipto['ship_to_code'];
@@ -109,6 +110,7 @@ class SchemeAllocRepository
 							$account_alloc->area = $customer->area_name;
 
 							$account_alloc->sold_to_code = $customer->customer_code;
+							$account_alloc->sob_customer_code = $customer->sob_customer_code;
 							$account_alloc->sold_to = $customer->customer_name;
 
 							$account_alloc->ship_to_code = $shipto['ship_to_code'];
@@ -142,6 +144,7 @@ class SchemeAllocRepository
 							$others_alloc->area = $customer->area_name;
 
 							$others_alloc->sold_to_code = $customer->customer_code;
+							$others_alloc->sob_customer_code = $customer->sob_customer_code;
 							$others_alloc->sold_to = $customer->customer_name;
 
 							$others_alloc->ship_to_code = $shipto['ship_to_code'];

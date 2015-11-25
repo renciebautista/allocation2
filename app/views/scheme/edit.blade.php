@@ -465,7 +465,7 @@
 								<div class="row">
 									<div class="col-lg-12">
 										{{ Form::label('brand', 'Brand', array('class' => 'control-label')) }}
-										{{ Form::select('brand', array('0' => '') + $brands, $scheme->brand_code, array('data-placeholder' => 'Select Brand','id' => 'brand', 'class' => 'form-control')) }}
+										{{ Form::select('brand', $brands, $scheme->brand_code, array('data-placeholder' => 'Select Brand','id' => 'brand', 'class' => 'form-control')) }}
 									</div>
 								</div>
 							</div>
@@ -680,7 +680,6 @@
 
 @section('page-script')
 
- 	$("html, body").animate({ scrollTop: 0 }, "fast");
  	
 	$('.nav-tabs a').on( 'shown.bs.tab', function (e) {
         $.fn.dataTable.tables( {visible: true, api: true} ).columns.adjust();
