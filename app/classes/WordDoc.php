@@ -32,6 +32,8 @@ class WordDoc {
 
 	private function generate($activity_id){
 		$activity = Activity::find($activity_id);
+
+		$activity_planner = ActivityPlanner::where('activity_id', $activity->id)->first();
 		$approvers = ActivityApprover::getNames($activity->id);
 
 		$budgets = ActivityBudget::with('budgettype')
@@ -129,15 +131,18 @@ class WordDoc {
 		$noSpace = array('spaceAfter' => 0);
 		$phpWord->addTableStyle('Fancy Table', $styleTable);
 		$table = $section->addTable('Fancy Table');
-		$proponent = $activity->createdby->getFullname();
-		if(!empty($activity->createdby->contact_no)){
-			$proponent .= " / ".$activity->createdby->contact_no;
+
+
+		$proponent = $activity->proponent_name;
+		if(!empty($activity->contact_no)){
+			$proponent .= " / ".$activity->contact_no;
 		}
+
 		$planner = "";
-		if(!empty($activity->pmog[0])){
-			$planner = $activity->pmog[0]->getFullname();
-			if(!empty($activity->pmog[0]->contact_no)){
-				$planner .= " / ".$activity->pmog[0]->contact_no;
+		if(!empty($activity_planner)){
+			$planner = $activity_planner->planner_desc;
+			if(!empty($activity_planner->contact_no)){
+				$planner .= " / ".$activity_planner->contact_no	;
 			}
 		}
 

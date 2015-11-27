@@ -781,19 +781,7 @@
 							break;
 						} 
 						$num = $x + 1;
-						// $final_alloc = $scheme->allocations[$x]->final_alloc;
-						// $case = 0;
-						// $deals = 0;
-						// if($activity->activitytype->uom == "CASES"){
-						// 	$case = $final_alloc;
-						// 	$deals = $final_alloc * $scheme->deals;
-						// }else{
-						// 	if($final_alloc > 0){
-						// 		$case = round($final_alloc / $scheme->deals);
-						// 		$deals = $final_alloc;
-						// 	}
-							
-						// }
+
 						$class = '';
 						if((empty($scheme->allocations[$x]->customer_id)) && (empty($scheme->allocations[$x]->shipto_id))){
 							$class = 'style="background-color: #d9edf7;"';
@@ -818,10 +806,15 @@
 						?>
 					@endfor
 					@if(!empty($body))
+
 					<h2 class="alloc-header" style="float:left;">{{ $scheme->name }}</h2>
 					<h2 class="alloc-header" style="float:right;">{{$i+1}} of {{$loops}}</h2>
+					@if($scheme->compute == 2)
+					<h3 style="clear: both;">Allocation generated using manual upload.</h3>
+					<p style="font-style:italic;">{{ $scheme->m_remarks }}</p>
+					<br>
+					@endif
 					<table width="100%" style="padding:2px;">
-						
 						<thead>
 							<tr>
 								<th style="width:20px;">#</th>
