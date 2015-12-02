@@ -38,7 +38,7 @@ class UploadSales extends Command {
 	public function fire()
 	{
 		$this->line('Uploading sales.');
-		Artisan::call('db:seed', array('--class' => 'InitDatabaseTableSeeder','--force' => true));
+		Artisan::call('db:seed', array('--class' => 'UpdateLatestSalesTableSeeder','--force' => true));
 
 		$this->line('Sales successfuly uploaded.');
 	}
