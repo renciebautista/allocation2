@@ -568,6 +568,16 @@ Route::group(array('before' => 'auth'), function()
 	Route::post('pricelist/upload', 'PricelistController@upload');
 	Route::resource('pricelist', 'PricelistController');
 
+	Route::get('area/export', 'AreaController@export');
+	Route::get('area/import', 'AreaController@import');
+	Route::post('area/upload', 'AreaController@upload');
+	Route::resource('area', 'AreaController');
+
+	Route::get('account/export', 'AccountController@export');
+	Route::get('account/import', 'AccountController@import');
+	Route::post('account/upload', 'AccountController@upload');
+	Route::resource('account', 'AccountController');
+
 	Route::get('images/{cycle_id}/{type_id}/{activity_id}/{name}', function($cycle_id = null,$type_id = null,$activity_id = null,$name = null)
 	{
 		$path = storage_path().'/uploads/'.$cycle_id.'/'. $type_id.'/'. $activity_id.'/'. $name;

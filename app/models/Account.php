@@ -28,4 +28,50 @@ class Account extends \Eloquent {
 			->groupBy('account_group_code')
 			->get();
 	}
+
+	public static function getAll(){
+		return self::join('areas', 'areas.area_code', '=', 'accounts.area_code')
+			->get();
+	}
+
+	public static function import($records){
+		DB::beginTransaction();
+			try {
+			$records->each(function($row)  {
+				if(!is_null($row->account_name)){
+					$account = self::where('area_code',$row->area_code)
+						->where('ship_to_code',$row->ship_to_code)
+						->where('account_group_code',$row->account_group_code)
+						->where('channel_code',$row->channel_code)
+						->where('account_name',$row->account_name)
+						->first();
+
+					if(empty($account)){
+						$account = new Account;
+						$account->area_code = $row->area_code;
+						$account->ship_to_code = $row->ship_to_code;
+						$account->account_group_code = $row->account_group_code;
+						$account->channel_code = $row->channel_code;
+						$account->account_name = $row->account_name;
+						$account->active = $row->active;
+						$account->save();
+					}else{
+						$account->area_code = $row->area_code;
+						$account->ship_to_code = $row->ship_to_code;
+						$account->account_group_code = $row->account_group_code;
+						$account->channel_code = $row->channel_code;
+						$account->account_name = $row->account_name;
+						$account->active = $row->active;
+						$account->update();
+						// dd($account);
+					}
+				}
+				
+			});
+			DB::commit();
+		} catch (\Exception $e) {
+			dd($e);
+			DB::rollback();
+		}
+	}
 }

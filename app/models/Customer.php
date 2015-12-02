@@ -128,8 +128,8 @@ class Customer extends \Eloquent {
 		DB::beginTransaction();
 			try {
 			$records->each(function($row)  {
-				if(!is_null($row->customer_name)){
-					$customer = self::where('customer_name',$row->customer_name)
+				if(!is_null($row->customer_code)){
+					$customer = self::where('customer_code',$row->customer_code)
 						->where('area_code',$row->area_code)
 						->first();
 					if(empty($customer)){

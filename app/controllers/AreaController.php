@@ -1,22 +1,22 @@
 <?php
 
-class CustomerController extends \BaseController {
+class AreaController extends \BaseController {
 
 	/**
 	 * Display a listing of the resource.
-	 * GET /customer
+	 * GET /area
 	 *
 	 * @return Response
 	 */
 	public function index()
 	{
-		$customers = Customer::getAll();
-		return View::make('customer.index',compact('customers'));
+		$areas = Area::getAll();
+		return View::make('area.index', compact('areas'));
 	}
 
 	/**
 	 * Show the form for creating a new resource.
-	 * GET /customer/create
+	 * GET /area/create
 	 *
 	 * @return Response
 	 */
@@ -27,7 +27,7 @@ class CustomerController extends \BaseController {
 
 	/**
 	 * Store a newly created resource in storage.
-	 * POST /customer
+	 * POST /area
 	 *
 	 * @return Response
 	 */
@@ -38,7 +38,7 @@ class CustomerController extends \BaseController {
 
 	/**
 	 * Display the specified resource.
-	 * GET /customer/{id}
+	 * GET /area/{id}
 	 *
 	 * @param  int  $id
 	 * @return Response
@@ -50,7 +50,7 @@ class CustomerController extends \BaseController {
 
 	/**
 	 * Show the form for editing the specified resource.
-	 * GET /customer/{id}/edit
+	 * GET /area/{id}/edit
 	 *
 	 * @param  int  $id
 	 * @return Response
@@ -62,7 +62,7 @@ class CustomerController extends \BaseController {
 
 	/**
 	 * Update the specified resource in storage.
-	 * PUT /customer/{id}
+	 * PUT /area/{id}
 	 *
 	 * @param  int  $id
 	 * @return Response
@@ -74,7 +74,7 @@ class CustomerController extends \BaseController {
 
 	/**
 	 * Remove the specified resource from storage.
-	 * DELETE /customer/{id}
+	 * DELETE /area/{id}
 	 *
 	 * @param  int  $id
 	 * @return Response
@@ -85,11 +85,11 @@ class CustomerController extends \BaseController {
 	}
 
 	public function export(){
-		$customers = Customer::all();
+		$areas = Area::all();
 
-		Excel::create("Customers", function($excel) use($customers){
-			$excel->sheet('Sheet1', function($sheet) use($customers) {
-				$sheet->fromModel($customers,null, 'A1', true);
+		Excel::create("Areas", function($excel) use($areas){
+			$excel->sheet('Sheet1', function($sheet) use($areas) {
+				$sheet->fromModel($areas,null, 'A1', true);
 
 			})->download('xls');
 
@@ -97,14 +97,14 @@ class CustomerController extends \BaseController {
 	}
 
 	public function import(){
-		return View::make('customer.import');
+		return View::make('area.import');
 	}
 
 	public function upload(){
 		if(Input::hasFile('file')){
 			$file_path = Input::file('file')->move(storage_path().'/uploads/temp/',Input::file('file')->getClientOriginalName());
 			Excel::selectSheets('Sheet1')->load($file_path, function($reader) {
-				Customer::import($reader->get());
+				Area::import($reader->get());
 			});
 
 
@@ -113,12 +113,12 @@ class CustomerController extends \BaseController {
 			    File::delete($file_path);
 			}
 			
-			return Redirect::action('CustomerController@index')
+			return Redirect::action('AreaController@index')
 					->with('class', 'alert-success')
-					->with('message', 'Customer list successfuly updated');
+					->with('message', 'Area list successfuly updated');
 		}else{
 
-			return Redirect::action('CustomerController@import')
+			return Redirect::action('AreaController@import')
 				->with('class', 'alert-danger')
 				->with('message', 'A file upload is required.');
 		}

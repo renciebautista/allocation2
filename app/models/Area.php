@@ -27,4 +27,39 @@ class Area extends \Eloquent {
 			->first();
 	}
 	
+
+	public static function getAll(){
+		return self::join('groups', 'groups.group_code','=', 'areas.group_code')
+			->orderBy('areas.group_code', 'desc')
+			->get();
+	}
+
+	public static function import($records){
+		DB::beginTransaction();
+			try {
+			$records->each(function($row)  {
+				if(!is_null($row->area_code)){
+					$area = self::where('area_code',$row->area_code)
+						->first();
+					if(empty($area)){
+						$area = new Area;
+						$area->group_code = $row->group_code;
+						$area->area_code = $row->area_code;
+						$area->area_name = $row->area_name;
+						$area->save();
+					}else{
+						$area->group_code = $row->group_code;
+						$area->area_code = $row->area_code;
+						$area->area_name = $row->area_name;
+						$area->update();
+					}
+				}
+				
+			});
+			DB::commit();
+		} catch (\Exception $e) {
+			// dd($e);
+			DB::rollback();
+		}
+	}
 }
