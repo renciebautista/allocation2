@@ -563,6 +563,10 @@ Route::group(array('before' => 'auth'), function()
 	Route::post('topsku/upload', 'TopskuController@upload');
 	Route::resource('topsku', 'TopskuController');
 
+	Route::get('pricelist/export', 'PricelistController@export');
+	Route::get('pricelist/import', 'PricelistController@import');
+	Route::post('pricelist/upload', 'PricelistController@upload');
+	Route::resource('pricelist', 'PricelistController');
 
 	Route::get('images/{cycle_id}/{type_id}/{activity_id}/{name}', function($cycle_id = null,$type_id = null,$activity_id = null,$name = null)
 	{

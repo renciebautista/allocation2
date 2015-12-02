@@ -4,6 +4,13 @@ class Pricelist extends \Eloquent {
 	protected $fillable = [];
 	public $timestamps = false;
 
+	public static function getAll(){
+		return self::orderBy('category_desc')
+			->orderBy('brand_desc')
+			->orderBy('sap_desc')
+			->get();
+	}
+
 	public static function search($search){
 		return self::where('launch',1)
 			->where('active',1)
@@ -242,6 +249,68 @@ class Pricelist extends \Eloquent {
 			}
 			
 		});
+	}
+
+	public static function import($records){
+		DB::beginTransaction();
+			try {
+			$records->each(function($row)  {
+				if(!is_null($row->sap_code)){
+					$item = self::where('sap_code',$row->sap_code)->first();
+					if(empty($item)){
+						$item = new Item;
+						$item->cpg_code = $row->cpg_code;
+						$item->cpg_desc = $row->cpg_desc;
+						$item->sap_code = $row->sap_code;
+						$item->sap_desc = $row->sap_desc;
+						$item->division_code = $row->division_code;
+						$item->division_desc = $row->division_desc;
+						$item->category_code = $row->category_code;
+						$item->category_desc = $row->category_desc;
+						$item->brand_code = $row->brand_code;
+						$item->brand_desc = $row->brand_desc;
+						$item->brand_shortcut = $row->brand_shortcut;
+						$item->pack_size = $row->pack_size;
+						$item->barcode = $row->barcode;
+						$item->case_code = $row->case_code;
+						$item->price_case = $row->price_case;
+						$item->price_case_tax = $row->price_case_tax;
+						$item->price = $row->price;
+						$item->srp = $row->srp;
+						$item->active = $row->active;
+						$item->launch = $row->launch;
+						$item->save();
+					}else{
+						$item->cpg_code = $row->cpg_code;
+						$item->cpg_desc = $row->cpg_desc;
+						$item->sap_code = $row->sap_code;
+						$item->sap_desc = $row->sap_desc;
+						$item->division_code = $row->division_code;
+						$item->division_desc = $row->division_desc;
+						$item->category_code = $row->category_code;
+						$item->category_desc = $row->category_desc;
+						$item->brand_code = $row->brand_code;
+						$item->brand_desc = $row->brand_desc;
+						$item->brand_shortcut = $row->brand_shortcut;
+						$item->pack_size = $row->pack_size;
+						$item->barcode = $row->barcode;
+						$item->case_code = $row->case_code;
+						$item->price_case = $row->price_case;
+						$item->price_case_tax = $row->price_case_tax;
+						$item->price = $row->price;
+						$item->srp = $row->srp;
+						$item->active = $row->active;
+						$item->launch = $row->launch;
+						$item->update();
+					}
+				}
+				
+			});
+			DB::commit();
+		} catch (\Exception $e) {
+			dd($e);
+			DB::rollback();
+		}
 	}
 
 }

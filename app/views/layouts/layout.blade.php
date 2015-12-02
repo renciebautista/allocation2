@@ -98,6 +98,7 @@
 								<li class="divider"></li>
 								<li>{{ HTML::linkRoute('brand.index', 'Brand') }}</li> 
 								<li>{{ HTML::linkRoute('topsku.index', 'Top Skus') }}</li> 
+								<li>{{ HTML::linkRoute('pricelist.index', 'Price List') }}</li> 
 								<li class="divider"></li>
 								<li>{{ HTML::linkRoute('customer.index', 'Customer') }}</li>  
 								<li>{{ HTML::linkRoute('shipto.index', 'Ship To') }}</li>  
