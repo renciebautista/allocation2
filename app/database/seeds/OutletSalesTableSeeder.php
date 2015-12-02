@@ -35,6 +35,9 @@ class OutletSalesTableSeeder extends CsvSeeder {
 		DB::table($this->table)->truncate();
 
 		parent::run();
+
+		$total = DB::table('outlet_sales')->sum('gsv');
+		echo 'Total Sales : '.$total.PHP_EOL; 
 	}
 
 }

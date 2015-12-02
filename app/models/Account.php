@@ -63,7 +63,6 @@ class Account extends \Eloquent {
 						$account->account_name = $row->account_name;
 						$account->active = $row->active;
 						$account->update();
-						// dd($account);
 					}
 				}
 				

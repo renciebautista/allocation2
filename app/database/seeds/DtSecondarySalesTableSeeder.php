@@ -22,7 +22,6 @@ class DtSecondarySalesTableSeeder extends CsvSeeder {
 			}
 		}
 		$this->filename = $folderpath.$latest.'/dtsecondarysales.csv';
-		// $this->filename = app_path().'/database/seeds/seed_files/dtsecondarysales.csv';
 		
 	}
 
@@ -35,6 +34,9 @@ class DtSecondarySalesTableSeeder extends CsvSeeder {
 		DB::table($this->table)->truncate();
 
 		parent::run();
+
+		$total = DB::table('dt_secondary_sales')->sum('gsv');
+		echo 'Total Sales : '.$total.PHP_EOL; 
 	}
 
 }
