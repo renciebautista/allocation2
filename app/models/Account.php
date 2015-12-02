@@ -37,7 +37,7 @@ class Account extends \Eloquent {
 	public static function import($records){
 		DB::beginTransaction();
 			try {
-						DB::table('account_groups')->truncate();
+						DB::table('accounts')->truncate();
 
 			$records->each(function($row)  {
 				if(!is_null($row->account_name)){
