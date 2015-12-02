@@ -37,22 +37,23 @@ class Area extends \Eloquent {
 	public static function import($records){
 		DB::beginTransaction();
 			try {
+				DB::table('areas')->truncate();
 			$records->each(function($row)  {
 				if(!is_null($row->area_code)){
-					$area = self::where('area_code',$row->area_code)
-						->first();
-					if(empty($area)){
+				// 	$area = self::where('area_code',$row->area_code)
+				// 		->first();
+				// 	if(empty($area)){
 						$area = new Area;
 						$area->group_code = $row->group_code;
 						$area->area_code = $row->area_code;
 						$area->area_name = $row->area_name;
 						$area->save();
-					}else{
-						$area->group_code = $row->group_code;
-						$area->area_code = $row->area_code;
-						$area->area_name = $row->area_name;
-						$area->update();
-					}
+					// }else{
+					// 	$area->group_code = $row->group_code;
+					// 	$area->area_code = $row->area_code;
+					// 	$area->area_name = $row->area_name;
+					// 	$area->update();
+					// }
 				}
 				
 			});

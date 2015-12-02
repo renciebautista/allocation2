@@ -24,12 +24,13 @@ class ShipTo extends \Eloquent {
 	public static function import($records){
 		DB::beginTransaction();
 			try {
+				DB::table('ship_tos')->truncate();
 			$records->each(function($row)  {
 				if(!is_null($row->ship_to_name)){
-					$shipto = self::where('ship_to_name',$row->ship_to_name)
-						->where('customer_code',$row->customer_code)
-						->first();
-					if(empty($shipto)){
+					// $shipto = self::where('ship_to_name',$row->ship_to_name)
+					// 	->where('customer_code',$row->customer_code)
+					// 	->first();
+					// if(empty($shipto)){
 						$shipto = new ShipTo;
 						$shipto->customer_code = $row->customer_code;
 						$shipto->ship_to_name = $row->ship_to_name;
@@ -39,16 +40,16 @@ class ShipTo extends \Eloquent {
 						$shipto->leadtime = $row->leadtime;
 						$shipto->active = $row->active;
 						$shipto->save();
-					}else{
-						$shipto->customer_code = $row->customer_code;
-						$shipto->ship_to_code = $row->ship_to_code;
-						$shipto->ship_to_name = $row->ship_to_name;
-						$shipto->split = $row->split;
-						$shipto->dayofweek = $row->dayofweek;
-						$shipto->leadtime = $row->leadtime;
-						$shipto->active = $row->active;
-						$shipto->update();
-					}
+					// }else{
+					// 	$shipto->customer_code = $row->customer_code;
+					// 	$shipto->ship_to_code = $row->ship_to_code;
+					// 	$shipto->ship_to_name = $row->ship_to_name;
+					// 	$shipto->split = $row->split;
+					// 	$shipto->dayofweek = $row->dayofweek;
+					// 	$shipto->leadtime = $row->leadtime;
+					// 	$shipto->active = $row->active;
+					// 	$shipto->update();
+					// }
 				}
 				
 			});
