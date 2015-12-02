@@ -2484,15 +2484,14 @@ class ActivityController extends BaseController {
 							}
 						}
 
-
 						// update all schemes
 						if($new_scheme->compute == 1){
 							$new_scheme->updating = 1;
 							$new_scheme->update();
 							if($_ENV['MAIL_TEST']){
-								Queue::push('SchemeScheduler', array('id' => $scheme->id),'scheme');
+								Queue::push('SchemeScheduler', array('id' => $new_scheme->id),'scheme');
 							}else{
-								Queue::push('SchemeScheduler', array('id' => $scheme->id),'p_scheme');
+								Queue::push('SchemeScheduler', array('id' => $new_scheme->id),'p_scheme');
 							}
 						}else{
 							$new_scheme->updating = 0;
