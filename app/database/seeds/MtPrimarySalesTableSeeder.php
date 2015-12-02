@@ -23,6 +23,9 @@ class MtPrimarySalesTableSeeder extends CsvSeeder {
 		}
 		$this->filename = $folderpath.$latest.'/mtprimarysales.csv';
 
+		echo $latest.PHP_EOL; 
+
+
 	}
 
 	public function run()
