@@ -48,7 +48,7 @@ class Pricelist extends \Eloquent {
 
 	public static function getBrand($brand_desc){
 		return self::select('brand_code', 'brand_desc', 'brand_shortcut')
-			->where('brand_desc', $brand_code)
+			->where('brand_desc', $brand_desc)
 			->first();
 	}
 
