@@ -578,6 +578,11 @@ Route::group(array('before' => 'auth'), function()
 	Route::post('account/upload', 'AccountController@upload');
 	Route::resource('account', 'AccountController');
 
+	Route::get('motherchildsku/export', 'MotherchildskuController@export');
+	Route::get('motherchildsku/import', 'MotherchildskuController@import');
+	Route::post('motherchildsku/upload', 'MotherchildskuController@upload');
+	Route::resource('motherchildsku', 'MotherchildskuController');
+
 	Route::get('images/{cycle_id}/{type_id}/{activity_id}/{name}', function($cycle_id = null,$type_id = null,$activity_id = null,$name = null)
 	{
 		$path = storage_path().'/uploads/'.$cycle_id.'/'. $type_id.'/'. $activity_id.'/'. $name;
