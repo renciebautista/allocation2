@@ -14,7 +14,7 @@ return array(
      */
 
     // 'enabled' => Config::get('app.debug'),
-     'enabled' => false,
+     'enabled' => true,
     /*
      |--------------------------------------------------------------------------
      | Storage settings
