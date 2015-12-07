@@ -75,7 +75,6 @@ class ReportController extends \BaseController {
 			//Involved Area
 			$areas = ActivityCutomerList::getSelectedAreas($activity->id);
 			$channels = ActivityChannelList::getSelectecdChannels($activity->id);
-
 			
 			$materials = ActivityMaterial::where('activity_id', $activity->id)->get();
 
@@ -86,9 +85,8 @@ class ReportController extends \BaseController {
 			$activity_roles = ActivityRole::getListData($activity->id);
 
 			$artworks = ActivityArtwork::getList($activity->id);
-			$pispermit = ActivityFis::where('activity_id', $activity->id)->first();
 
-			
+			$pispermit = ActivityFis::where('activity_id', $activity->id)->first();
 
 			$sku_involves = ActivitySku::getInvolves($activity->id);
 			

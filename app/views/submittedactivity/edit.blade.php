@@ -103,68 +103,14 @@
 					</div>
 				
 					<div class="ap-title">
-						<table>
-							<tr>
-								<td>Circular Reference No.</td>
-								<td>: {{ $activity->id }}</td>
-							</tr>
-							<tr>
-								<td>Activity Name</td>
-								<td>: {{ $activity->activity_code }}</td>
-							</tr>
-							<tr>
-								<td>TOP Cycle</td>
-								<td>: {{ $activity->cycle->cycle_name }}</td>
-							</tr>
-							<tr>
-								<td>Proponent Name</td>
-								<td>: {{ $activity->createdby->getFullname() }} 
-									@if(!empty($activity->createdby->contact_no))
-									/ {{ $activity->createdby->contact_no }}
-									@endif
-								</td>
-							</tr>
-							<tr>
-								<td>PMOG Partner</td>
-
-								@if(!empty($activity->pmog[0]))
-								<td>: {{  $activity->pmog[0]->getFullname() }} 
-									@if(!empty($activity->pmog[0]->contact_no))
-									/ {{ $activity->pmog[0]->contact_no }}
-									@endif
-								</td>
-								@else
-								<td>:</td>
-								@endif
-							</tr>
-
-							<tr>
-								<td>Approvers</td>
-								@if(!empty($approvers))
-								<td>
-									<?php $first = false; ?>
-									@foreach($approvers as $approver)
-									@if(!$first)
-									:
-									<?php $first = true; ?>
-									@else
-									&nbsp
-									@endif
-									 {{$approver->first_name}} {{$approver->last_name}}</br>
-									@endforeach
-								</td>
-								@else
-								<td>:</td>
-								@endif
-							</tr>
-						</table>
+						@include('shared.partial_activty_title')
 					</div>
 				
 					<div class="ap-activity">
 						<table class="bordered">
 							<tr>
 								<td>Activity Type</td>
-								<td>{{ $activity->activitytype-> activity_type }}</td>
+								<td>{{ $activity->activitytype_desc }}</td>
 								@if(!$read_only)
 								<td>{{ Form::textarea('activity_type','',array('rows' => 1,'placeholder' => 'Activity Type Remarks')) }}</td>
 								@endif
@@ -187,8 +133,8 @@
 								<td>Objectives</td>
 								<td>
 									<ul>
-									@foreach($activity->objectives as $objective)
-									<li>{{ $objective->objective }}</li>
+									@foreach($objectives as $objective)
+									<li>{{ $objective->objective_desc }}</li>
 									@endforeach
 									</ul>
 								</td>
@@ -428,7 +374,7 @@
 										</tr>
 										@foreach($materials as $material)
 										<tr>
-											<td>{{ $material->source->source }}</td>
+											<td>{{ $material->source_desc }}</td>
 											<td>{{ $material->material }}</td>
 										</tr>
 										@endforeach

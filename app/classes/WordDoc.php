@@ -36,13 +36,15 @@ class WordDoc {
 		$activity_planner = ActivityPlanner::where('activity_id', $activity->id)->first();
 		$approvers = ActivityApprover::getNames($activity->id);
 
-		$budgets = ActivityBudget::with('budgettype')
-						->where('activity_id', $activity->id)
-						->get();
+		$objectives = ActivityObjective::where('activity_id', $activity->id)->get();
+
+		$budgets = ActivityBudget::with('budgettype')->where('activity_id', $activity->id)->get();
 
 		$sku_involves = ActivitySku::getInvolves($activity->id);
-		$areas = ActivityCustomer::getSelectedAreas($activity->id);
-		$channels = ActivityChannel2::getSelectecdChannels($activity->id);
+
+		$areas = ActivityCutomerList::getSelectedAreas($activity->id);
+		$channels = ActivityChannelList::getSelectecdChannels($activity->id);
+
 		$schemes = Scheme::getList($activity->id);
 		$skuinvolves = array();
 		foreach ($schemes as $scheme) {
@@ -73,9 +75,8 @@ class WordDoc {
 		}
 		$networks = ActivityTiming::getTimings($activity->id,true);
 		$activity_roles = ActivityRole::getListData($activity->id);
-		$materials = ActivityMaterial::where('activity_id', $activity->id)
-					->with('source')
-					->get();
+
+		$materials = ActivityMaterial::where('activity_id', $activity->id)->get();
 
 		$billing_date = "";
 		if($activity->billing_date != ""){
@@ -159,22 +160,15 @@ class WordDoc {
 				$table->addCell(1800)->addText($title['desc'],array('bold'=>true,'size' => 8), $noSpace);
 				$table->addCell(9250)->addText(": ".htmlspecialchars($title['value']),array('size' => 8), $noSpace);
 			}else{
-				$first = false;
-				if(count($title['value'])>0){
-					foreach ($title['value'] as $approver) {
-						$table->addRow();
-						if(!$first){
-							$table->addCell(1800)->addText($title['desc'],array('bold'=>true,'size' => 8), $noSpace);
-							$first = true;
-						}else{
-							$table->addCell(1800)->addText("",array('bold'=>true,'size' => 8), $noSpace);
-						}
-						$table->addCell(9250)->addText(": ".$approver->first_name." ".$approver->last_name,array('size' => 8), $noSpace);
-					}
-				}else{
+				foreach ($title['value'] as $approver) {
 					$table->addRow();
 					$table->addCell(1800)->addText($title['desc'],array('bold'=>true,'size' => 8), $noSpace);
-					$table->addCell(9250)->addText(": ",array('size' => 8), $noSpace);
+					if(!empty($approver->contact_no)){
+						$table->addCell(9250)->addText(": ".$approver->approver_desc." / ".$approver->contact_no,array('size' => 8), $noSpace);
+					}else{
+						$table->addCell(9250)->addText(": ".$approver->approver_desc,array('size' => 8), $noSpace);
+					}
+					
 				}
 			}
 			
@@ -187,10 +181,10 @@ class WordDoc {
 		$phpWord->addTableStyle('Activity Table', $styleTable);
 		$table = $section->addTable('Activity Table');
 		
-		$activityData = array(array('desc' => 'Activity Type', 'value' => $activity->activitytype->activity_type),
+		$activityData = array(array('desc' => 'Activity Type', 'value' => $activity->activitytype_desc),
 			array('desc' => 'Activity Title', 'value' => $activity->circular_name),
 			array('desc' => 'Background', 'value' => $activity->background),
-			array('desc' => 'Objectives', 'value' => $activity->objectives),
+			array('desc' => 'Objectives', 'value' => $objectives),
 			array('desc' => 'Budget IO TTS', 'value' => $budgets),
 			array('desc' => 'Budget IO PE', 'value' => $budgets),
 			array('desc' => 'SKU/s Involved', 'value' => $sku_involves),
@@ -215,7 +209,7 @@ class WordDoc {
 					foreach ($title['value'] as $objective) {
 						$innerCell = $cell->addTable('Areas Table');
 						$innerCell->addRow();
-						$innerCell->addCell(7350)->addText(htmlspecialchars($objective->objective),array('size' => 8), $noSpace);
+						$innerCell->addCell(7350)->addText(htmlspecialchars($objective->objective_desc),array('size' => 8), $noSpace);
 						
 					}
 				}
@@ -430,7 +424,7 @@ class WordDoc {
 					$innerCell->addCell(3200)->addText("Materials",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
 					foreach($title['value'] as $material){
 						$innerCell->addRow();
-						$innerCell->addCell(5950)->addText(htmlspecialchars($material->source->source),array('size' => 8,'align' => 'center'), $fontStyle);
+						$innerCell->addCell(5950)->addText(htmlspecialchars($material->source_desc),array('size' => 8,'align' => 'center'), $fontStyle);
 						$innerCell->addCell(3200)->addText(htmlspecialchars($material->material),array('size' => 8,'align' => 'center'), $fontStyle);
 					}
 				}

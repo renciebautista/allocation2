@@ -64,17 +64,16 @@ class SubmittedActivityController extends \BaseController {
 			}
 		}
 
+		// activity details
 		$approver = ActivityApprover::getApprover($id,Auth::id());
 
 		$planner = ActivityPlanner::where('activity_id', $activity->id)->first();
 		$approvers = ActivityApprover::getNames($activity->id);
-		$budgets = ActivityBudget::with('budgettype')
-				->where('activity_id', $id)
-				->get();
 
-		$nobudgets = ActivityNobudget::with('budgettype')
-			->where('activity_id', $id)
-			->get();
+		$objectives = ActivityObjective::where('activity_id', $activity->id)->get();
+
+		$budgets = ActivityBudget::with('budgettype')->where('activity_id', $id)->get();
+		$nobudgets = ActivityNobudget::with('budgettype')->where('activity_id', $id)->get();
 
 		$schemes = Scheme::getList($id);
 
@@ -106,10 +105,11 @@ class SubmittedActivityController extends \BaseController {
 			$skuinvolves[$scheme->id]['non_ulp'] = $non_ulp;
 		}
 
-		
-		$materials = ActivityMaterial::where('activity_id', $activity->id)
-			->with('source')
-			->get();
+		//Involved Area
+		$areas = ActivityCutomerList::getSelectedAreas($activity->id);
+		$channels = ActivityChannelList::getSelectecdChannels($activity->id);
+
+		$materials = ActivityMaterial::where('activity_id', $activity->id)->get();
 
 		$fdapermits = ActivityFdapermit::getList($activity->id);
 
@@ -118,14 +118,11 @@ class SubmittedActivityController extends \BaseController {
 		$activity_roles = ActivityRole::getListData($activity->id);
 
 		$artworks = ActivityArtwork::getList($activity->id);
+
 		$pispermit = ActivityFis::where('activity_id', $activity->id)->first();
 
-		//Involved Area
-		$areas = ActivityCustomer::getSelectedAreas($activity->id);
-		$channels = ActivityChannel2::getSelectecdChannels($activity->id);
-
 		$sku_involves = ActivitySku::getInvolves($activity->id);
-		
+
 		// // Product Information Sheet
 		$path = '/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
 		if($pispermit){
@@ -153,7 +150,7 @@ class SubmittedActivityController extends \BaseController {
 		// dd($schemes);
 		// comments
 		$comments = ActivityComment::getList($activity->id);
-		return View::make('submittedactivity.edit',compact('activity','comments','approver', 'valid',
+		return View::make('submittedactivity.edit',compact('activity','comments','approver', 'objectives', 'valid',
 			'activity' ,'approvers', 'planner','budgets','nobudgets','schemes','skuinvolves', 'sku_involves',
 			'materials','non_ulp','networks','artworks', 'pis' , 'areas','channels', 
 			'fdapermits','fis', 'backgrounds', 'bandings' ,'activity_roles',
