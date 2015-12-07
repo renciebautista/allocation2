@@ -12,6 +12,21 @@
 
 @include('partials.notification')
 
+<div class="row">
+  <div class="col-lg-12">
+    {{ Form::open(array('method' => 'get','class' => 'form-inline')) }}
+      <div class="form-group">
+        <label class="sr-only" for="s">Search</label>
+        {{ Form::text('s',Input::old('s'),array('class' => 'form-control', 'placeholder' => 'Search')) }}
+        </div>
+        <button type="submit" class="btn btn-success"><i class="fa fa-search"></i> Search</button>
+        <a href="{{ URL::action('SobfilterController@create') }}" class="btn btn-primary"><i class="fa fa-plus"></i> SOB Filter</a>
+        <a href="{{ URL::action('SobfilterController@export') }}" class="btn btn-info"><i class="fa fa-download"></i> Export SOB Filter</a>
+        <a href="{{ URL::action('SobfilterController@import') }}" class="btn btn-info"><i class="fa fa-upload"></i> Import SOB Filter</a>
+    {{ Form::close() }}
+  </div>
+</div>
+
 
 <p><b>{{ count($filters)}} record/s found.</b></p>
 

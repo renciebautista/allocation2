@@ -542,7 +542,10 @@ Route::group(array('before' => 'auth'), function()
 	Route::post('sob/generate', ['as' => 'sob.generate', 'uses' => 'SobController@generate']);
 	Route::get('sob/weekly', ['as' => 'sob.weekly', 'uses' => 'SobController@weekly']);
 	Route::post('sob/generateweekly', ['as' => 'sob.generateweekly', 'uses' => 'SobController@generateweekly']);
-
+	
+	Route::get('sobfilter/export', 'SobfilterController@export');
+	Route::get('sobfilter/import', 'SobfilterController@import');
+	Route::post('sobfilter/upload', 'SobfilterController@upload');
 	Route::resource('sobfilter', 'SobfilterController');
 
 	Route::get('shipto/export', 'ShiptoController@export');

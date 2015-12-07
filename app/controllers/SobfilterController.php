@@ -84,4 +84,44 @@ class SobfilterController extends \BaseController {
 		//
 	}
 
+	public function export(){
+		$filters = SobFilter::all();
+
+		Excel::create("SOB Filters", function($excel) use($filters){
+			$excel->sheet('Sheet1', function($sheet) use($filters) {
+				$sheet->fromModel($filters,null, 'A1', true);
+
+			})->download('xls');
+
+		});
+	}
+
+	public function import(){
+		return View::make('sobfilter.import');
+	}
+
+	public function upload(){
+		if(Input::hasFile('file')){
+			$file_path = Input::file('file')->move(storage_path().'/uploads/temp/',Input::file('file')->getClientOriginalName());
+			Excel::selectSheets('Sheet1')->load($file_path, function($reader) {
+				SobFilter::import($reader->get());
+			});
+
+
+			if (File::exists($file_path))
+			{
+			    File::delete($file_path);
+			}
+			
+			return Redirect::action('SobfilterController@index')
+					->with('class', 'alert-success')
+					->with('message', 'SOB Filter successfuly updated');
+		}else{
+
+			return Redirect::action('SobfilterController@import')
+				->with('class', 'alert-danger')
+				->with('message', 'A file upload is required.');
+		}
+		
+	}
 }
