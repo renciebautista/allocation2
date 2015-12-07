@@ -465,7 +465,7 @@
 								<div class="row">
 									<div class="col-lg-12">
 										{{ Form::label('brand', 'Brand', array('class' => 'control-label')) }}
-										{{ Form::select('brand', $brands, $scheme->brand_code, array('data-placeholder' => 'Select Brand','id' => 'brand', 'class' => 'form-control')) }}
+										{{ Form::select('brand', $brands, $scheme->brand_desc, array('data-placeholder' => 'Select Brand','id' => 'brand', 'class' => 'form-control')) }}
 									</div>
 								</div>
 							</div>

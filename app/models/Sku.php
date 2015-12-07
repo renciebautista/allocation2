@@ -151,11 +151,12 @@ class Sku extends \Eloquent {
 	public static function import($records){
 		DB::beginTransaction();
 			try {
+				DB::table('skus')->truncate();
 			$records->each(function($row)  {
 				if(!is_null($row->sku_code)){
-					$topsku = self::where('sku_code',$row->sku_code)
-						->first();
-					if(empty($topsku)){
+					// $topsku = self::where('sku_code',$row->sku_code)
+					// 	->first();
+					// if(empty($topsku)){
 						$topsku = new Sku;
 						$topsku->sku_code = $row->sku_code;
 						$topsku->sku_desc = $row->sku_desc;
@@ -172,23 +173,23 @@ class Sku extends \Eloquent {
 						$topsku->active = $row->active;
 						$topsku->launch = $row->launch;
 						$topsku->save();
-					}else{
-						$topsku->sku_code = $row->sku_code;
-						$topsku->sku_desc = $row->sku_desc;
-						$topsku->division_code = $row->division_code;
-						$topsku->division_desc = $row->division_desc;
-						$topsku->category_code = $row->category_code;
-						$topsku->category_desc = $row->category_desc;
-						$topsku->brand_code = $row->brand_code;
-						$topsku->brand_desc = $row->brand_desc;
-						$topsku->cpg_code = $row->cpg_code;
-						$topsku->cpg_desc = $row->cpg_desc;
-						$topsku->packsize_code = $row->packsize_code;
-						$topsku->packsize_desc = $row->packsize_desc;
-						$topsku->active = $row->active;
-						$topsku->launch = $row->launch;
-						$topsku->update();
-					}
+					// }else{
+					// 	$topsku->sku_code = $row->sku_code;
+					// 	$topsku->sku_desc = $row->sku_desc;
+					// 	$topsku->division_code = $row->division_code;
+					// 	$topsku->division_desc = $row->division_desc;
+					// 	$topsku->category_code = $row->category_code;
+					// 	$topsku->category_desc = $row->category_desc;
+					// 	$topsku->brand_code = $row->brand_code;
+					// 	$topsku->brand_desc = $row->brand_desc;
+					// 	$topsku->cpg_code = $row->cpg_code;
+					// 	$topsku->cpg_desc = $row->cpg_desc;
+					// 	$topsku->packsize_code = $row->packsize_code;
+					// 	$topsku->packsize_desc = $row->packsize_desc;
+					// 	$topsku->active = $row->active;
+					// 	$topsku->launch = $row->launch;
+					// 	$topsku->update();
+					// }
 				}
 				
 			});
