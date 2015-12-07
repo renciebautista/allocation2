@@ -509,11 +509,13 @@
 								<div class="row">
 									<div class="col-lg-12">
 										{{ Form::submit('Plot', array('class' => 'btn btn-primary disable-button', 'id'=>'plotsob' , 'name' => 'submit')) }}
+										<a class="btn btn-success" target="_blank" href="{{ URL::action('SchemeController@exportsob', $scheme->id ) }}">Export To Excel</a>
 									</div>
 								</div>
 							</div>
 						</div>
 					</div>
+
 
 					<br>
 

@@ -446,12 +446,14 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('scheme/{id}/export', 'SchemeController@export');
 	Route::get('scheme/{id}/allocation', 'SchemeController@allocation');
 	Route::get('scheme/{id}/edit', 'SchemeController@edit');
+	Route::get('scheme/{id}/exportsob', 'SchemeController@exportsob');
 	Route::get('scheme/{id}', 'SchemeController@show');
 	Route::delete('scheme/{id}', 'SchemeController@destroy');
 	Route::put('scheme/{id}', 'SchemeController@update');
 	Route::post('scheme/{id}/updatesob', 'SchemeController@updatesob');
 	Route::post('scheme/{id}/duplicate','SchemeController@duplicate');
 	Route::post('scheme/{id}/duplicatescheme', 'SchemeController@duplicatescheme');
+
 
 	// Route::post('downloadedactivity/{id}/submittogcm', 'DownloadedActivityController@submittogcm');
 	// Route::resource('downloadedactivity', 'DownloadedActivityController');
