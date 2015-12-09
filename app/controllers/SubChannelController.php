@@ -10,7 +10,7 @@ class SubchannelController extends \BaseController {
 	 */
 	public function index()
 	{
-		$subchannels = Subchannel::getAll();
+		$subchannels = SubChannel::getAll();
 		return View::make('subchannel.index',compact('subchannels'));
 	}
 
