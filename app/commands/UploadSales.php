@@ -11,7 +11,7 @@ class UploadSales extends Command {
 	 *
 	 * @var string
 	 */
-	protected $name = 'upload:sales';
+	protected $name = 'update:sales';
 
 	/**
 	 * The console command description.
