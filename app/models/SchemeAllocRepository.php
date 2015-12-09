@@ -8,6 +8,7 @@ class SchemeAllocRepository
 
 	public static function updateAllocation($skus,$scheme){
 		SchemeAllocation::where('scheme_id',$scheme->id)->delete();
+		AllocationSob::where('scheme_id', $scheme->id)->delete();
 		self::save($skus,$scheme);
 	}
 
@@ -54,7 +55,7 @@ class SchemeAllocRepository
 			if(empty($customer->shiptos)){
 				$scheme_alloc->show = 1;
 			}
-			$scheme_alloc->allocation = 0;
+			$scheme_alloc->final_alloc = 0;
 			$list[] = $scheme_alloc;
 
 			// var_dump($scheme_alloc);
@@ -92,7 +93,7 @@ class SchemeAllocRepository
 				   	if(empty($shipto['accounts'])){
 				   		$shipto_alloc->show = 1;
 				   	}
-				   	$shipto_alloc->allocation = 0;
+				   	$shipto_alloc->final_alloc = 0;
 				   	$list[] = $shipto_alloc;
 				   	$id++;
 					if(!empty($shipto['accounts'])){
@@ -125,7 +126,7 @@ class SchemeAllocRepository
 							$account_alloc->outlet = $account['account_name'];
  
 							$account_alloc->show = 1;
-							$account_alloc->allocation = 0;
+							$account_alloc->final_alloc = 0;
 							$list[] = $account_alloc;
 							$id++;
 						}
@@ -160,7 +161,7 @@ class SchemeAllocRepository
 
 							$others_alloc->show = 1;
 
-							$others_alloc->allocation = 0;
+							$others_alloc->final_alloc = 0;
 							$list[] = $others_alloc;
 							$id++;
 						}

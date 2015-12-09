@@ -828,3 +828,9 @@ h2, .h2 {
 .num-week{
 	width: 100%;
 }
+
+.manual_upload{
+	display: none;
+}
+
+

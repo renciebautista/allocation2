@@ -486,6 +486,8 @@ class SchemeController extends \BaseController {
 
 				$scheme->update();
 
+				// dd($scheme);
+
 				// update scheme sku
 				SchemeRepository::addSchemeSku($scheme);
 				
@@ -511,6 +513,8 @@ class SchemeController extends \BaseController {
 				// echo $update_alloc;
 				
 				if($scheme->compute == 1) {
+
+					// dd(1);
 					if($update_alloc){
 						SchemeAllocRepository::updateAllocation(Input::get('skus'),$scheme);
 						
@@ -538,6 +542,7 @@ class SchemeController extends \BaseController {
 					$scheme2->final_alloc = $final_alloc;
 					$scheme2->final_total_deals = $total_deals;
 					$scheme2->final_total_cases = $total_cases;
+					$scheme2->m_remarks = "";
 
 					$per = 0;
 					if(Input::get('ulp_premium') != ""){
@@ -554,9 +559,9 @@ class SchemeController extends \BaseController {
 					$scheme2->update();
 					
 				}else if($scheme->compute == 2){
-					if($update_alloc){
-						SchemeAllocation::where('scheme_id',$scheme->id)->delete();
-					}
+					// if($update_alloc){
+					// 	SchemeAllocation::where('scheme_id',$scheme->id)->delete();
+					// }
 
 					if(Input::hasFile('file')){
 						
@@ -565,6 +570,7 @@ class SchemeController extends \BaseController {
 
 						Excel::selectSheets('allocations')->load($file_path, function($reader) use (&$isError,$scheme){
 							$firstrow = $reader->first()->toArray();
+							// dd($firstrow);	
 					       	if (isset($firstrow['scheme_id'])) {
 					            $rows = $reader->all();
 					            if($rows[0]->scheme_id != $scheme->id){
@@ -624,6 +630,7 @@ class SchemeController extends \BaseController {
 					
 				}else{
 					SchemeAllocation::where('scheme_id',$scheme->id)->delete();
+					AllocationSob::where('scheme_id', $scheme->id)->delete();
 					// update final alloc
 					$scheme2->final_alloc = $scheme->quantity;
 					$scheme2->final_total_deals = $scheme->total_deals;
@@ -746,6 +753,8 @@ class SchemeController extends \BaseController {
 
 				SchemeAllocation::recomputeAlloc($alloc,$scheme);
 
+				AllocationSob::where('scheme_id', $scheme->id)->delete();
+
 				$final_alloc = SchemeAllocation::finalallocation($alloc->scheme_id);
 
 				if($scheme->activity->activitytype->uom == 'CASES'){
@@ -867,7 +876,7 @@ class SchemeController extends \BaseController {
 		$scheme = Scheme::find($id);
 
 		Excel::create($scheme->name, function($excel) use($allocations){
-			$excel->sheet('allocations', function($sheet) use($allocations) {
+			$excel->sheet('Detailed Allocation', function($sheet) use($allocations) {
 				$sheet->fromModel($allocations,null, 'A1', true);
 				$sheet->row(1, array(
 				    'GROUP',
@@ -890,6 +899,18 @@ class SchemeController extends \BaseController {
 					'FORCE ALLOCATION',
 					'FINAL ALLOCATION'
 				));
+
+			})->download('xls');
+
+		});
+	}
+
+	public function exportsum($id){
+		$allocations = SchemeAllocation::getForManualUplaod($id);
+
+		Excel::create("Summarized Allocation", function($excel) use($allocations){
+			$excel->sheet('allocations', function($sheet) use($allocations) {
+				$sheet->fromModel($allocations,null, 'A1', true);
 
 			})->download('xls');
 

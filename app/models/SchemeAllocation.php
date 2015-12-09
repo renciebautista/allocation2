@@ -428,18 +428,18 @@ class SchemeAllocation extends \Eloquent {
 				$in_deals = 0;
 				$in_cases = 0;
 				if($scheme->activity->activitytype->uom == 'CASES'){
-					$in_deals = $row->allocation * $scheme->deals;
-					$in_cases = $row->allocation;
+					$in_deals = $row->final_alloc * $scheme->deals;
+					$in_cases = $row->final_alloc;
 				}else{
-					if($row->allocation > 0){
-						$in_deals =  $row->allocation;
-						$in_cases = round($row->allocation/$scheme->deals);
+					if($row->final_alloc > 0){
+						$in_deals =  $row->final_alloc;
+						$in_cases = round($row->final_alloc/$scheme->deals);
 						
 					}
 				}
 				$alloc->computed_alloc = 0;
 				$alloc->force_alloc = 0;
-				$alloc->final_alloc = $row->allocation;
+				$alloc->final_alloc = $row->final_alloc;
 				$alloc->in_deals = $in_deals;
 				$alloc->in_cases = $in_cases;
 				$alloc->tts_budget = 1;
@@ -456,5 +456,15 @@ class SchemeAllocation extends \Eloquent {
 			dd($e);
 			DB::rollback();
 		}
+	}
+
+	public static function getForManualUplaod($id){
+		return self::select('id', 'scheme_id', 'customer_id', 'shipto_id', 'group_code', 'group', 'area_code', 'area',
+			'sold_to_code', 'sob_customer_code', 'sold_to', 'ship_to_code', 'ship_to', 'channel_code', 'channel',
+			'account_group_code', 'account_group_name', 'outlet', 'show', 'final_alloc')
+		->where('scheme_id', $id)
+		->orderBy('allocations.id')
+		->get();
+
 	}
 }

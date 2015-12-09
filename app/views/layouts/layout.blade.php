@@ -183,8 +183,12 @@
 							
 						</li>
 
-						<li>
-							<a href="../help/">Help</a>
+						<li class="dropdown">
+							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="help">Help <span class="caret"></span></a>
+							<ul class="dropdown-menu" aria-labelledby="report">
+								<li>{{ HTML::linkAction('FaqController@index', 'Frequently Asked Questions',null, array()) }}</li>  
+								<li><a href="../help/">Documentation</a></li>  
+							</ul>
 						</li>
 					</ul>
 

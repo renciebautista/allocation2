@@ -444,6 +444,7 @@ Route::group(array('before' => 'auth'), function()
 	Route::put('scheme/updatealloc', 'SchemeController@updateallocation');
 	Route::get('scheme/{id}/gettemplate', 'SchemeController@gettemplate');
 	Route::get('scheme/{id}/export', 'SchemeController@export');
+	Route::get('scheme/{id}/exportsum', 'SchemeController@exportsum');
 	Route::get('scheme/{id}/allocation', 'SchemeController@allocation');
 	Route::get('scheme/{id}/edit', 'SchemeController@edit');
 	Route::get('scheme/{id}/exportsob', 'SchemeController@exportsob');
@@ -597,6 +598,10 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('subchannel/import', 'SubchannelController@import');
 	Route::post('subchannel/upload', 'SubchannelController@upload');
 	Route::resource('subchannel', 'SubchannelController');
+
+
+	Route::resource('faq', 'FaqController');
+
 
 	Route::get('images/{cycle_id}/{type_id}/{activity_id}/{name}', function($cycle_id = null,$type_id = null,$activity_id = null,$name = null)
 	{
