@@ -289,6 +289,10 @@
 
 	<script type="text/javascript">
 		$(document).ready(function() {
+			moment.locale('en', {
+			  	week: { dow: 1 } // Monday is the first day of the week
+			});
+
 			$('.dropdown-submenu > a').submenupicker();
 
 			$("#page").show();

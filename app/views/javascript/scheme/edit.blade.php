@@ -25,6 +25,7 @@ $('.nav-tabs a').click(function (e) {
 
 });
 
+
 $('#start_date').datetimepicker({
 	pickTime: false,
 	calendarWeeks: true,
