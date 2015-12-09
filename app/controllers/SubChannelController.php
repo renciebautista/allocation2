@@ -1,6 +1,6 @@
 <?php
 
-class SubChannelController extends \BaseController {
+class SubchannelController extends \BaseController {
 
 	/**
 	 * Display a listing of the resource.

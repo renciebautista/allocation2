@@ -210,4 +210,67 @@ class AllocationSob extends \Eloquent {
 
 		return $schemes;
 	}
+
+
+	public static function regenerateSob($id){
+		$with_sob = self::where('scheme_id', $id)->get();
+
+		if(count($with_sob) > 0){
+			
+		}
+
+		// // plot sob allocation
+		// $customers = Allocation::where('scheme_id',$scheme->id)
+		// 	// ->where('group_code','E1397')
+		// 	->whereNull('customer_id')
+		// 	->whereNull('shipto_id')
+		// 	->orderBy('id', 'asc')
+		// 	->get();
+
+		// $group_code = array();
+		// $area_code = array();
+		// $sold_to_code = array();
+
+		// $filters = SobFilter::all();
+		// foreach ($filters as $filter) {
+		// 	if($filter->group_code != "0"){
+		// 		if (!in_array($filter->group_code, $group_code)) {
+		// 		    $group_code[] = $filter->group_code;
+		// 		}
+				
+		// 	}
+
+		// 	if($filter->area_code != "0"){
+		// 		if (!in_array($filter->area_code, $area_code)) {
+		// 		    $area_code[] = $filter->area_code;
+		// 		}
+				
+		// 	}
+
+		// 	if($filter->customer_code != "0"){
+		// 		if (!in_array($filter->customer_code, $sold_to_code)) {
+		// 		    $sold_to_code[] = $filter->customer_code	;
+		// 		}
+				
+		// 	}
+		// }
+
+		// $total_weeks = $scheme->weeks;
+		// foreach ($customers as $customer) {
+		// 	if((in_array($customer->group_code, $group_code)) || (in_array($customer->area_code, $area_code))|| (in_array($customer->sold_to_code, $sold_to_code))){
+		// 		$data = array();
+		// 		$_shiptos = Allocation::where('customer_id',$customer->id)
+		// 			->whereNull('shipto_id')
+		// 			->orderBy('id', 'asc')
+		// 			->get();
+		// 		if(count($_shiptos) == 0){
+		// 			AllocationSob::createAllocation($id,$customer,Input::get('_wek'));
+		// 		}else{
+		// 			foreach ($_shiptos as $_shipto) {
+		// 				AllocationSob::createAllocation($id,$_shipto,Input::get('_wek'));
+		// 			}
+		// 		}
+		// 	}	
+		// }
+	}
 }
