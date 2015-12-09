@@ -56,4 +56,24 @@ class Channel extends \Eloquent {
 		}
 		return $data;
 	}
+
+	public static function import($records){
+		DB::beginTransaction();
+			try {
+				DB::table('channels')->truncate();
+			$records->each(function($row)  {
+				if(!is_null($row->channel_code)){
+					$channel = new Channel;
+					$channel->channel_code = $row->channel_code;
+					$channel->channel_name = $row->channel_name;
+					$channel->save();
+				}
+				
+			});
+			DB::commit();
+		} catch (\Exception $e) {
+			// dd($e);
+			DB::rollback();
+		}
+	}
 }

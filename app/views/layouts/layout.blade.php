@@ -21,6 +21,8 @@
 
 		{{ HTML::style('assets/plugins/handsontable-0.16.0/handsontable.full.min.css') }}
 
+		{{ HTML::style('assets/plugins/submenu/css/bootstrap-submenu.min.css') }}
+
 		{{ HTML::style('assets/css/styles.css') }}
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
@@ -48,6 +50,7 @@
 						<span class="icon-bar"></span>
 					</button>
 				</div>
+
 				<div class="navbar-collapse collapse" id="navbar-main">
 					<ul class="nav navbar-nav">
 						@if(Auth::user()->inRoles(['PROPONENT','PMOG PLANNER','GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']))
@@ -83,28 +86,53 @@
 						<li class="dropdown">
 							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="maintenance">Maintenance <span class="caret"></span></a>
 							<ul class="dropdown-menu" aria-labelledby="maintenance">
-								<li>{{ HTML::linkRoute('group.index', 'Group') }}</li>  
-								<li>{{ HTML::linkAction('UsersController@index' , 'User') }}</li>    
+								<li class="dropdown-submenu">
+								    <a tabindex="0" data-toggle="dropdown">Users Maintenance</a>
+								    <ul class="dropdown-menu">
+								      	<li>{{ HTML::linkRoute('group.index', 'Group') }}</li>  
+										<li>{{ HTML::linkAction('UsersController@index' , 'User') }}</li>
+								    </ul>
+								</li> 
 
-								<li>{{ HTML::linkRoute('cycle.index', 'Cycle') }}</li>  
-								<li>{{ HTML::linkRoute('activitytype.index', 'Activity Type') }}</li>  
-								<li>{{ HTML::linkRoute('holidays.index', 'Holidays') }}</li>  
+								<li class="dropdown-submenu">
+								    <a tabindex="0" data-toggle="dropdown">Activity Maintenance</a>
+								    <ul class="dropdown-menu">
+								      	<li>{{ HTML::linkRoute('cycle.index', 'Cycle') }}</li>  
+										<li>{{ HTML::linkRoute('activitytype.index', 'Activity Type') }}</li>  
+										<li>{{ HTML::linkRoute('holidays.index', 'Holidays') }}</li>  
+										<li>{{ HTML::linkRoute('activity.index', 'Activities') }}</li>
+								    </ul>
+								</li>  
+								 
+								<li class="dropdown-submenu">
+								    <a tabindex="0" data-toggle="dropdown">SOB Maintenance</a>
+								    <ul class="dropdown-menu">
+								      	<li>{{ HTML::linkRoute('sobfilter.index', 'SOB Filters') }}</li> 
+								    </ul>
+								</li>  
 
-								<li>{{ HTML::linkRoute('launchskus.index', 'Launch SKU') }}</li> 
+								<li class="dropdown-submenu">
+								    <a tabindex="0" data-toggle="dropdown">SKUS Maintenance</a>
+								    <ul class="dropdown-menu">
+								      	<li>{{ HTML::linkRoute('brand.index', 'Brand') }}</li> 
+								      	<li>{{ HTML::linkRoute('launchskus.index', 'Launch SKU') }}</li> 
+										<li>{{ HTML::linkRoute('topsku.index', 'Top Skus') }}</li> 
+										<li>{{ HTML::linkRoute('pricelist.index', 'Price List') }}</li> 
+										<li>{{ HTML::linkRoute('motherchildsku.index', 'Mother Child SKU') }}</li> 
+								    </ul>
+								</li>
 
-								<li>{{ HTML::linkRoute('activity.index', 'Activities') }}</li>  
-								<li>{{ HTML::linkRoute('sobfilter.index', 'SOB Filters') }}</li>  
-
-								<li class="divider"></li>
-								<li>{{ HTML::linkRoute('brand.index', 'Brand') }}</li> 
-								<li>{{ HTML::linkRoute('topsku.index', 'Top Skus') }}</li> 
-								<li>{{ HTML::linkRoute('pricelist.index', 'Price List') }}</li> 
-								<li>{{ HTML::linkRoute('motherchildsku.index', 'Mother Child SKU') }}</li> 
-								<li class="divider"></li>
-								<li>{{ HTML::linkRoute('area.index', 'Area') }}</li>  
-								<li>{{ HTML::linkRoute('customer.index', 'Customer') }}</li>  
-								<li>{{ HTML::linkRoute('shipto.index', 'Ship To') }}</li>  
-								<li>{{ HTML::linkRoute('account.index', 'Account') }}</li>  
+								<li class="dropdown-submenu">
+								    <a tabindex="0" data-toggle="dropdown">Customer Maintenance</a>
+								    <ul class="dropdown-menu">
+								      	<li>{{ HTML::linkRoute('area.index', 'Area') }}</li>  
+										<li>{{ HTML::linkRoute('customer.index', 'Customer') }}</li>  
+										<li>{{ HTML::linkRoute('shipto.index', 'Ship To') }}</li>  
+										<li>{{ HTML::linkRoute('account.index', 'Account') }}</li> 
+										<li>{{ HTML::linkRoute('channel.index', 'Channel') }}</li> 
+										<li>{{ HTML::linkRoute('subchannel.index', 'Sub Channel') }}</li> 
+								    </ul>
+								</li>
 							</ul>
 						</li>
 						@endif
@@ -250,6 +278,9 @@
 	{{ HTML::script('assets/plugins/handsontable-0.16.0/handsontable.full.min.js') }}
 
 	{{ HTML::script('assets/plugins/isdirty/jquery.dirtyforms.min.js') }}
+
+	{{ HTML::script('assets/plugins/submenu/js/bootstrap-submenu.min.js') }}
+
 	
 	{{ HTML::script('assets/js/function.js') }}
 
@@ -258,6 +289,8 @@
 
 	<script type="text/javascript">
 		$(document).ready(function() {
+			$('.dropdown-submenu > a').submenupicker();
+
 			$("#page").show();
 			$("#pageloading").hide();
 
@@ -266,6 +299,8 @@
 			@section('page-script')
 
 			@show
+
+
 		});
 	</script>
 	</body>

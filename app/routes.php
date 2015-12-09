@@ -588,6 +588,16 @@ Route::group(array('before' => 'auth'), function()
 	Route::post('motherchildsku/upload', 'MotherchildskuController@upload');
 	Route::resource('motherchildsku', 'MotherchildskuController');
 
+	Route::get('channel/export', 'ChannelController@export');
+	Route::get('channel/import', 'ChannelController@import');
+	Route::post('channel/upload', 'ChannelController@upload');
+	Route::resource('channel', 'ChannelController');
+
+	Route::get('subchannel/export', 'SubchannelController@export');
+	Route::get('subchannel/import', 'SubchannelController@import');
+	Route::post('subchannel/upload', 'SubchannelController@upload');
+	Route::resource('subchannel', 'SubchannelController');
+
 	Route::get('images/{cycle_id}/{type_id}/{activity_id}/{name}', function($cycle_id = null,$type_id = null,$activity_id = null,$name = null)
 	{
 		$path = storage_path().'/uploads/'.$cycle_id.'/'. $type_id.'/'. $activity_id.'/'. $name;
