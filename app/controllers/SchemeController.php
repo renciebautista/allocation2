@@ -896,8 +896,6 @@ class SchemeController extends \BaseController {
 		});
 	}
 
-
-
 	public function duplicate($id){
 		$scheme = Scheme::find($id);
 		$data = SchemeRepository::duplicate($id);
@@ -1125,7 +1123,7 @@ class SchemeController extends \BaseController {
 					return Redirect::to(URL::action('SchemeController@edit', array('id' => $id)) . "#sob")
 							->with('class', 'alert-success')
 							->with('message', 'SOB plotting was successfuly updated.');
-					}
+					
 				} catch (Exception $e) {
 					DB::rollback();
 					return Redirect::to(URL::action('SchemeController@edit', array('id' => $id)) . "#sob")
@@ -1133,7 +1131,6 @@ class SchemeController extends \BaseController {
 							->with('message', 'Please update your scheme allocations.');
 					}
 				}
-			}
 				
 			
 		}
