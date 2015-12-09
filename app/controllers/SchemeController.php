@@ -1133,6 +1133,7 @@ class SchemeController extends \BaseController {
 							->with('message', 'Please update your scheme allocations.');
 					}
 				}
+			}
 				
 			
 		}
