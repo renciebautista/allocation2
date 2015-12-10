@@ -85,7 +85,7 @@ class SubchannelController extends \BaseController {
 	}
 
 	public function export(){
-		$subchannels = Subchannel::all();
+		$subchannels = SubChannel::all();
 
 		Excel::create("SubChannels", function($excel) use($subchannels){
 			$excel->sheet('Sheet1', function($sheet) use($subchannels) {
@@ -104,7 +104,7 @@ class SubchannelController extends \BaseController {
 		if(Input::hasFile('file')){
 			$file_path = Input::file('file')->move(storage_path().'/uploads/temp/',Input::file('file')->getClientOriginalName());
 			Excel::selectSheets('Sheet1')->load($file_path, function($reader) {
-				Subchannel::import($reader->get());
+				SubChannel::import($reader->get());
 			});
 
 

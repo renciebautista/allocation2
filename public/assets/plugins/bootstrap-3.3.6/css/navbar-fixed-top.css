@@ -1,0 +1,25 @@
+body {
+  min-height: 2000px;
+  padding-top: 70px;
+}
+
+#box {
+	background: #f9f9f9;
+    width: 850px;
+    height: 360px;
+    display: block;
+    overflow: hidden;
+    color: gray;
+    -webkit-border-radius: 1px;
+    -moz-border-radius: 1px;
+    border-radius: 1px;
+    box-shadow: 0 0 2px #d3d3d3, inset 0 -3px 0 #e6e6e6;
+    -webkit-box-shadow: 2px 3px 8px #a7a7a7;
+    -moz-box-shadow: 2px 3px 8px #a7a7a7;
+    margin: 100px auto 0;
+}
+#content {
+    /*width: 795px!important;*/
+    /*height: 315px!important;*/
+    padding: 20px;
+}
