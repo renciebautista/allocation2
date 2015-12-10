@@ -40,12 +40,34 @@ code {
 
 .logo {
   text-align: center;
-  margin-top: 100px;
+  margin-top: 10px;
 }
 
-#login {
+.bg-form {
+  margin-top: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
   padding: 10px;
+  background-color: #f8f8f8;
     
+}
+#register {
+  margin-top: 10px;
+}
+
+#register h2 {
+  border-bottom: 1px solid #e1e8ed;
+    box-shadow: 0 1px 0 #fff;
+    /*color: #66757f;*/
+    display: block;
+    font-size: 16px;
+    font-weight: 300;
+    margin-bottom: 12px;
+    padding: 10px 12px;
+    position: relative;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.6);
+    margin-top: 0px;
+}
+.form-group{
+  margin-bottom: 5px;
 }

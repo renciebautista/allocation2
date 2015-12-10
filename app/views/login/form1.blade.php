@@ -58,30 +58,88 @@
 		        </div><!-- /.blog-main -->
 
         		<div class="col-sm-4">
-        			<div id="login"> 
-        				<form class="form-horizontal"> 
+        			<div id="login" class="bg-form"> 
+							{{ Form::open(array('action' => 'LoginController@dologin','class' => 'form-horizontal')) }}
         					<div class="form-group"> 
         						<div class="col-sm-12"> 
-        							<input type="email" class="form-control" id="inputEmail3" placeholder="Email"> 
+									{{ Form::text('name','',array('class' => 'form-control' , 'placeholder' => 'Email')) }}
         						</div> 
         					</div> 
         					<div class="form-group"> 
         						<div class="col-sm-12"> 
-        							<input type="password" class="form-control" id="inputPassword3" placeholder="Password"> 
-        						</div>
-        						<div class="col-sm-12"> 
-        							<button type="submit" class="btn btn-	default pull-right">Sign in</button>
+        							{{ Form::password('password',array('class' => 'form-control', 'placeholder' => 'Password')) }}
         						</div>
         					</div> 
+
+        					 
         					<div class="form-group"> 
         						<div class="col-sm-12"> 
         							<div class="checkbox"> 
         								<label> <input type="checkbox"> Remember me </label> 
-        								or 
-        								<a href="">Forgot password?</a>
+        								<a class="pull-right" href="">Forgot password?</a>
         							</div> 
     							</div> 
     						</div> 
+
+    						<div class="form-group"> 
+        						<div class="col-sm-12"> 
+        							<button type="submit" class="btn btn-default">Sign in</button>
+        						</div>
+        					</div>
+						{{ Form::close() }}
+    				</div>
+
+    				<div id="register" class="bg-form"> 
+    					<h2><strong>New to E-TOP?</strong> Sign up</h2>
+        				<form class="form-horizontal"> 
+
+        					<div class="form-group"> 
+        						<div class="col-sm-12"> 
+        							<input type="email" class="form-control" id="inputEmail3" placeholder="First Name"> 
+        						</div> 
+        					</div> 
+
+        					<div class="form-group"> 
+        						<div class="col-sm-12"> 
+        							<input type="email" class="form-control" id="inputEmail3" placeholder="Middle Initial"> 
+        						</div> 
+        					</div>
+
+        					<div class="form-group"> 
+        						<div class="col-sm-12"> 
+        							<input type="email" class="form-control" id="inputEmail3" placeholder="Last Name"> 
+        						</div> 
+        					</div>
+
+        					<div class="form-group"> 
+        						<div class="col-sm-12"> 
+        							<input type="email" class="form-control" id="inputEmail3" placeholder="Username"> 
+        						</div> 
+        					</div>
+
+        					<div class="form-group"> 
+        						<div class="col-sm-12"> 
+        							<input type="email" class="form-control" id="inputEmail3" placeholder="Email"> 
+        						</div> 
+        					</div>
+        					
+        					<div class="form-group"> 
+        						<div class="col-sm-12"> 
+        							<input type="email" class="form-control" id="inputEmail3" placeholder="Contact Number"> 
+        						</div> 
+        					</div>
+
+        					<div class="form-group"> 
+        						<div class="col-sm-12"> 
+        							<input type="email" class="form-control" id="inputEmail3" placeholder="Department"> 
+        						</div> 
+        					</div> 
+
+    						<div class="form-group"> 
+        						<div class="col-sm-12"> 
+        							<button type="submit" class="btn btn-default">Sign up for E-TOP</button>
+        						</div>
+        					</div>
     					</form> 
     				</div>
       			</div>
