@@ -18,12 +18,15 @@ body {
 }
 
 
+
+
 /* Custom page CSS
 -------------------------------------------------- */
 /* Not required for template or sticky footer method. */
 
 body > .container {
   padding: 60px 15px 0;
+
 }
 .container .text-muted {
   margin: 20px 0;
@@ -51,8 +54,11 @@ code {
   background-color: #f8f8f8;
     
 }
+#login{
+  margin-top: 40px;
+}
 #register {
-  margin-top: 10px;
+  margin-top: 30px;
 }
 
 #register h2 {
