@@ -37,12 +37,7 @@
 		<nav class="navbar navbar-default navbar-fixed-top">
 			<div class="container">
 				<div class="navbar-header">
-					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-						<span class="sr-only">Toggle navigation</span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-					</button>
+				
 					<a class="navbar-brand" href="#">E-TOP</a>
 				</div>
 				
@@ -52,7 +47,7 @@
 		<!-- Begin page content -->
 		<div class="container">
 			<div class="row">
-		        <div class="col-sm-8 logo">
+		        <div class="col-sm-8 hidden-xs logo">
 		        	<img src="assets/images/logo_2.png" width="500">
 		        </div><!-- /.blog-main -->
 
