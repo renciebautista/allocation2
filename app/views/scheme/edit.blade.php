@@ -738,15 +738,18 @@
 	    $('#sum').text(sum.toFixed(2) +'%');
 	})
 
+	$(".manual_upload").hide();
+
 	val = $("#alloc_ref").val();
 	if(val == 2){
 		$(".manual_upload").show();
 	}
 
-	$(".manual_upload").hide();
+	
 
 	$("#alloc_ref").change(function () {
 		if($(this).val() == 2){
+			
 			$(".manual_upload").show();
 		}else{
 			$(".manual_upload").hide();

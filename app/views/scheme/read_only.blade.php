@@ -274,6 +274,16 @@
 					</div>
 				</div>
 
+				@if($scheme->compute == 2)
+				<div class="row">
+					<div class="col-lg-12">
+					  	<div class="form-group">
+					    	{{ Form::label('remarks', 'Manual Uplaod Remarks', array('class' => 'control-label')) }}
+							{{ Form::textarea('remarks',$scheme->m_remarks,array('class' => 'form-control', 'readonly' => '')) }}
+					  	</div>
+				  	</div>
+			  	</div>
+			  	@endif
 				<br>
 
 				<div class="row">
