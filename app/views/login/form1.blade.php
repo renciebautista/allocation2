@@ -54,7 +54,7 @@
 		<div class="container">
 			<div class="row">
 		        <div class="col-sm-8 logo">
-		        	<img src="assets/images/logo_2.png" width="400">
+		        	<img src="assets/images/logo_2.png" width="500">
 		        </div><!-- /.blog-main -->
 
         		<div class="col-sm-4">
@@ -83,7 +83,7 @@
 
     						<div class="form-group"> 
         						<div class="col-sm-12"> 
-        							<button type="submit" class="btn btn-default">Sign in</button>
+        							<button type="submit" class="btn btn-primary">Sign in</button>
         						</div>
         					</div>
 						{{ Form::close() }}
@@ -137,7 +137,7 @@
 
     						<div class="form-group"> 
         						<div class="col-sm-12"> 
-        							<button type="submit" class="btn btn-default">Sign up for E-TOP</button>
+        							<button type="submit" class="btn btn-primary">Sign up for E-TOP</button>
         						</div>
         					</div>
     					</form> 
@@ -145,6 +145,12 @@
       			</div>
 			</div>
 		</div>
+
+		<footer class="footer">
+	      <div class="container">
+	        <p class="text-muted">© 2014- {{ date('Y') }}, All Rights Reserved.</p>
+	      </div>
+	    </footer>
 
 
 		<!-- Bootstrap core JavaScript

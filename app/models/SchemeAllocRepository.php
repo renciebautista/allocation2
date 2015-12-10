@@ -191,6 +191,8 @@ class SchemeAllocRepository
 		$force_total_sales = $_allocation->force_total_gsv();
 		$force_alloc = $activity->allow_force;
 		foreach ($allocations as $customer) {
+
+			// Total sales / per customer salse * total allocation
 			$scheme_alloc = new SchemeAllocation;
 			$scheme_alloc->scheme_id = $scheme->id;
 
