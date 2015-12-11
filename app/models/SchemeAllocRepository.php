@@ -12,168 +12,6 @@ class SchemeAllocRepository
 		self::save($skus,$scheme);
 	}
 
-	public static function gettemplate($scheme){
-		$forced_areas = ForceAllocation::getForcedAreas($scheme->activity_id);
-		$customers = ActivityCustomer::customers($scheme->activity_id);
-		$_channels = ActivityChannel2::channels($scheme->activity_id);
-
-		$_allocation = new AllocationRepository;
-		$allocations = $_allocation->customers(array(), $_channels, $customers,$forced_areas);
-		$list = array();
-		$id = 1;	
-		foreach ($allocations as $customer) {
-			$scheme_alloc = new stdClass();
-			$scheme_alloc->id = $id;
-			$scheme_alloc->scheme_id = $scheme->id;
-			$scheme_alloc->customer_id = '';
-			$scheme_alloc->shipto_id = '';
-
-			$scheme_alloc->group_code = $customer->group_code;
-			$scheme_alloc->group = $customer->group_name;
-
-			$scheme_alloc->area_code = $customer->area_code;
-			$scheme_alloc->area = $customer->area_name;
-
-			$scheme_alloc->sold_to_code = $customer->customer_code;
-			$scheme_alloc->sob_customer_code = $customer->sob_customer_code;
-			$scheme_alloc->sold_to = $customer->customer_name;
-
-			$scheme_alloc->ship_to_code = '';
-			$scheme_alloc->ship_to = $customer->customer_name . ' TOTAL';
-
-
-			$scheme_alloc->channel_code = '';
-			$scheme_alloc->channel = '';	
-
-			$scheme_alloc->account_group_code = '';
-			$scheme_alloc->account_group_name = '';				
-							
-			$scheme_alloc->outlet = '';
-
-			$scheme_alloc->show = 0;
-
-			if(empty($customer->shiptos)){
-				$scheme_alloc->show = 1;
-			}
-			$scheme_alloc->final_alloc = 0;
-			$list[] = $scheme_alloc;
-
-			// var_dump($scheme_alloc);
-			$id++;
-			if(!empty($customer->shiptos)){
-				foreach($customer->shiptos as $shipto){
-					$shipto_alloc = new stdClass();
-					$shipto_alloc->id = $id;
-					$shipto_alloc->scheme_id = $scheme->id;
-					$shipto_alloc->customer_id = $scheme_alloc->id;
-					$shipto_alloc->shipto_id = '';
-
-					$shipto_alloc->group_code = $customer->group_code;
-					$shipto_alloc->group = $customer->group_name;
-
-					$shipto_alloc->area_code = $customer->area_code;
-					$shipto_alloc->area = $customer->area_name;
-
-					$shipto_alloc->sold_to_code = $customer->customer_code;
-					$shipto_alloc->sob_customer_code = $customer->sob_customer_code;
-					$shipto_alloc->sold_to = $customer->customer_name;
-
-					$shipto_alloc->ship_to_code = $shipto['ship_to_code'];
-					$shipto_alloc->ship_to = $shipto['ship_to_name'];
-
-					$shipto_alloc->channel_code = '';
-					$shipto_alloc->channel = '';		
-
-					$shipto_alloc->account_group_code = '';
-					$shipto_alloc->account_group_name = '';			
-							
-					$shipto_alloc->outlet = '';
-
-					$shipto_alloc->show = 0;
-				   	if(empty($shipto['accounts'])){
-				   		$shipto_alloc->show = 1;
-				   	}
-				   	$shipto_alloc->final_alloc = 0;
-				   	$list[] = $shipto_alloc;
-				   	$id++;
-					if(!empty($shipto['accounts'])){
-						foreach($shipto['accounts'] as $account){
-							$account_alloc = new stdClass();
-							$account_alloc->id = $id;
-							$account_alloc->scheme_id = $scheme->id;
-							$account_alloc->customer_id = $scheme_alloc->id;
-							$account_alloc->shipto_id = $shipto_alloc->id;
-
-							$account_alloc->group_code = $customer->group_code;
-							$account_alloc->group = $customer->group_name;
-
-							$account_alloc->area_code = $customer->area_code;
-							$account_alloc->area = $customer->area_name;
-
-							$account_alloc->sold_to_code = $customer->customer_code;
-							$account_alloc->sob_customer_code = $customer->sob_customer_code;
-							$account_alloc->sold_to = $customer->customer_name;
-
-							$account_alloc->ship_to_code = $shipto['ship_to_code'];
-							$account_alloc->ship_to = $shipto['ship_to_name'];
-
-							$account_alloc->channel_code = $account['channel_code'];
-							$account_alloc->channel = $account['channel_name'];
-
-							$account_alloc->account_group_code = $account['account_group_code'];
-							$account_alloc->account_group_name = $account['account_group_name'];
-
-							$account_alloc->outlet = $account['account_name'];
- 
-							$account_alloc->show = 1;
-							$account_alloc->final_alloc = 0;
-							$list[] = $account_alloc;
-							$id++;
-						}
-
-						if(empty($customer->area_code_two)){
-							$others_alloc = new stdClass();
-							$others_alloc->id = $id;
-							$others_alloc->scheme_id = $scheme->id;
-							$others_alloc->customer_id = $scheme_alloc->id;
-							$others_alloc->shipto_id = $shipto_alloc->id;
-
-							$others_alloc->group_code = $customer->group_code;
-							$others_alloc->group = $customer->group_name;
-
-							$others_alloc->area_code = $customer->area_code;
-							$others_alloc->area = $customer->area_name;
-
-							$others_alloc->sold_to_code = $customer->customer_code;
-							$others_alloc->sob_customer_code = $customer->sob_customer_code;
-							$others_alloc->sold_to = $customer->customer_name;
-
-							$others_alloc->ship_to_code = $shipto['ship_to_code'];
-							$others_alloc->ship_to = $shipto['ship_to_name'];	
-
-							$others_alloc->channel_code = 'OTHERS';
-							$others_alloc->channel = 'OTHERS';	
-
-							$others_alloc->account_group_code = '';
-							$others_alloc->account_group_name = '';			
-							
-							$others_alloc->outlet = 'OTHERS';
-
-							$others_alloc->show = 1;
-
-							$others_alloc->final_alloc = 0;
-							$list[] = $others_alloc;
-							$id++;
-						}
-						
-					}
-				}
-			}
-			
-
-		}
-		return $list;
-	}
 
 	private static function save($skus,$scheme){
 		$activity = Activity::find($scheme->activity_id);
@@ -624,6 +462,169 @@ class SchemeAllocRepository
 				}
 			}
 		}
+	}
+
+	public static function gettemplate($scheme){
+		$forced_areas = ForceAllocation::getForcedAreas($scheme->activity_id);
+		$customers = ActivityCustomer::customers($scheme->activity_id);
+		$_channels = ActivityChannel2::channels($scheme->activity_id);
+
+		$_allocation = new AllocationRepository;
+		$allocations = $_allocation->customers(array(), $_channels, $customers,$forced_areas);
+		$list = array();
+		$id = 1;	
+		foreach ($allocations as $customer) {
+			$scheme_alloc = new stdClass();
+			$scheme_alloc->id = $id;
+			$scheme_alloc->scheme_id = $scheme->id;
+			$scheme_alloc->customer_id = '';
+			$scheme_alloc->shipto_id = '';
+
+			$scheme_alloc->group_code = $customer->group_code;
+			$scheme_alloc->group = $customer->group_name;
+
+			$scheme_alloc->area_code = $customer->area_code;
+			$scheme_alloc->area = $customer->area_name;
+
+			$scheme_alloc->sold_to_code = $customer->customer_code;
+			$scheme_alloc->sob_customer_code = $customer->sob_customer_code;
+			$scheme_alloc->sold_to = $customer->customer_name;
+
+			$scheme_alloc->ship_to_code = '';
+			$scheme_alloc->ship_to = $customer->customer_name . ' TOTAL';
+
+
+			$scheme_alloc->channel_code = '';
+			$scheme_alloc->channel = '';	
+
+			$scheme_alloc->account_group_code = '';
+			$scheme_alloc->account_group_name = '';				
+							
+			$scheme_alloc->outlet = '';
+
+			$scheme_alloc->show = 0;
+
+			if(empty($customer->shiptos)){
+				$scheme_alloc->show = 1;
+			}
+			$scheme_alloc->final_alloc = 0;
+			$list[] = $scheme_alloc;
+
+			// var_dump($scheme_alloc);
+			$id++;
+			if(!empty($customer->shiptos)){
+				foreach($customer->shiptos as $shipto){
+					$shipto_alloc = new stdClass();
+					$shipto_alloc->id = $id;
+					$shipto_alloc->scheme_id = $scheme->id;
+					$shipto_alloc->customer_id = $scheme_alloc->id;
+					$shipto_alloc->shipto_id = '';
+
+					$shipto_alloc->group_code = $customer->group_code;
+					$shipto_alloc->group = $customer->group_name;
+
+					$shipto_alloc->area_code = $customer->area_code;
+					$shipto_alloc->area = $customer->area_name;
+
+					$shipto_alloc->sold_to_code = $customer->customer_code;
+					$shipto_alloc->sob_customer_code = $customer->sob_customer_code;
+					$shipto_alloc->sold_to = $customer->customer_name;
+
+					$shipto_alloc->ship_to_code = $shipto['ship_to_code'];
+					$shipto_alloc->ship_to = $shipto['ship_to_name'];
+
+					$shipto_alloc->channel_code = '';
+					$shipto_alloc->channel = '';		
+
+					$shipto_alloc->account_group_code = '';
+					$shipto_alloc->account_group_name = '';			
+							
+					$shipto_alloc->outlet = '';
+
+					$shipto_alloc->show = 0;
+				   	if(empty($shipto['accounts'])){
+				   		$shipto_alloc->show = 1;
+				   	}
+				   	$shipto_alloc->final_alloc = 0;
+				   	$list[] = $shipto_alloc;
+				   	$id++;
+					if(!empty($shipto['accounts'])){
+						foreach($shipto['accounts'] as $account){
+							$account_alloc = new stdClass();
+							$account_alloc->id = $id;
+							$account_alloc->scheme_id = $scheme->id;
+							$account_alloc->customer_id = $scheme_alloc->id;
+							$account_alloc->shipto_id = $shipto_alloc->id;
+
+							$account_alloc->group_code = $customer->group_code;
+							$account_alloc->group = $customer->group_name;
+
+							$account_alloc->area_code = $customer->area_code;
+							$account_alloc->area = $customer->area_name;
+
+							$account_alloc->sold_to_code = $customer->customer_code;
+							$account_alloc->sob_customer_code = $customer->sob_customer_code;
+							$account_alloc->sold_to = $customer->customer_name;
+
+							$account_alloc->ship_to_code = $shipto['ship_to_code'];
+							$account_alloc->ship_to = $shipto['ship_to_name'];
+
+							$account_alloc->channel_code = $account['channel_code'];
+							$account_alloc->channel = $account['channel_name'];
+
+							$account_alloc->account_group_code = $account['account_group_code'];
+							$account_alloc->account_group_name = $account['account_group_name'];
+
+							$account_alloc->outlet = $account['account_name'];
+ 
+							$account_alloc->show = 1;
+							$account_alloc->final_alloc = 0;
+							$list[] = $account_alloc;
+							$id++;
+						}
+
+						if(empty($customer->area_code_two)){
+							$others_alloc = new stdClass();
+							$others_alloc->id = $id;
+							$others_alloc->scheme_id = $scheme->id;
+							$others_alloc->customer_id = $scheme_alloc->id;
+							$others_alloc->shipto_id = $shipto_alloc->id;
+
+							$others_alloc->group_code = $customer->group_code;
+							$others_alloc->group = $customer->group_name;
+
+							$others_alloc->area_code = $customer->area_code;
+							$others_alloc->area = $customer->area_name;
+
+							$others_alloc->sold_to_code = $customer->customer_code;
+							$others_alloc->sob_customer_code = $customer->sob_customer_code;
+							$others_alloc->sold_to = $customer->customer_name;
+
+							$others_alloc->ship_to_code = $shipto['ship_to_code'];
+							$others_alloc->ship_to = $shipto['ship_to_name'];	
+
+							$others_alloc->channel_code = 'OTHERS';
+							$others_alloc->channel = 'OTHERS';	
+
+							$others_alloc->account_group_code = '';
+							$others_alloc->account_group_name = '';			
+							
+							$others_alloc->outlet = 'OTHERS';
+
+							$others_alloc->show = 1;
+
+							$others_alloc->final_alloc = 0;
+							$list[] = $others_alloc;
+							$id++;
+						}
+						
+					}
+				}
+			}
+			
+
+		}
+		return $list;
 	}
 
 	public static function updateCosting($scheme){
