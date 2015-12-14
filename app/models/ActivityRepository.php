@@ -93,11 +93,15 @@ class ActivityRepository extends \Eloquent {
 			$cmd = User::GetPlanners(['CMD DIRECTOR']);
 			if(!ActivityApprover::ApproverExist($activity->id,$cmd[0]->user_id)){
 				$user = User::find($cmd[0]->user_id);
+				$contact_no = '';
+				if(!empty($user->contact_no)){
+					$contact_no = $user->contact_no;
+				}
 				if(!empty($user)){
 					ActivityApprover::insert(array('activity_id' => $activity->id, 
 					'user_id' => $cmd[0]->user_id,
 					'approver_desc' => $user->getFullname(),
-					'contact_no' => $user->contact_no,
+					'contact_no' => $contact_no,
 					'group_id' => $user->roles[0]->id));
 				}
 				
