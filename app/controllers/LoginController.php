@@ -6,11 +6,11 @@ class LoginController extends \BaseController {
 		if (Confide::user()) {
         	return Redirect::to('/dashboard');
 	    } else {
-	    	if($_ENV['MAIL_TEST']){
+	    	// if($_ENV['MAIL_TEST']){
 	    		return View::make('login.form1');
-	    	}else{
-	    		return View::make('login.index');
-	    	}
+	    	// }else{
+	    	// 	return View::make('login.index');
+	    	// }
 
 	    }
 	}
