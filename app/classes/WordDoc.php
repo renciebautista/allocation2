@@ -112,8 +112,8 @@ class WordDoc {
 		$header->addText("Customer Marketing Department",array('size' => 10),array('spaceAfter' => 0));
 		$header->addImage(storage_path().'/uploads/tempfiles/logo.png',
 			array(
-				'width'            => \PhpOffice\PhpWord\Shared\Converter::cmToPixel(3),
-				'height'           => \PhpOffice\PhpWord\Shared\Converter::cmToPixel(3),
+				'width'            => \PhpOffice\PhpWord\Shared\Converter::cmToPixel(2),
+				'height'           => \PhpOffice\PhpWord\Shared\Converter::cmToPixel(2),
 				'positioning'      => \PhpOffice\PhpWord\Style\Image::POSITION_ABSOLUTE,
 				'posHorizontal'    => \PhpOffice\PhpWord\Style\Image::POSITION_HORIZONTAL_RIGHT,
 				'posHorizontalRel' => \PhpOffice\PhpWord\Style\Image::POSITION_RELATIVE_TO_PAGE,
@@ -541,7 +541,7 @@ class WordDoc {
 						$permittable->addRow();
 						$cell = $permittable->addCell(900);
 						$textrun = $cell->createTextRun();
-						$textrun->addImage(storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/'.$permit->hash_name,array('width'=>800));
+						$textrun->addImage(storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id.'/'.$permit->hash_name,array('width'=>500));
 					}
 				}
 			}
@@ -719,6 +719,10 @@ class WordDoc {
 					$_ap++;
 					$section->addText(htmlspecialchars($scheme->name),array('bold'=>true,'size' => 10));
 					$section->addText($x.' of '.$loops,array('bold'=>true,'size' => 10));
+					if($scheme->compute == 2){
+						$section->addText("Allocation is not system generated. It is manually computed by the proponent.",array('bold'=>true,'size' => 10));
+					}
+					
 
 					$styleTable = array('borderSize' => 6, 'borderColor' => '000000', 'cellMargin' => 60);
 					$fontStyle = array('bold' => true, 'align' => 'center');

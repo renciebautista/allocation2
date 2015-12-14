@@ -26,7 +26,7 @@
 				margin-left: auto;
 			/*	border-left: 1px solid #ddd;
 				border-right: 1px solid #ddd;*/
-				padding-left: 40px;
+				padding-left: 40px;`
 				padding-right: 40px;
 			}
 			#header{
@@ -764,8 +764,7 @@
 					<h2 class="alloc-header" style="float:left;">{{ $scheme->name }}</h2>
 					<h2 class="alloc-header" style="float:right;">{{$i+1}} of {{$loops}}</h2>
 					@if($scheme->compute == 2)
-					<h3 style="clear: both;">Allocation generated using manual upload.</h3>
-					<p style="font-style:italic;">{{ $scheme->m_remarks }}</p>
+					<h3 style="clear: both;">Allocation is not system generated. It is manually computed by the proponent.</h3>
 					<br>
 					@endif
 					<table width="100%" style="padding:2px;">

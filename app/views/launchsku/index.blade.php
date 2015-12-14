@@ -21,6 +21,7 @@
 		  	</div>
 		  	<button type="submit" class="btn btn-success"><i class="fa fa-search"></i> Search</button>
 		  	{{ HTML::linkAction('LaunchSkuController@upload','Import SKU/s',null, array('class' => 'btn btn-info')) }}
+		  	{{ HTML::linkAction('LaunchSkuController@export','Export Laucnh SKU/s Template',null, array('class' => 'btn btn-info')) }}
 		{{ Form::close() }}
 	</div>
 </div>

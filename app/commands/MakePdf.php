@@ -44,15 +44,11 @@ class MakePdf extends Command {
 		// echo $id;
 		$activity = Activity::find($id);
 		if(!empty($activity)){
-			$approvers = ActivityApprover::getNames($activity->id);
 			$planner = ActivityPlanner::where('activity_id', $activity->id)->first();
-			$budgets = ActivityBudget::with('budgettype')
-					->where('activity_id', $activity->id)
-					->get();
-
-			$nobudgets = ActivityNobudget::with('budgettype')
-				->where('activity_id', $activity->id)
-				->get();
+			$approvers = ActivityApprover::getNames($activity->id);
+			
+			$budgets = ActivityBudget::with('budgettype')->where('activity_id', $activity->id)->get();
+			$nobudgets = ActivityNobudget::with('budgettype')->where('activity_id', $activity->id)->get();
 
 			$schemes = Scheme::getList($activity->id);
 
@@ -289,9 +285,7 @@ class MakePdf extends Command {
 						$pdf->Image($image_file, $x, $y, 0, 200, '', '', '', true, 150, '', false, false, 0, false, false, true,false);
 					}
 				}
-
-				
-				
+				$pdf->AddPage();
 			}
 				
 			if(count($pis) > 0){
@@ -349,8 +343,13 @@ class MakePdf extends Command {
 						if(!empty($body)){
 							$x = $i +1;
 							$table = '<h2>'.$scheme->name.'</h2>
-							<h2>'.$x.' of '.$loops.'</h2>
-							<table width="100%" style="padding:2px;">
+							<h2>'.$x.' of '.$loops.'</h2>';
+
+							if($scheme->compute == 2){
+								$table .= '<h2>Allocation is not system generated. It is manually computed by the proponent.</h2>';
+							}
+
+							$table .= '<table width="100%" style="padding:2px;">
 								<thead>
 									<tr>
 										<th style="width:20px;border: 1px solid #000000; text-align:center;">#</th>

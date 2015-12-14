@@ -33,6 +33,20 @@ class LaunchSkuController extends \BaseController {
 		return View::make('launchsku.upload');
 	}
 
+	public function export(){
+		$data = ['cpg_code', 'cpg_desc', 'sap_code', 'sap_desc', 'division_code', 'division_desc',
+			'category_code', 'category_desc', 'brand_code', 'brand_desc', 'brand_shortcut', 'pack_size',
+			'barcode', 'case_code', 'price_case', 'price_case_tax', 'price', 'srp'];
+
+		Excel::create("Laucnh SKU/s Template", function($excel) use($data){
+			$excel->sheet('Sheet1', function($sheet) use($data) {
+				$sheet->fromModel($data,null, 'A1', true);
+
+			})->download('xls');
+
+		});
+	}
+
 	public function doupload(){
 		$file_path = Input::file('file')->move(storage_path().'/uploads/temp/',Input::file('file')->getClientOriginalName());
 		$cnt = 0;

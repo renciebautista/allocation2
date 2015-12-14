@@ -373,6 +373,7 @@ Route::group(array('before' => 'auth'), function()
 	Route::post('launchskus/upload','LaunchSkuController@doupload');
 	Route::post('launchskus/assignaccess','LaunchSkuController@assignaccess');
 	Route::post('launchskus/removeaccess','LaunchSkuController@removeaccess');
+	Route::get('launchskus/export','LaunchSkuController@export');
 	Route::resource('launchskus','LaunchSkuController');
 
 	Route::get('help', 'HelpController@index');
