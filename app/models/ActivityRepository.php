@@ -50,10 +50,14 @@ class ActivityRepository extends \Eloquent {
 			$planner = Input::get('planner');
 			$user = User::find($planner);
 			if(!empty($user)){
+				$contact_no = '';
+				if(!empty($user->contact_no)){
+					$contact_no = $user->contact_no;
+				}
 				ActivityPlanner::insert(array('activity_id' => $activity->id, 
 				'user_id' => $planner,
 				'planner_desc' => $user->getFullname(),
-				'contact_no' => $user->contact_no));
+				'contact_no' => $contact_no));
 			}
 			
 		}
@@ -65,11 +69,15 @@ class ActivityRepository extends \Eloquent {
 			$activity_planner = array();
 			foreach (Input::get('approver') as $approver) {
 				$user = User::find($approver);
+				$contact_no = '';
+				if(!empty($user->contact_no)){
+					$contact_no = $user->contact_no;
+				}
 				if(!empty($user)){
 					$activity_approver[] = array('activity_id' => $activity->id, 
 						'user_id' => $approver,
 						'approver_desc' => $user->getFullname(),
-						'contact_no' => $user->contact_no,
+						'contact_no' => $contact_no,
 						'status_id' => 0,
 						'for_approval' => 0,
 						'group_id' => $user->roles[0]->id);
