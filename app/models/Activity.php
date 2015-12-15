@@ -803,7 +803,7 @@ class Activity extends \Eloquent {
 		return false;
 	}
 
-	public function getNextForApproval($status){
+	public static function getNextForApproval($status){
 		$activities = ActivityApprover::getActivities(Auth::id());
 
 		return self::select('activities.id as id')
