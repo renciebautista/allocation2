@@ -81,9 +81,7 @@ class MakePdf extends Command {
 				$skuinvolves[$scheme->id]['non_ulp'] = $non_ulp;
 			}
 
-			$materials = ActivityMaterial::where('activity_id', $activity->id)
-				->with('source')
-				->get();
+			$materials = ActivityMaterial::where('activity_id', $activity->id)->with('source')->get();
 
 			$fdapermits = ActivityFdapermit::where('activity_id', $activity->id)->get();
 			$networks = ActivityTiming::getTimings($activity->id,true);

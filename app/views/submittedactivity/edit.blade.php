@@ -910,7 +910,7 @@
 	<div class="tab-pane fade" id="sob">
 		<br>
 
-		@foreach($schemes as $scheme)
+		@foreach($soballocation as $scheme)
 		@if(count($scheme->sobs) > 0)
 		<div class="panel panel-default">
 			<div class="panel-heading">{{ $scheme->name }} - SOB Details</div>

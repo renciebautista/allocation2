@@ -145,7 +145,7 @@ class SubmittedActivityController extends \BaseController {
 
 		// sob
 
-		$schemes = AllocationSob::getByActivity($activity->id);
+		$soballocation = AllocationSob::getByActivity($activity->id);
 		// Helper::print_r($schemes);
 		// dd($schemes);
 		// comments
@@ -154,7 +154,7 @@ class SubmittedActivityController extends \BaseController {
 			'activity' ,'approvers', 'planner','budgets','nobudgets','schemes','skuinvolves', 'sku_involves',
 			'materials','non_ulp','networks','artworks', 'pis' , 'areas','channels', 
 			'fdapermits','fis', 'backgrounds', 'bandings' ,'activity_roles',
-			'activityIdList','id_index','status', 'schemes'));
+			'activityIdList','id_index','status', 'soballocation'));
 	}
 
 	public function updateactivity($id)
