@@ -123,7 +123,7 @@ class MakePdf extends Command {
 			$header = "";
 			$header .= View::make('pdf.style')->render();
 			$header .= View::make('pdf.title',compact('activity','approvers', 'planner'))->render();
-			$header .= View::make('pdf.activity',compact('activity','schemes','networks','materials', 'objectives'
+			$header .= View::make('pdf.activity',compact('activity','schemes','networks','materials', 'objectives',
 				'budgets','nobudgets', 'skuinvolves', 'areas', 'channels','fdapermits', 'sku_involves', 'activity_roles'))->render();
 			
 			$pdf->writeHTML(iconv("UTF-8", "CP1252//TRANSLIT", $header) , $ln=true, $fill=false, $reset=false, $cell=false, $align='');
