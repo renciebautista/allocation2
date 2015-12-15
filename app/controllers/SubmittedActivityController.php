@@ -38,8 +38,11 @@ class SubmittedActivityController extends \BaseController {
 	{
 		$status = Input::get('s');
 
-		$activityIdList = Activity::getIdList($status);
+		$activityIdList = Activity::getIdList($status);		
+
 		$id_index = array_search($id, $activityIdList);
+
+		// dd($id_index);
 
 		$activity = Activity::findOrFail($id);
 		if(!ActivityApprover::myActivity($activity->id)){

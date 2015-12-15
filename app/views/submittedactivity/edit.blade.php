@@ -36,7 +36,7 @@
 			@if(count($activityIdList) > 1)
 				@if(!$id_index)
 					{{ HTML::linkAction('SubmittedActivityController@edit','Previous', array('id' => $activity->id, 's' => $status), array('class' => 'btn btn-primary disabled')) }}
-					{{ HTML::linkAction('SubmittedActivityController@edit','Next', array('id' => $activityIdList[0], 's' => $status), array('class' => 'btn btn-primary')) }}
+					{{ HTML::linkAction('SubmittedActivityController@edit','Next', array('id' => $activityIdList[1], 's' => $status), array('class' => 'btn btn-primary')) }}
 				@else
 					@if($activityIdList[0] == $activity->id)
 						{{ HTML::linkAction('SubmittedActivityController@edit','Previous', array('id' => $activity->id, 's' => $status), array('class' => 'btn btn-primary disabled')) }}
