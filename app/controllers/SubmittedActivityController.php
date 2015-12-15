@@ -396,7 +396,7 @@ class SubmittedActivityController extends \BaseController {
 						->with('message', $message);
 				}else{
 					// {{ HTML::linkAction('SubmittedActivityController@edit','View', array('id' => $activity->id, 's' => $s), array('class' => 'btn btn-success btn-xs')) }}
-					return Redirect::to(URL::action('SubmittedActivityController@index', array('s' => $status)))
+					return Redirect::to(URL::action('SubmittedActivityController@index', array('st' => $status)))
 						->with('class', "alert-success" )
 						->with('message', "All activity approved.");
 				}

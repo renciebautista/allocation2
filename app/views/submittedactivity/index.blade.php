@@ -10,6 +10,9 @@
 	</div>
 </div>
 
+@include('partials.notification')
+
+
 <div class="panel panel-default">
 	<div class="panel-heading">Filters</div>
 	<div class="panel-body">
