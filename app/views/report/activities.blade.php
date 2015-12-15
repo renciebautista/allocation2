@@ -161,9 +161,9 @@
 						@else
 						<td></td>
 						@endif
-						<td>{{ ($activity->pdf) ? '<i class="fa fa-check"></i>':'' }}</td>
-						<td>{{ ($activity->word) ? '<i class="fa fa-check"></i>':'' }}</td>
-						<td>{{ ($activity->disable) ? <i class="fa fa-check"></i>:'' }}</td>
+						<td>{{ ($activity->pdf) ? '<i class="fa fa-check"></i>' : '' }}</td>
+						<td>{{ ($activity->word) ? '<i class="fa fa-check"></i>' : '' }}</td>
+						<td>{{ ($activity->disable) ? '<i class="fa fa-check"></i>' : '' }}</td>
 						<td class="action">
 							{{ HTML::linkAction('ReportController@download','Download', $activity->id, array('class' => 'btn btn-success btn-xs')) }}
 						</td>
