@@ -803,6 +803,24 @@ class Activity extends \Eloquent {
 		return false;
 	}
 
+	public function getNextForApproval($status){
+		$activities = ActivityApprover::getActivities(Auth::id());
+
+		return self::select('activities.id as id')
+			->join('activity_types', 'activities.activity_type_id','=','activity_types.id')
+			->where('activities.status_id','>',1)
+			->where(function($query) use ($status){
+				if($status > 0){
+					$query->whereIn('activities.status_id', $status);
+				}
+			})
+			->whereIn('activities.id',$activities)
+			->orderBy('activity_types.activity_type')
+			->orderBy('activities.circular_name')
+			->orderBy('activities.id')
+			->first();
+	}
+
 
 	public static function getIdList($status){
 		$activities = ActivityApprover::getActivities(Auth::id());

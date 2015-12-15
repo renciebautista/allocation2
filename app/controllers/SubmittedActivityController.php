@@ -388,10 +388,19 @@ class SubmittedActivityController extends \BaseController {
 				$comment->save();
 
 				DB::commit();
-				// {{ HTML::linkAction('SubmittedActivityController@edit','View', array('id' => $activity->id, 's' => $s), array('class' => 'btn btn-success btn-xs')) }}
-				return Redirect::to(URL::action('SubmittedActivityController@edit', array('id' => $id, 's' => $status)))
-					->with('class', "alert-success" )
-					->with('message', $message);
+
+				$next_activity = Activity::getNextForApproval($status);
+				if(!empty($next_activity)){
+					return Redirect::to(URL::action('SubmittedActivityController@edit', array('id' => $next_activity->id, 's' => $status)))
+						->with('class', "alert-success" )
+						->with('message', $message);
+				}else{
+					// {{ HTML::linkAction('SubmittedActivityController@edit','View', array('id' => $activity->id, 's' => $s), array('class' => 'btn btn-success btn-xs')) }}
+					return Redirect::to(URL::action('SubmittedActivityController@index', array('s' => $status)))
+						->with('class', "alert-success" )
+						->with('message', "All activity approved.");
+				}
+				
 			} catch (q $e) {
 				DB::rollback();
 				// return Redirect::to(URL::action('SubmittedActivityController@edit', $id))
