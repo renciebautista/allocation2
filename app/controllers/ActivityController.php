@@ -227,6 +227,7 @@ class ActivityController extends BaseController {
 	 */
 	public function show($id)
 	{
+
 		return Redirect::route('activity.edit',$id);
 	}
 
@@ -241,6 +242,7 @@ class ActivityController extends BaseController {
 	{
 		if(Auth::user()->hasRole("PROPONENT")){
 			$activity = Activity::findOrFail($id);
+			
 			if(!Activity::myActivity($activity)){
 				return Response::make(View::make('shared/404'), 404);
 			}

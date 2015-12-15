@@ -22,21 +22,29 @@ class SchemeController extends \BaseController {
 	 */
 	public function create($id)
 	{
-		$activity = Activity::find($id);
-		$divisions = ActivityDivision::getList($id);
-		$categories = ActivityCategory::selected_category($id);
-		$brands = ActivityBrand::selected_brand($id);
+		$activity = Activity::findOrFail($id);
 
-		$skus = Sku::items($divisions,$categories,$brands);
+		if((Activity::myActivity($activity)) || (ActivityPlanner::myActivity($activity->id))){
+			$divisions = ActivityDivision::getList($id);
+			$categories = ActivityCategory::selected_category($id);
+			$brands = ActivityBrand::selected_brand($id);
 
-		$host = Pricelist::involves($brands,$activity);
-		$premuim =  Pricelist::items();
+			$skus = Sku::items($divisions,$categories,$brands);
 
-		$alloc_refs = array('1' => 'USE SYSTEM GENERATED',
-			'2' => 'USE MANUAL UPLOAD',
-			'3' => 'NO ALLOCATION');
+			$host = Pricelist::involves($brands,$activity);
+			$premuim =  Pricelist::items();
 
-		return View::make('scheme.create', compact('activity','skus', 'host', 'premuim', 'alloc_refs'));
+			$alloc_refs = array('1' => 'USE SYSTEM GENERATED',
+				'2' => 'USE MANUAL UPLOAD',
+				'3' => 'NO ALLOCATION');
+
+			return View::make('scheme.create', compact('activity','skus', 'host', 'premuim', 'alloc_refs'));
+		}else{
+			return Response::make(View::make('shared/404'), 404);
+		}
+
+
+		
 	}
 
 	/**
@@ -232,156 +240,162 @@ class SchemeController extends \BaseController {
 	 */
 	public function edit($id)
 	{
-		$scheme = Scheme::find($id);
-		$activity = Activity::find($scheme->activity_id);
+		$scheme = Scheme::findOrFail($id);
+		$activity = Activity::findOrFail($scheme->activity_id);
 
-		$activity_schemes = Scheme::getIdList($activity->id);
-		$id_index = array_search($id, $activity_schemes);
+		if((Activity::myActivity($activity)) || (ActivityPlanner::myActivity($activity->id))){
+			$activity_schemes = Scheme::getIdList($activity->id);
+			$id_index = array_search($id, $activity_schemes);
 
-		$divisions = ActivityDivision::getList($scheme->activity_id);
-		$categories = ActivityCategory::selected_category($scheme->activity_id);
-		$brands = ActivityBrand::selected_brand($scheme->activity_id);
-		$skus = Sku::items($divisions,$categories,$brands);
-		// $involves = Pricelist::items();
+			$divisions = ActivityDivision::getList($scheme->activity_id);
+			$categories = ActivityCategory::selected_category($scheme->activity_id);
+			$brands = ActivityBrand::selected_brand($scheme->activity_id);
+			$skus = Sku::items($divisions,$categories,$brands);
+			// $involves = Pricelist::items();
 
-		$host_sku = Pricelist::involves($brands,$activity);
-		$premuim_sku =  Pricelist::items();
+			$host_sku = Pricelist::involves($brands,$activity);
+			$premuim_sku =  Pricelist::items();
 
-		$sel_skus =  SchemeSku::getSkus($scheme->id);
-		$sel_hosts = SchemeHostSku::getHosts($scheme->id);
-		$sel_premuim = SchemePremuimSku::getPremuim($scheme->id);
-		
-		$count = SchemeAllocation::where('scheme_id',$scheme->id)->count();
+			$sel_skus =  SchemeSku::getSkus($scheme->id);
+			$sel_hosts = SchemeHostSku::getHosts($scheme->id);
+			$sel_premuim = SchemePremuimSku::getPremuim($scheme->id);
+			
+			$count = SchemeAllocation::where('scheme_id',$scheme->id)->count();
 
-		$alloc_refs = AllocationSource::lists('alloc_ref', 'id');
-
-
-		$premuim = array();
-		if(!empty($sel_premuim)){
-			$premuim = Pricelist::getSku($sel_premuim[0]);
-		}
-		
-		$customers = ActivityCustomer::customers($scheme->activity_id);
-		$_channels = ActivityChannel::channels($scheme->activity_id);
-		$qty = $scheme->quantity;
+			$alloc_refs = AllocationSource::lists('alloc_ref', 'id');
 
 
-		$allocations = Allocation::schemeAllocations($id);
-
-		$alloref = AllocationSource::find($scheme->compute);
-		$ac_groups = AccountGroup::where('show_in_summary',1)->get();
-
-		if(!empty($ac_groups)){
-			foreach ($ac_groups as $ac_group) {
-				$customer = array();
-				foreach ($allocations  as $allocation) {
-					if(!empty($allocation->account_group_name)){
-						if($ac_group->account_group_name == $allocation->account_group_name){
-							if(array_key_exists($allocation->outlet, $customer)){
-								$customer[$allocation->outlet]->computed_alloc +=  $allocation->computed_alloc;
-								$customer[$allocation->outlet]->force_alloc +=  $allocation->force_alloc;
-								$customer[$allocation->outlet]->final_alloc +=  $allocation->final_alloc;
-							}else{
-								$object = new StdClass;
-								$object->account_name = $allocation->outlet;
-								$object->computed_alloc = $allocation->computed_alloc;
-								$object->force_alloc = $allocation->force_alloc;
-								$object->final_alloc = $allocation->final_alloc;
-								$customer[$allocation->outlet] = $object;
-							}
-							
-						}
-					}
-					
-				}
-				sort($customer);
-				$ac_group->customers = $customer;
+			$premuim = array();
+			if(!empty($sel_premuim)){
+				$premuim = Pricelist::getSku($sel_premuim[0]);
 			}
-		}
+			
+			$customers = ActivityCustomer::customers($scheme->activity_id);
+			$_channels = ActivityChannel::channels($scheme->activity_id);
+			$qty = $scheme->quantity;
 
-		$groups = array();
-		foreach ($allocations  as $allocation) {
-			if((empty($allocation->customer_id)) && (empty($allocation->shipto_id))){
-				if(array_key_exists($allocation->group, $groups)){
-					if(array_key_exists($allocation->area, $groups[$allocation->group]->area)){
-						$groups[$allocation->group]->area[$allocation->area]->computed_alloc +=  $allocation->computed_alloc;
-						$groups[$allocation->group]->area[$allocation->area]->force_alloc +=  $allocation->force_alloc;
-						$groups[$allocation->group]->area[$allocation->area]->final_alloc +=  $allocation->final_alloc;
+
+			$allocations = Allocation::schemeAllocations($id);
+
+			$alloref = AllocationSource::find($scheme->compute);
+			$ac_groups = AccountGroup::where('show_in_summary',1)->get();
+
+			if(!empty($ac_groups)){
+				foreach ($ac_groups as $ac_group) {
+					$customer = array();
+					foreach ($allocations  as $allocation) {
+						if(!empty($allocation->account_group_name)){
+							if($ac_group->account_group_name == $allocation->account_group_name){
+								if(array_key_exists($allocation->outlet, $customer)){
+									$customer[$allocation->outlet]->computed_alloc +=  $allocation->computed_alloc;
+									$customer[$allocation->outlet]->force_alloc +=  $allocation->force_alloc;
+									$customer[$allocation->outlet]->final_alloc +=  $allocation->final_alloc;
+								}else{
+									$object = new StdClass;
+									$object->account_name = $allocation->outlet;
+									$object->computed_alloc = $allocation->computed_alloc;
+									$object->force_alloc = $allocation->force_alloc;
+									$object->final_alloc = $allocation->final_alloc;
+									$customer[$allocation->outlet] = $object;
+								}
+								
+							}
+						}
+						
+					}
+					sort($customer);
+					$ac_group->customers = $customer;
+				}
+			}
+
+			$groups = array();
+			foreach ($allocations  as $allocation) {
+				if((empty($allocation->customer_id)) && (empty($allocation->shipto_id))){
+					if(array_key_exists($allocation->group, $groups)){
+						if(array_key_exists($allocation->area, $groups[$allocation->group]->area)){
+							$groups[$allocation->group]->area[$allocation->area]->computed_alloc +=  $allocation->computed_alloc;
+							$groups[$allocation->group]->area[$allocation->area]->force_alloc +=  $allocation->force_alloc;
+							$groups[$allocation->group]->area[$allocation->area]->final_alloc +=  $allocation->final_alloc;
+						}else{
+							$area_object = new StdClass;
+							$area_object->group = $allocation->group;
+							$area_object->area_name = $allocation->area;
+							$area_object->computed_alloc = $allocation->computed_alloc;
+							$area_object->force_alloc = $allocation->force_alloc;
+							$area_object->final_alloc = $allocation->final_alloc;
+						}
+
+						$groups[$allocation->group]->area[$allocation->area] =  $area_object;
+						$groups[$allocation->group]->computed_alloc +=  $allocation->computed_alloc;
+						$groups[$allocation->group]->force_alloc +=  $allocation->force_alloc;
+						$groups[$allocation->group]->final_alloc +=  $allocation->final_alloc;
 					}else{
+						
+
 						$area_object = new StdClass;
 						$area_object->group = $allocation->group;
 						$area_object->area_name = $allocation->area;
 						$area_object->computed_alloc = $allocation->computed_alloc;
 						$area_object->force_alloc = $allocation->force_alloc;
 						$area_object->final_alloc = $allocation->final_alloc;
+						
+
+						$object = new StdClass;
+						$object->group_name = $allocation->group;
+						$object->computed_alloc = $allocation->computed_alloc;
+						$object->force_alloc = $allocation->force_alloc;
+						$object->final_alloc = $allocation->final_alloc;
+						$object->area[$allocation->area] = $area_object;
+						$groups[$allocation->group] = $object;
 					}
 
-					$groups[$allocation->group]->area[$allocation->area] =  $area_object;
-					$groups[$allocation->group]->computed_alloc +=  $allocation->computed_alloc;
-					$groups[$allocation->group]->force_alloc +=  $allocation->force_alloc;
-					$groups[$allocation->group]->final_alloc +=  $allocation->final_alloc;
-				}else{
-					
-
-					$area_object = new StdClass;
-					$area_object->group = $allocation->group;
-					$area_object->area_name = $allocation->area;
-					$area_object->computed_alloc = $allocation->computed_alloc;
-					$area_object->force_alloc = $allocation->force_alloc;
-					$area_object->final_alloc = $allocation->final_alloc;
-					
-
-					$object = new StdClass;
-					$object->group_name = $allocation->group;
-					$object->computed_alloc = $allocation->computed_alloc;
-					$object->force_alloc = $allocation->force_alloc;
-					$object->final_alloc = $allocation->final_alloc;
-					$object->area[$allocation->area] = $area_object;
-					$groups[$allocation->group] = $object;
 				}
-
 			}
+
+			$ref_sku = SchemeSku::where('scheme_id',$scheme->id)->first();
+			
+			$total_gsv = SchemeAllocation::totalgsv($id);
+
+			$sobs = AllocationSob::getSob($scheme->id);
+
+			$header = AllocationSob::getHeader($scheme->id);
+			$sob_header = array();
+			if(count($header) >0){
+				foreach ($header as $value) {
+					$sob_header[$value->weekno] = $value->share;
+				}
+			}
+
+			$brands = $brands = Pricelist::getBrandLists();
+
+			if(Auth::user()->hasRole("PROPONENT")){
+				if($activity->status_id < 4){
+					return View::make('scheme.edit',compact('scheme', 'activity_schemes', 'id_index', 'activity', 'skus', 'sel_skus', 'sel_hosts',
+						'sel_premuim','allocations', 'total_sales', 'qty','id','total_gsv', 'ac_groups', 'groups','host_sku','premuim_sku',
+						'count','alloc_refs', 'sobs','sob_header', 'brands'));
+				}else{
+					return View::make('scheme.read_only',compact('scheme', 'activity', 'activity_schemes', 'id_index', 'skus', 'involves', 'sel_skus', 'sel_hosts',
+						'sel_premuim','allocations', 'total_sales', 'qty','id', 'summary', 'total_gsv','sku', 'host', 'premuim','ac_groups','groups',
+						'host_sku','premuim_sku','ref_sku','count', 'alloc_refs','alloref', 'sobs', 'sob_header', 'brands'));
+				}
+			}
+
+			if(Auth::user()->hasRole("PMOG PLANNER")){
+				if($activity->status_id == 4){
+					return View::make('scheme.edit',compact('scheme', 'activity_schemes', 'id_index', 'activity', 'skus', 'sel_skus', 'sel_hosts',
+						'sel_premuim','allocations', 'total_sales', 'qty','id', 'summary', 'total_gsv','ac_groups', 'groups','host_sku','premuim_sku',
+						'count','alloc_refs', 'sobs', 'sob_header', 'brands'));
+				}else{
+					return View::make('scheme.read_only',compact('scheme', 'activity_schemes', 'id_index', 'activity', 'skus', 'sel_skus', 'sel_hosts',
+						'sel_premuim','allocations', 'total_sales', 'qty','id', 'summary', 'total_gsv','sku', 'host', 'premuim','ac_groups','groups',
+						'host_sku','premuim_sku','ref_sku', 'count', 'alloc_refs','alloref', 'sobs', 'sob_header', 'brands'));
+				}
+			}
+		}else{
+			return Response::make(View::make('shared/404'), 404);
 		}
 
-		$ref_sku = SchemeSku::where('scheme_id',$scheme->id)->first();
 		
-		$total_gsv = SchemeAllocation::totalgsv($id);
-
-		$sobs = AllocationSob::getSob($scheme->id);
-
-		$header = AllocationSob::getHeader($scheme->id);
-		$sob_header = array();
-		if(count($header) >0){
-			foreach ($header as $value) {
-				$sob_header[$value->weekno] = $value->share;
-			}
-		}
-
-		$brands = $brands = Pricelist::getBrandLists();
-
-		if(Auth::user()->hasRole("PROPONENT")){
-			if($activity->status_id < 4){
-				return View::make('scheme.edit',compact('scheme', 'activity_schemes', 'id_index', 'activity', 'skus', 'sel_skus', 'sel_hosts',
-					'sel_premuim','allocations', 'total_sales', 'qty','id','total_gsv', 'ac_groups', 'groups','host_sku','premuim_sku',
-					'count','alloc_refs', 'sobs','sob_header', 'brands'));
-			}else{
-				return View::make('scheme.read_only',compact('scheme', 'activity', 'activity_schemes', 'id_index', 'skus', 'involves', 'sel_skus', 'sel_hosts',
-					'sel_premuim','allocations', 'total_sales', 'qty','id', 'summary', 'total_gsv','sku', 'host', 'premuim','ac_groups','groups',
-					'host_sku','premuim_sku','ref_sku','count', 'alloc_refs','alloref', 'sobs', 'sob_header', 'brands'));
-			}
-		}
-
-		if(Auth::user()->hasRole("PMOG PLANNER")){
-			if($activity->status_id == 4){
-				return View::make('scheme.edit',compact('scheme', 'activity_schemes', 'id_index', 'activity', 'skus', 'sel_skus', 'sel_hosts',
-					'sel_premuim','allocations', 'total_sales', 'qty','id', 'summary', 'total_gsv','ac_groups', 'groups','host_sku','premuim_sku',
-					'count','alloc_refs', 'sobs', 'sob_header', 'brands'));
-			}else{
-				return View::make('scheme.read_only',compact('scheme', 'activity_schemes', 'id_index', 'activity', 'skus', 'sel_skus', 'sel_hosts',
-					'sel_premuim','allocations', 'total_sales', 'qty','id', 'summary', 'total_gsv','sku', 'host', 'premuim','ac_groups','groups',
-					'host_sku','premuim_sku','ref_sku', 'count', 'alloc_refs','alloref', 'sobs', 'sob_header', 'brands'));
-			}
-		}
 	}
 
 	/**
@@ -676,46 +690,54 @@ class SchemeController extends \BaseController {
 	public function destroy($id)
 	{
 		$scheme = Scheme::findOrFail($id);
-		if (is_null($scheme))
-		{
-			$class = 'alert-danger';
-			$message = 'Scheme does not exist.';
+		$activity = Activity::findOrFail($scheme->activity_id);
+
+		if((Activity::myActivity($activity)) || (ActivityPlanner::myActivity($activity->id))){
+			if (is_null($scheme))
+			{
+				$class = 'alert-danger';
+				$message = 'Scheme does not exist.';
+			}else{
+
+				DB::beginTransaction();
+
+				try {
+				   	SchemeSku::where('scheme_id',$scheme->id)->delete();
+					SchemeHostSku::where('scheme_id',$scheme->id)->delete();
+					SchemePremuimSku::where('scheme_id',$scheme->id)->delete();
+					SchemeAllocation::where('scheme_id',$scheme->id)->delete();
+					$scheme->delete();
+
+					DB::commit();
+					$class = 'alert-success';
+					$message = 'Scheme successfully deleted.';
+
+					return Redirect::to(URL::action('ActivityController@edit', array('id' => $scheme->activity_id)) . "#schemes")
+					->with('class', $class )
+					->with('message', $message);
+				    
+				    // all good
+				} catch (\Exception $e) {
+				    DB::rollback();
+				    $class = 'alert-danger';
+					$message = 'Cannot delete scheme.';
+
+					return Redirect::to(URL::action('ActivityController@edit', array('id' => $scheme->activity_id)) . "#schemes")
+					->with('class', $class )
+					->with('message', $message);
+				    // something went wrong
+				}			
+				
+			}
+
+			return Redirect::to(URL::action('ActivityController@edit', array('id' => $scheme->activity_id)) . "#schemes")
+					->with('class', $class )
+					->with('message', $message);
 		}else{
-
-			DB::beginTransaction();
-
-			try {
-			   	SchemeSku::where('scheme_id',$scheme->id)->delete();
-				SchemeHostSku::where('scheme_id',$scheme->id)->delete();
-				SchemePremuimSku::where('scheme_id',$scheme->id)->delete();
-				SchemeAllocation::where('scheme_id',$scheme->id)->delete();
-				$scheme->delete();
-
-				DB::commit();
-				$class = 'alert-success';
-				$message = 'Scheme successfully deleted.';
-
-				return Redirect::to(URL::action('ActivityController@edit', array('id' => $scheme->activity_id)) . "#schemes")
-				->with('class', $class )
-				->with('message', $message);
-			    
-			    // all good
-			} catch (\Exception $e) {
-			    DB::rollback();
-			    $class = 'alert-danger';
-				$message = 'Cannot delete scheme.';
-
-				return Redirect::to(URL::action('ActivityController@edit', array('id' => $scheme->activity_id)) . "#schemes")
-				->with('class', $class )
-				->with('message', $message);
-			    // something went wrong
-			}			
-			
+			return Response::make(View::make('shared/404'), 404);
 		}
 
-		return Redirect::to(URL::action('ActivityController@edit', array('id' => $scheme->activity_id)) . "#schemes")
-				->with('class', $class )
-				->with('message', $message);
+		
 	}
 
 	public function updateallocation(){
@@ -872,37 +894,43 @@ class SchemeController extends \BaseController {
 	}
 
 	public function export($id){
-		$allocations = SchemeAllocation::getAllocationsForExport($id);
-		$scheme = Scheme::find($id);
+		$scheme = Scheme::findOrFail($id);
+		$activity = Activity::findOrFail($scheme->activity_id);
+		if((Activity::myActivity($activity)) || (ActivityPlanner::myActivity($activity->id))){
+			$allocations = SchemeAllocation::getAllocationsForExport($id);
+			Excel::create($scheme->name, function($excel) use($allocations){
+				$excel->sheet('Detailed Allocation', function($sheet) use($allocations) {
+					$sheet->fromModel($allocations,null, 'A1', true);
+					$sheet->row(1, array(
+					    'GROUP',
+						'AREA',
+						'SOLD TO',
+						'SHIP TO',	
+						'CHANNEL',	
+						'OUTLET',	
+						'SOLD TO GSV',	
+						'SOLD TO GSV PERCENTAGE',	
+						'SOLD TO ALLOCATION',
+						'SHIP TO GSV',
+						'SHIP TO GSV PERCENTAGE',	
+						'SHIP TO ALLOCATION',
+						'OUTLET GSV',
+						'OUTLET GSV PERCENTAGE',	
+						'OUTLET ALLOCATION',
+						'MULTIPLIER',
+						'COMPUTED ALLOCATION',	
+						'FORCE ALLOCATION',
+						'FINAL ALLOCATION'
+					));
 
-		Excel::create($scheme->name, function($excel) use($allocations){
-			$excel->sheet('Detailed Allocation', function($sheet) use($allocations) {
-				$sheet->fromModel($allocations,null, 'A1', true);
-				$sheet->row(1, array(
-				    'GROUP',
-					'AREA',
-					'SOLD TO',
-					'SHIP TO',	
-					'CHANNEL',	
-					'OUTLET',	
-					'SOLD TO GSV',	
-					'SOLD TO GSV PERCENTAGE',	
-					'SOLD TO ALLOCATION',
-					'SHIP TO GSV',
-					'SHIP TO GSV PERCENTAGE',	
-					'SHIP TO ALLOCATION',
-					'OUTLET GSV',
-					'OUTLET GSV PERCENTAGE',	
-					'OUTLET ALLOCATION',
-					'MULTIPLIER',
-					'COMPUTED ALLOCATION',	
-					'FORCE ALLOCATION',
-					'FINAL ALLOCATION'
-				));
+				})->download('xls');
 
-			})->download('xls');
+			});
+		}else{
+			return Response::make(View::make('shared/404'), 404);
+		}
 
-		});
+		
 	}
 
 	public function exportsum($id){
@@ -918,11 +946,18 @@ class SchemeController extends \BaseController {
 	}
 
 	public function duplicate($id){
-		$scheme = Scheme::find($id);
-		$data = SchemeRepository::duplicate($id);
-		return Redirect::to(URL::action('ActivityController@edit', array('id' => $scheme->activity_id)) . "#schemes")
-				->with('class', $data['class'] )
-				->with('message', $data['message']);
+		$scheme = Scheme::findOrFail($id);
+		$activity = Activity::findOrFail($scheme->activity_id);
+		if((Activity::myActivity($activity)) || (ActivityPlanner::myActivity($activity->id))){
+			$data = SchemeRepository::duplicate($id);
+			return Redirect::to(URL::action('ActivityController@edit', array('id' => $scheme->activity_id)) . "#schemes")
+					->with('class', $data['class'] )
+					->with('message', $data['message']);		
+		}else{
+			return Response::make(View::make('shared/404'), 404);
+		}
+
+		
 	}
 
 	public function duplicatescheme($id){
@@ -933,69 +968,175 @@ class SchemeController extends \BaseController {
 	} 
 
 	public function gettemplate($id){
-		$scheme = Scheme::find($id);
-		$allocations = SchemeAllocRepository::gettemplate($scheme);
+		$scheme = Scheme::findOrFail($id);
+		$activity = Activity::findOrFail($scheme->activity_id);
+		if((Activity::myActivity($activity)) || (ActivityPlanner::myActivity($activity->id))){
+			$allocations = SchemeAllocRepository::gettemplate($scheme);
 
-		foreach ($allocations as &$allocation) {
-		    $allocation = (array)$allocation;
+			foreach ($allocations as &$allocation) {
+			    $allocation = (array)$allocation;
+			}
+
+			Excel::create('Manual Allocation Template', function($excel) use($allocations){
+				$excel->sheet('allocations', function($sheet) use($allocations) {
+					$sheet->fromArray($allocations,null, 'A1', true);
+				})->download('xls');
+
+			});	
+		}else{
+			return Response::make(View::make('shared/404'), 404);
 		}
-
-		Excel::create('Manual Allocation Template', function($excel) use($allocations){
-			$excel->sheet('allocations', function($sheet) use($allocations) {
-				$sheet->fromArray($allocations,null, 'A1', true);
-			})->download('xls');
-
-		});
+		
 	}
 
 	public function updatesob($id){
 		// dd(Input::all());
 		$scheme = Scheme::findOrFail($id);
+		$activity = Activity::findOrFail($scheme->activity_id);
+		if((Activity::myActivity($activity)) || (ActivityPlanner::myActivity($activity->id))){
+			$today = date('m/d/Y');
 
-		$today = date('m/d/Y');
+			if($scheme->sob_start_date == date('Y-m-d',strtotime(Input::get('start_date')))){
+				$rules = array(
+					'start_date' => 'required|date|date_format:m/d/Y',
+					'weeks' => 'required|numeric|max:14',
+					'brand' => 'required'
 
-		if($scheme->sob_start_date == date('Y-m-d',strtotime(Input::get('start_date')))){
-			$rules = array(
-				'start_date' => 'required|date|date_format:m/d/Y',
-				'weeks' => 'required|numeric|max:14',
-				'brand' => 'required'
+				);
+			}else{
+				$rules = array(
+					'start_date' => 'required|date|date_format:m/d/Y|after:'.$today,
+					'weeks' => 'required|numeric|max:14',
+					'brand' => 'required'
+				);
+			}
 
-			);
-		}else{
-			$rules = array(
-				'start_date' => 'required|date|date_format:m/d/Y|after:'.$today,
-				'weeks' => 'required|numeric|max:14',
-				'brand' => 'required'
-			);
-		}
+			// dd(Input::all());
 
-		// dd(Input::all());
-
-		$validation = Validator::make(Input::all(),$rules);
-
-
-		if($validation->passes())
-		{	
-			if(Input::get('submit') == 'Update SOB'){
+			$validation = Validator::make(Input::all(),$rules);
 
 
-				// dd(1);
-			// if(($scheme->weeks == Input::get('weeks')) && ($scheme->sob_start_date == date('Y-m-d',strtotime(Input::get('start_date'))))){
-				$total = 0.0;
-				$per = 100.00;
-				// dd(Input::all());
-				foreach (Input::get('_wek') as $week) {
-					$total += $week;
-				}
-				// dd($total);
-				// if($total == 100.00){
-				if(number_format((float)$total, 2) == number_format((float)$per, 2)) {
+			if($validation->passes())
+			{	
+				if(Input::get('submit') == 'Update SOB'){
 
+
+					// dd(1);
+				// if(($scheme->weeks == Input::get('weeks')) && ($scheme->sob_start_date == date('Y-m-d',strtotime(Input::get('start_date'))))){
+					$total = 0.0;
+					$per = 100.00;
+					// dd(Input::all());
+					foreach (Input::get('_wek') as $week) {
+						$total += $week;
+					}
+					// dd($total);
+					// if($total == 100.00){
+					if(number_format((float)$total, 2) == number_format((float)$per, 2)) {
+
+						DB::beginTransaction();
+
+						try {
+							$brand = Pricelist::getBrand(Input::get('brand'));
+						
+							$scheme->sob_start_date = date('Y-m-d',strtotime(Input::get('start_date')));
+							$scheme->weeks = Input::get('weeks');
+							$scheme->brand_code = $brand->brand_code;
+							$scheme->brand_desc = $brand->brand_desc;
+							$scheme->brand_shortcut = $brand->brand_shortcut;
+							$scheme->update();
+
+							AllocationSob::where('scheme_id', $scheme->id)->delete();
+							// plot sob allocation
+							$customers = Allocation::where('scheme_id',$scheme->id)
+								// ->where('group_code','E1397')
+								->whereNull('customer_id')
+								->whereNull('shipto_id')
+								->orderBy('id', 'asc')
+								->get();
+
+							$group_code = array();
+							$area_code = array();
+							$sold_to_code = array();
+
+							$filters = SobFilter::all();
+							foreach ($filters as $filter) {
+								if($filter->group_code != "0"){
+									if (!in_array($filter->group_code, $group_code)) {
+									    $group_code[] = $filter->group_code;
+									}
+									
+								}
+
+								if($filter->area_code != "0"){
+									if (!in_array($filter->area_code, $area_code)) {
+									    $area_code[] = $filter->area_code;
+									}
+									
+								}
+
+								if($filter->customer_code != "0"){
+									if (!in_array($filter->customer_code, $sold_to_code)) {
+									    $sold_to_code[] = $filter->customer_code	;
+									}
+									
+								}
+							}
+
+							$total_weeks = $scheme->weeks;
+							foreach ($customers as $customer) {
+								if((in_array($customer->group_code, $group_code)) || (in_array($customer->area_code, $area_code))|| (in_array($customer->sold_to_code, $sold_to_code))){
+									$data = array();
+									$_shiptos = Allocation::where('customer_id',$customer->id)
+										->whereNull('shipto_id')
+										->orderBy('id', 'asc')
+										->get();
+									if(count($_shiptos) == 0){
+										AllocationSob::createAllocation($id,$customer,Input::get('_wek'));
+									}else{
+										foreach ($_shiptos as $_shipto) {
+											AllocationSob::createAllocation($id,$_shipto,Input::get('_wek'));
+										}
+									}
+								}	
+							}
+
+							DB::commit();
+							return Redirect::to(URL::action('SchemeController@edit', array('id' => $id)) . "#sob")
+								->with('class', 'alert-success')
+								->with('message', 'SOB plotting was successfuly updated.');
+
+						} catch (Exception $e) {
+							DB::rollback();
+							return Redirect::to(URL::action('SchemeController@edit', array('id' => $id)) . "#sob")
+								->with('class', 'alert-danger')
+								->with('message', 'Please update your scheme allocations.');
+						}
+							
+
+						return Redirect::to(URL::action('SchemeController@edit', array('id' => $id)) . "#sob")
+								->with('class', 'alert-success')
+								->with('message', 'SOB plotting was successfuly updated.');
+						
+					}else{
+						// dd($total);
+						// echo $total . '=>';
+						// dd($total);
+						return Redirect::to(URL::action('SchemeController@edit', array('id' => $id)) . "#sob")
+						->withErrors($validation)
+						->with('class', 'alert-danger')
+						->with('message', "Percentage Total doesn't add up to 100%!");
+					}
+
+
+					
+
+				}else{
+					// dd(1);
 					DB::beginTransaction();
 
 					try {
 						$brand = Pricelist::getBrand(Input::get('brand'));
-					
+
 						$scheme->sob_start_date = date('Y-m-d',strtotime(Input::get('start_date')));
 						$scheme->weeks = Input::get('weeks');
 						$scheme->brand_code = $brand->brand_code;
@@ -1049,175 +1190,90 @@ class SchemeController extends \BaseController {
 									->orderBy('id', 'asc')
 									->get();
 								if(count($_shiptos) == 0){
-									AllocationSob::createAllocation($id,$customer,Input::get('_wek'));
+									AllocationSob::createAllocation($id,$customer);
 								}else{
 									foreach ($_shiptos as $_shipto) {
-										AllocationSob::createAllocation($id,$_shipto,Input::get('_wek'));
+										AllocationSob::createAllocation($id,$_shipto);
 									}
 								}
-							}	
+							}
 						}
 
 						DB::commit();
-						return Redirect::to(URL::action('SchemeController@edit', array('id' => $id)) . "#sob")
-							->with('class', 'alert-success')
-							->with('message', 'SOB plotting was successfuly updated.');
 
+						return Redirect::to(URL::action('SchemeController@edit', array('id' => $id)) . "#sob")
+								->with('class', 'alert-success')
+								->with('message', 'SOB plotting was successfuly updated.');
+						
 					} catch (Exception $e) {
 						DB::rollback();
 						return Redirect::to(URL::action('SchemeController@edit', array('id' => $id)) . "#sob")
-							->with('class', 'alert-danger')
-							->with('message', 'Please update your scheme allocations.');
+								->with('class', 'alert-danger')
+								->with('message', 'Please update your scheme allocations.');
+						}
 					}
-						
-
-					return Redirect::to(URL::action('SchemeController@edit', array('id' => $id)) . "#sob")
-							->with('class', 'alert-success')
-							->with('message', 'SOB plotting was successfuly updated.');
 					
-				}else{
-					// dd($total);
-					// echo $total . '=>';
-					// dd($total);
-					return Redirect::to(URL::action('SchemeController@edit', array('id' => $id)) . "#sob")
-					->withErrors($validation)
-					->with('class', 'alert-danger')
-					->with('message', "Percentage Total doesn't add up to 100%!");
-				}
-
-
 				
-
-			}else{
-				// dd(1);
-				DB::beginTransaction();
-
-				try {
-					$brand = Pricelist::getBrand(Input::get('brand'));
-
-					$scheme->sob_start_date = date('Y-m-d',strtotime(Input::get('start_date')));
-					$scheme->weeks = Input::get('weeks');
-					$scheme->brand_code = $brand->brand_code;
-					$scheme->brand_desc = $brand->brand_desc;
-					$scheme->brand_shortcut = $brand->brand_shortcut;
-					$scheme->update();
-
-					AllocationSob::where('scheme_id', $scheme->id)->delete();
-					// plot sob allocation
-					$customers = Allocation::where('scheme_id',$scheme->id)
-						// ->where('group_code','E1397')
-						->whereNull('customer_id')
-						->whereNull('shipto_id')
-						->orderBy('id', 'asc')
-						->get();
-
-					$group_code = array();
-					$area_code = array();
-					$sold_to_code = array();
-
-					$filters = SobFilter::all();
-					foreach ($filters as $filter) {
-						if($filter->group_code != "0"){
-							if (!in_array($filter->group_code, $group_code)) {
-							    $group_code[] = $filter->group_code;
-							}
-							
-						}
-
-						if($filter->area_code != "0"){
-							if (!in_array($filter->area_code, $area_code)) {
-							    $area_code[] = $filter->area_code;
-							}
-							
-						}
-
-						if($filter->customer_code != "0"){
-							if (!in_array($filter->customer_code, $sold_to_code)) {
-							    $sold_to_code[] = $filter->customer_code	;
-							}
-							
-						}
-					}
-
-					$total_weeks = $scheme->weeks;
-					foreach ($customers as $customer) {
-						if((in_array($customer->group_code, $group_code)) || (in_array($customer->area_code, $area_code))|| (in_array($customer->sold_to_code, $sold_to_code))){
-							$data = array();
-							$_shiptos = Allocation::where('customer_id',$customer->id)
-								->whereNull('shipto_id')
-								->orderBy('id', 'asc')
-								->get();
-							if(count($_shiptos) == 0){
-								AllocationSob::createAllocation($id,$customer);
-							}else{
-								foreach ($_shiptos as $_shipto) {
-									AllocationSob::createAllocation($id,$_shipto);
-								}
-							}
-						}
-					}
-
-					DB::commit();
-
-					return Redirect::to(URL::action('SchemeController@edit', array('id' => $id)) . "#sob")
-							->with('class', 'alert-success')
-							->with('message', 'SOB plotting was successfuly updated.');
-					
-				} catch (Exception $e) {
-					DB::rollback();
-					return Redirect::to(URL::action('SchemeController@edit', array('id' => $id)) . "#sob")
-							->with('class', 'alert-danger')
-							->with('message', 'Please update your scheme allocations.');
-					}
-				}
-				
-			
+			}
+			return Redirect::to(URL::action('SchemeController@edit', array('id' => $id)) . "#sob")
+				->withErrors($validation)
+				->with('class', 'alert-danger')
+				->with('message', 'There were validation errors.');
+		}else{
+			return Response::make(View::make('shared/404'), 404);
 		}
-		return Redirect::to(URL::action('SchemeController@edit', array('id' => $id)) . "#sob")
-			->withErrors($validation)
-			->with('class', 'alert-danger')
-			->with('message', 'There were validation errors.');
+
+		
 
 	}
 
 	public function exportsob($id){
 		$scheme = Scheme::findOrFail($id);
-		$sobs = AllocationSob::getSob($scheme->id);
+		$activity = Activity::findOrFail($scheme->activity_id);
+		if((Activity::myActivity($activity)) || (ActivityPlanner::myActivity($activity->id))){
 
-		foreach($sobs as $key => $value)
-		{
-			$rows[$key] = (array) $value;
-		} 
-		$export_data = $rows;
+			$sobs = AllocationSob::getSob($scheme->id);
 
-		Excel::create($scheme->name. "_SOB Allocations", function($excel) use($export_data){
-			$excel->sheet('SOB Allocations', function($sheet) use($export_data) {
-				$sheet->fromModel($export_data,null, 'A1', true);
-				// $sheet->row(1, array(
-				//     'GROUP',
-				// 	'AREA',
-				// 	'SOLD TO',
-				// 	'SHIP TO',	
-				// 	'CHANNEL',	
-				// 	'OUTLET',	
-				// 	'SOLD TO GSV',	
-				// 	'SOLD TO GSV PERCENTAGE',	
-				// 	'SOLD TO ALLOCATION',
-				// 	'SHIP TO GSV',
-				// 	'SHIP TO GSV PERCENTAGE',	
-				// 	'SHIP TO ALLOCATION',
-				// 	'OUTLET GSV',
-				// 	'OUTLET GSV PERCENTAGE',	
-				// 	'OUTLET ALLOCATION',
-				// 	'MULTIPLIER',
-				// 	'COMPUTED ALLOCATION',	
-				// 	'FORCE ALLOCATION',
-				// 	'FINAL ALLOCATION'
-				// ));
+			foreach($sobs as $key => $value)
+			{
+				$rows[$key] = (array) $value;
+			} 
+			$export_data = $rows;
 
-			})->download('xls');
+			Excel::create($scheme->name. "_SOB Allocations", function($excel) use($export_data){
+				$excel->sheet('SOB Allocations', function($sheet) use($export_data) {
+					$sheet->fromModel($export_data,null, 'A1', true);
+					// $sheet->row(1, array(
+					//     'GROUP',
+					// 	'AREA',
+					// 	'SOLD TO',
+					// 	'SHIP TO',	
+					// 	'CHANNEL',	
+					// 	'OUTLET',	
+					// 	'SOLD TO GSV',	
+					// 	'SOLD TO GSV PERCENTAGE',	
+					// 	'SOLD TO ALLOCATION',
+					// 	'SHIP TO GSV',
+					// 	'SHIP TO GSV PERCENTAGE',	
+					// 	'SHIP TO ALLOCATION',
+					// 	'OUTLET GSV',
+					// 	'OUTLET GSV PERCENTAGE',	
+					// 	'OUTLET ALLOCATION',
+					// 	'MULTIPLIER',
+					// 	'COMPUTED ALLOCATION',	
+					// 	'FORCE ALLOCATION',
+					// 	'FINAL ALLOCATION'
+					// ));
 
-		});
+				})->download('xls');
+
+			});
+					
+		}else{
+			return Response::make(View::make('shared/404'), 404);
+		}
+
+		
 	}
 
 }
