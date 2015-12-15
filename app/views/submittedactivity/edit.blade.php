@@ -728,6 +728,9 @@
 							@if(!empty($body))
 							<h2 class="alloc-header" style="float:left;">{{ $scheme->name }}</h2>
 							<h2 class="alloc-header" style="float:right;">{{$i+1}} of {{$loops}}</h2>
+							@if($scheme->compute == 2)
+							<h2 class="alloc-header" style="float:left;">Allocation is not system generated. It is manually computed by the proponent.</h2>
+							@endif
 							<table width="100%" style="padding:2px;">
 								
 								<thead>

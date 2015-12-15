@@ -1,7 +1,7 @@
 <div>
 	<table id="title" width="910">
 		<tr>
-			<td width="80"><b>Circular Ref. No.</b></td>
+			<td width="80"><b>Circular Reference No.</b></td>
 			<td>: {{ $activity->id }}</td>
 		</tr>
 		<tr>

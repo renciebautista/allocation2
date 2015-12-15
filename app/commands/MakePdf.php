@@ -46,12 +46,13 @@ class MakePdf extends Command {
 		if(!empty($activity)){
 			$planner = ActivityPlanner::where('activity_id', $activity->id)->first();
 			$approvers = ActivityApprover::getNames($activity->id);
+
+			$objectives = ActivityObjective::where('activity_id', $activity->id)->get();
 			
 			$budgets = ActivityBudget::with('budgettype')->where('activity_id', $activity->id)->get();
 			$nobudgets = ActivityNobudget::with('budgettype')->where('activity_id', $activity->id)->get();
 
 			$schemes = Scheme::getList($activity->id);
-
 
 			$skuinvolves = array();
 			foreach ($schemes as $scheme) {
@@ -81,18 +82,21 @@ class MakePdf extends Command {
 				$skuinvolves[$scheme->id]['non_ulp'] = $non_ulp;
 			}
 
-			$materials = ActivityMaterial::where('activity_id', $activity->id)->with('source')->get();
+			//Involved Area
+			$areas = ActivityCutomerList::getSelectedAreas($activity->id);
+			$channels = ActivityChannelList::getSelectecdChannels($activity->id);
+
+			$materials = ActivityMaterial::where('activity_id', $activity->id)->get();
 
 			$fdapermits = ActivityFdapermit::where('activity_id', $activity->id)->get();
-			$networks = ActivityTiming::getTimings($activity->id,true);
-			$activity_roles = ActivityRole::getListData($activity->id);
-			$artworks = ActivityArtwork::getList($activity->id);
-			$pispermit = ActivityFis::where('activity_id', $activity->id)->first();
 
-			//Involved Area
-			$areas = ActivityCustomer::getSelectedAreas($activity->id);
-			// $channels = ActivityChannel::getSelectecdChannels($activity->id);
-			$channels = ActivityChannel2::getSelectecdChannels($activity->id);
+			$networks = ActivityTiming::getTimings($activity->id,true);
+
+			$activity_roles = ActivityRole::getListData($activity->id);
+
+			$artworks = ActivityArtwork::getList($activity->id);
+			
+			$pispermit = ActivityFis::where('activity_id', $activity->id)->first();
 			
 			$sku_involves = ActivitySku::getInvolves($activity->id);
 
@@ -119,7 +123,7 @@ class MakePdf extends Command {
 			$header = "";
 			$header .= View::make('pdf.style')->render();
 			$header .= View::make('pdf.title',compact('activity','approvers', 'planner'))->render();
-			$header .= View::make('pdf.activity',compact('activity','schemes','networks','materials', 
+			$header .= View::make('pdf.activity',compact('activity','schemes','networks','materials', 'objectives'
 				'budgets','nobudgets', 'skuinvolves', 'areas', 'channels','fdapermits', 'sku_involves', 'activity_roles'))->render();
 			
 			$pdf->writeHTML(iconv("UTF-8", "CP1252//TRANSLIT", $header) , $ln=true, $fill=false, $reset=false, $cell=false, $align='');

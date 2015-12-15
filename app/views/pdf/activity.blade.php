@@ -17,8 +17,8 @@
 			<td><b>Objectives</b></td>
 			<td>
 				<ul style="margin: 0px; padding: 0px;">
-				@foreach($activity->objectives as $objective)
-				<li>{{ $objective->objective }}</li>
+				@foreach($objectives as $objective)
+				<li>{{ $objective->objective_desc }}</li>
 				@endforeach
 				</ul>
 			</td>

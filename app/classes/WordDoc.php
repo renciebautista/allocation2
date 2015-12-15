@@ -147,7 +147,7 @@ class WordDoc {
 			}
 		}
 
-		$titleData = array(array('desc' => 'Circular Ref. No.', 'value' => $activity->id),
+		$titleData = array(array('desc' => 'Circular Reference No.', 'value' => $activity->id),
 			array('desc' => 'Activity Name', 'value' => strip_tags($activity->activity_code)),
 			array('desc' => 'TOP Cycle', 'value' => $activity->cycle->cycle_name),
 			array('desc' => 'Proponent Name', 'value' => $proponent),
