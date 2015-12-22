@@ -415,6 +415,17 @@
 			<div class="panel-body">
 					<br>
 					@if(count($sobs) > 0)
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="form-group">
+								<div class="row">
+									<div class="col-lg-12">
+										<a class="btn btn-success" target="_blank" href="{{ URL::action('SchemeController@exportsob', $scheme->id ) }}">Export To Excel</a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
 					<div class="row mytable">
 						<div class="col-lg-12">
 							<div class="allocation_total table-responsive">
