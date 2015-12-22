@@ -98,7 +98,7 @@ class AllocationSob extends \Eloquent {
 			$query1 = sprintf("SELECT 
 				GROUP_CONCAT(DISTINCT 
 					CONCAT('MAX(IF(weekno = ', weekno, ',allocation,NULL)) AS wk_', weekno)
-					ORDER BY id 
+					ORDER BY year, weekno
 			  ) as query_sting
 			FROM allocation_sobs 
 			WHERE scheme_id = '".$id."';");
