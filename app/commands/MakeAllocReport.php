@@ -191,7 +191,7 @@ class MakeAllocReport extends Command {
 		}else{
 			Mail::send('emails.allocreport', $data, function($message) use ($user, $template, $fileName){
 				$message->to($user->email, $user->first_name);
-				$message->subject('Allocation Report - '.$$fileName);
+				$message->subject('Allocation Report - '.$fileName);
 			});	
 		}
 		
