@@ -47,7 +47,7 @@
 		<div class="container">
 			<div class="row">
 		        <div class="col-sm-8 hidden-xs logo">
-		        	<img src="assets/images/logo_2.png" width="500">
+		        	<img src="/assets/images/logo_2.png" width="500">
 		        </div><!-- /.blog-main -->
 
         		<div class="col-sm-4">

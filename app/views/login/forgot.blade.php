@@ -12,7 +12,7 @@
 	  {{ Form::open(array('action' => 'LoginController@forgotpassword','class' => 'form-horizontal')) }}
 	      <div class="form-group"> 
 	        <div class="col-sm-12"> 
-	          <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email or username"> 
+	          <input type="text" class="form-control" id="email" name="email" placeholder="Enter your email or username"> 
 	        </div> 
 	      </div>
 	    

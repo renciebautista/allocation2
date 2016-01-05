@@ -70,7 +70,7 @@ class LoginController extends \BaseController {
 
     public function resetpassword($token)
     {
-        return View::make('login.reset_password')->with('token', $token);
+        return View::make('login.reset')->with('token', $token);
     }
 
     public function doResetPassword()
