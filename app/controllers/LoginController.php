@@ -7,7 +7,7 @@ class LoginController extends \BaseController {
         	return Redirect::to('/dashboard');
 	    } else {
 	    	// if($_ENV['MAIL_TEST']){
-	    		return View::make('login.form1');
+	    		return View::make('login.login');
 	    	// }else{
 	    	// 	return View::make('login.index');
 	    	// }
@@ -52,12 +52,12 @@ class LoginController extends \BaseController {
     }
 
     public function forgotpassword(){
-    	return View::make('login.forgotpassword');
+    	return View::make('login.forgot');
     }
 
     public function doforgotpassword(){
     	if (User::forgot_password(Input::get('email'))) {
-			return Redirect::action('LoginController@index')
+			return Redirect::action('LoginController@doforgotpassword')
 				->with('class', ' alert alert-success')
 				->with('message', 'The information regarding password reset was sent to your email.');
 		} else {
