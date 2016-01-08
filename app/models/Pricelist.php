@@ -258,7 +258,8 @@ class Pricelist extends \Eloquent {
 				if(!is_null($row->sap_code)){
 					$item = self::where('sap_code',$row->sap_code)->first();
 					if(empty($item)){
-						$item = new Item;
+						// change item to pricelist
+						$item = new Pricelist;
 						$item->cpg_code = $row->cpg_code;
 						$item->cpg_desc = $row->cpg_desc;
 						$item->sap_code = $row->sap_code;
