@@ -585,9 +585,9 @@ class SchemeController extends \BaseController {
 						Excel::selectSheets('allocations')->load($file_path, function($reader) use (&$isError,$scheme){
 							$firstrow = $reader->first()->toArray();
 							// dd($firstrow);	
-					       	if (isset($firstrow['scheme_id'])) {
+					       	if (isset($firstrow['scheme'])) {
 					            $rows = $reader->all();
-					            if($rows[0]->scheme_id != $scheme->id){
+					            if($rows[0]->scheme != $scheme->id){
 					            	$isError = true;
 					            }
 					        }
@@ -902,7 +902,7 @@ class SchemeController extends \BaseController {
 				$excel->sheet('Detailed Allocation', function($sheet) use($allocations) {
 					$sheet->fromModel($allocations,null, 'A1', true);
 					$sheet->row(1, array(
-					    'GROUP',
+					  'GROUP',
 						'AREA',
 						'SOLD TO',
 						'SHIP TO',	
@@ -980,6 +980,29 @@ class SchemeController extends \BaseController {
 			Excel::create('Manual Allocation Template', function($excel) use($allocations){
 				$excel->sheet('allocations', function($sheet) use($allocations) {
 					$sheet->fromArray($allocations,null, 'A1', true);
+					$sheet->row(1, array(
+					  'ID',
+						'SCHEME ID',
+						'CUSTOMER ID',
+						'SHIPTO ID',	
+						'GROUP CODE',	
+						'GROUP',	
+						'AREA CODE',	
+						'AREA',	
+						'SOLD TO CODE',
+						'SOB CUSTOMER CODE',
+						'SOLD TO',	
+						'SHIP TO CODE',
+						'SHIP TO',
+						'CHANNEL CODE',	
+						'CHANNEL',
+						'ACCOUNT GROUP CODE',
+						'ACCOUNT GROUP NAME',	
+						'OUTLET',
+						'SHOW',
+						'FINAL ALLOC'
+					));
+
 				})->download('xls');
 
 			});	
@@ -1244,7 +1267,7 @@ class SchemeController extends \BaseController {
 				$excel->sheet('SOB Allocations', function($sheet) use($export_data) {
 					$sheet->fromModel($export_data,null, 'A1', true);
 					// $sheet->row(1, array(
-					//     'GROUP',
+					//  'GROUP',
 					// 	'AREA',
 					// 	'SOLD TO',
 					// 	'SHIP TO',	

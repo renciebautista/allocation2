@@ -15,6 +15,53 @@ class LoginController extends \BaseController {
 	    }
 	}
 
+  public function signup(){
+    $input = Input::all();
+    $rules = array(
+      'first_name' => 'required',
+      'middle_initial' => 'required',
+      'last_name' => 'required',
+      'username' => 'required|unique:users,username',
+      'email' => 'required|email|unique:users,email',
+      'contact_number' => 'required'
+    );
+    $validation = Validator::make($input, $rules);
+
+    if($validation->passes())
+    {
+      $password = str_random(6);
+      $user = new User;
+      $user->first_name = strtoupper(Input::get('first_name'));
+      $user->middle_initial = strtoupper(Input::get('middle_initial'));
+      $user->last_name = strtoupper(Input::get('last_name'));
+      $user->username = Input::get('username');
+      $user->email = Input::get('email');
+      $user->contact_no = Input::get('contact_number');
+      $user->password = $password;
+      $user->password_confirmation = $password;
+      $user->confirmation_code = md5(uniqid(mt_rand(), true));
+      $user->confirmed = 0;
+      $user->active = 0;
+      $user->save();
+
+
+      // send email about signup
+      Mail::send('emails.signup', $data, function($message) use ($user){
+        $message->to($user->email, $user->first_name)->subject('ETOP - Account Application');
+      });
+
+      Session::flash('signup_message', 'Sign up successfull, please wait for your account confirmation email.');
+      Session::flash('class', 'alert alert-success');
+      return Redirect::back();
+    }
+
+    return Redirect::to(URL::action('LoginController@index'))
+      ->withInput()
+      ->withErrors($validation)
+      ->with('class', 'alert-danger')
+      ->with('signup_message', 'There were validation errors.');
+  }
+
 	public function dologin()
 	{
 		$usernameinput =  Input::get('name');

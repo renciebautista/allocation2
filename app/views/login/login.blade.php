@@ -43,50 +43,57 @@
             </div>
 
             <div id="register" class="bg-form"> 
-              <h2><strong>New to E-TOP?</strong> Sign up</h2>
-                <form class="form-horizontal"> 
 
+              @if (Session::has('signup_message'))
+                                <div class="alert alert-dismissable {{ Session::get('class') }}">
+                                    <button class="close" data-dismiss="alert" type="button">×</button>
+                                    {{ Session::get('signup_message') }}
+                                </div>
+                            @endif
+
+                          @if ($errors->any())
+    <ul>
+        {{ implode('', $errors->all('<li class="error">:message</li>')) }}
+    </ul>
+@endif
+
+              <h2><strong>New to E-TOP?</strong> Sign up</h2>
+                {{ Form::open(array('action' => 'LoginController@signup','class' => 'form-horizontal')) }}
                   <div class="form-group"> 
                     <div class="col-sm-12"> 
-                      <input type="email" class="form-control" id="inputEmail3" placeholder="First Name"> 
+                      {{ Form::text('first_name','',array('class' => 'form-control' , 'placeholder' => 'First Name' , 'required')) }}
                     </div> 
                   </div> 
 
                   <div class="form-group"> 
-                    <div class="col-sm-12"> 
-                      <input type="email" class="form-control" id="inputEmail3" placeholder="Middle Initial"> 
+                    <div class="col-sm-12">
+                      {{ Form::text('middle_initial','',array('class' => 'form-control' , 'placeholder' => 'Middle Initial' , 'required')) }}
                     </div> 
                   </div>
 
                   <div class="form-group"> 
                     <div class="col-sm-12"> 
-                      <input type="email" class="form-control" id="inputEmail3" placeholder="Last Name"> 
+                      {{ Form::text('last_name','',array('class' => 'form-control' , 'placeholder' => 'Last Name' , 'required')) }}                      
+                    </div> 
+                  </div>
+
+                  <div class="form-group"> 
+                    <div class="col-sm-12">
+                      {{ Form::text('username','',array('class' => 'form-control' , 'placeholder' => 'Username' , 'required')) }}                      
                     </div> 
                   </div>
 
                   <div class="form-group"> 
                     <div class="col-sm-12"> 
-                      <input type="email" class="form-control" id="inputEmail3" placeholder="Username"> 
-                    </div> 
-                  </div>
-
-                  <div class="form-group"> 
-                    <div class="col-sm-12"> 
-                      <input type="email" class="form-control" id="inputEmail3" placeholder="Email"> 
+                      {{ Form::email('email','',array('class' => 'form-control' , 'placeholder' => 'Email' , 'required')) }}                      
                     </div> 
                   </div>
                   
                   <div class="form-group"> 
                     <div class="col-sm-12"> 
-                      <input type="email" class="form-control" id="inputEmail3" placeholder="Contact Number"> 
+                      {{ Form::text('contact_number','',array('class' => 'form-control' , 'placeholder' => 'Contact Number' , 'required')) }}                      
                     </div> 
                   </div>
-
-                  <div class="form-group"> 
-                    <div class="col-sm-12"> 
-                      <input type="email" class="form-control" id="inputEmail3" placeholder="Department"> 
-                    </div> 
-                  </div> 
 
                 <div class="form-group"> 
                     <div class="col-sm-12"> 

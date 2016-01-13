@@ -16,10 +16,8 @@ class AddWeekPercentagesOnTables extends Migration {
 		{
 			$table->bigIncrements('id');
 			$table->integer('scheme_id')->unsigned();
-            
-            $table->integer('weekno');
-
-            $table->decimal('share',12,2);
+    	$table->integer('weekno');
+      $table->decimal('share',12,2);
 		});
 	}
 
@@ -31,10 +29,7 @@ class AddWeekPercentagesOnTables extends Migration {
 	 */
 	public function down()
 	{
-		Schema::table('week_percentages', function(Blueprint $table)
-		{
-			
-		});
+		Schema::drop('week_percentages');
 	}
 
 }

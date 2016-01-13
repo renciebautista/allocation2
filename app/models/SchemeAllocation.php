@@ -400,6 +400,7 @@ class SchemeAllocation extends \Eloquent {
 			
 			$idList = array();
 			foreach ($records as $row) {
+				// dd($row);
 				$alloc = new SchemeAllocation;
 				$alloc->scheme_id = $row->scheme_id;
 

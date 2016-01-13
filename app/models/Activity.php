@@ -268,8 +268,8 @@ class Activity extends \Eloquent {
 			->join('users', 'activity_planners.user_id','=','users.id', 'left')	
 			->join('users as propo', 'activities.created_by','=','propo.id')
 			->where(function($query) use ($user_id){
-				if($user_id > 0){
-					$query->where('activities.created_by', $user_id);
+				if(count($user_id) > 0){
+					$query->whereIn('activities.created_by', $user_id);
 				}
 			})
 			->where(function($query) use ($title){

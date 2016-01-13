@@ -89,8 +89,9 @@
 								<li class="dropdown-submenu">
 								    <a tabindex="0" data-toggle="dropdown">Users Maintenance</a>
 								    <ul class="dropdown-menu">
-								      	<li>{{ HTML::linkRoute('group.index', 'Group') }}</li>  
-										<li>{{ HTML::linkAction('UsersController@index' , 'User') }}</li>
+								      <li>{{ HTML::linkRoute('group.index', 'Group') }}</li>  
+											<li>{{ HTML::linkAction('UsersController@index' , 'User') }}</li>
+											<li>{{ HTML::linkAction('UsersController@forapproval' , 'User For Approval') }}</li>
 								    </ul>
 								</li> 
 

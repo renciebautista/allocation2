@@ -351,6 +351,8 @@ Route::post('queue/scheme', function()
 	return Queue::marshal();
 });
 
+Route::post('signup', ['as' => 'signup', 'uses' => 'LoginController@signup']);
+
 Route::get('/','LoginController@index');
 Route::get('login','LoginController@index');
 Route::get('logout','LoginController@logout');
@@ -491,6 +493,8 @@ Route::group(array('before' => 'auth'), function()
 	Route::post('updatepassword', 'ProfileController@updatepassword');
 
 	Route::get('users/exportuser', 'UsersController@exportuser');
+	Route::get('user/forapproval', 'UsersController@forapproval');
+	Route::post('user/{id}/deny', 'UsersController@deny');
 	Route::resource('users', 'UsersController');
 	
 	Route::post('cycle/release', 'CycleController@release');

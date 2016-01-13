@@ -191,6 +191,20 @@ class UsersController extends Controller
 			})->download('xls');
 
 		});
+	}
 
+	public function forapproval(){
+		$users = User::forApproval(Input::get('status'),Input::get('group'),Input::get('search'));
+		return View::make('users.forapproval',compact('users', 'status', 'groups'));
+	}
+
+	public function deny($id){
+		// dd(Input::all());
+		$user = User::findOrFail($id);
+		// dd($user);
+		$user->status = 3;
+		$user->update();
+
+		// send mail for deny
 	}
 }
