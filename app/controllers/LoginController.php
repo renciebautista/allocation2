@@ -149,20 +149,14 @@ class LoginController extends \BaseController {
     {
         if (Confide::confirm($code)) {
             $notice_msg = Lang::get('confide::confide.alerts.confirmation');
-            // dd($notice_msg);
             return Redirect::action('LoginController@index')
             ->with('message', $notice_msg)
             ->with('class', 'alert alert-success');
-            // return Redirect::action('LoginController@index')
-            //     ->with('notice', $notice_msg);
         } else {
             $error_msg = Lang::get('confide::confide.alerts.wrong_confirmation');
             return Redirect::action('LoginController@index')
             ->with('message', $error_msg)
             ->with('class', 'alert alert-danger');
-            // dd($error_msg);
-            // return Redirect::action('LoginController@index')
-            //     ->with('error', $error_msg);
         }
     }
 }
