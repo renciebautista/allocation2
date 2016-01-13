@@ -16,7 +16,7 @@
 <body>
   <h1>Hi {{ ucwords(strtolower($first_name)) }}!</h1>
 
-<p>Thanks for creating an account with ETOP. Please wait for comfirmation email from the ETOP Administrator about your ETOP account.</p>
+<p>Thanks for creating an account with ETOP. Please wait for confirmation email from the ETOP Administrator.</p>
 
 <br>
 <p>Thanks,</p>
