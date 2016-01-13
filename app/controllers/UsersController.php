@@ -205,6 +205,9 @@ class UsersController extends Controller
 		$user->status = 3;
 		$user->update();
 
+		$data['email'] = $user->email;
+    $data['first_name'] = $user->first_name;
+
 		// send mail for deny
     Mail::send('emails.signup_deny', $data, function($message) use ($data){
       $message->to($data['email'],$data['first_name'])->subject('ETOP - Account Application Denied');
