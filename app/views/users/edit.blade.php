@@ -41,7 +41,7 @@
 
 		<div class="form-group">
 			{{ Form::label('middle_name', 'Middle Initial', array('class' => 'control-label')) }}
-			{{ Form::text('middle_name', $user->middle_name,array('class' => 'form-control', 'placeholder' => 'Middle Initial')) }}
+			{{ Form::text('middle_name', $user->middle_initial,array('class' => 'form-control', 'placeholder' => 'Middle Initial')) }}
 		</div>
 
 		<div class="form-group">

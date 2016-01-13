@@ -44,7 +44,7 @@
               {{ Form::close() }}
             </td>
             <td class="action">
-              {{ HTML::linkAction('UsersController@edit','Approve', $user->id, array('class' => 'btn btn-info btn-xs')) }}
+              {{ HTML::linkAction('UsersController@approve','Approve', $user->id, array('class' => 'btn btn-info btn-xs')) }}
             </td>
           </tr>
           @endforeach

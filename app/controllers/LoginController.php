@@ -50,7 +50,7 @@ class LoginController extends \BaseController {
 
       // send email about signup
       Mail::send('emails.signup', $data, function($message) use ($data){
-        $message->to($data['email'],$data['first_name'])->subject('ETOP - Account Application');
+        $message->to($data['email'],$data['first_name'])->subject('Account Application');
       });
 
       Session::flash('signup_message', 'Sign up successfull, please wait for your account confirmation email.');
@@ -142,6 +142,27 @@ class LoginController extends \BaseController {
                 ->withInput()
                 ->with('message', 'Invalid password. Try again')
                 ->with('class', 'alert alert-danger');
+        }
+    }
+
+    public function confirm($code)
+    {
+        if (Confide::confirm($code)) {
+            $notice_msg = Lang::get('confide::confide.alerts.confirmation');
+            // dd($notice_msg);
+            return Redirect::action('LoginController@index')
+            ->with('message', $notice_msg)
+            ->with('class', 'alert alert-success');
+            // return Redirect::action('LoginController@index')
+            //     ->with('notice', $notice_msg);
+        } else {
+            $error_msg = Lang::get('confide::confide.alerts.wrong_confirmation');
+            return Redirect::action('LoginController@index')
+            ->with('message', $error_msg)
+            ->with('class', 'alert alert-danger');
+            // dd($error_msg);
+            // return Redirect::action('LoginController@index')
+            //     ->with('error', $error_msg);
         }
     }
 }

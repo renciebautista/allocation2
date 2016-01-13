@@ -16,7 +16,10 @@
 <body>
   <h1>Hi {{ ucwords(strtolower($first_name)) }}!</h1>
 
-<p>We regret that your account application is denied. For clarification please contant the ETOP Administrator. </p>
+<p>Thanks for creating an account with ETOP</p>
+<p>This will be your account username and password, kindly change your password for security purpose after you have successfully logged in.</p>
+<p>Username : {{ $username }}</p>
+<p>Password : {{ $password }}</p>
 
 <br>
 <p>Thanks,</p>

@@ -210,11 +210,51 @@ class UsersController extends Controller
 
 		// send mail for deny
     Mail::send('emails.signup_deny', $data, function($message) use ($data){
-      $message->to($data['email'],$data['first_name'])->subject('ETOP - Account Application Denied');
+      $message->to($data['email'],$data['first_name'])->subject('Account Application Denied');
     });
 
     Session::flash('message', 'User list successfuly updated.');
    	Session::flash('class', 'alert alert-success');
     return Redirect::back();
+	}
+
+	public function approve($id){
+		$user = User::findOrFail($id);
+		$groups = Role::getLists();
+		return View::make('users.approve',compact('user','groups'));
+	}
+
+	public function setapprove($id){
+
+		$password = str_random(6);
+		$user = User::findOrFail($id);
+		$user->status = 2;
+		$user->active = (Input::has('is_active')) ? 1 : 0;
+
+		$user->password = $password;
+		$user->password_confirmation = $password;
+		$user->confirmation_code = md5(uniqid(mt_rand(), true));
+		$user->confirmed = 1;
+
+		$user->update();
+		$user->detachRoles($user->roles);
+		$role = Role::find(Input::get('group_id'));
+
+		$user->roles()->attach($role->id); // id only
+
+		$data['email'] = $user->email;
+    $data['first_name'] = $user->first_name;
+    $data['username'] = $user->username;
+    $data['password'] = $password;
+
+		// send confirmation email
+		Mail::send('emails.approved', $data, function($message) use ($data){
+      $message->to($data['email'],$data['first_name'])->subject('Account Application Approved');
+    });
+
+		return Redirect::action('UsersController@forapproval')
+					->with('class', 'alert-success')
+					->with('message', 'User list successfuly updated.');
+
 	}
 }

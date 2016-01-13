@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <title>ETOP Signup</title>
+  <title>Account Confirmation</title>
   <meta http-equiv="Content-Type" content="text/html; charset=us-ascii"><!-- CREATE TEXT STYLES USED IN THIS HTML FILE, START -->
 
   <style type="text/css">
@@ -14,9 +14,15 @@
   </style><!-- CREATE TEXT STYLES USED IN THIS HTML FILE, END -->
 </head>
 <body>
-  <h1>Hi {{ ucwords(strtolower($first_name)) }}!</h1>
+  <h1>Hi {{ ucwords(strtolower($user['first_name'])) }}!</h1>
 
-<p>We regret that your account application is denied. For clarification please contant the ETOP Administrator. </p>
+<p>We need to verify your email address so you can use ETOP.</p>
+<p>Click the link below to verify your email</p>
+<a href='{{ URL::to('reset_password/'.$token) }}'>
+    {{ URL::to('reset_password/'.$token)  }}
+</a>
+
+<p>If you don't want to change your password, you can ignore this email.</p>
 
 <br>
 <p>Thanks,</p>

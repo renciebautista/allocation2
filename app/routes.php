@@ -357,6 +357,8 @@ Route::get('/','LoginController@index');
 Route::get('login','LoginController@index');
 Route::get('logout','LoginController@logout');
 Route::post('login', 'LoginController@dologin');
+Route::get('confirm/{code}', 'LoginController@confirm');
+
 
 Route::get('forgotpassword','LoginController@forgotpassword');
 Route::post('forgotpassword','LoginController@doforgotpassword');
@@ -494,6 +496,8 @@ Route::group(array('before' => 'auth'), function()
 
 	Route::get('users/exportuser', 'UsersController@exportuser');
 	Route::get('user/forapproval', 'UsersController@forapproval');
+	Route::get('user/{id}/approve', 'UsersController@approve');
+	Route::post('user/{id}/setapprove', 'UsersController@setapprove');
 	Route::post('user/{id}/deny', 'UsersController@deny');
 	Route::resource('users', 'UsersController');
 	
@@ -657,3 +661,16 @@ Route::group(array('before' => 'auth'), function()
 	});//
 
 });
+//
+
+// Confide routes
+// Route::get('users/create', 'Employee@create');
+// Route::post('users', 'Employee@store');
+// Route::get('users/login', 'Employee@login');
+// Route::post('users/login', 'Employee@doLogin');
+// Route::get('users/confirm/{code}', 'Employee@confirm');
+// Route::get('users/forgot_password', 'Employee@forgotPassword');
+// Route::post('users/forgot_password', 'Employee@doForgotPassword');
+// Route::get('users/reset_password/{token}', 'Employee@resetPassword');
+// Route::post('users/reset_password', 'Employee@doResetPassword');
+// Route::get('users/logout', 'Employee@logout');
