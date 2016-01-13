@@ -49,7 +49,7 @@ class LoginController extends \BaseController {
 
 
       // send email about signup
-      Mail::send('emails.signup', $data, function($message){
+      Mail::send('emails.signup', $data, function($message) use ($data){
         $message->to($data['email'],$data['first_name'])->subject('ETOP - Account Application');
       });
 
