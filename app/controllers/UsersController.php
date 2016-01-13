@@ -206,5 +206,12 @@ class UsersController extends Controller
 		$user->update();
 
 		// send mail for deny
+    Mail::send('emails.signup_deny', $data, function($message) use ($data){
+      $message->to($data['email'],$data['first_name'])->subject('ETOP - Account Application Denied');
+    });
+
+    Session::flash('message', 'User list successfuly updated.');
+   	Session::flash('class', 'alert alert-success');
+    return Redirect::back();
 	}
 }
