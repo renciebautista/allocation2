@@ -46,7 +46,7 @@ class LoginController extends \BaseController {
 
 
       // send email about signup
-      Mail::send('emails.signup',function($message) use ($user){
+      Mail::send('emails.signup', $user, function($message){
         $message->to($user->email, $user->first_name)->subject('ETOP - Account Application');
       });
 
