@@ -44,10 +44,13 @@ class LoginController extends \BaseController {
       $user->active = 0;
       $user->save();
 
+      $data['email'] = $user->email;
+      $data['first_name'] = $user->first_name;
+
 
       // send email about signup
-      Mail::send('emails.signup', $user, function($message){
-        $message->to($user->email, $user->first_name)->subject('ETOP - Account Application');
+      Mail::send('emails.signup', $data, function($message){
+        $message->to($data['email'],$data['first_name'])->subject('ETOP - Account Application');
       });
 
       Session::flash('signup_message', 'Sign up successfull, please wait for your account confirmation email.');

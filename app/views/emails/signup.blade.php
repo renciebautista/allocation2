@@ -14,7 +14,7 @@
   </style><!-- CREATE TEXT STYLES USED IN THIS HTML FILE, END -->
 </head>
 <body>
-  <h1>Hi {{ ucwords(strtolower($user['first_name'])) }}!</h1>
+  <h1>Hi {{ ucwords(strtolower($data['first_name'])) }}!</h1>
 
 <p>Thanks for creating an account with ETOP. Please wait for comfirmation email from the ETOP Administrator about your ETOP account.</p>
 
