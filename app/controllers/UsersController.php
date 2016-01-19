@@ -206,16 +206,18 @@ class UsersController extends Controller
 		$user->update();
 
 		$data['email'] = $user->email;
-    $data['first_name'] = $user->first_name;
+	    $data['first_name'] = $user->first_name;
 
-		// send mail for deny
-    Mail::send('emails.signup_deny', $data, function($message) use ($data){
-      $message->to($data['email'],$data['first_name'])->subject('Account Application Denied');
-    });
+			// send mail for deny
+	    Mail::send('emails.signup_deny', $data, function($message) use ($data){
+	      	$message->to($data['email'],$data['first_name'])->subject('Account Application Denied');
+	    });
 
-    Session::flash('message', 'User list successfuly updated.');
-   	Session::flash('class', 'alert alert-success');
-    return Redirect::back();
+	    $user->delete();
+
+	    Session::flash('message', 'User list successfuly updated.');
+	   	Session::flash('class', 'alert alert-success');
+	    return Redirect::back();
 	}
 
 	public function approve($id){
@@ -243,14 +245,14 @@ class UsersController extends Controller
 		$user->roles()->attach($role->id); // id only
 
 		$data['email'] = $user->email;
-    $data['first_name'] = $user->first_name;
-    $data['username'] = $user->username;
-    $data['password'] = $password;
+	    $data['first_name'] = $user->first_name;
+	    $data['username'] = $user->username;
+	    $data['password'] = $password;
 
 		// send confirmation email
 		Mail::send('emails.approved', $data, function($message) use ($data){
-      $message->to($data['email'],$data['first_name'])->subject('Account Application Approved');
-    });
+	      	$message->to($data['email'],$data['first_name'])->subject('Account Application Approved');
+	    });
 
 		return Redirect::action('UsersController@forapproval')
 					->with('class', 'alert-success')

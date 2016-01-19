@@ -415,6 +415,7 @@ class SchemeAllocation extends \Eloquent {
 				$alloc->group_code = $row->group_code;
 				$alloc->group = $row->group;
 				$alloc->area_code = $row->area_code;
+				$alloc->area = $row->area;
 				$alloc->sold_to_code = $row->sold_to_code;
 				$alloc->sold_to = $row->sold_to;
 				$alloc->ship_to_code = $row->ship_to_code;

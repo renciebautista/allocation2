@@ -23,6 +23,7 @@ class AllocationSob extends \Eloquent {
 
 		$year = idate('Y', strtotime($scheme->sob_start_date));
 
+		$week_shares = array();
 
 		for($i = $start_week; $i < $last_week; $i++){
 			$wek_value = 0;
@@ -84,10 +85,24 @@ class AllocationSob extends \Eloquent {
 				'year' => $year,
 				'share' => $share,
 				'allocation' => $wek_value);
+
+			if($wek_multi == null){
+				$week_shares[$weekno] = $share;
+			}else{
+				Weekpercentage::where('scheme_id',$scheme->id)
+					->where('weekno',$weekno)
+					->update(['share' => $share]);
+			}
+			
 		}
 
 		if(count($data) > 0){
 			self::insert($data);
+			if(!empty($week_shares)){
+				foreach ($week_shares as $key => $share) {
+					Weekpercentage::firstOrCreate(['scheme_id' => $scheme->id, 'weekno' => $key, 'share' => $share]);
+				}
+			}
 		}
 		
 	}
@@ -191,9 +206,9 @@ class AllocationSob extends \Eloquent {
 		$schemes = Scheme::where('activity_id',$id)->get();
 		// return $schemes;
 		foreach ($schemes as $key => $scheme) {
-			$sobs = AllocationSob::getSob($scheme->id);
+			$sobs = self::getSob($scheme->id);
 			if(count($sobs) > 0){
-				$header = AllocationSob::getHeader($scheme->id);
+				$header = self::getHeader($scheme->id);
 				$sob_header = array();
 				if(count($header) >0){
 					foreach ($header as $value) {
@@ -212,65 +227,61 @@ class AllocationSob extends \Eloquent {
 	}
 
 
-	public static function regenerateSob($id){
-		$with_sob = self::where('scheme_id', $id)->get();
+	public static function createSobAllocation($id,$scheme,$weeks){
+		if($scheme->weeks > 0){
+			self::where('scheme_id', $scheme->id)->delete();
+			$customers = Allocation::where('scheme_id',$scheme->id)
+				->whereNull('customer_id')
+				->whereNull('shipto_id')
+				->orderBy('id', 'asc')
+				->get();
 
-		if(count($with_sob) > 0){
-			
+			$group_code = array();
+			$area_code = array();
+			$sold_to_code = array();
+
+			$filters = SobFilter::all();
+			foreach ($filters as $filter) {
+				if($filter->group_code != "0"){
+					if (!in_array($filter->group_code, $group_code)) {
+					    $group_code[] = $filter->group_code;
+					}
+					
+				}
+
+				if($filter->area_code != "0"){
+					if (!in_array($filter->area_code, $area_code)) {
+					    $area_code[] = $filter->area_code;
+					}
+					
+				}
+
+				if($filter->customer_code != "0"){
+					if (!in_array($filter->customer_code, $sold_to_code)) {
+					    $sold_to_code[] = $filter->customer_code	;
+					}
+					
+				}
+			}
+
+			$total_weeks = $scheme->weeks;
+			foreach ($customers as $customer) {
+				if((in_array($customer->group_code, $group_code)) || (in_array($customer->area_code, $area_code))|| (in_array($customer->sold_to_code, $sold_to_code))){
+					$data = array();
+					$_shiptos = Allocation::where('customer_id',$customer->id)
+						->whereNull('shipto_id')
+						->orderBy('id', 'asc')
+						->get();
+					if(count($_shiptos) == 0){
+						self::createAllocation($id,$customer,$weeks);
+					}else{
+						foreach ($_shiptos as $_shipto) {
+							self::createAllocation($id,$_shipto,$weeks);
+						}
+					}
+				}	
+			}
 		}
-
-		// // plot sob allocation
-		// $customers = Allocation::where('scheme_id',$scheme->id)
-		// 	// ->where('group_code','E1397')
-		// 	->whereNull('customer_id')
-		// 	->whereNull('shipto_id')
-		// 	->orderBy('id', 'asc')
-		// 	->get();
-
-		// $group_code = array();
-		// $area_code = array();
-		// $sold_to_code = array();
-
-		// $filters = SobFilter::all();
-		// foreach ($filters as $filter) {
-		// 	if($filter->group_code != "0"){
-		// 		if (!in_array($filter->group_code, $group_code)) {
-		// 		    $group_code[] = $filter->group_code;
-		// 		}
-				
-		// 	}
-
-		// 	if($filter->area_code != "0"){
-		// 		if (!in_array($filter->area_code, $area_code)) {
-		// 		    $area_code[] = $filter->area_code;
-		// 		}
-				
-		// 	}
-
-		// 	if($filter->customer_code != "0"){
-		// 		if (!in_array($filter->customer_code, $sold_to_code)) {
-		// 		    $sold_to_code[] = $filter->customer_code	;
-		// 		}
-				
-		// 	}
-		// }
-
-		// $total_weeks = $scheme->weeks;
-		// foreach ($customers as $customer) {
-		// 	if((in_array($customer->group_code, $group_code)) || (in_array($customer->area_code, $area_code))|| (in_array($customer->sold_to_code, $sold_to_code))){
-		// 		$data = array();
-		// 		$_shiptos = Allocation::where('customer_id',$customer->id)
-		// 			->whereNull('shipto_id')
-		// 			->orderBy('id', 'asc')
-		// 			->get();
-		// 		if(count($_shiptos) == 0){
-		// 			AllocationSob::createAllocation($id,$customer,Input::get('_wek'));
-		// 		}else{
-		// 			foreach ($_shiptos as $_shipto) {
-		// 				AllocationSob::createAllocation($id,$_shipto,Input::get('_wek'));
-		// 			}
-		// 		}
-		// 	}	
-		// }
+		
 	}
 }

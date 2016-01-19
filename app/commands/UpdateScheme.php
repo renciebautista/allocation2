@@ -91,6 +91,9 @@ class UpdateScheme extends Command {
 				$scheme->final_total_cost = $scheme->final_tts_r+$scheme->final_pe_r;
 				$scheme->updating = 0;
 				$scheme->update();
+
+				$weeks = Weekpercentage::allowSharePerWeek($scheme->id);
+				AllocationSob::createSobAllocation($id,$scheme,$weeks);
 			}
 			
 

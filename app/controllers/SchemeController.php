@@ -413,7 +413,8 @@ class SchemeController extends \BaseController {
 		if($validation->passes())
 		{
 			$isError = false;
-			DB::transaction(function() use ($id,&$isError)  {
+			$message = 'Scheme "'.Input::get('scheme_name').'" was successfuly updated.';
+			DB::transaction(function() use ($id,&$isError, &$message)  {
 				$scheme = Scheme::find($id);
 
 				// check if reference sku is changed
@@ -531,7 +532,6 @@ class SchemeController extends \BaseController {
 					// dd(1);
 					if($update_alloc){
 						SchemeAllocRepository::updateAllocation(Input::get('skus'),$scheme);
-						
 					}
 
 					// update final alloc
@@ -571,6 +571,12 @@ class SchemeController extends \BaseController {
 					
 					$scheme2->final_total_cost = $scheme2->final_tts_r+$scheme2->final_pe_r;
 					$scheme2->update();
+
+					if($update_alloc){
+						$weeks = Weekpercentage::allowSharePerWeek($scheme->id);
+						AllocationSob::createSobAllocation($id,$scheme,$weeks);
+						$message = 'Scheme "'.Input::get('scheme_name').'" allocations and SOB allocation was successfuly updated.';
+					}
 					
 				}else if($scheme->compute == 2){
 					// if($update_alloc){
@@ -641,10 +647,15 @@ class SchemeController extends \BaseController {
 					
 					$scheme2->final_total_cost = $scheme2->final_tts_r+$scheme2->final_pe_r;
 					$scheme2->update();
+
+					$weeks = Weekpercentage::allowSharePerWeek($scheme->id);
+					AllocationSob::createSobAllocation($id,$scheme,$weeks);
+					$message = 'Scheme "'.Input::get('scheme_name').'" allocations and SOB allocation was successfuly updated.';
 					
 				}else{
 					SchemeAllocation::where('scheme_id',$scheme->id)->delete();
 					AllocationSob::where('scheme_id', $scheme->id)->delete();
+					Weekpercentage::where('scheme_id', $scheme->id)->delete();
 					// update final alloc
 					$scheme2->final_alloc = $scheme->quantity;
 					$scheme2->final_total_deals = $scheme->total_deals;
@@ -654,6 +665,9 @@ class SchemeController extends \BaseController {
 					$scheme2->final_total_cost = $scheme2->total_cost;
 
 					$scheme2->update();
+
+					$message = 'Scheme "'.Input::get('scheme_name').'" allocations and SOB allocation was successfuly updated.';
+
 				}
 
 				SchemeAllocRepository::updateCosting($scheme);
@@ -667,7 +681,8 @@ class SchemeController extends \BaseController {
 			}else{
 				return Redirect::action('SchemeController@edit', array('id' => $id))
 					->with('class', 'alert-success')
-					->with('message', 'Scheme "'.Input::get('scheme_name').'" was successfuly updated.');
+					// ->with('message', 'Scheme "'.Input::get('scheme_name').'" was successfuly updated.');
+					->with('message', $message);
 			}
 			
 			
@@ -1068,60 +1083,7 @@ class SchemeController extends \BaseController {
 							$scheme->brand_shortcut = $brand->brand_shortcut;
 							$scheme->update();
 
-							AllocationSob::where('scheme_id', $scheme->id)->delete();
-							// plot sob allocation
-							$customers = Allocation::where('scheme_id',$scheme->id)
-								// ->where('group_code','E1397')
-								->whereNull('customer_id')
-								->whereNull('shipto_id')
-								->orderBy('id', 'asc')
-								->get();
-
-							$group_code = array();
-							$area_code = array();
-							$sold_to_code = array();
-
-							$filters = SobFilter::all();
-							foreach ($filters as $filter) {
-								if($filter->group_code != "0"){
-									if (!in_array($filter->group_code, $group_code)) {
-									    $group_code[] = $filter->group_code;
-									}
-									
-								}
-
-								if($filter->area_code != "0"){
-									if (!in_array($filter->area_code, $area_code)) {
-									    $area_code[] = $filter->area_code;
-									}
-									
-								}
-
-								if($filter->customer_code != "0"){
-									if (!in_array($filter->customer_code, $sold_to_code)) {
-									    $sold_to_code[] = $filter->customer_code	;
-									}
-									
-								}
-							}
-
-							$total_weeks = $scheme->weeks;
-							foreach ($customers as $customer) {
-								if((in_array($customer->group_code, $group_code)) || (in_array($customer->area_code, $area_code))|| (in_array($customer->sold_to_code, $sold_to_code))){
-									$data = array();
-									$_shiptos = Allocation::where('customer_id',$customer->id)
-										->whereNull('shipto_id')
-										->orderBy('id', 'asc')
-										->get();
-									if(count($_shiptos) == 0){
-										AllocationSob::createAllocation($id,$customer,Input::get('_wek'));
-									}else{
-										foreach ($_shiptos as $_shipto) {
-											AllocationSob::createAllocation($id,$_shipto,Input::get('_wek'));
-										}
-									}
-								}	
-							}
+							AllocationSob::createSobAllocation($id,$scheme,Input::get('_wek'));
 
 							DB::commit();
 							return Redirect::to(URL::action('SchemeController@edit', array('id' => $id)) . "#sob")
@@ -1129,6 +1091,7 @@ class SchemeController extends \BaseController {
 								->with('message', 'SOB plotting was successfuly updated.');
 
 						} catch (Exception $e) {
+							dd($e);
 							DB::rollback();
 							return Redirect::to(URL::action('SchemeController@edit', array('id' => $id)) . "#sob")
 								->with('class', 'alert-danger')
@@ -1141,9 +1104,7 @@ class SchemeController extends \BaseController {
 								->with('message', 'SOB plotting was successfuly updated.');
 						
 					}else{
-						// dd($total);
-						// echo $total . '=>';
-						// dd($total);
+	
 						return Redirect::to(URL::action('SchemeController@edit', array('id' => $id)) . "#sob")
 						->withErrors($validation)
 						->with('class', 'alert-danger')
@@ -1168,6 +1129,7 @@ class SchemeController extends \BaseController {
 						$scheme->update();
 
 						AllocationSob::where('scheme_id', $scheme->id)->delete();
+						Weekpercentage::where('scheme_id', $scheme->id)->delete();
 						// plot sob allocation
 						$customers = Allocation::where('scheme_id',$scheme->id)
 							// ->where('group_code','E1397')
