@@ -777,18 +777,37 @@ class ActivityController extends BaseController {
 						if($status_id == 1){
 							if(count($planner_count) > 0){
 								if($activity->activitytype->with_scheme){
-									$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme','submission_deadline');
+									if($activity->activitytype->with_sob){
+										$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme','sob','submission_deadline');
+									}else{
+										$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme','submission_deadline');
+									}
 								}else{
-									$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','submission_deadline');
+									if($activity->activitytype->with_sob){
+										$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','sob', 'submission_deadline');
+									}else{
+										$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','submission_deadline');
+									}
+
 								}
 								
 							}else{
 								if($activity->activitytype->with_scheme){
-									$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme','submission_deadline');
+									if($activity->activitytype->with_sob){
+										$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme','sob','submission_deadline');
+									}else{
+										$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme','submission_deadline');
+									}
 								}else{
-									$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','submission_deadline');
+									if($activity->activitytype->with_sob){
+										$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','sob','submission_deadline');
+									}else{
+										$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','submission_deadline');
+									}
 								}
 							}
+
+							// dd($required_rules);
 
 							$validation = Activity::validForDownload($activity,$required_rules);
 

@@ -159,6 +159,23 @@ class Activity extends \Eloquent {
 				$return['status'] = 0;
 			}
 		}
+
+		if(in_array("sob", $required_array)){
+			$_required = false;
+			$scheme = Scheme::getList($activity->id);
+
+			foreach ($scheme as $row) {
+				$sob = AllocationSob::where('scheme_id', $row->id)->get();
+				if(count($sob) < 1){
+					$_required = true;
+				}
+			}
+
+			if($_required){
+				$required[] = 'SOB Allocation is required.';
+				$return['status'] = 0;
+			}
+		}
 		
 		if(in_array("fdapermit", $required_array)){
 			$fdaPermit = ActivityFdapermit::getList($activity->id);
