@@ -409,7 +409,7 @@
 
 		@if(Auth::user()->hasRole("PROPONENT"))
 			@include('shared.sob_details_edit')
-		@lse
+		@else
 			@include('shared.sob_details_readonly')
 		@endif
 </div>
