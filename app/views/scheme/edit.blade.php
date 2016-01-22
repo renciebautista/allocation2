@@ -585,9 +585,7 @@
 	});
 
 
-    
-
-
+   
 	
 
 	$('.numweek').inputNumber({ 

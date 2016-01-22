@@ -469,15 +469,118 @@
 @stop
 
 @section('page-script')
-$('.nav-tabs a').on( 'shown.bs.tab', function (e) {
-    $.fn.dataTable.tables( {visible: true, api: true} ).columns.adjust();
-} );
+$("#brand").chosen({
+		search_contains: true,
+		allow_single_deselect: true
+	});
+ 	
+	$('.nav-tabs a').on( 'shown.bs.tab', function (e) {
+        $.fn.dataTable.tables( {visible: true, api: true} ).columns.adjust();
+    } );
+
+    $('#sob-allocation').DataTable({
+		"scrollY": "500px",
+		"scrollCollapse": true,
+		"paging": false,
+		"bSort": false
+	});
 
 
-$('#sob-allocation').DataTable({
-	"scrollY": "500px",
-	"scrollCollapse": true,
-	"paging": false,
-	"bSort": false
-});
+   
+	
+
+	$('.numweek').inputNumber({ 
+		allowDecimals: true,
+		maxDecimalDigits: 2
+	});
+
+	$('.numweek').blur(function(){
+		if(Number($(this).val()) == ""){
+			$(this).val(0.00);
+		}
+		var sum = 0;
+	    $('.dataTables_scrollHead .numweek').each(function() {
+	        sum += Number($(this).val());
+	        console.log($(this).val());
+	    });
+
+	    if(sum > 100){
+	    	alert('Total percentage is above 100%!');
+	    	$(this).val(0);
+	    	sum = 0;
+	    	$('.dataTables_scrollHead input').each(function() {
+		        sum += Number($(this).val());
+		    });
+		}
+
+		var arr = $(this).attr("id").split('_');
+		$("#_wek"+arr[1]).val($(this).val());
+
+	    $('#sum').text(sum.toFixed(2) +'%');
+	})
+
+	$(".manual_upload").hide();
+
+	val = $("#alloc_ref").val();
+	if(val == 2){
+		$(".manual_upload").show();
+	}
+
+	
+
+	$("#alloc_ref").change(function () {
+		if($(this).val() == 2){
+			
+			$(".manual_upload").show();
+		}else{
+			$(".manual_upload").hide();
+		}
+		
+    });
+
+	$("#updatesob").validate({
+		ignore: ':hidden:not(".multiselect")',
+		errorElement: "span", 
+		errorClass : "has-error",
+		rules: {
+			weeks: {
+				required: true,
+				max: 14,
+				min:1
+			},
+			start_date: {
+				required: true
+			}
+
+		},
+		errorPlacement: function(error, element) {    
+		
+		},
+		highlight: function( element, errorClass, validClass ) {
+	    	$(element).closest('div').addClass(errorClass).removeClass(validClass);
+	    	
+	  	},
+	  	unhighlight: function( element, errorClass, validClass ) {
+	    	$(element).closest('div').removeClass(errorClass).addClass(validClass);
+	  	},
+	  	invalidHandler: function(form, validator) {
+	        var errors = validator.numberOfInvalids();
+	        if (errors) {
+	            $("html, body").animate({ scrollTop: 0 }, "fast");
+	           
+	        }
+	    }
+
+	});
+
+	$.validator.addMethod("sum", function(value, element, params) {
+		console.log(value);
+		var sumOfVals = 0;
+	        var parent = $(element).parent(".parentDiv");
+	        $(parent).find("input").each(function () {
+	            sumOfVals = sumOfVals + parseInt($(this).val(), 10);
+	        });
+	        if (sumOfVals == params) return true;
+	        return false;
+	}, "Sum must be {0}");
 @stop
