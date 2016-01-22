@@ -485,6 +485,18 @@ $("#brand").chosen({
 		"bSort": false
 	});
 
+	$('#start_date').datetimepicker({
+		pickTime: false,
+		calendarWeeks: true,
+		minDate: moment(),
+		daysOfWeekDisabled: [0,2,3,4,5,6]
+	});
+
+	$('#start_date').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
+
+
+	$('#weeks').inputNumber({ allowDecimals: true });
+
 
    
 	
