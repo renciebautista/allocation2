@@ -1228,27 +1228,6 @@ class SchemeController extends \BaseController {
 			Excel::create($scheme->name. "_SOB Allocations", function($excel) use($export_data){
 				$excel->sheet('SOB Allocations', function($sheet) use($export_data) {
 					$sheet->fromModel($export_data,null, 'A1', true);
-					// $sheet->row(1, array(
-					//  'GROUP',
-					// 	'AREA',
-					// 	'SOLD TO',
-					// 	'SHIP TO',	
-					// 	'CHANNEL',	
-					// 	'OUTLET',	
-					// 	'SOLD TO GSV',	
-					// 	'SOLD TO GSV PERCENTAGE',	
-					// 	'SOLD TO ALLOCATION',
-					// 	'SHIP TO GSV',
-					// 	'SHIP TO GSV PERCENTAGE',	
-					// 	'SHIP TO ALLOCATION',
-					// 	'OUTLET GSV',
-					// 	'OUTLET GSV PERCENTAGE',	
-					// 	'OUTLET ALLOCATION',
-					// 	'MULTIPLIER',
-					// 	'COMPUTED ALLOCATION',	
-					// 	'FORCE ALLOCATION',
-					// 	'FINAL ALLOCATION'
-					// ));
 
 				})->download('xls');
 
