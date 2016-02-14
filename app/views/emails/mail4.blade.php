@@ -106,7 +106,12 @@
 				<td class="center">{{ $activity->planner }}</td>
 				<td class="center">{{ date_format(date_create($activity->eimplementation_date),'m/d/Y') }}</td>
 				<td class="center">{{ date_format(date_create($activity->end_date),'m/d/Y') }}</td>
+
+				@if($activity->billing_date != "")
 				<td class="center">{{ date_format(date_create($activity->billing_date),'m/d/Y') }}</td>
+				@else
+				<td class="center"></td>
+				
 			</tr>
 			@endforeach
 			@endif

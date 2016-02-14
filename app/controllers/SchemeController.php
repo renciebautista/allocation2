@@ -917,7 +917,7 @@ class SchemeController extends \BaseController {
 				$excel->sheet('Detailed Allocation', function($sheet) use($allocations) {
 					$sheet->fromModel($allocations,null, 'A1', true);
 					$sheet->row(1, array(
-					  'GROUP',
+					  	'GROUP',
 						'AREA',
 						'SOLD TO',
 						'SHIP TO',	
@@ -1228,7 +1228,6 @@ class SchemeController extends \BaseController {
 			Excel::create($scheme->name. "_SOB Allocations", function($excel) use($export_data){
 				$excel->sheet('SOB Allocations', function($sheet) use($export_data) {
 					$sheet->fromModel($export_data,null, 'A1', true);
-
 				})->download('xls');
 
 			});

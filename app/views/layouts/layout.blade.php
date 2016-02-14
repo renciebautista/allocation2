@@ -162,8 +162,7 @@
 								<li>{{ HTML::linkAction('SobController@index' , 'Sales Order Booking Report') }}</li>
 
 								@if(Auth::user()->inRoles(['SOB ASSISTANT', 'ADMINISTRATOR' , 'PROPONENT', 'PMOG PLANNER']))
-								
-								<li>{{ HTML::linkAction('SobController@weekly' , 'Sales Order Booking Weekly Report') }}</li>
+								<li>{{ HTML::linkAction('SobController@booking' , 'Sales Order Booking') }}</li>
 								@endif
 
 								
@@ -286,6 +285,7 @@
 
 	{{ HTML::script('assets/plugins/submenu/js/bootstrap-submenu.min.js') }}
 
+	{{ HTML::script('assets/plugins/mindup/mindmup-editabletable.js') }}
 	
 	{{ HTML::script('assets/js/function.js') }}
 

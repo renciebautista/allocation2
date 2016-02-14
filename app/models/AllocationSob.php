@@ -5,6 +5,21 @@ class AllocationSob extends \Eloquent {
 
 	public $timestamps = false;
 
+
+	public static function getWeeks(){
+		return self::select('weekno')
+			->groupBy('weekno')
+			->orderBy('weekno')
+			->lists('weekno', 'weekno');
+	}
+
+	public static function getYears(){
+		return self::select('year')
+			->groupBy('year')
+			->orderBy('year')
+			->lists('year', 'year');
+	}
+
 	public static function createAllocation($id,$ship_to,$wek_multi = null){
 		// dd($wek_multi);
 
@@ -282,6 +297,78 @@ class AllocationSob extends \Eloquent {
 				}	
 			}
 		}
+		
+	}
+
+
+	public static function getWeekBooking($type,$brand,$week,$year,$status){
+		return self::select(DB::raw('schemes.id, schemes.item_code,activities.activitytype_desc,activities.activity_type_id,
+			schemes.brand_desc,
+			schemes.brand_code, weekno, year, sum(allocation) as total_allocation, booking_status.status'))
+			->join('schemes', 'schemes.id', '=', 'allocation_sobs.scheme_id')
+			->join('activities', 'activities.id', '=', 'schemes.activity_id')
+			->join('booking_status', 'booking_status.id' , '=', 'allocation_sobs.booking_status_id')
+			->where(function($query) use ($type){
+				if(!empty($type)){
+					$query->whereIn('activities.activity_type_id', $type);
+				}
+			})
+			->where(function($query) use ($brand){
+				if(!empty($brand)){
+					$query->whereIn('schemes.brand_code', $brand);
+				}
+			})
+			->where(function($query) use ($week){
+				if(!empty($week)){
+					$query->whereIn('allocation_sobs.weekno', $week);
+				}
+			})
+			->where(function($query) use ($year){
+				if(!empty($year)){
+					$query->whereIn('allocation_sobs.year', $year);
+				}
+			})
+			->where(function($query) use ($status){
+				if(!empty($status)){
+					$query->whereIn('allocation_sobs.booking_status_id', $status);
+				}
+			})
+			->groupBy('brand_desc')
+			->groupBy('weekno')
+			->groupBy('allocation_sobs.year')
+			->groupBy('allocation_sobs.booking_status_id')
+			->orderBy('weekno')
+			->orderBy('year')
+			->orderBy('activitytype_desc')
+			->orderBy('brand_desc')
+			->get();
+	}
+
+	public static function getSkuList($weeks,$year){
+		$query = sprintf("select  distinct(schemes.item_code),schemes.item_desc,category_tbl.categories,brands_tbl.brands
+
+			from allocation_sobs
+			join schemes on schemes.id = allocation_sobs.scheme_id
+			join activities on activities.id = schemes.activity_id		
+			JOIN (
+							SELECT activity_id,
+							GROUP_CONCAT(CONCAT(activity_categories.category_desc)) as categories
+							FROM activity_categories 
+							GROUP BY activity_id
+						)as category_tbl ON activities.id = category_tbl.activity_id
+			JOIN (
+						SELECT activity_id,
+							GROUP_CONCAT(CONCAT(activity_brands.b_desc)) as brands
+							FROM activity_brands 
+							GROUP BY activity_id
+						) as brands_tbl ON activities.id = brands_tbl.activity_id
+			where allocation_sobs.weekno = '%s'
+			and allocation_sobs.year = '%s'
+			",$weeks,$year);
+		return DB::select(DB::raw($query));
+	}
+
+	public static function getBooking(){
 		
 	}
 }

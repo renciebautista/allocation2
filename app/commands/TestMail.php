@@ -167,21 +167,21 @@ class TestMail extends Command {
 				foreach ($data['cycles'] as $value) {
 					$cycle_names .= $value->cycle_name ." - ";
 				}
-
-				$data['cycle_names'] = $cycle_names;
+				
+				$data['cycle_names'] = substr($cycle_names, 0,-3);
 
 				if(count($data['activities'])>0){
 					if($_ENV['MAIL_TEST']){
 						if(count($data['cycles']) > 1){
 							Mail::send('emails.mail4', $data, function($message) use ($data){
 								$message->to("rbautista@chasetech.com", $data['fullname']);
-								$message->bcc("rosarah.reyes@unilever.com");
+								// $message->bcc("rosarah.reyes@unilever.com");
 								$message->subject('TOP ACTIVITIES FOR: ('.$data['cycle_names'].')');
 							});	
 						}else{
 							Mail::send('emails.mail4', $data, function($message) use ($data){
 								$message->to("rbautista@chasetech.com", $data['fullname']);
-								$message->bcc("rosarah.reyes@unilever.com");
+								// $message->bcc("rosarah.reyes@unilever.com");
 								$message->subject('TOP ACTIVITIES FOR: '.$data['cycle_names']);
 							});	
 						}

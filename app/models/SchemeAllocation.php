@@ -425,6 +425,10 @@ class SchemeAllocation extends \Eloquent {
 				$alloc->account_group_code = $row->account_group_code;
 				$alloc->account_group_name = $row->account_group_name;
 				$alloc->outlet = $row->outlet;
+
+				if($row->final_alloc ==''){
+					$row->final_alloc = 0;
+				}
 				
 
 				$in_deals = 0;

@@ -52,6 +52,12 @@ class Pricelist extends \Eloquent {
 			->first();
 	}
 
+	public static function getBrandByCode($brand_code){
+		return self::select('brand_code', 'brand_desc', 'brand_shortcut')
+			->where('brand_code', $brand_code)
+			->first();
+	}
+
 	public static function getBrandLists(){
 		return self::select('brand_desc', 'brand_desc')
 			->groupBy('brand_desc')
