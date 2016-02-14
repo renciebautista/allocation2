@@ -102,49 +102,11 @@ Route::get('allocreport', function(){
 
 
 Route::get('test', function(){
-	$cycle_ids = [27];
-
-	$data['cycles'] = Activity::ReleasedCyles($cycle_ids);
-	$cycle_cnt =  count($data['cycles']);
-	$cycle_names = '';
-
-	foreach ($data['cycles'] as $value) {
-		$cycle_names .= $value->cycle_name ." - ";
-	}
-
-
-
-	echo substr($cycle_names, 0,-3);
+	
 });
 
 Route::get('mail4', function(){
-	$cycles = Cycle::getByReleaseDate();
-	$cycle_ids = array();
-	$cycle_names = "";
-	foreach ($cycles as $value) {
-		$cycle_ids[] = $value->id;
-	}
 	
-	$user = User::find(1);
-
-	$data['user'] = $user->first_name;
-	$data['email'] = $user->email;
-	$data['fullname'] = $user->getFullname();
-	$data['cycle_ids'] = $cycle_ids;
-
-	$data['activities'] = Activity::Released($cycle_ids);
-
-	$data['cycles'] = Activity::ReleasedCyles($cycle_ids);
-
-
-	foreach ($data['cycles'] as $value) {
-
-		$cycle_names .= $value->cycle_name ." - ";
-	}
-
-	$data['cycle_names'] = $cycle_names;
-
-	dd($cycle_names);
 });
 
 

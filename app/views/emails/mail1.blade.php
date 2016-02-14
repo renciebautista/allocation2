@@ -113,6 +113,7 @@
 				<td class="center">{{ date_format(date_create($activity->billing_date),'m/d/Y') }}</td>
 				@else
 				<td class="center"></td>
+				@endif
 			</tr>
 			@endforeach
 			@endif
