@@ -5,7 +5,10 @@
 
 
 .container {
-  	width: 1200px;
+  	width: 1400px;
+}
+table {
+    font-size: 11px;
 }
 h1, .h1 {
   font-size: 20px;

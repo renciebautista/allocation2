@@ -1274,7 +1274,7 @@ class ActivityController extends BaseController {
 					// end update
 					$arr['success'] = 1;
 					Session::flash('class', 'alert-success');
-					Session::flash('message', 'Activity customer successfully updated.');
+					Session::flash('message', 'Customer details, allocation per scheme and sob details were updated.');
 				} catch (Exception $e) {
 					DB::rollback();
 					echo $e;

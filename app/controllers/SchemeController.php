@@ -543,7 +543,6 @@ class SchemeController extends \BaseController {
 						$total_cases = $final_alloc;
 						$final_tts = $final_alloc * $scheme->deals * $scheme->srp_p; 
 					}else{
-						
 						if($final_alloc > 0){
 							$total_cases = round($final_alloc/$scheme->deals);
 							$total_deals = $final_alloc;
@@ -575,7 +574,7 @@ class SchemeController extends \BaseController {
 					if($update_alloc){
 						$weeks = Weekpercentage::allowSharePerWeek($scheme->id);
 						AllocationSob::createSobAllocation($id,$scheme,$weeks);
-						$message = 'Scheme "'.Input::get('scheme_name').'" allocations and SOB allocation was successfuly updated.';
+						$message = 'Scheme "'.Input::get('scheme_name').'" allocations and SOB allocation were successfuly updated.';
 					}
 					
 				}else if($scheme->compute == 2){

@@ -196,7 +196,7 @@ class AllocationSob extends \Eloquent {
 			schemes.name,schemes.item_code,schemes.item_desc,
 			allocations.group, allocations.area, allocations.sold_to, 
 			COALESCE(allocations.ship_to_code,allocations.ship_to_code,allocations.sold_to_code) as ship_to_code,
-			allocations.ship_to, allocation_sobs.weekno, allocation_sobs.year,
+			allocations.ship_to, allocations.final_alloc, allocation_sobs.weekno, allocation_sobs.year,
 			DATE_FORMAT(loading_date,'%%m/%%d/%%Y'), DATE_FORMAT(receipt_date,'%%m/%%d/%%Y'),
 			allocation_sobs.allocation,
 			((schemes.lpat/ 1.12) * allocation_sobs.allocation) as value
