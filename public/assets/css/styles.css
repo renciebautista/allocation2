@@ -2,11 +2,16 @@
 	font-weight: bold;
 }
 
-
-
 .container {
-  	width: 1400px;
+  	/*width: 1200px;*/
 }
+
+@media (min-width: 1200px) {
+  .container {
+    width: 1400px;
+  }
+}
+
 table {
     font-size: 11px;
 }
@@ -124,11 +129,13 @@ h2, .h2 {
 }
 @media (max-width: 767px) {
     .navbar-default .navbar-nav .open .dropdown-menu > li > a {
-        color: #777;
+        /*color: #777;*/
+        color: #FFF;
     }
     .navbar-default .navbar-nav .open .dropdown-menu > li > a:hover,
     .navbar-default .navbar-nav .open .dropdown-menu > li > a:focus {
-        color: #333;
+        /*color: #333;*/
+        color: #FFF;
     }
 }
 
