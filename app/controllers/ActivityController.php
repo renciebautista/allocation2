@@ -1220,9 +1220,9 @@ class ActivityController extends BaseController {
 									$area = Area::getArea($key);
 									$area_list[] = array('activity_id' => $id, 
 										'group_code' => $area->group_code,
-										'group_desc' => $area->group_desc,
+										'group_desc' => $area->group_name,
 										'area_code' => $key, 
-										'area_desc' => $area->area_desc,
+										'area_desc' => $area->area_name,
 										'multi' => $value);
 								}
 								ForceAllocation::insert($area_list);
@@ -1256,6 +1256,7 @@ class ActivityController extends BaseController {
 
 					// update all schemes
 					$schemes = Scheme::getList($activity->id);
+
 					foreach ($schemes as $scheme) {
 						if($scheme->compute == 1){
 							$scheme->updating = 1;

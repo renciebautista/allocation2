@@ -482,6 +482,11 @@
 									  	<td class="text-right">{{ number_format($scheme->final_tts_r,2) }}</td>
 									  	<td class="text-right">{{ number_format($scheme->final_pe_r,2) }}</td>
 									  	<td class="text-right">{{ number_format($scheme->final_total_cost,2) }}</td>
+									  	@if($scheme->updating == 1)
+									  	<td class="action" colspan="3">
+									  		<button class="btn btn-info btn-xs disabled">Updating Scheme</button>
+									  	</td>
+									  	@else
 									  	<td class="action">
 									  		{{ HTML::linkAction('SchemeController@edit','View', $scheme->id, array('class' => 'btn btn-success btn-xs')) }}
 									  	</td>
@@ -496,6 +501,7 @@
 												{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs disable-button','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}
 											{{ Form::close() }}
 									  	</td>
+									  	@endif
 									</tr>
 									@endforeach
 									@endif

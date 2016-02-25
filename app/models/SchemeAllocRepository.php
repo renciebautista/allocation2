@@ -12,7 +12,6 @@ class SchemeAllocRepository
 		self::save($skus,$scheme);
 	}
 
-
 	private static function save($skus,$scheme){
 		$activity = Activity::find($scheme->activity_id);
 		$forced_areas = ForceAllocation::getForcedAreas($scheme->activity_id);

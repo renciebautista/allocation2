@@ -243,6 +243,10 @@ class SchemeController extends \BaseController {
 		$scheme = Scheme::findOrFail($id);
 		$activity = Activity::findOrFail($scheme->activity_id);
 
+		if($scheme->updating == 1){
+			return View::make('activity.updating');
+		}
+
 		if((Activity::myActivity($activity)) || (ActivityPlanner::myActivity($activity->id))){
 			$activity_schemes = Scheme::getIdList($activity->id);
 			$id_index = array_search($id, $activity_schemes);
