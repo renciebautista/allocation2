@@ -158,38 +158,6 @@ class AllocationSob extends \Eloquent {
 	}
 
 	public static function getByCycle($cycles){
-		// $query = sprintf("select allocation_sobs.id, activities.activitytype_desc,
-		// 	category_tbl.categories,brands_tbl.brands,
-		// 	schemes.name,schemes.item_code,schemes.item_desc,
-		// 	allocations.group, allocations.area, allocations.sold_to, 
-		// 	COALESCE(allocations.ship_to_code,allocations.ship_to_code,allocations.sold_to_code) as ship_to_code,
-		// 	allocations.ship_to, allocation_sobs.weekno, allocation_sobs.year,
-		// 	DATE_FORMAT(loading_date,'%%m/%%d/%%Y'), DATE_FORMAT(receipt_date,'%%m/%%d/%%Y'),
-		// 	allocation_sobs.allocation,
-		// 	((schemes.lpat/ 1.12) * allocation_sobs.allocation) as value
-		// 	from allocation_sobs
-		// 	join allocations on allocations.id = allocation_sobs.allocation_id
-		// 	join schemes on allocation_sobs.scheme_id = schemes.id
-		// 	join activities on schemes.activity_id = activities.id
-		// 	LEFT JOIN (
-		// 		SELECT activity_id,
-		// 		    GROUP_CONCAT(CONCAT(activity_categories.category_code)) as category_codes,
-		// 			GROUP_CONCAT(CONCAT(activity_categories.category_desc)) as categories
-		// 			FROM activity_categories 
-		// 			GROUP BY activity_id
-		// 		)as category_tbl ON activities.id = category_tbl.activity_id
-		// 		LEFT JOIN (
-		// 		SELECT activity_id,
-		// 			GROUP_CONCAT(CONCAT(activity_brands.b_desc)) as brand_codes,
-		// 			GROUP_CONCAT(CONCAT(activity_brands.b_desc)) as brands
-		// 			FROM activity_brands 
-		// 			GROUP BY activity_id
-		// 		) as brands_tbl ON activities.id = brands_tbl.activity_id
-		// 	where activities.cycle_id in (".implode(",", $cycles).")
-		// 	and activities.disable = '0'
-		// 	order by allocation_sobs.id");
-
-			// dd($query);
 
 		$query = sprintf("select allocation_sobs.id, activities.activitytype_desc,
 			category_tbl.category_desc,schemes.brand_desc,
@@ -213,6 +181,34 @@ class AllocationSob extends \Eloquent {
 			and activities.disable = '0'
 			and activities.status_id = '9'
 			order by allocation_sobs.id");
+
+		return DB::select(DB::raw($query));
+	}
+
+
+	public static function getBySchemeId($id){
+
+		$query = sprintf("select allocation_sobs.id, activities.activitytype_desc,
+			category_tbl.category_desc,schemes.brand_desc,
+			schemes.name,schemes.item_code,schemes.item_desc,
+			allocations.group, allocations.area, allocations.sold_to, 
+			COALESCE(allocations.ship_to_code,allocations.ship_to_code,allocations.sold_to_code) as ship_to_code,
+			allocations.ship_to, allocations.final_alloc, allocation_sobs.weekno, allocation_sobs.year,
+			DATE_FORMAT(loading_date,'%%m/%%d/%%Y'), DATE_FORMAT(receipt_date,'%%m/%%d/%%Y'),
+			allocation_sobs.allocation,
+			((schemes.lpat/ 1.12) * allocation_sobs.allocation) as value
+			from allocation_sobs
+			join allocations on allocations.id = allocation_sobs.allocation_id
+			join schemes on allocation_sobs.scheme_id = schemes.id
+			join activities on schemes.activity_id = activities.id
+			LEFT JOIN (
+				SELECT brand_desc,category_desc
+				FROM pricelists
+				GROUP BY brand_desc
+				)as category_tbl ON schemes.brand_desc = category_tbl.brand_desc
+			where schemes.id = '%s'
+			and activities.disable = '0'
+			order by allocation_sobs.id",$id);
 
 		return DB::select(DB::raw($query));
 	}

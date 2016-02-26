@@ -1220,20 +1220,58 @@ class SchemeController extends \BaseController {
 		$activity = Activity::findOrFail($scheme->activity_id);
 		if((Activity::myActivity($activity)) || (ActivityPlanner::myActivity($activity->id))){
 
-			$sobs = AllocationSob::getSob($scheme->id);
+			// $sobs = AllocationSob::getSob($scheme->id);
 
-			foreach($sobs as $key => $value)
-			{
-				$rows[$key] = (array) $value;
-			} 
-			$export_data = $rows;
+			// foreach($sobs as $key => $value)
+			// {
+			// 	$rows[$key] = (array) $value;
+			// } 
+			// $export_data = $rows;
 
-			Excel::create($scheme->name. "_SOB Allocations", function($excel) use($export_data){
-				$excel->sheet('SOB Allocations', function($sheet) use($export_data) {
-					$sheet->fromModel($export_data,null, 'A1', true);
-				})->download('xls');
+			$allocations = AllocationSob::getBySchemeId($id);
+			$data = array();
+			foreach ($allocations as $result) {
+				if(isset($result->value)){
+					$result->value = (double) $result->value;
+				}
+			   	$data[] = (array)$result;  
+			}
 
-			});
+			Excel::create($scheme->name. "_SOB Allocations", function($excel) use($data){
+			$excel->sheet('SOB Allocation', function($sheet) use($data) {
+				$sheet->fromArray($data,null, 'A1', true);
+				$sheet->row(1, array(
+				    'ID',
+					'ACTIVITY TYPE',
+					'CATEGORY',
+					'BRAND',	
+					'SCHEME',	
+					'ITEM CODE',	
+					'ITEM DESCRIPTION',
+					'GROUP',	
+					'AREA',	
+					'SOLD TO',
+					'SHIP TO CODE',
+					'CUSTOMER SHIP TO NAME',
+					'ALLOCATION',	
+					'WEEK #',
+					'YEAR',
+					'LOADING DATE',
+					'RECEIVING DATE',
+					'SOB ALLOCATION',
+					'VALUE'
+				));
+
+			})->download('xls');
+
+		});
+
+			// Excel::create($scheme->name. "_SOB Allocations", function($excel) use($export_data){
+			// 	$excel->sheet('SOB Allocations', function($sheet) use($export_data) {
+			// 		$sheet->fromModel($export_data,null, 'A1', true);
+			// 	})->download('xls');
+
+			// });
 					
 		}else{
 			return Response::make(View::make('shared/404'), 404);
