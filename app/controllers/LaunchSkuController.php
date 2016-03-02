@@ -110,6 +110,34 @@ class LaunchSkuController extends \BaseController {
 		}
 	}
 
+	public function removeskus(){
+		if(Request::ajax()){
+			$skus = Input::get('skus');
+			if(!empty($skus)){
+				foreach ($skus as $sku) {
+					if(ActivitySku::alreadyUsed($sku) || SchemeHostSku::alreadyUsed($sku) || SchemePremuimSku::alreadyUsed($sku)){
+						Session::flash('class', 'alert-danger');
+						Session::flash('message', "Error deleting sku code '".$sku. "', already used in a transaction.' ");
+						return Response::json(array('success' => 0));
+					}else{
+						LaunchSkuAccess::where('sku_code',$sku)->delete();
+						Pricelist::where('sap_code',$sku)->delete();
+						Session::flash('class', 'alert-success');
+						Session::flash('message', 'Launch SKU/s is successfuly updated.');
+
+						return Response::json(array('success' => 1));
+					}
+
+				}
+				
+			}else{
+				Session::flash('class', 'alert-danger');
+				Session::flash('message', 'Error deleting SKU/s!');
+				return Response::json(array('success' => 0));
+			}
+		}
+	}
+
 
 		
 	// }
@@ -202,7 +230,7 @@ class LaunchSkuController extends \BaseController {
 	 */
 	public function destroy($id)
 	{
-		//
+		
 	}
 
 }

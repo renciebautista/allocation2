@@ -11,4 +11,14 @@ class SchemePremuimSku extends \Eloquent {
 
 		return $premuim;
 	}
+
+	public static function alreadyUsed($sap_code){
+		$used = self::where('sap_code',$sap_code)->get();
+		if(count($used)>0){
+			return true;
+		}else{
+			return false;
+		}
+
+	}
 }

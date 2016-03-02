@@ -22,7 +22,6 @@ class User extends Eloquent implements ConfideUserInterface {
   public static function forApproval(){
   	return self::select('users.id', 'users.first_name', 'users.last_name','users.email','users.contact_no')
 			->where('status', 1)
-			// ->orderBy('first_name')
 			->get();
   }
 

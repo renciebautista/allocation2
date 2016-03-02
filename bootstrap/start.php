@@ -25,7 +25,7 @@ $app = new Illuminate\Foundation\Application;
 */
 
 $env = $app->detectEnvironment(array(
-	'local' => array('homestead','ULTRABOOK-PC','Rencies-MacBook-Air.local','cpe-172-100-24-13.twcny.res.rr.com'),
+	'local' => array('homestead','ULTRABOOK-PC','Rencies-MacBook-Air.local','cpe-174-100-24-4.neo.res.rr.com', 'cpe-174-100-24-6.neo.res.rr.com'),
 ));
 
 /*

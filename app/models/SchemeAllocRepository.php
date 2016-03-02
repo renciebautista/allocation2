@@ -641,4 +641,131 @@ class SchemeAllocRepository
 			$allocation->update();
 		}
 	}
+
+	public static function fixUntallyAllocation($scheme){
+		$outlets = Allocation::where('scheme_id',$scheme->id)
+			->whereNotNull('shipto_id')
+			->orderBy('id', 'desc')
+			->get();
+		$outlet_total = array();
+
+		foreach ($outlets as $outlet) {
+			if(!isset($outlet_total[$outlet->shipto_id])){
+				$outlet_total[$outlet->shipto_id] = $outlet->final_alloc;
+			}else{
+				$outlet_total[$outlet->shipto_id] += $outlet->final_alloc;
+			}
+			
+		}
+		// update shipto total
+		foreach ($outlet_total as $key => $value) {
+			$allocation = Allocation::find($key);
+			$in_deals = 0;
+			$in_cases = 0;
+			if($scheme->activity->activitytype->uom == 'CASES'){
+				$in_deals = $value * $scheme->deals;
+				$in_cases = $value;
+				$tts_budget = $value * $scheme->deals * $scheme->srp_p; 
+			}else{
+				if($value > 0){
+					$in_cases = round($value/$scheme->deals);
+					$in_deals =  $value;
+				}
+				$tts_budget = $value * $scheme->srp_p;
+			}
+
+			$allocation->final_alloc = $value;
+			$allocation->in_deals = $in_deals;
+			$allocation->in_cases = $in_cases;
+			$allocation->tts_budget = $tts_budget;
+			$allocation->pe_budget = $value *  $scheme->other_cost;
+
+			$allocation->update();
+
+		}
+
+		$shiptos = Allocation::where('scheme_id',$scheme->id)
+			->whereNotNull('customer_id')
+			->whereNull('shipto_id')
+			->orderBy('id', 'desc')
+			->get();
+
+		$shipto_total = array();
+
+		foreach ($shiptos as $shipto) {
+			if(!isset($shipto_total[$shipto->customer_id])){
+				$shipto_total[$shipto->customer_id] = $shipto->final_alloc;
+			}else{
+				$shipto_total[$shipto->customer_id] += $shipto->final_alloc;
+			}
+		}
+		
+		// update shipto total
+		foreach ($shipto_total as $key => $value) {
+			$allocation = Allocation::find($key);
+			$in_deals = 0;
+			$in_cases = 0;
+			if($scheme->activity->activitytype->uom == 'CASES'){
+				$in_deals = $value * $scheme->deals;
+				$in_cases = $value;
+				$tts_budget = $value * $scheme->deals * $scheme->srp_p; 
+			}else{
+				if($value > 0){
+					$in_cases = round($value/$scheme->deals);
+					$in_deals =  $value;
+				}
+				$tts_budget = $value * $scheme->srp_p;
+			}
+			$allocation->final_alloc = $value;
+			$allocation->in_deals = $in_deals;
+			$allocation->in_cases = $in_cases;
+			$allocation->tts_budget = $tts_budget;
+			$allocation->pe_budget = $value *  $scheme->other_cost;
+
+			$allocation->update();
+		}
+
+
+		$final_alloc = SchemeAllocation::finalallocation($scheme->id);
+		$total_cases = 0;
+		$total_deals = 0;
+		if($scheme->activity->activitytype->uom == 'CASES'){
+			$total_deals = $final_alloc * $scheme->deals;
+			$total_cases = $final_alloc;
+			$final_tts = $final_alloc * $scheme->deals * $scheme->srp_p; 
+		}else{
+			
+			if($final_alloc > 0){
+				$total_cases = round($final_alloc/$scheme->deals);
+				$total_deals = $final_alloc;
+			}
+			$final_tts = $final_alloc * $scheme->srp_p; 
+		}
+
+		$final_pe = $total_deals *  $scheme->other_cost;
+
+
+		$scheme->final_alloc = $final_alloc;
+		$scheme->final_total_deals = $total_deals;
+		$scheme->final_total_cases = $total_cases;
+
+		$per = 0;
+		if($scheme->ulp_premium != "" || !is_null($scheme->ulp_premium)){
+			$scheme->final_tts_r = 0;
+			$non = $scheme->srp_p * $total_deals;
+			$per = $total_deals * $scheme->other_cost;
+			$scheme->final_pe_r = $non+$per;
+		}else{
+			$scheme->final_tts_r = $final_tts;
+			$scheme->final_pe_r = $final_pe;
+		}	
+		$scheme->final_total_cost = $scheme->final_tts_r+$scheme->final_pe_r;
+
+		$scheme->update();
+
+		$weeks = Weekpercentage::allowSharePerWeek($scheme->id);
+		if(!is_null($weeks) && $weeks > 0){
+			AllocationSob::createSobAllocation($scheme->id,$scheme,$weeks);
+		}
+	}
 }

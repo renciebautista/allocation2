@@ -21,7 +21,7 @@
 		  	</div>
 		  	<button type="submit" class="btn btn-success"><i class="fa fa-search"></i> Search</button>
 		  	{{ HTML::linkAction('LaunchSkuController@upload','Import SKU/s',null, array('class' => 'btn btn-info')) }}
-		  	{{ HTML::linkAction('LaunchSkuController@export','Export Laucnh SKU/s Template',null, array('class' => 'btn btn-info')) }}
+		  	{{ HTML::linkAction('LaunchSkuController@export','Export Launch SKU/s Template',null, array('class' => 'btn btn-info')) }}
 		{{ Form::close() }}
 	</div>
 </div>
@@ -44,6 +44,7 @@
 			<div class="col-lg-6">
 				<button id="assign" type="button" class="btn btn-info"> Assign Access</button>
 		  		<button id="remove" type="button" class="btn btn-danger"> Remove Access</button>
+		  		<button id="delete" type="button" class="btn btn-danger"> Delete SKU</button>
 			</div>
 		</div>
 	</div>
@@ -81,8 +82,7 @@
 						<td>{{ $launch->category_desc }}</td>
 						<td>{{ $launch->brand_desc }}</td>
 						<td>{{ $launch->cpg_desc }}</td>
-						<td>{{ $launch->users }}
-						</td>
+						<td>{{ $launch->users }}</td>
 					</tr>
 					@endforeach
 					@endif
@@ -171,6 +171,48 @@ $("#remove").click(function(e){
 						    	location.reload();
 							}else{
 								alert("Error updating records!");
+							}
+					        
+					    }
+					});
+				}
+	      }
+	    },
+	    danger: {
+	      	label: "No",
+	      	className: "btn btn-default"
+	    },
+	  }
+	});
+});
+
+$("#delete").click(function(e){
+	bootbox.dialog({
+	  message: "Do you want to remove this sku/s?",
+	  title: "ETOP",
+	  buttons: {
+	    success: {
+	      	label: "Yes",
+	      	className: "btn btn-primary",
+	      	callback: function() {
+	        	var skus = new Array();
+				$("input[name='skus[]']:checked").each(function(i) {
+					skus.push($(this).val());
+				});
+				
+				if(skus.length == 0){
+					alert("No sku selected");
+				}else{
+					$.ajax({
+					    type: 'POST',
+					    url: "{{ URL::action('LaunchSkuController@removeskus') }}",
+					    data: { skus: skus },
+					    success: function(data) {
+						    if(data.success == 1){
+						    	location.reload();
+							}else{
+								alert("Error updating records!");
+								location.reload();
 							}
 					        
 					    }

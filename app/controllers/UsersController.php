@@ -194,7 +194,7 @@ class UsersController extends Controller
 	}
 
 	public function forapproval(){
-		$users = User::forApproval(Input::get('status'),Input::get('group'),Input::get('search'));
+		$users = User::forApproval();
 		return View::make('users.forapproval',compact('users', 'status', 'groups'));
 	}
 
@@ -202,13 +202,18 @@ class UsersController extends Controller
 		// dd(Input::all());
 		$user = User::findOrFail($id);
 		// dd($user);
-		$user->status = 3;
-		$user->update();
+		// $user->status = 3;
+		// $user->update();
+
+		// dd($user);	
+
+		DeniedUser::create(['first_name' => $user->first_name, 'middle_initial' => $user->middle_initial,
+			'last_name' => $user->last_name, 'email' => $user->email, 'username' => $user->username]);
 
 		$data['email'] = $user->email;
 	    $data['first_name'] = $user->first_name;
 
-			// send mail for deny
+		// send mail for deny
 	    Mail::send('emails.signup_deny', $data, function($message) use ($data){
 	      	$message->to($data['email'],$data['first_name'])->subject('Account Application Denied');
 	    });

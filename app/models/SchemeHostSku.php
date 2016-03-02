@@ -12,4 +12,14 @@ class SchemeHostSku extends \Eloquent {
 
 		return $hosts;
 	}
+
+	public static function alreadyUsed($sap_code){
+		$used = self::where('sap_code',$sap_code)->get();
+		if(count($used)>0){
+			return true;
+		}else{
+			return false;
+		}
+
+	}
 }
