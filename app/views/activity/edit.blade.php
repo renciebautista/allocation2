@@ -456,6 +456,7 @@
 								<thead>
 									<tr>
 										<th>#</th>
+										<th>Scheme ID</th>
 										<th class="text-center">Scheme Name</th>
 										<th class="text-center">Item Code</th>
 										<th class="text-center">Purchase Req't</th>
@@ -480,6 +481,7 @@
 									<?php $i += 1; ?>
 									<tr>
 										<td>{{ $i }}</td>
+										<td>{{ $scheme->id }}</td>
 									  	<td>{{ $scheme->name }}</td>
 									  	<td>{{ $scheme->item_code }}</td>
 									  	<td class="text-right">{{ number_format($scheme->pr,2) }}</td>
