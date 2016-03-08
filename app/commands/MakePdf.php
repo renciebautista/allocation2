@@ -298,6 +298,8 @@ class MakePdf extends Command {
 				$pdf->writeHTML($pis_view , $ln=true, $fill=false, $reset=false, $cell=false, $align='');
 			}
 
+			$required_budget_type = ActivityTypeBudgetRequired::required($activity->activity_type_id);
+
 			if(count($schemes) > 0){
 				$pdf->SetFont('helvetica', '', 6);
 				foreach ($schemes as $scheme) {
@@ -327,6 +329,16 @@ class MakePdf extends Command {
 								$class = 'style="background-color: #fcf8e3;"';
 							}
 
+							$tts = '';
+							$pe = '';
+							if(in_array(1,$required_budget_type)){
+								$tts = '<td style="width:50px;border: 1px solid #000000; text-align:right;">'.number_format($scheme->allocations[$x]->tts_budget,2).'</td>';
+							}
+							
+							if(in_array(2,$required_budget_type)){
+								$pe = '<td style="width:50px;border: 1px solid #000000; text-align:right;">'.number_format($scheme->allocations[$x]->pe_budget,2).'</td>';
+							}
+
 							$body .='<tr '.$class.'>
 									<td style="width:20px;border: 1px solid #000000; text-align:right;">'.$num.'</td>
 									<td style="width:30px;border: 1px solid #000000;">'.$scheme->allocations[$x]->group.'</td>
@@ -336,10 +348,10 @@ class MakePdf extends Command {
 									<td style="width:60px;border: 1px solid #000000;;">'.$scheme->allocations[$x]->channel.'</td>
 									<td style="width:130px;border: 1px solid #000000;">'.$scheme->allocations[$x]->outlet.'</td>
 									<td style="width:50px;border: 1px solid #000000; text-align:right;">'.number_format($scheme->allocations[$x]->in_deals).'</td>
-									<td style="width:50px;border: 1px solid #000000; text-align:right;">'.number_format($scheme->allocations[$x]->in_cases).'</td>
-									<td style="width:50px;border: 1px solid #000000; text-align:right;">'.number_format($scheme->allocations[$x]->tts_budget,2).'</td>
-									<td style="width:50px;border: 1px solid #000000; text-align:right;">'.number_format($scheme->allocations[$x]->pe_budget,2).'</td>
-								</tr>';
+									<td style="width:50px;border: 1px solid #000000; text-align:right;">'.number_format($scheme->allocations[$x]->in_cases).'</td>'.
+									$tts.
+									$pe.
+								'</tr>';
 							$cnt++;
 						}
 						if(!empty($body)){
@@ -349,6 +361,15 @@ class MakePdf extends Command {
 
 							if($scheme->compute == 2){
 								$table .= '<h2>Allocation is not system generated. It is manually computed by the proponent.</h2>';
+							}
+							$tts_header = '';
+							$pe_header = '';
+							if(in_array(1,$required_budget_type)){
+								$tts_header = '<th style="width:50px;border: 1px solid #000000; text-align:center;">TTS BUDGET</th>';
+							}
+							
+							if(in_array(2,$required_budget_type)){
+								$pe_header = '<th style="width:50px;border: 1px solid #000000; text-align:center;">PE BUDGET</th>';
 							}
 
 							$table .= '<table width="100%" style="padding:2px;">
@@ -362,10 +383,10 @@ class MakePdf extends Command {
 										<th style="width:60px;border: 1px solid #000000; text-align:center;">CHANNEL</th>
 										<th style="width:130px;border: 1px solid #000000; text-align:center;">ACCOUNT NAME</th> 
 										<th style="width:50px;border: 1px solid #000000; text-align:center;">IN DEALS</th>
-										<th style="width:50px;border: 1px solid #000000; text-align:center;">IN CASES</th>
-										<th style="width:50px;border: 1px solid #000000; text-align:center;">TTS BUDGET</th>
-										<th style="width:50px;border: 1px solid #000000; text-align:center;">PE BUDGET</th>
-									</tr>
+										<th style="width:50px;border: 1px solid #000000; text-align:center;">IN CASES</th>'.
+										$tts_header.
+										$pe_header.
+									'</tr>
 								</thead>
 							  	<tbody>'.
 							  		$body. 

@@ -97,6 +97,8 @@ class WordDoc {
 			$pis = Excel::selectSheets('Output')->load(storage_path().$path."/".$pispermit->hash_name)->get();
 		}
 
+		$required_budget_type = ActivityTypeBudgetRequired::required($activity->activity_type_id);
+
 		// New Word Document
 		$phpWord = new \PhpOffice\PhpWord\PhpWord();
 
@@ -741,8 +743,17 @@ class WordDoc {
 					$table->addCell(2500)->addText('ACCOUNT NAME',$scheme_style, $headStyle);
 					$table->addCell(1000)->addText('IN DEALS',$scheme_style, $headStyle);
 					$table->addCell(1000)->addText('IN CASES',$scheme_style, $headStyle);
-					$table->addCell(1000)->addText('TTS BUDGET',$scheme_style, $headStyle);
-					$table->addCell(1000)->addText('PE BUDGET',$scheme_style, $headStyle);
+
+					if(in_array(1,$required_budget_type)){
+						$table->addCell(1000)->addText('TTS BUDGET',$scheme_style, $headStyle);
+					}
+					
+					if(in_array(2,$required_budget_type)){
+						$table->addCell(1000)->addText('PE BUDGET',$scheme_style, $headStyle);
+					}
+
+					
+					
 
 					for ($x=$cnt; $x <= $last_count; $x++) { 
 						if($cnt == $count){
@@ -768,8 +779,15 @@ class WordDoc {
 						$table->addCell(2500,$rowstyle)->addText(htmlspecialchars($scheme->allocations[$x]->outlet),$scheme_style,array('spaceAfter' => 0));
 						$table->addCell(1000,$rowstyle)->addText(number_format($scheme->allocations[$x]->in_deals),$scheme_style, array('spaceAfter' => 0,'align' => 'right'));
 						$table->addCell(1000,$rowstyle)->addText(number_format($scheme->allocations[$x]->in_cases),$scheme_style, array('spaceAfter' => 0,'align' => 'right'));
-						$table->addCell(1000,$rowstyle)->addText(number_format($scheme->allocations[$x]->tts_budget,2),$scheme_style, array('spaceAfter' => 0,'align' => 'right'));
-						$table->addCell(1000,$rowstyle)->addText(number_format($scheme->allocations[$x]->pe_budget,2),$scheme_style, array('spaceAfter' => 0,'align' => 'right'));
+
+						if(in_array(1,$required_budget_type)){
+							$table->addCell(1000,$rowstyle)->addText(number_format($scheme->allocations[$x]->tts_budget,2),$scheme_style, array('spaceAfter' => 0,'align' => 'right'));
+						}
+						
+						if(in_array(2,$required_budget_type)){
+							$table->addCell(1000,$rowstyle)->addText(number_format($scheme->allocations[$x]->pe_budget,2),$scheme_style, array('spaceAfter' => 0,'align' => 'right'));
+						}
+
 						$cnt++;
 					}
 					if($_ap < ($loops * count($schemes)) ){

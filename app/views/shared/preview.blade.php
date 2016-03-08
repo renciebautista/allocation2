@@ -743,6 +743,16 @@
 						if((!empty($scheme->allocations[$x]->customer_id)) && (!empty($scheme->allocations[$x]->shipto_id))){
 							$class = 'style="background-color: #fcf8e3;"';
 						}
+						$tts = '';
+						$pe = '';
+						if(in_array(1,$required_budget_type)){
+							$tts = '<td style="text-align:right;">'.number_format($scheme->allocations[$x]->tts_budget,2).'</td>';
+						}
+						
+						if(in_array(2,$required_budget_type)){
+							$pe = '<td style="text-align:right;">'.number_format($scheme->allocations[$x]->pe_budget,2).'</td>';
+						}
+							
 						$body .='<tr '.$class.'>
 							<td style="text-align:right;">'.$num.'</td>
 							<td style="width:40px;border: 1px solid #000000">'.$scheme->allocations[$x]->group.'</td>
@@ -752,10 +762,12 @@
 							<td style="width:60px;border: 1px solid #000000">'.$scheme->allocations[$x]->channel.'</td>
 							<td style="width:200px;border: 1px solid #000000">'.$scheme->allocations[$x]->outlet.'</td>
 							<td style="text-align:right;">'.number_format($scheme->allocations[$x]->in_deals).'</td>
-							<td style="text-align:right;">'.number_format($scheme->allocations[$x]->in_cases).'</td>
-							<td style="text-align:right;">'.number_format($scheme->allocations[$x]->tts_budget,2).'</td>
-							<td style="text-align:right;">'.number_format($scheme->allocations[$x]->pe_budget,2).'</td>
-						</tr>';
+							<td style="text-align:right;">'.number_format($scheme->allocations[$x]->in_cases).'</td>'.
+							$tts.
+							$pe.
+						'</tr>';
+
+
 						$cnt++;
 						?>
 					@endfor
@@ -779,8 +791,13 @@
 								<th style="width:200px;border: 1px solid #000000">ACCOUNT NAME</th> 
 								<th>ALLOCATION IN DEALS</th>
 								<th>ALLOCATION IN CASES</th>
+
+								@if(in_array(1,$required_budget_type))
 								<th>TTS BUDGET</th>
+								@endif
+								@if(in_array(2,$required_budget_type))
 								<th>PE BUDGET</th>
+								@endif
 							</tr>
 						</thead>
 					  	<tbody>

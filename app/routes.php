@@ -406,6 +406,8 @@ Route::group(array('before' => 'auth'), function()
 
 	Route::resource('faq', 'FaqController');
 
+	Route::get('salesdatareport', ['as' => 'salesdatareport.index', 'uses' => 'SalesDataReportController@index']);
+
 
 	Route::get('images/{cycle_id}/{type_id}/{activity_id}/{name}', function($cycle_id = null,$type_id = null,$activity_id = null,$name = null)
 	{

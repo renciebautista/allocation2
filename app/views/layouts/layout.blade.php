@@ -155,6 +155,7 @@
 								@endif
 								@if(Auth::user()->inRoles(['ADMINISTRATOR']))
 								<li>{{ HTML::linkAction('ReportController@activities' , 'All Activities') }}</li>
+								<li>{{ HTML::linkAction('SalesDataReportController@index' , 'Sales Data Report') }}</li>
 								@endif
 
 								<li>{{ HTML::linkAction('AllocationReportController@index' , 'Allocation Report') }}</li>
