@@ -438,6 +438,7 @@
 										<thead>
 											<tr>
 												<th>#</th>
+												<th>Scheme ID</th>
 												<th class="text-center">Scheme Name</th>
 												<th class="text-center">Item Code</th>
 												<th class="text-center" style="width:80px;">Purchase Req't</th>
@@ -464,6 +465,7 @@
 											
 											<tr>
 												<td>{{ $i }}</td>
+												<td>{{ $scheme->id }}</td>
 											  	<td>{{ $scheme->name }}</td>
 											  	<td>{{ $scheme->item_code }}</td>
 											  	<td class="text-right"></td>
