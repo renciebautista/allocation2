@@ -173,6 +173,9 @@ class ExportSales extends Command {
 		$mt_sales = DB::table('mt_primary_sales')->get();
 		foreach($mt_sales as $key => $value)
 		{
+			if(isset($value->gsv)){
+				$value->gsv = (double) $value->gsv;
+			}
 			$mt_sales[$key] = (array) $value;
 		}
 		$export_data = $mt_sales;
@@ -184,6 +187,9 @@ class ExportSales extends Command {
 		$dt_sales = DB::table('dt_secondary_sales')->get();
 		foreach($dt_sales as $key => $value)
 		{
+			if(isset($value->gsv)){
+				$value->gsv = (double) $value->gsv;
+			}
 			$dt_sales[$key] = (array) $value;
 		}
 		$export_data = $dt_sales;
@@ -195,6 +201,9 @@ class ExportSales extends Command {
 		$shipto_sales = DB::table('ship_to_sales')->get();
 		foreach($shipto_sales as $key => $value)
 		{
+			if(isset($value->gsv)){
+				$value->gsv = (double) $value->gsv;
+			}
 			$shipto_sales[$key] = (array) $value;
 		}
 		$export_data = $shipto_sales;
@@ -206,6 +215,9 @@ class ExportSales extends Command {
 		$outlet_sales = DB::table('outlet_sales')->get();
 		foreach($outlet_sales as $key => $value)
 		{
+			if(isset($value->gsv)){
+				$value->gsv = (double) $value->gsv;
+			}
 			$outlet_sales[$key] = (array) $value;
 		}
 		$export_data = $outlet_sales;
