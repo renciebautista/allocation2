@@ -23,6 +23,8 @@
 
 		{{ HTML::style('assets/plugins/submenu/css/bootstrap-submenu.min.css') }}
 
+		{{ HTML::style('assets/plugins/offline/offline-theme-default.css') }}
+		{{ HTML::style('assets/plugins/offline/offline-language-english.css') }}
 		{{ HTML::style('assets/css/styles.css') }}
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
@@ -288,6 +290,8 @@
 	{{ HTML::script('assets/plugins/submenu/js/bootstrap-submenu.min.js') }}
 
 	{{ HTML::script('assets/plugins/mindup/mindmup-editabletable.js') }}
+
+	{{ HTML::script('assets/plugins/offline/offline.min.js') }}
 	
 	{{ HTML::script('assets/js/function.js') }}
 
@@ -310,6 +314,23 @@
 			@section('page-script')
 
 			@show
+
+			@if (Auth::user())
+		    $(function() {
+		      setInterval(function checkSession() {
+		        $.get('/check-session', function(data) {
+		          // if session was expired
+		          if (data.guest) {
+		            // redirect to login page
+		            // location.assign('/auth/login');
+
+		            // or, may be better, just reload page
+		            location.reload();
+		          }
+		        });
+		      }, 60000); // every minute
+		    });
+		@endif
 
 
 		});

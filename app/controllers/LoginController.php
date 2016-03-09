@@ -159,4 +159,8 @@ class LoginController extends \BaseController {
             ->with('class', 'alert alert-danger');
         }
     }
+
+    public function checkSession(){
+      return Response::json(['guest' => Auth::guest()]);
+    }
 }
