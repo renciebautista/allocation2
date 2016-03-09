@@ -96,6 +96,19 @@ Route::filter('csrf', function()
 // Only owners will have access to routes within admin/advanced
 Entrust::routeNeedsRole( 'group*', 'ADMINISTRATOR',Redirect::to('/') );
 Entrust::routeNeedsRole( 'users', 'ADMINISTRATOR',Redirect::to('/') );
+Entrust::routeNeedsRole( 'salesdatareport*', 'ADMINISTRATOR',Redirect::to('/') );
+Entrust::routeNeedsRole( 'customermaster*', 'ADMINISTRATOR',Redirect::to('/') );
+Entrust::routeNeedsRole( 'sobfilter*', 'ADMINISTRATOR',Redirect::to('/') );
+Entrust::routeNeedsRole( 'shipto*', 'ADMINISTRATOR',Redirect::to('/') );
+Entrust::routeNeedsRole( 'customer*', 'ADMINISTRATOR',Redirect::to('/') );
+Entrust::routeNeedsRole( 'brand*', 'ADMINISTRATOR',Redirect::to('/') );
+Entrust::routeNeedsRole( 'topsku*', 'ADMINISTRATOR',Redirect::to('/') );
+Entrust::routeNeedsRole( 'pricelist*', 'ADMINISTRATOR',Redirect::to('/') );
+Entrust::routeNeedsRole( 'area*', 'ADMINISTRATOR',Redirect::to('/') );
+Entrust::routeNeedsRole( 'account*', 'ADMINISTRATOR',Redirect::to('/') );
+Entrust::routeNeedsRole( 'motherchildsku*', 'ADMINISTRATOR',Redirect::to('/') );
+Entrust::routeNeedsRole( 'channel*', 'ADMINISTRATOR',Redirect::to('/') );
+Entrust::routeNeedsRole( 'subchannel*', 'ADMINISTRATOR',Redirect::to('/') );
 
 // Entrust::routeNeedsRole( 'submittedactivity', ['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR'],Redirect::to('/activity') );
 // Entrust::routeNeedsRole( 'activity*', 'PROPONENT',Redirect::to('/') );

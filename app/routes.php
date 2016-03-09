@@ -161,7 +161,7 @@ Route::get('ar/{token}','AllocationReportController@download');
 Route::group(array('before' => 'auth'), function()
 {	
 	// Route::pattern('id', '[0-9]+');
-
+	// admin only
 	Route::get('launchskus/upload','LaunchSkuController@upload');
 	Route::post('launchskus/upload','LaunchSkuController@doupload');
 	Route::post('launchskus/assignaccess','LaunchSkuController@assignaccess');
@@ -169,6 +169,72 @@ Route::group(array('before' => 'auth'), function()
 	Route::post('launchskus/removeskus','LaunchSkuController@removeskus');
 	Route::get('launchskus/export','LaunchSkuController@export');
 	Route::resource('launchskus','LaunchSkuController');
+
+	Route::resource('group', 'GroupController');
+
+	Route::get('salesdatareport', ['as' => 'salesdatareport.index', 'uses' => 'SalesDataReportController@index']);
+
+	Route::get('customermaster', ['as' => 'customermaster.index', 'uses' => 'CustomerMasterController@index']);
+	Route::get('customermaster/export', ['as' => 'customermaster.export', 'uses' => 'CustomerMasterController@export']);
+	Route::get('customermaster/{id}/download', ['as' => 'customermaster.download', 'uses' => 'CustomerMasterController@download']);
+
+	Route::get('sobfilter/export', 'SobfilterController@export');
+	Route::get('sobfilter/import', 'SobfilterController@import');
+	Route::post('sobfilter/upload', 'SobfilterController@upload');
+	Route::resource('sobfilter', 'SobfilterController');
+
+	Route::get('shipto/export', 'ShiptoController@export');
+	Route::get('shipto/import', 'ShiptoController@import');
+	Route::post('shipto/upload', 'ShiptoController@upload');
+	Route::resource('shipto', 'ShiptoController');
+
+	Route::get('customer/export', 'CustomerController@export');
+	Route::get('customer/import', 'CustomerController@import');
+	Route::post('customer/upload', 'CustomerController@upload');
+	Route::resource('customer', 'CustomerController');
+
+	Route::get('brand/export', 'BrandController@export');
+	Route::get('brand/import', 'BrandController@import');
+	Route::post('brand/upload', 'BrandController@upload');
+	Route::resource('brand', 'BrandController');
+
+	Route::get('topsku/export', 'TopskuController@export');
+	Route::get('topsku/import', 'TopskuController@import');
+	Route::post('topsku/upload', 'TopskuController@upload');
+	Route::resource('topsku', 'TopskuController');
+
+	Route::get('pricelist/export', 'PricelistController@export');
+	Route::get('pricelist/import', 'PricelistController@import');
+	Route::post('pricelist/upload', 'PricelistController@upload');
+	Route::resource('pricelist', 'PricelistController');
+
+	Route::get('area/export', 'AreaController@export');
+	Route::get('area/import', 'AreaController@import');
+	Route::post('area/upload', 'AreaController@upload');
+	Route::resource('area', 'AreaController');
+
+	Route::get('account/export', 'AccountController@export');
+	Route::get('account/import', 'AccountController@import');
+	Route::post('account/upload', 'AccountController@upload');
+	Route::resource('account', 'AccountController');
+
+	Route::get('motherchildsku/export', 'MotherchildskuController@export');
+	Route::get('motherchildsku/import', 'MotherchildskuController@import');
+	Route::post('motherchildsku/upload', 'MotherchildskuController@upload');
+	Route::resource('motherchildsku', 'MotherchildskuController');
+
+	Route::get('channel/export', 'ChannelController@export');
+	Route::get('channel/import', 'ChannelController@import');
+	Route::post('channel/upload', 'ChannelController@upload');
+	Route::resource('channel', 'ChannelController');
+
+	Route::get('subchannel/export', 'SubchannelController@export');
+	Route::get('subchannel/import', 'SubchannelController@import');
+	Route::post('subchannel/upload', 'SubchannelController@upload');
+	Route::resource('subchannel', 'SubchannelController');
+
+
+
 
 	Route::get('help', 'HelpController@index');
 
@@ -267,7 +333,6 @@ Route::group(array('before' => 'auth'), function()
 
 	Route::get('downloads/{id}/released', 'DownloadsController@released');
 
-	Route::resource('group', 'GroupController');
 
 	Route::get('dashboard', 'DashboardController@index');
 	Route::get('dashboard/filters', 'DashboardController@filters');
@@ -348,67 +413,10 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('sob/booking/{week}/{year}/{brand_code}/{type}', ['as' => 'sob.showbooking', 'uses' => 'SobController@showbooking']);
 	Route::get('sob/downloadbooking', ['as' => 'sob.downloadbooking', 'uses' => 'SobController@downloadbooking']);
 	
-	Route::get('sobfilter/export', 'SobfilterController@export');
-	Route::get('sobfilter/import', 'SobfilterController@import');
-	Route::post('sobfilter/upload', 'SobfilterController@upload');
-	Route::resource('sobfilter', 'SobfilterController');
-
-	Route::get('shipto/export', 'ShiptoController@export');
-	Route::get('shipto/import', 'ShiptoController@import');
-	Route::post('shipto/upload', 'ShiptoController@upload');
-	Route::resource('shipto', 'ShiptoController');
-
-	Route::get('customer/export', 'CustomerController@export');
-	Route::get('customer/import', 'CustomerController@import');
-	Route::post('customer/upload', 'CustomerController@upload');
-	Route::resource('customer', 'CustomerController');
-
-	Route::get('brand/export', 'BrandController@export');
-	Route::get('brand/import', 'BrandController@import');
-	Route::post('brand/upload', 'BrandController@upload');
-	Route::resource('brand', 'BrandController');
-
-	Route::get('topsku/export', 'TopskuController@export');
-	Route::get('topsku/import', 'TopskuController@import');
-	Route::post('topsku/upload', 'TopskuController@upload');
-	Route::resource('topsku', 'TopskuController');
-
-	Route::get('pricelist/export', 'PricelistController@export');
-	Route::get('pricelist/import', 'PricelistController@import');
-	Route::post('pricelist/upload', 'PricelistController@upload');
-	Route::resource('pricelist', 'PricelistController');
-
-	Route::get('area/export', 'AreaController@export');
-	Route::get('area/import', 'AreaController@import');
-	Route::post('area/upload', 'AreaController@upload');
-	Route::resource('area', 'AreaController');
-
-	Route::get('account/export', 'AccountController@export');
-	Route::get('account/import', 'AccountController@import');
-	Route::post('account/upload', 'AccountController@upload');
-	Route::resource('account', 'AccountController');
-
-	Route::get('motherchildsku/export', 'MotherchildskuController@export');
-	Route::get('motherchildsku/import', 'MotherchildskuController@import');
-	Route::post('motherchildsku/upload', 'MotherchildskuController@upload');
-	Route::resource('motherchildsku', 'MotherchildskuController');
-
-	Route::get('channel/export', 'ChannelController@export');
-	Route::get('channel/import', 'ChannelController@import');
-	Route::post('channel/upload', 'ChannelController@upload');
-	Route::resource('channel', 'ChannelController');
-
-	Route::get('subchannel/export', 'SubchannelController@export');
-	Route::get('subchannel/import', 'SubchannelController@import');
-	Route::post('subchannel/upload', 'SubchannelController@upload');
-	Route::resource('subchannel', 'SubchannelController');
-
 
 	Route::resource('faq', 'FaqController');
 
-	Route::get('salesdatareport', ['as' => 'salesdatareport.index', 'uses' => 'SalesDataReportController@index']);
-
-
+	
 	Route::get('images/{cycle_id}/{type_id}/{activity_id}/{name}', function($cycle_id = null,$type_id = null,$activity_id = null,$name = null)
 	{
 		$path = storage_path().'/uploads/'.$cycle_id.'/'. $type_id.'/'. $activity_id.'/'. $name;
