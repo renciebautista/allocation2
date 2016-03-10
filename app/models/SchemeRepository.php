@@ -164,18 +164,23 @@ class SchemeRepository extends \Eloquent {
 			}
 
 			$allocations = Allocation::schemeAllocations($scheme->id);
-			$last_area_id = 0;
-			$last_shipto_id = 0;
+
+			$last_customer_id = null;
+			$last_shipto_id = null;
+
 			foreach ($allocations as $allocation) {
 				$scheme_alloc = new SchemeAllocation;
 
 				if((!empty($allocation->customer_id)) && (empty($allocation->shipto_id))){
-					$scheme_alloc->customer_id = $last_area_id;
+					$scheme_alloc->customer_id = $last_customer_id;
 				}
 
 				if((!empty($allocation->customer_id)) && (!empty($allocation->shipto_id))){
-					$scheme_alloc->customer_id = $last_area_id;
-					$scheme_alloc->shipto_id = $last_shipto_id;
+					$scheme_alloc->customer_id = $last_customer_id;
+					if( $last_shipto_id > 0){
+						$scheme_alloc->shipto_id = $last_shipto_id;
+					}
+					
 				}	
 				
 				$scheme_alloc->scheme_id = $new_scheme->id;
@@ -223,20 +228,21 @@ class SchemeRepository extends \Eloquent {
 				$scheme_alloc->save();
 
 				if((empty($allocation->customer_id)) && (empty($allocation->shipto_id))){
-					$last_area_id = $scheme_alloc->id;
+					$last_customer_id = $scheme_alloc->id;
 				}
 
-				if((!empty($allocation->customer_id)) && (!empty($allocation->shipto_id))){
+				if((!empty($allocation->customer_id)) && (empty($allocation->shipto_id))){
 					$last_shipto_id = $scheme_alloc->id;
 				}
 			}
 			$data['scheme_id'] = $new_scheme->id;
 			DB::commit();
+			$data['status'] = 1;
 			$data['class'] = 'alert-success';
 			$data['message'] = 'Scheme  successfully duplicated.';
 		} catch (\Exception $e) {
 			DB::rollback();
-			// echo $e;
+			$data['status'] = 0;
 		    $data['class'] = 'alert-danger';
 			$data['message'] = 'Cannot duplicate activity.';
 				// something went wrong

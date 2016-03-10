@@ -23,9 +23,11 @@ class CustomerMasterController extends \BaseController {
 	public function export()
 	{
 		Artisan::call('export:sales');
-		return Redirect::to(URL::action('CustomerMasterController@index'))
+
+		return Redirect::route('customermaster.index')
 				->with('class', 'alert-success')
-				->with('message', 'Export successfuly created');
+			->with('message', 'Export successfuly created');
+
 	}
 
 

@@ -11,17 +11,15 @@
 </div>
 
 @include('partials.notification')
+
 <div class="row">
-  <div class="col-lg-6">
-    <div class="form-group">
-      <div class="row">
-        <div class="col-lg-12">
-          <a href="{{ URL::action('CustomerMasterController@export') }}" class="btn btn-primary">Export Customer Master</a>
-        </div>
-      </div>
-    </div>
+  <div class="col-lg-12">
+    {{ Form::open(array('route' => 'customermaster.export','class' => 'form-inline', 'id' => 'myform')) }}
+         <button type="submit" class="btn btn-primary disable-button"> Export Customer Masterfiles</button>
+    {{ Form::close() }}
   </div>
 </div>
+
 <br>
 <div class="row">
   <div class="col-lg-12">
@@ -57,5 +55,10 @@
     </div>
   </div>
 </div>
+
+@stop
+@section('scripts')
+
+$("#myform").disableButton();
 
 @stop

@@ -331,7 +331,7 @@
 
 			</div>
 		</div>
-
+		@if($count > 0)
 		<div class="panel panel-warning">
 			<div class="panel-heading">
 				<h3 class="panel-title">Final Allocation</h3>
@@ -409,6 +409,8 @@
 				</div>
 			</div>
 		</div>
+		@endif
+
 		@if($count > 0)
 		<div class="row">
 			<div class="col-lg-12">

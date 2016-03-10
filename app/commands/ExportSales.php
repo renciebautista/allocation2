@@ -179,6 +179,8 @@ class ExportSales extends Command {
 			$mt_sales[$key] = (array) $value;
 		}
 		$export_data = $mt_sales;
+		$header = array('record_id', 'area_code', 'customer_code', 'child_sku_code', 'gsv');
+		$writer->addRow($header);
 		$writer->addRows($export_data); // add multiple rows at a time
 
 		$newSheet = $writer->addNewSheetAndMakeItCurrent();
@@ -193,6 +195,8 @@ class ExportSales extends Command {
 			$dt_sales[$key] = (array) $value;
 		}
 		$export_data = $dt_sales;
+		$header = array('record_id', 'area_code', 'customer_code', 'child_sku_code', 'coc_03_code', 'gsv');
+		$writer->addRow($header);
 		$writer->addRows($export_data); // add multiple rows at a time
 
 		$newSheet = $writer->addNewSheetAndMakeItCurrent();
@@ -207,6 +211,8 @@ class ExportSales extends Command {
 			$shipto_sales[$key] = (array) $value;
 		}
 		$export_data = $shipto_sales;
+		$header = array('record_id', 'ship_to_code', 'child_sku_code','gsv');
+		$writer->addRow($header);
 		$writer->addRows($export_data); // add multiple rows at a time
 
 		$newSheet = $writer->addNewSheetAndMakeItCurrent();
@@ -221,6 +227,8 @@ class ExportSales extends Command {
 			$outlet_sales[$key] = (array) $value;
 		}
 		$export_data = $outlet_sales;
+		$header = array('record_id', 'area_code', 'customer_code', 'account_name', 'outlet_code', 'child_sku_code', 'coc_03_code', 'gsv');
+		$writer->addRow($header);
 		$writer->addRows($export_data); // add multiple rows at a time
 
 		$file = CustomerMasterfile::where('filename',$filename)->first();

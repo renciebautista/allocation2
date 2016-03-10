@@ -98,7 +98,8 @@ class UpdateScheme extends Command {
 			
 
 			SchemeAllocRepository::updateCosting($scheme);
-
+			SchemeAllocRepository::fixUntallyAllocation($scheme);
+			
 			$timeSecond = strtotime(date('Y-m-d H:i:s'));
 			$differenceInSeconds = $timeSecond - $timeFirst;
 			$this->line( 'Time used ' . $differenceInSeconds . " sec");

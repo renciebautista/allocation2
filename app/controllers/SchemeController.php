@@ -200,6 +200,7 @@ class SchemeController extends \BaseController {
 					$scheme2->update();
 				}
 				
+				SchemeAllocRepository::fixUntallyAllocation($scheme);
 
 				return $scheme->id;
 			});
@@ -669,6 +670,7 @@ class SchemeController extends \BaseController {
 				}
 
 				SchemeAllocRepository::updateCosting($scheme);
+				SchemeAllocRepository::fixUntallyAllocation($scheme);
 			});
 
 			if ($isError) {
@@ -963,6 +965,11 @@ class SchemeController extends \BaseController {
 		$activity = Activity::findOrFail($scheme->activity_id);
 		if((Activity::myActivity($activity)) || (ActivityPlanner::myActivity($activity->id))){
 			$data = SchemeRepository::duplicate($id);
+			if($data['status'] == 1){
+				$scheme2 = Scheme::findOrFail($data['scheme_id']);
+				SchemeAllocRepository::fixUntallyAllocation($scheme2);
+			}
+			
 			return Redirect::to(URL::action('ActivityController@edit', array('id' => $scheme->activity_id)) . "#schemes")
 					->with('class', $data['class'] )
 					->with('message', $data['message']);		
@@ -975,6 +982,10 @@ class SchemeController extends \BaseController {
 
 	public function duplicatescheme($id){
 		$data = SchemeRepository::duplicate($id);
+		if($data['status'] == 1){
+			$scheme2 = Scheme::findOrFail($data['scheme_id']);
+			SchemeAllocRepository::fixUntallyAllocation($scheme2);
+		}
 		return Redirect::to(URL::action('SchemeController@edit', array('id' => $data['scheme_id'])))
 				->with('class', $data['class'] )
 				->with('message', $data['message']);

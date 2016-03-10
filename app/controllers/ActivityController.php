@@ -1839,7 +1839,7 @@ class ActivityController extends BaseController {
 		$activity = Activity::findOrFail($id);
 		$scheme_allcations = SchemeAllocation::getExportAllocations($id)->toArray();
 
-		$header = ['RECORD ID', 
+		$header = ['SCHEME ID', 
 			'SCHEME','GROUP', 'AREA', 'SOLD TO CODE', 'SOLD TO', 'SHIP TO CODE', 'SHIP TO',
 			'CHANNEL', 'OUTLET', 
 			'SOLD TO GSV', 'FORCED SOLD TO GSV', 'SOLD TO GSV PERCENTAGE', 'FORCED SOLD TO GSV PERCENTAGE', 'SOLD TO ALLOCATION', 'FORCED SOLD TO ALLOCATION',
