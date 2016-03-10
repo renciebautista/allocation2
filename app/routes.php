@@ -305,6 +305,8 @@ Route::group(array('before' => 'auth'), function()
 	Route::post('sob/booking', ['as' => 'sob.filterbooking', 'uses' => 'SobController@filterbooking']);
 	Route::get('sob/booking/{week}/{year}/{brand_code}/{type}', ['as' => 'sob.showbooking', 'uses' => 'SobController@showbooking']);
 	Route::get('sob/downloadbooking', ['as' => 'sob.downloadbooking', 'uses' => 'SobController@downloadbooking']);
+
+	Route::get('activitytype/{id}/network/totalduration', 'NetworkController@totalduration');
 	
 
 	Route::resource('faq', 'FaqController');
@@ -450,7 +452,6 @@ Route::group(array('before' => 'auth'), function()
 		Route::get('activitytype/{id}/network', 'NetworkController@index');
 		Route::get('activitytype/{id}/network/list', 'NetworkController@show');
 		Route::get('activitytype/{id}/network/dependon', 'NetworkController@dependOn');
-		Route::get('activitytype/{id}/network/totalduration', 'NetworkController@totalduration');
 		Route::post('activitytype/{id}/network/create', 'NetworkController@store');
 		Route::post('network/delete', 'NetworkController@destroy');
 		Route::get('network/edit', 'NetworkController@edit');

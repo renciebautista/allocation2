@@ -1911,24 +1911,10 @@ class ActivityController extends BaseController {
 				$value['pe_budget'] = (double) $value['pe_budget'];
 			}
 			$writer->addRow($value); // add multiple rows at a time
-
-			// $scheme_allcations[$key] = (array) $value;
 		} 
-		// $export_data = $scheme_allcations;
-		// dd($export_data);
-		// echo '<pre>';
-		// print_r($export_data);
-		// echo '</pre>';
-		// dd($export_data);
-		// $writer->addRows($scheme_allcations); // add multiple rows at a time
 		$writer->close();
 
-		// Excel::create($activity->circular_name.' Allocation Summary', function($excel) use($scheme_allcations)
-		// {
-		// 	$excel->sheet('data', function($sheet) use($scheme_allcations) {
-		// 		$sheet->fromModel($scheme_allcations);
-		// 	});
-		// }) -> download('xls');
+
 	}
 
 	public function pistemplate(){
