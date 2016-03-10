@@ -2334,7 +2334,9 @@ class ActivityController extends BaseController {
 				}
 
 				// add schemes
-				$schemes = Scheme::where('activity_id',$activity->id)->get();
+				$schemes = Scheme::where('activity_id',$activity->id)
+					->orderBy('id')
+					->get();
 				if(!empty($schemes)){
 					$activity_schemes = array();
 					foreach ($schemes as $scheme){
