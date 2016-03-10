@@ -112,17 +112,14 @@ class SchemeController extends \BaseController {
 					$per = $scheme->total_deals * $scheme->other_cost;
 					$pe_r = $non+$per;
 				}else{
-					// $scheme->tts_r =  str_replace(",", "", Input::get('tts_r'));
-					$tts_r = $scheme->quantity * $scheme->deals * $srp_p;
-					
-					// $scheme->pe_r = str_replace(",", "", Input::get('pe_r'));
+					// $tts_r = $scheme->quantity * $scheme->deals * $srp_p;
+					$tts_r = $scheme->total_deals * $srp_p;
 					$pe_r = $scheme->total_deals * $other_cost;
 					
 				}
 
 				$scheme->tts_r =  $tts_r;
 				$scheme->pe_r = $pe_r;
-				// $scheme->total_cost = str_replace(",", "", Input::get('total_cost'));
 				$scheme->total_cost = $tts_r + $pe_r;
 
 				$scheme->final_total_deals = $scheme->total_deal;
@@ -184,7 +181,7 @@ class SchemeController extends \BaseController {
 						$scheme2->final_pe_r = $non+$per;
 					}else{
 						$scheme2->final_tts_r = $final_tts;
-						$scheme2->final_pe_r = $per;
+						$scheme2->final_pe_r = $scheme->pe_r;
 					}
 					
 					
@@ -481,10 +478,8 @@ class SchemeController extends \BaseController {
 					$per = $scheme->total_deals * $scheme->other_cost;
 					$pe_r = $non+$per;
 				}else{
-					// $scheme->tts_r =  str_replace(",", "", Input::get('tts_r'));
-					$tts_r = $scheme->quantity * $scheme->deals * $srp_p;
-					
-					// $scheme->pe_r = str_replace(",", "", Input::get('pe_r'));
+					// $tts_r = $scheme->quantity * $scheme->deals * $srp_p;
+					$tts_r = $scheme->total_deals * $srp_p;
 					$pe_r = $scheme->total_deals * $other_cost;
 					
 				}
