@@ -70,7 +70,8 @@ class SchemesFieldsTableSeeder extends Seeder {
 			('allocations.pe_budget + allocations.pe_budget as total_cost','TOTAL COST'),
 			('tts_budget.tts_io','TTS IO'),
 			('pe_budget.pe_io','PE IO'),
-			('activities.allow_force as forced_alloc','ALLOW FORCE ALLOC');");
+			('activities.allow_force as forced_alloc','ALLOW FORCE ALLOC'),
+			('schemes.item_desc','ITEM DESCRIPTION');");
 
 		DB::table('alloc_report_per_groups')->truncate();
 
@@ -85,7 +86,7 @@ class SchemesFieldsTableSeeder extends Seeder {
 		// insert proponent
 		$proponent_filter = array();
 		for ($i=1; $i <= $fields ; $i++) { 
-			if(($i != 36) && ($i != 40) &&
+			if( ($i != 40) &&
 				($i != 41) &&
 				($i != 42) &&
 				($i != 43) &&
@@ -106,7 +107,7 @@ class SchemesFieldsTableSeeder extends Seeder {
 		// insert pmog
 		$pmog_filter = array();
 		for ($i=1; $i <= $fields ; $i++) { 
-			if(($i != 36) && ($i != 40) &&
+			if( ($i != 40) &&
 				($i != 41) &&
 				($i != 42) &&
 				($i != 43) &&
@@ -129,8 +130,7 @@ class SchemesFieldsTableSeeder extends Seeder {
 		for ($i=1; $i <= $fields ; $i++) { 
 			if(($i != 9) && ($i != 16) && ($i != 17) &&
 				($i != 30) && ($i != 31) && ($i != 32) &&
-				($i != 36) && ($i != 40) && ($i != 41) &&
-				($i != 42) && ($i != 43) && ($i != 44) &&
+				($i != 40) && ($i != 41) && ($i != 42) && ($i != 43) && ($i != 44) &&
 				($i != 45) && ($i != 46) && ($i != 47) &&
 				($i != 48) && ($i != 50) && ($i != 51) &&
 				($i != 52) &&
@@ -145,8 +145,7 @@ class SchemesFieldsTableSeeder extends Seeder {
 		for ($i=1; $i <= $fields ; $i++) { 
 			if(($i != 9) && ($i != 16) && ($i != 17) &&
 				($i != 30) && ($i != 31) && ($i != 32) &&
-				($i != 36) && ($i != 40) && ($i != 41) &&
-				($i != 42) && ($i != 43) && ($i != 44) &&
+				($i != 40) && ($i != 41) && ($i != 42) && ($i != 43) && ($i != 44) &&
 				($i != 45) && ($i != 46) && ($i != 47) &&
 				($i != 48) && ($i != 50) && ($i != 51) &&
 				($i != 52) &&
@@ -161,8 +160,7 @@ class SchemesFieldsTableSeeder extends Seeder {
 		for ($i=1; $i <= $fields ; $i++) { 
 			if(($i != 9) && ($i != 16) && ($i != 17) &&
 				($i != 30) && ($i != 31) && ($i != 32) &&
-				($i != 36) && ($i != 40) && ($i != 41) &&
-				($i != 42) && ($i != 43) && ($i != 44) &&
+				($i != 40) && ($i != 41) && ($i != 42) && ($i != 43) && ($i != 44) &&
 				($i != 45) && ($i != 46) && ($i != 47) &&
 				($i != 48) && ($i != 50) && ($i != 51) &&
 				($i != 52) &&
@@ -177,8 +175,7 @@ class SchemesFieldsTableSeeder extends Seeder {
 		for ($i=1; $i <= $fields ; $i++) { 
 			if(($i != 9) && ($i != 16) && ($i != 17) &&
 				($i != 30) && ($i != 31) && ($i != 32) &&
-				($i != 36) && ($i != 40) && ($i != 41) &&
-				($i != 42) && ($i != 43) && ($i != 44) &&
+				($i != 40) && ($i != 41) && ($i != 42) && ($i != 43) && ($i != 44) &&
 				($i != 45) && ($i != 46) && ($i != 47) &&
 				($i != 48) && ($i != 50) && ($i != 51) &&
 				($i != 52) &&
