@@ -181,6 +181,7 @@ class SchemesFieldsTableSeeder extends Seeder {
 				&& ($i != 53)
 				&& ($i != 54)
 				&& ($i != 55)
+				&& ($i != 63)
 				){
 				$field_filter[] = array('role_id' => 7, 'filter_id' => $i);
 			}
