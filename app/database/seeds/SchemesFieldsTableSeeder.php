@@ -22,7 +22,7 @@ class SchemesFieldsTableSeeder extends Seeder {
 			('tts_budget.tts_io','TTS IO'),
 			('pe_budget.pe_io','PE IO'),
 			('activities.proponent_name','PROPONENT'),
-			('planner_tbl.planner_desc as planner_name','PLANNER'),
+			('planner_tbl.planner_desc as planner_name','PMOG PLANNER'),
 			('approver_tbl.approvers','APPROVERS'),
 			('divison_tbl.divisions','DIVISION'),
 			('category_tbl.categories','CATEGORY'),
