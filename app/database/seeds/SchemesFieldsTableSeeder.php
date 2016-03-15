@@ -178,7 +178,6 @@ class SchemesFieldsTableSeeder extends Seeder {
 				&& ($i != 49)
 				&& ($i != 50)
 				&& ($i != 51)
-				&& ($i != 52)
 				&& ($i != 53)
 				&& ($i != 54)
 				&& ($i != 55)
