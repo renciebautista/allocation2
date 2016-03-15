@@ -258,8 +258,8 @@ class MakePdf extends Command {
 
 					$str_table='<table cellspacing="0" cellpadding="2" border=".1px;">            
 					<tr nobr="true">
-						<td align="center" style="background-color: #000000;color: #FFFFFF;">Barcode</td>
-						<td align="center" style="background-color: #000000;color: #FFFFFF;">Case Code</td>
+						<td align="center" style="background-color: #000000;color: #FFFFFF;">Promo Item Barcode</td>
+						<td align="center" style="background-color: #000000;color: #FFFFFF;">Promo Item Casecode</td>
 					</tr>';
 					$str_table .= $str;
 					$str_table .='</table>';

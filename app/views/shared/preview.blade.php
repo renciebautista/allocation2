@@ -333,7 +333,7 @@
 								<tr>
 									<th style="width:3%"></th>
 									<th>Scheme Desc.</th>
-									<th style="width:16%">Item Code</th>
+									<th style="width:16%">Promo Item Code</th>
 									<th style="width:16%">Cost per Deal</th>
 									<th style="width:16%">Cost of Premium</th>
 									<th style="width:16%">Shopper Purchase Requirement</th>
@@ -508,8 +508,8 @@
 				@if(!empty($schemes))
 				<table>
 					<tr>
-						<th width="50%">Barcode</th>
-						<th>Case Code</th>
+						<th width="50%">Promo Item Barcode</th>
+						<th>Promo Item Casecode</th>
 					</tr>
 					@foreach($schemes as $scheme)
 					<tr>

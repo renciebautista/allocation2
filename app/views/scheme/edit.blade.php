@@ -101,13 +101,13 @@
 							<div class="form-group">
 								<div class="row">
 									<div class="col-lg-4">
-										{{ Form::label('item_code', 'Item Code', array('class' => 'control-label')) }}
+										{{ Form::label('item_code', 'Promo Item Code', array('class' => 'control-label')) }}
 										{{ Form::text('item_code',$scheme->item_code, array('class' => 'form-control', 'placeholder' => 'Item Code','maxlength' => 8)) }}
 									</div>
 									
 
 									<div class="col-lg-8">
-										{{ Form::label('item_desc', 'Item Description', array('class' => 'control-label')) }}
+										{{ Form::label('item_desc', 'Promo Item Description', array('class' => 'control-label')) }}
 										{{ Form::text('item_desc',$scheme->item_desc,array('id' => 'item_desc', 'class' => 'form-control', 'placeholder' => 'Item Description','maxlength' => 80)) }}
 									</div>
 								</div>
@@ -121,11 +121,11 @@
 							<div class="form-group">
 								<div class="row">
 									<div class="col-lg-4">
-										{{ Form::label('item_barcode', 'Item Barcode', array('class' => 'control-label')) }}
+										{{ Form::label('item_barcode', 'Promo Item Barcode', array('class' => 'control-label')) }}
 										{{ Form::text('item_barcode',$scheme->item_barcode, array('class' => 'form-control', 'placeholder' => 'Item Barcode','maxlength' => 13)) }}
 									</div>
 									<div class="col-lg-4">
-										{{ Form::label('item_casecode', 'Item Casecode', array('class' => 'control-label')) }}
+										{{ Form::label('item_casecode', 'Promo Item Casecode', array('class' => 'control-label')) }}
 										{{ Form::text('item_casecode',$scheme->item_casecode,array('class' => 'form-control', 'placeholder' => 'Item Casecode','maxlength' => 14)) }}
 									</div>
 								</div>

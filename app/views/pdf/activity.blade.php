@@ -123,7 +123,7 @@
 					<tr nobr="true">
 						<th width="20"></th>
 						<th width="150">Scheme Desc.</th>
-						<th width="75">Item Code</th>
+						<th width="75">Promo Item Code</th>
 						<th width="75">Cost per Deal</th>
 						<th width="75">Cost of Premium</th>
 						<th width="75">Shopper Purchase Requirement</th>

@@ -310,7 +310,7 @@ class WordDoc {
 					$innerCell->addRow();
 					$innerCell->addCell(300)->addText("",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
 					$innerCell->addCell(2450)->addText("Scheme Desc.",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-					$innerCell->addCell(1600)->addText("Item Code",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+					$innerCell->addCell(1600)->addText("Promo Item Code",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
 					$innerCell->addCell(1600)->addText("Cost per Deal",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
 					$innerCell->addCell(1600)->addText("Cost of Premium",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
 					$innerCell->addCell(1600)->addText("Shopper Purchase Requirement",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
@@ -490,8 +490,8 @@ class WordDoc {
 			$phpWord->addTableStyle('Barcode Table', $styleTable, $styleFirstRow);
 			$barcodeTable = $section->addTable('Barcode Table');
 			$barcodeTable->addRow();
-			$barcodeTable->addCell(5525)->addText("Source",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-			$barcodeTable->addCell(5525)->addText("Materials",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+			$barcodeTable->addCell(5525)->addText("Promo Item Barcode",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+			$barcodeTable->addCell(5525)->addText("Promo Item Casecode",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
 			foreach ($schemes as $scheme) {
 				if(($scheme->item_barcode  !== "") || ($scheme->item_casecode !== "")){
 					$barcodeTable->addRow();
