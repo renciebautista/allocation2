@@ -14,6 +14,49 @@ class SkuController extends \BaseController {
 		}
 	}
 
+	public function sobcategory()
+	{
+		if(\Request::ajax()){
+			$ids = \Input::get('depdrop_parents');
+			$params = \Input::get('depdrop_params');
+        	$div_id = empty($ids[0]) ? null : $ids[0];
+        	$scheme_id = empty($params[0]) ? null : $params[0];
+			$scheme = \Scheme::find($scheme_id);
+			$records = \Pricelist::select('category_code as id', 'category_desc as name')
+				->where('division_code',$div_id)
+				->groupBy('category_code')
+				->orderBy('category_desc')->get();
+
+			$data['output'] = $records;
+			$data['selected'] = $scheme->scategory_code;
+			return \Response::json($data,200);
+		}
+	}
+
+	public function sobbrand()
+	{
+		if(\Request::ajax()){
+			$ids = \Input::get('depdrop_parents');
+			$params = \Input::get('depdrop_params');
+        	$cat_id = empty($ids[0]) ? null : $ids[0];
+        	$scheme_id = empty($params[0]) ? null : $params[0];
+			$scheme = \Scheme::find($scheme_id);
+
+			$records = \Pricelist::select('brand_desc as id', 'brand_desc as name')
+				->where('active',1)
+				->where('launch',0)
+				->where('category_code',$cat_id)
+				->groupBy('brand_desc')
+				->orderBy('brand_desc')->get();
+
+
+
+			$data['output'] = $records;
+			$data['selected'] = $scheme->brand_desc;
+			return \Response::json($data,200);
+		}
+	}
+
 	public function categories()
 	{
 		if(\Request::ajax()){
@@ -44,6 +87,9 @@ class SkuController extends \BaseController {
 			return \Response::json($data,200);
 		}
 	}
+
+	
+
 
 	public function brand()
 	{
@@ -90,6 +136,8 @@ class SkuController extends \BaseController {
 			return \Response::json($data->lists('brand_desc', 'brand_desc'),200);
 		}
 	}
+
+
 
 	public function brandselected()
 	{

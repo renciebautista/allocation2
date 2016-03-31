@@ -20,7 +20,8 @@
 		"maxxscho/laravel-tcpdf": "0.*",
 		"iron-io/iron_mq": "1.*",
 		"box/spout": "~2.0",
-		"phpoffice/phpword": "dev-master"
+		"phpoffice/phpword": "dev-master",
+		"league/csv": "^8.0"
 		
 	},
 	"autoload": {

@@ -93,9 +93,10 @@ $(document).ready(function(){
 		});
    }; 
    
-	$.fn.select_chain = function(option)
+	$.fn.select_chain = function(option)	
 	{	
 		option.chosen = option.chosen || false;
+		option.selected_value = option.selected_value || "0";
 	    $(option.child).attr("disabled","disabled");
 
 	    setselection($(this));
@@ -103,6 +104,9 @@ $(document).ready(function(){
 	    $(this).on("change",function(){
 	        setselection($(this));
 	    });
+
+
+
 
 	    function setselection(object){
 	    	if(object.val() == 0){
@@ -118,27 +122,59 @@ $(document).ready(function(){
 	           	if(option.chosen){
 	            	$(option.child).trigger("chosen:updated");   
 	            }
-	            $.getJSON(option.ajax_url+'?q='+object.val(), function(data) {
-	            	$(option.child).removeAttr("disabled").empty();
-	                $('<option />', {value: 0, text: option.default_value}).appendTo($(option.child)); 
-	                if(option.chosen){
-		            	$(option.child).trigger("chosen:updated");   
-		            }      
-	                if(data[option.child_value] != ""){
-	                    $.each (data[option.child_value], function (key, val) {
-	                        $('<option />', {value: key, text: val}).appendTo($(option.child));
-	                        if(option.chosen){
-				            	$(option.child).trigger("chosen:updated");   
-				            }       
-	                    });
-	                }else{
-	                    $(option.child).attr("disabled","disabled").empty();
-	                    $('<option />', {value: 0, text: 'NO RECORD FOUND'}).appendTo($(option.child)); 
-	                   	if(option.chosen){
+	            if(option.selected_value != "0"){
+	            	$.getJSON(option.ajax_url+'?q='+object.val()+"&scheme="+option.selected_value, function(data) {
+		            	$(option.child).removeAttr("disabled").empty();
+		                $('<option />', {value: 0, text: option.default_value}).appendTo($(option.child)); 
+		                if(option.chosen){
 			            	$(option.child).trigger("chosen:updated");   
-			            }  
-	                }
-				});
+			            }      
+		                if(data[option.child_value] != ""){
+		                    $.each (data[option.child_value], function (key, val) {
+		                    	$('<option />', {value: key, text: val}).appendTo($(option.child));
+		                        
+		                        if(option.chosen){
+					            	$(option.child).trigger("chosen:updated");   
+					            }       
+		                    });
+		                    var optionExists = ($(option.child + " option[value="+data['selected']+"]").length > 0);
+		                    if(optionExists){
+		                    	$(option.child).val(data['selected']);
+		                    }
+							
+		                    
+		                }else{
+		                    $(option.child).attr("disabled","disabled").empty();
+		                    $('<option />', {value: 0, text: 'NO RECORD FOUND'}).appendTo($(option.child)); 
+		                   	if(option.chosen){
+				            	$(option.child).trigger("chosen:updated");   
+				            }  
+		                }
+					});
+	            }else{
+	            	$.getJSON(option.ajax_url+'?q='+object.val(), function(data) {
+		            	$(option.child).removeAttr("disabled").empty();
+		                $('<option />', {value: 0, text: option.default_value}).appendTo($(option.child)); 
+		                if(option.chosen){
+			            	$(option.child).trigger("chosen:updated");   
+			            }      
+		                if(data[option.child_value] != ""){
+		                    $.each (data[option.child_value], function (key, val) {
+		                        $('<option />', {value: key, text: val}).appendTo($(option.child));
+		                        if(option.chosen){
+					            	$(option.child).trigger("chosen:updated");   
+					            }       
+		                    });
+		                }else{
+		                    $(option.child).attr("disabled","disabled").empty();
+		                    $('<option />', {value: 0, text: 'NO RECORD FOUND'}).appendTo($(option.child)); 
+		                   	if(option.chosen){
+				            	$(option.child).trigger("chosen:updated");   
+				            }  
+		                }
+					});
+	            }
+	            
 	        }
 	    }
 	};

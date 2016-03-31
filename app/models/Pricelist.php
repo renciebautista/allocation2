@@ -39,7 +39,7 @@ class Pricelist extends \Eloquent {
 
 	public static function getBrands(){
 		return self::select('brand_code','division_desc', 'category_desc', 'brand_desc', 'brand_shortcut')
-			->groupBy('brand_desc')
+			->groupBy('brand_desc', 'category_desc',  'division_desc')
 			->orderBy('division_desc')
 			->orderBy('category_desc')
 			->orderBy('brand_desc')

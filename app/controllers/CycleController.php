@@ -27,7 +27,7 @@ class CycleController extends \BaseController {
 	{
 		Input::flash();
 		$cycles = Cycle::search(Input::get('s'));
-		return View::make('cycle.index', compact('cycles'));
+		return View::make('cycle.index2', compact('cycles'));
 	}
 
 	/**
@@ -67,6 +67,7 @@ class CycleController extends \BaseController {
 				$cycle->pdf_deadline = date('Y-m-d',strtotime(Input::get('pdf_deadline')));
 				$cycle->release_date = date('Y-m-d',strtotime(Input::get('release_date')));
 				$cycle->implemintation_date = date('Y-m-d',strtotime(Input::get('implemintation_date')));
+				$cycle->sob_deadline = date('Y-m-d',strtotime(Input::get('sob_deadline')));
 				$cycle->emergency = (Input::has('emergency')) ? 1 : 0;
 				$cycle->save();
 
@@ -147,6 +148,7 @@ class CycleController extends \BaseController {
 			$cycle->pdf_deadline = date('Y-m-d',strtotime(Input::get('pdf_deadline')));
 			$cycle->release_date = date('Y-m-d',strtotime(Input::get('release_date')));
 			$cycle->implemintation_date = date('Y-m-d',strtotime(Input::get('implemintation_date')));
+			$cycle->sob_deadline = date('Y-m-d',strtotime(Input::get('sob_deadline')));
 			$cycle->emergency = (Input::has('emergency')) ? 1 : 0;
 			$cycle->save();
 
@@ -197,9 +199,11 @@ class CycleController extends \BaseController {
 		return View::make('cycle.calendar', compact('cycles'));
 	}
 
-	public function release(){
-		if(Request::ajax()){
-			$ids = Input::get('ids');
+
+	public function rerun(){
+		if(Input::get('submit') == "release"){
+
+			$ids = Input::get('cycle');
 			$users = User::GetPlanners(['PROPONENT' ,'PMOG PLANNER','GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR','FIELD SALES']);
 
 			$cycle_ids = array();
@@ -210,91 +214,42 @@ class CycleController extends \BaseController {
 			}
 
 			$total_activities = 0;
-			$type = "mail4";
-			$forrelease = Activity::where('activities.status_id','>',7)
-				->where('activities.pdf', 1)
-				->whereIn('activities.cycle_id',$cycle_ids)
-				->get();
-			if(count($forrelease) > 0){
-				$total_activities = count($forrelease);
-				foreach ($forrelease as $activity) {
-					$activity->scheduled = true;
-					$activity->status_id = 9;
-					$activity->update();
+			if(count($cycle_ids) > 0){
 
-					// relaase sku 
-					$activity_skus = ActivitySku::where('activity_id',$activity->id)->get();
-					foreach ($activity_skus as $activity_sku) {
-						$sku = Pricelist::where('sap_code',$activity_sku->sap_code)->first();
-						$sku->active = 1;
-						$sku->launch = 0;
-						$sku->update();
+				$type = "mail4";
+				$forrelease = Activity::where('activities.status_id','>',7)
+					->where('activities.pdf', 1)
+					->whereIn('activities.cycle_id',$cycle_ids)
+					->get();
+				if(count($forrelease) > 0){
+					$total_activities = count($forrelease);
+					foreach ($forrelease as $activity) {
+						$activity->scheduled = true;
+						$activity->status_id = 9;
+						$activity->update();
 
-						LaunchSkuAccess::where('sku_code',$activity_sku->sap_code)->delete();
-					}
-				}
+						// relaase sku 
+						$activity_skus = ActivitySku::where('activity_id',$activity->id)->get();
+						foreach ($activity_skus as $activity_sku) {
+							$sku = Pricelist::where('sap_code',$activity_sku->sap_code)->first();
+							$sku->active = 1;
+							$sku->launch = 0;
+							$sku->update();
 
-
-				foreach ($users as $user) {
-					$data['activities'] = Activity::Released($cycle_ids);
-					if(count($data['activities']) > 0){
-						if($_ENV['MAIL_TEST']){
-							Queue::push('MailScheduler', array('type' => $type, 'user_id' => $user->user_id, 'role_id' => $user->role_id,),'etop');
-						}else{
-							Queue::push('MailScheduler', array('type' => $type, 'user_id' => $user->user_id, 'role_id' => $user->role_id),'p_etop');
+							LaunchSkuAccess::where('sku_code',$activity_sku->sap_code)->delete();
 						}
 					}
-				}
-				
-			}else{
-			}
-			echo $total_activities;
-			
-		}
-
-	}
-
-	public function rerun($id){
-		// rerun activities
-		if(Request::ajax()){
-			$ids = Input::get('ids');
-			$cycle_ids = array();
-			if(count($ids) > 0){
-				foreach ($ids as $value) {
-					$cycle_ids[] = $value;
-				}
-			}
-
-			$total_activities = 0;
-
-			$activities = Activity::select('activities.id', 'activities.circular_name')
-				->join('cycles', 'cycles.id', '=', 'activities.cycle_id')
-				->whereIn('activities.cycle_id',$cycle_ids)
-				->where('status_id','>', 7)
-				->get();
-
-			$total_activities = count($activities);
-			foreach ($activities as $activity) {
-
-				$activity->pdf = 0;
-				$activity->update();
-				
-				if($_ENV['MAIL_TEST']){
-					$job_id = Queue::push('Scheduler', array('string' => "Scheduling ".$activity->circular_name, 'id' => $activity->id),'pdf');
 					
 				}else{
-					$job_id = Queue::push('Scheduler', array('string' => "Scheduling ".$activity->circular_name, 'id' => $activity->id),'p_pdf');
+
 				}
-				Job::create(array('job_id' => $job_id));
 			}
+			return Redirect::route('cycle.index')
+					->with('class', 'alert-success')
+					->with('message', $total_activities." activities were released.");
 
-			echo $total_activities;
-		}
-	}
-
-	public function rerundoc($id){
-		if(Request::ajax()){
-			$ids = Input::get('ids');
+		}else{
+			$ids = Input::get('cycle');
 			$cycle_ids = array();
 			if(count($ids) > 0){
 				foreach ($ids as $value) {
@@ -303,26 +258,62 @@ class CycleController extends \BaseController {
 			}
 
 			$total_activities = 0;
+			if(count($cycle_ids) > 0){
+				$activities = Activity::select('activities.id', 'activities.circular_name')
+					->join('cycles', 'cycles.id', '=', 'activities.cycle_id')
+					->whereIn('activities.cycle_id',$cycle_ids)
+					->where('status_id','>', 7)
+					->get();
 
-			$activities = Activity::select('activities.id', 'activities.circular_name')
-				->join('cycles', 'cycles.id', '=', 'activities.cycle_id')
-				->whereIn('activities.cycle_id',$cycle_ids)
-				->where('status_id','>', 7)
-				->get();
-
-			$total_activities = count($activities);
-			foreach ($activities as $activity) {
-				$activity->word = 0;
-				$activity->update();
+				$total_activities = count($activities);
 				
-				if($_ENV['MAIL_TEST']){
-					$job_id = Queue::push('WordScheduler', array('string' => "Scheduling ".$activity->circular_name, 'id' => $activity->id),'word');
-				}else{
-					$job_id = Queue::push('WordScheduler', array('string' => "Scheduling ".$activity->circular_name, 'id' => $activity->id),'p_word');
+				foreach ($activities as $activity) {
+					if(Input::get('submit') == "doc"){
+						$activity->word = 0;
+						$activity->update();
+						
+						if($_ENV['MAIL_TEST']){
+							$job_id = Queue::push('WordScheduler', array('string' => "Scheduling ".$activity->circular_name, 'id' => $activity->id),'word');
+						}else{
+							$job_id = Queue::push('WordScheduler', array('string' => "Scheduling ".$activity->circular_name, 'id' => $activity->id),'p_word');
+						}
+						Job::create(array('job_id' => $job_id));
+					}elseif (Input::get('submit') == "pdf") {
+						$activity->pdf = 0;
+						$activity->update();
+						if($_ENV['MAIL_TEST']){
+							$job_id = Queue::push('Scheduler', array('string' => "Scheduling ".$activity->circular_name, 'id' => $activity->id),'pdf');
+						}else{
+							$job_id = Queue::push('Scheduler', array('string' => "Scheduling ".$activity->circular_name, 'id' => $activity->id),'p_pdf');
+						}
+						Job::create(array('job_id' => $job_id));
+					}elseif (Input::get('submit') == "sob") {
+						
+					}else{
+
+					}
+					
 				}
-				Job::create(array('job_id' => $job_id));
 			}
-			echo $total_activities;
+			
+			
+
+			if(Input::get('submit') == "doc"){
+				$message = $total_activities." activities queue for doc creation";
+			}elseif (Input::get('submit') == "pdf") {
+				$message = $total_activities." activities queue for pdf creation";
+			}elseif (Input::get('submit') == "sob") {
+				$message = $total_activities." activities queue for sob po creation";
+			}else{
+
+			}
+
+			return Redirect::route('cycle.index')
+					->with('class', 'alert-success')
+					->with('message', $message);
 		}
+		
+		
 	}
+
 }

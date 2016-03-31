@@ -26,8 +26,6 @@
 
 @include('partials.scheme_pagination')
 
-
-
 @include('partials.notification')
 
 
@@ -458,10 +456,10 @@
 	</div>
 	
 	@if(Auth::user()->hasRole("PROPONENT"))
-			@include('shared.sob_details_edit')
-		@else
-			@include('shared.sob_details_readonly')
-		@endif
+		@include('shared.sob_details_edit')
+	@else
+		@include('shared.sob_details_readonly')
+	@endif
 	
 </div>
 
@@ -518,6 +516,7 @@
 			</div>
 		</div>
 		{{ Form::close() }}
+		<input type="hidden" id="hidden-1" value="{{ $scheme->id }}">
 	</div>
 </div>
 @endif
@@ -569,11 +568,6 @@
 
 @section('page-script')
 	
-	
-    $("#brand").chosen({
-		search_contains: true,
-		allow_single_deselect: true
-	});
  	
 	$('.nav-tabs a').on( 'shown.bs.tab', function (e) {
         $.fn.dataTable.tables( {visible: true, api: true} ).columns.adjust();
@@ -585,10 +579,6 @@
 		"paging": false,
 		"bSort": false
 	});
-
-
-   
-	
 
 	$('.numweek').inputNumber({ 
 		allowDecimals: true,
@@ -668,7 +658,6 @@
 	        var errors = validator.numberOfInvalids();
 	        if (errors) {
 	            $("html, body").animate({ scrollTop: 0 }, "fast");
-	           
 	        }
 	    }
 
@@ -684,4 +673,19 @@
 	        if (sumOfVals == params) return true;
 	        return false;
 	}, "Sum must be {0}");
+
+
+	$("#category").depdrop({
+        url: "{{action('api\SkuController@sobcategory')}}",
+        depends: ['division'],
+        params: ['hidden-1']
+    });
+	
+	$("#brand").depdrop({
+        url: "{{action('api\SkuController@sobbrand')}}",
+        depends: ['category'],
+        initialize: true,
+    	initDepends: ['division'],
+    	params: ['hidden-1']
+    });
 @stop

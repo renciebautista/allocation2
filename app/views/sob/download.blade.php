@@ -5,14 +5,14 @@
 <div class="page-header" id="banner">
 	<div class="row">
 		<div class="col-lg-8 col-md-7 col-sm-6">
-			<h1>Dowload Sales Order Booking Per Week</h1>
+			<h1>Export SOB File</h1>
 		</div>
 	</div>
 </div>
 
 @include('partials.notification')
 
-{{ Form::open(array('action' => array('SobController@generateweekly'),'class' => 'bs-component','id' => 'myform')) }}
+{{ Form::open(array('action' => array('SobController@downloadreport'),'class' => 'bs-component','id' => 'myform')) }}
 <div class="panel panel-default">
 	<div class="panel-heading">Filter</div>
 	<div class="panel-body">
@@ -28,10 +28,7 @@
 					</div>
 				</div>
 			</div>
-			
-		</div>
 
-		<div class="row">
 			<div class="col-lg-6">
 				<div class="form-group">
 					<div class="row">
@@ -46,6 +43,7 @@
 		</div>
 
 
+
 		<div class="row">
 			<div class="col-lg-6">
 				<div class="form-group">
@@ -57,51 +55,33 @@
 					</div>
 				</div>
 			</div>
-			
-		</div>
 
-		<div class="row">
 			<div class="col-lg-6">
 				<div class="form-group">
 					<div class="row">
 						<div class="col-lg-12">
-						{{ Form::label('year', 'Year', array('class' => 'control-label')) }}
-						{{ Form::select('year', array('0' => 'PLEASE SELECT') + $years, null, array('class' => 'form-control')) }}
+						{{ Form::label('cycles', 'TOP Cycle', array('class' => 'control-label')) }}
+						{{ Form::select('cycles[]', $cycles, null, array('id' => 'cycles','class' => 'form-control', 'multiple' => 'multiple')) }}
 						</div>
 					</div>
 				</div>
 			</div>
 			
 		</div>
-
-		<div class="row">
-			<div class="col-lg-6">
-				<div class="form-group">
-					<div class="row">
-						<div class="col-lg-12">
-						{{ Form::label('week', 'Week No.', array('class' => 'control-label')) }}
-						{{ Form::select('week', array('0' => 'PLEASE SELECT') + $weeks, null, array('class' => 'form-control')) }}
-						</div>
-					</div>
-				</div>
-			</div>
-			
-		</div>
-
 		
 
 	</div>
 </div>
 
 <div class="form-group">
-	{{ Form::submit('Download Report', array('class' => 'btn btn-primary')) }}
+	{{ Form::submit('Download File', array('class' => 'btn btn-primary')) }}
 </div>
 {{ Form::close() }}
 
 @stop
 
 @section('page-script')
-$('#cy').multiselect({
+$('#cycles').multiselect({
 	maxHeight: 200,
 	includeSelectAllOption: true,
 	enableCaseInsensitiveFiltering: true,

@@ -19,22 +19,7 @@ Queue::getIron()->ssl_verifypeer = false;
 */
 
 
-Route::get('allocreport', function(){
-	
-});
-
-
-
 Route::get('test', function(){
-	$schemes = Scheme::where('activity_id',52)
-					->orderBy('id')
-					->get();
-	foreach ($schemes as $key => $value) {
-		echo $value->id .PHP_EOL;
-	}
-});
-
-Route::get('mail4', function(){
 	
 });
 
@@ -227,13 +212,13 @@ Route::group(array('before' => 'auth'), function()
 
 	Route::get('sob', ['as' => 'sob.index', 'uses' => 'SobController@index']);
 	Route::post('sob/generate', ['as' => 'sob.generate', 'uses' => 'SobController@generate']);
-	Route::get('sob/weekly', ['as' => 'sob.weekly', 'uses' => 'SobController@weekly']);
-	Route::post('sob/generateweekly', ['as' => 'sob.generateweekly', 'uses' => 'SobController@generateweekly']);
+	Route::get('sob/download', ['as' => 'sob.download', 'uses' => 'SobController@download']);
+	Route::post('sob/downloadreport', ['as' => 'sob.downloadreport', 'uses' => 'SobController@downloadreport']);
 
-	Route::get('sob/booking', ['as' => 'sob.booking', 'uses' => 'SobController@booking']);
-	Route::post('sob/booking', ['as' => 'sob.filterbooking', 'uses' => 'SobController@filterbooking']);
-	Route::get('sob/booking/{week}/{year}/{brand_code}/{type}', ['as' => 'sob.showbooking', 'uses' => 'SobController@showbooking']);
-	Route::get('sob/downloadbooking', ['as' => 'sob.downloadbooking', 'uses' => 'SobController@downloadbooking']);
+	// Route::get('sob/booking', ['as' => 'sob.booking', 'uses' => 'SobController@booking']);
+	// Route::post('sob/booking', ['as' => 'sob.filterbooking', 'uses' => 'SobController@filterbooking']);
+	// Route::get('sob/booking/{week}/{year}/{brand_code}/{type}', ['as' => 'sob.showbooking', 'uses' => 'SobController@showbooking']);
+	// Route::get('sob/downloadbooking', ['as' => 'sob.downloadbooking', 'uses' => 'SobController@downloadbooking']);
 
 	Route::get('activitytype/{id}/network/totalduration', 'NetworkController@totalduration');
 	
@@ -277,8 +262,11 @@ Route::group(array('before' => 'auth'), function()
 
 		Route::post('category/getselected', 'api\SkuController@categoryselected');
 		Route::post('category', 'api\SkuController@category');
+		Route::post('sobcategory', 'api\SkuController@sobcategory');
+		Route::post('sobbrand', 'api\SkuController@sobbrand');
 		Route::post('categories', 'api\SkuController@categories');
 		Route::post('brand', 'api\SkuController@brand');
+		
 		Route::post('brand/getselected', 'api\SkuController@brandselected');
 
 		Route::post('skusinvolve', 'api\PriceListController@involve');
@@ -373,9 +361,8 @@ Route::group(array('before' => 'auth'), function()
 		Route::post('users/{id}/deny', 'UsersController@deny');
 		Route::resource('users', 'UsersController');
 		
-		Route::post('cycle/release', 'CycleController@release');
-		Route::post('cycle/{id}/rerun', 'CycleController@rerun');
-		Route::post('cycle/{id}/rerundoc', 'CycleController@rerundoc');
+		Route::post('cycle/rerun', 'CycleController@rerun');
+
 		Route::resource('cycle', 'CycleController');
 
 		Route::get('activitytype/{id}/network', 'NetworkController@index');

@@ -15,8 +15,34 @@
 						<div class="form-group">
 							<div class="row">
 								<div class="col-lg-12">
-									{{ Form::label('brand', 'Brand', array('class' => 'control-label')) }}
-									{{ Form::select('brand', $brands, $scheme->brand_desc, array('data-placeholder' => 'Select Brand','id' => 'brand', 'class' => 'form-control')) }}
+									{{ Form::label('division', 'Division', array('class' => 'control-label')) }}
+									{{ Form::select('division', array('' => 'SELECT DIVISION') + $sobdivisions, $scheme->sdivision_code, array('data-placeholder' => 'SELECT DIVISION','id' => 'division', 'class' => 'form-control')) }}
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-4">
+						<div class="form-group">
+							<div class="row">
+								<div  class="col-lg-12">
+								{{ Form::label('category', 'Category', array('class' => 'control-label')) }}
+								<select class="form-control" data-placeholder="SELECT CATEGORY" id="category" name="category" >
+									<option value="">SELECT CATEGORY</option>
+								</select>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-lg-4">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+								{{ Form::label('brand', 'Brand', array('class' => 'control-label')) }}
+								<select class="form-control multiselect" data-placeholder="SELECT BRAND" id="brand" name="brand" >
+									<option value="">SELECT BRAND</option>
+								</select>
+
 								</div>
 							</div>
 						</div>
@@ -56,7 +82,11 @@
 							<div class="row">
 								<div class="col-lg-12">
 									{{ Form::submit('Plot', array('class' => 'btn btn-primary disable-button', 'id'=>'plotsob' , 'name' => 'submit')) }}
+									@if(count($sobs)>0)
 									<a class="btn btn-success" target="_blank" href="{{ URL::action('SchemeController@exportsob', $scheme->id ) }}">Export To Excel</a>
+									@else
+									<button class="btn btn-success disabled">Export To Excel</button>
+									@endif
 								</div>
 							</div>
 						</div>
@@ -71,7 +101,13 @@
 								<thead>
 									
 									<tr class="sob-percent">
-										<th colspan="3" >{{ Form::submit('Update SOB', array('class' => 'btn btn-primary btn-xs disable-button pull-right', 'id'=>'updatesob' , 'name' => 'submit' )) }}</th>
+										<th colspan="3" >
+											@if(count($sobs)>0)
+											{{ Form::submit('Update SOB', array('class' => 'btn btn-primary btn-xs disable-button pull-right', 'id'=>'updatesob' , 'name' => 'submit' )) }}
+											@else
+											<button class="btn btn-primary btn-xs disabled pull-right">Update SOB</button>
+											@endif
+										</th>
 										<?php $total = 0; ?>
 										@foreach($sob_header as $key => $header)
 										<th class="alloc_per">

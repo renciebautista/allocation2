@@ -49,6 +49,11 @@
 		</div>
 
 		<div class="form-group">
+			{{ Form::label('sob_deadline', 'SOB Deadline', array('class' => 'control-label')) }}
+			{{ Form::text('sob_deadline','',array('class' => 'form-control', 'placeholder' => 'SOB Deadline')) }}
+		</div>
+
+		<div class="form-group">
 			{{ Form::label('release_date', 'Release Date', array('class' => 'control-label')) }}
 			{{ Form::text('release_date','',array('class' => 'form-control', 'placeholder' => 'Release Date')) }}
 		</div>

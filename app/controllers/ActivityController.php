@@ -1934,6 +1934,8 @@ class ActivityController extends BaseController {
 			DB::beginTransaction();
 
 			try {
+
+				$activity_type = ActivityType::find($activity->activity_type_id);
 				
 				$new_activity = new Activity;
 				$new_activity->created_by = Auth::id();
@@ -1959,6 +1961,9 @@ class ActivityController extends BaseController {
 				$new_activity->instruction = $activity->instruction;
 				$new_activity->allow_force =  $activity->allow_force;
 				$new_activity->end_date = $activity->end_date;
+
+				$new_activity->with_sob = $activity_type->with_sob;
+
 				$new_activity->save();
 
 				// add timings
@@ -2494,7 +2499,6 @@ class ActivityController extends BaseController {
 							}
 						}
 
-						// update all schemes
 						if($new_scheme->compute == 1){
 							$new_scheme->updating = 1;
 							$new_scheme->update();
@@ -2507,7 +2511,6 @@ class ActivityController extends BaseController {
 							$new_scheme->updating = 0;
 							$new_scheme->update();
 						}
-						// end update
 					}
 				}
 				// copy all file

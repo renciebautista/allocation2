@@ -21,13 +21,18 @@
 		  	</div>
 		  	<button type="submit" class="btn btn-success"><i class="fa fa-search"></i> Search</button>
 		  	<a href="{{ URL::action('CycleController@create') }}" class="btn btn-primary"><i class="fa fa-plus"></i> Cycle</a>
-		  	<button id="release" type="button" class="btn btn-info"> Release</button>
-		  	<button id="pdf" type="button" class="btn btn-info"> Re-run PDF</button>
-		  	<button id="doc" type="button" class="btn btn-info"> Re-run Doc</button>
+		  	
 		{{ Form::close() }}
 	</div>
 </div>
 <br>
+{{ Form::open(array('action' => 'CycleController@rerundoc')) }}
+
+<button id="release" type="button" class="btn btn-info"> Release</button>
+<button id="pdf" type="button" class="btn btn-info"> Re-run PDF</button>
+<button id="doc" type="button" class="btn btn-info"> Re-run Doc</button>
+<input class="btn btn-info" name="submit" type="submit" value="Re-run Doc">
+
 <div class="row">
 	<div class="col-lg-12">
 		<div class="table-responsive">
@@ -43,7 +48,7 @@
 						<th class="center">PDF and Attachment Creation Date</th>
 						<th class="center">Release Date</th>
 						<th class="center">Implementation Date</th>
-						<th class="center">SOB Deadline</th>
+						<th class="center">SOB Expiry Date</th>
 						<th class="center">Emergency</th>
 						<th colspan="2" class="dash-action">Action</th>
 					</tr>
@@ -88,7 +93,7 @@
 		</div>
 	</div>
 </div>
-
+{{ Form::close() }}
 @stop
 
 @section('page-script')
@@ -167,7 +172,7 @@ $(function() {
 		});
    	});
 
-   	$("#doc").click(function(e){
+   	$("#doc1").click(function(e){
 
 		bootbox.dialog({
 		  message: "Do you want to re-run Doc this cycles?",

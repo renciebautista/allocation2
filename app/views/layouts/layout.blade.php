@@ -23,6 +23,8 @@
 
 		{{ HTML::style('assets/plugins/submenu/css/bootstrap-submenu.min.css') }}
 
+		{{ HTML::style('assets/plugins/kartik/css/dependent-dropdown.min.css') }}
+
 		{{ HTML::style('assets/plugins/offline/offline-theme-default.css') }}
 		{{ HTML::style('assets/plugins/offline/offline-language-english.css') }}
 		{{ HTML::style('assets/css/styles.css') }}
@@ -164,15 +166,15 @@
 								<li>{{ HTML::linkAction('AllocationReportController@index' , 'Allocation Report') }}</li>
 
 								<li>{{ HTML::linkAction('SobController@index' , 'Sales Order Booking Report') }}</li>
-
-								@if(Auth::user()->inRoles(['SOB ASSISTANT', 'ADMINISTRATOR' , 'PROPONENT', 'PMOG PLANNER']))
-								<li>{{ HTML::linkAction('SobController@booking' , 'Sales Order Booking') }}</li>
-								@endif
-
-								
 							</ul>
 						</li>
 
+						<li class="dropdown">
+							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="report">SOB <span class="caret"></span></a>
+							<ul class="dropdown-menu" aria-labelledby="report">
+								<li>{{ HTML::linkAction('SobController@download' , 'Export SOB File') }}</li>  
+							</ul>
+						</li>
 						
 
 						<li class="dropdown">
@@ -292,6 +294,8 @@
 	{{ HTML::script('assets/plugins/mindup/mindmup-editabletable.js') }}
 
 	{{ HTML::script('assets/plugins/offline/offline.min.js') }}
+
+	{{ HTML::script('assets/plugins/kartik/js/dependent-dropdown.min.js') }}
 	
 	{{ HTML::script('assets/js/function.js') }}
 

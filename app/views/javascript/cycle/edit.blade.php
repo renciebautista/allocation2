@@ -1,9 +1,9 @@
 @section('scripts')
-$('#start_date, #end_date, #submission_deadline, #approval_deadline, #pdf_deadline, #release_date, #implemintation_date').datetimepicker({
+$('#start_date, #end_date, #submission_deadline, #approval_deadline, #pdf_deadline, #release_date, #implemintation_date, #sob_deadline').datetimepicker({
 		pickTime: false
 });
 
-$('#start_date, #end_date, #submission_deadline, #approval_deadline, #pdf_deadline, #release_date, #implemintation_date').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
+$('#start_date, #end_date, #submission_deadline, #approval_deadline, #pdf_deadline, #release_date, #implemintation_date, #sob_deadline').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
 
 
 $("form").validate({

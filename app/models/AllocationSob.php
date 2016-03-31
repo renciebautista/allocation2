@@ -52,8 +52,6 @@ class AllocationSob extends \Eloquent {
 				$weekno = $new_count;
 				
 			}
-
-			// if(!$zero){
 				if(!empty($wek_multi)){
 					$multi = $wek_multi[$new_count]/100;
 					if($multi != 0){
@@ -79,10 +77,7 @@ class AllocationSob extends \Eloquent {
 				if($wek_value < 1){
 					$wek_value = 0;
 				}
-			// }else{
-			// 	$wek_value = 0;
-			// }
-
+				
 			$weekno = $new_count;
 			$new_count++;
 
@@ -159,7 +154,9 @@ class AllocationSob extends \Eloquent {
 
 	public static function getByCycle($cycles){
 
-		$query = sprintf("select allocation_sobs.id, activities.activitytype_desc,
+		$query = sprintf("select allocation_sobs.id, activities.cycle_desc,
+			activities.activitytype_desc,
+			activities.id as activity_id,activities.circular_name,
 			category_tbl.category_desc,schemes.brand_desc,
 			schemes.name,schemes.item_code,schemes.item_desc,
 			allocations.group, allocations.area, allocations.sold_to, 
@@ -364,7 +361,60 @@ class AllocationSob extends \Eloquent {
 		return DB::select(DB::raw($query));
 	}
 
-	public static function getBooking(){
-		
+	public static function getCycleSOB($input){
+		// dd($input);
+		$cycle_ids = [];
+		foreach ($input['cycles'] as $cycle) {
+			$cycle_ids[] = $cycle;
+		}
+		$cycles = implode(",", $cycle_ids);
+		$query = sprintf("select table_cnt.po_count,
+			'P001' as col2, '11' as col3,'11' as col4,
+			allocation_sobs.ship_to_code as ship_to_code_1,
+			allocation_sobs.ship_to_code as ship_to_code_2,
+			'ZTA' as col7,'' as col8,
+			allocation_sobs.po_no,date_format(curdate(), '%%Y%%m%%d') as currentdate,
+			'' as col11,'' as col12,'' as col13,'' as col14,'' as col15,'' as col16,
+			schemes.item_code,
+			sum(allocation_sobs.allocation) as allocation,
+			'' as col19,'' as col20,'' as col21,'' as col22,'' as col23,
+			date_format(curdate(), '%%Y%%m%%d') as deliverydate,
+			'P101' as col25,'' as col26,'' as col27,'' as col28,'' as col29,'CMD SOB' as col30
+			from allocation_sobs
+			join (
+				select allocation_sobs.scheme_id, count(DISTINCT allocation_sobs.scheme_id) as po_count, po_no
+				from allocation_sobs
+				group by po_no
+			) as table_cnt on table_cnt.po_no = allocation_sobs.po_no
+			join schemes on schemes.id = allocation_sobs.scheme_id 
+			join activities on activities.id = schemes.activity_id
+			where activities.cycle_id in (%s)
+			group by allocation_sobs.po_no, allocation_sobs.ship_to_code,  allocation_sobs.scheme_id
+			order by allocation_sobs.po_no",$cycles);
+
+		// $query = sprintf("select table_cnt.po_count,
+		// 	'P001' as col2, '11' as col3,'11' as col4,
+		// 	allocation_sobs.ship_to_code as ship_to_code_1,
+		// 	allocation_sobs.ship_to_code as ship_to_code_2,
+		// 	'ZTA' as col7,'' as col8,
+		// 	allocation_sobs.po_no,date_format(curdate(), '%%Y%%m%%d') as currentdate,
+		// 	'' as col11,'' as col12,'' as col13,'' as col14,'' as col15,'' as col16,
+		// 	schemes.item_code,
+		// 	allocation_sobs.allocation,
+		// 	'' as col19,'' as col20,'' as col21,'' as col22,'' as col23,
+		// 	date_format(curdate(), '%%Y%%m%%d') as deliverydate,
+		// 	'P101' as col25,'' as col26,'' as col27,'' as col28,'' as col29,'CMD SOB' as col30
+		// 	from allocation_sobs
+		// 	join (
+		// 		select allocation_sobs.scheme_id, count(DISTINCT allocation_sobs.scheme_id) as po_count, po_no
+		// 		from allocation_sobs
+		// 		group by po_no
+		// 	) as table_cnt on table_cnt.po_no = allocation_sobs.po_no
+		// 	join schemes on schemes.id = allocation_sobs.scheme_id 
+		// 	join activities on activities.id = schemes.activity_id
+		// 	where activities.cycle_id in (%s) 
+		// 	and activities.activity_type_id = %d
+		// 	and schemes.brand_desc = '%s'",$cycles, $input['type'], $input['brand']);
+		return DB::select(DB::raw($query));
 	}
 }

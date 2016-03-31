@@ -50,6 +50,11 @@
 		</div>
 
 		<div class="form-group">
+			{{ Form::label('sob_deadline', 'SOB Deadline', array('class' => 'control-label')) }}
+			{{ Form::text('sob_deadline', date_format(date_create($cycle->sob_deadline),'m/d/Y'), array('class' => 'form-control', 'placeholder' => 'SOB Deadline')) }}
+		</div>
+
+		<div class="form-group">
 			{{ Form::label('release_date', 'Release Date', array('class' => 'control-label')) }}
 			{{ Form::text('release_date', date_format(date_create($cycle->release_date),'m/d/Y'),array('class' => 'form-control', 'placeholder' => 'Release Date')) }}
 		</div>
@@ -58,6 +63,9 @@
 			{{ Form::label('implemintation_date', 'Implementation Date', array('class' => 'control-label')) }}
 			{{ Form::text('implemintation_date', date_format(date_create($cycle->implemintation_date),'m/d/Y'), array('class' => 'form-control', 'placeholder' => 'Implementation Date')) }}
 		</div>
+
+		
+
 
 		<div class="form-group">
 			<div class="checkbox">

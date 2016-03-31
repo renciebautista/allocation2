@@ -21,4 +21,5 @@ Artisan::add(new MakeWord);
 Artisan::add(new ClearAllocReport);
 Artisan::add(new UpdateScheme);
 Artisan::add(new ExportSales);
+Artisan::add(new MakeSob);
 

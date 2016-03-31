@@ -488,7 +488,7 @@ $("#brand").chosen({
 	$('#start_date').datetimepicker({
 		pickTime: false,
 		calendarWeeks: true,
-		minDate: moment(),
+		//minDate: moment(),
 		daysOfWeekDisabled: [0,2,3,4,5,6]
 	});
 
