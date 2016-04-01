@@ -368,7 +368,7 @@ class AllocationSob extends \Eloquent {
 			$cycle_ids[] = $cycle;
 		}
 		$cycles = implode(",", $cycle_ids);
-		$query = sprintf("select table_cnt.po_count,
+		$query = sprintf("select '' as row_no,
 			'P001' as col2, '11' as col3,'11' as col4,
 			allocation_sobs.ship_to_code as ship_to_code_1,
 			allocation_sobs.ship_to_code as ship_to_code_2,
@@ -381,16 +381,11 @@ class AllocationSob extends \Eloquent {
 			date_format(curdate(), '%%Y%%m%%d') as deliverydate,
 			'P101' as col25,'' as col26,'' as col27,'' as col28,'' as col29,'CMD SOB' as col30
 			from allocation_sobs
-			join (
-				select allocation_sobs.scheme_id, count(DISTINCT allocation_sobs.scheme_id) as po_count, po_no
-				from allocation_sobs
-				group by po_no
-			) as table_cnt on table_cnt.po_no = allocation_sobs.po_no
 			join schemes on schemes.id = allocation_sobs.scheme_id 
 			join activities on activities.id = schemes.activity_id
 			where activities.cycle_id in (%s)
 			group by allocation_sobs.po_no, allocation_sobs.ship_to_code,  allocation_sobs.scheme_id
-			order by allocation_sobs.po_no",$cycles);
+			order by allocation_sobs.year, allocation_sobs.weekno,allocation_sobs.po_no",$cycles);
 
 		// $query = sprintf("select table_cnt.po_count,
 		// 	'P001' as col2, '11' as col3,'11' as col4,

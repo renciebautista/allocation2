@@ -108,7 +108,15 @@ class SobController extends \BaseController {
 			ini_set('memory_limit', -1);
 			$soldtos =  AllocationSob::getCycleSOB($input);
 			$csv = \League\Csv\Writer::createFromFileObject(new \SplTempFileObject());
+			$cnt = 0;
+			$last_po ='';
 			foreach ($soldtos as $soldto) {
+				if($last_po != $soldto->po_no){
+					$last_po = $soldto->po_no;
+					$cnt++;
+				}
+				$soldto->row_no = $cnt;
+
 	            $csv->insertOne((array)$soldto);
 	        }
 	        $csv->output(Input::get('filename').'.csv');

@@ -79,7 +79,7 @@ class MakeSob extends Command {
 					->orderBy('year', 'weekno')
 					->get();
 				foreach ($splits as $split) {
-					$po_no = $activity->activitytype->prefix ."_". $brand->brand_shortcut ."_". $split->year ."_". $split->weekno;
+					$po_no = $activity->activitytype->prefix ."_". $brand->brand_shortcut ."_". $split->year ."_". sprintf("%02d", $split->weekno);
 					$sobs = AllocationSob::join('allocations', 'allocations.id', '=', 'allocation_sobs.allocation_id')
 						->join('schemes', 'schemes.id', '=', 'allocations.scheme_id')
 						->where('weekno', $split->weekno)
@@ -91,7 +91,7 @@ class MakeSob extends Command {
 						->get();
 					$series = 1;
 					foreach ($sobs as $sob) {
-						$po_series = $po_no ."_". $series;
+						$po_series = $po_no ."_". sprintf("%02d", $series);
 						$this->line('PO SERIES : ' .$po_series);
 
 						$shipTo = ShipTo::where('ship_to_code',$sob->ship_to_code)->first();
