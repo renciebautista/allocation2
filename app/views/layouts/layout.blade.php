@@ -169,12 +169,15 @@
 							</ul>
 						</li>
 
+						@if($_ENV['MAIL_TEST'])
+
 						<li class="dropdown">
 							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="report">SOB <span class="caret"></span></a>
 							<ul class="dropdown-menu" aria-labelledby="report">
 								<li>{{ HTML::linkAction('SobController@download' , 'Export SOB File') }}</li>  
 							</ul>
 						</li>
+						@endif
 						
 
 						<li class="dropdown">

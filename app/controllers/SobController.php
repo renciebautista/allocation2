@@ -106,20 +106,39 @@ class SobController extends \BaseController {
 		{	
 			set_time_limit(0);
 			ini_set('memory_limit', -1);
-			$soldtos =  AllocationSob::getCycleSOB($input);
-			$csv = \League\Csv\Writer::createFromFileObject(new \SplTempFileObject());
-			$cnt = 0;
-			$last_po ='';
-			foreach ($soldtos as $soldto) {
-				if($last_po != $soldto->po_no){
-					$last_po = $soldto->po_no;
-					$cnt++;
-				}
-				$soldto->row_no = $cnt;
 
-	            $csv->insertOne((array)$soldto);
-	        }
-	        $csv->output(Input::get('filename').'.csv');
+			$soldtos =  AllocationSob::getCycleSOB($input);
+
+			$data = '';
+			foreach ($emails as $email)
+			{
+			    // If you want 1 email per line
+			    $data .= '"'.$email.'"'.PHP_EOL;
+
+			    // If you want all emails on 1 line
+			    $data .= '"'.$email.'",';
+			}
+
+			header('Content-type: text/csv');
+			header('Content-Disposition: attachment; filename=My Cool File.csv');
+			header('Pragma: no-cache');
+			header('Expires: 0');
+
+			echo $data;
+
+			// $csv = \League\Csv\Writer::createFromFileObject(new \SplTempFileObject());
+			// $cnt = 0;
+			// $last_po ='';
+			// foreach ($soldtos as $soldto) {
+			// 	if($last_po != $soldto->po_no){
+			// 		$last_po = $soldto->po_no;
+			// 		$cnt++;
+			// 	}
+			// 	$soldto->row_no = $cnt;
+
+	  //           $csv->insertOne((array)$soldto);
+	  //       }
+	  //       $csv->output(Input::get('filename').'.csv');
 
 
 		}else{
