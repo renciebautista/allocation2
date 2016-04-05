@@ -251,7 +251,9 @@ class Pricelist extends \Eloquent {
 		$records->each(function($row){
 			if(!is_null($row->brand_desc)){
 				self::where('brand_desc', $row->brand_desc)
-				->update(['brand_shortcut' => $row->brand_shortcut]);
+					->where('category_desc', $row->category_desc)
+					->where('division_desc', $row->division_desc)
+					->update(['brand_shortcut' => $row->brand_shortcut]);
 			}
 			
 		});
