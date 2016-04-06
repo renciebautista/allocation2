@@ -363,11 +363,11 @@ class AllocationSob extends \Eloquent {
 
 	public static function getCycleSOB($input){
 		// dd($input);
-		$cycle_ids = [];
-		foreach ($input['cycles'] as $cycle) {
-			$cycle_ids[] = $cycle;
-		}
-		$cycles = implode(",", $cycle_ids);
+		// $cycle_ids = [];
+		// foreach ($input['cycles'] as $cycle) {
+		// 	$cycle_ids[] = $cycle;
+		// }
+		// $cycles = implode(",", $cycle_ids);
 		$query = sprintf("select '' as row_no,
 			'P001' as col2, '11' as col3,'11' as col4,
 			allocation_sobs.ship_to_code as ship_to_code_1,
@@ -383,9 +383,11 @@ class AllocationSob extends \Eloquent {
 			from allocation_sobs
 			join schemes on schemes.id = allocation_sobs.scheme_id 
 			join activities on activities.id = schemes.activity_id
-			where activities.cycle_id in (%s)
+			where allocation > 0
+			and allocation_sobs.po_no != ''
 			group by allocation_sobs.po_no, allocation_sobs.ship_to_code,  allocation_sobs.scheme_id
-			order by allocation_sobs.year, allocation_sobs.weekno,allocation_sobs.po_no",$cycles);
+			order by allocation_sobs.year, allocation_sobs.weekno,allocation_sobs.po_no");
+
 
 		// $query = sprintf("select table_cnt.po_count,
 		// 	'P001' as col2, '11' as col3,'11' as col4,
