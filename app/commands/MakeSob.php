@@ -45,6 +45,7 @@ class MakeSob extends Command {
 			->where('activities.status_id',$activity_status)
 			->where('activities.with_sob',1)
 			->whereIn('activities.cycle_id',$cycle_ids)
+			->where('generating_sob',0)
 			->groupBy('activity_type_id')
 			->get();
 
@@ -112,6 +113,8 @@ class MakeSob extends Command {
 						$series++;
 					}
 				}
+
+				Cycle::whereIn('id',$cycle_ids)->update(['generating_sob' => 0, 'sob_generated' => 1]);
 			}
 		}
 		

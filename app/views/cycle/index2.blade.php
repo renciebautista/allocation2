@@ -51,6 +51,8 @@
 						<th class="center">Implementation Date</th>
 						<th class="center">SOB Deadline</th>
 						<th class="center">Emergency</th>
+						<th class="center">Generating SOB</th>
+						<th class="center">PO No. Generated</th>
 						<th colspan="2" class="dash-action">Action</th>
 					</tr>
 				</thead>
@@ -62,7 +64,9 @@
 					@else
 					@foreach($cycles as $cycle)
 					<tr>
-						<td>{{ Form::checkbox('cycle[]', $cycle->id) }}</td>
+						<td>
+							{{ Form::checkbox('cycle[]', $cycle->id,false, ($cycle->generating_sob) ? ['disabled' => 'disabled']:'' )}}
+						</td>
 						<td>{{ $cycle->cycle_name }}</td>
 						<td class="center">{{ date_format(date_create($cycle->start_date),'m/d/Y')  }}</td>
 						<td class="center">{{ date_format(date_create($cycle->end_date),'m/d/Y')  }}</td>
@@ -77,9 +81,8 @@
 							@endif
 						</td>
 						<td class="center">{{ ($cycle->emergency) ? '<i class="fa fa-check"></i>' : '' }}</td>
-						<td class="action">
-							
-						</td>
+						<td class="center">{{ ($cycle->generating_sob) ? '<i class="fa fa-check"></i>' : '' }}</td>
+						<td class="center">{{ ($cycle->sob_generated) ? '<i class="fa fa-check"></i>' : '' }}</td>
 						<td class="action">
 							{{ HTML::linkAction('CycleController@edit','Edit', $cycle->id, array('class' => 'btn btn-info btn-xs')) }}
 						</td>

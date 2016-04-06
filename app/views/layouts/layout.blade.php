@@ -169,7 +169,7 @@
 							</ul>
 						</li>
 
-						@if($_ENV['MAIL_TEST'])
+						@if(Auth::user()->hasRole("ADMINISTRATOR"))
 
 						<li class="dropdown">
 							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="report">SOB <span class="caret"></span></a>
