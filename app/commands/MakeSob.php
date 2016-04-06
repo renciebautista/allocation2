@@ -51,7 +51,7 @@ class MakeSob extends Command {
 			->get();
 
 		// $this->line('Total activities with : ' .count($cycle_ids));
-		Cycle::whereIn('id',$cycle_ids)->update(['generating_sob' => 1]);
+		Cycle::whereIn('id',$cycle_ids)->update(['generating_sob' => 1, 'sob_generated' => 0]);
 
 		foreach ($activities as $activity) {
 			$activity_schemes = Scheme::select('schemes.id')
@@ -117,8 +117,9 @@ class MakeSob extends Command {
 				}
 			}
 
-			Cycle::whereIn('id',$cycle_ids)->update(['generating_sob' => 0, 'sob_generated' => 1]);
+			
 		}
+		Cycle::whereIn('id',$cycle_ids)->update(['generating_sob' => 0, 'sob_generated' => 1]);
 		
 	}
 
