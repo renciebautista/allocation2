@@ -115,9 +115,9 @@ class MakeSob extends Command {
 						$series++;
 					}
 				}
-
-				Cycle::whereIn('id',$cycle_ids)->update(['generating_sob' => 0, 'sob_generated' => 1]);
 			}
+
+			Cycle::whereIn('id',$cycle_ids)->update(['generating_sob' => 0, 'sob_generated' => 1]);
 		}
 		
 	}
