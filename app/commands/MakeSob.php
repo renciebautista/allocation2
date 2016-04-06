@@ -42,6 +42,7 @@ class MakeSob extends Command {
 		$activity_status = 9;
 
 		$activities = Activity::with('activitytype')
+			->join('cycles', 'cycles.id', '=', 'activities.cycle_id')
 			->where('activities.status_id',$activity_status)
 			->where('activities.with_sob',1)
 			->whereIn('activities.cycle_id',$cycle_ids)
@@ -50,6 +51,7 @@ class MakeSob extends Command {
 			->get();
 
 		// $this->line('Total activities with : ' .count($cycle_ids));
+		Cycle::whereIn('id',$cycle_ids)->update(['generating_sob' => 1]);
 
 		foreach ($activities as $activity) {
 			$activity_schemes = Scheme::select('schemes.id')

@@ -315,8 +315,6 @@ class CycleController extends \BaseController {
 				$message = $total_activities." activities queue for pdf creation";
 			}elseif (Input::get('submit') == "sob") {
 
-				Cycle::whereIn('id',$cycle_ids)->update(['generating_sob' => 1]);
-
 				if($_ENV['MAIL_TEST']){
 					Queue::push('SobScheduler', array('cycle_ids' => $cycle_ids),'pono');
 				}else{
