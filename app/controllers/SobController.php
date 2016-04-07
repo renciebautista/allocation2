@@ -72,24 +72,31 @@ class SobController extends \BaseController {
 	}
 
 	public function download(){
-		$cycles = Activity::select('cycle_desc','cycle_id')
-			->groupBy('cycle_id')
-			->orderBy('cycle_id')
-			->lists('cycle_desc', 'cycle_id');
-
+		
 		$types = AllocationSob::orderBy('activitytype_desc')
 			->join('schemes', 'schemes.id', '=', 'allocation_sobs.scheme_id')
 			->join('activities', 'activities.id', '=', 'schemes.activity_id')
 			->groupBy('activity_type_id')
 			->lists('activitytype_desc', 'activity_type_id');
 
-		$brands = AllocationSob::orderBy('brand_desc')
+		$brands = AllocationSob::selectRaw('CONCAT(brand_desc, " - ", brand_shortcut) AS brand_desc, brand_shortcut')
 			->join('schemes', 'schemes.id', '=', 'allocation_sobs.scheme_id')
-			->groupBy('brand_desc')
-			->lists('brand_desc', 'brand_desc');
+			->groupBy('brand_shortcut')
+			->lists('brand_desc', 'brand_shortcut');
 
 
-		return View::make('sob.download',compact('cycles', 'types', 'brands'));
+		$years = AllocationSob::select('year')
+			->groupBy('year')
+			->orderBy('year')
+			->lists('year', 'year');
+
+		$weeks = AllocationSob::select('weekno')
+			->groupBy('weekno')
+			->orderBy('weekno')
+			->lists('weekno', 'weekno');
+
+
+		return View::make('sob.download',compact('types', 'brands', 'years', 'weeks'));
 	}
 
 	public function downloadreport(){
@@ -98,7 +105,8 @@ class SobController extends \BaseController {
 	        'filename' => 'required|between:4,128',
 	        'type' => 'required|integer|min:1',
 	        'brand' => 'required',
-	        'cycles' => 'required'
+	        'year' => 'required',
+	        'week' => 'required'
 	    );
 		$validation = Validator::make($input,$rules);
 
@@ -107,7 +115,7 @@ class SobController extends \BaseController {
 			set_time_limit(0);
 			ini_set('memory_limit', -1);
 
-			$soldtos =  AllocationSob::getCycleSOB($input);
+			$soldtos =  AllocationSob::getSOBFilters($input);
 
 			$csv = \League\Csv\Writer::createFromFileObject(new \SplTempFileObject());
 			$cnt = 0;

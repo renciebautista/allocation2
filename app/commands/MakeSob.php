@@ -62,7 +62,6 @@ class MakeSob extends Command {
 				->whereIn('activities.cycle_id',$cycle_ids)
 				->get();
 
-			// $this->line($activity_schemes->count());
 
 			$scheme_ids = [];
 			foreach ($activity_schemes as $key => $scheme) {
@@ -88,13 +87,17 @@ class MakeSob extends Command {
 						->where('weekno', $split->weekno)
 						->where('year', $split->year)
 						->where('brand_desc', $brand->brand_desc)
+						->whereNull('po_no')
 						->whereIn('allocation_sobs.scheme_id',$scheme_ids)
 						->groupBy('allocation_sobs.ship_to_code')
 						->orderBy('allocation_sobs.id')
 						->get();
+						
+					$this->line($sobs->count());
+
 					$series = 1;
 					foreach ($sobs as $sob) {
-						$po_series = $po_no ."_". sprintf("%02d", $series);
+						$po_series = $po_no ."_". date('Ymd').'_'. sprintf("%02d", $series);
 						$this->line('PO SERIES : ' .$po_series);
 
 						$shipTo = ShipTo::where('ship_to_code',$sob->ship_to_code)->first();

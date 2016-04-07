@@ -29,7 +29,14 @@
 				</div>
 			</div>
 
-			<div class="col-lg-6">
+			
+		</div>
+
+
+
+		<div class="row">
+
+			<div class="col-lg-3">
 				<div class="form-group">
 					<div class="row">
 						<div class="col-lg-12">
@@ -40,12 +47,8 @@
 				</div>
 			</div>
 			
-		</div>
 
-
-
-		<div class="row">
-			<div class="col-lg-6">
+			<div class="col-lg-3">
 				<div class="form-group">
 					<div class="row">
 						<div class="col-lg-12">
@@ -55,13 +58,29 @@
 					</div>
 				</div>
 			</div>
+			
+		</div>
 
-			<div class="col-lg-6">
+		<div class="row">
+
+			<div class="col-lg-3">
 				<div class="form-group">
 					<div class="row">
 						<div class="col-lg-12">
-						{{ Form::label('cycles', 'TOP Cycle', array('class' => 'control-label')) }}
-						{{ Form::select('cycles[]', $cycles, null, array('id' => 'cycles','class' => 'form-control', 'multiple' => 'multiple')) }}
+						{{ Form::label('year', 'Year', array('class' => 'control-label')) }}
+						{{ Form::select('year', array('0' => 'PLEASE SELECT') + $years, null, array('class' => 'form-control')) }}
+						</div>
+					</div>
+				</div>
+			</div>
+			
+
+			<div class="col-lg-3">
+				<div class="form-group">
+					<div class="row">
+						<div class="col-lg-12">
+						{{ Form::label('week', 'Week', array('class' => 'control-label')) }}
+						{{ Form::select('week', array('0' => 'PLEASE SELECT') + $weeks, null, array('class' => 'form-control')) }}
 						</div>
 					</div>
 				</div>

@@ -320,7 +320,6 @@ class CycleController extends \BaseController {
 				}else{
 					Queue::push('SobScheduler', array('cycle_ids' => $cycle_ids),'p_pono');
 				}
-
 				$message = $total_activities." activities queue for sob po creation";
 			}else{
 

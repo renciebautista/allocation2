@@ -20,6 +20,8 @@ class AllocationSob extends \Eloquent {
 			->lists('year', 'year');
 	}
 
+
+
 	public static function createAllocation($id,$ship_to,$wek_multi = null){
 		// dd($wek_multi);
 
@@ -361,13 +363,7 @@ class AllocationSob extends \Eloquent {
 		return DB::select(DB::raw($query));
 	}
 
-	public static function getCycleSOB($input){
-		// dd($input);
-		// $cycle_ids = [];
-		// foreach ($input['cycles'] as $cycle) {
-		// 	$cycle_ids[] = $cycle;
-		// }
-		// $cycles = implode(",", $cycle_ids);
+	public static function getSOBFilters($input){
 		$query = sprintf("select '' as row_no,
 			'P001' as col2, '11' as col3,'11' as col4,
 			allocation_sobs.ship_to_code as ship_to_code_1,
@@ -385,8 +381,12 @@ class AllocationSob extends \Eloquent {
 			join activities on activities.id = schemes.activity_id
 			where allocation > 0
 			and allocation_sobs.po_no != ''
+			and activities.activity_type_id = %d
+			and schemes.brand_shortcut = '%s'
+			and allocation_sobs.year = '%s'
+			and allocation_sobs.weekno = '%s'
 			group by allocation_sobs.po_no, allocation_sobs.ship_to_code,  allocation_sobs.scheme_id
-			order by allocation_sobs.year, allocation_sobs.weekno,allocation_sobs.po_no");
+			order by allocation_sobs.year, allocation_sobs.weekno,allocation_sobs.po_no",$input['type'],$input['brand'],$input['year'],$input['week']);
 
 
 		// $query = sprintf("select table_cnt.po_count,
