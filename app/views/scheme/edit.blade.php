@@ -456,7 +456,12 @@
 	</div>
 	
 	@if(Auth::user()->hasRole("PROPONENT"))
-		@include('shared.sob_details_edit')
+		@if((strtotime($activity->cycle->approval_deadline) > strtotime(date('Y-m-d'))))
+			@include('shared.sob_details_edit')
+		@else
+			@include('shared.sob_details_readonly')
+		@endif
+		
 	@else
 		@include('shared.sob_details_readonly')
 	@endif
@@ -568,7 +573,6 @@
 
 @section('page-script')
 	
- 	
 	$('.nav-tabs a').on( 'shown.bs.tab', function (e) {
         $.fn.dataTable.tables( {visible: true, api: true} ).columns.adjust();
     } );
@@ -590,9 +594,9 @@
 			$(this).val(0.00);
 		}
 		var sum = 0;
-	    $('.dataTables_scrollHead .numweek').each(function() {
+
+	    $(this).closest('tr').find('.numweek').each(function() {
 	        sum += Number($(this).val());
-	        console.log($(this).val());
 	    });
 
 	    if(sum > 100){
@@ -605,9 +609,9 @@
 		}
 
 		var arr = $(this).attr("id").split('_');
-		$("#_wek"+arr[1]).val($(this).val());
+		$("#_wek_"+arr[1]+"_"+arr[2]).attr('value',$(this).val());
 
-	    $('#sum').text(sum.toFixed(2) +'%');
+	    $(this).closest('tr').find('.sum').text(sum.toFixed(2) +'%');
 	})
 
 	$(".manual_upload").hide();
@@ -630,7 +634,6 @@
     });
 
 	$("#updatesob").validate({
-		ignore: ':hidden:not(".multiselect")',
 		errorElement: "span", 
 		errorClass : "has-error",
 		rules: {

@@ -43,12 +43,15 @@ class SobController extends \BaseController {
 				$sheet->fromArray($data,null, 'A1', true);
 				$sheet->row(1, array(
 				    'ALLOCATION SOB ID',
+				    'PO NO',
 				    'TOP CYCLE',
 					'ACTIVITY TYPE',
 					'ACTIVITY ID',
 					'ACTIVITY NAME',
+					'DIVISION',
 					'CATEGORY',
 					'BRAND',	
+					'BRAND SHORTCUT',
 					'SCHEME',	
 					'ITEM CODE',	
 					'ITEM DESCRIPTION',

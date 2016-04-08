@@ -5,6 +5,10 @@ class AllocationSob extends \Eloquent {
 
 	public $timestamps = false;
 
+	public function sobGroup(){
+		return $this->belongsTo('SobGroup','sob_group_id','id');
+	}
+
 
 	public static function getWeeks(){
 		return self::select('weekno')
@@ -21,10 +25,7 @@ class AllocationSob extends \Eloquent {
 	}
 
 
-
 	public static function createAllocation($id,$ship_to,$wek_multi = null){
-		// dd($wek_multi);
-
 		$scheme = Scheme::find($id);
 		$total_alloc = $ship_to->final_alloc;
 		$total_weeks = $scheme->weeks;
@@ -42,6 +43,8 @@ class AllocationSob extends \Eloquent {
 
 		$week_shares = array();
 
+		$sob_group = SobFilter::getFilter($ship_to);
+
 		for($i = $start_week; $i < $last_week; $i++){
 			$wek_value = 0;
 			$share = 0;
@@ -54,31 +57,30 @@ class AllocationSob extends \Eloquent {
 				$weekno = $new_count;
 				
 			}
-				if(!empty($wek_multi)){
-					$multi = $wek_multi[$new_count]/100;
-					if($multi != 0){
-						$wek_value = ceil($total_alloc * $multi);
-						$share = $wek_multi[$new_count];
-					}
-
-				}else{
-					$wek_value = ceil($total_alloc/$total_weeks);
-					$share = round((1/$total_weeks) * 100,2);
-
+			
+			if(!empty($wek_multi)){
+				$multi = $wek_multi[$sob_group->sob_group_id][$new_count]/100;
+				if($multi != 0){
+					$wek_value = ceil($total_alloc * $multi);
+					$share = $wek_multi[$sob_group->sob_group_id][$new_count];
 				}
 
-				// echo $wek_value;
-				$running_value += $wek_value;
-				if($running_value > $total_alloc){
-					// dd($running_value);
-					$x = $running_value - $total_alloc;
-					$wek_value = $wek_value - $x;
-					// $zero = true;
-				}
+			}else{
+				$wek_value = ceil($total_alloc/$total_weeks);
+				$share = round((1/$total_weeks) * 100,2);
 
-				if($wek_value < 1){
-					$wek_value = 0;
-				}
+			}
+
+			// echo $wek_value;
+			$running_value += $wek_value;
+			if($running_value > $total_alloc){
+				$x = $running_value - $total_alloc;
+				$wek_value = $wek_value - $x;
+			}
+
+			if($wek_value < 1){
+				$wek_value = 0;
+			}
 				
 			$weekno = $new_count;
 			$new_count++;
@@ -90,18 +92,22 @@ class AllocationSob extends \Eloquent {
 
 			$running_share += $share;	
 
+			
+
 			$data[] = array('scheme_id' => $scheme->id, 
 				'allocation_id' => $ship_to->id, 
 				'ship_to_code' => $ship_to->ship_to_code,
 				'weekno' => $weekno, 
 				'year' => $year,
+				'sob_group_id' => $sob_group->sob_group_id,
 				'share' => $share,
 				'allocation' => $wek_value);
 
 			if($wek_multi == null){
-				$week_shares[$weekno] = $share;
+				$week_shares[$weekno] = ['share' => $share, 'sob_group_id' => $sob_group->sob_group_id];
 			}else{
 				Weekpercentage::where('scheme_id',$scheme->id)
+					->where('sob_group_id',$sob_group->sob_group_id)
 					->where('weekno',$weekno)
 					->update(['share' => $share]);
 			}
@@ -111,13 +117,119 @@ class AllocationSob extends \Eloquent {
 		if(count($data) > 0){
 			self::insert($data);
 			if(!empty($week_shares)){
-				foreach ($week_shares as $key => $share) {
-					Weekpercentage::firstOrCreate(['scheme_id' => $scheme->id, 'weekno' => $key, 'share' => $share]);
+				foreach ($week_shares as $key => $row) {
+					// dd($row['sob_group_id']);
+					Weekpercentage::firstOrCreate(['scheme_id' => $scheme->id,
+						'sob_group_id' =>$row['sob_group_id'],
+					 	'weekno' => $key, 
+					 	'share' => $row['share']]);
 				}
 			}
 		}
 		
 	}
+
+	// public static function createAllocation($id,$ship_to,$wek_multi = null){
+	// 	// dd($ship_to);
+	// 	$scheme = Scheme::find($id);
+	// 	$total_alloc = $ship_to->final_alloc;
+	// 	$total_weeks = $scheme->weeks;
+
+	// 	$data = array();
+	// 	$running_value = 0;
+	// 	$running_share = 0;
+	// 	$zero = false;
+
+	// 	$start_week = idate('W', strtotime($scheme->sob_start_date));
+	// 	$last_week = $start_week + $total_weeks;
+	// 	$new_count = $start_week;
+
+	// 	$year = idate('Y', strtotime($scheme->sob_start_date));
+
+	// 	$week_shares = array();
+
+	// 	for($i = $start_week; $i < $last_week; $i++){
+	// 		$wek_value = 0;
+	// 		$share = 0;
+
+	// 		if($i > 52){
+	// 			if($new_count > 52){
+	// 				$new_count = 1;
+	// 				$year++;
+	// 			}
+	// 			$weekno = $new_count;
+				
+	// 		}
+
+	// 		if(!empty($wek_multi)){
+	// 			$multi = $wek_multi[$new_count]/100;
+	// 			if($multi != 0){
+	// 				$wek_value = ceil($total_alloc * $multi);
+	// 				$share = $wek_multi[$new_count];
+	// 			}
+
+	// 		}else{
+	// 			$wek_value = ceil($total_alloc/$total_weeks);
+	// 			$share = round((1/$total_weeks) * 100,2);
+
+	// 		}
+
+	// 		// echo $wek_value;
+	// 		$running_value += $wek_value;
+	// 		if($running_value > $total_alloc){
+	// 			$x = $running_value - $total_alloc;
+	// 			$wek_value = $wek_value - $x;
+	// 		}
+
+	// 		if($wek_value < 1){
+	// 			$wek_value = 0;
+	// 		}
+				
+	// 		$weekno = $new_count;
+	// 		$new_count++;
+
+	// 		$x = $last_week - 1;
+	// 		if($i == $x){
+	// 			$share = 100 - $running_share;
+	// 		}
+
+	// 		$running_share += $share;	
+
+	// 		$sob_group = SobFilter::getFilter($ship_to);
+
+	// 		$data[] = array('scheme_id' => $scheme->id, 
+	// 			'allocation_id' => $ship_to->id, 
+	// 			'ship_to_code' => $ship_to->ship_to_code,
+	// 			'weekno' => $weekno, 
+	// 			'year' => $year,
+	// 			'sob_group_id' => $sob_group->sob_group_id,
+	// 			'share' => $share,
+	// 			'allocation' => $wek_value);
+
+	// 		if($wek_multi == null){
+	// 			$week_shares[$weekno] = ['share' => $share, 'sob_group_id' => $sob_group->sob_group_id];
+	// 		}else{
+	// 			Weekpercentage::where('scheme_id',$scheme->id)
+	// 				->where('weekno',$weekno)
+	// 				->update(['share' => $share]);
+	// 		}
+			
+	// 	}
+
+	// 	if(count($data) > 0){
+	// 		self::insert($data);
+	// 		if(!empty($week_shares)){
+	// 			foreach ($week_shares as $key => $row) {
+	// 				// dd($row['sob_group_id']);
+	// 				Weekpercentage::firstOrCreate(['scheme_id' => $scheme->id,
+	// 					'sob_group_id' =>$row['sob_group_id'],
+	// 				 	'weekno' => $key, 
+	// 				 	'share' => $row['share']]);
+	// 			}
+	// 		}
+	// 	}
+		
+	// }
 
 	public static function getSob($id){
 		$rows = self::where('scheme_id', $id)->get();
@@ -133,9 +245,10 @@ class AllocationSob extends \Eloquent {
 			$x = DB::select(DB::raw($query1));
 			// echo $x[0]->query_sting;
 
-			$query = sprintf("SELECT allocation_id,allocations.group,allocations.area,allocations.ship_to,allocation_sobs.share,".$x[0]->query_sting."
+			$query = sprintf("SELECT allocation_id,sobgroup,allocations.group,allocations.area,allocations.ship_to,allocation_sobs.share,".$x[0]->query_sting."
 				FROM allocation_sobs
 				join allocations on allocations.id = allocation_sobs.allocation_id
+				join sob_groups on sob_groups.id = allocation_sobs.sob_group_id
 				WHERE allocation_sobs.scheme_id = '".$id."'
 				GROUP BY allocation_id
 				ORDER BY allocation_id");
@@ -146,20 +259,21 @@ class AllocationSob extends \Eloquent {
 	}
 
 	public static function getHeader($id){
-		return self::select('weekno', 'share')
+		return self::select('weekno', 'share','sob_group_id')
 			->where('scheme_id', $id)
-			->groupBy('weekno')
+			->groupBy('sob_group_id', 'weekno', 'year','share')
 			->orderBy('year')
 			->orderBy('weekno')
+			->orderBy('sob_group_id')
 			->get();
 	}
 
 	public static function getByCycle($cycles){
 
-		$query = sprintf("select allocation_sobs.id, activities.cycle_desc,
+		$query = sprintf("select allocation_sobs.id, allocation_sobs.po_no, activities.cycle_desc,
 			activities.activitytype_desc,
 			activities.id as activity_id,activities.circular_name,
-			category_tbl.category_desc,schemes.brand_desc,
+			schemes.sdivision,schemes.scategory,schemes.brand_desc,schemes.brand_shortcut,
 			schemes.name,schemes.item_code,schemes.item_desc,
 			allocations.group, allocations.area, allocations.sold_to, 
 			COALESCE(allocations.ship_to_code,allocations.ship_to_code,allocations.sold_to_code) as ship_to_code,
@@ -171,11 +285,6 @@ class AllocationSob extends \Eloquent {
 			join allocations on allocations.id = allocation_sobs.allocation_id
 			join schemes on allocation_sobs.scheme_id = schemes.id
 			join activities on schemes.activity_id = activities.id
-			LEFT JOIN (
-				SELECT brand_desc,category_desc
-				FROM pricelists
-				GROUP BY brand_desc
-				)as category_tbl ON schemes.brand_desc = category_tbl.brand_desc
 			where activities.cycle_id in (".implode(",", $cycles).")
 			and activities.disable = '0'
 			and activities.status_id = '9'
@@ -187,8 +296,8 @@ class AllocationSob extends \Eloquent {
 
 	public static function getBySchemeId($id){
 
-		$query = sprintf("select allocation_sobs.id, activities.activitytype_desc,
-			category_tbl.category_desc,schemes.brand_desc,
+		$query = sprintf("select allocation_sobs.id, allocation_sobs.po_no, activities.activitytype_desc,
+			schemes.sdivision,schemes.scategory,schemes.brand_desc,schemes.brand_shortcut,
 			schemes.name,schemes.item_code,schemes.item_desc,
 			allocations.group, allocations.area, allocations.sold_to, 
 			COALESCE(allocations.ship_to_code,allocations.ship_to_code,allocations.sold_to_code) as ship_to_code,
@@ -200,11 +309,6 @@ class AllocationSob extends \Eloquent {
 			join allocations on allocations.id = allocation_sobs.allocation_id
 			join schemes on allocation_sobs.scheme_id = schemes.id
 			join activities on schemes.activity_id = activities.id
-			LEFT JOIN (
-				SELECT brand_desc,category_desc
-				FROM pricelists
-				GROUP BY brand_desc
-				)as category_tbl ON schemes.brand_desc = category_tbl.brand_desc
 			where schemes.id = '%s'
 			and activities.disable = '0'
 			order by allocation_sobs.id",$id);
@@ -214,20 +318,41 @@ class AllocationSob extends \Eloquent {
 
 	public static function getByActivity($id){
 		$schemes = Scheme::where('activity_id',$id)->get();
+		$sobgroups = SobGroup::all();
 		// return $schemes;
 		foreach ($schemes as $key => $scheme) {
 			$sobs = self::getSob($scheme->id);
 			if(count($sobs) > 0){
 				$header = self::getHeader($scheme->id);
+				// $sob_header = array();
+				// if(count($header) >0){
+				// 	foreach ($header as $value) {
+				// 		$sob_header[$value->weekno] = $value->share;
+				// 	}
+				// }
+
 				$sob_header = array();
 				if(count($header) >0){
 					foreach ($header as $value) {
-						$sob_header[$value->weekno] = $value->share;
+						$sob_header[$value->sob_group_id][$value->weekno] = $value->share;
+					}
+				}
+
+				if(count($sobs) >0){
+					$prv_header = 0;
+					foreach ($sobgroups as $value) {
+						if(empty($prv_header)){
+							$prv_header = $sob_header[$value->id];
+						}
+						if(!isset($sob_header[$value->id])){
+							$sob_header[$value->id] = $prv_header;
+						}
 					}
 				}
 
 				$schemes[$key]->sobs = $sobs;
 				$schemes[$key]->sob_header = $sob_header;
+				$schemes[$key]->sobgroups = $sobgroups;
 			}
 
 			

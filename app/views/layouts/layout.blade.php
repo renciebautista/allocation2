@@ -113,6 +113,7 @@
 								    <a tabindex="0" data-toggle="dropdown">SOB Maintenance</a>
 								    <ul class="dropdown-menu">
 								      	<li>{{ HTML::linkRoute('sobfilter.index', 'SOB Filters') }}</li> 
+								      	<li>{{ HTML::linkRoute('sobgroup.index', 'SOB Groups') }}</li> 
 								    </ul>
 								</li>  
 

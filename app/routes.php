@@ -304,6 +304,9 @@ Route::group(array('before' => 'auth'), function()
 		Route::post('sobfilter/upload', 'SobfilterController@upload');
 		Route::resource('sobfilter', 'SobfilterController');
 
+
+		Route::resource('sobgroup', 'SobGroupController');
+
 		Route::get('shipto/export', 'ShiptoController@export');
 		Route::get('shipto/import', 'ShiptoController@import');
 		Route::post('shipto/upload', 'ShiptoController@upload');
