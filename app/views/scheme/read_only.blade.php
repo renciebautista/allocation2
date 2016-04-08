@@ -474,10 +474,7 @@
 @stop
 
 @section('page-script')
-$("#brand").chosen({
-		search_contains: true,
-		allow_single_deselect: true
-	});
+
  	
 	$('.nav-tabs a').on( 'shown.bs.tab', function (e) {
         $.fn.dataTable.tables( {visible: true, api: true} ).columns.adjust();
@@ -490,22 +487,6 @@ $("#brand").chosen({
 		"bSort": false
 	});
 
-	$('#start_date').datetimepicker({
-		pickTime: false,
-		calendarWeeks: true,
-		//minDate: moment(),
-		daysOfWeekDisabled: [0,2,3,4,5,6]
-	});
-
-	$('#start_date').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
-
-
-	$('#weeks').inputNumber({ allowDecimals: true });
-
-
-   
-	
-
 	$('.numweek').inputNumber({ 
 		allowDecimals: true,
 		maxDecimalDigits: 2
@@ -516,9 +497,9 @@ $("#brand").chosen({
 			$(this).val(0.00);
 		}
 		var sum = 0;
-	    $('.dataTables_scrollHead .numweek').each(function() {
+
+	    $(this).closest('tr').find('.numweek').each(function() {
 	        sum += Number($(this).val());
-	        console.log($(this).val());
 	    });
 
 	    if(sum > 100){
@@ -531,9 +512,9 @@ $("#brand").chosen({
 		}
 
 		var arr = $(this).attr("id").split('_');
-		$("#_wek"+arr[1]).val($(this).val());
+		$("#_wek_"+arr[1]+"_"+arr[2]).attr('value',$(this).val());
 
-	    $('#sum').text(sum.toFixed(2) +'%');
+	    $(this).closest('tr').find('.sum').text(sum.toFixed(2) +'%');
 	})
 
 	$(".manual_upload").hide();
@@ -556,7 +537,6 @@ $("#brand").chosen({
     });
 
 	$("#updatesob").validate({
-		ignore: ':hidden:not(".multiselect")',
 		errorElement: "span", 
 		errorClass : "has-error",
 		rules: {
@@ -584,7 +564,6 @@ $("#brand").chosen({
 	        var errors = validator.numberOfInvalids();
 	        if (errors) {
 	            $("html, body").animate({ scrollTop: 0 }, "fast");
-	           
 	        }
 	    }
 
@@ -600,4 +579,19 @@ $("#brand").chosen({
 	        if (sumOfVals == params) return true;
 	        return false;
 	}, "Sum must be {0}");
+
+
+	$("#category").depdrop({
+        url: "{{action('api\SkuController@sobcategory')}}",
+        depends: ['division'],
+        params: ['hidden-1']
+    });
+	
+	$("#brand").depdrop({
+        url: "{{action('api\SkuController@sobbrand')}}",
+        depends: ['category'],
+        initialize: true,
+    	initDepends: ['division'],
+    	params: ['hidden-1']
+    });
 @stop
