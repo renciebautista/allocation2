@@ -51,7 +51,7 @@
 						<th class="center">Implementation Date</th>
 						<th class="center">SOB Deadline</th>
 						<th class="center">Emergency</th>
-						<th class="center">Generating SOB</th>
+						<th class="center">Generating PO No.</th>
 						<th class="center">PO No. Generated</th>
 						<th colspan="2" class="dash-action">Action</th>
 					</tr>
