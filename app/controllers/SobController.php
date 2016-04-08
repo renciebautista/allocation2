@@ -188,7 +188,7 @@ class SobController extends \BaseController {
 			    
 			}
 
-			header('Content-type: text/plain');
+			header('Content-type: text/tab-separated-values');
 			header('Content-Disposition: attachment; filename='.Input::get('filename').'.txt');
 			header('Pragma: no-cache');
 			header('Expires: 0');
