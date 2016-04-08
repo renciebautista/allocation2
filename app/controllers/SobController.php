@@ -120,21 +120,96 @@ class SobController extends \BaseController {
 
 			$soldtos =  AllocationSob::getSOBFilters($input);
 
-			$csv = \League\Csv\Writer::createFromFileObject(new \SplTempFileObject());
+			$data = '';
 			$cnt = 0;
 			$last_po ='';
-			foreach ($soldtos as $soldto) {
+			foreach ($soldtos as $soldto)
+			{
 				if($soldto->allocation > 0){
 					if($last_po != $soldto->po_no){
 						$last_po = $soldto->po_no;
 						$cnt++;
 					}
 					$soldto->row_no = $cnt;
+					// $data .= '"'.$email.'"'.PHP_EOL;
+					$data .= $soldto->row_no . chr(9)
+						.$soldto->col2 . chr(9)
+						.$soldto->col3 . chr(9)
+						.$soldto->col4 . chr(9)
+						.$soldto->ship_to_code_1 . chr(9)
+						.$soldto->ship_to_code_2 . chr(9)
+						.$soldto->col7 . chr(9)
+						.$soldto->col8 . chr(9)
+						.$soldto->po_no . chr(9)
+						.$soldto->currentdate . chr(9)
+						.$soldto->col11 . chr(9)
+						.$soldto->col12 . chr(9)
+						.$soldto->col13 . chr(9)
+						.$soldto->col14 . chr(9)
+						.$soldto->col15 . chr(9)
+						.$soldto->col16 . chr(9)
+						.$soldto->item_code . chr(9)
+						.$soldto->allocation . chr(9)
+						.$soldto->col19 . chr(9)
+						.$soldto->col20 . chr(9)
+						.$soldto->col21 . chr(9)
+						.$soldto->col22 . chr(9)
+						.$soldto->col23 . chr(9)
+						.$soldto->deliverydate . chr(9)
+						.$soldto->col25 . chr(9)
+						.$soldto->col26 . chr(9)
+						.$soldto->col27 . chr(9)
+						.$soldto->col28 . chr(9)
+						.$soldto->col29 . chr(9)
+						.$soldto->col30 . chr(9)
+						.'' . chr(9)
+						.'' . chr(9)
+						.'' . chr(9)
+						.'' . chr(9)
+						.'' . chr(9)
+						.'' . chr(9)
+						.'' . chr(9)
+						.'' . chr(9)
+						.'' . chr(9)
+						.'' . chr(9)
+						.'' . chr(9)
+						.'' . chr(9)
+						.'' . chr(9)
+						.'' . chr(9)
+						.'' . chr(9)
+						.'' . chr(9)
+						.'' . chr(9)
+						.'' . chr(9)
+						.'' . chr(9)
+						.PHP_EOL;
 
-		            $csv->insertOne((array)$soldto);
+		            // $csv->insertOne((array)$soldto);
 				}
-	        }
-	        $csv->output(Input::get('filename').'.txt');
+			    
+			}
+
+			header('Content-type: text/plain');
+			header('Content-Disposition: attachment; filename='.Input::get('filename').'.txt');
+			header('Pragma: no-cache');
+			header('Expires: 0');
+
+			echo $data;
+
+			// $csv = \League\Csv\Writer::createFromFileObject(new \SplTempFileObject());
+			// $cnt = 0;
+			// $last_po ='';
+			// foreach ($soldtos as $soldto) {
+			// 	if($soldto->allocation > 0){
+			// 		if($last_po != $soldto->po_no){
+			// 			$last_po = $soldto->po_no;
+			// 			$cnt++;
+			// 		}
+			// 		$soldto->row_no = $cnt;
+
+		 //            $csv->insertOne((array)$soldto);
+			// 	}
+	  //       }
+	  //       $csv->output(Input::get('filename').'.txt');
 
 
 		}else{
