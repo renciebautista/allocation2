@@ -468,7 +468,7 @@
 		</div>
 	</div>
 </div>
-
+<input type="hidden" id="hidden-1" value="{{ $scheme->id }}">
 @include('javascript.scheme.read_only')
 
 @stop
