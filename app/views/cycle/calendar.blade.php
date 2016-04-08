@@ -36,6 +36,7 @@
 						<th class="center">Circular Submission Deadline</th>
 						<th class="center">Approval Deadline</th>
 						<th class="center">PDF Creation Date</th>
+						<th class="center">SOB Deadline</th>
 						<th class="center">Release Date</th>
 						<th class="center">Implementation Date</th>
 						<th class="center">Emergency</th>
@@ -55,6 +56,11 @@
 						<td class="center">{{ date_format(date_create($cycle->submission_deadline),'m/d/Y')  }}</td>
 						<td class="center">{{ date_format(date_create($cycle->approval_deadline),'m/d/Y')  }}</td>
 						<td class="center">{{ date_format(date_create($cycle->pdf_deadline),'m/d/Y')  }}</td>
+						<td class="center">
+							@if(!is_null($cycle->sob_deadline))
+							{{ date_format(date_create($cycle->sob_deadline),'m/d/Y')  }}
+							@endif
+						</td>
 						<td class="center">{{ date_format(date_create($cycle->release_date),'m/d/Y')  }}</td>
 						<td class="center">{{ date_format(date_create($cycle->implemintation_date),'m/d/Y')  }}</td>
 						<td class="center">{{ ($cycle->emergency) ? '<i class="fa fa-check"></i>' : '' }}</td>

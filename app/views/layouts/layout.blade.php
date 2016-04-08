@@ -103,9 +103,9 @@
 								    <a tabindex="0" data-toggle="dropdown">Activity Maintenance</a>
 								    <ul class="dropdown-menu">
 								      	<li>{{ HTML::linkRoute('cycle.index', 'Cycle') }}</li>  
+								      	<li>{{ HTML::linkRoute('activity.index', 'Activities') }}</li>
 										<li>{{ HTML::linkRoute('activitytype.index', 'Activity Type') }}</li>  
 										<li>{{ HTML::linkRoute('holidays.index', 'Holidays') }}</li>  
-										<li>{{ HTML::linkRoute('activity.index', 'Activities') }}</li>
 								    </ul>
 								</li>  
 								 
@@ -121,10 +121,10 @@
 								    <a tabindex="0" data-toggle="dropdown">SKUS Maintenance</a>
 								    <ul class="dropdown-menu">
 								      	<li>{{ HTML::linkRoute('brand.index', 'Brand') }}</li> 
-								      	<li>{{ HTML::linkRoute('launchskus.index', 'Launch SKU') }}</li> 
-										<li>{{ HTML::linkRoute('topsku.index', 'Top Skus') }}</li> 
+								      	<li>{{ HTML::linkRoute('topsku.index', 'Reference SKUs') }}</li> 
 										<li>{{ HTML::linkRoute('pricelist.index', 'Price List') }}</li> 
-										<li>{{ HTML::linkRoute('motherchildsku.index', 'Mother Child SKU') }}</li> 
+										<li>{{ HTML::linkRoute('launchskus.index', 'Launch SKUs') }}</li> 
+										<li>{{ HTML::linkRoute('motherchildsku.index', 'Mother Child SKUs') }}</li> 
 								    </ul>
 								</li>
 
@@ -137,7 +137,7 @@
 										<li>{{ HTML::linkRoute('account.index', 'Account') }}</li> 
 										<li>{{ HTML::linkRoute('channel.index', 'Channel') }}</li> 
 										<li>{{ HTML::linkRoute('subchannel.index', 'Sub Channel') }}</li> 
-										<li>{{ HTML::linkRoute('customermaster.index', 'Customer Masterfiles') }}</li> 
+										<li>{{ HTML::linkRoute('customermaster.index', 'Customer & Sales Masterfile') }}</li> 
 								    </ul>
 								</li>
 							</ul>
@@ -149,24 +149,33 @@
 							<ul class="dropdown-menu" aria-labelledby="report">
 								@if(Auth::user()->inRoles(['PROPONENT','PMOG PLANNER']))
 								<li>{{ HTML::linkAction('ReportController@activities' , 'All Released Activities',array('st' => ['9'])) }}</li>  
+								@endif
+
+								@if(Auth::user()->inRoles(['FIELD SALES']))
+								<li>{{ HTML::linkAction('ReportController@activities' , 'All Released Activities',array('st' => ['9'])) }}</li>  
+								@endif
+
+								@if(Auth::user()->inRoles(['ADMINISTRATOR']))
+								<li>{{ HTML::linkAction('ReportController@activities' , 'All Activities') }}</li>
+								@endif
+
+								<li>{{ HTML::linkAction('AllocationReportController@index' , 'Allocation Report') }}</li>
+
+
+								@if(Auth::user()->inRoles(['ADMINISTRATOR','PROPONENT','PMOG PLANNER','COM APPROVER','CD OPS APPROVER','CMD DIRECTOR','SOB ASSISTANT']))
+								<li>{{ HTML::linkAction('SobController@index' , 'Sales Order Booking Report') }}</li>
+								@endif
+								
+
+
+								@if(Auth::user()->inRoles(['ADMINISTRATOR']))
 								<li><a href="#">Calendar of Activities</a></li>
 								<li><a href="#">Activity Details Report</a></li>  
 								<li><a href="#">Activity Timings Report</a></li>
 								<li><a href="#">PIS Summary Report</a></li>
 								@endif
 
-								@if(Auth::user()->inRoles(['FIELD SALES']))
-								<li>{{ HTML::linkAction('ReportController@activities' , 'All Released Activities',array('st' => ['9'])) }}</li>  
-	
-								@endif
-								@if(Auth::user()->inRoles(['ADMINISTRATOR']))
-								<li>{{ HTML::linkAction('ReportController@activities' , 'All Activities') }}</li>
-								<li>{{ HTML::linkAction('SalesDataReportController@index' , 'Sales Data Report') }}</li>
-								@endif
-
-								<li>{{ HTML::linkAction('AllocationReportController@index' , 'Allocation Report') }}</li>
-
-								<li>{{ HTML::linkAction('SobController@index' , 'Sales Order Booking Report') }}</li>
+								
 							</ul>
 						</li>
 
@@ -184,7 +193,7 @@
 						<li class="dropdown">
 							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="report">Exports <span class="caret"></span></a>
 							<ul class="dropdown-menu" aria-labelledby="report">
-								<li>{{ HTML::linkAction('DownloadsController@cycles' , 'Download Released Activities') }}</li>  
+								<li>{{ HTML::linkAction('DownloadsController@cycles' , 'Download Activities') }}</li>  
 							</ul>
 						</li>
 

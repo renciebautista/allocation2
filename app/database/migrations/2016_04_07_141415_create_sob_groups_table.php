@@ -19,9 +19,8 @@ class CreateSobGroupsTable extends Migration {
 		});
 
 		DB::statement("INSERT INTO sob_groups (id, sobgroup) VALUES
-			(1, 'LUZON'),
-			(2, 'VISAYAS'),
-			(3, 'MINDANAO');");
+			(1, 'GMA / LUZ'),
+			(2, 'VIS / MIN');");
 	}
 
 
