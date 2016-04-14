@@ -112,9 +112,9 @@ class SobController extends \BaseController {
 
 			$so_series = So::find(1);
 			
-			if(empty($so_series)){
-				$so_series = So::insert(['series' => 1, 'locked' => 1]);
-			}
+			// if(empty($so_series)){
+			// 	$so_series = So::insert(['series' => 1, 'locked' => 1]);
+			// }
 
 			if($so_series->locked){
 				return Redirect::route('sob.download')

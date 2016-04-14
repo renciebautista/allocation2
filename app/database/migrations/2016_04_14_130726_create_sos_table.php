@@ -19,6 +19,9 @@ class CreateSosTable extends Migration {
 			$table->boolean('locked');
 			$table->timestamps();
 		});
+
+		DB::statement("INSERT INTO sos (id, series, locked) VALUES
+			(1, 1, 0);");
 	}
 
 
