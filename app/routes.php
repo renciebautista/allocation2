@@ -278,6 +278,10 @@ Route::group(array('before' => 'auth'), function()
 		Route::resource('network', 'api\NetworkController');
 		Route::get('budgettype', 'api\BudgetTypeController@gettype');
 		Route::get('materialsource', 'api\MaterialController@getsource');
+
+		Route::post('sobweeks', 'api\SobController@weeks');
+		Route::post('sobweekactivitytype', 'api\SobController@weekactivitytype');
+		Route::post('weekbrand', 'api\SobController@weekbrand');
 	});//
 
 

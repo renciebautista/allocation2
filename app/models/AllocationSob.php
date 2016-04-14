@@ -505,38 +505,12 @@ class AllocationSob extends \Eloquent {
 			join schemes on schemes.id = allocation_sobs.scheme_id 
 			join activities on activities.id = schemes.activity_id
 			where allocation > 0
-			and allocation_sobs.po_no != ''
 			and activities.activity_type_id = %d
 			and schemes.brand_shortcut = '%s'
 			and allocation_sobs.year = '%s'
 			and allocation_sobs.weekno = '%s'
 			group by allocation_sobs.po_no, allocation_sobs.ship_to_code,  allocation_sobs.scheme_id
-			order by allocation_sobs.year, allocation_sobs.weekno,allocation_sobs.po_no",$input['type'],$input['brand'],$input['year'],$input['week']);
-
-
-		// $query = sprintf("select table_cnt.po_count,
-		// 	'P001' as col2, '11' as col3,'11' as col4,
-		// 	allocation_sobs.ship_to_code as ship_to_code_1,
-		// 	allocation_sobs.ship_to_code as ship_to_code_2,
-		// 	'ZTA' as col7,'' as col8,
-		// 	allocation_sobs.po_no,date_format(curdate(), '%%Y%%m%%d') as currentdate,
-		// 	'' as col11,'' as col12,'' as col13,'' as col14,'' as col15,'' as col16,
-		// 	schemes.item_code,
-		// 	allocation_sobs.allocation,
-		// 	'' as col19,'' as col20,'' as col21,'' as col22,'' as col23,
-		// 	date_format(curdate(), '%%Y%%m%%d') as deliverydate,
-		// 	'P101' as col25,'' as col26,'' as col27,'' as col28,'' as col29,'CMD SOB' as col30
-		// 	from allocation_sobs
-		// 	join (
-		// 		select allocation_sobs.scheme_id, count(DISTINCT allocation_sobs.scheme_id) as po_count, po_no
-		// 		from allocation_sobs
-		// 		group by po_no
-		// 	) as table_cnt on table_cnt.po_no = allocation_sobs.po_no
-		// 	join schemes on schemes.id = allocation_sobs.scheme_id 
-		// 	join activities on activities.id = schemes.activity_id
-		// 	where activities.cycle_id in (%s) 
-		// 	and activities.activity_type_id = %d
-		// 	and schemes.brand_desc = '%s'",$cycles, $input['type'], $input['brand']);
+			order by allocation_sobs.year, allocation_sobs.weekno,allocation_sobs.po_no",$input['activity_type'],$input['brand'],$input['year'],$input['week']);
 		return DB::select(DB::raw($query));
 	}
 }

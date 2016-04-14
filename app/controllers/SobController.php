@@ -75,42 +75,29 @@ class SobController extends \BaseController {
 	}
 
 	public function download(){
-		
-		$types = AllocationSob::orderBy('activitytype_desc')
-			->join('schemes', 'schemes.id', '=', 'allocation_sobs.scheme_id')
-			->join('activities', 'activities.id', '=', 'schemes.activity_id')
-			->groupBy('activity_type_id')
-			->lists('activitytype_desc', 'activity_type_id');
-
-		$brands = AllocationSob::selectRaw('CONCAT(brand_desc, " - ", brand_shortcut) AS brand_desc, brand_shortcut')
-			->join('schemes', 'schemes.id', '=', 'allocation_sobs.scheme_id')
-			->groupBy('brand_shortcut')
-			->lists('brand_desc', 'brand_shortcut');
-
 
 		$years = AllocationSob::select('year')
 			->groupBy('year')
 			->orderBy('year')
 			->lists('year', 'year');
 
-		$weeks = AllocationSob::select('weekno')
-			->groupBy('weekno')
-			->orderBy('weekno')
-			->lists('weekno', 'weekno');
 
-
-		return View::make('sob.download',compact('types', 'brands', 'years', 'weeks'));
+		return View::make('sob.download',compact('years'));
 	}
 
 	public function downloadreport(){
 		$input = Input::all();
+		$type_id = Input::get('activity_type');
+		$year_id = Input::get('year');
+		$week_id = Input::get('week');
+		$brand_id = Input::get('brand');
 		$rules = array(
-	        'filename' => 'required|between:4,128',
-	        'type' => 'required|integer|min:1',
-	        'brand' => 'required',
-	        'year' => 'required',
-	        'week' => 'required'
+	        'year' => 'required|integer|min:1',
+	        'week' => 'required',
+	        'activity_type' => 'required',
+	        'brand' => 'required'
 	    );
+
 		$validation = Validator::make($input,$rules);
 
 		if($validation->passes())
@@ -118,105 +105,146 @@ class SobController extends \BaseController {
 			set_time_limit(0);
 			ini_set('memory_limit', -1);
 
-			$soldtos =  AllocationSob::getSOBFilters($input);
+			$activity_type = ActivityType::find($type_id);
+			$brand_shortcut = $brand_id;
+			$year = $year_id;
+			$week = $week_id;
 
-			$data = '';
-			$cnt = 0;
-			$last_po ='';
-			foreach ($soldtos as $soldto)
-			{
-				if($soldto->allocation > 0){
-					if($last_po != $soldto->po_no){
-						$last_po = $soldto->po_no;
-						$cnt++;
-					}
-					$soldto->row_no = $cnt;
-					// $data .= '"'.$email.'"'.PHP_EOL;
-					$data .= $soldto->row_no . chr(9)
-						.$soldto->col2 . chr(9)
-						.$soldto->col3 . chr(9)
-						.$soldto->col4 . chr(9)
-						.$soldto->ship_to_code_1 . chr(9)
-						.$soldto->ship_to_code_2 . chr(9)
-						.$soldto->col7 . chr(9)
-						.$soldto->col8 . chr(9)
-						.$soldto->po_no . chr(9)
-						.$soldto->currentdate . chr(9)
-						.$soldto->col11 . chr(9)
-						.$soldto->col12 . chr(9)
-						.$soldto->col13 . chr(9)
-						.$soldto->col14 . chr(9)
-						.$soldto->col15 . chr(9)
-						.$soldto->col16 . chr(9)
-						.$soldto->item_code . chr(9)
-						.$soldto->allocation . chr(9)
-						.$soldto->col19 . chr(9)
-						.$soldto->col20 . chr(9)
-						.$soldto->col21 . chr(9)
-						.$soldto->col22 . chr(9)
-						.$soldto->col23 . chr(9)
-						.$soldto->deliverydate . chr(9)
-						.$soldto->col25 . chr(9)
-						.$soldto->col26 . chr(9)
-						.$soldto->col27 . chr(9)
-						.$soldto->col28 . chr(9)
-						.$soldto->col29 . chr(9)
-						.$soldto->col30 . chr(9)
-						.'' . chr(9)
-						.'' . chr(9)
-						.'' . chr(9)
-						.'' . chr(9)
-						.'' . chr(9)
-						.'' . chr(9)
-						.'' . chr(9)
-						.'' . chr(9)
-						.'' . chr(9)
-						.'' . chr(9)
-						.'' . chr(9)
-						.'' . chr(9)
-						.'' . chr(9)
-						.'' . chr(9)
-						.'' . chr(9)
-						.'' . chr(9)
-						.'' . chr(9)
-						.'' . chr(9)
-						.'' . chr(9)
-						.PHP_EOL;
-
-		            // $csv->insertOne((array)$soldto);
-				}
-			    
+			$so_series = So::find(1);
+			
+			if(empty($so_series)){
+				$so_series = So::insert(['series' => 1, 'locked' => 1]);
 			}
 
-			header('Content-type: application/octet-stream');
-			header('Content-Disposition: attachment; filename='.Input::get('filename').'.txt');
-			header('Pragma: no-cache');
-			header('Expires: 0');
+			if($so_series->locked){
+				return Redirect::route('sob.download')
+					->withInput()
+					->withErrors($validation)
+					->with('class', 'alert-danger')
+					->with('message', 'Cannot run simultaneous SOB PO generation.');
+			}else{
+				$sobs = AllocationSob::join('allocations', 'allocations.id', '=', 'allocation_sobs.allocation_id')
+					->join('schemes', 'schemes.id', '=', 'allocations.scheme_id')
+					->join('activities', 'activities.id', '=', 'schemes.activity_id')
+					->where('weekno', $week)
+					->where('year',$year)
+					->where('brand_shortcut', $brand_shortcut)
+					->where('activities.activity_type_id', $activity_type->id)
+					->where('activities.status_id', 9)
+					->whereNull('po_no')
+					->groupBy('allocation_sobs.ship_to_code')
+					->orderBy('allocation_sobs.id')
+					->get();
 
-			echo $data;
+				
+				$so_series->locked = true;
+				$so_series->update();
 
-			// $csv = \League\Csv\Writer::createFromFileObject(new \SplTempFileObject());
-			// $cnt = 0;
-			// $last_po ='';
-			// foreach ($soldtos as $soldto) {
-			// 	if($soldto->allocation > 0){
-			// 		if($last_po != $soldto->po_no){
-			// 			$last_po = $soldto->po_no;
-			// 			$cnt++;
-			// 		}
-			// 		$soldto->row_no = $cnt;
+				$series = $so_series->series;
+				foreach ($sobs as $sob) {
+					$po_series = $activity_type->prefix ."_". $brand_shortcut .'_'.sprintf("%07d", $series);
 
-		 //            $csv->insertOne((array)$soldto);
-			// 	}
-	  //       }
-	  //       $csv->output(Input::get('filename').'.txt');
+					$shipTo = ShipTo::where('ship_to_code',$sob->ship_to_code)->first();
 
+					$week_start = new DateTime();
+					$week_start->setISODate($year,$week,$shipTo->dayofweek);
+					$loading_date = $week_start->format('Y-m-d');
+					$receipt_date = date('Y-m-d', strtotime($loading_date . '+ '.$shipTo->leadtime.' days'));
 
+					AllocationSob::join('allocations', 'allocations.id', '=', 'allocation_sobs.allocation_id')
+						->join('schemes', 'schemes.id', '=', 'allocations.scheme_id')
+						->where('weekno', $week)
+						->where('year', $year)
+						->where('allocation_sobs.ship_to_code',$sob->ship_to_code)
+						->where('brand_shortcut', $brand_shortcut)
+						->update(['po_no' => $po_series, 'loading_date' => $loading_date, 'receipt_date' => $receipt_date]);
+					$series++;
+				}
+
+				$so_series->series = $series;
+				$so_series->locked = false;
+				$so_series->update();
+
+				$soldtos =  AllocationSob::getSOBFilters($input);
+
+				$data = '';
+				$cnt = 0;
+				$last_po ='';
+				foreach ($soldtos as $soldto)
+				{
+					if($soldto->allocation > 0){
+						if($last_po != $soldto->po_no){
+							$last_po = $soldto->po_no;
+							$cnt++;
+						}
+						$soldto->row_no = $cnt;
+						$data .= $soldto->row_no . chr(9)
+							.$soldto->col2 . chr(9)
+							.$soldto->col3 . chr(9)
+							.$soldto->col4 . chr(9)
+							.$soldto->ship_to_code_1 . chr(9)
+							.$soldto->ship_to_code_2 . chr(9)
+							.$soldto->col7 . chr(9)
+							.$soldto->col8 . chr(9)
+							.$soldto->po_no . chr(9)
+							.$soldto->currentdate . chr(9)
+							.$soldto->col11 . chr(9)
+							.$soldto->col12 . chr(9)
+							.$soldto->col13 . chr(9)
+							.$soldto->col14 . chr(9)
+							.$soldto->col15 . chr(9)
+							.$soldto->col16 . chr(9)
+							.$soldto->item_code . chr(9)
+							.$soldto->allocation . chr(9)
+							.$soldto->col19 . chr(9)
+							.$soldto->col20 . chr(9)
+							.$soldto->col21 . chr(9)
+							.$soldto->col22 . chr(9)
+							.$soldto->col23 . chr(9)
+							.$soldto->deliverydate . chr(9)
+							.$soldto->col25 . chr(9)
+							.$soldto->col26 . chr(9)
+							.$soldto->col27 . chr(9)
+							.$soldto->col28 . chr(9)
+							.$soldto->col29 . chr(9)
+							.$soldto->col30 . chr(9)
+							.'' . chr(9)
+							.'' . chr(9)
+							.'' . chr(9)
+							.'' . chr(9)
+							.'' . chr(9)
+							.'' . chr(9)
+							.'' . chr(9)
+							.'' . chr(9)
+							.'' . chr(9)
+							.'' . chr(9)
+							.'' . chr(9)
+							.'' . chr(9)
+							.'' . chr(9)
+							.'' . chr(9)
+							.'' . chr(9)
+							.'' . chr(9)
+							.'' . chr(9)
+							.'' . chr(9)
+							.'' . chr(9)
+							.PHP_EOL;
+					}
+				    
+				}
+				$filename = $year.'_'.$week.'_'.$activity_type->prefix."_". $brand_shortcut;
+				header('Content-type: application/octet-stream');
+				header('Content-Disposition: attachment; filename='.$filename.'.txt');
+				header('Pragma: no-cache');
+				header('Expires: 0');
+
+				echo $data;
+			}
 		}else{
 			return Redirect::route('sob.download')
 			->withInput()
 			->withErrors($validation)
 			->with('class', 'alert-danger')
+			->with('week_id', $week_id)
 			->with('message', 'There were validation errors.');
 		}
 	}
