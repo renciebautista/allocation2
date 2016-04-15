@@ -2,6 +2,19 @@
 
 //sob tab
 
+$('#start_date').datetimepicker({
+	pickTime: false,
+	calendarWeeks: true,
+	//minDate: moment(),
+	daysOfWeekDisabled: [0,2,3,4,5,6]
+});
+
+$('#start_date').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
+
+
+$('#weeks').inputNumber({ allowDecimals: true });
+
+
 if(location.hash.length > 0){
 	var activeTab = $('[href=' + location.hash + ']');
 	activeTab && activeTab.tab('show');
