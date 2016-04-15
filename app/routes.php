@@ -388,6 +388,9 @@ Route::group(array('before' => 'auth'), function()
 
 		Route::get('sob/download', ['as' => 'sob.download', 'uses' => 'SobController@download']);
 		Route::post('sob/downloadreport', ['as' => 'sob.downloadreport', 'uses' => 'SobController@downloadreport']);
+
+		Route::get('settings', ['as' => 'settings.index', 'uses' => 'SettingsController@index']);
+		Route::post('settings', ['as' => 'settings.update', 'uses' => 'SettingsController@update']);
 	});
 
 });

@@ -202,6 +202,16 @@
 							
 						</li>
 
+						@if(Auth::user()->hasRole("ADMINISTRATOR"))
+
+						<li class="dropdown">
+							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="report">Settings <span class="caret"></span></a>
+							<ul class="dropdown-menu" aria-labelledby="report">
+								<li>{{ HTML::linkAction('SettingsController@index' , 'Settings') }}</li>  
+							</ul>
+						</li>
+						@endif
+
 						<li class="dropdown">
 							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="help">Help <span class="caret"></span></a>
 							<ul class="dropdown-menu" aria-labelledby="report">
@@ -209,6 +219,8 @@
 								<li>{{ HTML::linkAction('FaqController@index', 'Documentation',null, array()) }}</li>  
 							</ul>
 						</li>
+
+						
 					</ul>
 
 					<ul class="nav navbar-nav navbar-right">
