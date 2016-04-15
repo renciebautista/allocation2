@@ -31,7 +31,6 @@
 	<button id="pdf" type="submit" name="submit" class="btn btn-info" value="pdf"> Create PDF</button>
 	<button id="doc" type="submit" name="submit" class="btn btn-info" value="doc"> Create Word Doc</button>
 	<button id="release" type="submit" name="submit" class="btn btn-info" value="release"> Release</button>
-	<button id="sob" type="submit" name="submit" class="btn btn-info" value="sob"> Generate PO No</button>
 </div>
 
 <div class="row">

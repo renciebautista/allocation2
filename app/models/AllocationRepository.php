@@ -282,14 +282,6 @@ class AllocationRepository  {
 									}else{
 										self::get_additional_gsv($additional_gsv,$customer,$_grps,$_areas,$_cust,$_shp,$_shipto,$_otlts,$_account,$salescources,$customers_list,$_shiptos_list,$_accounts_list,$_outlets,$_outlet_sales);
 									}
-
-									
-									
-									// if($customer->customer_code == 'E53617'){
-										// $additional_gsv = self::additonal_outlet_sales($salescources,$customers_list,$customer->customer_code,$_shiptos_list,$_accounts_list,$_outlets,$_outlet_sales,$_account->account_name);
-										// echo $customer->customer_code. '<br>';
-										// echo $customer->customer_name. ' => '.$_account->account_name .' => '.$_account->gsv. ' + '.$additional_gsv.'<br>';
-									// }
 									
 
 									$_account->gsv += $additional_gsv;
@@ -526,34 +518,6 @@ class AllocationRepository  {
 			}
 		}
 
-		// from with dt
-		// if(in_array($customer->group_code, $_grps)){
-		// 	if(!empty($_areas[$customer->group_code])){
-		// 		if(in_array($customer->area_code, $_areas[$customer->group_code])){
-		// 			if(!empty($_cust[$customer->area_code])){
-		// 				if(in_array($customer->customer_code, $_cust[$customer->area_code])){
-		// 					if(!empty($_shp[$customer->customer_code])){
-		// 						if(in_array($_shipto->ship_to_code, $_shp[$customer->customer_code])){
-		// 							if(!empty($_otlts[$_shipto->ship_to_code])){
-		// 								if(in_array($_account->id, $_otlts[$_shipto->ship_to_code])){
-		// 									$gsv +=  $_outlet_sale->gsv;
-		// 								}
-		// 							}else{
-		// 								$gsv +=  $_outlet_sale->gsv;
-		// 							}
-		// 						}
-		// 					}else{
-		// 						$gsv +=  $_outlet_sale->gsv;
-		// 					}
-		// 				}
-		// 			}else{
-		// 				$gsv +=  $_outlet_sale->gsv;
-		// 			}
-		// 		}
-		// 	}else{
-		// 		$gsv +=  $_outlet_sale->gsv;
-		// 	}
-		// }
 	}
 
 
@@ -672,12 +636,6 @@ class AllocationRepository  {
 			->groupBy('customers.area_code')
 			->orderBy('areas.id')
 			->get();
-			// foreach ($areas as $area) {
-			// 	$customers = \DB::table('customers')
-			// 		->where('area_code',$area->area_code)
-			// 		->where('customers.active', 1)
-			// 		->get();
-			// }
 			$group->areas = $areas;
 		}
 
