@@ -66,7 +66,9 @@ class SobController extends \BaseController {
 					'LOADING DATE',
 					'RECEIVING DATE',
 					'SOB ALLOCATION',
-					'VALUE'
+					'VALUE',
+					'DATE CREATED',
+					'DATE UPDATED'
 				));
 
 			})->download('xls');
@@ -145,9 +147,27 @@ class SobController extends \BaseController {
 						$po_series = $activity_type->prefix ."_". $brand_shortcut .date('yW').sprintf("%05d", $series);
 
 						$shipTo = ShipTo::where('ship_to_code',$sob->ship_to_code)->first();
+						$day_of_week = 0;
+						if($activity_type->default_loading == 1){
+							for ($i=1; $i < 8 ; $i++) { 
+								$day_of_week = $i;
+								if($shipTo->getDayOfWeek($i)){
+									break;
+								}
+							}
+						}else{
+							for ($i=7; $i > 0 ; $i--) { 
+								$day_of_week = $i;
+								if($shipTo->getDayOfWeek($i)){
+									break;
+								}
+							}
+						}
+						
+						$day_of_week = $day_of_week - 1;
 
 						$week_start = new DateTime();
-						$week_start->setISODate($year,$week,$shipTo->dayofweek);
+						$week_start->setISODate($year,$week,$day_of_week);
 						$loading_date = $week_start->format('Y-m-d');
 						$receipt_date = date('Y-m-d', strtotime($loading_date . '+ '.$shipTo->leadtime.' days'));
 
@@ -157,7 +177,7 @@ class SobController extends \BaseController {
 							->where('year', $year)
 							->where('allocation_sobs.ship_to_code',$sob->ship_to_code)
 							->where('brand_shortcut', $brand_shortcut)
-							->update(['po_no' => $po_series, 'loading_date' => $loading_date, 'receipt_date' => $receipt_date]);
+							->update(['po_no' => $po_series, 'loading_date' => $loading_date, 'receipt_date' => $receipt_date, 'allocation_sobs.updated_at' => date('Y-m-d h:i:s')]);
 						$series++;
 					}
 

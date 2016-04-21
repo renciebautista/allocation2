@@ -101,7 +101,9 @@ class AllocationSob extends \Eloquent {
 				'year' => $year,
 				'sob_group_id' => $sob_group->sob_group_id,
 				'share' => $share,
-				'allocation' => $wek_value);
+				'allocation' => $wek_value,
+				'created_at' => date('Y-m-d h:i:s'),
+				'updated_at' => date('Y-m-d h:i:s'));
 
 			if($wek_multi == null){
 				$week_shares[$weekno] = ['share' => $share, 'sob_group_id' => $sob_group->sob_group_id];
@@ -280,7 +282,8 @@ class AllocationSob extends \Eloquent {
 			allocations.ship_to, allocations.final_alloc, allocation_sobs.weekno, allocation_sobs.year,
 			DATE_FORMAT(loading_date,'%%m/%%d/%%Y'), DATE_FORMAT(receipt_date,'%%m/%%d/%%Y'),
 			allocation_sobs.allocation,
-			((schemes.lpat/ 1.12) * allocation_sobs.allocation) as value
+			((schemes.lpat/ 1.12) * allocation_sobs.allocation) as value,
+			allocation_sobs.created_at, allocation_sobs.updated_at
 			from allocation_sobs
 			join allocations on allocations.id = allocation_sobs.allocation_id
 			join schemes on allocation_sobs.scheme_id = schemes.id

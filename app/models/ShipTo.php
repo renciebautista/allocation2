@@ -51,4 +51,35 @@ class ShipTo extends \Eloquent {
 			DB::rollback();
 		}
 	}
+
+	public function getDayOfWeek($id){
+		switch ($id) {
+			case '1':
+				return $this->mon;
+				break;
+			case '2':
+				return $this->tue;
+				break;
+			case '3':
+				return $this->wed;
+				break;
+			case '4':
+				return $this->thu;
+				break;
+			case '5':
+				return $this->fri;
+				break;
+			case '6':
+				return $this->sat;
+				break;
+			case '7':
+				return $this->sun;
+				break;
+			
+			default:
+				# code...
+				break;
+		}
+
+	}
 }
