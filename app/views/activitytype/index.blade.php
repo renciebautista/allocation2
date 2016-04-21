@@ -30,22 +30,25 @@
 <div class="row">
 	<div class="col-lg-12">
 		<div class="table-responsive">
-			<table class="table table-striped table-condensed table-hover table-bordered">
+			  <table class="table table-striped table-hover datatable">
 				<thead>
 					<tr>
-						<th class="center" style="width:55%;">Activity Type Name</th>
+						<th class="center">Activity Type Name</th>
 						<th class="center">Prefix</th>
-						<th class="center">With Scheme</th>
-						<th class="center">With Material Sourcing</th>
-						<th class="center">With SOB</th>
-						<th class="center">Unit of Measurement</th>
-						<th colspan="3" style="text-align:center;">Action</th>
+						<th class="center">Scheme</th>
+						<th class="center">Material Sourcing</th>
+						<th class="center">SOB</th>
+						<th class="center">UOM</th>
+						<th class="center">Default Loading</th>
+						<th style="text-align:center;">Action</th>
+						<th style="text-align:center;"></th>
+						<th style="text-align:center;"></th>
 					</tr>
 				</thead>
 				<tbody>
 					@if(count($activitytypes) == 0)
 					<tr>
-						<td colspan="6">No record found!</td>
+						<td colspan="9">No record found!</td>
 					</tr>
 					@else
 					@foreach($activitytypes as $type)
@@ -56,6 +59,7 @@
 						<td class="center">{{ ($type->with_msource) ? '<i class="fa fa-check"></i>' : '' }}</td>
 						<td class="center">{{ ($type->with_sob) ? '<i class="fa fa-check"></i>' : '' }}</td>
 						<td class="center">{{ $type->uom }}</td>
+						<td class="center">{{ $type->get_default_loading() }}</td>
 						<td class="action">
 							{{ HTML::linkAction('NetworkController@index','Manage Networks', $type->id, array('class' => 'btn btn-primary btn-xs')) }}
 						</td>
@@ -76,4 +80,15 @@
 	</div>
 </div>
 
+@stop
+
+@section('page-script')
+
+$('.datatable').DataTable({
+  "scrollY": "500px",
+  "scrollCollapse": true,
+  "paging": false,
+  "bSort": false,
+  "searching": false
+});
 @stop

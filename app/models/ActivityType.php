@@ -49,4 +49,14 @@ class ActivityType extends \Eloquent {
 		})
 		->orderBy('activity_type')->lists('activity_type', 'id');
 	}
+
+	public function get_default_loading(){
+		if($this->default_loading == 1){
+			return 'First';
+		}
+
+		if($this->default_loading == 2){
+			return 'Last';
+		}
+	}
 }

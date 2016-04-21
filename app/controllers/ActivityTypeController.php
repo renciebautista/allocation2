@@ -24,7 +24,8 @@ class ActivityTypeController extends \BaseController {
 	public function create()
 	{
 		$budget_types = BudgetType::all();
-		return View::make('activitytype.create', compact('budget_types'));
+		$loading = ['1' => 'First', '2' => 'Last'];
+		return View::make('activitytype.create', compact('budget_types', 'loading'));
 	}
 
 	/**
@@ -49,6 +50,7 @@ class ActivityTypeController extends \BaseController {
 				$activitytype->with_scheme = (Input::has('with_scheme')) ? 1 : 0;
 				$activitytype->with_msource = (Input::has('with_msource')) ? 1 : 0;
 				$activitytype->with_sob = (Input::has('with_sob')) ? 1 : 0;
+				$activitytype->default_loading = Input::get('default_loading');
 				$activitytype->save();
 
 				// add required
@@ -100,7 +102,8 @@ class ActivityTypeController extends \BaseController {
 		$activitytype = ActivityType::findOrFail($id);
 		$required = ActivityTypeBudgetRequired::required($id);
 		$budget_types = BudgetType::all();
-		return View::make('activitytype.edit', compact('activitytype', 'budget_types', 'required'));
+		$loading = ['1' => 'First Day', '2' => 'Last Day'];
+		return View::make('activitytype.edit', compact('activitytype', 'budget_types', 'required', 'loading'));
 	}
 
 	/**
@@ -131,6 +134,7 @@ class ActivityTypeController extends \BaseController {
 				$activitytype->with_scheme = (Input::has('with_scheme')) ? 1 : 0;
 				$activitytype->with_msource = (Input::has('with_msource')) ? 1 : 0;
 				$activitytype->with_sob = (Input::has('with_sob')) ? 1 : 0;
+				$activitytype->default_loading = Input::get('default_loading');
 				$activitytype->update();
 
 				// add required

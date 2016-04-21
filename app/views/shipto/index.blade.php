@@ -30,17 +30,24 @@
 <div class="row">
   <div class="col-lg-12">
     <div class="table-responsive">
-      <table class="table table-striped table-hover">
+      <table class="table table-striped table-hover datatable">
         <thead>
           <tr>
             <th>Customer Code</th>
             <th>Ship To Code</th>
             <th>Ship To Name</th>
             <th>Split %</th>
-            <th>Loading Day</th>
             <th>Lead Time (days)</th>
-            <th>Active</th>
-            <th colspan="2" style="text-align:center;">Action</th>
+            <th class="center">Mon</th>
+            <th class="center">Tue</th>
+            <th class="center">Wed</th>
+            <th class="center">Thur</th>
+            <th class="center">Fri</th>
+            <th class="center">Sat</th>
+            <th class="center">Sun</th>
+            <th class="center">Active</th>
+            <th></th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -54,10 +61,16 @@
             <td>{{ $shipto->customer_code }}</td>
             <td>{{ $shipto->ship_to_code }}</td>
             <td>{{ $shipto->ship_to_name }}</td>
-            <td>{{ $shipto->split }}</td>
-            <td>{{ $shipto->dayofweek }}</td>
-            <td>{{ $shipto->leadtime }}</td>
-            <td>{{ (($shipto->active == 1) ? 'Active':'Inactive') }}</td>
+            <td class="center">{{ $shipto->split }}</td>
+            <td class="center">{{ $shipto->leadtime }}</td>
+            <td class="center">{{ ($shipto->mon) ? '<i class="fa fa-check"></i>' : '' }}</td>
+            <td class="center">{{ ($shipto->tue) ? '<i class="fa fa-check"></i>' : '' }}</td>
+            <td class="center">{{ ($shipto->wed) ? '<i class="fa fa-check"></i>' : '' }}</td>
+            <td class="center">{{ ($shipto->thu) ? '<i class="fa fa-check"></i>' : '' }}</td>
+            <td class="center">{{ ($shipto->fri) ? '<i class="fa fa-check"></i>' : '' }}</td>
+            <td class="center">{{ ($shipto->sat) ? '<i class="fa fa-check"></i>' : '' }}</td>
+            <td class="center">{{ ($shipto->sun) ? '<i class="fa fa-check"></i>' : '' }}</td>
+            <td class="center">{{ (($shipto->active == 1) ? 'Active':'Inactive') }}</td>
             <td class="action">
               {{ HTML::linkAction('ShiptoController@edit','Edit', $shipto->id, array('class' => 'btn btn-info btn-xs')) }}
             </td>
@@ -76,4 +89,15 @@
   </div>
 </div>
 
+@stop
+
+@section('page-script')
+
+$('.datatable').DataTable({
+  "scrollY": "500px",
+  "scrollCollapse": true,
+  "paging": false,
+  "bSort": false,
+  "searching": false
+});
 @stop

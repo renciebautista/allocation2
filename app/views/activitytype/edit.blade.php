@@ -53,9 +53,15 @@
 		</div>
 
 		<div class="form-group">
-			{{ Form::label('prefix', 'Prefix', array('class' => 'control-label')) }}
-			{{ Form::text('prefix', $activitytype->prefix ,array('class' => 'form-control', 'placeholder' => 'Prefix')) }}
+			{{ Form::label('prefix', 'SOB Prefix', array('class' => 'control-label')) }}
+			{{ Form::text('prefix', $activitytype->prefix ,array('class' => 'form-control', 'placeholder' => 'SOB Prefix')) }}
 		</div>
+
+		<div class="form-group">
+			{{ Form::label('default_loading', 'SOB Default Loading', array('class' => 'control-label')) }}
+			{{ Form::select('default_loading', $loading, $activitytype->default_loading, array('class' => 'form-control')) }}
+		</div>
+
 
 		<div class="form-group">
 			{{ Form::label('budget_type', 'Required Budget Type', array('class' => 'control-label')) }}

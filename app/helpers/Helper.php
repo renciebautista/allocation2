@@ -30,4 +30,33 @@ class Helper {
 	public static function replace_content_inside_delimiters($start, $end, $new, $source) {
 		return preg_replace('#('.preg_quote($start).')(.*?)('.preg_quote($end).')#si', '$1'.$new.'$3', $source);
 	}
+
+	public static function getDay($int){
+		switch ($int) {
+			case '1':
+				return 'MON';
+				break;
+			case '2':
+				return 'TUE';
+				break;
+			case '3':
+				return 'WED';
+				break;
+			case '4':
+				return 'THU';
+				break;
+			case '5':
+				return 'FRI';
+				break;
+			case '6':
+				return 'SAT';
+				break;
+			case '7':
+				return 'SUN';
+				break;
+			default:
+				# code...
+				break;
+		}
+	}
 }

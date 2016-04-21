@@ -58,8 +58,15 @@ class ShiptoController extends \BaseController {
 	public function edit($id)
 	{
 		$shipto = ShipTo::findOrFail($id);
-		$weeks = Week::getDays();
-		return View::make('shipto.edit', compact('shipto','weeks'));
+		$days = [ ['id' => 'mon', 'desc' => 'Monday'],
+		 	['id' => 'tue', 'desc' => 'Tuesday'], 
+		 	['id' => 'wed', 'desc' => 'Wednesday'],
+		 	['id' => 'thu', 'desc' => 'Thursday'],
+		 	['id' => 'fri', 'desc' => 'Friday'],
+			['id' => 'sat', 'desc' => 'Saturday'],
+			['id' => 'sun', 'desc' => 'Sunday']];
+
+		return View::make('shipto.edit', compact('shipto', 'days'));
 	}
 
 	/**
@@ -71,11 +78,11 @@ class ShiptoController extends \BaseController {
 	 */
 	public function update($id)
 	{
+		// dd(Input::all());
 		$shipto = ShipTo::findOrFail($id);
 		$input = Input::all();
 		$rules = array(
 	        'ship_to_name' => 'required|between:4,128|unique:roles,name,'.$id,
-	        'dayofweek' => 'required',
 	        'leadtime' => 'required|min:1'
 	    );
 		$validation = Validator::make($input,$rules);
@@ -85,10 +92,25 @@ class ShiptoController extends \BaseController {
 			DB::beginTransaction();
 
 			try {
+				$shipto->customer_code = strtoupper(Input::get('customer_code'));
 				$shipto->ship_to_code = strtoupper(Input::get('ship_to_code'));
 				$shipto->ship_to_name = strtoupper(Input::get('ship_to_name'));
-				$shipto->dayofweek = Input::get('dayofweek');
+				$shipto->split = Input::get('split');
 				$shipto->leadtime = Input::get('leadtime');
+				$shipto->mon = 0;
+				$shipto->tue = 0;
+				$shipto->wed = 0;
+				$shipto->thu = 0;
+				$shipto->fri = 0;
+				$shipto->sat = 0;
+				$shipto->sun = 0;
+				if(Input::has('days')){
+					foreach (Input::get('days') as $day) {
+						$shipto->$day = 1;
+					}
+				}
+				
+				$shipto->active = (Input::has('active')) ? 1 : 0;
 				$shipto->update();
 
 				DB::commit();
@@ -98,16 +120,17 @@ class ShiptoController extends \BaseController {
 					->with('class', 'alert-success')
 					->with('message', 'Ship To details successfully updated.');
 			} catch (Exception $e) {
+				dd($e);
 				DB::rollback();
 			}
 
 		}
 
-		return Redirect::route('shipto.edit', $id)
-			->withInput()
-			->withErrors($validation)
-			->with('class', 'alert-danger')
-			->with('message', 'There were validation errors.');
+		// return Redirect::route('shipto.edit', $id)
+		// 	->withInput()
+		// 	->withErrors($validation)
+		// 	->with('class', 'alert-danger')
+		// 	->with('message', 'There were validation errors.');
 
 
 		

@@ -19,6 +19,11 @@
 	<div class="col-lg-6">
 	{{ Form::open(array('action' => array('ShiptoController@update', $shipto->id), 'method' => 'PUT', 'class' => 'bs-component')) }}
 		<div class="form-group">
+			{{ Form::label('customer_code', 'Customer Code', array('class' => 'control-label')) }}
+			{{ Form::text('customer_code',$shipto->customer_code,array('class' => 'form-control', 'placeholder' => 'Ship To Code')) }}
+		</div>
+
+		<div class="form-group">
 			{{ Form::label('ship_to_code', 'Ship To Code', array('class' => 'control-label')) }}
 			{{ Form::text('ship_to_code',$shipto->ship_to_code,array('class' => 'form-control', 'placeholder' => 'Ship To Code')) }}
 		</div>
@@ -29,14 +34,26 @@
 		</div>
 
 		<div class="form-group">
-			{{ Form::label('dayofweek', 'Day Of Week', array('class' => 'control-label')) }}
-			{{ Form::select('dayofweek',$weeks, $shipto->dayofweek, array('class' => 'form-control')) }}
+			{{ Form::label('split', 'Split', array('class' => 'control-label')) }}
+			{{ Form::text('split',$shipto->split,array('class' => 'form-control', 'placeholder' => 'Split')) }}
 		</div>
-
+		
 		<div class="form-group">
 			{{ Form::label('leadtime', 'Lead Time (days)', array('class' => 'control-label')) }}
-			{{ Form::text('leadtime',$shipto->leadtime,array('class' => 'form-control', 'placeholder' => 'Lead Time (days')) }}
+			{{ Form::text('leadtime',$shipto->leadtime,array('class' => 'form-control', 'placeholder' => 'Lead Time (days)')) }}
 		</div>
+
+			<div class="checkbox"> <label> {{ Form::checkbox('active', 1, $shipto->active) }} Active </label> </div>
+
+
+		<div class="form-group">
+			{{ Form::label('loading_day', 'Loading Day/s', array('class' => 'control-label')) }}
+			@foreach ($days as $day)
+			<div class="checkbox"> <label> {{ Form::checkbox('days[]', $day['id'], $shipto->$day['id']) }} {{ $day['desc']}} </label> </div>
+			@endforeach
+		</div>
+
+		
 	
 
 		<div class="form-group">
@@ -50,7 +67,7 @@
 @stop
 
 @section('page-script')
-	$('#leadtime').inputNumber({ allowDecimals: false });
+	$('#split, #leadtime').inputNumber({ allowDecimals: false });
 
 @stop
 

@@ -112,10 +112,6 @@ class SobController extends \BaseController {
 
 			$so_series = So::find(1);
 			
-			// if(empty($so_series)){
-			// 	$so_series = So::insert(['series' => 1, 'locked' => 1]);
-			// }
-			
 
 			if($so_series->locked){
 				return Redirect::route('sob.download')
@@ -146,7 +142,7 @@ class SobController extends \BaseController {
 
 					$series = $so_series->series;
 					foreach ($sobs as $sob) {
-						$po_series = $activity_type->prefix ."_". $brand_shortcut .'_'.sprintf("%07d", $series);
+						$po_series = $activity_type->prefix ."_". $brand_shortcut .date('yW').sprintf("%05d", $series);
 
 						$shipTo = ShipTo::where('ship_to_code',$sob->ship_to_code)->first();
 

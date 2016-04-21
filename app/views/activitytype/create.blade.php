@@ -59,6 +59,11 @@
 		</div>
 
 		<div class="form-group">
+			{{ Form::label('default_loading', 'SOB Default Loading', array('class' => 'control-label')) }}
+			{{ Form::select('default_loading', $loading, 1, array('class' => 'form-control')) }}
+		</div>
+
+		<div class="form-group">
 			{{ Form::label('budget_type', 'Required Budget Type', array('class' => 'control-label')) }}
 
 			@foreach ($budget_types as $row)
