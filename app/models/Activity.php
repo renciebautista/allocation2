@@ -207,6 +207,23 @@ class Activity extends \Eloquent {
 				$return['status'] = 0;
 			}
 		}
+
+		if(in_array("sob_start_week", $required_array)){
+			$_failed = false;
+			$scheme = Scheme::getList($activity->id);
+			$schemes = [];
+			foreach ($scheme as $row) {
+				if(date('Y-m-d') > $row->sob_start_week){
+					$schemes[] = $row->name;
+					$_failed = true;
+				}
+			}
+
+			if($_failed){
+				$required[] = implode(',', $schemes).' SOB start date is less than today.';
+				$return['status'] = 0;
+			}
+		}
 		
 
 

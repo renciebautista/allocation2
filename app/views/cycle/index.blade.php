@@ -45,6 +45,7 @@
 						<th class="center">Implementation Date</th>
 						<th class="center">SOB Deadline</th>
 						<th class="center">Emergency</th>
+						<th class="center">Released</th>
 						<th colspan="2" class="dash-action">Action</th>
 					</tr>
 				</thead>
@@ -71,6 +72,7 @@
 							@endif
 						</td>
 						<td class="center">{{ ($cycle->emergency) ? '<i class="fa fa-check"></i>' : '' }}</td>
+						<td class="center">{{ ($cycle->released) ? '<i class="fa fa-check"></i>' : '' }}</td>
 						<td class="action">
 							{{ Form::open(array('method' => 'DELETE', 'action' => array('CycleController@destroy', $cycle->id))) }}                       
 							{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}

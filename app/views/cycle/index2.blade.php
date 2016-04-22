@@ -15,13 +15,25 @@
 <div class="row">
 	<div class="col-lg-12">
 		{{ Form::open(array('method' => 'get','class' => 'form-inline')) }}
+		<div class="form-group">
+
+			<label class="radio-inline">
+				{{ Form::radio('released', 0, true) }} Un-Released
+			</label>
+			<label class="radio-inline">
+				{{ Form::radio('released', 1) }} Released
+			</label>
+		
+		  	</div><br><br>
 		 	<div class="form-group">
 		 		<label class="sr-only" for="s">Search</label>
 		 		{{ Form::text('s',Input::old('s'),array('class' => 'form-control', 'placeholder' => 'Search')) }}
 		  	</div>
 		  	<button type="submit" class="btn btn-success"><i class="fa fa-search"></i> Search</button>
-		  	<a href="{{ URL::action('CycleController@create') }}" class="btn btn-primary"><i class="fa fa-plus"></i> Cycle</a>
+		  	<a href="{{ URL::action('CycleController@create') }}" class="btn btn-primary pull-right"><i class="fa fa-plus"></i> Cycle</a>
 		  	
+
+
 		{{ Form::close() }}
 	</div>
 </div>
@@ -52,13 +64,14 @@
 						<th class="center">Emergency</th>
 						<th class="center">Generating PO No.</th>
 						<th class="center">PO No. Generated</th>
+						<th class="center">Released</th>
 						<th colspan="2" class="dash-action">Action</th>
 					</tr>
 				</thead>
 				<tbody>
 					@if(count($cycles) == 0)
 					<tr>
-						<td colspan="8">No record found!</td>
+						<td colspan="15">No record found!</td>
 					</tr>
 					@else
 					@foreach($cycles as $cycle)
@@ -82,6 +95,7 @@
 						<td class="center">{{ ($cycle->emergency) ? '<i class="fa fa-check"></i>' : '' }}</td>
 						<td class="center">{{ ($cycle->generating_sob) ? '<i class="fa fa-check"></i>' : '' }}</td>
 						<td class="center">{{ ($cycle->sob_generated) ? '<i class="fa fa-check"></i>' : '' }}</td>
+						<td class="center">{{ ($cycle->released) ? '<i class="fa fa-check"></i>' : '' }}</td>
 						<td class="action">
 							{{ HTML::linkAction('CycleController@edit','Edit', $cycle->id, array('class' => 'btn btn-info btn-xs')) }}
 						</td>

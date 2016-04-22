@@ -26,7 +26,7 @@ class CycleController extends \BaseController {
 	public function index()
 	{
 		Input::flash();
-		$cycles = Cycle::search(Input::get('s'));
+		$cycles = Cycle::search(Input::all());
 		return View::make('cycle.index2', compact('cycles'));
 	}
 
@@ -150,6 +150,7 @@ class CycleController extends \BaseController {
 			$cycle->implemintation_date = date('Y-m-d',strtotime(Input::get('implemintation_date')));
 			$cycle->sob_deadline = date('Y-m-d',strtotime(Input::get('sob_deadline')));
 			$cycle->emergency = (Input::has('emergency')) ? 1 : 0;
+			$cycle->released = (Input::has('released')) ? 1 : 0;
 			$cycle->save();
 
 			// $old_path = storage_path().'/uploads/'.$old_name;
@@ -195,7 +196,7 @@ class CycleController extends \BaseController {
 
 	public function calendar(){
 		Input::flash();
-		$cycles = Cycle::search(Input::get('s'));
+		$cycles = Cycle::search(Input::all());
 		return View::make('cycle.calendar', compact('cycles'));
 	}
 

@@ -55,8 +55,18 @@ class Cycle extends \Eloquent {
 		});
 	}
 
-	public static function search($filter){
+	public static function search($inputs){
+		$filter ='';
+		if(isset($inputs['s'])){
+			$filter = $inputs['s'];
+		}
+
+		$released = 0;
+		if(isset($inputs['released'])){
+			$released = $inputs['released'];
+		}
 		return self::where('cycles.cycle_name', 'LIKE' ,"%$filter%")
+			->where('released',$released)
 			->orderBy('release_date')
 			->get();
 	}

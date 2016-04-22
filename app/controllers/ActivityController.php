@@ -778,13 +778,13 @@ class ActivityController extends BaseController {
 							if(count($planner_count) > 0){
 								if($activity->activitytype->with_scheme){
 									if($activity->activitytype->with_sob){
-										$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme','sob','submission_deadline');
+										$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme','sob','submission_deadline','sob_start_week');
 									}else{
 										$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme','submission_deadline');
 									}
 								}else{
 									if($activity->activitytype->with_sob){
-										$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','sob', 'submission_deadline');
+										$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','sob', 'submission_deadline','sob_start_week');
 									}else{
 										$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','submission_deadline');
 									}
@@ -794,13 +794,13 @@ class ActivityController extends BaseController {
 							}else{
 								if($activity->activitytype->with_scheme){
 									if($activity->activitytype->with_sob){
-										$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme','sob','submission_deadline');
+										$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme','sob','submission_deadline','sob_start_week');
 									}else{
-										$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme','submission_deadline');
+										$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme','submission_deadline',);
 									}
 								}else{
 									if($activity->activitytype->with_sob){
-										$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','sob','submission_deadline');
+										$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','sob','submission_deadline', 'sob_start_week');
 									}else{
 										$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','submission_deadline');
 									}
@@ -929,6 +929,11 @@ class ActivityController extends BaseController {
 							if($activity->activitytype->with_scheme){
 								array_push($required_rules, 'scheme');
 							}
+
+							if($activity->activitytype->with_sob){
+								array_push($required_rules, 'sob_start_week');
+							}
+
 
 							if($activity->activitytype->with_msource){
 								array_push($required_rules, 'material_source');
