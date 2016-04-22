@@ -24,7 +24,7 @@ class ActivityTypeController extends \BaseController {
 	public function create()
 	{
 		$budget_types = BudgetType::all();
-		$loading = ['1' => 'First', '2' => 'Last'];
+		$loading = ['1' => 'Last', '2' => 'First'];
 		return View::make('activitytype.create', compact('budget_types', 'loading'));
 	}
 

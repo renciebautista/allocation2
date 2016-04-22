@@ -33,6 +33,7 @@ class ActivityType extends \Eloquent {
 
 	public static function search($filter){
 		return self::where('activity_type', 'LIKE' ,"%$filter%")
+			->orderBy('activity_type')
 			->get();
 	}
 
@@ -52,11 +53,11 @@ class ActivityType extends \Eloquent {
 
 	public function get_default_loading(){
 		if($this->default_loading == 1){
-			return 'First';
+			return 'Last';
 		}
 
 		if($this->default_loading == 2){
-			return 'Last';
+			return 'First';
 		}
 	}
 }

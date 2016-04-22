@@ -148,7 +148,7 @@ class SobController extends \BaseController {
 
 						$shipTo = ShipTo::where('ship_to_code',$sob->ship_to_code)->first();
 						$day_of_week = 0;
-						if($activity_type->default_loading == 1){
+						if($activity_type->default_loading == 2){
 							for ($i=1; $i < 8 ; $i++) { 
 								$day_of_week = $i;
 								if($shipTo->getDayOfWeek($i)){
