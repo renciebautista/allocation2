@@ -95,7 +95,12 @@ class ShiptoController extends \BaseController {
 				$shipto->customer_code = strtoupper(Input::get('customer_code'));
 				$shipto->ship_to_code = strtoupper(Input::get('ship_to_code'));
 				$shipto->ship_to_name = strtoupper(Input::get('ship_to_name'));
-				$shipto->split = Input::get('split');
+				if(Input::get('split') == ''){
+					$shipto->split = null;
+				}else{
+					$shipto->split = Input::get('split');
+				}
+				
 				$shipto->leadtime = Input::get('leadtime');
 				$shipto->mon = 0;
 				$shipto->tue = 0;
