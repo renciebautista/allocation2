@@ -82,7 +82,7 @@ class ShiptoController extends \BaseController {
 		$shipto = ShipTo::findOrFail($id);
 		$input = Input::all();
 		$rules = array(
-	        'ship_to_name' => 'required|between:4,128|unique:roles,name,'.$id,
+	        'ship_to_name' => 'required|between:2,128|unique:roles,name,'.$id,
 	        'leadtime' => 'required|min:1'
 	    );
 		$validation = Validator::make($input,$rules);
@@ -131,11 +131,11 @@ class ShiptoController extends \BaseController {
 
 		}
 
-		// return Redirect::route('shipto.edit', $id)
-		// 	->withInput()
-		// 	->withErrors($validation)
-		// 	->with('class', 'alert-danger')
-		// 	->with('message', 'There were validation errors.');
+		return Redirect::route('shipto.edit', $id)
+			->withInput()
+			->withErrors($validation)
+			->with('class', 'alert-danger')
+			->with('message', 'There were validation errors.');
 
 
 		
