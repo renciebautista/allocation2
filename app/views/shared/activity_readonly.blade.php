@@ -434,7 +434,7 @@
 						<div class="form-group">
 							<div class="row">
 								<div class="col-lg-12">
-									<table id="budget_table" class="table table-striped table-hover ">
+									<table id="budget_table" class="table table-striped table-hover">
 										<thead>
 											<tr>
 												<th>#</th>
@@ -487,6 +487,7 @@
 									  	<tfoot>
 									  		<tr>
 												<th class="text-center" colspan="3">Sub Total</th>
+												<th></th>
 												<th class="text-right" style="width:80px;">{{ number_format($scheme_summary->pr,2) }}</th>
 												<th class="text-right" style="width:80px;">{{ number_format($scheme_summary->ulp,2) }}</th>
 												<th class="text-right" style="width:80px;">{{ number_format($scheme_summary->cost_sale,2) }}</th>

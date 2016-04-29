@@ -20,7 +20,10 @@ Queue::getIron()->ssl_verifypeer = false;
 
 
 Route::get('test', function(){
-	
+	$app = app();
+	echo '<pre>';
+	print_r($app);
+	echo '</pre>';
 });
 
 
@@ -393,6 +396,8 @@ Route::group(array('before' => 'auth'), function()
 
 		Route::get('settings', ['as' => 'settings.index', 'uses' => 'SettingsController@index']);
 		Route::post('settings', ['as' => 'settings.update', 'uses' => 'SettingsController@update']);
+
+		Route::resource('sobholiday', 'SobholidaysController');
 	});
 
 });

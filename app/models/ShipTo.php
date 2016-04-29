@@ -82,4 +82,54 @@ class ShipTo extends \Eloquent {
 		}
 
 	}
+
+	public static function getAllShipTo(){
+		$group_code = array();
+		$area_code = array();
+		$sold_to_code = array();
+
+		$filters = SobFilter::all();
+		foreach ($filters as $filter) {
+			if($filter->group_code != "0"){
+				if (!in_array($filter->group_code, $group_code)) {
+				    $group_code[] = $filter->group_code;
+				}
+			}
+
+			if($filter->area_code != "0"){
+				if (!in_array($filter->area_code, $area_code)) {
+				    $area_code[] = $filter->area_code;
+				}
+			}
+
+			if($filter->customer_code != "0"){
+				if (!in_array($filter->customer_code, $sold_to_code)) {
+				    $sold_to_code[] = $filter->customer_code	;
+				}
+			}
+		}
+
+		$shiptos =  self::join('customers', 'customers.customer_code', '=', 'ship_tos.customer_code')
+			->join('areas', 'areas.area_code', '=', 'customers.area_code')
+			->join('groups', 'groups.group_code', '=', 'areas.group_code')
+			->where('customers.active',1)
+			->groupBy('ship_tos.ship_to_code')
+			->orderBy('areas.id')
+			->orderBy('ship_tos.id')
+			->get();
+
+		$new = $shiptos->filter(function($shipto) use ($group_code,$area_code, $sold_to_code)
+	    {
+	        if((in_array($shipto->group_code, $group_code)) || (in_array($shipto->area_code, $area_code))|| (in_array($shipto->customer_code, $sold_to_code))){
+				return true;
+			}
+	    });
+
+		return $new;
+
+	}
+
+	public static function getOlr($activity_type){
+		
+	}
 }

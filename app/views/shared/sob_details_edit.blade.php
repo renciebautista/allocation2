@@ -126,7 +126,18 @@
 										@endforeach
 										<th><span class="sum">{{ number_format($total,2) }}% </span></th>
 									</tr>
+
 									@endforeach
+									<tr>
+										<th colspan="4" >
+											<span class="pull-right">Sub Total</span>
+										</th>
+										@foreach($sob_header[$group->id] as $key => $header)
+										<th class="alloc_per">
+										</th>
+										@endforeach
+										<th></th>
+									</tr>
 									<tr class="sob-header">
 										<th>GROUP</th>
 										<th>AREA</th>
@@ -152,9 +163,9 @@
 										<?php $sum += $sob->$col; ?>
 										@endforeach
 										<td class="sob_alloc_header wek_sum"><span clss="sum_alloc">{{ $sum }}</span></td>
-										
 									</tr>
 									@endforeach
+									
 								</tbody>
 								
 							</table> 

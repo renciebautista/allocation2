@@ -286,6 +286,8 @@ class AllocationSob extends \Eloquent {
 			schemes.name,
 			schemes.item_code,
 			schemes.item_desc,
+			(schemes.lpat/ 1.12) as lpbt,
+			schemes.deals,
 			allocations.group, 
 			allocations.area,
 			allocations.sold_to, 
@@ -297,8 +299,9 @@ class AllocationSob extends \Eloquent {
 			allocation_sobs.year,
 			DATE_FORMAT(loading_date,'%%m/%%d/%%Y'), DATE_FORMAT(receipt_date,'%%m/%%d/%%Y'),
 			allocation_sobs.allocation,
-			((schemes.lpat/ 1.12) * allocation_sobs.allocation) as value,
-			allocation_sobs.created_at, allocation_sobs.updated_at
+			((schemes.lpat/ 1.12) * allocation_sobs.allocation * schemes.deals) as value,
+			allocation_sobs.created_at, 
+			allocation_sobs.updated_at
 			from allocation_sobs
 			join allocations on allocations.id = allocation_sobs.allocation_id
 			left join allocations as allocation_customer on allocation_customer.id = allocations.customer_id

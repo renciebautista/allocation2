@@ -522,6 +522,7 @@
 										<th class="text-right" style="width:80px;"></th>
 										<th class="text-right" style="width:80px;"></th>
 										<th class="text-right" style="width:80px;"></th>
+										<th class="text-right" style="width:80px;"></th>
 										<th class="text-right" style="width:80px;">{{ number_format($scheme_summary->final_total_deals) }}</th>
 										<th class="text-right" style="width:80px;">{{ number_format($scheme_summary->final_total_cases) }}</th>
 										<th class="text-right" style="width:80px;">{{ number_format($scheme_summary->final_tts_r,2) }}</th>

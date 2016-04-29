@@ -114,6 +114,7 @@
 								    <ul class="dropdown-menu">
 								      	<li>{{ HTML::linkRoute('sobfilter.index', 'SOB Filters') }}</li> 
 								      	<li>{{ HTML::linkRoute('sobgroup.index', 'SOB Groups') }}</li> 
+								      	<li>{{ HTML::linkRoute('sobholiday.index', 'Ship To Holidays') }}</li> 
 								    </ul>
 								</li>  
 

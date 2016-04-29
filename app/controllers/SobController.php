@@ -55,6 +55,8 @@ class SobController extends \BaseController {
 					'SCHEME',	
 					'ITEM CODE',	
 					'ITEM DESCRIPTION',
+					'LPBT / PC',
+					'PC / CS',
 					'GROUP',	
 					'AREA',	
 					'SOLD TO',
