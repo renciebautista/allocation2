@@ -66,7 +66,11 @@ class Cycle extends \Eloquent {
 			$released = $inputs['released'];
 		}
 		return self::where('cycles.cycle_name', 'LIKE' ,"%$filter%")
-			->where('released',$released)
+			->where(function($query) use ($released){
+				if($released < 2){
+					$query->where('released',$released);
+				}
+			})
 			->orderBy('release_date')
 			->get();
 	}

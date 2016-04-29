@@ -40,7 +40,9 @@
 						<th class="center">SOB</th>
 						<th class="center">UOM</th>
 						<th class="center">Default Loading</th>
+						<th class="center">Active</th>
 						<th style="text-align:center;">Action</th>
+						<th style="text-align:center;"></th>
 						<th style="text-align:center;"></th>
 						<th style="text-align:center;"></th>
 					</tr>
@@ -60,16 +62,23 @@
 						<td class="center">{{ ($type->with_sob) ? '<i class="fa fa-check"></i>' : '' }}</td>
 						<td class="center">{{ $type->uom }}</td>
 						<td class="center">{{ $type->get_default_loading() }}</td>
+						<td class="center">{{ ($type->active) ? '<i class="fa fa-check"></i>' : '' }}</td>
 						<td class="action">
 							{{ HTML::linkAction('NetworkController@index','Manage Networks', $type->id, array('class' => 'btn btn-primary btn-xs')) }}
+						</td>
+						
+						<td class="action">
+							{{ Form::open(array('method' => 'POST', 'action' => array('ActivityTypeController@duplicate', $type->id), 'class' => 'disable-button')) }}                       
+							{{ Form::submit('Duplicate', array('class'=> 'btn btn-primary btn-xs','onclick' => "if(!confirm('Are you sure to duplicate this record?')){return false;};")) }}
+							{{ Form::close() }}
+						</td>
+						<td class="action">
+							{{ HTML::linkAction('ActivityTypeController@edit','Edit', $type->id, array('class' => 'btn btn-info btn-xs')) }}
 						</td>
 						<td class="action">
 							{{ Form::open(array('method' => 'DELETE', 'action' => array('ActivityTypeController@destroy', $type->id))) }}                       
 							{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}
 							{{ Form::close() }}
-						</td>
-						<td class="action">
-							{{ HTML::linkAction('ActivityTypeController@edit','Edit', $type->id, array('class' => 'btn btn-info btn-xs')) }}
 						</td>
 					</tr>
 					@endforeach

@@ -23,6 +23,10 @@
 			<label class="radio-inline">
 				{{ Form::radio('released', 1) }} Released
 			</label>
+
+			<label class="radio-inline">
+				{{ Form::radio('released', 2) }} All 
+			</label>
 		
 		  	</div><br><br>
 		 	<div class="form-group">
@@ -48,7 +52,7 @@
 <div class="row">
 	<div class="col-lg-12">
 		<div class="table-responsive">
-			<table class="table table-striped table-condensed table-hover table-bordered">
+			<table class="table table-striped table-hover datatable">
 				<thead>
 					<tr>
 						<th></th>
@@ -65,13 +69,13 @@
 						<th class="center">Generating PO No.</th>
 						<th class="center">PO No. Generated</th>
 						<th class="center">Released</th>
-						<th colspan="2" class="dash-action">Action</th>
+						<th class="dash-action">Action</th>
 					</tr>
 				</thead>
 				<tbody>
 					@if(count($cycles) == 0)
 					<tr>
-						<td colspan="15">No record found!</td>
+						<td colspan="16">No record found!</td>
 					</tr>
 					@else
 					@foreach($cycles as $cycle)
@@ -79,7 +83,7 @@
 						<td>
 							{{ Form::checkbox('cycle[]', $cycle->id,false, ($cycle->generating_sob) ? ['disabled' => 'disabled']:'' )}}
 						</td>
-						<td>{{ $cycle->cycle_name }}</td>
+						<td style="width:20%;">{{ $cycle->cycle_name }}</td>
 						<td class="center">{{ date_format(date_create($cycle->start_date),'m/d/Y')  }}</td>
 						<td class="center">{{ date_format(date_create($cycle->end_date),'m/d/Y')  }}</td>
 						<td class="center">{{ date_format(date_create($cycle->submission_deadline),'m/d/Y')  }}</td>
@@ -110,5 +114,14 @@
 </div>
 {{ Form::close() }}
 @stop
+@section('page-script')
 
+$('.datatable').DataTable({
+  "scrollY": "500px",
+  "scrollCollapse": true,
+  "paging": false,
+  "bSort": false,
+  "searching": false
+});
+@stop
 

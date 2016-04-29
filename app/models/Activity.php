@@ -881,4 +881,13 @@ class Activity extends \Eloquent {
 
 		return $data;
 	}
+
+	public static function checkIfTypeExist($id){
+		$record = self::where('activity_type_id',$id)->get();
+		if($record->count()> 0){
+			return true;
+		}else{
+			return false;
+		}
+	}
 }

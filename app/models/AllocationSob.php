@@ -272,20 +272,36 @@ class AllocationSob extends \Eloquent {
 
 	public static function getByCycle($cycles){
 
-		$query = sprintf("select allocation_sobs.id, allocation_sobs.po_no, activities.cycle_desc,
+		$query = sprintf("select 
+			allocation_sobs.id, 
+			allocation_sobs.po_no, 
+			activities.cycle_desc,
 			activities.activitytype_desc,
-			activities.id as activity_id,activities.circular_name,
-			schemes.sdivision,schemes.scategory,schemes.brand_desc,schemes.brand_shortcut,
-			schemes.name,schemes.item_code,schemes.item_desc,
-			allocations.group, allocations.area, allocations.sold_to, 
+			activities.id as activity_id,
+			activities.circular_name,
+			schemes.sdivision,
+			schemes.scategory,
+			schemes.brand_desc,
+			schemes.brand_shortcut,
+			schemes.name,
+			schemes.item_code,
+			schemes.item_desc,
+			allocations.group, 
+			allocations.area,
+			allocations.sold_to, 
 			COALESCE(allocations.ship_to_code,allocations.ship_to_code,allocations.sold_to_code) as ship_to_code,
-			allocations.ship_to, allocations.final_alloc, allocation_sobs.weekno, allocation_sobs.year,
+			allocations.ship_to, 
+			COALESCE(allocation_customer.final_alloc,''),
+			allocations.final_alloc,
+			allocation_sobs.weekno,
+			allocation_sobs.year,
 			DATE_FORMAT(loading_date,'%%m/%%d/%%Y'), DATE_FORMAT(receipt_date,'%%m/%%d/%%Y'),
 			allocation_sobs.allocation,
 			((schemes.lpat/ 1.12) * allocation_sobs.allocation) as value,
 			allocation_sobs.created_at, allocation_sobs.updated_at
 			from allocation_sobs
 			join allocations on allocations.id = allocation_sobs.allocation_id
+			left join allocations as allocation_customer on allocation_customer.id = allocations.customer_id
 			join schemes on allocation_sobs.scheme_id = schemes.id
 			join activities on schemes.activity_id = activities.id
 			where activities.cycle_id in (".implode(",", $cycles).")

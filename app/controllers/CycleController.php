@@ -255,6 +255,10 @@ class CycleController extends \BaseController {
 				}else{
 
 				}
+
+				foreach ($ids as $value) {
+					Cycle::where('id', $value)->update(['released' => 1]);
+				}
 			}
 			return Redirect::route('cycle.index')
 					->with('class', 'alert-success')

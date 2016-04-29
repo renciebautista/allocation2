@@ -60,13 +60,14 @@ class SobController extends \BaseController {
 					'SOLD TO',
 					'SHIP TO CODE',
 					'CUSTOMER SHIP TO NAME',
-					'ALLOCATION',	
+					'SOLD TO ALLOCATION',
+					'SHIP TO ALLOCATION',	
 					'WEEK #',
 					'YEAR',
 					'LOADING DATE',
 					'RECEIVING DATE',
-					'SOB ALLOCATION',
-					'VALUE',
+					'SOB ALLOCATION QTY',
+					'SOB ALLOCATION VALUE',
 					'DATE CREATED',
 					'DATE UPDATED'
 				));

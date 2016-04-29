@@ -51,6 +51,7 @@ class ActivityTypeController extends \BaseController {
 				$activitytype->with_msource = (Input::has('with_msource')) ? 1 : 0;
 				$activitytype->with_sob = (Input::has('with_sob')) ? 1 : 0;
 				$activitytype->default_loading = Input::get('default_loading');
+				$activitytype->active = (Input::has('active')) ? 1 : 0;
 				$activitytype->save();
 
 				// add required
@@ -102,7 +103,7 @@ class ActivityTypeController extends \BaseController {
 		$activitytype = ActivityType::findOrFail($id);
 		$required = ActivityTypeBudgetRequired::required($id);
 		$budget_types = BudgetType::all();
-		$loading = ['1' => 'First Day', '2' => 'Last Day'];
+		$loading = ['1' => 'Last', '2' => 'First'];
 		return View::make('activitytype.edit', compact('activitytype', 'budget_types', 'required', 'loading'));
 	}
 
@@ -135,6 +136,7 @@ class ActivityTypeController extends \BaseController {
 				$activitytype->with_msource = (Input::has('with_msource')) ? 1 : 0;
 				$activitytype->with_sob = (Input::has('with_sob')) ? 1 : 0;
 				$activitytype->default_loading = Input::get('default_loading');
+				$activitytype->active = (Input::has('active')) ? 1 : 0;
 				$activitytype->update();
 
 				// add required
@@ -172,7 +174,73 @@ class ActivityTypeController extends \BaseController {
 	 */
 	public function destroy($id)
 	{
-		//
+		if(!Activity::checkIfTypeExist($id)){
+			$activitytype = ActivityType::findOrFail($id);
+			$activities = ActivityTypeNetwork::where('activitytype_id', $activitytype->id)->orderBy('task_id')->get();
+
+			foreach ($activities as $key => $activity) {
+				ActivityNetworkDependent::where('child_id',$activity->id)->delete();
+				ActivityNetworkDependent::where('parent_id',$activity->id)->delete();
+				$activity->delete();
+			}
+
+			$activitytype->delete();
+
+
+			return Redirect::route('activitytype.index')
+					->with('class', 'alert-success')
+					->with('message', 'Activity Type successfuly deleted.');
+		}else{
+			return Redirect::route('activitytype.index')
+					->with('class', 'alert-danger')
+					->with('message', 'Cannot delete activity type already used in an activity.');
+		}
+		
+	}
+
+	public function duplicate($id){
+		$activitytype = ActivityType::findOrFail($id);
+
+		$new_activitytype = new ActivityType();
+		$new_activitytype->activity_type = $activitytype->activity_type .' - DUPLICATE';
+		$new_activitytype->uom = $activitytype->uom;
+		$new_activitytype->prefix = $activitytype->prefix;
+		$new_activitytype->with_scheme = $activitytype->with_scheme;
+		$new_activitytype->with_msource = $activitytype->with_msource;
+		$new_activitytype->with_sob = $activitytype->with_sob;
+		$new_activitytype->default_loading = $activitytype->default_loading;
+		$new_activitytype->save();
+
+		$activities = ActivityTypeNetwork::where('activitytype_id', $activitytype->id)->orderBy('task_id')->get();
+
+		foreach ($activities as $key => $activity) {
+			$milestone = new ActivityTypeNetwork();
+			$milestone->task_id = $activity->task_id;
+			$milestone->activitytype_id = $new_activitytype->id;
+			$milestone->milestone = $activity->milestone;
+			$milestone->task = $activity->task;
+			$milestone->responsible = $activity->responsible;
+			$milestone->duration = $activity->duration;
+			$milestone->show = $activity->show;
+			$milestone->save();
+
+			$childs = ActivityNetworkDependent::where('child_id',$activity->id)->get();
+
+			if(!empty($childs)){
+				foreach ($childs as $key => $child) {
+					$original_parent = ActivityTypeNetwork::where('id',$child->parent_id)->first();
+					$parent = ActivityTypeNetwork::where('activitytype_id', $new_activitytype->id)->where('task_id', $original_parent->task_id)->first();
+					$depend_on = new ActivityNetworkDependent;
+					$depend_on->child_id = $milestone->id;
+					$depend_on->parent_id = $parent->id;
+					$depend_on->save();
+				}
+			}
+		}
+
+		return Redirect::route('activitytype.edit', $new_activitytype->id)
+				->with('class', 'alert-success')
+				->with('message', 'Activity Type successfuly duplicated.');
 	}
 
 }

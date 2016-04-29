@@ -48,6 +48,7 @@ class ActivityType extends \Eloquent {
 		    ->groupBy('activitytype_id')
 		    ->get();
 		})
+		->where('active',1)
 		->orderBy('activity_type')->lists('activity_type', 'id');
 	}
 

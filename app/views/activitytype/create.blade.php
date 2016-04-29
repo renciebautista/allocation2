@@ -76,6 +76,14 @@
 			@endforeach
 		</div>
 
+		<div class="form-group">
+			<div class="checkbox">
+				<label>
+					{{ Form::checkbox('active', 1,true) }} Active
+				</label>
+			</div>
+		</div>
+
 		
 
 		<div class="form-group">

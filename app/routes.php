@@ -373,6 +373,7 @@ Route::group(array('before' => 'auth'), function()
 
 		Route::resource('cycle', 'CycleController');
 
+
 		Route::get('activitytype/{id}/network', 'NetworkController@index');
 		Route::get('activitytype/{id}/network/list', 'NetworkController@show');
 		Route::get('activitytype/{id}/network/dependon', 'NetworkController@dependOn');
@@ -381,6 +382,7 @@ Route::group(array('before' => 'auth'), function()
 		Route::get('network/edit', 'NetworkController@edit');
 		Route::post('network/update', 'NetworkController@update');
 		
+		Route::post('activitytype/{id}/duplicate', 'ActivityTypeController@duplicate');
 		Route::resource('activitytype', 'ActivityTypeController');
 
 		Route::get('downloads/{id}/all', 'DownloadsController@downloadall');
