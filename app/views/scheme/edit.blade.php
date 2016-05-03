@@ -582,7 +582,7 @@
 		"scrollCollapse": true,
 		"paging": false,
 		"bSort": false,
-		"dom": '<"top"i>rt<"bottom"flp><"clear">'
+		"dom": '<"pull-left"flp><"clear">'
 	});
 
 	$('.numweek').inputNumber({ 
