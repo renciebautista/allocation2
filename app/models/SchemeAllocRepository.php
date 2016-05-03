@@ -647,6 +647,7 @@ class SchemeAllocRepository
 			->whereNotNull('shipto_id')
 			->orderBy('id', 'desc')
 			->get();
+
 		$outlet_total = array();
 
 		foreach ($outlets as $outlet) {
@@ -764,6 +765,7 @@ class SchemeAllocRepository
 		$scheme->update();
 
 		$weeks = Weekpercentage::allowSharePerWeek($scheme->id);
+
 		if(!is_null($weeks) && $weeks > 0){
 			AllocationSob::createSobAllocation($scheme->id,$scheme,$weeks);
 		}

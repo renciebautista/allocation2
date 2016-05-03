@@ -539,7 +539,6 @@ class SchemeController extends \BaseController {
 				// $update_alloc = $update_alloc || SchemeRepository::newValue($old_lpat,$scheme2->lpat);
 				$update_alloc = $update_alloc || SchemeRepository::newValue($old_quantity,$scheme2->quantity);
 				$update_alloc = $update_alloc || SchemeRepository::newValue($old_deals,$scheme2->deals);
-
 				$update_alloc = $update_alloc || SchemeRepository::newValue($old_compute,$scheme2->compute);
 
 				// echo $old_srp .'=>'.$scheme2->srp_p;
@@ -1055,7 +1054,6 @@ class SchemeController extends \BaseController {
 	}
 
 	public function updatesob($id){
-		// dd(Input::all());
 		$scheme = Scheme::findOrFail($id);
 		$activity = Activity::findOrFail($scheme->activity_id);
 		if((Activity::myActivity($activity)) || (ActivityPlanner::myActivity($activity->id))){

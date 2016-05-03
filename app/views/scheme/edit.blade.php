@@ -581,8 +581,7 @@
 		"scrollY": "500px",
 		"scrollCollapse": true,
 		"paging": false,
-		"bSort": false,
-		"dom": '<"pull-left"flp><"clear">'
+		"bSort": false
 	});
 
 	$('.numweek').inputNumber({ 
