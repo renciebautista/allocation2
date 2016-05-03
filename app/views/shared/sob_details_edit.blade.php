@@ -128,16 +128,6 @@
 									</tr>
 
 									@endforeach
-									<tr>
-										<th colspan="4" >
-											<span class="pull-right">Sub Total</span>
-										</th>
-										@foreach($sob_header[$group->id] as $key => $header)
-										<th class="alloc_per">
-										</th>
-										@endforeach
-										<th></th>
-									</tr>
 									<tr class="sob-header">
 										<th>GROUP</th>
 										<th>AREA</th>
