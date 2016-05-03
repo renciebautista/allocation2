@@ -22,7 +22,7 @@ class SobGroupController extends \BaseController {
 	 */
 	public function create()
 	{
-		//
+		return View::make('sobgroup.create');
 	}
 
 	/**
@@ -33,7 +33,26 @@ class SobGroupController extends \BaseController {
 	 */
 	public function store()
 	{
-		//
+		$input = Input::all();
+
+		$validation = Validator::make($input, SobGroup::$rules);
+
+		if($validation->passes())
+		{
+			$group = new SobGroup();
+			$group->sobgroup = strtoupper(Input::get('sobgroup'));
+			$group->save();
+
+			return Redirect::route('sobgroup.index')
+				->with('class', 'alert-success')
+				->with('message', 'Record successfuly created.');
+		}
+
+		return Redirect::route('sobgroup.create')
+			->withInput()
+			->withErrors($validation)
+			->with('class', 'alert-danger')
+			->with('message', 'There were validation errors.');
 	}
 
 	/**

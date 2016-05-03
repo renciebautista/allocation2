@@ -104,9 +104,9 @@
 					<div class="col-lg-12">
 						<div class="allocation_total table-responsive">
 							@if(count($sobs)>0)
-							{{ Form::submit('Update SOB', array('class' => 'btn btn-primary btn-xs disable-button ', 'id'=>'updatesob' , 'name' => 'submit' )) }}
+							{{ Form::submit('Update SOB', array('class' => 'btn btn-primary disable-button  pull-right', 'id'=>'updatesob' , 'name' => 'submit' )) }}
 							@else
-							<button class="btn btn-primary btn-xs disabled ">Update SOB</button>
+							<button class="btn btn-primary disabled pull-right">Update SOB</button>
 							@endif
 							<table id="sob-allocation" class="table table-condensed table-bordered display compact">
 								
