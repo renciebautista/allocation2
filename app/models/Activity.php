@@ -213,7 +213,7 @@ class Activity extends \Eloquent {
 			$scheme = Scheme::getList($activity->id);
 			$schemes = [];
 			foreach ($scheme as $row) {
-				if(date('Y-m-d') > $row->sob_start_week){
+				if($row->sob_start_week < date('Y-m-d')){
 					$schemes[] = $row->name;
 					$_failed = true;
 				}
