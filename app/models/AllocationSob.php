@@ -59,7 +59,12 @@ class AllocationSob extends \Eloquent {
 			}
 			
 			if(!empty($wek_multi)){
+				if(!isset($wek_multi[$sob_group->sob_group_id][$new_count])){
+					$wek_multi[$sob_group->sob_group_id][$new_count] = $wek_multi[1][$new_count];
+				}
+
 				$multi = $wek_multi[$sob_group->sob_group_id][$new_count]/100;
+
 				if($multi != 0){
 					$wek_value = ceil($total_alloc * $multi);
 					$share = $wek_multi[$sob_group->sob_group_id][$new_count];
@@ -120,7 +125,6 @@ class AllocationSob extends \Eloquent {
 			self::insert($data);
 			if(!empty($week_shares)){
 				foreach ($week_shares as $key => $row) {
-					// dd($row['sob_group_id']);
 					Weekpercentage::firstOrCreate(['scheme_id' => $scheme->id,
 						'sob_group_id' =>$row['sob_group_id'],
 					 	'weekno' => $key, 
