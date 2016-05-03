@@ -33,6 +33,13 @@
       <table class="table table-striped table-hover datatable">
         <thead>
           <tr>
+            <th colspan="5"></th>
+            <th class="center" colspan="7">Loading Day</th>
+            <th></th>
+            <th></th>
+            <th></th>
+          </tr>
+          <tr>
             <th>Customer Code</th>
             <th>Ship To Code</th>
             <th>Ship To Name</th>

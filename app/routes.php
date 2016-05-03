@@ -20,10 +20,19 @@ Queue::getIron()->ssl_verifypeer = false;
 
 
 Route::get('test', function(){
-	$app = app();
-	echo '<pre>';
-	print_r($app);
-	echo '</pre>';
+	// $scheme = Scheme::getList(328);
+		
+	// $schemes = [];
+	// foreach ($scheme as $row) {
+	// 	// dd(strtotime($row->sob_start_week));
+	// 	// echo $row['sob_start_date'];
+	// 	if(strtotime($row['sob_start_date']) < strtotime(date('Y-m-d'))){
+	// 		$schemes[] = $row->name;
+	// 	}
+	// }
+	// echo '<pre>';
+	// print_r($schemes);
+	// echo '</pre>';
 });
 
 
