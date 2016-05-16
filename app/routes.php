@@ -309,6 +309,11 @@ Route::group(array('before' => 'auth'), function()
 
 		Route::resource('group', 'GroupController');
 
+		Route::get('customerremap/export', 'CustomerRemapController@export');
+		Route::get('customerremap/import', 'CustomerRemapController@import');
+		Route::post('customerremap/upload', 'CustomerRemapController@upload');
+		Route::resource('customerremap', 'CustomerRemapController');
+
 		Route::get('customermaster', ['as' => 'customermaster.index', 'uses' => 'CustomerMasterController@index']);
 		Route::post('customermaster', ['as' => 'customermaster.export', 'uses' => 'CustomerMasterController@export']);
 		Route::get('customermaster/{id}/download', ['as' => 'customermaster.download', 'uses' => 'CustomerMasterController@download']);

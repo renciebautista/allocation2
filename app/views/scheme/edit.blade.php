@@ -456,12 +456,7 @@
 	</div>
 	
 	@if(Auth::user()->hasRole("PROPONENT"))
-		@if((strtotime($activity->cycle->sob_deadline) > strtotime(date('Y-m-d'))))
-			@include('shared.sob_details_edit')
-		@else
-			@include('shared.sob_details_readonly')
-		@endif
-		
+		@include('shared.sob_details_edit')
 	@else
 		@include('shared.sob_details_readonly')
 	@endif

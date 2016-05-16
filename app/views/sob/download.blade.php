@@ -81,6 +81,22 @@
 			
 		</div>
 
+		<div class="row">
+
+			<div class="col-lg-3">
+				<div class="form-group">
+					<div class="row">
+						<div class="col-lg-12">
+						{{ Form::label('exporttype', 'Export Type', array('class' => 'control-label')) }}
+						{{ Form::select('exporttype', $exporttypes, null, array('class' => 'form-control')) }}
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			
+		</div>
+
 		
 		
 

@@ -536,7 +536,11 @@ class AllocationSob extends \Eloquent {
 			and allocation_sobs.year = '%s'
 			and allocation_sobs.weekno = '%s'
 			group by allocation_sobs.po_no, allocation_sobs.ship_to_code,  allocation_sobs.scheme_id
-			order by allocation_sobs.year, allocation_sobs.weekno,allocation_sobs.po_no",$input['activity_type'],$input['brand'],$input['year'],$input['week']);
+			order by allocation_sobs.year, allocation_sobs.weekno,allocation_sobs.po_no",
+			$input['activity_type'],
+			$input['brand'],
+			$input['year'],
+			$input['week']);
 		return DB::select(DB::raw($query));
 	}
 }

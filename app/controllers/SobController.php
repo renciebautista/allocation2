@@ -85,9 +85,10 @@ class SobController extends \BaseController {
 			->groupBy('year')
 			->orderBy('year')
 			->lists('year', 'year');
+		$exporttypes = ['1' => 'Without PO Generated','2' => 'With PO Generated'];
 
 
-		return View::make('sob.download',compact('years'));
+		return View::make('sob.download',compact('years', 'exporttypes'));
 	}
 
 	public function downloadreport(){
@@ -96,6 +97,7 @@ class SobController extends \BaseController {
 		$year_id = Input::get('year');
 		$week_id = Input::get('week');
 		$brand_id = Input::get('brand');
+		$exporttype = Input::get('exporttype');
 		$rules = array(
 	        'year' => 'required|integer|min:1',
 	        'week' => 'required',
@@ -126,75 +128,76 @@ class SobController extends \BaseController {
 					->with('message', 'Cannot run simultaneous SOB PO generation.');
 			}else{
 
-				DB::beginTransaction();
-				try {
-					$sobs = AllocationSob::join('allocations', 'allocations.id', '=', 'allocation_sobs.allocation_id')
-						->join('schemes', 'schemes.id', '=', 'allocations.scheme_id')
-						->join('activities', 'activities.id', '=', 'schemes.activity_id')
-						->where('weekno', $week)
-						->where('year',$year)
-						->where('brand_shortcut', $brand_shortcut)
-						->where('activities.activity_type_id', $activity_type->id)
-						->where('activities.status_id', 9)
-						->whereNull('po_no')
-						->groupBy('allocation_sobs.ship_to_code')
-						->orderBy('allocation_sobs.id')
-						->get();
-
-					
-					$so_series->locked = true;
-					$so_series->update();
-
-					$series = $so_series->series;
-					foreach ($sobs as $sob) {
-						$po_series = $activity_type->prefix ."_". $brand_shortcut .date('yW').sprintf("%05d", $series);
-
-						$shipTo = ShipTo::where('ship_to_code',$sob->ship_to_code)->first();
-						$day_of_week = 0;
-						if($activity_type->default_loading == 2){
-							for ($i=1; $i < 8 ; $i++) { 
-								$day_of_week = $i;
-								if($shipTo->getDayOfWeek($i)){
-									break;
-								}
-							}
-						}else{
-							for ($i=7; $i > 0 ; $i--) { 
-								$day_of_week = $i;
-								if($shipTo->getDayOfWeek($i)){
-									break;
-								}
-							}
-						}
-						
-						$day_of_week = $day_of_week - 1;
-
-						$week_start = new DateTime();
-						$week_start->setISODate($year,$week,$day_of_week);
-						$loading_date = $week_start->format('Y-m-d');
-						$receipt_date = date('Y-m-d', strtotime($loading_date . '+ '.$shipTo->leadtime.' days'));
-
-						AllocationSob::join('allocations', 'allocations.id', '=', 'allocation_sobs.allocation_id')
+				if($exporttype == 1){
+					DB::beginTransaction();
+					try {
+						$sobs = AllocationSob::join('allocations', 'allocations.id', '=', 'allocation_sobs.allocation_id')
 							->join('schemes', 'schemes.id', '=', 'allocations.scheme_id')
+							->join('activities', 'activities.id', '=', 'schemes.activity_id')
 							->where('weekno', $week)
-							->where('year', $year)
-							->where('allocation_sobs.ship_to_code',$sob->ship_to_code)
+							->where('year',$year)
 							->where('brand_shortcut', $brand_shortcut)
-							->update(['po_no' => $po_series, 'loading_date' => $loading_date, 'receipt_date' => $receipt_date, 'allocation_sobs.updated_at' => date('Y-m-d h:i:s')]);
-						$series++;
+							->where('activities.activity_type_id', $activity_type->id)
+							->where('activities.status_id', 9)
+							->whereNull('po_no')
+							->groupBy('allocation_sobs.ship_to_code')
+							->orderBy('allocation_sobs.id')
+							->get();
+
+						
+						$so_series->locked = true;
+						$so_series->update();
+
+						$series = $so_series->series;
+						foreach ($sobs as $sob) {
+							$po_series = $activity_type->prefix ."_". $brand_shortcut .date('yW').sprintf("%05d", $series);
+
+							$shipTo = ShipTo::where('ship_to_code',$sob->ship_to_code)->first();
+							$day_of_week = 0;
+							if($activity_type->default_loading == 2){
+								for ($i=1; $i < 8 ; $i++) { 
+									$day_of_week = $i;
+									if($shipTo->getDayOfWeek($i)){
+										break;
+									}
+								}
+							}else{
+								for ($i=7; $i > 0 ; $i--) { 
+									$day_of_week = $i;
+									if($shipTo->getDayOfWeek($i)){
+										break;
+									}
+								}
+							}
+							
+							$day_of_week = $day_of_week - 1;
+
+							$week_start = new DateTime();
+							$week_start->setISODate($year,$week,$day_of_week);
+							$loading_date = $week_start->format('Y-m-d');
+							$receipt_date = date('Y-m-d', strtotime($loading_date . '+ '.$shipTo->leadtime.' days'));
+
+							AllocationSob::join('allocations', 'allocations.id', '=', 'allocation_sobs.allocation_id')
+								->join('schemes', 'schemes.id', '=', 'allocations.scheme_id')
+								->where('weekno', $week)
+								->where('year', $year)
+								->where('allocation_sobs.ship_to_code',$sob->ship_to_code)
+								->where('brand_shortcut', $brand_shortcut)
+								->update(['po_no' => $po_series, 'loading_date' => $loading_date, 'receipt_date' => $receipt_date, 'allocation_sobs.updated_at' => date('Y-m-d h:i:s')]);
+							$series++;
+						}
+
+						$so_series->series = $series;
+						$so_series->locked = false;
+						$so_series->update();
+
+						DB::commit();
+					} catch (Exception $e) {
+						DB::rollback();
+						dd($e);
 					}
-
-					$so_series->series = $series;
-					$so_series->locked = false;
-					$so_series->update();
-
-					DB::commit();
-				} catch (Exception $e) {
-					DB::rollback();
-					dd($e);
 				}
-				
-
+								
 				$soldtos =  AllocationSob::getSOBFilters($input);
 
 				$data = '';

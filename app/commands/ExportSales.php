@@ -57,7 +57,7 @@ class ExportSales extends Command {
 			->get();
 
 		$_shiptos_list = DB::table('ship_tos')
-			->select('customer_code','ship_to_code','ship_to_name','split', 'dayofweek', 'leadtime', 'active')
+			->select('customer_code','ship_to_code','ship_to_name','split', 'leadtime', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun', 'active')
 			->get();
 
 		$_accounts_list = DB::table('accounts')
@@ -95,7 +95,8 @@ class ExportSales extends Command {
 		$writer->openToFile($filePath); // write data to a file or to a PHP stream
 
 		$header = array('GROUP CODE', 'GROUP', 'AREA CODE', 'AREA CODE TWO', 'AREA', 'SOLD TO CODE', 'SOLD TO', 'SOLD TO STATUS (ACTIVE)','SALES MULTIPLIER', 'FROM DT', 
-					'SOB SOLD TO CODE', 'SHIP TO CODE', 'CUSTOMER SHIP TO NAME', '% SPLIT', 'DAY OF WEEK', 'LEAD TIME (DAYS)','SHIP TO POINT STATUS (ACTIVE)', 
+					'SOB SOLD TO CODE', 'SHIP TO CODE', 'CUSTOMER SHIP TO NAME', '% SPLIT', 'LEAD TIME (DAYS)', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY',
+					'SUNDAY', 'SHIP TO POINT STATUS (ACTIVE)', 
 				 	'CHANNEL CODE', 'CHANNEL',  'ACCOUNT GROUP CODE', 'ACCOUNT GROUP', 'ACCOUNT NAME', 'ACCOUNT STATUS (ACTIVE)');
 		$writer->addRow($header);
 
@@ -128,8 +129,14 @@ class ExportSales extends Command {
 						$shipto['ship_to_code'],
 						$shipto['ship_to_name'],
 						$shipto['split'],
-						$shipto['dayofweek'],
 						$shipto['leadtime'],
+						$shipto['mon'],
+						$shipto['tue'],
+						$shipto['wed'],
+						$shipto['thu'],
+						$shipto['fri'],
+						$shipto['sat'],
+						$shipto['sun'],
 						$shipto['active']));
 					if(isset($shipto['accounts'])){
 						foreach ($shipto['accounts'] as $account) {
@@ -147,8 +154,14 @@ class ExportSales extends Command {
 								$shipto['ship_to_code'],
 								$shipto['ship_to_name'],
 								$shipto['split'],
-								$shipto['dayofweek'],
 								$shipto['leadtime'],
+								$shipto['mon'],
+								$shipto['tue'],
+								$shipto['wed'],
+								$shipto['thu'],
+								$shipto['fri'],
+								$shipto['sat'],
+								$shipto['sun'],
 								$shipto['active'],
 								$account['channel_code'],
 								$account['channel_name'],
