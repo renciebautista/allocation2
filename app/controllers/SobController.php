@@ -150,7 +150,7 @@ class SobController extends \BaseController {
 
 						$series = $so_series->series;
 						foreach ($sobs as $sob) {
-							$po_series = $activity_type->prefix ."_". $brand_shortcut .date('yW').sprintf("%05d", $series);
+							$po_series = $activity_type->prefix ."_". $brand_shortcut .substr($year,2).str_pad($week,2, '0', STR_PAD_LEFT).sprintf("%05d", $series);
 
 							$shipTo = ShipTo::where('ship_to_code',$sob->ship_to_code)->first();
 							$day_of_week = 0;
@@ -185,6 +185,9 @@ class SobController extends \BaseController {
 								->where('brand_shortcut', $brand_shortcut)
 								->update(['po_no' => $po_series, 'loading_date' => $loading_date, 'receipt_date' => $receipt_date, 'allocation_sobs.updated_at' => date('Y-m-d h:i:s')]);
 							$series++;
+							if($series == 99999){
+								$series = 1;
+							}
 						}
 
 						$so_series->series = $series;
