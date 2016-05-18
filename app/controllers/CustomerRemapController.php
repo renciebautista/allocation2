@@ -84,4 +84,43 @@ class CustomerRemapController extends \BaseController {
 		//
 	}
 
+	public function export(){
+		$customers = SplitOldCustomer::all();
+		Excel::create("Customer Inactive - Active Mapping", function($excel) use($customers){
+			$excel->sheet('Sheet1', function($sheet) use($customers) {
+				$sheet->fromModel($customers,null, 'A1', true);
+			})->download('xls');
+
+		});
+	}
+
+	public function import(){
+		return View::make('customerremap.import');
+	}
+
+	public function upload(){
+		if(Input::hasFile('file')){
+			$file_path = Input::file('file')->move(storage_path().'/uploads/temp/',Input::file('file')->getClientOriginalName());
+			Excel::selectSheets('Sheet1')->load($file_path, function($reader) {
+				SplitOldCustomer::import($reader->get());
+			});
+
+
+			if (File::exists($file_path))
+			{
+			    File::delete($file_path);
+			}
+			
+			return Redirect::action('CustomerRemapController@index')
+					->with('class', 'alert-success')
+					->with('message', 'Customer Inactive / Active mapping successfuly updated');
+		}else{
+
+			return Redirect::action('CustomerRemapController@import')
+				->with('class', 'alert-danger')
+				->with('message', 'A file upload is required.');
+		}
+		
+	}
+
 }

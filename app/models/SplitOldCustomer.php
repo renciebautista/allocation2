@@ -26,4 +26,25 @@ class SplitOldCustomer extends \Eloquent {
 			// ->where('c2.active',1)
 			->get();
 	}
+
+	public static function import($records){
+		DB::beginTransaction();
+		try {
+				DB::table('split_old_customers')->truncate();
+				$records->each(function($row)  {
+				if(!is_null($row->inactive_customer_code)){
+					$split = new SplitOldCustomer;
+					$split->inactive_customer_code = $row->inactive_customer_code;
+					$split->active_customer_code = $row->active_customer_code;
+					$split->split = $row->split;
+					$split->save();
+				}
+				
+			});
+			DB::commit();
+		} catch (\Exception $e) {
+			// dd($e);
+			DB::rollback();
+		}
+	}
 }

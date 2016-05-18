@@ -53,14 +53,9 @@
             <td>{{ (($customer->active == 1) ? 'Active':'Inactive') }}</td>
             <td>{{ $customer->split }}</td>
             <td class="action">
-              {{ HTML::linkAction('CustomerRemapController@edit','Edit', $customer->id, array('class' => 'btn btn-info btn-xs')) }}
             </td>
             <td class="action">
-              {{ Form::open(array('method' => 'DELETE', 'action' => array('CustomerRemapController@destroy', $customer->id))) }}                       
-              {{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}
-              {{ Form::close() }}
             </td>
-            
           </tr>
           @endforeach
           @endif
