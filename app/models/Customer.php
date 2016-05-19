@@ -13,6 +13,30 @@ class Customer extends \Eloquent {
 			->get();
 	}
 
+	public static function search($inputs){
+		$filter ='';
+		if(isset($inputs['s'])){
+			$filter = $inputs['s'];
+		}
+
+		$status = 1;
+		if(isset($inputs['status'])){
+			$status = $inputs['status'];
+		}
+		return self::select('customers.id', 'customers.area_code',
+			'areas.area_name',
+			'customers.area_code_two', 'customers.customer_code', 'customers.sob_customer_code','customers.customer_name',
+			'customers.multiplier', 'customers.from_dt', 'customers.active')
+			->join('areas', 'areas.area_code' , '=', 'customers.area_code')
+			->where('customer_name', 'LIKE' ,"%$filter%")
+			->where(function($query) use ($status){
+				if($status < 2){
+					$query->where('active',$status);
+				}
+			})
+			->get();
+	}
+
 	public static function batchInsert($records){
 		$records->each(function($row) {
 			if(!is_null($row->area_code)){

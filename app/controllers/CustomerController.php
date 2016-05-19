@@ -10,7 +10,8 @@ class CustomerController extends \BaseController {
 	 */
 	public function index()
 	{
-		$customers = Customer::getAll();
+		Input::flash();
+		$customers = Customer::search(Input::all());
 		return View::make('customer.index',compact('customers'));
 	}
 
@@ -81,18 +82,27 @@ class CustomerController extends \BaseController {
 	 */
 	public function destroy($id)
 	{
-		//
+		$customer = Customer::findOrFail($id);
+		$customer->delete();
+		$class = 'alert-success';
+		$message = 'Customer successfully deleted.';
+		// }else{
+		// 	$class = 'alert-danger';
+		// 	$message = 'Cannot delete cycle.';
+		// }
+		
+		return Redirect::route('customer.index')
+				->with('class', $class )
+				->with('message', $message);
 	}
 
 	public function export(){
 		$customers = Customer::all();
-
 		Excel::create("Customers", function($excel) use($customers){
 			$excel->sheet('Sheet1', function($sheet) use($customers) {
 				$sheet->fromModel($customers,null, 'A1', true);
 
 			})->download('xls');
-
 		});
 	}
 

@@ -16,6 +16,19 @@
   <div class="col-lg-12">
     {{ Form::open(array('method' => 'get','class' => 'form-inline')) }}
       <div class="form-group">
+        <label class="radio-inline">
+        {{ Form::radio('status', 1, true) }} Active
+      </label>
+      <label class="radio-inline">
+        {{ Form::radio('status', 0) }} Inactive
+      </label>
+
+      <label class="radio-inline">
+        {{ Form::radio('status', 2) }} All 
+      </label>
+    
+        </div><br><br>
+      <div class="form-group">
         <label class="sr-only" for="s">Search</label>
         {{ Form::text('s',Input::old('s'),array('class' => 'form-control', 'placeholder' => 'Search')) }}
         </div>
