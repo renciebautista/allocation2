@@ -127,10 +127,11 @@ class SobController extends \BaseController {
 					->with('class', 'alert-danger')
 					->with('message', 'Cannot run simultaneous SOB PO generation.');
 			}else{
-
+				$hash = null;
 				if($exporttype == 1){
 					DB::beginTransaction();
 					try {
+						$hash = md5(date('Y-m-d H:i:s'));
 						$sobs = AllocationSob::join('allocations', 'allocations.id', '=', 'allocation_sobs.allocation_id')
 							->join('schemes', 'schemes.id', '=', 'allocations.scheme_id')
 							->join('activities', 'activities.id', '=', 'schemes.activity_id')
@@ -183,7 +184,9 @@ class SobController extends \BaseController {
 								->where('year', $year)
 								->where('allocation_sobs.ship_to_code',$sob->ship_to_code)
 								->where('brand_shortcut', $brand_shortcut)
-								->update(['po_no' => $po_series, 'loading_date' => $loading_date, 'receipt_date' => $receipt_date, 'allocation_sobs.updated_at' => date('Y-m-d h:i:s')]);
+								->update(['po_no' => $po_series, 'loading_date' => $loading_date,
+								 'receipt_date' => $receipt_date, 'allocation_sobs.updated_at' => date('Y-m-d h:i:s'),
+								 'hash' => $hash]);
 							$series++;
 							if($series == 99999){
 								$series = 1;
@@ -201,7 +204,7 @@ class SobController extends \BaseController {
 					}
 				}
 								
-				$soldtos =  AllocationSob::getSOBFilters($input);
+				$soldtos =  AllocationSob::getSOBFilters($input,$hash);
 
 				$data = '';
 				$cnt = 0;

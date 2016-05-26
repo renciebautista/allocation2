@@ -6,4 +6,14 @@ class SobGroup extends \Eloquent {
 	public static $rules = array(
         'sobgroup' => 'required|unique:sob_groups'
     );
+
+    public static function search($inputs){
+		$filter ='';
+		if(isset($inputs['s'])){
+			$filter = $inputs['s'];
+		}
+
+		return self::where('sobgroup', 'LIKE' ,"%$filter%")
+			->get();
+	}
 }

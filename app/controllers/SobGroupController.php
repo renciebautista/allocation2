@@ -10,7 +10,8 @@ class SobGroupController extends \BaseController {
 	 */
 	public function index()
 	{
-		$groups = SobGroup::all();
+		Input::flash();
+		$groups = SobGroup::search(Input::all());
 		return View::make('sobgroup.index',compact('groups'));
 	}
 
@@ -76,7 +77,8 @@ class SobGroupController extends \BaseController {
 	 */
 	public function edit($id)
 	{
-		//
+		$sobgroup = SobGroup::findOrFail($id);
+		return View::make('sobgroup.edit',compact('sobgroup'));
 	}
 
 	/**
@@ -88,7 +90,25 @@ class SobGroupController extends \BaseController {
 	 */
 	public function update($id)
 	{
-		//
+		$sobgroup = SobGroup::findOrFail($id);
+		$input = Input::all();
+		$validation = Validator::make($input, SobGroup::$rules);
+		if ($validation->passes())
+		{
+			$sobgroup->sobgroup = strtoupper(Input::get('sobgroup'));
+			$sobgroup->save();
+
+
+			return Redirect::route('sobgroup.index')
+				->with('class', 'alert-success')
+				->with('message', 'Record successfuly created.');
+		}
+
+		return Redirect::route('sobgroup.edit', $id)
+			->withInput()
+			->withErrors($validation)
+			->with('class', 'alert-danger')
+			->with('message', 'There were validation errors.');
 	}
 
 	/**
@@ -100,7 +120,12 @@ class SobGroupController extends \BaseController {
 	 */
 	public function destroy($id)
 	{
-		//
+		$sobgroup = SobGroup::findOrFail($id);
+		$sobgroup->delete();
+
+		return Redirect::route('sobgroup.index')
+				->with('class', 'alert-success')
+				->with('message', 'Record successfuly deleted.');
 	}
 
 }

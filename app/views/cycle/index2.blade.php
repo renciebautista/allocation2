@@ -66,8 +66,6 @@
 						<th class="center">Implementation Date</th>
 						<th class="center">SOB Deadline</th>
 						<th class="center">Emergency</th>
-						<th class="center">Generating PO No.</th>
-						<th class="center">PO No. Generated</th>
 						<th class="center">Released</th>
 						<th class="dash-action">Action</th>
 					</tr>
@@ -97,8 +95,6 @@
 							@endif
 						</td>
 						<td class="center">{{ ($cycle->emergency) ? '<i class="fa fa-check"></i>' : '' }}</td>
-						<td class="center">{{ ($cycle->generating_sob) ? '<i class="fa fa-check"></i>' : '' }}</td>
-						<td class="center">{{ ($cycle->sob_generated) ? '<i class="fa fa-check"></i>' : '' }}</td>
 						<td class="center">{{ ($cycle->released) ? '<i class="fa fa-check"></i>' : '' }}</td>
 						<td class="action">
 							{{ HTML::linkAction('CycleController@edit','Edit', $cycle->id, array('class' => 'btn btn-info btn-xs')) }}

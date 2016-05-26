@@ -50,6 +50,11 @@
 						<td class="action">
 							{{ HTML::linkAction('SobGroupController@edit','Edit', $group->id, array('class' => 'btn btn-info btn-xs')) }}
 						</td>
+						<td class="action">
+							{{ Form::open(array('method' => 'DELETE', 'action' => array('SobGroupController@destroy', $group->id), 'class' => 'disable-button')) }}                       
+							{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}
+							{{ Form::close() }}
+						</td>
 					</tr>
 					@endforeach
 					@endif

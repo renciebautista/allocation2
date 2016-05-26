@@ -946,4 +946,13 @@ h2, .h2 {
 	margin-bottom: 10px;
 }
 
+table.dataTable thead tr.sob-percent th{
+	border-bottom: 1px solid #dddddd;
+
+}
+table.dataTable thead tr.even th{
+	background-color: #f9f9f9;
+
+}
+    
 

@@ -360,17 +360,37 @@ class SchemeController extends \BaseController {
 
 			$sobs = AllocationSob::getSob($scheme->id);
 
+			// dd($sobs[0]);
+			
 
 
 			$header = AllocationSob::getHeader($scheme->id);
 
 			$sob_header = array();
+			$h_weeks =[];
 			if(count($header) >0){
 				foreach ($header as $value) {
+					if(!in_array($value->weekno, $h_weeks)){
+						$h_weeks[] = $value->weekno;
+					}
+					
 					$sob_header[$value->sob_group_id][$value->weekno] = $value->share;
 				}
 			}
 
+			$sob_group_total = [];
+			foreach ($sobs as $sob) {
+				foreach ($h_weeks as $weekno) {
+					$_wek_no = 'wk_'.$weekno;
+					if(!isset($sob_group_total[$sob->sobgroup][$weekno])){
+						$sob_group_total[$sob->sobgroup][$weekno] = 0;
+					}
+					$sob_group_total[$sob->sobgroup][$weekno] += $sob->$_wek_no;
+				}
+				
+			}
+
+			// dd($sob_group_total);
 			$sobgroups = SobGroup::all();
 
 			if(count($sobs) >0){
@@ -392,11 +412,11 @@ class SchemeController extends \BaseController {
 				if($activity->status_id < 4){
 					return View::make('scheme.edit',compact('scheme', 'activity_schemes', 'id_index', 'activity', 'skus', 'sel_skus', 'sel_hosts',
 						'sel_premuim','allocations', 'total_sales', 'qty','id','total_gsv', 'ac_groups', 'groups','host_sku','premuim_sku',
-						'count','alloc_refs', 'sobs','sob_header', 'sobdivisions','sobgroups'));
+						'count','alloc_refs', 'sobs','sob_header', 'sobdivisions','sobgroups', 'sob_group_total'));
 				}else{
 					return View::make('scheme.read_only',compact('scheme', 'activity', 'activity_schemes', 'id_index', 'skus', 'involves', 'sel_skus', 'sel_hosts',
 						'sel_premuim','allocations', 'total_sales', 'qty','id', 'summary', 'total_gsv','sku', 'host', 'premuim','ac_groups','groups',
-						'host_sku','premuim_sku','ref_sku','count', 'alloc_refs','alloref', 'sobs', 'sob_header', 'brands','sobs','sob_header', 'sobdivisions','sobgroups'));
+						'host_sku','premuim_sku','ref_sku','count', 'alloc_refs','alloref', 'sobs', 'sob_header', 'brands','sobs','sob_header', 'sobdivisions','sobgroups','sob_group_total'));
 				}
 			}
 
@@ -404,11 +424,11 @@ class SchemeController extends \BaseController {
 				if($activity->status_id == 4){
 					return View::make('scheme.edit',compact('scheme', 'activity_schemes', 'id_index', 'activity', 'skus', 'sel_skus', 'sel_hosts',
 						'sel_premuim','allocations', 'total_sales', 'qty','id', 'summary', 'total_gsv','ac_groups', 'groups','host_sku','premuim_sku',
-						'count','alloc_refs', 'sobs', 'sob_header', 'sobdivisions','sobgroups'));
+						'count','alloc_refs', 'sobs', 'sob_header', 'sobdivisions','sobgroups', 'sob_group_total'));
 				}else{
 					return View::make('scheme.read_only',compact('scheme', 'activity_schemes', 'id_index', 'activity', 'skus', 'sel_skus', 'sel_hosts',
 						'sel_premuim','allocations', 'total_sales', 'qty','id', 'summary', 'total_gsv','sku', 'host', 'premuim','ac_groups','groups',
-						'host_sku','premuim_sku','ref_sku', 'count', 'alloc_refs','alloref', 'sobs', 'sob_header', 'sobdivisions','sobgroups'));
+						'host_sku','premuim_sku','ref_sku', 'count', 'alloc_refs','alloref', 'sobs', 'sob_header', 'sobdivisions','sobgroups','sob_group_total'));
 				}
 			}
 		}else{

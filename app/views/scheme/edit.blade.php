@@ -455,7 +455,7 @@
 		@endif
 	</div>
 	
-	@if(Auth::user()->hasRole("PROPONENT"))
+	@if((Auth::user()->hasRole("PROPONENT")) && (strtotime($activity->cycle->sob_deadline) >= strtotime(date('Y-m-d'))))
 		@include('shared.sob_details_edit')
 	@else
 		@include('shared.sob_details_readonly')
@@ -598,13 +598,14 @@
 	    	alert('Total percentage is above 100%!');
 	    	$(this).val(0);
 	    	sum = 0;
-	    	$('.dataTables_scrollHead input').each(function() {
+	    	$(this).closest('tr').find('.numweek').each(function() {
 		        sum += Number($(this).val());
 		    });
 		}
 
 		var arr = $(this).attr("id").split('_');
 		$("#_wek_"+arr[1]+"_"+arr[2]).attr('value',$(this).val());
+		console.log(sum);
 
 	    $(this).closest('tr').find('.sum').text(sum.toFixed(2) +'%');
 	})

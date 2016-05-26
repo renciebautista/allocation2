@@ -217,6 +217,9 @@ Route::group(array('before' => 'auth'), function()
 
 	Route::get('sob', ['as' => 'sob.index', 'uses' => 'SobController@index']);
 	Route::post('sob/generate', ['as' => 'sob.generate', 'uses' => 'SobController@generate']);
+
+	Route::get('sob/download', ['as' => 'sob.download', 'uses' => 'SobController@download']);
+	Route::post('sob/downloadreport', ['as' => 'sob.downloadreport', 'uses' => 'SobController@downloadreport']);
 	
 
 	// Route::get('sob/booking', ['as' => 'sob.booking', 'uses' => 'SobController@booking']);
@@ -393,9 +396,6 @@ Route::group(array('before' => 'auth'), function()
 
 		Route::get('downloads/{id}/all', 'DownloadsController@downloadall');
 		Route::get('downloads/{id}/approved', 'DownloadsController@download');
-
-		Route::get('sob/download', ['as' => 'sob.download', 'uses' => 'SobController@download']);
-		Route::post('sob/downloadreport', ['as' => 'sob.downloadreport', 'uses' => 'SobController@downloadreport']);
 
 		Route::get('settings', ['as' => 'settings.index', 'uses' => 'SettingsController@index']);
 		Route::post('settings', ['as' => 'settings.update', 'uses' => 'SettingsController@update']);

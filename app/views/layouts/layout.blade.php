@@ -181,7 +181,7 @@
 							</ul>
 						</li>
 
-						@if(Auth::user()->hasRole("ADMINISTRATOR"))
+						@if(Auth::user()->inRoles(['ADMINISTRATOR','SOB ASSISTANT']))
 
 						<li class="dropdown">
 							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="report">SOB <span class="caret"></span></a>

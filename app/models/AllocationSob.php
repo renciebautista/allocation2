@@ -514,7 +514,11 @@ class AllocationSob extends \Eloquent {
 		return DB::select(DB::raw($query));
 	}
 
-	public static function getSOBFilters($input){
+	public static function getSOBFilters($input,$hash = null){
+		$_hash = '';
+		if(!is_null($hash)){
+			$_hash = "and hash = '$hash'";
+		}
 		$query = sprintf("select '' as row_no,
 			'P001' as col2, '11' as col3,'11' as col4,
 			allocation_sobs.ship_to_code as ship_to_code_1,
@@ -535,12 +539,15 @@ class AllocationSob extends \Eloquent {
 			and schemes.brand_shortcut = '%s'
 			and allocation_sobs.year = '%s'
 			and allocation_sobs.weekno = '%s'
+			and allocation_sobs.po_no IS NOT NULL
+			%s
 			group by allocation_sobs.po_no, allocation_sobs.ship_to_code,  allocation_sobs.scheme_id
 			order by allocation_sobs.year, allocation_sobs.weekno,allocation_sobs.po_no",
 			$input['activity_type'],
 			$input['brand'],
 			$input['year'],
-			$input['week']);
+			$input['week'],
+			$_hash);
 		return DB::select(DB::raw($query));
 	}
 }
