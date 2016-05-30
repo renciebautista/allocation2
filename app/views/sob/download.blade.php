@@ -18,13 +18,29 @@
 	<div class="panel-body">
 
 		<div class="row">
+			<div class="col-lg-3">
+				<div class="form-group">
+					<div class="row">
+						<div class="col-lg-12">
+						{{ Form::label('exporttype', 'Export Type', array('class' => 'control-label')) }}
+						{{ Form::select('exporttype',$exporttypes, null, array('class' => 'form-control')) }}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
 
 			<div class="col-lg-3">
 				<div class="form-group">
 					<div class="row">
 						<div class="col-lg-12">
 						{{ Form::label('year', 'Year', array('class' => 'control-label')) }}
-						{{ Form::select('year', array('0' => 'PLEASE SELECT') + $years, null, array('class' => 'form-control')) }}
+						{{ Form::hidden('year_id', '',array('id' => 'year_id')) }}
+						<select class="form-control" data-placeholder="SELECT YEAR" id="year" name="year" >
+							<option value="">SELECT YEAR</option>
+						</select>
 						</div>
 					</div>
 				</div>
@@ -81,21 +97,7 @@
 			
 		</div>
 
-		<div class="row">
-
-			<div class="col-lg-3">
-				<div class="form-group">
-					<div class="row">
-						<div class="col-lg-12">
-						{{ Form::label('exporttype', 'Export Type', array('class' => 'control-label')) }}
-						{{ Form::select('exporttype', $exporttypes, null, array('class' => 'form-control')) }}
-						</div>
-					</div>
-				</div>
-			</div>
-			
-			
-		</div>
+		
 
 		
 		
@@ -145,24 +147,33 @@ $("#myform").validate({
     }
 });
 
+$("#year").depdrop({
+    url: "{{action('api\SobController@years')}}",
+    depends: ['exporttype'],
+    params: ['year_id']
+});
+
 $("#week").depdrop({
     url: "{{action('api\SobController@weeks')}}",
-    depends: ['year'],
+    depends: ['year', 'exporttype'],
     params: ['week_id']
 });
 
 $("#activity_type").depdrop({
     url: "{{action('api\SobController@weekactivitytype')}}",
-    depends: ['week','year'],
+    depends: ['week','year', 'exporttype'],
     params: ['type_id']
 });
 
 $("#brand").depdrop({
     url: "{{action('api\SobController@weekbrand')}}",
-    depends: ['activity_type', 'week','year'],
-    initDepends: ['year'], 
+    depends: ['activity_type', 'week','year', 'exporttype'],
+    initDepends: ['exporttype'], 
     initialize: true,
     params: ['brand_id']
+});
+$( "#year" ).change(function() {
+  	$('#year_id').val($(this).val());
 });
 
 $( "#week" ).change(function() {

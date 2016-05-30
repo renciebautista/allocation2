@@ -283,6 +283,7 @@ Route::group(array('before' => 'auth'), function()
 		Route::get('budgettype', 'api\BudgetTypeController@gettype');
 		Route::get('materialsource', 'api\MaterialController@getsource');
 
+		Route::post('sobyears', 'api\SobController@years');
 		Route::post('sobweeks', 'api\SobController@weeks');
 		Route::post('sobweekactivitytype', 'api\SobController@weekactivitytype');
 		Route::post('weekbrand', 'api\SobController@weekbrand');
