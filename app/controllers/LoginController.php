@@ -27,6 +27,8 @@ class LoginController extends \BaseController {
     );
     $validation = Validator::make($input, $rules);
 
+    $errorMessages = new Illuminate\Support\MessageBag;
+
     if($validation->passes())
     {
       $password = str_random(6);
@@ -42,31 +44,44 @@ class LoginController extends \BaseController {
       $user->confirmation_code = md5(uniqid(mt_rand(), true));
       $user->confirmed = 0;
       $user->active = 0;
-      $user->save();
 
-      $data['email'] = $user->email;
-      $data['first_name'] = $user->first_name;
+      if($user->save()){
 
+        $data['email'] = $user->email;
+        $data['first_name'] = $user->first_name;
 
-      // send email about signup
-      Mail::send('emails.signup', $data, function($message) use ($data){
-        $message->to($data['email'],$data['first_name'])->subject('Account Application');
-      });
-      $settings = Setting::find(1);
+        // send email about signup
+        Mail::send('emails.signup', $data, function($message) use ($data){
+          $message->to($data['email'],$data['first_name'])->subject('Account Application');
+        });
 
-      Mail::send('emails.newuser', $data, function($message) use ($settings){
-        $emails = explode(",", $settings->new_user_email);
-        $message->to($emails,'Admin')->subject('New Account Application');
-      });
+        $settings = Setting::find(1);
 
-      Session::flash('signup_message', 'Sign up successfull, please wait for your account confirmation email.');
-      Session::flash('class', 'alert alert-success');
-      return Redirect::back();
+        Mail::send('emails.newuser', $data, function($message) use ($settings){
+          $emails = explode(",", $settings->new_user_email);
+          $message->to($emails,'Admin')->subject('New Account Application');
+        });
+
+        Session::flash('signup_message', 'Sign up successfull, please wait for your account confirmation email.');
+        Session::flash('class', 'alert alert-success');
+        return Redirect::back();
+      }else{
+        $errorMessages->add('username', 'The username may only contain letters, numbers, and dashes.');
+        // dd($user);
+      }
+
     }
+
+    if ($validation->fails()) {
+        $errorMessages->merge($validation->errors()->toArray());
+    }
+
+    
+
 
     return Redirect::to(URL::action('LoginController@index'))
       ->withInput()
-      ->withErrors($validation)
+      ->withErrors($errorMessages)
       ->with('class', 'alert-danger')
       ->with('signup_message', 'There were validation errors.');
   }

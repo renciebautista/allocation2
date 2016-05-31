@@ -12,11 +12,11 @@ class User extends Eloquent implements ConfideUserInterface {
     public static $rules = array(
     	'username' => 'required|unique:users',
     	'password' => 'required|min:6|confirmed',
-			'password_confirmation' => 'same:password',
-			'email' => 'required|email|unique:users',
-			'first_name' => 'required',
-			'last_name' => 'required',
-			'group_id' => 'required|integer|min:1'
+		'password_confirmation' => 'same:password',
+		'email' => 'required|email|unique:users',
+		'first_name' => 'required',
+		'last_name' => 'required',
+		'group_id' => 'required|integer|min:1'
 	);
 
   public static function forApproval(){

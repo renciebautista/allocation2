@@ -153,6 +153,9 @@ class SobController extends \BaseController {
 						foreach ($sobs as $sob) {
 							$po_series = $activity_type->prefix ."_". $brand_shortcut .substr($year,2).str_pad($week,2, '0', STR_PAD_LEFT).sprintf("%05d", $series);
 
+							Scheme::where('id',$sob->scheme_id)
+								->update(['processed' => 1]);
+
 							$shipTo = ShipTo::where('ship_to_code',$sob->ship_to_code)->first();
 							$day_of_week = 0;
 							if($activity_type->default_loading == 2){

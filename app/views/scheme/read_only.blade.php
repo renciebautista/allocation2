@@ -408,7 +408,7 @@
 		</div>
 
 		@if(Auth::user()->hasRole("PROPONENT"))
-			@if(strtotime($activity->cycle->sob_deadline) >= strtotime(date('Y-m-d')))
+			@if((strtotime($activity->cycle->sob_deadline) >= strtotime(date('Y-m-d'))) && (!$scheme->processed))
 				@include('shared.sob_details_edit')
 			@else
 				@include('shared.sob_details_readonly')
@@ -484,7 +484,8 @@
 		"scrollY": "500px",
 		"scrollCollapse": true,
 		"paging": false,
-		"bSort": false
+		"bSort": false,
+		"dom": '<"pull-left"f><"pull-right"l>tip'
 	});
 
 	$('.numweek').inputNumber({ 
