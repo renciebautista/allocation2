@@ -834,8 +834,7 @@ $container.handsontable({
       data: "timing",
       type: 'text',
     }],
-	afterChange: function (change, source) {
-		//console.log(source);
+	afterDeselect: function () {
 		$("#updatetimings").addClass("dirty");
 	}
 });

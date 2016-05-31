@@ -840,10 +840,11 @@ $container.handsontable({
       data: "timing",
       type: 'text',
     }],
-	afterChange: function (change, source) {
+	afterDeselect: function () {
 		$("#updatetimings").addClass("dirty");
 	}
 });
+
 var handsontable = $container.data('handsontable');
 
 $("form[id='updatetimings']").on("submit",function(e){
