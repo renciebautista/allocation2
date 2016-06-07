@@ -48,7 +48,7 @@
           <tr>
             <th>Area</th>
             <th>Customer Code</th>
-            <th>SOB Customer Code</th>
+            <th>SOB Sold to Code</th>
             <th>Customer Name</th>
             <th>Sales Multiplier</th>
             <th>Active</th>
