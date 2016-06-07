@@ -140,6 +140,7 @@ class SobController extends \BaseController {
 							->where('brand_shortcut', $brand_shortcut)
 							->where('activities.activity_type_id', $activity_type->id)
 							->where('activities.status_id', 9)
+							->where('activities.disable', 0)
 							->whereNull('po_no')
 							->groupBy('allocation_sobs.ship_to_code')
 							->orderBy('allocation_sobs.id')
@@ -183,6 +184,9 @@ class SobController extends \BaseController {
 
 							AllocationSob::join('allocations', 'allocations.id', '=', 'allocation_sobs.allocation_id')
 								->join('schemes', 'schemes.id', '=', 'allocations.scheme_id')
+								->join('activities', 'activities.id', '=', 'schemes.activity_id')
+								->where('activities.status_id', 9)
+								->where('activities.disable', 0)
 								->where('weekno', $week)
 								->where('year', $year)
 								->where('allocation_sobs.ship_to_code',$sob->ship_to_code)
