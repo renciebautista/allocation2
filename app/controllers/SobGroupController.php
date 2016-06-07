@@ -121,6 +121,7 @@ class SobGroupController extends \BaseController {
 	public function destroy($id)
 	{
 		$sobgroup = SobGroup::findOrFail($id);
+		
 		$sobgroup->delete();
 
 		return Redirect::route('sobgroup.index')
