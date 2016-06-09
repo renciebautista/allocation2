@@ -2,6 +2,8 @@
 
 use Box\Spout\Writer\WriterFactory;
 use Box\Spout\Common\Type;
+use Rencie\Cpm\CpmActivity;
+use Rencie\Cpm\Cpm;
 
 class ActivityController extends BaseController {
 
@@ -1941,6 +1943,22 @@ class ActivityController extends BaseController {
 			try {
 
 				$activity_type = ActivityType::find($activity->activity_type_id);
+
+				$data = array();
+				$activities = ActivityTypeNetwork::activities($activity->activity_type_id);
+				$holidays = Holiday::allHoliday();
+				$data['days'] = 1;
+				$data['start_date'] = ActivityTypeNetwork::getImplemetationDate( date('m/d/Y'),$holidays,0);
+				if(count($activities)>0){
+					$cpm = new Cpm($activities);
+					$data['days'] = $cpm->TotalDuration();
+					$data['cpm'] = $cpm->CriticalPath();
+				}
+				
+				$data['min_date'] = ActivityTypeNetwork::getImplemetationDate($data['start_date'],$holidays,$data['days'] - 1);
+				$data['end_date'] = ActivityTypeNetwork::getImplemetationDate($data['start_date'],$holidays,$data['days'] - 1);
+
+				// dd($data);
 				
 				$new_activity = new Activity;
 				$new_activity->created_by = Auth::id();
@@ -1950,9 +1968,9 @@ class ActivityController extends BaseController {
 				$new_activity->circular_name = $activity->circular_name;
 				$new_activity->scope_type_id = $activity->scope_type_id;
 				$new_activity->scope_desc = $activity->scope_desc;
-				$new_activity->duration = $activity->duration;
-				$new_activity->edownload_date = $activity->edownload_date;
-				$new_activity->eimplementation_date = $activity->eimplementation_date;
+				$new_activity->duration = $data['days'];
+				$new_activity->edownload_date = date_format(date_create_from_format('m/d/Y', $data['start_date']), 'Y-m-d');
+				$new_activity->eimplementation_date = date_format(date_create_from_format('m/d/Y', $data['end_date']), 'Y-m-d');
 				$new_activity->cycle_id = $activity->cycle_id;
 				$new_activity->cycle_desc = $activity->cycle_desc;
 				$new_activity->activity_type_id = $activity->activity_type_id;
@@ -1965,7 +1983,7 @@ class ActivityController extends BaseController {
 				$new_activity->billing_remarks =  $activity->billing_remarks;
 				$new_activity->instruction = $activity->instruction;
 				$new_activity->allow_force =  $activity->allow_force;
-				$new_activity->end_date = $activity->end_date;
+				$new_activity->end_date = date_format(date_create_from_format('m/d/Y', $data['end_date']), 'Y-m-d');;
 
 				$new_activity->with_sob = $activity_type->with_sob;
 

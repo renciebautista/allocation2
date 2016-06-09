@@ -529,7 +529,7 @@ class AllocationSob extends \Eloquent {
 			schemes.item_code,
 			sum(allocation_sobs.allocation) as allocation,
 			'' as col19,'' as col20,'' as col21,'' as col22,'' as col23,
-			date_format(curdate(), '%%Y%%m%%d') as deliverydate,
+			date_format(receipt_date, '%%Y%%m%%d') as deliverydate,
 			'P101' as col25,'' as col26,'' as col27,'' as col28,'' as col29,'CMD SOB' as col30
 			from allocation_sobs
 			join schemes on schemes.id = allocation_sobs.scheme_id 
