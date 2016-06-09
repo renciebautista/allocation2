@@ -521,7 +521,7 @@ class AllocationSob extends \Eloquent {
 		}
 		$query = sprintf("select '' as row_no,
 			'P001' as col2, '11' as col3,'11' as col4,
-			allocation_sobs.ship_to_code as ship_to_code_1,
+			allocations.sob_customer_code,
 			allocation_sobs.ship_to_code as ship_to_code_2,
 			'ZTA' as col7,'' as col8,
 			allocation_sobs.po_no,date_format(curdate(), '%%Y%%m%%d') as currentdate,
@@ -532,6 +532,7 @@ class AllocationSob extends \Eloquent {
 			date_format(receipt_date, '%%Y%%m%%d') as deliverydate,
 			'P101' as col25,'' as col26,'' as col27,'' as col28,'' as col29,'CMD SOB' as col30
 			from allocation_sobs
+			join allocations on allocations.id = allocation_sobs.allocation_id
 			join schemes on schemes.id = allocation_sobs.scheme_id 
 			join activities on activities.id = schemes.activity_id
 			where allocation > 0

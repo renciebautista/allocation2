@@ -228,7 +228,7 @@ class SobController extends \BaseController {
 							.$soldto->col2 . chr(9)
 							.$soldto->col3 . chr(9)
 							.$soldto->col4 . chr(9)
-							.$soldto->ship_to_code_1 . chr(9)
+							.$soldto->sob_customer_code . chr(9)
 							.$soldto->ship_to_code_2 . chr(9)
 							.$soldto->col7 . chr(9)
 							.$soldto->col8 . chr(9)

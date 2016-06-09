@@ -99,6 +99,16 @@ class SchemesFieldsTableSeeder extends Seeder {
 		}
 		AllocReportPerGroup::insert($proponent_filter);
 
+		// insert sob assistant
+		$sobassistant_filter = array();
+		for ($i=1; $i <= $fields ; $i++) { 
+			if(($i != 58) && ($i != 61)){
+				$sobassistant_filter[] = array('role_id' => 8, 'filter_id' => $i);
+			}
+			
+		}
+		AllocReportPerGroup::insert($sobassistant_filter);
+
 		// insert pmog
 		$pmog_filter = array();
 		for ($i=1; $i <= $fields ; $i++) { 

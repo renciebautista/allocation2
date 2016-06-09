@@ -1990,27 +1990,45 @@ class ActivityController extends BaseController {
 				$new_activity->save();
 
 				// add timings
-				$timings = ActivityTiming::where('activity_id',$activity->id)->get();
-				if(!empty($timings)){
+				// $timings = ActivityTiming::where('activity_id',$activity->id)->get();
+				// if(!empty($timings)){
+				// 	$activity_timing = array();
+				// 	foreach ($timings as $timing) {
+				// 		$activity_timing[] = array('activity_id' => $new_activity->id, 
+				// 				'task_id' => $timing->task_id,
+				// 				'milestone' => $timing->milestone, 
+				// 				'task' => $timing->task, 
+				// 				'responsible' => $timing->responsible,
+				// 				'duration' => $timing->duration, 
+				// 				'depend_on' => $timing->depend_on,
+				// 				'show' => $timing->show,
+				// 				'start_date' => date('Y-m-d',strtotime($timing->start_date)),
+				// 				'end_date' => date('Y-m-d',strtotime($timing->end_date)),
+				// 				'final_start_date' => date('Y-m-d',strtotime($timing->final_start_date)),
+				// 				'final_end_date' => date('Y-m-d',strtotime($timing->final_end_date)));
+				// 	}
+				// 	if(!empty($activity_timing)){
+				// 		ActivityTiming::insert($activity_timing);
+				// 	}
+				// }
+				$networks = ActivityTypeNetwork::timings($new_activity->activity_type_id,$new_activity->edownload_date);
+				if(count($networks)> 0){
 					$activity_timing = array();
-					foreach ($timings as $timing) {
-						$activity_timing[] = array('activity_id' => $new_activity->id, 
-								'task_id' => $timing->task_id,
-								'milestone' => $timing->milestone, 
-								'task' => $timing->task, 
-								'responsible' => $timing->responsible,
-								'duration' => $timing->duration, 
-								'depend_on' => $timing->depend_on,
-								'show' => $timing->show,
-								'start_date' => date('Y-m-d',strtotime($timing->start_date)),
-								'end_date' => date('Y-m-d',strtotime($timing->end_date)),
-								'final_start_date' => date('Y-m-d',strtotime($timing->final_start_date)),
-								'final_end_date' => date('Y-m-d',strtotime($timing->final_end_date)));
+					foreach ($networks as $network) {
+						$activity_timing[] = array('activity_id' => $new_activity->id,
+						 	'task_id' => $network->task_id,
+							'milestone' => $network->milestone, 
+							'task' => $network->task, 
+							'responsible' => $network->responsible,
+							'duration' => $network->duration, 
+							'depend_on' => $network->depend_on,
+							'show' => $network->show,
+							'start_date' => date('Y-m-d',strtotime($network->start_date)),
+							'end_date' => date('Y-m-d',strtotime($network->end_date)),
+							'final_start_date' => date('Y-m-d',strtotime($network->start_date)),
+							'final_end_date' => date('Y-m-d',strtotime($network->end_date)));
 					}
-					if(!empty($activity_timing)){
-						ActivityTiming::insert($activity_timing);
-					}
-					
+					ActivityTiming::insert($activity_timing);
 				}
 
 				// add roles
