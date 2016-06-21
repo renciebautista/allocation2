@@ -881,6 +881,7 @@ class SchemeController extends \BaseController {
 			'allocations.final_alloc' ,'allocations.customer_id', 'multi','allocations.shipto_id','allocations.computed_alloc', 'allocations.force_alloc')
 		->where('scheme_id', $id)
 		->orderBy('allocations.id');
+		// ->orderBy('allocations.sold_to');
 
 		// echo '<pre>';
 		// echo print_r($result);

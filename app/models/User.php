@@ -56,7 +56,7 @@ class User extends Eloquent implements ConfideUserInterface {
 
 	public static function export($status,$type,$search){
 		return self::select('users.username', 'users.email', 'users.contact_no','users.first_name','users.last_name','roles.name as groups', 
-			DB::raw("IF(users.active = 1, 'YES', 'No') AS active"))
+			DB::raw("IF(users.active = 1, 'YES', 'No') AS active"), 'users.updated_at')
 			->join('assigned_roles', 'users.id', '=', 'assigned_roles.user_id')
 			->join('roles', 'assigned_roles.role_id', '=', 'roles.id')
 			->where(function($query) use ($search){
