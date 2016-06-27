@@ -275,6 +275,13 @@ class AllocationSob extends \Eloquent {
 	}
 
 	public static function getByCycle($cycles){
+		$status = '';
+		if(Auth::user()->inRoles(['ADMINISTRATOR'])){
+
+		}else{
+			$status = "and activities.status_id = '9'";
+		}
+		
 
 		$query = sprintf("select 
 			allocation_sobs.id, 
@@ -313,8 +320,8 @@ class AllocationSob extends \Eloquent {
 			join activities on schemes.activity_id = activities.id
 			where activities.cycle_id in (".implode(",", $cycles).")
 			and activities.disable = '0'
-			and activities.status_id = '9'
-			order by allocation_sobs.id");
+			%s
+			order by allocation_sobs.id",$status);
 
 		return DB::select(DB::raw($query));
 	}
