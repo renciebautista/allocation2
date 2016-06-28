@@ -28,7 +28,10 @@ class SkuController extends \BaseController {
 				->orderBy('category_desc')->get();
 
 			$data['output'] = $records;
-			$data['selected'] = $scheme->scategory_code;
+			if(!empty($scheme->scategory_code)){
+				$data['selected'] = $scheme->scategory_code;
+			}
+			
 			return \Response::json($data,200);
 		}
 	}
@@ -52,7 +55,10 @@ class SkuController extends \BaseController {
 
 
 			$data['output'] = $records;
-			$data['selected'] = $scheme->brand_desc;
+			if(!empty($scheme->brand_desc)){
+				$data['selected'] = $scheme->brand_desc;
+			}
+			
 			return \Response::json($data,200);
 		}
 	}
