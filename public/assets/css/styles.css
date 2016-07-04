@@ -937,6 +937,10 @@ h2, .h2 {
 	display: none;
 }
 
+.action {
+	width: 10px;
+}
+
 .action > .btn-xs{
 	/*font-size: 14px;*/
 	margin: 0px;
@@ -955,4 +959,3 @@ table.dataTable thead tr.even th{
 
 }
     
-

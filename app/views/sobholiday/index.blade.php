@@ -32,7 +32,7 @@
 				<thead>
 					<tr>
 						<th>Description</th>
-						<th>Date</th>
+						<th style="width:10%;">Date</th>
 						<th colspan="2" style="text-align:center;">Action</th>
 					</tr>
 				</thead>
