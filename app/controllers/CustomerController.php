@@ -97,7 +97,7 @@ class CustomerController extends \BaseController {
 	}
 
 	public function export(){
-		$customers = Customer::all();
+		$customers = Customer::select('id', 'area_code', 'area_code_two', 'customer_code', 'customer_name', 'active', 'multiplier', 'from_dt')->get();
 		Excel::create("Customers", function($excel) use($customers){
 			$excel->sheet('Sheet1', function($sheet) use($customers) {
 				$sheet->fromModel($customers,null, 'A1', true);

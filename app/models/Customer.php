@@ -152,36 +152,21 @@ class Customer extends \Eloquent {
 		DB::beginTransaction();
 			try {
 				DB::table('customers')->truncate();
-			$records->each(function($row)  {
-				if(!is_null($row->customer_code)){
-				// 	$customer = self::where('customer_code',$row->customer_code)
-				// 		->where('area_code',$row->area_code)
-				// 		->first();
-				// 	if(empty($customer)){
-						$customer = new Customer;
-						$customer->area_code = $row->area_code;
-						$customer->area_code_two = $row->area_code_two;
-						$customer->customer_code = $row->customer_code;
-						$customer->sob_customer_code = $row->sob_customer_code;
-						$customer->customer_name = $row->customer_name;
-						$customer->active = $row->active;
-						$customer->multiplier = $row->multiplier;
-						$customer->from_dt = $row->from_dt;
-						$customer->save();
-					// }else{
-					// 	$customer->area_code = $row->area_code;
-					// 	$customer->area_code_two = $row->area_code_two;
-					// 	$customer->customer_code = $row->customer_code;
-					// 	$customer->sob_customer_code = $row->sob_customer_code;
-					// 	$customer->customer_name = $row->customer_name;
-					// 	$customer->active = $row->active;
-					// 	$customer->multiplier = $row->multiplier;
-					// 	$customer->from_dt = $row->from_dt;
-					// 	$customer->update();
-					// }
-				}
+				$records->each(function($row)  {
+					if(!is_null($row->customer_code)){
+					$customer = new Customer;
+					$customer->area_code = $row->area_code;
+					$customer->area_code_two = $row->area_code_two;
+					$customer->customer_code = $row->customer_code;
+					// $customer->sob_customer_code = $row->sob_customer_code;
+					$customer->customer_name = $row->customer_name;
+					$customer->active = $row->active;
+					$customer->multiplier = $row->multiplier;
+					$customer->from_dt = $row->from_dt;
+					$customer->save();
+					}
 				
-			});
+				});
 			DB::commit();
 		} catch (\Exception $e) {
 			// dd($e);

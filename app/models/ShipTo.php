@@ -29,6 +29,7 @@ class ShipTo extends \Eloquent {
 				if(!is_null($row->ship_to_name)){
 					$shipto = new ShipTo;
 					$shipto->customer_code = $row->customer_code;
+					$shipto->sold_to_code = $row->sold_to_code;
 					$shipto->ship_to_code = $row->ship_to_code;
 					$shipto->ship_to_name = $row->ship_to_name;
 					$shipto->split = $row->split;
