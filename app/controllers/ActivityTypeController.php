@@ -50,6 +50,7 @@ class ActivityTypeController extends \BaseController {
 				$activitytype->with_scheme = (Input::has('with_scheme')) ? 1 : 0;
 				$activitytype->with_msource = (Input::has('with_msource')) ? 1 : 0;
 				$activitytype->with_sob = (Input::has('with_sob')) ? 1 : 0;
+				$activitytype->with_tradedeal = (Input::has('with_tradedeal')) ? 1 : 0;
 				$activitytype->default_loading = Input::get('default_loading');
 				$activitytype->active = (Input::has('active')) ? 1 : 0;
 				$activitytype->save();
@@ -135,6 +136,7 @@ class ActivityTypeController extends \BaseController {
 				$activitytype->with_scheme = (Input::has('with_scheme')) ? 1 : 0;
 				$activitytype->with_msource = (Input::has('with_msource')) ? 1 : 0;
 				$activitytype->with_sob = (Input::has('with_sob')) ? 1 : 0;
+				$activitytype->with_tradedeal = (Input::has('with_tradedeal')) ? 1 : 0;
 				$activitytype->default_loading = Input::get('default_loading');
 				$activitytype->active = (Input::has('active')) ? 1 : 0;
 				$activitytype->update();
@@ -208,6 +210,7 @@ class ActivityTypeController extends \BaseController {
 		$new_activitytype->with_scheme = $activitytype->with_scheme;
 		$new_activitytype->with_msource = $activitytype->with_msource;
 		$new_activitytype->with_sob = $activitytype->with_sob;
+		$new_activitytype->with_tradedeal = $activitytype->with_tradedeal;
 		$new_activitytype->default_loading = $activitytype->default_loading;
 		$new_activitytype->save();
 

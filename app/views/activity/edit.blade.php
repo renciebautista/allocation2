@@ -70,6 +70,11 @@
 	<li class="active"><a id="tab-activity" aria-expanded="true" href="#activity">Activity Details</a></li>
 	<li class=""><a id="tab-customer" aria-expanded="false" href="#customer">Customer Details</a></li>
 	<li class=""><a id="tab-schemes" aria-expanded="false" href="#schemes">Schemes</a></li>
+
+	@if($activity->activitytype->with_tradedeal)
+	<li class=""><a id="tab-schemes" aria-expanded="false" href="#tradedeal">Trade Deal</a></li>
+	@endif
+
 	<li class=""><a id="tab-budget" aria-expanded="false" href="#budget">Budget Details</a></li>
 	<li class=""><a id="tab-timings" aria-expanded="false" href="#timings">Timings Details</a></li>
 	<li class=""><a id="tab-attachments" aria-expanded="false" href="#attachment">Attachments</a></li>
@@ -345,7 +350,8 @@
 						<button class="btn btn-primary btn-style" type="submit">Next</button>
 					</div>
 				</div>
-			</div><br>
+		</div>
+		<br>
 			{{ Form::close() }}
 	</div>
 
@@ -568,6 +574,180 @@
 		</div>
 		<br>
 	</div>
+
+	@if($activity->activitytype->with_tradedeal)
+	<!-- trade details -->
+	<div class="tab-pane fade" id="tradedeal">
+		<br>
+		{{ Form::open(array('action' => array('ActivityController@updatebilling', $activity->id), 'method' => 'PUT', 'class' => 'bs-component','id' => 'updateBilling')) }}
+		<div class="panel panel-default">
+		  	<div class="panel-heading">Activity Details</div>
+
+		  	<div class="panel-body">
+				<div class="row">
+					<div class="col-lg-3">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('alloc_in_weeks', 'Allocation Worth (in weeks)', array('class' => 'control-label')) }}
+									{{ Form::text('alloc_in_weeks','', array('class' => 'form-control')) }}
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-lg-3">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('alloc_in_weeks', 'Customer % Coverage', array('class' => 'control-label')) }}
+									{{ Form::text('alloc_in_weeks','', array('class' => 'form-control')) }}
+								</div>
+							</div>
+						</div>
+					</div>
+
+					
+				</div>
+
+				<div class="row">
+					<div class="col-lg-3">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('alloc_in_weeks', 'Host SKU Cost (LPBT/Case)', array('class' => 'control-label')) }}
+									{{ Form::text('alloc_in_weeks','', array('class' => 'form-control')) }}
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-lg-3">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('alloc_in_weeks', 'Pcs/Case of Host SKU', array('class' => 'control-label')) }}
+									{{ Form::text('alloc_in_weeks','', array('class' => 'form-control')) }}
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-lg-3">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('alloc_in_weeks', 'Host SKU Cost (LPBT/Dozen)', array('class' => 'control-label')) }}
+									{{ Form::text('alloc_in_weeks','', array('class' => 'form-control')) }}
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-lg-3">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('alloc_in_weeks', 'Host SKU Cost (LPBT/Piece)', array('class' => 'control-label')) }}
+									{{ Form::text('alloc_in_weeks','', array('class' => 'form-control')) }}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+
+				<div class="row">
+					<div class="col-lg-3">
+						<div class="form-group">
+							<div class="checkbox">
+						        <label>
+						        	{{ Form::checkbox('allow_force', 1,$activity->allow_force,['id' => 'allow_force']) }} ULP Premium
+						        </label>
+						    </div>
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+
+					<div class="col-lg-3">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('alloc_in_weeks', 'Unit Cost of Premium', array('class' => 'control-label')) }}
+									{{ Form::text('alloc_in_weeks','', array('class' => 'form-control')) }}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-lg-6">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('scope', 'Participating Host SKUs', array('class' => 'control-label')) }}
+									{{ Form::select('scope', array('0' => 'PLEASE SELECT') + $scope_types, $activity->scope_type_id, array('class' => 'form-control')) }}
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-lg-6">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('scope', 'Reference SKUs', array('class' => 'control-label')) }}
+									{{ Form::select('scope', array('0' => 'PLEASE SELECT') + $scope_types, $activity->scope_type_id, array('class' => 'form-control')) }}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-lg-6">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('scope', 'Premium SKUs (ULP)', array('class' => 'control-label')) }}
+									{{ Form::select('scope', array('0' => 'PLEASE SELECT') + $scope_types, $activity->scope_type_id, array('class' => 'form-control')) }}
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-lg-6">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('scope', 'Premium SKUs (Non ULP)', array('class' => 'control-label')) }}
+									{{ Form::select('scope', array('0' => 'PLEASE SELECT') + $scope_types, $activity->scope_type_id, array('class' => 'form-control')) }}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+		  	</div>
+
+
+		</div>
+
+		<div class="row">
+			<div class="col-lg-12">
+				<div id="jsGrid"></div>
+			</div>
+		</div>
+
+		
+
+		{{ Form::close() }}
+	</div>
+
+	@endif
 
 	<!-- budget details -->
 	<div class="tab-pane fade" id="budget">
@@ -1099,6 +1279,9 @@
 @stop
 
 @section('page-script')
+
+
+
 
 $("#fisupload").uploadifyTable({
 	'multi': false,
