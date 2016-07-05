@@ -274,6 +274,8 @@ class ActivityController extends BaseController {
 
 			$timings = ActivityTiming::getList($activity->id);
 
+			$tradedeal = Tradedeal::where('activity_id', $activity->id)->first();
+
 			// $activity_roles = ActivityRole::getList($activity->id);
 
 			$force_allocs = ForceAllocation::getlist($activity->id);
@@ -302,7 +304,7 @@ class ActivityController extends BaseController {
 				 'activity_types', 'divisions' , 'sel_divisions','objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
 				 'sel_objectives',  'schemes', 'scheme_summary', 'networks', 'areas', 'timings' ,'sel_involves',
 				 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings',
-				 'force_allocs', 'comments' ,'submitstatus'));
+				 'force_allocs', 'comments' ,'submitstatus', 'tradedeal'));
 			}
 
 			if($activity->status_id > 3){
@@ -316,7 +318,7 @@ class ActivityController extends BaseController {
 				 'objectives',  'users', 'budgets', 'nobudgets','sel_approver',
 				 'sel_objectives',  'schemes', 'scheme_summary', 'networks','areas',
 				 'scheme_customers', 'scheme_allcations', 'materials', 'force_allocs','sel_involves',
-				 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings', 'comments' ,'submitstatus', 'route', 'recall', 'submit_action'));
+				 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings', 'comments' ,'submitstatus', 'route', 'recall', 'submit_action', 'tradedeal'));
 			}
 		}
 
@@ -352,6 +354,8 @@ class ActivityController extends BaseController {
 
 			$timings = ActivityTiming::getList($activity->id);
 
+			$tradedeal = Tradedeal::where('activity_id', $activity->id)->first();
+
 			// $activity_roles = ActivityRole::getList($activity->id);
 
 			$force_allocs = ForceAllocation::getlist($activity->id);
@@ -378,7 +382,7 @@ class ActivityController extends BaseController {
 				 'activity_types', 'divisions' , 'sel_divisions','objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
 				 'sel_objectives',  'schemes', 'scheme_summary', 'networks', 'areas', 'timings' ,'sel_involves',
 				 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings',
-				 'force_allocs', 'comments' ,'submitstatus'));
+				 'force_allocs', 'comments' ,'submitstatus', 'tradedeal'));
 			}else{
 				$submitstatus = array('3' => 'RECALL ACTIVITY');
 				$divisions = Sku::getDivisionLists();
@@ -389,7 +393,7 @@ class ActivityController extends BaseController {
 				 'objectives',  'users', 'budgets', 'nobudgets','sel_approver',
 				 'sel_objectives',  'schemes', 'scheme_summary', 'networks', 'areas',
 				 'scheme_customers', 'scheme_allcations', 'materials', 'force_allocs', 'timings' ,'sel_involves',
-				 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings', 'comments' ,'submitstatus', 'route', 'recall', 'submit_action'));
+				 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings', 'comments' ,'submitstatus', 'route', 'recall', 'submit_action', 'tradedeal'));
 			}
 		}
 	}
@@ -2742,6 +2746,28 @@ class ActivityController extends BaseController {
 		else{
 			return Redirect::to('/dashboard');
 		}
+	}
+
+	public function updatetradedeal($id){
+
+		$tradedeal = Tradedeal::where('activity_id', $id)->first();
+		if(empty($tradedeal)){
+			$tradedeal = new Tradedeal;
+			$tradedeal->activity_id = $id;
+		}
+		$tradedeal->alloc_in_weeks = str_replace(",", "", Input::get('alloc_in_weeks'));
+		$tradedeal->coverage = str_replace(",", "", Input::get('coverage'));
+		$tradedeal->host_sku_lpbt_case = str_replace(",", "", Input::get('host_sku_lpbt_case'));
+		$tradedeal->host_sku_pcs_case = str_replace(",", "", Input::get('host_sku_pcs_case'));
+		$tradedeal->host_sku_lpbt_dozen = str_replace(",", "", Input::get('host_sku_lpbt_dozen'));
+		$tradedeal->host_sku_lpbt_pcs = str_replace(",", "", Input::get('host_sku_lpbt_pcs'));
+		$tradedeal->ulp_premium = (Input::has('ulp_premium')) ? 1 : 0;
+		$tradedeal->host_sku_lpbt_pcs = str_replace(",", "", Input::get('host_sku_lpbt_pcs'));
+		$tradedeal->unit_cost_of_premium = str_replace(",", "", Input::get('unit_cost_of_premium'));
+		$tradedeal->save();
+
+		$data['success'] = 1;
+		return Response::json($data,200);
 	}
 
 }

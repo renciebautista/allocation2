@@ -124,6 +124,7 @@ $('#pr, #srp_p, #other_cost,#lpat').blur(function() {
 
 
 $('#updatescheme').areYouSure();
+
 $('#scheme_back').click(function(e) {
     e.preventDefault();
     console.log(this.href);

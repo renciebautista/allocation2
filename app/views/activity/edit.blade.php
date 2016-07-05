@@ -72,7 +72,7 @@
 	<li class=""><a id="tab-schemes" aria-expanded="false" href="#schemes">Schemes</a></li>
 
 	@if($activity->activitytype->with_tradedeal)
-	<li class=""><a id="tab-schemes" aria-expanded="false" href="#tradedeal">Trade Deal</a></li>
+	<li class=""><a id="tab-tradedeal" aria-expanded="false" href="#tradedeal">Trade Deal</a></li>
 	@endif
 
 	<li class=""><a id="tab-budget" aria-expanded="false" href="#budget">Budget Details</a></li>
@@ -579,7 +579,7 @@
 	<!-- trade details -->
 	<div class="tab-pane fade" id="tradedeal">
 		<br>
-		{{ Form::open(array('action' => array('ActivityController@updatebilling', $activity->id), 'method' => 'PUT', 'class' => 'bs-component','id' => 'updateBilling')) }}
+		{{ Form::open(array('action' => array('ActivityController@updatetradedeal', $activity->id), 'method' => 'PUT', 'class' => 'bs-component','id' => 'updateTradedeal')) }}
 		<div class="panel panel-default">
 		  	<div class="panel-heading">Activity Details</div>
 
@@ -590,7 +590,7 @@
 							<div class="row">
 								<div class="col-lg-12">
 									{{ Form::label('alloc_in_weeks', 'Allocation Worth (in weeks)', array('class' => 'control-label')) }}
-									{{ Form::text('alloc_in_weeks','', array('class' => 'form-control')) }}
+									{{ Form::text('alloc_in_weeks',$tradedeal->alloc_in_weeks, array('class' => 'form-control')) }}
 								</div>
 							</div>
 						</div>
@@ -600,8 +600,8 @@
 						<div class="form-group">
 							<div class="row">
 								<div class="col-lg-12">
-									{{ Form::label('alloc_in_weeks', 'Customer % Coverage', array('class' => 'control-label')) }}
-									{{ Form::text('alloc_in_weeks','', array('class' => 'form-control')) }}
+									{{ Form::label('coverage', 'Customer % Coverage', array('class' => 'control-label')) }}
+									{{ Form::text('coverage',$tradedeal->coverage, array('class' => 'form-control')) }}
 								</div>
 							</div>
 						</div>
@@ -615,8 +615,8 @@
 						<div class="form-group">
 							<div class="row">
 								<div class="col-lg-12">
-									{{ Form::label('alloc_in_weeks', 'Host SKU Cost (LPBT/Case)', array('class' => 'control-label')) }}
-									{{ Form::text('alloc_in_weeks','', array('class' => 'form-control')) }}
+									{{ Form::label('host_sku_lpbt_case', 'Host SKU Cost (LPBT/Case)', array('class' => 'control-label')) }}
+									{{ Form::text('host_sku_lpbt_case',$tradedeal->host_sku_lpbt_case, array('class' => 'form-control')) }}
 								</div>
 							</div>
 						</div>
@@ -626,8 +626,8 @@
 						<div class="form-group">
 							<div class="row">
 								<div class="col-lg-12">
-									{{ Form::label('alloc_in_weeks', 'Pcs/Case of Host SKU', array('class' => 'control-label')) }}
-									{{ Form::text('alloc_in_weeks','', array('class' => 'form-control')) }}
+									{{ Form::label('host_sku_pcs_case', 'Pcs/Case of Host SKU', array('class' => 'control-label')) }}
+									{{ Form::text('host_sku_pcs_case',$tradedeal->host_sku_pcs_case, array('class' => 'form-control')) }}
 								</div>
 							</div>
 						</div>
@@ -637,8 +637,8 @@
 						<div class="form-group">
 							<div class="row">
 								<div class="col-lg-12">
-									{{ Form::label('alloc_in_weeks', 'Host SKU Cost (LPBT/Dozen)', array('class' => 'control-label')) }}
-									{{ Form::text('alloc_in_weeks','', array('class' => 'form-control')) }}
+									{{ Form::label('host_sku_lpbt_dozen', 'Host SKU Cost (LPBT/Dozen)', array('class' => 'control-label')) }}
+									{{ Form::text('host_sku_lpbt_dozen',$tradedeal->host_sku_lpbt_dozen, array('class' => 'form-control', 'readonly' => '')) }}
 								</div>
 							</div>
 						</div>
@@ -648,8 +648,8 @@
 						<div class="form-group">
 							<div class="row">
 								<div class="col-lg-12">
-									{{ Form::label('alloc_in_weeks', 'Host SKU Cost (LPBT/Piece)', array('class' => 'control-label')) }}
-									{{ Form::text('alloc_in_weeks','', array('class' => 'form-control')) }}
+									{{ Form::label('host_sku_lpbt_pcs', 'Host SKU Cost (LPBT/Piece)', array('class' => 'control-label')) }}
+									{{ Form::text('host_sku_lpbt_pcs',$tradedeal->host_sku_lpbt_pcs, array('class' => 'form-control', 'readonly' => '')) }}
 								</div>
 							</div>
 						</div>
@@ -662,7 +662,7 @@
 						<div class="form-group">
 							<div class="checkbox">
 						        <label>
-						        	{{ Form::checkbox('allow_force', 1,$activity->allow_force,['id' => 'allow_force']) }} ULP Premium
+						        	{{ Form::checkbox('ulp_premium', 1,(($tradedeal->ulp_premium == 1) ? true : false),['id' => 'ulp_premium']) }} ULP Premium
 						        </label>
 						    </div>
 						</div>
@@ -675,75 +675,29 @@
 						<div class="form-group">
 							<div class="row">
 								<div class="col-lg-12">
-									{{ Form::label('alloc_in_weeks', 'Unit Cost of Premium', array('class' => 'control-label')) }}
-									{{ Form::text('alloc_in_weeks','', array('class' => 'form-control')) }}
+									{{ Form::label('unit_cost_of_premium', 'Unit Cost of Premium', array('class' => 'control-label')) }}
+									{{ Form::text('unit_cost_of_premium',$tradedeal->unit_cost_of_premium, array('class' => 'form-control')) }}
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
 
-				<div class="row">
-					<div class="col-lg-6">
-						<div class="form-group">
-							<div class="row">
-								<div class="col-lg-12">
-									{{ Form::label('scope', 'Participating Host SKUs', array('class' => 'control-label')) }}
-									{{ Form::select('scope', array('0' => 'PLEASE SELECT') + $scope_types, $activity->scope_type_id, array('class' => 'form-control')) }}
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<div class="col-lg-6">
-						<div class="form-group">
-							<div class="row">
-								<div class="col-lg-12">
-									{{ Form::label('scope', 'Reference SKUs', array('class' => 'control-label')) }}
-									{{ Form::select('scope', array('0' => 'PLEASE SELECT') + $scope_types, $activity->scope_type_id, array('class' => 'form-control')) }}
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div class="row">
-					<div class="col-lg-6">
-						<div class="form-group">
-							<div class="row">
-								<div class="col-lg-12">
-									{{ Form::label('scope', 'Premium SKUs (ULP)', array('class' => 'control-label')) }}
-									{{ Form::select('scope', array('0' => 'PLEASE SELECT') + $scope_types, $activity->scope_type_id, array('class' => 'form-control')) }}
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<div class="col-lg-6">
-						<div class="form-group">
-							<div class="row">
-								<div class="col-lg-12">
-									{{ Form::label('scope', 'Premium SKUs (Non ULP)', array('class' => 'control-label')) }}
-									{{ Form::select('scope', array('0' => 'PLEASE SELECT') + $scope_types, $activity->scope_type_id, array('class' => 'form-control')) }}
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
 
 		  	</div>
 
 
 		</div>
-
-		<div class="row">
-			<div class="col-lg-12">
-				<div id="jsGrid"></div>
-			</div>
-		</div>
-
 		
-
+		<div class="row">
+					<div class="col-lg-12">
+						<div class="form-group">
+							<button class="btn btn-primary disable-button">Update</button>
+							<button class="btn btn-default btn-style" type="submit">Back</button>
+							<button class="btn btn-primary btn-style" type="submit">Next</button>
+						</div>
+					</div>
+				</div>
 		{{ Form::close() }}
 	</div>
 
@@ -1279,6 +1233,43 @@
 @stop
 
 @section('page-script')
+
+
+$('#host_sku_pcs_case').inputNumber({ allowDecimals: false });
+$('#alloc_in_weeks, #coverage, #host_sku_lpbt_case, #unit_cost_of_premium').inputNumber({ allowDecimals: true, maxDecimalDigits: 2 });
+
+$('#host_sku_pcs_case, #host_sku_lpbt_case').blur(function() {
+	var cost_case = accounting.unformat($('#host_sku_lpbt_case').val()) || 0;
+	var pcs_case = accounting.unformat($('#host_sku_pcs_case').val()) || 0;
+	var cost_pcs = accounting.unformat(accounting.formatNumber(cost_case/pcs_case, 2, ",",".")) || 0;
+	$('#host_sku_lpbt_pcs').val(cost_pcs);
+	$('#host_sku_lpbt_dozen').val(accounting.formatNumber(cost_pcs * 12, 2, ",","."));
+});
+
+$("form[id='updateTradedeal']").on("submit",function(e){
+	var form = $(this);
+	var url = form.prop('action');
+	if(form.valid()){
+		$.ajax({
+			url: url,
+			data: form.serialize(),
+			method: 'POST',
+			dataType: "json",
+			success: function(data){
+				if(data.success == "1"){
+					//bootbox.alert("Trade dea; was successfully updated."); 
+					location.reload();
+				}else{
+					bootbox.alert("An error occured while updating."); 
+				}
+			}
+		});
+	}
+	
+	e.preventDefault();
+});
+
+
 
 
 

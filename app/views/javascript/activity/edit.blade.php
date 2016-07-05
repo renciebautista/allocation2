@@ -128,7 +128,7 @@ function checkDirty(target_id,callback) {
 };
 
 
-$('#updateActivity,#updateCustomer,#updateBilling,#updatetimings').areYouSure();
+$('#updateActivity,#updateCustomer,#updateBilling,#updatetimings, #updateTradedeal').areYouSure();
 
 
 $("a[href='#customer']").on('shown.bs.tab', function(e) {
