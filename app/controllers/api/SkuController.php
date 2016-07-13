@@ -197,6 +197,17 @@ class SkuController extends \BaseController {
 		}
 	}
 
+	public function getReferenceSku(){
+		if(\Request::ajax()){
+			$id = \Input::get('id');
+			$activity = \Activity::findOrFail($id);
+			$divisions = \ActivityDivision::getList($id);
+			$categories = \ActivityCategory::selected_category($id);
+			$brands = \ActivityBrand::selected_brand($id);
+			$data = \Sku::items($divisions,$categories,$brands);
+			return \Response::json($data,200);
+		}
+	}
 
 	
 

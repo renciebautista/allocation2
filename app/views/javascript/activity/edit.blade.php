@@ -695,6 +695,171 @@ function show_force_alloc(){
 }
 <!-- schemes -->
 
+<!-- trade deal -->
+$('#alloc_in_weeks, #coverage, #non_ulp_premium_cost').inputNumber({ allowDecimals: true, maxDecimalDigits: 2 });
+
+var table = $("#participating_sku").DataTable({
+	"processing": true, //Feature control the processing indicator.
+    "serverSide": true, //Feature control DataTables' server-side processing mode.
+	"scrollCollapse": true,
+	"searching": false,
+	"paging": false,
+	"bSort": true,
+	"ajax": "{{ URL::action('ActivityController@partskus', $activity->id ) }}",
+	"columnDefs": [ { //this prevents errors if the data is null
+		"targets": "_all",
+		"defaultContent": ""
+	} ]
+});
+
+$(document).on("click",".deletesku", function (e) {
+    var id = $(this).attr('id');
+    if(confirm('Are you sure delete this data?'))
+    {
+        // ajax delete data to database
+        $.ajax({
+            url : "",
+            type: "POST",
+            dataType: "JSON",
+            success: function(data)
+            {
+                //if success reload ajax table
+                $('#modal_form').modal('hide');
+                reload_table();
+            },
+            error: function (jqXHR, textStatus, errorThrown)
+            {
+                alert('Error deleting data');
+            }
+        });
+ 
+    }
+});
+
+function reload_table()
+{
+    table.ajax.reload(null,false); //reload datatable ajax 
+}
+
+$('#addSku').on('shown.bs.modal', function () {
+    $("#host_skus").chosen({
+		search_contains: true,
+		allow_single_deselect: true
+	}).change(function() {
+	    $.ajax({
+	        async: false,
+	        type: "GET",
+	        url: "{{ URL::action('api\PriceListController@getSku') }}?code="+$(this).val(),
+	        contentType: "application/json; charset=utf-8",
+	        dataType: "json",
+	        success: function (data) { 
+	        	$('#host_cost_pcs').val('');
+	        	$('#host_cost_pcs').val(data.price);
+	        	$('#host_pcs_case').val('');
+	        	$('#host_pcs_case').val(data.pack_size);
+	        },
+	        error: function (msg) { roles = msg; }
+	    });
+	});
+
+	$("#ref_skus").chosen({
+		search_contains: true,
+		allow_single_deselect: true
+	});
+
+	$("#pre_skus").chosen({
+		search_contains: true,
+		allow_single_deselect: true
+	}).change(function() {
+	    $.ajax({
+	        async: false,
+	        type: "GET",
+	        url: "{{ URL::action('api\PriceListController@getSku') }}?code="+$(this).val(),
+	        contentType: "application/json; charset=utf-8",
+	        dataType: "json",
+	        success: function (data) { 
+	        	$('#pre_cost_pcs').val('');
+	        	$('#pre_cost_pcs').val(data.price);
+	        	$('#pre_pcs_case').val('');
+	        	$('#pre_pcs_case').val(data.pack_size);
+	        },
+	        error: function (msg) { roles = msg; }
+	    });
+	});
+}).on('hide.bs.modal', function(){
+	$("#host_skus, #ref_skus, #pre_skus").val('').trigger("chosen:updated");
+	$('#host_cost_pcs').val('');
+	$('#host_pcs_case').val('');
+	$('#pre_cost_pcs').val('');
+	$('#pre_pcs_case').val('');
+});
+
+$("form[id='addpartsku']").on("submit",function(e){
+	var form = $(this);
+	var method = form.find('input[name="_method"]').val() || 'POST';
+	var url = form.prop('action');
+	$.ajax({
+		url: url,
+		data: form.serialize(),
+		method: "POST",
+		dataType: "json",
+		success: function(data){
+			if(data.success == "1"){
+				bootbox.alert("Participating variants was successfully added."); 
+				$('#addSku').modal('hide');
+				reload_table();
+			}else{
+				bootbox.alert("An error occured while updating."); 
+			}
+		}
+	});
+	e.preventDefault();
+});
+
+
+$("form[id='updateTradedeal']").on("submit",function(e){
+	var form = $(this);
+	var url = form.prop('action');
+	if(form.valid()){
+		$.ajax({
+			url: url,
+			data: form.serialize(),
+			method: 'POST',
+			dataType: "json",
+			success: function(data){
+				if(data.success == "1"){
+					//bootbox.alert("Trade deal was successfully updated."); 
+					location.reload();
+				}else{
+					bootbox.alert("An error occured while updating."); 
+				}
+			}
+		});
+	}
+	
+	e.preventDefault();
+});
+
+
+$('#non_ulp_premium').click(function() {
+    var $this = $(this);
+    // $this will contain a reference to the checkbox   
+    if ($this.is(':checked')) {
+    	// the checkbox was checked 
+        $('#non_ulp_premium_desc, #non_ulp_premium_code, #non_ulp_premium_cost').removeAttr('disabled');
+    } else {
+    	// the checkbox was unchecked
+        $('#non_ulp_premium_desc, #non_ulp_premium_code, #non_ulp_premium_cost').val('').attr('disabled','disabled');
+       
+    }
+});
+
+var non_ulp_premium = $('input[name="non_ulp_premium"]:checked').length > 0;
+if(non_ulp_premium){
+	$('#non_ulp_premium_desc, #non_ulp_premium_code, #non_ulp_premium_cost').removeAttr('disabled');
+}else{
+	$('#non_ulp_premium_desc, #non_ulp_premium_code, #non_ulp_premium_cost').val('').attr('disabled','disabled');
+}
 
 
 <!-- Budget details -->

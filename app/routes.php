@@ -20,28 +20,35 @@ Queue::getIron()->ssl_verifypeer = false;
 
 
 Route::get('test', function(){
-	$data = ['draw' => 1, 'recordsTotal' => 1, 'recordsFiltered' => 1,
-	'data' => [['C16205','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
-		['C11602','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
-		['C11607','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
-		['C11608','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
-		['C11609','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
-		['C11610','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
-		['C11611','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
-		['C11612','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
-		['C11613','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
-		['C11614','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
-		['C11615','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
-		['C11616','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
-		['C11617','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
-		['C11618','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
-		['C11619','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
-		['C11620','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
-		['C11621','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
-		['C11622','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
-		['C11623','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', '']]
-		];
-	return Response::json($data,200);
+	$a = '1';
+	echo $a . '</br>';
+	$b = &$a;
+	echo $b . '</br>';
+	$b = "2$b";
+	echo $b . '</br>';
+	echo $a.", ".$b;
+	// $data = ['draw' => 1, 'recordsTotal' => 1, 'recordsFiltered' => 1,
+	// 'data' => [['C16205','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
+	// 	['C11602','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
+	// 	['C11607','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
+	// 	['C11608','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
+	// 	['C11609','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
+	// 	['C11610','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
+	// 	['C11611','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
+	// 	['C11612','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
+	// 	['C11613','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
+	// 	['C11614','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
+	// 	['C11615','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
+	// 	['C11616','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
+	// 	['C11617','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
+	// 	['C11618','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
+	// 	['C11619','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
+	// 	['C11620','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
+	// 	['C11621','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
+	// 	['C11622','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
+	// 	['C11623','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', '']]
+	// 	];
+	// return Response::json($data,200);
 });
 
 
@@ -120,6 +127,11 @@ Route::group(array('before' => 'auth'), function()
 	Route::post('activity/{id}/addbudget', 'ActivityController@addbudget');
 	Route::delete('activity/deletebudget', 'ActivityController@deletebudget');
 	Route::put('activity/updatebudget', 'ActivityController@updatebudget');
+
+	Route::get('activity/{id}/partskus', 'ActivityController@partskus');
+	Route::post('activity/{id}/addpartskus', 'ActivityController@addpartskus');
+	Route::delete('activity/deletepartskus', 'ActivityController@deletepartskus');
+	Route::put('activity/updatepartskus', 'ActivityController@updatepartskus');
 
 	Route::post('activity/{id}/addnobudget', 'ActivityController@addnobudget');
 	Route::delete('activity/deletenobudget', 'ActivityController@deletenobudget');
@@ -306,10 +318,16 @@ Route::group(array('before' => 'auth'), function()
 		Route::get('budgettype', 'api\BudgetTypeController@gettype');
 		Route::get('materialsource', 'api\MaterialController@getsource');
 
+		Route::get('hostsku', 'api\PriceListController@getHostSku');
+		Route::get('refrencesku', 'api\SkuController@getReferenceSku');
+		Route::get('premiumsku', 'api\PriceListController@getPremiumSku');
+
 		Route::post('sobyears', 'api\SobController@years');
 		Route::post('sobweeks', 'api\SobController@weeks');
 		Route::post('sobweekactivitytype', 'api\SobController@weekactivitytype');
 		Route::post('weekbrand', 'api\SobController@weekbrand');
+
+		Route::get('pricelistsku', 'api\PriceListController@getSku');
 	});//
 
 

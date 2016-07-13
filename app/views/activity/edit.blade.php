@@ -581,7 +581,7 @@
 		<br>
 		{{ Form::open(array('action' => array('ActivityController@updatetradedeal', $activity->id), 'method' => 'PUT', 'class' => 'bs-component','id' => 'updateTradedeal')) }}
 		<div class="panel panel-default">
-		  	<div class="panel-heading">Activity Details</div>
+		  	<div class="panel-heading">Trade Deal Details</div>
 
 		  	<div class="panel-body">
 				<div class="row">
@@ -590,7 +590,7 @@
 							<div class="row">
 								<div class="col-lg-12">
 									{{ Form::label('alloc_in_weeks', 'Allocation Worth (in weeks)', array('class' => 'control-label')) }}
-									{{ Form::text('alloc_in_weeks',$tradedeal->alloc_in_weeks, array('class' => 'form-control')) }}
+									{{ Form::text('alloc_in_weeks',($tradedeal) ? $tradedeal->alloc_in_weeks : '', array('class' => 'form-control')) }}
 								</div>
 							</div>
 						</div>
@@ -601,7 +601,7 @@
 							<div class="row">
 								<div class="col-lg-12">
 									{{ Form::label('coverage', 'Customer % Coverage', array('class' => 'control-label')) }}
-									{{ Form::text('coverage',$tradedeal->coverage, array('class' => 'form-control')) }}
+									{{ Form::text('coverage',($tradedeal) ? $tradedeal->coverage : '100.00', array('class' => 'form-control')) }}									
 								</div>
 							</div>
 						</div>
@@ -610,59 +610,21 @@
 					
 				</div>
 
-				<div class="row">
-					<div class="col-lg-3">
-						<div class="form-group">
-							<div class="row">
-								<div class="col-lg-12">
-									{{ Form::label('host_sku_lpbt_case', 'Host SKU Cost (LPBT/Case)', array('class' => 'control-label')) }}
-									{{ Form::text('host_sku_lpbt_case',$tradedeal->host_sku_lpbt_case, array('class' => 'form-control')) }}
-								</div>
-							</div>
-						</div>
-					</div>
 
-					<div class="col-lg-3">
-						<div class="form-group">
-							<div class="row">
-								<div class="col-lg-12">
-									{{ Form::label('host_sku_pcs_case', 'Pcs/Case of Host SKU', array('class' => 'control-label')) }}
-									{{ Form::text('host_sku_pcs_case',$tradedeal->host_sku_pcs_case, array('class' => 'form-control')) }}
-								</div>
-							</div>
-						</div>
-					</div>
+		  	</div>
+		</div>
 
-					<div class="col-lg-3">
-						<div class="form-group">
-							<div class="row">
-								<div class="col-lg-12">
-									{{ Form::label('host_sku_lpbt_dozen', 'Host SKU Cost (LPBT/Dozen)', array('class' => 'control-label')) }}
-									{{ Form::text('host_sku_lpbt_dozen',$tradedeal->host_sku_lpbt_dozen, array('class' => 'form-control', 'readonly' => '')) }}
-								</div>
-							</div>
-						</div>
-					</div>
+		<div class="panel panel-default">
+		  	<div class="panel-heading">Non ULP Premium</div>
 
-					<div class="col-lg-3">
-						<div class="form-group">
-							<div class="row">
-								<div class="col-lg-12">
-									{{ Form::label('host_sku_lpbt_pcs', 'Host SKU Cost (LPBT/Piece)', array('class' => 'control-label')) }}
-									{{ Form::text('host_sku_lpbt_pcs',$tradedeal->host_sku_lpbt_pcs, array('class' => 'form-control', 'readonly' => '')) }}
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-
-
+		  	<div class="panel-body">
+				
 				<div class="row">
 					<div class="col-lg-3">
 						<div class="form-group">
 							<div class="checkbox">
 						        <label>
-						        	{{ Form::checkbox('ulp_premium', 1,(($tradedeal->ulp_premium == 1) ? true : false),['id' => 'ulp_premium']) }} ULP Premium
+						        	{{ Form::checkbox('non_ulp_premium',1, ($tradedeal) ?  $tradedeal->non_ulp_premium : 1,['id' => 'non_ulp_premium']) }} Yes
 						        </label>
 						    </div>
 						</div>
@@ -675,8 +637,30 @@
 						<div class="form-group">
 							<div class="row">
 								<div class="col-lg-12">
-									{{ Form::label('unit_cost_of_premium', 'Unit Cost of Premium', array('class' => 'control-label')) }}
-									{{ Form::text('unit_cost_of_premium',$tradedeal->unit_cost_of_premium, array('class' => 'form-control')) }}
+									{{ Form::label('non_ulp_premium_desc', 'Description', array('class' => 'control-label')) }}
+									{{ Form::text('non_ulp_premium_desc',($tradedeal) ?  $tradedeal->non_ulp_premium_desc : '', array('class' => 'form-control', 'id' => 'non_ulp_premium_desc')) }}
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-lg-3">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('non_ulp_premium_code', 'Code', array('class' => 'control-label')) }}
+									{{ Form::text('non_ulp_premium_code',($tradedeal) ?  $tradedeal->non_ulp_premium_code : '', array('class' => 'form-control', 'id' => 'non_ulp_premium_code')) }}
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-lg-3">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('non_ulp_premium_cost', 'Unit Cost / PCS', array('class' => 'control-label')) }}
+									{{ Form::text('non_ulp_premium_cost',($tradedeal) ?  $tradedeal->non_ulp_premium_cost : '', array('class' => 'form-control', 'id' => 'non_ulp_premium_cost')) }}
 								</div>
 							</div>
 						</div>
@@ -685,20 +669,63 @@
 
 
 		  	</div>
-
-
 		</div>
-		
-		<div class="row">
+
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Participating Variants</h3>
+			</div>
+			<div class="panel-body">
+				<div class="row">
 					<div class="col-lg-12">
-						<div class="form-group">
-							<button class="btn btn-primary disable-button">Update</button>
-							<button class="btn btn-default btn-style" type="submit">Back</button>
-							<button class="btn btn-primary btn-style" type="submit">Next</button>
+						<button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#addSku">Add Participating Variants</button>
+					</div>
+				</div>
+				<br>
+				<div >
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="form-group">
+								<div class="row">
+									<div class="col-lg-12">
+										<table id="participating_sku" class="table table-striped table-hover ">
+											<thead>
+												<tr>
+													<th>Host SKUs</th>
+													<th class="right">Cost / Pcs</th>
+													<th class="right">Pcs / Case</th>
+													<th>Reference SKUs</th>
+													<th>Premium SKUs (ULP)</th>
+													<th class="right">Cost / Pcs</th>
+													<th class="right">Pcs / Case</th>
+													<th></th>
+													<th></th>
+												</tr>
+											</thead>
+											<tbody>
+											</tbody>
+										</table> 
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
+			</div>
+		</div>
+		
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="form-group">
+					<button class="btn btn-primary disable-button">Update</button>
+					<button class="btn btn-default btn-style" type="submit">Back</button>
+					<button class="btn btn-primary btn-style" type="submit">Next</button>
+				</div>
+			</div>
+		</div>
 		{{ Form::close() }}
+
+
 	</div>
 
 	@endif
@@ -1228,50 +1255,80 @@
 
 </div>
 
+
+@if($activity->activitytype->with_tradedeal)
+<!-- Modal -->
+<div class="modal fade" id="addSku" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		{{ Form::open(array('action' => array('ActivityController@addpartskus', $activity->id), 'method' => 'POST', 'class' => 'bs-component','id' => 'addpartsku')) }}
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="myModalLabel">Participating Variants</h4>
+			</div>
+			<div class="modal-body">
+				<table class="table table-bordered">
+					<tbody>
+						<tr>
+							<td>Host SKU</td>
+							<td>
+								{{ Form::select('host_sku', array('0' => '') + $host_skus, [], array('data-placeholder' => 'Select Host SKU','id' => 'host_skus', 'class' => 'form-control')) }}
+							</td>
+						</tr>
+						<tr>
+							<td>Cost / Pcs</td>
+							<td>
+								<input class="form-control" name="host_cost_pcs" type="text" value="" id="host_cost_pcs" readonly =''>
+							</td>
+						</tr>
+						<tr>
+							<td>Pcs / Case</td>
+							<td>
+								<input class="form-control" name="host_pcs_case" type="text" value="" id="host_pcs_case" readonly =''>
+							</td>
+						</tr>
+						<tr>
+							<td>Reference SKU</td>
+							<td>
+								{{ Form::select('ref_sku', array('0' => '') + $ref_skus, [], array('data-placeholder' => 'Select Reference SKU','id' => 'ref_skus', 'class' => 'form-control')) }}
+							</td>
+						</tr>
+						<tr>
+							<td>Premium SKU (ULP)</td>
+							<td>
+								{{ Form::select('pre_sku', array('0' => '') + $pre_skus, [], array('data-placeholder' => 'Select Premium SKU','id' => 'pre_skus', 'class' => 'form-control')) }}
+							</td>
+						</tr>
+						<tr>
+							<td>Cost / Pcs</td>
+							<td>
+								<input class="form-control" name="pre_cost_pcs" type="text" value="" id="pre_cost_pcs" readonly =''>
+							</td>
+						</tr>
+						<tr>
+							<td>Pcs / Case</td>
+							<td>
+								<input class="form-control" name="pre_pcs_case" type="text" value="" id="pre_pcs_case" readonly =''>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				<button id="addsku" class="btn btn-primary">Add</button>
+			</div>
+		</div>
+		{{ Form::close() }}
+	</div>
+</div>
+@endif
+
 @include('javascript.activity.edit')
 
 @stop
 
 @section('page-script')
-
-
-$('#host_sku_pcs_case').inputNumber({ allowDecimals: false });
-$('#alloc_in_weeks, #coverage, #host_sku_lpbt_case, #unit_cost_of_premium').inputNumber({ allowDecimals: true, maxDecimalDigits: 2 });
-
-$('#host_sku_pcs_case, #host_sku_lpbt_case').blur(function() {
-	var cost_case = accounting.unformat($('#host_sku_lpbt_case').val()) || 0;
-	var pcs_case = accounting.unformat($('#host_sku_pcs_case').val()) || 0;
-	var cost_pcs = accounting.unformat(accounting.formatNumber(cost_case/pcs_case, 2, ",",".")) || 0;
-	$('#host_sku_lpbt_pcs').val(cost_pcs);
-	$('#host_sku_lpbt_dozen').val(accounting.formatNumber(cost_pcs * 12, 2, ",","."));
-});
-
-$("form[id='updateTradedeal']").on("submit",function(e){
-	var form = $(this);
-	var url = form.prop('action');
-	if(form.valid()){
-		$.ajax({
-			url: url,
-			data: form.serialize(),
-			method: 'POST',
-			dataType: "json",
-			success: function(data){
-				if(data.success == "1"){
-					//bootbox.alert("Trade dea; was successfully updated."); 
-					location.reload();
-				}else{
-					bootbox.alert("An error occured while updating."); 
-				}
-			}
-		});
-	}
-	
-	e.preventDefault();
-});
-
-
-
-
 
 
 $("#fisupload").uploadifyTable({

@@ -275,6 +275,15 @@ class ActivityController extends BaseController {
 			$timings = ActivityTiming::getList($activity->id);
 
 			$tradedeal = Tradedeal::where('activity_id', $activity->id)->first();
+			// dd($tradedeal);
+			$tradedeal_skus = TradedealPartSku::where('activity_id', $activity->id)->get();
+
+			$acdivisions = \ActivityDivision::getList($activity->id);
+			$accategories = \ActivityCategory::selected_category($activity->id);
+			$acbrands = \ActivityBrand::selected_brand($activity->id);
+			$host_skus = Pricelist::involves($acbrands,$activity);
+			$ref_skus = Sku::items($acdivisions,$accategories,$acbrands);
+			$pre_skus = \Pricelist::items();
 
 			// $activity_roles = ActivityRole::getList($activity->id);
 
@@ -304,7 +313,7 @@ class ActivityController extends BaseController {
 				 'activity_types', 'divisions' , 'sel_divisions','objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
 				 'sel_objectives',  'schemes', 'scheme_summary', 'networks', 'areas', 'timings' ,'sel_involves',
 				 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings',
-				 'force_allocs', 'comments' ,'submitstatus', 'tradedeal'));
+				 'force_allocs', 'comments' ,'submitstatus', 'tradedeal', 'tradedeal_skus', 'host_skus', 'ref_skus', 'pre_skus'));
 			}
 
 			if($activity->status_id > 3){
@@ -318,7 +327,7 @@ class ActivityController extends BaseController {
 				 'objectives',  'users', 'budgets', 'nobudgets','sel_approver',
 				 'sel_objectives',  'schemes', 'scheme_summary', 'networks','areas',
 				 'scheme_customers', 'scheme_allcations', 'materials', 'force_allocs','sel_involves',
-				 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings', 'comments' ,'submitstatus', 'route', 'recall', 'submit_action', 'tradedeal'));
+				 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings', 'comments' ,'submitstatus', 'route', 'recall', 'submit_action'));
 			}
 		}
 
@@ -355,6 +364,8 @@ class ActivityController extends BaseController {
 			$timings = ActivityTiming::getList($activity->id);
 
 			$tradedeal = Tradedeal::where('activity_id', $activity->id)->first();
+			$tradedeal_skus = TradedealPartSku::where('activity_id', $activity->id)->get();
+
 
 			// $activity_roles = ActivityRole::getList($activity->id);
 
@@ -382,7 +393,7 @@ class ActivityController extends BaseController {
 				 'activity_types', 'divisions' , 'sel_divisions','objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
 				 'sel_objectives',  'schemes', 'scheme_summary', 'networks', 'areas', 'timings' ,'sel_involves',
 				 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings',
-				 'force_allocs', 'comments' ,'submitstatus', 'tradedeal'));
+				 'force_allocs', 'comments' ,'submitstatus', 'tradedeal', 'tradedeal_skus'));
 			}else{
 				$submitstatus = array('3' => 'RECALL ACTIVITY');
 				$divisions = Sku::getDivisionLists();
@@ -393,7 +404,7 @@ class ActivityController extends BaseController {
 				 'objectives',  'users', 'budgets', 'nobudgets','sel_approver',
 				 'sel_objectives',  'schemes', 'scheme_summary', 'networks', 'areas',
 				 'scheme_customers', 'scheme_allcations', 'materials', 'force_allocs', 'timings' ,'sel_involves',
-				 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings', 'comments' ,'submitstatus', 'route', 'recall', 'submit_action', 'tradedeal'));
+				 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings', 'comments' ,'submitstatus', 'route', 'recall', 'submit_action', 'tradedeal', 'tradedeal_skus'));
 			}
 		}
 	}
@@ -2757,17 +2768,141 @@ class ActivityController extends BaseController {
 		}
 		$tradedeal->alloc_in_weeks = str_replace(",", "", Input::get('alloc_in_weeks'));
 		$tradedeal->coverage = str_replace(",", "", Input::get('coverage'));
-		$tradedeal->host_sku_lpbt_case = str_replace(",", "", Input::get('host_sku_lpbt_case'));
-		$tradedeal->host_sku_pcs_case = str_replace(",", "", Input::get('host_sku_pcs_case'));
-		$tradedeal->host_sku_lpbt_dozen = str_replace(",", "", Input::get('host_sku_lpbt_dozen'));
-		$tradedeal->host_sku_lpbt_pcs = str_replace(",", "", Input::get('host_sku_lpbt_pcs'));
-		$tradedeal->ulp_premium = (Input::has('ulp_premium')) ? 1 : 0;
-		$tradedeal->host_sku_lpbt_pcs = str_replace(",", "", Input::get('host_sku_lpbt_pcs'));
-		$tradedeal->unit_cost_of_premium = str_replace(",", "", Input::get('unit_cost_of_premium'));
+		$tradedeal->non_ulp_premium = (Input::has('non_ulp_premium')) ? 1 : 0;
+
+		$tradedeal->non_ulp_premium_desc = Input::get('non_ulp_premium_desc');
+		$tradedeal->non_ulp_premium_code = Input::get('non_ulp_premium_code');
+		$tradedeal->non_ulp_premium_cost = str_replace(",", "", Input::get('non_ulp_premium_cost'));
 		$tradedeal->save();
 
 		$data['success'] = 1;
 		return Response::json($data,200);
+	}
+
+	public function addpartskus($id){
+		if(Request::ajax()){
+			$activity = Activity::find($id);
+			if(empty($activity)){
+				$arr['success'] = 0;
+			}else{
+				// dd(Input::all());
+				$host_sku = Pricelist::getSku(Input::get('host_sku'));
+				$ref_sku = Sku::getSku(Input::get('ref_sku'));
+
+				
+				
+
+				$part_sku = new TradedealPartSku;
+
+				$part_sku->activity_id = $id;
+				$part_sku->host_code = $host_sku->sap_code;
+				$part_sku->host_desc = $host_sku->sap_desc;
+				$part_sku->host_cost = $host_sku->price;
+				$part_sku->host_pcs_case = $host_sku->pack_size;
+				$part_sku->ref_code = $ref_sku->sku_code;
+				$part_sku->ref_desc = $ref_sku->sku_desc;
+				if(Input::get('pre_sku') != 0){
+					$pre_sku = Pricelist::getSku(Input::get('pre_sku'));
+					$part_sku->pre_code = $pre_sku->sap_code;
+					$part_sku->pre_desc = $pre_sku->sap_desc;
+					$part_sku->pre_cost = $pre_sku->price;
+					$part_sku->pre_pcs_case = $pre_sku->pack_size;
+				}
+				
+				$part_sku->save();
+
+				$arr['success'] = 1;
+			}
+			
+			return json_encode($arr);
+		}
+	}
+
+	public function partskus($id){
+
+		$skus = TradedealPartSku::select(array('id', DB::raw('CONCAT(host_desc," - ",host_code) as host_sku'), 'host_cost', 'host_pcs_case',
+			DB::raw('CONCAT(ref_desc," - ",ref_code) as ref_sku'),
+			DB::raw('CONCAT(pre_desc," - ",pre_code) as pre_sku'), 'pre_cost', 'pre_pcs_case'))
+			->where('activity_id', $id);
+
+		return Datatables::of($skus)
+			->remove_column('id')
+			->add_column('edit', '<a href="/user/edit/{{$id}}" >Edit</a>', 8)
+			->add_column('delete', '<a href="javascript:void(0)" id="{{$id}}" class="deletesku" >Delete</a>', 9)
+			->edit_column('host_cost', function($row) {
+			        return "<span class='pull-right'> {$row->host_cost} </span>";
+			    })	
+			->edit_column('host_pcs_case', function($row) {
+			        return "<span class='pull-right'> {$row->host_pcs_case} </span>";
+			    })	
+			->edit_column('pre_cost', function($row) {
+			        return "<span class='pull-right'> {$row->pre_cost} </span>";
+			    })	
+			->edit_column('pre_pcs_case', function($row) {
+			        return "<span class='pull-right'> {$row->pre_pcs_case} </span>";
+			    })			
+			->make();
+	}
+
+	public function deletepartskus(){
+		if(Request::ajax()){
+			$id = Input::get('d_id');
+			$part_sku = TradedealPartSku::find($id);
+			if(empty($part_sku)){
+				$arr['success'] = 0;
+			}else{
+				$part_sku->delete();
+				$arr['success'] = 1;
+				
+			}
+			$arr['id'] = $id;
+			return json_encode($arr);
+		}
+	}
+
+	public function updatepartskus(){
+		if(Request::ajax()){
+			$id = Input::get('id');
+			$part_sku = TradedealPartSku::find($id);
+
+			$host_sku = Pricelist::getSku(Input::get('host_sku'));
+			$ref_sku = Sku::getSku(Input::get('ref_sku'));
+
+			$pre_code = "";
+			$pre_desc = "";
+			if(Input::get('pre_sku') != 0){
+				$pre_sku = Pricelist::getSku(Input::get('pre_sku'));
+				$pre_code = $pre_sku->sap_code;
+				$pre_desc = $pre_sku->sap_desc;
+			}
+			
+			$part_sku->host_code = $host_sku->sap_code;
+			$part_sku->host_desc = $host_sku->sap_desc;
+			$part_sku->ref_code = $ref_sku->sku_code;
+			$part_sku->ref_desc = $ref_sku->sku_desc;
+			$part_sku->pre_code = $pre_code;
+			$part_sku->pre_desc = $pre_desc;
+			$part_sku->non_pre_desc = Input::get('non_pre_desc');
+			$part_sku->update();
+
+			$arr = Input::all();
+
+			$arr['id'] = $part_sku->id;
+			$arr['host_sku'] = $host_sku->sap_desc.' - '.$host_sku->sap_code;
+			$arr['ref_sku'] = $ref_sku->sku_desc.' - '.$ref_sku->sku_code;
+			$arr['pre_sku'] = "";
+				if(!empty($pre_desc)){
+					$arr['pre_sku'] = $pre_desc.' - '.$pre_code;
+				}
+			$arr['non_pre_desc']  = "";
+			if(Input::has('non_pre_desc')){
+				$arr['non_pre_desc'] =  Input::get('non_pre_desc');
+			}
+			$arr['success'] = 1;
+			
+			$arr['id'] = $id;
+			return json_encode($arr);
+		}
 	}
 
 }
