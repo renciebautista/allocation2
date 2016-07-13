@@ -718,8 +718,11 @@ $(document).on("click",".deletesku", function (e) {
     {
         // ajax delete data to database
         $.ajax({
-            url : "",
+            url : "{{ URL::action('ActivityController@deletepartskus') }}",
             type: "POST",
+            data: { 
+		        'd_id': id
+		    },
             dataType: "JSON",
             success: function(data)
             {
@@ -736,10 +739,125 @@ $(document).on("click",".deletesku", function (e) {
     }
 });
 
+
 function reload_table()
 {
     table.ajax.reload(null,false); //reload datatable ajax 
 }
+
+$("form[id='editpartsku']").on("submit",function(e){
+	var form = $(this);
+	var method = form.find('input[name="_method"]').val() || 'POST';
+	var url = form.prop('action');
+	$.ajax({
+		url: url,
+		data: form.serialize(),
+		method: "POST",
+		dataType: "json",
+		success: function(data){
+			if(data.success == "1"){
+				bootbox.alert("Participating variants was successfully added."); 
+				$('#editSku').modal('hide');
+				reload_table();
+			}else{
+				bootbox.alert("An error occured while updating."); 
+			}
+		}
+	});
+	e.preventDefault();
+});
+
+$('#editSku').on('shown.bs.modal', function (e) {
+	var skuid = $(e.relatedTarget).data('sku-id');
+	$('#sku_id').val(skuid);
+	$.ajax({
+        async: false,
+        type: "GET",
+        url: "{{ URL::action('ActivityController@getpartskus', $activity->id) }}?d_id="+skuid,
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (data) { 
+        	$("#ehost_skus").chosen({
+				search_contains: true,
+				allow_single_deselect: true
+			}).change(function() {
+			    $.ajax({
+			        async: false,
+			        type: "GET",
+			        url: "{{ URL::action('api\PriceListController@getSku') }}?code="+$(this).val(),
+			        contentType: "application/json; charset=utf-8",
+			        dataType: "json",
+			        success: function (data) { 
+			        	$('#ehost_cost_pcs').val('');
+			        	$('#ehost_cost_pcs').val(data.price);
+			        	$('#ehost_pcs_case').val('');
+			        	$('#ehost_pcs_case').val(data.pack_size);
+			        },
+			        error: function (msg) { roles = msg; }
+			    });
+			}).val(data.host_code).trigger("chosen:updated");
+
+			$('#ehost_cost_pcs').val(data.host_cost);
+			$('#ehost_pcs_case').val(data.host_pcs_case);
+
+			$("#eref_skus").chosen({
+				search_contains: true,
+				allow_single_deselect: true
+			}).val(data.ref_code).trigger("chosen:updated");
+
+			$("#epre_skus").chosen({
+				search_contains: true,
+				allow_single_deselect: true
+			}).change(function() {
+			    $.ajax({
+			        async: false,
+			        type: "GET",
+			        url: "{{ URL::action('api\PriceListController@getSku') }}?code="+$(this).val(),
+			        contentType: "application/json; charset=utf-8",
+			        dataType: "json",
+			        success: function (data) { 
+			        	$('#epre_cost_pcs').val('');
+			        	$('#epre_cost_pcs').val(data.price);
+			        	$('#epre_pcs_case').val('');
+			        	$('#epre_pcs_case').val(data.pack_size);
+			        },
+			        error: function (msg) { roles = msg; }
+			    });
+			}).val(data.pre_code).trigger("chosen:updated");
+			$('#epre_cost_pcs').val(data.pre_cost);
+			$('#epre_pcs_case').val(data.pre_pcs_case);
+        },
+        error: function (msg) { roles = msg; }
+    });
+}).on('hide.bs.modal', function(){
+	$("#ehost_skus, #eref_skus, #epre_skus").val('').trigger("chosen:updated");
+	$('#ehost_cost_pcs').val('');
+	$('#ehost_pcs_case').val('');
+	$('#epre_cost_pcs').val('');
+	$('#epre_pcs_case').val('');
+});
+
+$("form[id='addpartsku']").on("submit",function(e){
+	var form = $(this);
+	var method = form.find('input[name="_method"]').val() || 'POST';
+	var url = form.prop('action');
+	$.ajax({
+		url: url,
+		data: form.serialize(),
+		method: "POST",
+		dataType: "json",
+		success: function(data){
+			if(data.success == "1"){
+				bootbox.alert("Participating variants was successfully added."); 
+				$('#addSku').modal('hide');
+				reload_table();
+			}else{
+				bootbox.alert("An error occured while updating."); 
+			}
+		}
+	});
+	e.preventDefault();
+});
 
 $('#addSku').on('shown.bs.modal', function () {
     $("#host_skus").chosen({
@@ -794,27 +912,7 @@ $('#addSku').on('shown.bs.modal', function () {
 	$('#pre_pcs_case').val('');
 });
 
-$("form[id='addpartsku']").on("submit",function(e){
-	var form = $(this);
-	var method = form.find('input[name="_method"]').val() || 'POST';
-	var url = form.prop('action');
-	$.ajax({
-		url: url,
-		data: form.serialize(),
-		method: "POST",
-		dataType: "json",
-		success: function(data){
-			if(data.success == "1"){
-				bootbox.alert("Participating variants was successfully added."); 
-				$('#addSku').modal('hide');
-				reload_table();
-			}else{
-				bootbox.alert("An error occured while updating."); 
-			}
-		}
-	});
-	e.preventDefault();
-});
+
 
 
 $("form[id='updateTradedeal']").on("submit",function(e){

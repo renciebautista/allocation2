@@ -2827,7 +2827,7 @@ class ActivityController extends BaseController {
 
 		return Datatables::of($skus)
 			->remove_column('id')
-			->add_column('edit', '<a href="/user/edit/{{$id}}" >Edit</a>', 8)
+			->add_column('edit', '<a href="#editSku" id="{{$id}}" data-sku-id="{{$id}}" data-toggle="modal"" >Edit</a>', 8)
 			->add_column('delete', '<a href="javascript:void(0)" id="{{$id}}" class="deletesku" >Delete</a>', 9)
 			->edit_column('host_cost', function($row) {
 			        return "<span class='pull-right'> {$row->host_cost} </span>";
@@ -2860,47 +2860,48 @@ class ActivityController extends BaseController {
 		}
 	}
 
+	public function getpartskus(){
+		if(Request::ajax()){
+			$id = Input::get('d_id');
+			$part_sku = TradedealPartSku::find($id);
+			return json_encode($part_sku);
+		}
+	}
+
+
 	public function updatepartskus(){
 		if(Request::ajax()){
-			$id = Input::get('id');
+			$id = Input::get('sku_id');
 			$part_sku = TradedealPartSku::find($id);
 
+			// dd(Input::all());
 			$host_sku = Pricelist::getSku(Input::get('host_sku'));
 			$ref_sku = Sku::getSku(Input::get('ref_sku'));
 
-			$pre_code = "";
-			$pre_desc = "";
-			if(Input::get('pre_sku') != 0){
-				$pre_sku = Pricelist::getSku(Input::get('pre_sku'));
-				$pre_code = $pre_sku->sap_code;
-				$pre_desc = $pre_sku->sap_desc;
-			}
-			
 			$part_sku->host_code = $host_sku->sap_code;
 			$part_sku->host_desc = $host_sku->sap_desc;
+			$part_sku->host_cost = $host_sku->price;
+			$part_sku->host_pcs_case = $host_sku->pack_size;
 			$part_sku->ref_code = $ref_sku->sku_code;
 			$part_sku->ref_desc = $ref_sku->sku_desc;
-			$part_sku->pre_code = $pre_code;
-			$part_sku->pre_desc = $pre_desc;
-			$part_sku->non_pre_desc = Input::get('non_pre_desc');
-			$part_sku->update();
-
-			$arr = Input::all();
-
-			$arr['id'] = $part_sku->id;
-			$arr['host_sku'] = $host_sku->sap_desc.' - '.$host_sku->sap_code;
-			$arr['ref_sku'] = $ref_sku->sku_desc.' - '.$ref_sku->sku_code;
-			$arr['pre_sku'] = "";
-				if(!empty($pre_desc)){
-					$arr['pre_sku'] = $pre_desc.' - '.$pre_code;
-				}
-			$arr['non_pre_desc']  = "";
-			if(Input::has('non_pre_desc')){
-				$arr['non_pre_desc'] =  Input::get('non_pre_desc');
+			if(Input::get('pre_sku') != 0){
+				$pre_sku = Pricelist::getSku(Input::get('pre_sku'));
+				$part_sku->pre_code = $pre_sku->sap_code;
+				$part_sku->pre_desc = $pre_sku->sap_desc;
+				$part_sku->pre_cost = $pre_sku->price;
+				$part_sku->pre_pcs_case = $pre_sku->pack_size;
+			}else{
+				$part_sku->pre_code = NULL;
+				$part_sku->pre_desc = NULL;
+				$part_sku->pre_cost = NULL;
+				$part_sku->pre_pcs_case = NULL;
 			}
-			$arr['success'] = 1;
 			
-			$arr['id'] = $id;
+			$part_sku->save();
+
+			$arr['success'] = 1;
+
+			
 			return json_encode($arr);
 		}
 	}

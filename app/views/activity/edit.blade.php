@@ -1322,6 +1322,74 @@
 		{{ Form::close() }}
 	</div>
 </div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="editSku" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		{{ Form::open(array('action' => array('ActivityController@updatepartskus'), 'method' => 'POST', 'class' => 'bs-component','id' => 'editpartsku')) }}
+		{{ Form::hidden('sku_id', '', array('id' => 'sku_id')) }}
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="myModalLabel">Edit Participating Variants</h4>
+			</div>
+			<div class="modal-body">
+				<table class="table table-bordered">
+					<tbody>
+						<tr>
+							<td>Host SKU</td>
+							<td>
+								{{ Form::select('host_sku', array('0' => '') + $host_skus, [], array('data-placeholder' => 'Select Host SKU','id' => 'ehost_skus', 'class' => 'form-control')) }}
+							</td>
+						</tr>
+						<tr>
+							<td>Cost / Pcs</td>
+							<td>
+								<input class="form-control" name="host_cost_pcs" type="text" value="" id="ehost_cost_pcs" readonly =''>
+							</td>
+						</tr>
+						<tr>
+							<td>Pcs / Case</td>
+							<td>
+								<input class="form-control" name="host_pcs_case" type="text" value="" id="ehost_pcs_case" readonly =''>
+							</td>
+						</tr>
+						<tr>
+							<td>Reference SKU</td>
+							<td>
+								{{ Form::select('ref_sku', array('0' => '') + $ref_skus, [], array('data-placeholder' => 'Select Reference SKU','id' => 'eref_skus', 'class' => 'form-control')) }}
+							</td>
+						</tr>
+						<tr>
+							<td>Premium SKU (ULP)</td>
+							<td>
+								{{ Form::select('pre_sku', array('0' => '') + $pre_skus, [], array('data-placeholder' => 'Select Premium SKU','id' => 'epre_skus', 'class' => 'form-control')) }}
+							</td>
+						</tr>
+						<tr>
+							<td>Cost / Pcs</td>
+							<td>
+								<input class="form-control" name="pre_cost_pcs" type="text" value="" id="epre_cost_pcs" readonly =''>
+							</td>
+						</tr>
+						<tr>
+							<td>Pcs / Case</td>
+							<td>
+								<input class="form-control" name="pre_pcs_case" type="text" value="" id="epre_pcs_case" readonly =''>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				<button id="updatesku" class="btn btn-primary">Update</button>
+			</div>
+		</div>
+		{{ Form::close() }}
+	</div>
+</div>
 @endif
 
 @include('javascript.activity.edit')

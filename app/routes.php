@@ -128,10 +128,11 @@ Route::group(array('before' => 'auth'), function()
 	Route::delete('activity/deletebudget', 'ActivityController@deletebudget');
 	Route::put('activity/updatebudget', 'ActivityController@updatebudget');
 
+	Route::get('activity/{id}/getpartskus', 'ActivityController@getpartskus');
 	Route::get('activity/{id}/partskus', 'ActivityController@partskus');
 	Route::post('activity/{id}/addpartskus', 'ActivityController@addpartskus');
-	Route::delete('activity/deletepartskus', 'ActivityController@deletepartskus');
-	Route::put('activity/updatepartskus', 'ActivityController@updatepartskus');
+	Route::post('activity/deletepartskus', 'ActivityController@deletepartskus');
+	Route::post('activity/updatepartskus', 'ActivityController@updatepartskus');
 
 	Route::post('activity/{id}/addnobudget', 'ActivityController@addnobudget');
 	Route::delete('activity/deletenobudget', 'ActivityController@deletenobudget');
