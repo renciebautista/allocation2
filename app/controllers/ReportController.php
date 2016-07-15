@@ -151,5 +151,59 @@ class ReportController extends \BaseController {
 		$archive = $zippy->create($zip_path,$folder,true);
 		return Response::download($zip_path);
 	}
+
+	public function review($id){
+		$activity = Activity::findOrFail($id);
+
+		$sel_planner = ActivityPlanner::getPlanner($activity->id);
+		$sel_approver = ActivityApprover::getList($activity->id);
+		$sel_objectives = ActivityObjective::getList($activity->id);
+		$sel_divisions = ActivityDivision::getList($activity->id);
+		$sel_involves = ActivitySku::getSkus($activity->id);
+		// $involves = Pricelist::items();
+		$approvers = User::getApprovers(['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']);
+		
+		$objectives = Objective::getLists();
+		$budgets = ActivityBudget::getBudgets($activity->id);
+		$nobudgets = ActivityNobudget::getBudgets($activity->id);
+		$schemes = Scheme::getList($activity->id);
+		$scheme_summary = Scheme::getSummary($schemes);
+		$materials = ActivityMaterial::getList($activity->id);
+		// attachments
+		$fdapermits = ActivityFdapermit::getList($activity->id);
+		$fis = ActivityFis::getList($activity->id);
+		$artworks = ActivityArtwork::getList($activity->id);
+		$backgrounds = ActivityBackground::getList($activity->id);
+		$bandings = ActivityBanding::getList($activity->id);
+		// comments
+		$comments = ActivityComment::getList($activity->id);
+
+		$timings = ActivityTiming::getList($activity->id);
+
+		// $activity_roles = ActivityRole::getList($activity->id);
+
+		$force_allocs = ForceAllocation::getlist($activity->id);
+		$areas = Area::getAreaWithGroup();
+
+		foreach ($areas as $key => $area) {
+			$area->multi = "1.00";
+			foreach ($force_allocs as $force_alloc) {
+				if($area->area_code == $force_alloc->area_code){
+					$area->multi = $force_alloc->multi;
+				}
+			}
+		}
+
+		$divisions = Sku::getDivisionLists();
+		$route = 'reports.activities';
+		$recall = $activity->pro_recall;
+		$submit_action = 'ActivityController@updateactivity';
+		return View::make('shared.activity_readonly', compact('activity', 'sel_planner', 'approvers', 
+		 'sel_divisions','divisions', 'timings',
+		 'objectives',  'users', 'budgets', 'nobudgets','sel_approver',
+		 'sel_objectives',  'schemes', 'scheme_summary', 'networks','areas',
+		 'scheme_customers', 'scheme_allcations', 'materials', 'force_allocs','sel_involves',
+		 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings', 'comments' , 'route', 'recall', 'submit_action'));
+	}
 	
 }

@@ -210,7 +210,7 @@ Route::group(array('before' => 'auth'), function()
 	Route::put('reports/allocation/{id}', 'AllocationReportController@update');
 	Route::post('reports/allocation/{id}/duplicate', 'AllocationReportController@duplicate');
 
-	Route::get('reports/activities', 'ReportController@activities');
+	Route::get('reports/activities', ['as' => 'reports.activities', 'uses' => 'ReportController@activities']);
 	Route::get('reports/{id}/preview', 'ReportController@preview');
 	Route::get('reports/{id}/download', 'ReportController@download');
 	Route::get('reports/{id}/document', 'ReportController@document');
@@ -402,6 +402,9 @@ Route::group(array('before' => 'auth'), function()
 		Route::post('settings', ['as' => 'settings.update', 'uses' => 'SettingsController@update']);
 
 		Route::resource('sobholiday', 'SobholidaysController');
+
+
+		Route::get('reports/{id}/review', ['as' => 'reports.review', 'uses' => 'ReportController@review']);
 	});
 
 });

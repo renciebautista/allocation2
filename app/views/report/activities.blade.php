@@ -135,7 +135,7 @@
 						<th class="center">PDF Generated</th>
 						<th class="center">Doc Generated</th>
 						<th class="center">Deactivated Circular</th>
-						<th colspan="2" style="text-align:center;">Action</th>
+						<th colspan="3" style="text-align:center;">Action</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -170,6 +170,11 @@
 						<td class="action">
 							<a class="btn btn-info btn-xs" target="_blank" href="{{ URL::action('ReportController@preview', $activity->id ) }}">Preview</a>							
 						</td>
+						@if(Auth::user()->inRoles(['ADMINISTRATOR']))
+						<td class="action">
+							<a class="btn btn-info btn-xs" target="_blank" href="{{ URL::action('ReportController@review', $activity->id ) }}">Review</a>							
+						</td>
+						@endif
 					</tr>
 					@endforeach
 					@endif

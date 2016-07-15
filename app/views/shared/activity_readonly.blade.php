@@ -16,6 +16,7 @@
 		<div class="form-group">
 			{{ HTML::linkRoute($route, 'Back To Activity List', array(), array('class' => 'btn btn-default')) }}
 
+			@if(isset($submitstatus))
 			@if($activity->status_id < 9)
 				@if($recall)
 				<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myAction">
@@ -27,6 +28,7 @@
 			@else
 				<button type="button" class="btn btn-primary disabled" >Actions</button>
 			@endif
+			@endif
 			
 			@include('partials.downloaddoc')
 		</div>
@@ -34,6 +36,7 @@
 
 </div>
 
+@if(isset($submitstatus))
 <!-- Modal -->
 <div class="modal fade" id="myAction" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   	<div class="modal-dialog">
@@ -61,7 +64,7 @@
 	    </div>
   	</div>
 </div>
-
+@endif
 
 
 <ul class="nav nav-tabs">
