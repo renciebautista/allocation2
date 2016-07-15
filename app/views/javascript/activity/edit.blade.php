@@ -712,6 +712,78 @@ var table = $("#participating_sku").DataTable({
 	} ]
 });
 
+var dtchtable = $("#td-channels").DataTable({
+	"processing": true, //Feature control the processing indicator.
+    "serverSide": true, //Feature control DataTables' server-side processing mode.
+	"bSort": true,
+	"ajax": "{{ URL::action('ActivityController@tdchannels', $activity->id ) }}",
+	"columnDefs": [ { //this prevents errors if the data is null
+		"targets": "_all",
+		"defaultContent": ""
+	} ],
+	"columns": [
+			{ "data" : "l5_desc","title" : "Channel Name", "searchable": true},
+			{ "data" : "rtm_tag","title" : "RTM Tagging", "searchable": true},
+			{ "data" : "tradedeal_type","title" : "Deal Type", "searchable": true},
+			{ "data" : "tradedeal_uom","title" : "UOM", "searchable": true},
+			{ "data" : "scheme","title" : "Scheme", "searchable": true},
+			{ "data" : "premium","title" : "Premium", "searchable": true},
+		],
+});
+
+$('#td-channels tbody').on('click', 'tr', function () {
+   	var data = dtchtable.row(this).data();
+   	console.log(data);
+   	$('#channel_name').val(data.l5_desc);
+   	$('#rtm_tagging').val(data.rtm_tag);
+   	$('#ch_id').val(data.id);
+   	$('#scheme').val(data.scheme);
+   	if(data.tradedeal_type == null){
+   		$("#deal_type").val(0);
+   	}else{
+   		$("#deal_type option").filter(function() {
+    		return $(this).text() == data.tradedeal_type;
+		}).prop("selected", true);
+   	}
+   	
+   	if(data.tradedeal_uom == null){
+   		$("#deal_uom").val(0);
+   	}else{
+   		$("#deal_uom option").filter(function() {
+    		return $(this).text() == data.tradedeal_uom;
+		}).prop("selected", true);
+   	}
+
+   	$('#editChannel').modal('show');
+});
+
+function reload_dtchtable()
+{
+    dtchtable.ajax.reload(null,false); //reload datatable ajax 
+}
+
+$("form[id='updatedtchannel']").on("submit",function(e){
+	var form = $(this);
+	var method = form.find('input[name="_method"]').val() || 'POST';
+	var url = form.prop('action');
+	$.ajax({
+		url: url,
+		data: form.serialize(),
+		method: "POST",
+		dataType: "json",
+		success: function(data){
+			if(data.success == "1"){
+				$('#editChannel').modal('hide');
+				reload_dtchtable();
+			}else{
+				bootbox.alert("An error occured while updating."); 
+			}
+		}
+	});
+	e.preventDefault();
+});
+
+
 $(document).on("click",".deletesku", function (e) {
     var id = $(this).attr('id');
     if(confirm('Are you sure delete this data?'))

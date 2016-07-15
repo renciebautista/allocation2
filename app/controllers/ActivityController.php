@@ -284,6 +284,8 @@ class ActivityController extends BaseController {
 			$host_skus = Pricelist::involves($acbrands,$activity);
 			$ref_skus = Sku::items($acdivisions,$accategories,$acbrands);
 			$pre_skus = \Pricelist::items();
+			$dealtypes = TradedealType::get()->lists('tradedeal_type', 'id');
+			$dealuoms = TradedealUom::get()->lists('tradedeal_uom', 'id');
 
 			// $activity_roles = ActivityRole::getList($activity->id);
 
@@ -313,7 +315,7 @@ class ActivityController extends BaseController {
 				 'activity_types', 'divisions' , 'sel_divisions','objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
 				 'sel_objectives',  'schemes', 'scheme_summary', 'networks', 'areas', 'timings' ,'sel_involves',
 				 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings',
-				 'force_allocs', 'comments' ,'submitstatus', 'tradedeal', 'tradedeal_skus', 'host_skus', 'ref_skus', 'pre_skus'));
+				 'force_allocs', 'comments' ,'submitstatus', 'tradedeal', 'tradedeal_skus', 'host_skus', 'ref_skus', 'pre_skus', 'dealtypes', 'dealuoms'));
 			}
 
 			if($activity->status_id > 3){
@@ -2775,6 +2777,23 @@ class ActivityController extends BaseController {
 		$tradedeal->non_ulp_premium_cost = str_replace(",", "", Input::get('non_ulp_premium_cost'));
 		$tradedeal->save();
 
+		// copy tradedeal channel
+		$channels = TradedealChannel::where('activity_id', $id)->get();
+		if(count($channels) == 0){
+			$chTemp = Level5::where('trade_deal',1)
+				->orderBy('l5_desc')
+				->get();
+
+			foreach ($chTemp as $ch) {
+				$tc = new TradedealChannel;
+				$tc->activity_id = $id;
+				$tc->l5_code = $ch->l5_code;
+				$tc->l5_desc = $ch->l5_desc;
+				$tc->rtm_tag = $ch->rtm_tag;
+				$tc->save();
+			}
+		}
+
 		$data['success'] = 1;
 		return Response::json($data,200);
 	}
@@ -2899,6 +2918,38 @@ class ActivityController extends BaseController {
 			
 			$part_sku->save();
 
+			$arr['success'] = 1;
+
+			
+			return json_encode($arr);
+		}
+	}
+
+	public function tdchannels($id){
+
+		$skus = TradedealChannel::select(array('tradedeal_channels.id', 'tradedeal_channels.l5_desc', 'tradedeal_channels.rtm_tag', 
+			'tradedeal_types.tradedeal_type', 'tradedeal_uoms.tradedeal_uom', 'tradedeal_channels.scheme'))
+			->join('tradedeal_types', 'tradedeal_types.id', '=', 'tradedeal_channels.tradedeal_type_id', 'left')
+			->join('tradedeal_uoms', 'tradedeal_uoms.id', '=', 'tradedeal_channels.tradedeal_uom_id', 'left')
+			->where('activity_id', $id);
+
+		return Datatables::of($skus)
+			->set_index_column('id')	
+			// ->remove_column('id')
+			->make(true);
+	}
+
+	public function updatedtchannel(){
+		if(Request::ajax()){
+			$id = Input::get('ch_id');
+			$scheme = explode("+", Input::get('scheme'));
+			$dtChannel = TradedealChannel::find($id);
+			$dtChannel->tradedeal_type_id = Input::get('deal_type');
+			$dtChannel->tradedeal_uom_id = Input::get('deal_uom');
+			$dtChannel->scheme = $scheme[0] ."+".$scheme[1];
+			$dtChannel->buy = $scheme[0];
+			$dtChannel->free = $scheme[1];
+			$dtChannel->save();
 			$arr['success'] = 1;
 
 			

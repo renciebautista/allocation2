@@ -139,6 +139,8 @@
 										<li>{{ HTML::linkRoute('account.index', 'Account') }}</li> 
 										<li>{{ HTML::linkRoute('channel.index', 'Channel') }}</li> 
 										<li>{{ HTML::linkRoute('subchannel.index', 'Sub Channel') }}</li> 
+										<li>{{ HTML::linkRoute('level4.index', 'Level 4 Channel') }}</li> 
+										<li>{{ HTML::linkRoute('level5.index', 'Level 5 Channel') }}</li> 
 										<li>{{ HTML::linkRoute('customermaster.index', 'Customer & Sales Masterfile') }}</li> 
 								    </ul>
 								</li>

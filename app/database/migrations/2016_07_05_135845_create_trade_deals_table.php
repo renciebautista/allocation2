@@ -22,9 +22,9 @@ class CreateTradeDealsTable extends Migration {
 			$table->decimal('alloc_in_weeks',12,2);
 			$table->decimal('coverage',12,2);
 			$table->boolean('non_ulp_premium');
-			$table->string('non_ulp_premium_desc');
-			$table->string('non_ulp_premium_code');
-			$table->decimal('non_ulp_premium_cost',12,2);
+			$table->string('non_ulp_premium_desc')->nullable();
+			$table->string('non_ulp_premium_code')->nullable();
+			$table->decimal('non_ulp_premium_cost',12,2)->nullable();
 			$table->timestamps();
 
 			$table->foreign('activity_id')->references('id')->on('activities');

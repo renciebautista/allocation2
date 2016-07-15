@@ -134,6 +134,9 @@ Route::group(array('before' => 'auth'), function()
 	Route::post('activity/deletepartskus', 'ActivityController@deletepartskus');
 	Route::post('activity/updatepartskus', 'ActivityController@updatepartskus');
 
+	Route::get('activity/{id}/tdchannels', 'ActivityController@tdchannels');
+	Route::post('activity/updatedtchannel', 'ActivityController@updatedtchannel');
+
 	Route::post('activity/{id}/addnobudget', 'ActivityController@addnobudget');
 	Route::delete('activity/deletenobudget', 'ActivityController@deletenobudget');
 	Route::put('activity/updatenobudget', 'ActivityController@updatenobudget');
@@ -444,6 +447,16 @@ Route::group(array('before' => 'auth'), function()
 		Route::post('settings', ['as' => 'settings.update', 'uses' => 'SettingsController@update']);
 
 		Route::resource('sobholiday', 'SobholidaysController');
+
+		Route::get('level4/export', 'Level4Controller@export');
+		Route::get('level4/import', 'Level4Controller@import');
+		Route::post('level4/upload', 'Level4Controller@upload');
+		Route::resource('level4', 'Level4Controller');
+
+		Route::get('level5/export', 'Level5Controller@export');
+		Route::get('level5/import', 'Level5Controller@import');
+		Route::post('level5/upload', 'Level5Controller@upload');
+		Route::resource('level5', 'Level5Controller');
 	});
 
 });

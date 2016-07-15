@@ -713,6 +713,42 @@
 				</div>
 			</div>
 		</div>
+
+
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Channels</h3>
+			</div>
+			<div class="panel-body">
+				<div >
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="form-group">
+								<div class="row">
+									<div class="col-lg-12">
+										<table id="td-channels" class="table table-striped table-hover ">
+											<thead>
+												<tr>
+													<th>Channel Name</th>
+													<th>RTM Tagging</th>
+													<th>Deal Type</th>
+													<th>UOM</th>
+													<th>Scheme</th>
+													<th>Premium</th>
+												</tr>
+											</thead>
+											<tbody>
+												
+											</tbody>
+										</table> 
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 		
 		<div class="row">
 			<div class="col-lg-12">
@@ -1377,6 +1413,68 @@
 							<td>Pcs / Case</td>
 							<td>
 								<input class="form-control" name="pre_pcs_case" type="text" value="" id="epre_pcs_case" readonly =''>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				<button id="updatesku" class="btn btn-primary">Update</button>
+			</div>
+		</div>
+		{{ Form::close() }}
+	</div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="editChannel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		{{ Form::open(array('action' => array('ActivityController@updatedtchannel'), 'method' => 'POST', 'class' => 'bs-component','id' => 'updatedtchannel')) }}
+		{{ Form::hidden('ch_id', '', array('id' => 'ch_id')) }}
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="myModalLabel">Edit Channel</h4>
+			</div>
+			<div class="modal-body">
+				<table class="table table-bordered">
+					<tbody>
+						<tr>
+							<td>Channel Name</td>
+							<td>
+								<input class="form-control" name="channel_name" type="text" value="" id="channel_name" readonly =''>
+							</td>
+						</tr>
+						<tr>
+							<td>RTM Tagging</td>
+							<td>
+								<input class="form-control" name="rtm_tagging" type="text" value="" id="rtm_tagging" readonly =''>
+							</td>
+						</tr>
+						<tr>
+							<td>Deal Type</td>
+							<td>
+								{{ Form::select('deal_type', array('0' => '') + $dealtypes, [], array('data-placeholder' => 'Select Deal Type','id' => 'deal_type', 'class' => 'form-control')) }}
+							</td>
+						</tr>
+						
+						<tr>
+							<td>UOM</td>
+							<td>
+								{{ Form::select('deal_uom', array('0' => '') + $dealuoms, [], array('data-placeholder' => 'Select Unit Of Measurement','id' => 'deal_uom', 'class' => 'form-control')) }}
+							</td>
+						</tr>
+						<tr>
+							<td>Scheme</td>
+							<td>
+								<input class="form-control" name="scheme" type="text" value="" id="scheme">
+							</td>
+						</tr>
+						<tr>
+							<td>Premium</td>
+							<td>
+								<input class="form-control" name="pre_cost_pcs" type="text" value="" id="epre_cost_pcs">
 							</td>
 						</tr>
 					</tbody>
