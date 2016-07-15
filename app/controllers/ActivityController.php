@@ -1603,7 +1603,7 @@ class ActivityController extends BaseController {
 					$arr['mesage'] = 'Invalid file type.';
 					return Response::json($arr, 400);
 				}
-			} catch (Exception $e) {
+			} catch (Exception $e) {	
 				$arr['mesage'] = 'Invalid file type.';
 				return Response::json($arr, 400);
 			}
@@ -2584,6 +2584,43 @@ class ActivityController extends BaseController {
 					{
 					    File::delete($docfile);
 					}
+
+					// delete unnessary file
+					$files = [];
+					foreach ($fdapermits as $file) {
+						$files[] = $file->hash_name;
+					}
+
+					foreach ($pis as $file) {
+						$files[] = $file->hash_name;
+					}
+
+					foreach ($artworks as $file) {
+						$files[] = $file->hash_name;
+					}
+
+					foreach ($backgrounds as $file) {
+						$files[] = $file->hash_name;
+					}
+					
+					foreach ($guidelines as $file) {
+						$files[] = $file->hash_name;
+					}
+
+					$dir_files = File::files($path2);
+
+					foreach ($dir_files as $file) {
+						$x = explode("/", $file);
+						$cnt = count($x) - 1;
+						$f_file = $x[$cnt];
+						if(!in_array($f_file, $files)){
+							if (File::exists($file))
+							{
+							    File::delete($file);
+							}
+						}
+					}
+
 				}
 
 				$comment = new ActivityComment;
