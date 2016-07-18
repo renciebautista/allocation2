@@ -69,7 +69,7 @@ class TestMail extends Command {
 						});
 					}else{
 						Mail::send('emails.mail1', $data, function($message) use ($data){
-							$message->to(strtolower($data['email']), $data['fullname'])->subject('TOP ACTIVITY STATUS');
+							$message->to(trim(strtolower($data['email'])), $data['fullname'])->subject('TOP ACTIVITY STATUS');
 						});
 					}
 				}
@@ -96,7 +96,7 @@ class TestMail extends Command {
 						});	
 					}else{
 						Mail::send('emails.mail2', $data, function($message) use ($data){
-							$message->to(strtolower($data['email']), $data['fullname'])->subject('FOR APPROVAL: TOP ACTIVITIES');
+							$message->to(trim(strtolower($data['email'])), $data['fullname'])->subject('FOR APPROVAL: TOP ACTIVITIES');
 						});
 					}
 				}
@@ -138,7 +138,7 @@ class TestMail extends Command {
 						});	
 					}else{
 						Mail::send($mail_template, $data, function($message) use ($data){
-							$message->to(strtolower($data['email']), $data['fullname'])->subject('TOP ACTIVITY STATUS');
+							$message->to(trim(strtolower($data['email'])), $data['fullname'])->subject('TOP ACTIVITY STATUS');
 						});
 					}
 				}
@@ -188,9 +188,9 @@ class TestMail extends Command {
 					}else{
 						Mail::send('emails.mail4', $data, function($message) use ($data){
 							if(count($data['cycles']) > 1){
-								$message->to(strtolower($data['email']), $data['fullname'])->subject('TOP ACTIVITIES FOR: ('.$data['cycle_names'].')');
+								$message->to(trim(strtolower($data['email'])), $data['fullname'])->subject('TOP ACTIVITIES FOR: ('.$data['cycle_names'].')');
 							}else{
-								$message->to(strtolower($data['email']), $data['fullname'])->subject('TOP ACTIVITIES FOR: '.$data['cycle_names']);
+								$message->to(trim(strtolower($data['email'])), $data['fullname'])->subject('TOP ACTIVITIES FOR: '.$data['cycle_names']);
 							}
 							
 						});
