@@ -327,8 +327,7 @@
 	
 	{{ HTML::script('assets/js/function.js') }}
 
-	@yield('content')
-
+	@yield('add-script')
 
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -342,9 +341,7 @@
 			$("#pageloading").hide();
 
 			@yield('scripts')
-			
 			@section('page-script')
-
 			@show
 
 			@if (Auth::user())

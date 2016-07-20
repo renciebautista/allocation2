@@ -262,6 +262,10 @@
 
 @stop
 
+@section('add-script')
+	{{ HTML::script('assets/js/activitycreate.js') }}
+@stop
+
 @section('page-script')
 
 @stop
