@@ -113,15 +113,18 @@ class ActivityController extends BaseController {
 						$scope_id = 2;
 						$cycle_id = Input::get('cycle');
 						$activity_type_id = Input::get('activity_type');
-						$brand_code = Input::get('brand');
 
-						$pricelistsku = Pricelist::where('brand_code', $brand_code)->first();
+						foreach (Input::get('brand') as $brand) {
+							$pricelistsku = Pricelist::where('brand_code', $brand)->first();
+							$division_code[] = $pricelistsku->division_code;
+							$category_code[] = $pricelistsku->category_code;
+							$brand_code[] = $pricelistsku->brand_desc;
+						}
+						
+						Input::merge(array('division' => $division_code,
+						 'category' => $category_code, 'brand' => $brand_code ));
 
-						Input::merge(array('division' => $pricelistsku->division_code,
-						 'category' => $pricelistsku->division_code, 'brand' => 'new value' ));
-
-
-						dd(Input::all());
+						// dd(Input::all());
 
 						$activity = new Activity;
 						$activity->created_by = Auth::id();
@@ -184,10 +187,8 @@ class ActivityController extends BaseController {
 
 						// // add division
 						ActivityRepository::addDivisions($activity);
-
 						// // add category
 						ActivityRepository::addCategories($activity);
-
 						// // add brand
 						ActivityRepository::addBrands($activity);
 
@@ -195,7 +196,7 @@ class ActivityController extends BaseController {
 						// ActivityRepository::addSkus($activity);
 						
 						// add objective
-						// ActivityRepository::addObjectives($activity);
+						ActivityRepository::addObjectives($activity);
 
 						// ActivityCutomerList::addCustomer($activity->id,array());
 
@@ -383,75 +384,115 @@ class ActivityController extends BaseController {
 				return Response::make(View::make('shared/404'), 404);
 			}
 
-			$sel_planner = ActivityPlanner::getPlanner($activity->id);
-			$sel_approver = ActivityApprover::getList($activity->id);
-			$sel_objectives = ActivityObjective::getList($activity->id);
-			$sel_divisions = ActivityDivision::getList($activity->id);
-			$sel_involves = ActivitySku::getSkus($activity->id);
-			// $involves = Pricelist::items();
-			$approvers = User::getApprovers(['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']);
-			
-			$objectives = Objective::getLists();
-			$budgets = ActivityBudget::getBudgets($activity->id);
-			$nobudgets = ActivityNobudget::getBudgets($activity->id);
-			$schemes = Scheme::getList($activity->id);
-			$scheme_summary = Scheme::getSummary($schemes);
-			$materials = ActivityMaterial::getList($activity->id);
-			// attachments
-			$fdapermits = ActivityFdapermit::getList($activity->id);
-			$fis = ActivityFis::getList($activity->id);
-			$artworks = ActivityArtwork::getList($activity->id);
-			$backgrounds = ActivityBackground::getList($activity->id);
-			$bandings = ActivityBanding::getList($activity->id);
-			// comments
-			$comments = ActivityComment::getList($activity->id);
+			if($activity->scope_type_id == 1){
+				$sel_planner = ActivityPlanner::getPlanner($activity->id);
+				$sel_approver = ActivityApprover::getList($activity->id);
+				$sel_objectives = ActivityObjective::getList($activity->id);
+				$sel_divisions = ActivityDivision::getList($activity->id);
+				$sel_involves = ActivitySku::getSkus($activity->id);
+				// $involves = Pricelist::items();
+				$approvers = User::getApprovers(['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']);
+				
+				$objectives = Objective::getLists();
+				$budgets = ActivityBudget::getBudgets($activity->id);
+				$nobudgets = ActivityNobudget::getBudgets($activity->id);
+				$schemes = Scheme::getList($activity->id);
+				$scheme_summary = Scheme::getSummary($schemes);
+				$materials = ActivityMaterial::getList($activity->id);
+				// attachments
+				$fdapermits = ActivityFdapermit::getList($activity->id);
+				$fis = ActivityFis::getList($activity->id);
+				$artworks = ActivityArtwork::getList($activity->id);
+				$backgrounds = ActivityBackground::getList($activity->id);
+				$bandings = ActivityBanding::getList($activity->id);
+				// comments
+				$comments = ActivityComment::getList($activity->id);
 
-			$timings = ActivityTiming::getList($activity->id);
+				$timings = ActivityTiming::getList($activity->id);
 
-			// $activity_roles = ActivityRole::getList($activity->id);
+				// $activity_roles = ActivityRole::getList($activity->id);
 
-			$force_allocs = ForceAllocation::getlist($activity->id);
-			$areas = Area::getAreaWithGroup();
+				$force_allocs = ForceAllocation::getlist($activity->id);
+				$areas = Area::getAreaWithGroup();
 
-			foreach ($areas as $key => $area) {
-				$area->multi = "1.00";
-				foreach ($force_allocs as $force_alloc) {
-					if($area->area_code == $force_alloc->area_code){
-						$area->multi = $force_alloc->multi;
+				foreach ($areas as $key => $area) {
+					$area->multi = "1.00";
+					foreach ($force_allocs as $force_alloc) {
+						if($area->area_code == $force_alloc->area_code){
+							$area->multi = $force_alloc->multi;
+						}
 					}
 				}
-			}
-			// Helper::print_r($areas);
-			if($activity->status_id < 4){
+
+
+				if($activity->status_id < 4){
+					$submitstatus = array('1' => 'SUBMIT ACTIVITY','4' => 'SAVE AS DRAFT');
+					$planners = User::getApprovers(['PMOG PLANNER']);
+					$activity_types = ActivityType::getWithNetworks();
+					$cycles = Cycle::getLists();
+					// $divisions = Sku::getDivisionLists();
+					$divisions = Pricelist::divisions();
+					
+
+					return View::make('activity.edit', compact('activity', 'planners', 'approvers', 'cycles',
+					 'activity_types', 'divisions' , 'sel_divisions','objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
+					 'sel_objectives',  'schemes', 'scheme_summary', 'networks', 'areas', 'timings' ,'sel_involves',
+					 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings',
+					 'force_allocs', 'comments' ,'submitstatus'));
+				}
+
+				if($activity->status_id > 3){
+					$submitstatus = array('2' => 'RECALL ACTIVITY');
+					$divisions = Sku::getDivisionLists();
+					$route = 'activity.index';
+					$recall = $activity->pro_recall;
+					$submit_action = 'ActivityController@updateactivity';
+					return View::make('shared.activity_readonly', compact('activity', 'sel_planner', 'approvers', 
+					 'sel_divisions','divisions', 'timings',
+					 'objectives',  'users', 'budgets', 'nobudgets','sel_approver',
+					 'sel_objectives',  'schemes', 'scheme_summary', 'networks','areas',
+					 'scheme_customers', 'scheme_allcations', 'materials', 'force_allocs','sel_involves',
+					 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings', 'comments' ,'submitstatus', 'route', 'recall', 'submit_action'));
+				}
+			}else{
+				
+				$sel_objectives = ActivityObjective::getList($activity->id);
+				$sel_divisions = ActivityDivision::getList($activity->id);
+				
+				$objectives = Objective::getLists();
+				$budgets = ActivityBudget::getBudgets($activity->id);
+				$nobudgets = ActivityNobudget::getBudgets($activity->id);
+				$schemes = Scheme::getList($activity->id);
+				$scheme_summary = Scheme::getSummary($schemes);
+				$materials = ActivityMaterial::getList($activity->id);
+				// attachments
+				$fdapermits = ActivityFdapermit::getList($activity->id);
+				$fis = ActivityFis::getList($activity->id);
+				$artworks = ActivityArtwork::getList($activity->id);
+				$backgrounds = ActivityBackground::getList($activity->id);
+				$bandings = ActivityBanding::getList($activity->id);
+				// comments
+				$comments = ActivityComment::getList($activity->id);
+
+				$timings = ActivityTiming::getList($activity->id);
+
+				// $activity_roles = ActivityRole::getList($activity->id);
+
+				
+
 				$submitstatus = array('1' => 'SUBMIT ACTIVITY','4' => 'SAVE AS DRAFT');
-				$scope_types = ScopeType::getLists($activity->id);
-				$planners = User::getApprovers(['PMOG PLANNER']);
 				$activity_types = ActivityType::getWithNetworks();
 				$cycles = Cycle::getLists();
 				// $divisions = Sku::getDivisionLists();
-				$divisions = Pricelist::divisions();
-				
+				$brands = Pricelist::getFullBrand()->lists('brand_desc', 'brand_code');
 
-				return View::make('activity.edit', compact('activity', 'scope_types', 'planners', 'approvers', 'cycles',
-				 'activity_types', 'divisions' , 'sel_divisions','objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
-				 'sel_objectives',  'schemes', 'scheme_summary', 'networks', 'areas', 'timings' ,'sel_involves',
-				 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings',
-				 'force_allocs', 'comments' ,'submitstatus'));
+				return View::make('activity.customizededit', compact('activity', 'planners', 'approvers', 'cycles',
+					 'activity_types', 'brands' , 'sel_divisions','objectives',  'users', 'budgets', 'nobudgets', 
+					 'sel_objectives',  'schemes', 'scheme_summary', 'networks', 'timings' ,
+					 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings',
+					 'comments' ,'submitstatus'));
 			}
-
-			if($activity->status_id > 3){
-				$submitstatus = array('2' => 'RECALL ACTIVITY');
-				$divisions = Sku::getDivisionLists();
-				$route = 'activity.index';
-				$recall = $activity->pro_recall;
-				$submit_action = 'ActivityController@updateactivity';
-				return View::make('shared.activity_readonly', compact('activity', 'sel_planner', 'approvers', 
-				 'sel_divisions','divisions', 'timings',
-				 'objectives',  'users', 'budgets', 'nobudgets','sel_approver',
-				 'sel_objectives',  'schemes', 'scheme_summary', 'networks','areas',
-				 'scheme_customers', 'scheme_allcations', 'materials', 'force_allocs','sel_involves',
-				 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings', 'comments' ,'submitstatus', 'route', 'recall', 'submit_action'));
-			}
+			
 		}
 
 		if(Auth::user()->hasRole("PMOG PLANNER")){

@@ -113,6 +113,7 @@ class ActivityRepository extends \Eloquent {
 		ActivityDivision::where('activity_id',$activity->id)->delete();
 		if (Input::has('division')){
 			$activity_division = array();
+
 			foreach (Input::get('division') as $division){
 				$activity_division = Pricelist::division($division);
 				$activity_divisions[] = array('activity_id' => $activity->id, 
@@ -120,6 +121,7 @@ class ActivityRepository extends \Eloquent {
 					'division_desc' => $activity_division->division_desc);
 			}
 			if(count($activity_divisions)>0){
+				
 				ActivityDivision::insert($activity_divisions);
 			}
 			

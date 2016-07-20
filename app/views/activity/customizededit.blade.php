@@ -104,37 +104,14 @@
 							<div class="row">
 								<div class="col-lg-12">
 									{{ Form::label('scope', 'Scope', array('class' => 'control-label')) }}
-									{{ Form::text('scope','NATIONAL', array('class' => 'form-control','readonly' => '')) }}
+									{{ Form::text('scope','CUSTOMIZED', array('class' => 'form-control','readonly' => '')) }}
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
 
-				<!-- Approver -->
-				<div class="row">
-					<div class="col-lg-6">
-						<div class="form-group">
-							<div class="row">
-								<div class="col-lg-12">
-									{{ Form::label('planner', 'PMOG Planner', array('class' => 'control-label')) }}
-									{{ Form::select('planner', array('0' => 'PLEASE SELECT') + $planners, (!is_null($sel_planner)) ? $sel_planner->user_id : 0, array('class' => 'form-control')) }}
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="col-lg-6">
-						<div class="form-group">
-							<div class="row">
-								<div class="col-lg-12">
-									{{ Form::label('approver', 'Activity Approver', array('class' => 'control-label')) }}
-									{{ Form::select('approver[]', $approvers, $sel_approver, array('id' => 'approver', 'class' => 'form-control multiselect', 'multiple' => 'multiple')) }}
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<!-- End Approver -->
+				
 
 				<!-- Cycle -->
 				<div class="row">
@@ -218,28 +195,6 @@
 					</div>
 				</div>
 
-				<div class="row">
-					<div class="col-lg-6">
-						<div class="form-group">
-							<div class="row">
-								<div class="col-lg-12">
-									{{ Form::label('division', 'Division', array('class' => 'control-label')) }}
-									{{ Form::select('division[]',  $divisions, $sel_divisions, array('id' => 'division', 'class' => 'form-control' ,'multiple' => 'multiple' ,'data-placeholder' => 'SELECT DIVISION')) }}
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="col-lg-6">
-						<div class="form-group">
-							<div class="row">
-								<div id="multiselect" class="col-lg-12">
-									{{ Form::label('category', 'Category', array('class' => 'control-label')) }}
-									<select class="form-control" data-placeholder="SELECT CATEGORY" id="category" name="category[]" multiple="multiple" ></select>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
 
 				<div class="row">
 					<div class="col-lg-6">
@@ -247,17 +202,7 @@
 							<div class="row">
 								<div class="col-lg-12">
 									{{ Form::label('brand', 'Brand', array('class' => 'control-label')) }}
-									<select class="form-control" data-placeholder="SELECT BRAND" id="brand" name="brand[]" multiple="multiple" ></select>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="col-lg-6">
-						<div class="form-group">
-							<div class="row">
-								<div class="col-lg-12">
-									{{ Form::label('skus', 'SKU/s Involved', array('class' => 'control-label')) }}
-									<select class="form-control" data-placeholder="SELECT SKU/s" id="skus" name="skus[]" multiple="multiple" ></select>
+									{{ Form::select('brand[]', $brands, null, array('id' => 'brand', 'class' => 'form-control multiselect', 'multiple' => 'multiple')) }}
 								</div>
 							</div>
 						</div>
@@ -297,7 +242,7 @@
 							<div class="row">
 								<div class="col-lg-12">
 									{{ Form::label('instruction', 'Special Instruction', array('class' => 'control-label')) }}
-										{{ Form::textarea('instruction',$activity->instruction ,array('class' => 'form-control', 'placeholder' => 'Special Instruction')) }}
+									{{ Form::textarea('instruction',$activity->instruction ,array('class' => 'form-control', 'placeholder' => 'Special Instruction')) }}
 								</div>
 							</div>
 						</div>
@@ -370,52 +315,8 @@
 									<div id="tree3"></div>
 									{{ Form::hidden('customers', null, array('id' => 'customers')) }}
 								</div>
-
-								<div class="col-lg-6">
-									{{ Form::label('tree4', 'Select DT Channels Involved', array('class' => 'control-label' )) }}<br>
-									<div id="chSel">
-										<a href="#" id="btnChSelectAll">Select all</a> |
-										<a href="#" id="btnChDeselectAll">Deselect all</a>
-									</div>
-									
-									<div id="tree4"></div>
-									{{ Form::hidden('channels_involved', null, array('id' => 'channels_involved')) }}
-								</div>
 							</div>	
-							<div class="row">
-								<div class="col-lg-6">
-									<div class="form-group">
-										<div class="checkbox">
-									        <label>
-									        	{{ Form::checkbox('allow_force', 1,$activity->allow_force,['id' => 'allow_force']) }} Enable Force Allocation
-									        </label>
-									    </div>
-									</div>
-								</div>
-							</div>
-							<div class="row">
-								<div  class="col-lg-12">
-									<caption>Force Allocation</caption>
-									<table id="force_alloc" class="table table-striped table-condensed table-hover table-bordered">
-									  	<thead>
-										    <tr>
-										    	<th style="width:10%;">Group</th>
-										      	<th>Area</th>
-										      	<th>Sales Multiplier</th>
-										    </tr>
-									  	</thead>
-									  	<tbody>
-									  		@foreach($areas as $area)
-									  		<tr>
-									  			<td>{{ $area->group_name }}</td>
-									  			<td>{{ $area->area_name }}</td>
-								  				<td><input class="input-number" id="{{ $area->area_code }}"  name="force_alloc[{{ $area->area_code }}]" value="{{ $area->multi }}" type="text"></td>
-									  		</tr>
-									  		@endforeach
-									  	</tbody>
-									</table> 
-								</div>
-						  	</div>
+							
 							
 						</div>
 					</div>
