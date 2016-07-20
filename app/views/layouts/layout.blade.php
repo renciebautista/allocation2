@@ -11,6 +11,7 @@
 		{{ HTML::style('assets/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css') }}
 		{{ HTML::style('assets/plugins/chosen_v1.4.1/bootstrap-chosen.css') }}
 		{{ HTML::style('assets/plugins/DataTables-1.10.9/css/jquery.dataTables.min.css') }}
+		{{ HTML::style('assets/plugins/jquery-datatables-checkboxes-master/css/dataTables.checkboxes.css') }}
 		{{ HTML::style('assets/plugins/FixedColumns-3.0.4/css/dataTables.fixedColumns.min.css') }}
 		{{ HTML::style('assets/plugins/ColVis-1.1.1/css/dataTables.colVis.min.css') }}
 		{{ HTML::style('assets/plugins/fancytree-2.10.2/skin-xp/ui.fancytree.min.css') }}
@@ -274,6 +275,7 @@
 	
 
 	{{ HTML::script('assets/plugins/DataTables-1.10.9/js/jquery.dataTables.min.js') }}
+	{{ HTML::script('assets/plugins/jquery-datatables-checkboxes-master/js/dataTables.checkboxes.min.js') }}
 	{{ HTML::script('assets/plugins/FixedColumns-3.0.4/js/dataTables.fixedColumns.min.js') }}
 	{{ HTML::script('assets/plugins/ColVis-1.1.1/js/dataTables.colVis.min.js') }}
 
@@ -328,6 +330,7 @@
 	
 	{{ HTML::script('assets/js/function.js') }}
 
+	@yield('add-script')
 
 
 

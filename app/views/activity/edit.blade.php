@@ -6,6 +6,8 @@
 	<div class="row">
 		<div class="col-lg-12 col-md-7 col-sm-6">
 			<h1>Edit {{ $activity->circular_name }}</h1>
+			{{ Form::hidden('activity_id', $activity->id, ['id' => 'activity_id']) }}
+
 		</div>
 	</div>
 </div>
@@ -637,17 +639,6 @@
 						<div class="form-group">
 							<div class="row">
 								<div class="col-lg-12">
-									{{ Form::label('non_ulp_premium_desc', 'Description', array('class' => 'control-label')) }}
-									{{ Form::text('non_ulp_premium_desc',($tradedeal) ?  $tradedeal->non_ulp_premium_desc : '', array('class' => 'form-control', 'id' => 'non_ulp_premium_desc')) }}
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<div class="col-lg-3">
-						<div class="form-group">
-							<div class="row">
-								<div class="col-lg-12">
 									{{ Form::label('non_ulp_premium_code', 'Code', array('class' => 'control-label')) }}
 									{{ Form::text('non_ulp_premium_code',($tradedeal) ?  $tradedeal->non_ulp_premium_code : '', array('class' => 'form-control', 'id' => 'non_ulp_premium_code')) }}
 								</div>
@@ -659,14 +650,40 @@
 						<div class="form-group">
 							<div class="row">
 								<div class="col-lg-12">
-									{{ Form::label('non_ulp_premium_cost', 'Unit Cost / PCS', array('class' => 'control-label')) }}
+									{{ Form::label('non_ulp_premium_desc', 'Description', array('class' => 'control-label')) }}
+									{{ Form::text('non_ulp_premium_desc',($tradedeal) ?  $tradedeal->non_ulp_premium_desc : '', array('class' => 'form-control', 'id' => 'non_ulp_premium_desc')) }}
+								</div>
+							</div>
+						</div>
+					</div>
+
+					
+
+					<div class="col-lg-3">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('non_ulp_premium_cost', 'Unit Cost / Pcs', array('class' => 'control-label')) }}
 									{{ Form::text('non_ulp_premium_cost',($tradedeal) ?  $tradedeal->non_ulp_premium_cost : '', array('class' => 'form-control', 'id' => 'non_ulp_premium_cost')) }}
 								</div>
 							</div>
 						</div>
 					</div>
-				</div>
 
+					<div class="col-lg-3">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('non_ulp_pcs_case', 'Pcs / Case', array('class' => 'control-label')) }}
+									{{ Form::text('non_ulp_pcs_case',($tradedeal) ?  $tradedeal->non_ulp_pcs_case : '', array('class' => 'form-control', 'id' => 'non_ulp_pcs_case')) }}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<br>
+
+				<button class="btn btn-primary disable-button">Update</button>
 
 		  	</div>
 		</div>
@@ -691,9 +708,8 @@
 										<table id="participating_sku" class="table table-striped table-hover ">
 											<thead>
 												<tr>
+													<th>Set Name</th>
 													<th>Host SKUs</th>
-													<th class="right">Cost / Pcs</th>
-													<th class="right">Pcs / Case</th>
 													<th>Reference SKUs</th>
 													<th>Premium SKUs (ULP)</th>
 													<th class="right">Cost / Pcs</th>
@@ -729,6 +745,7 @@
 										<table id="td-channels" class="table table-striped table-hover ">
 											<thead>
 												<tr>
+													<th><input name="select_all" value="1" type="checkbox"></th>
 													<th>Channel Name</th>
 													<th>RTM Tagging</th>
 													<th>Deal Type</th>
@@ -1294,65 +1311,98 @@
 
 @if($activity->activitytype->with_tradedeal)
 <!-- Modal -->
-<div class="modal fade" id="addSku" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
+<div class="modal fade modal-wide" id="addSku" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog ">
 		{{ Form::open(array('action' => array('ActivityController@addpartskus', $activity->id), 'method' => 'POST', 'class' => 'bs-component','id' => 'addpartsku')) }}
-		<div class="modal-content">
+		<div class="modal-content ">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				<h4 class="modal-title" id="myModalLabel">Participating Variants</h4>
 			</div>
+
 			<div class="modal-body">
-				<table class="table table-bordered">
-					<tbody>
-						<tr>
-							<td>Host SKU</td>
-							<td>
-								{{ Form::select('host_sku', array('0' => '') + $host_skus, [], array('data-placeholder' => 'Select Host SKU','id' => 'host_skus', 'class' => 'form-control')) }}
-							</td>
-						</tr>
-						<tr>
-							<td>Cost / Pcs</td>
-							<td>
-								<input class="form-control" name="host_cost_pcs" type="text" value="" id="host_cost_pcs" readonly =''>
-							</td>
-						</tr>
-						<tr>
-							<td>Pcs / Case</td>
-							<td>
-								<input class="form-control" name="host_pcs_case" type="text" value="" id="host_pcs_case" readonly =''>
-							</td>
-						</tr>
-						<tr>
-							<td>Reference SKU</td>
-							<td>
-								{{ Form::select('ref_sku', array('0' => '') + $ref_skus, [], array('data-placeholder' => 'Select Reference SKU','id' => 'ref_skus', 'class' => 'form-control')) }}
-							</td>
-						</tr>
-						<tr>
-							<td>Premium SKU (ULP)</td>
-							<td>
-								{{ Form::select('pre_sku', array('0' => '') + $pre_skus, [], array('data-placeholder' => 'Select Premium SKU','id' => 'pre_skus', 'class' => 'form-control')) }}
-							</td>
-						</tr>
-						<tr>
-							<td>Cost / Pcs</td>
-							<td>
-								<input class="form-control" name="pre_cost_pcs" type="text" value="" id="pre_cost_pcs" readonly =''>
-							</td>
-						</tr>
-						<tr>
-							<td>Pcs / Case</td>
-							<td>
-								<input class="form-control" name="pre_pcs_case" type="text" value="" id="pre_pcs_case" readonly =''>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
+				<div id="td-error"></div>
+
+		        <div class="row">
+		          	<div class="col-md-12">
+		          		<div class="form-group">
+		            		<label for="recipient-name" class="control-label">Set Name</label>
+		            		<input type="text" class="form-control" id="set_name" name="set_name">
+		       			</div>
+		          	</div>
+		        </div>
+
+		        <div class="row">
+		          	<div class="col-md-8">
+		          		<div class="form-group">
+		            		<label for="recipient-name" class="control-label">Host SKU</label>
+		            		{{ Form::select('host_sku', array('0' => '') + $host_skus, [], array('data-placeholder' => 'Select Host SKU','id' => 'host_skus', 'class' => 'form-control')) }}
+		       			</div>
+		          	</div>
+		          	<div class="col-md-2">
+		          		<div class="form-group">
+		            		<label for="recipient-name" class="control-label">Qty</label>
+		            		<input type="text" class="form-control" name="host_qty" id="host_qty" value="1">
+		       			</div>
+		          	</div>
+
+		          	<div class="col-md-2">
+		          		<br>
+		          		<button type="button" id="add-host-sku" class="btn btn-primary">Add</button>
+		          	</div>
+		          	
+		        </div>
+
+		        <div class="row">
+		          	<div class="col-md-12">
+		          		<table id="set_sku" class="table table-condensed"> 
+		        		<thead> 
+		        			<tr> 
+		        				<th>#</th> 
+		        				<th>Host SKU</th> 
+		        				<th class="right">Cost / Pcs</th> 
+		        				<th class="right">Pcs / Case</th> 
+		        				<th class="right">Qty</th>
+		        				<th class="right pr_req">Purchare Req.</th>
+		        				<th>Action</th>
+		        			</tr> 
+		        		</thead> 
+		        		<tbody> 
+		        			
+		        		</tbody> 
+		        		<tfoot>
+		        			<tr>
+		        				<th class="right" colspan="5">Total Purchase Requirement</th>
+		        				<th class="right"><span id="total_req"></span></th>
+		        				<th></th>
+		        			</tr>
+		        		</tfoot>
+		        		</table>
+		        	</div>
+		        </div>
+
+		        <div class="row">
+		          	<div class="col-md-12">
+		          		<div class="form-group">
+		            		<label for="reference-sku" class="control-label">Reference SKU</label>
+		            		{{ Form::select('ref_skus', array('0' => '') + $ref_skus, [], array('data-placeholder' => 'Select Reference SKU','id' => 'ref_skus', 'class' => 'form-control')) }}
+		       			</div>
+		          	</div>
+		        </div>
+
+		        <div id="refsku" class="row">
+		          	<div class="col-md-12">
+		          		<div class="form-group">
+		            		<label for="reference-sku" class="control-label">Premium SKU(ULP)</label>
+		            		{{ Form::select('pre_skus', array('0' => '') + $pre_skus, [], array('data-placeholder' => 'Select Premium SKU','id' => 'pre_skus', 'class' => 'form-control')) }}
+		       			</div>
+		          	</div>
+		        </div>
+	      	</div>
+
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				<button id="addsku" class="btn btn-primary">Add</button>
+				<button id="addsku" class="btn btn-primary">Submit</button>
 			</div>
 		</div>
 		{{ Form::close() }}
@@ -1494,8 +1544,11 @@
 
 @stop
 
-@section('page-script')
+@section('add-script')
+	{{ HTML::script('assets/js/tradedeal.js') }}
+@stop
 
+@section('page-script')
 
 $("#fisupload").uploadifyTable({
 	'multi': false,

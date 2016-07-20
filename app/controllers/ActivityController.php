@@ -2775,6 +2775,7 @@ class ActivityController extends BaseController {
 		$tradedeal->non_ulp_premium_desc = Input::get('non_ulp_premium_desc');
 		$tradedeal->non_ulp_premium_code = Input::get('non_ulp_premium_code');
 		$tradedeal->non_ulp_premium_cost = str_replace(",", "", Input::get('non_ulp_premium_cost'));
+		$tradedeal->non_ulp_pcs_case = Input::get('non_ulp_pcs_case');
 		$tradedeal->save();
 
 		// copy tradedeal channel
@@ -2800,36 +2801,84 @@ class ActivityController extends BaseController {
 
 	public function addpartskus($id){
 		if(Request::ajax()){
+			$err = [];
 			$activity = Activity::find($id);
 			if(empty($activity)){
-				$arr['success'] = 0;
+				// $arr['success'] = 0;
+				$err[] = 'Activity not found.';
 			}else{
-				// dd(Input::all());
-				$host_sku = Pricelist::getSku(Input::get('host_sku'));
-				$ref_sku = Sku::getSku(Input::get('ref_sku'));
-
 				
-				
+				$hostskus = explode(",", Input::get('hostskus')) ;
+				if(Input::get('hostskus') != ''){
 
-				$part_sku = new TradedealPartSku;
+					$first_set = TradedealPartSku::where('activity_id',$activity->id)
+						->orderBy('id')
+						->first();
+					if(!empty($first_set)){
+						$amount = TradedealHostSku::select(DB::raw('sum(cost * qty) as total'))
+							->where('tradedeal_part_sku_id',$first_set->id)
+							->first();
+						$new_amount = 0;
+						foreach ($hostskus as $sku) {
+							$x = explode(":",$sku);
+							$host_sku = Pricelist::getSku($x[0]);
+							$new_amount += $x[1] * $host_sku->price;
+							
+						}
+						if($amount->total != $new_amount){
+							$err[] = 'Purchase requirement is not equal on the first set.';
+						}
+						
+					}
+					$ref_sku = Sku::getSku(Input::get('ref_skus'));
 
-				$part_sku->activity_id = $id;
-				$part_sku->host_code = $host_sku->sap_code;
-				$part_sku->host_desc = $host_sku->sap_desc;
-				$part_sku->host_cost = $host_sku->price;
-				$part_sku->host_pcs_case = $host_sku->pack_size;
-				$part_sku->ref_code = $ref_sku->sku_code;
-				$part_sku->ref_desc = $ref_sku->sku_desc;
-				if(Input::get('pre_sku') != 0){
-					$pre_sku = Pricelist::getSku(Input::get('pre_sku'));
-					$part_sku->pre_code = $pre_sku->sap_code;
-					$part_sku->pre_desc = $pre_sku->sap_desc;
-					$part_sku->pre_cost = $pre_sku->price;
-					$part_sku->pre_pcs_case = $pre_sku->pack_size;
+					if(empty($ref_sku)){
+						$err[] = 'Reference SKU is required.';
+					}
+
+					if(count($err) == 0){
+						
+						$part_sku = new TradedealPartSku;
+						$part_sku->activity_id = $id;
+						$part_sku->set_name = strtoupper(Input::get('set_name'));
+						$part_sku->ref_code = $ref_sku->sku_code;
+						$part_sku->ref_desc = $ref_sku->sku_desc;
+						if(Input::get('pre_skus') != 0){
+							$pre_sku = Pricelist::getSku(Input::get('pre_skus'));
+							$part_sku->pre_code = $pre_sku->sap_code;
+							$part_sku->pre_desc = $pre_sku->sap_desc;
+							$part_sku->pre_cost = $pre_sku->price;
+							$part_sku->pre_pcs_case = $pre_sku->pack_size;
+						}
+						
+						$part_sku->save();
+						$data = [];
+						
+						foreach ($hostskus as $sku) {
+							$x = explode(":",$sku);
+							$host_sku = Pricelist::getSku($x[0]);
+							$data[] = ['tradedeal_part_sku_id' => $part_sku->id, 
+							'code' => $host_sku->sap_code,
+							'desc' => $host_sku->sap_desc,
+							'cost' => $host_sku->price,
+							'pcs_case' => $host_sku->pack_size,
+							'qty' => $x[1]
+							];
+						}
+						if(count($data) > 0){
+							TradedealHostSku::insert($data);
+						}
+					}
+					
+				}else{
+					$err[] = 'No selected Host SKU';
 				}
-				
-				$part_sku->save();
+			}
 
+			if(count($err) > 0){
+				$arr['success'] = 0;
+				$arr['err_msg'] = $err;
+			}else{
 				$arr['success'] = 1;
 			}
 			
@@ -2839,14 +2888,48 @@ class ActivityController extends BaseController {
 
 	public function partskus($id){
 
-		$skus = TradedealPartSku::select(array('id', DB::raw('CONCAT(host_desc," - ",host_code) as host_sku'), 'host_cost', 'host_pcs_case',
+		$skus = TradedealPartSku::select(array('id', 'set_name',
 			DB::raw('CONCAT(ref_desc," - ",ref_code) as ref_sku'),
 			DB::raw('CONCAT(pre_desc," - ",pre_code) as pre_sku'), 'pre_cost', 'pre_pcs_case'))
 			->where('activity_id', $id);
 
 		return Datatables::of($skus)
 			->remove_column('id')
-			->add_column('edit', '<a href="#editSku" id="{{$id}}" data-sku-id="{{$id}}" data-toggle="modal"" >Edit</a>', 8)
+			->add_column('host', function($row){
+		        $host_skus = TradedealHostSku::where('tradedeal_part_sku_id',$row->id)->get();
+		        $body = '';
+		        $cnt = 1;
+		        $pur_req = 0.0;
+		        foreach ($host_skus as $sku) {
+		        	$pur = $sku->qty * $sku->cost;
+		        	$body .= '<tr><td>'.$cnt.'</td><td>'.$sku->desc.' - '.$sku->code.'</td><td class="right">'.$sku->cost.'</td><td class="right">'.$sku->pcs_case.'</td><td class="right">'.number_format($sku->qty).'</td><td class="right">'.number_format($pur,2).'</td></tr>';
+		        	$pur_req += $pur;
+		        	$cnt++;
+		        }
+
+		        $html = '<table class="table table-condensed"> 
+		        		<thead> 
+		        			<tr> 
+		        				<th>#</th> 
+		        				<th>Host SKU</th> 
+		        				<th class="right">Cost / Pcs</th> 
+		        				<th class="right">Pcs / Case</th> 
+		        				<th class="right">Qty</th>
+		        				<th class="right pr_req">Purchare Req.</th>
+		        			</tr> 
+		        		</thead> 
+		        		<tbody>'.$body.'
+		        		</tbody> 
+		        		<tfoot>
+		        			<tr>
+		        				<th class="right" colspan="5">Total Purchase Requirement</th>
+		        				<th class="right">'.number_format($pur_req,2).'</span></th>
+		        			</tr>
+		        		</tfoot>
+		        		</table>';
+		        return $html;
+			} , 2)
+			->add_column('edit', '<a href="javascript:void(0)" id="{{$id}}" class="deletesku" >Edit</a>', 8)
 			->add_column('delete', '<a href="javascript:void(0)" id="{{$id}}" class="deletesku" >Delete</a>', 9)
 			->edit_column('host_cost', function($row) {
 			        return "<span class='pull-right'> {$row->host_cost} </span>";
@@ -2870,6 +2953,7 @@ class ActivityController extends BaseController {
 			if(empty($part_sku)){
 				$arr['success'] = 0;
 			}else{
+				TradedealHostSku::where('tradedeal_part_sku_id', $part_sku->id)->delete();
 				$part_sku->delete();
 				$arr['success'] = 1;
 				
@@ -2927,7 +3011,8 @@ class ActivityController extends BaseController {
 
 	public function tdchannels($id){
 
-		$skus = TradedealChannel::select(array('tradedeal_channels.id', 'tradedeal_channels.l5_desc', 'tradedeal_channels.rtm_tag', 
+		$skus = TradedealChannel::select(array(
+			'tradedeal_channels.id', 'tradedeal_channels.l5_desc', 'tradedeal_channels.rtm_tag', 
 			'tradedeal_types.tradedeal_type', 'tradedeal_uoms.tradedeal_uom', 'tradedeal_channels.scheme'))
 			->join('tradedeal_types', 'tradedeal_types.id', '=', 'tradedeal_channels.tradedeal_type_id', 'left')
 			->join('tradedeal_uoms', 'tradedeal_uoms.id', '=', 'tradedeal_channels.tradedeal_uom_id', 'left')
@@ -2936,7 +3021,8 @@ class ActivityController extends BaseController {
 		return Datatables::of($skus)
 			->set_index_column('id')	
 			// ->remove_column('id')
-			->make(true);
+			->add_column('premuim', '', 6)
+			->make();
 	}
 
 	public function updatedtchannel(){

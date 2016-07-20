@@ -18,10 +18,7 @@ class CreateTradedealPartSkusTable extends Migration {
 			$table->increments('id');
 			$table->integer('activity_id')->unsigned();
 			$table->foreign('activity_id')->references('id')->on('activities');
-			$table->string('host_code');
-			$table->string('host_desc');
-			$table->decimal('host_cost',10,2);
-			$table->integer('host_pcs_case');
+			$table->string('set_name');
 			$table->string('ref_code');
 			$table->string('ref_desc');
 			$table->string('pre_code')->nullable();

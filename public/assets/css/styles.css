@@ -959,3 +959,14 @@ table.dataTable thead tr.even th{
 
 }
     
+.modal-wide .modal-dialog {
+  width: 50%; /* or whatever you wish */
+}
+#participating_sku tr.odd { background-color: #ffffff; }// change #E2E4FF to white
+#participating_sku tr.even { background-color: #ffffff; }
+
+.alert-danger{
+	color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
+}
