@@ -89,8 +89,8 @@
 						<div class="col-lg-12">
 							<div class="search">
 								<button type="submit" class="btn btn-success"><i class="fa fa-search"></i> Search</button>
-								<a href="{{ URL::action('ActivityController@create') }}" class="btn btn-primary">Add New National Activity</a>
-								<a href="{{ URL::action('ActivityController@create') }}" class="btn btn-primary">Add New Customized Activity</a>
+								<a href="{{ URL::action('ActivityController@create', 1) }}" class="btn btn-primary">Add New National Activity</a>
+								<a href="{{ URL::action('ActivityController@create', 2) }}" class="btn btn-primary">Add New Customized Activity</a>
 							</div>
 						</div>
 					</div>

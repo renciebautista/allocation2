@@ -146,6 +146,10 @@ Route::group(array('before' => 'auth'), function()
 
 	Route::post('activity/{id}/duplicate','ActivityController@duplicate');
 	Route::get('activity/{id}/summary','ActivityController@summary');
+
+	// customized
+	Route::get('activity/create/{id}',['as' => 'activity.create', 'uses' => 'ActivityController@create']);
+	Route::post('activity/store/{id}',['as' => 'activity.store', 'uses' => 'ActivityController@store']);
 	
 	Route::resource('activity', 'ActivityController');
 	

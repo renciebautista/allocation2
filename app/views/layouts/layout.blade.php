@@ -65,8 +65,8 @@
 								<li>{{ HTML::linkRoute('activity.index', 'All') }}</li> 
 								<li>{{ HTML::linkAction('activity.index' , 'Unreleased',array('st' => ['1','2','3','4','5','6','7','8'],'title' => '')) }}</li>  
 								<li>{{ HTML::linkAction('activity.index' , 'Released',array('st' => ['9'],'title' => '')) }}</li>  
-								<li>{{ HTML::linkRoute('activity.create', 'Add New National Activity') }}</li> 
-								<li>{{ HTML::linkRoute('activity.create', 'Add New Customized Activity') }}</li> 
+								<li>{{ HTML::linkAction('ActivityController@create', 'Add New National Activity', [1]) }}</li> 
+								<li>{{ HTML::linkAction('ActivityController@create', 'Add New Customized Activity', [2]) }}</li> 
 								@endif
 
 								@if(Auth::user()->inRoles(['PMOG PLANNER','FIELD SALES']))
@@ -327,7 +327,7 @@
 	
 	{{ HTML::script('assets/js/function.js') }}
 
-
+	@yield('content')
 
 
 	<script type="text/javascript">

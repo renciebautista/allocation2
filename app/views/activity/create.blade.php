@@ -33,7 +33,7 @@
 <div id="myTabContent" class="tab-content">
   	<div class="tab-pane fade active in" id="activty">
   		<br>
-  		{{ Form::open(array('route' => 'activity.store','class' => 'bs-component', 'id' => 'myform')) }}
+  		{{ Form::open(array('action' => array('ActivityController@store', 1), 'class' => 'bs-component','id' => 'myform')) }}
   		<div class="well">
   			<div class="row">
   				<div class="col-lg-6">
@@ -41,7 +41,7 @@
 						<div class="row">
 							<div class="col-lg-12">
 								{{ Form::label('scope', 'Scope', array('class' => 'control-label')) }}
-								{{ Form::select('scope', array('0' => 'PLEASE SELECT') + $scope_types, null, array('id' => 'scope','class' => 'form-control')) }}
+								{{ Form::text('scope','NATIONAL', array('class' => 'form-control','readonly' => '')) }}
 							</div>
 						</div>
 					</div>

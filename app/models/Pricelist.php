@@ -46,6 +46,16 @@ class Pricelist extends \Eloquent {
 			->get();
 	}
 
+	public static function getFullBrand(){
+		return self::select(DB::raw("CONCAT(division_desc,' - ',category_desc,' - ',brand_desc) as brand_desc"),'brand_code')
+			->groupBy('brand_desc', 'category_desc',  'division_desc')
+			->orderBy('division_desc')
+			->orderBy('category_desc')
+			->orderBy('brand_desc')
+			->get();
+	}
+
+
 	public static function getBrand($brand_desc){
 		return self::select('brand_code', 'brand_desc', 'brand_shortcut')
 			->where('brand_desc', $brand_desc)

@@ -69,22 +69,31 @@ class ActivityController extends BaseController {
 	 *
 	 * @return Response
 	 */
-	public function create()
+	public function create($type = 1)
 	{
-		if(Auth::user()->hasRole("PROPONENT")){
-			$scope_types = ScopeType::getLists();
-			$planners = User::getApprovers(['PMOG PLANNER']);
-			$approvers = User::getApprovers(['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']);
+		if($type == 2){
 			$activity_types = ActivityType::getWithNetworks();
 			$cycles = Cycle::getLists();
-			$divisions = Pricelist::divisions();
-			
 			$objectives = Objective::getLists();
-			return View::make('activity.create', compact('scope_types', 'planners', 'approvers', 'cycles',
-			 'activity_types', 'divisions' , 'objectives',  'users'));
-		}
+			$brands = Pricelist::getFullBrand()->lists('brand_desc', 'brand_code');
+			return View::make('activity.createcusomized', compact('cycles', 'activity_types', 'objectives', 'brands'));
+		}else{
+			if(Auth::user()->hasRole("PROPONENT")){
+				$scope_types = ScopeType::getLists();
+				$planners = User::getApprovers(['PMOG PLANNER']);
+				$approvers = User::getApprovers(['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']);
+				$activity_types = ActivityType::getWithNetworks();
+				$cycles = Cycle::getLists();
+				$divisions = Pricelist::divisions();
+				
+				$objectives = Objective::getLists();
+				return View::make('activity.create', compact('scope_types', 'planners', 'approvers', 'cycles',
+				 'activity_types', 'divisions' , 'objectives',  'users', 'type'));
+			}
 
-		return Response::make(View::make('shared/404'), 404);
+			return Response::make(View::make('shared/404'), 404);
+		}
+		
 		
 	}
 
@@ -94,130 +103,255 @@ class ActivityController extends BaseController {
 	 *
 	 * @return Response
 	 */
-	public function store()
+	public function store($type = 1)
 	{
-		if(Auth::user()->hasRole("PROPONENT")){
+		if($type == 2){
 			$validation = Validator::make(Input::all(), Activity::$rules);
-			if($validation->passes())
-			{
-				$id =  DB::transaction(function()   {
-					$scope_id = Input::get('scope');
-					$cycle_id = Input::get('cycle');
-					$activity_type_id = Input::get('activity_type');
-					$division_code = Input::get('division');
-					$category_code = Input::get('category');
-					$brand_code = Input::get('brand');
+				if($validation->passes())
+				{
+					$id =  DB::transaction(function()   {
+						$scope_id = 2;
+						$cycle_id = Input::get('cycle');
+						$activity_type_id = Input::get('activity_type');
+						$brand_code = Input::get('brand');
 
-					$activity = new Activity;
-					$activity->created_by = Auth::id();
-					$activity->proponent_name = Auth::user()->getFullname();
-					$activity->contact_no = Auth::user()->contact_no;
-					
-					$scope = ScopeType::find($scope_id);
-					$activity->scope_type_id = $scope_id;
-					$activity->scope_desc = $scope->scope_name;
+						$pricelistsku = Pricelist::where('brand_code', $brand_code)->first();
 
-					$cycle = Cycle::find($cycle_id);
-					$activity->cycle_id = $cycle_id;
-					$activity->cycle_desc = $cycle->cycle_name;
+						Input::merge(array('division' => $pricelistsku->division_code,
+						 'category' => $pricelistsku->division_code, 'brand' => 'new value' ));
 
-					$activitytype = ActivityType::find($activity_type_id);
-					$activity->activity_type_id = $activity_type_id;
-					$activity->activitytype_desc = $activitytype->activity_type;
-					$activity->uom_desc = $activitytype->uom;
 
-					$activity->duration = (Input::get('lead_time') == '') ? 0 : Input::get('lead_time');
-					$activity->edownload_date = date('Y-m-d',strtotime(Input::get('download_date')));
-					$activity->eimplementation_date = date('Y-m-d',strtotime(Input::get('implementation_date')));
-					$activity->end_date = date('Y-m-d',strtotime(Input::get('end_date')));
-					$activity->circular_name = strtoupper(Input::get('activity_title'));
-					$activity->background = Input::get('background');
-					$activity->instruction = Input::get('instruction');
-					$activity->status_id = 1;
-					$activity->save();
+						dd(Input::all());
 
-					// add timings
-					$networks = ActivityTypeNetwork::timings($activity->activity_type_id,$activity->edownload_date);
-					if(count($networks)> 0){
-						$activity_timing = array();
+						$activity = new Activity;
+						$activity->created_by = Auth::id();
+						$activity->proponent_name = Auth::user()->getFullname();
+						$activity->contact_no = Auth::user()->contact_no;
+						
+						$scope = ScopeType::find($scope_id);
+						$activity->scope_type_id = $scope_id;
+						$activity->scope_desc = $scope->scope_name;
 
-						foreach ($networks as $network) {
-							$activity_timing[] = array('activity_id' => $activity->id,
-							 	'task_id' => $network->task_id,
-								'milestone' => $network->milestone, 
-								'task' => $network->task, 
-								'responsible' => $network->responsible,
-								'duration' => $network->duration, 
-								'depend_on' => $network->depend_on,
-								'show' => $network->show,
-								'start_date' => date('Y-m-d',strtotime($network->start_date)),
-								'end_date' => date('Y-m-d',strtotime($network->end_date)),
-								'final_start_date' => date('Y-m-d',strtotime($network->start_date)),
-								'final_end_date' => date('Y-m-d',strtotime($network->end_date)));
+						$cycle = Cycle::find($cycle_id);
+						$activity->cycle_id = $cycle_id;
+						$activity->cycle_desc = $cycle->cycle_name;
+
+						$activitytype = ActivityType::find($activity_type_id);
+						$activity->activity_type_id = $activity_type_id;
+						$activity->activitytype_desc = $activitytype->activity_type;
+						$activity->uom_desc = $activitytype->uom;
+
+						$activity->duration = (Input::get('lead_time') == '') ? 0 : Input::get('lead_time');
+						$activity->edownload_date = date('Y-m-d',strtotime(Input::get('download_date')));
+						$activity->eimplementation_date = date('Y-m-d',strtotime(Input::get('implementation_date')));
+						$activity->end_date = date('Y-m-d',strtotime(Input::get('end_date')));
+						$activity->circular_name = strtoupper(Input::get('activity_title'));
+						$activity->background = Input::get('background');
+						$activity->instruction = Input::get('instruction');
+						$activity->status_id = 1;
+						$activity->save();
+
+						// add timings
+						$networks = ActivityTypeNetwork::timings($activity->activity_type_id,$activity->edownload_date);
+						if(count($networks)> 0){
+							$activity_timing = array();
+
+							foreach ($networks as $network) {
+								$activity_timing[] = array('activity_id' => $activity->id,
+								 	'task_id' => $network->task_id,
+									'milestone' => $network->milestone, 
+									'task' => $network->task, 
+									'responsible' => $network->responsible,
+									'duration' => $network->duration, 
+									'depend_on' => $network->depend_on,
+									'show' => $network->show,
+									'start_date' => date('Y-m-d',strtotime($network->start_date)),
+									'end_date' => date('Y-m-d',strtotime($network->end_date)),
+									'final_start_date' => date('Y-m-d',strtotime($network->start_date)),
+									'final_end_date' => date('Y-m-d',strtotime($network->end_date)));
+							}
+							ActivityTiming::insert($activity_timing);
 						}
-						ActivityTiming::insert($activity_timing);
-					}
+						
+						$activity->activity_code =  ActivityRepository::generateActivityCode($activity,$scope,$cycle,$activitytype,$division_code,$category_code,$brand_code);
+						$activity->update();
+
+						// // add planner
+						// ActivityRepository::addPlanner($activity);
+						
+						// // add approver
+						// ActivityRepository::addApprovers($activity,$cycle);
+
+						// // add division
+						ActivityRepository::addDivisions($activity);
+
+						// // add category
+						ActivityRepository::addCategories($activity);
+
+						// // add brand
+						ActivityRepository::addBrands($activity);
+
+						// // add skus
+						// ActivityRepository::addSkus($activity);
+						
+						// add objective
+						// ActivityRepository::addObjectives($activity);
+
+						// ActivityCutomerList::addCustomer($activity->id,array());
+
+						$path_1 = storage_path().'/uploads/'.$activity->cycle_id;
+
+						if(!File::exists($path_1)) {
+							File::makeDirectory($path_1);
+						}
+
+						$path = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id;
+						if(!File::exists($path)) {
+							File::makeDirectory($path);
+						}
+						$path2 = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
+						if(!File::exists($path2)) {
+							File::makeDirectory($path2);
+						}
+
+						return $activity->id;
+
+						
+					});
+
+					return Redirect::route('activity.edit',$id)
+						->with('class', 'alert-success')
+						->with('message', 'Activity "'.strtoupper(Input::get('activity_title')).'" was successfuly created.');
 					
-					$activity->activity_code =  ActivityRepository::generateActivityCode($activity,$scope,$cycle,$activitytype,$division_code,$category_code,$brand_code);
-					$activity->update();
+				}
 
-					// add planner
-					ActivityRepository::addPlanner($activity);
+				return Redirect::route('activity.create', 2)
+					->withInput()
+					->withErrors($validation)
+					->with('class', 'alert-danger')
+					->with('message', 'There were validation errors.');
+		}else{
+			if(Auth::user()->hasRole("PROPONENT")){
+				$validation = Validator::make(Input::all(), Activity::$rules);
+				if($validation->passes())
+				{
+					$id =  DB::transaction(function()   {
+						$scope_id = 1;
+						$cycle_id = Input::get('cycle');
+						$activity_type_id = Input::get('activity_type');
+						$division_code = Input::get('division');
+						$category_code = Input::get('category');
+						$brand_code = Input::get('brand');
+
+						$activity = new Activity;
+						$activity->created_by = Auth::id();
+						$activity->proponent_name = Auth::user()->getFullname();
+						$activity->contact_no = Auth::user()->contact_no;
+						
+						$scope = ScopeType::find($scope_id);
+						$activity->scope_type_id = $scope_id;
+						$activity->scope_desc = $scope->scope_name;
+
+						$cycle = Cycle::find($cycle_id);
+						$activity->cycle_id = $cycle_id;
+						$activity->cycle_desc = $cycle->cycle_name;
+
+						$activitytype = ActivityType::find($activity_type_id);
+						$activity->activity_type_id = $activity_type_id;
+						$activity->activitytype_desc = $activitytype->activity_type;
+						$activity->uom_desc = $activitytype->uom;
+
+						$activity->duration = (Input::get('lead_time') == '') ? 0 : Input::get('lead_time');
+						$activity->edownload_date = date('Y-m-d',strtotime(Input::get('download_date')));
+						$activity->eimplementation_date = date('Y-m-d',strtotime(Input::get('implementation_date')));
+						$activity->end_date = date('Y-m-d',strtotime(Input::get('end_date')));
+						$activity->circular_name = strtoupper(Input::get('activity_title'));
+						$activity->background = Input::get('background');
+						$activity->instruction = Input::get('instruction');
+						$activity->status_id = 1;
+						$activity->save();
+
+						// add timings
+						$networks = ActivityTypeNetwork::timings($activity->activity_type_id,$activity->edownload_date);
+						if(count($networks)> 0){
+							$activity_timing = array();
+
+							foreach ($networks as $network) {
+								$activity_timing[] = array('activity_id' => $activity->id,
+								 	'task_id' => $network->task_id,
+									'milestone' => $network->milestone, 
+									'task' => $network->task, 
+									'responsible' => $network->responsible,
+									'duration' => $network->duration, 
+									'depend_on' => $network->depend_on,
+									'show' => $network->show,
+									'start_date' => date('Y-m-d',strtotime($network->start_date)),
+									'end_date' => date('Y-m-d',strtotime($network->end_date)),
+									'final_start_date' => date('Y-m-d',strtotime($network->start_date)),
+									'final_end_date' => date('Y-m-d',strtotime($network->end_date)));
+							}
+							ActivityTiming::insert($activity_timing);
+						}
+						
+						$activity->activity_code =  ActivityRepository::generateActivityCode($activity,$scope,$cycle,$activitytype,$division_code,$category_code,$brand_code);
+						$activity->update();
+
+						// add planner
+						ActivityRepository::addPlanner($activity);
+						
+						// add approver
+						ActivityRepository::addApprovers($activity,$cycle);
+
+						// add division
+						ActivityRepository::addDivisions($activity);
+
+						// add category
+						ActivityRepository::addCategories($activity);
+
+						// add brand
+						ActivityRepository::addBrands($activity);
+
+						// add skus
+						ActivityRepository::addSkus($activity);
+						
+						// add objective
+						ActivityRepository::addObjectives($activity);
+
+						ActivityCutomerList::addCustomer($activity->id,array());
+
+						$path_1 = storage_path().'/uploads/'.$activity->cycle_id;
+
+						if(!File::exists($path_1)) {
+							File::makeDirectory($path_1);
+						}
+
+						$path = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id;
+						if(!File::exists($path)) {
+							File::makeDirectory($path);
+						}
+						$path2 = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
+						if(!File::exists($path2)) {
+							File::makeDirectory($path2);
+						}
+
+						return $activity->id;
+
+						
+					});
+
+					return Redirect::route('activity.edit',$id)
+						->with('class', 'alert-success')
+						->with('message', 'Activity "'.strtoupper(Input::get('activity_title')).'" was successfuly created.');
 					
-					// add approver
-					ActivityRepository::addApprovers($activity,$cycle);
+				}
 
-					// add division
-					ActivityRepository::addDivisions($activity);
-
-					// add category
-					ActivityRepository::addCategories($activity);
-
-					// add brand
-					ActivityRepository::addBrands($activity);
-
-					// add skus
-					ActivityRepository::addSkus($activity);
-					
-					// add objective
-					ActivityRepository::addObjectives($activity);
-
-					ActivityCutomerList::addCustomer($activity->id,array());
-
-					$path_1 = storage_path().'/uploads/'.$activity->cycle_id;
-
-					if(!File::exists($path_1)) {
-						File::makeDirectory($path_1);
-					}
-
-					$path = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id;
-					if(!File::exists($path)) {
-						File::makeDirectory($path);
-					}
-					$path2 = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
-					if(!File::exists($path2)) {
-						File::makeDirectory($path2);
-					}
-
-					return $activity->id;
-
-					
-				});
-
-				return Redirect::route('activity.edit',$id)
-					->with('class', 'alert-success')
-					->with('message', 'Activity "'.strtoupper(Input::get('activity_title')).'" was successfuly created.');
-				
+				return Redirect::route('activity.create', 1)
+					->withInput()
+					->withErrors($validation)
+					->with('class', 'alert-danger')
+					->with('message', 'There were validation errors.');
 			}
-
-			return Redirect::route('activity.create')
-				->withInput()
-				->withErrors($validation)
-				->with('class', 'alert-danger')
-				->with('message', 'There were validation errors.');
 		}
-		
-
 	}
 
 	/**
