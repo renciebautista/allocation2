@@ -12,14 +12,23 @@ class DashboardController extends \BaseController {
 	 */
 	public function index()
 	{
+		// dd(Auth::user()->updated_at);
+		$datetime1 = date_create();
+		$datetime2 = date_create(Auth::user()->last_update);
+		$interval = date_diff($datetime1, $datetime2);
 
+		$settings = Setting::where('id', 1)->first();
+		$change_password = false;
+		if($interval->days > $settings->pasword_expiry){
+			$change_password = true;
+		}
 		$ongoings = Activity::summary(9,'ongoing');
 		// Helper::print_array($ongoings);
 		$upcomings = Activity::summary(9,'nextmonth');
 		// Helper::print_array($upcomings);
 		$lastmonths = Activity::summary(9,'lastmonth');
 		// Helper::print_array($lastmonths);
-		return View::make('dashboard.index',compact('ongoings', 'upcomings', 'lastmonths'));
+		return View::make('dashboard.index',compact('ongoings', 'upcomings', 'lastmonths', 'settings','change_password'));
 	}
 
 	

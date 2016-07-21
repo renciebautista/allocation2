@@ -259,6 +259,8 @@
 			</div>
 		</div>
 
+
+	
 		
 	{{ HTML::script('assets/js/jquery-1.11.1.min.js') }}
 
@@ -331,6 +333,13 @@
 
 	<script type="text/javascript">
 		$(document).ready(function() {
+
+			$('#changepasswordmodal').modal('show');
+			$('#changepassword').on('click', function(){
+				$('#changepasswordmodal').modal('hide');
+				window.location.href = '/changepassword';
+			});
+
 			moment.locale('en', {
 			  	week: { dow: 1 } // Monday is the first day of the week
 			});

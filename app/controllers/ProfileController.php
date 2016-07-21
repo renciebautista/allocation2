@@ -61,7 +61,7 @@ class ProfileController extends \BaseController {
 			->with('message', 'There were validation errors.');
 	}
 
-		public function changepassword(){
+	public function changepassword(){
 		return View::make('profile.changepassword');
 	}
 
@@ -88,6 +88,7 @@ class ProfileController extends \BaseController {
 				$user = User::find(Auth::id());
 				$user->password = Input::get('password');
 				$user->password_confirmation = Input::get('password_confirmation');
+				$user->last_update = date('Y-m-d H:i:s');
 				$user->update();
 				DB::commit();
 
