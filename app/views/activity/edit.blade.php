@@ -736,6 +736,12 @@
 				<h3 class="panel-title">Channels</h3>
 			</div>
 			<div class="panel-body">
+				<div class="row">
+					<div class="col-lg-12">
+						<button type="button" class="btn btn-primary btn-sm " id="eChannel">Edit</button>
+					</div>
+				</div>
+				<br>
 				<div >
 					<div class="row">
 						<div class="col-lg-12">
@@ -750,7 +756,8 @@
 													<th>RTM Tagging</th>
 													<th>Deal Type</th>
 													<th>UOM</th>
-													<th>Scheme</th>
+													<th>Buy</th>
+													<th>Free</th>
 													<th>Premium</th>
 												</tr>
 											</thead>
@@ -1491,18 +1498,6 @@
 				<table class="table table-bordered">
 					<tbody>
 						<tr>
-							<td>Channel Name</td>
-							<td>
-								<input class="form-control" name="channel_name" type="text" value="" id="channel_name" readonly =''>
-							</td>
-						</tr>
-						<tr>
-							<td>RTM Tagging</td>
-							<td>
-								<input class="form-control" name="rtm_tagging" type="text" value="" id="rtm_tagging" readonly =''>
-							</td>
-						</tr>
-						<tr>
 							<td>Deal Type</td>
 							<td>
 								{{ Form::select('deal_type', array('0' => '') + $dealtypes, [], array('data-placeholder' => 'Select Deal Type','id' => 'deal_type', 'class' => 'form-control')) }}
@@ -1516,9 +1511,15 @@
 							</td>
 						</tr>
 						<tr>
-							<td>Scheme</td>
+							<td>Buy</td>
 							<td>
-								<input class="form-control" name="scheme" type="text" value="" id="scheme">
+								<input class="form-control" name="buy" type="text" value="" id="buy">
+							</td>
+						</tr>
+						<tr>
+							<td>Free</td>
+							<td>
+								<input class="form-control" name="free" type="text" value="" id="free">
 							</td>
 						</tr>
 						<tr>

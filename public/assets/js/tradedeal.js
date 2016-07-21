@@ -22,7 +22,7 @@ $('#add-host-sku').on('click', function(){
 		$.ajax({
 	        async: false,
 	        type: "GET",
-	        url: hostname +"/pricelistsku?code="+host,
+	        url: hostname +"/api/pricelistsku?code="+host,
 	        contentType: "application/json; charset=utf-8",
 	        dataType: "json",
 	        success: function (data) { 
@@ -76,7 +76,7 @@ $('#addSku').on('shown.bs.modal', function () {
 		    $.ajax({
 		        async: false,
 		        type: "GET",
-		        url: hostname + '/pricelistsku/?code='+$(this).val(),
+		        url: hostname + '/api/pricelistsku/?code='+$(this).val(),
 		        contentType: "application/json; charset=utf-8",
 		        dataType: "json",
 		        success: function (data) { 
@@ -98,7 +98,7 @@ $('#addSku').on('shown.bs.modal', function () {
 	    $.ajax({
 	        async: false,
 	        type: "GET",
-	        url: hostname + '/pricelistsku/?code='+$(this).val(),
+	        url: hostname + '/api/pricelistsku/?code='+$(this).val(),
 	        contentType: "application/json; charset=utf-8",
 	        dataType: "json",
 	        success: function (data) { 
@@ -235,7 +235,7 @@ $('#editSku').on('shown.bs.modal', function (e) {
 			    $.ajax({
 			        async: false,
 			        type: "GET",
-			        url: hostname + '/pricelistsku/?code='+$(this).val(),
+			        url: hostname + '/api/pricelistsku/?code='+$(this).val(),
 			        contentType: "application/json; charset=utf-8",
 			        dataType: "json",
 			        success: function (data) { 
@@ -263,7 +263,7 @@ $('#editSku').on('shown.bs.modal', function (e) {
 			    $.ajax({
 			        async: false,
 			        type: "GET",
-			        url: hostname + '/pricelistsku/?code='+$(this).val(),
+			        url: hostname + '/api/pricelistsku/?code='+$(this).val(),
 			        contentType: "application/json; charset=utf-8",
 			        dataType: "json",
 			        success: function (data) { 
@@ -344,6 +344,25 @@ var dtchtable = $('#td-channels').DataTable({
    'order': [[1, 'asc']]
 });
 
+$(document).on("click","#eChannel", function (e) {
+	e.preventDefault(); // prevents button from submitting
+    var rows_selected = dtchtable.column(0).checkboxes.selected();
+    // Iterate over all selected checkboxes 
+    var chId = new Array();
+    $.each(rows_selected, function(index, rowId){
+       	chId.push(rowId);
+    });
+
+    if(chId.length > 0){
+    	$('#editChannel').modal('show');
+    	$('#ch_id').val(chId);
+    }else{
+    	bootbox.alert("No channel selected, select a channel to edit."); 
+    }
+    
+});
+
+
 // $('#td-channels tbody').on('click', 'tr', function () {
 //    	var data = dtchtable.row(this).data();
 //    	console.log(data);
@@ -373,6 +392,7 @@ var dtchtable = $('#td-channels').DataTable({
 function reload_dtchtable()
 {
     dtchtable.ajax.reload(null,false); //reload datatable ajax 
+    dtchtable.column(0).checkboxes.deselect();
 }
 
 $("form[id='updatedtchannel']").on("submit",function(e){
@@ -410,6 +430,7 @@ $("form[id='editpartsku']").on("submit",function(e){
 				bootbox.alert("Participating variants was successfully added."); 
 				$('#editSku').modal('hide');
 				reload_table();
+
 			}else{
 				bootbox.alert("An error occured while updating."); 
 			}
@@ -457,7 +478,7 @@ $('#non_ulp_premium').click(function() {
 
 var non_ulp_premium = $('input[name="non_ulp_premium"]:checked').length > 0;
 if(non_ulp_premium){
-	$('#non_ulp_premium_desc, #non_ulp_premium_code, #non_ulp_premium_cost').removeAttr('disabled');
+	$('#non_ulp_premium_desc, #non_ulp_premium_code, #non_ulp_premium_cost, #non_ulp_pcs_case').removeAttr('disabled');
 }else{
-	$('#non_ulp_premium_desc, #non_ulp_premium_code, #non_ulp_premium_cost').val('').attr('disabled','disabled');
+	$('#non_ulp_premium_desc, #non_ulp_premium_code, #non_ulp_premium_cost, #non_ulp_pcs_case').val('').attr('disabled','disabled');
 }

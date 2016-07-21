@@ -3013,7 +3013,7 @@ class ActivityController extends BaseController {
 
 		$skus = TradedealChannel::select(array(
 			'tradedeal_channels.id', 'tradedeal_channels.l5_desc', 'tradedeal_channels.rtm_tag', 
-			'tradedeal_types.tradedeal_type', 'tradedeal_uoms.tradedeal_uom', 'tradedeal_channels.scheme'))
+			'tradedeal_types.tradedeal_type', 'tradedeal_uoms.tradedeal_uom', 'tradedeal_channels.buy', 'tradedeal_channels.free'))
 			->join('tradedeal_types', 'tradedeal_types.id', '=', 'tradedeal_channels.tradedeal_type_id', 'left')
 			->join('tradedeal_uoms', 'tradedeal_uoms.id', '=', 'tradedeal_channels.tradedeal_uom_id', 'left')
 			->where('activity_id', $id);
@@ -3021,21 +3021,23 @@ class ActivityController extends BaseController {
 		return Datatables::of($skus)
 			->set_index_column('id')	
 			// ->remove_column('id')
-			->add_column('premuim', '', 6)
+			->add_column('premuim', '', 7)
 			->make();
 	}
 
 	public function updatedtchannel(){
 		if(Request::ajax()){
-			$id = Input::get('ch_id');
-			$scheme = explode("+", Input::get('scheme'));
-			$dtChannel = TradedealChannel::find($id);
-			$dtChannel->tradedeal_type_id = Input::get('deal_type');
-			$dtChannel->tradedeal_uom_id = Input::get('deal_uom');
-			$dtChannel->scheme = $scheme[0] ."+".$scheme[1];
-			$dtChannel->buy = $scheme[0];
-			$dtChannel->free = $scheme[1];
-			$dtChannel->save();
+			$ids = explode(",", Input::get('ch_id')) ;
+			foreach ($ids as $id) {
+				$dtChannel = TradedealChannel::find($id);
+				$dtChannel->tradedeal_type_id = Input::get('deal_type');
+				$dtChannel->tradedeal_uom_id = Input::get('deal_uom');
+				$dtChannel->scheme = Input::get('buy') ."+".Input::get('free');
+				$dtChannel->buy = Input::get('buy');
+				$dtChannel->free = Input::get('free');
+				$dtChannel->save();
+			}
+			
 			$arr['success'] = 1;
 
 			
