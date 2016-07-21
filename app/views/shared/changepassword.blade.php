@@ -8,10 +8,10 @@
 	        <h4 class="modal-title" id="myModalLabel">Password Policy</h4>
 	      </div>
 	      <div class="modal-body">
-	        Your password has already expired.  Please input your old and new passwords below.
+	        Your password has expired.  You need to change your password..
 	      </div>
 	      <div class="modal-footer">
-	        <button id="changepassword" type="button" class="btn btn-primary">Yes</button>
+	        <button id="changepassword" type="button" class="btn btn-primary">Ok</button>
 	      </div>
 	    </div>
 	  </div>
