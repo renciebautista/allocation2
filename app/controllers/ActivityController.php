@@ -75,8 +75,8 @@ class ActivityController extends BaseController {
 			$activity_types = ActivityType::getWithNetworks();
 			$cycles = Cycle::getLists();
 			$objectives = Objective::getLists();
-			$brands = Pricelist::getFullBrand()->lists('brand_desc', 'brand_code');
-			return View::make('activity.createcusomized', compact('cycles', 'activity_types', 'objectives', 'brands'));
+			$divisions = Pricelist::divisions();
+			return View::make('activity.createcusomized', compact('cycles', 'activity_types', 'objectives', 'divisions'));
 		}else{
 			if(Auth::user()->hasRole("PROPONENT")){
 				$scope_types = ScopeType::getLists();
@@ -113,16 +113,19 @@ class ActivityController extends BaseController {
 						$scope_id = 2;
 						$cycle_id = Input::get('cycle');
 						$activity_type_id = Input::get('activity_type');
+						$division_code = Input::get('division');
+						$category_code = Input::get('category');
+						$brand_code = Input::get('brand');
 
-						foreach (Input::get('brand') as $brand) {
-							$pricelistsku = Pricelist::where('brand_code', $brand)->first();
-							$division_code[] = $pricelistsku->division_code;
-							$category_code[] = $pricelistsku->category_code;
-							$brand_code[] = $pricelistsku->brand_desc;
-						}
+						// foreach (Input::get('brand') as $brand) {
+						// 	$pricelistsku = Pricelist::where('brand_code', $brand)->first();
+						// 	$division_code[] = $pricelistsku->division_code;
+						// 	$category_code[] = $pricelistsku->category_code;
+						// 	$brand_code[] = $pricelistsku->brand_desc;
+						// }
 						
-						Input::merge(array('division' => $division_code,
-						 'category' => $category_code, 'brand' => $brand_code ));
+						// Input::merge(array('division' => $division_code,
+						//  'category' => $category_code, 'brand' => $brand_code ));
 
 						// dd(Input::all());
 
@@ -484,11 +487,11 @@ class ActivityController extends BaseController {
 				$activity_types = ActivityType::getWithNetworks();
 				$cycles = Cycle::getLists();
 				// $divisions = Sku::getDivisionLists();
-				$brands = Pricelist::getFullBrand()->lists('brand_desc', 'brand_code');
+				$divisions = Pricelist::divisions();
 
 				return View::make('activity.customizededit', compact('activity', 'planners', 'approvers', 'cycles',
-					 'activity_types', 'brands' , 'sel_divisions','objectives',  'users', 'budgets', 'nobudgets', 
-					 'sel_objectives',  'schemes', 'scheme_summary', 'networks', 'timings' ,
+					 'activity_types', 'divisions' ,'objectives',  'users', 'budgets', 'nobudgets', 
+					 'sel_objectives', 'sel_divisions',  'schemes', 'scheme_summary', 'networks', 'timings' ,
 					 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings',
 					 'comments' ,'submitstatus'));
 			}
@@ -607,8 +610,8 @@ class ActivityController extends BaseController {
 							$activity->proponent_name = Auth::user()->getFullname();
 							$activity->contact_no = Auth::user()->contact_no;
 							
-							$activity->scope_type_id = $scope_id;
-							$activity->scope_desc = $scope->scope_name;
+							// $activity->scope_type_id = $scope_id;
+							// $activity->scope_desc = $scope->scope_name;
 
 							$activity->cycle_id = $cycle_id;
 							$activity->cycle_desc = $cycle->cycle_name;

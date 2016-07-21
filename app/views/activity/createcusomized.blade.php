@@ -140,13 +140,35 @@
 					<div class="form-group">
 						<div class="row">
 							<div class="col-lg-12">
-								{{ Form::label('brand', 'Brand', array('class' => 'control-label')) }}
-								{{ Form::select('brand[]', $brands, null, array('id' => 'brand', 'class' => 'form-control multiselect', 'multiple' => 'multiple')) }}
+								{{ Form::label('division', 'Division', array('class' => 'control-label')) }}
+								{{ Form::select('division[]',  $divisions, null, array('id' => 'division', 'class' => 'form-control multiselect' ,'multiple' => 'multiple' ,'data-placeholder' => 'SELECT DIVISION')) }}
 							</div>
 						</div>
 					</div>
 				</div>
-				
+				<div class="col-lg-6">
+					<div class="form-group">
+						<div class="row">
+							<div id="multiselect" class="col-lg-12">
+								{{ Form::label('category', 'Category', array('class' => 'control-label')) }}
+								<select class="form-control multiselect" data-placeholder="SELECT CATEGORY" id="category" name="category[]" multiple="multiple" ></select>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-lg-6">
+					<div class="form-group">
+						<div class="row">
+							<div class="col-lg-12">
+								{{ Form::label('brand', 'Brand', array('class' => 'control-label')) }}
+								<select class="form-control multiselect" data-placeholder="SELECT BRAND" id="brand" name="brand[]" multiple="multiple" ></select>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 
 			<div class="row">

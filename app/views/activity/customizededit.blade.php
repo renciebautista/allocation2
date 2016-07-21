@@ -67,19 +67,42 @@
 
 
 <ul class="nav nav-tabs">
-	<li class="active"><a id="tab-activity" aria-expanded="true" href="#activity">Activity Details</a></li>
+	<li class="active"><a id="tab-summary" aria-expanded="true" href="#summary">Activity Summary</a></li>
+	<li class=""><a id="tab-activity" aria-expanded="true" href="#activity">Activity Details</a></li>
+	<li class=""><a id="tab-member" aria-expanded="true" href="#member">Activity Members</a></li>
 	<li class=""><a id="tab-customer" aria-expanded="false" href="#customer">Customer Details</a></li>
 	<li class=""><a id="tab-schemes" aria-expanded="false" href="#schemes">Schemes</a></li>
 	<li class=""><a id="tab-budget" aria-expanded="false" href="#budget">Budget Details</a></li>
 	<li class=""><a id="tab-timings" aria-expanded="false" href="#timings">Timings Details</a></li>
 	<li class=""><a id="tab-attachments" aria-expanded="false" href="#attachment">Attachments</a></li>
 	<li class=""><a id="tab-comments" aria-expanded="false" href="#comments">Comments</a></li>
+	<li class=""><a id="tab-jo" aria-expanded="false" href="#jo">Job Orders</a></li>
 </ul>
 
 <div id="myTabContent" class="tab-content">
 
+	<!-- summary -->
+	<div class="tab-pane fade active in" id="summary">
+		<br>
+		<div class="panel panel-default">
+			<div class="panel-body">
+				<div class="col-md-9 col-sm-9 col-xs-12">
+					<div>
+						<h4>Recent Activity</h4>
+						<hr>
+						<ul>
+							<li>
+								<div></div>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<!-- activity details -->
-	<div class="tab-pane fade active in" id="activity">
+	<div class="tab-pane fade " id="activity">
 		<br>
 		{{ Form::open(array('route' => array('activity.update', $activity->id), 'method' => 'PUT', 'class' => 'bs-component','id' => 'updateActivity')) }}
 		<div class="panel panel-default">
@@ -201,8 +224,41 @@
 						<div class="form-group">
 							<div class="row">
 								<div class="col-lg-12">
+									{{ Form::label('division', 'Division', array('class' => 'control-label')) }}
+									{{ Form::select('division[]',  $divisions, $sel_divisions, array('id' => 'division', 'class' => 'form-control' ,'multiple' => 'multiple' ,'data-placeholder' => 'SELECT DIVISION')) }}
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-6">
+						<div class="form-group">
+							<div class="row">
+								<div id="multiselect" class="col-lg-12">
+									{{ Form::label('category', 'Category', array('class' => 'control-label')) }}
+									<select class="form-control" data-placeholder="SELECT CATEGORY" id="category" name="category[]" multiple="multiple" ></select>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-lg-6">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
 									{{ Form::label('brand', 'Brand', array('class' => 'control-label')) }}
-									{{ Form::select('brand[]', $brands, null, array('id' => 'brand', 'class' => 'form-control multiselect', 'multiple' => 'multiple')) }}
+									<select class="form-control" data-placeholder="SELECT BRAND" id="brand" name="brand[]" multiple="multiple" ></select>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-6">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('skus', 'SKU/s Involved', array('class' => 'control-label')) }}
+									<select class="form-control" data-placeholder="SELECT SKU/s" id="skus" name="skus[]" multiple="multiple" ></select>
 								</div>
 							</div>
 						</div>
@@ -292,6 +348,44 @@
 				</div>
 			</div><br>
 			{{ Form::close() }}
+	</div>
+
+	<!-- members -->
+	<div class="tab-pane fade" id="member">
+		<br>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Activity Members</h3>
+			</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-lg-12">
+						<a href="{{ URL::action('SchemeController@create', $activity->id) }}" class="btn btn-primary">Add Member</a>
+					</div>
+				</div>
+				<br>
+				<div class="row">
+					<div class="col-lg-12">
+						<div class="table-responsive">
+							<table class="table table-striped table-condensed table-hover">
+								<thead>
+									<tr>
+										<th>#</th>
+										<th>Fullname</th>
+										<th colspan="3" class="text-center">Action</th>
+									</tr>
+								</thead>
+							  	<tbody>
+							  		
+							  	</tbody>
+							  	
+							</table> 
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 
 	<!-- customer details -->
@@ -957,7 +1051,7 @@
 		<br>
 	</div>
 
-		<!-- attachment details -->
+	<!-- attachment details -->
 	<div class="tab-pane fade" id="comments">
 		<br>
 		<div class="panel panel-default">
