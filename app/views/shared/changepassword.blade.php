@@ -8,10 +8,9 @@
 	        <h4 class="modal-title" id="myModalLabel">Password Policy</h4>
 	      </div>
 	      <div class="modal-body">
-	        Your Password already exceeds {{$settings->pasword_expiry}} days. Would you like to change your password?
+	        Your password has already expired.  Please input your old and new passwords below.
 	      </div>
 	      <div class="modal-footer">
-	        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 	        <button id="changepassword" type="button" class="btn btn-primary">Yes</button>
 	      </div>
 	    </div>

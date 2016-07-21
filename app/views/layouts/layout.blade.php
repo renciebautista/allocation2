@@ -334,7 +334,10 @@
 	<script type="text/javascript">
 		$(document).ready(function() {
 
-			$('#changepasswordmodal').modal('show');
+			$('#changepasswordmodal').modal({
+			    backdrop: 'static',   // This disable for click outside event
+			    keyboard: true        // This for keyboard event
+			});
 			$('#changepassword').on('click', function(){
 				$('#changepasswordmodal').modal('hide');
 				window.location.href = '/changepassword';
