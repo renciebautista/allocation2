@@ -3021,7 +3021,22 @@ class ActivityController extends BaseController {
 		return Datatables::of($skus)
 			->set_index_column('id')	
 			// ->remove_column('id')
-			->add_column('premuim', '', 7)
+			->add_column('premuim', '<table class="table table-condensed"> 
+		        		<thead> 
+		        			<tr> 
+		        				<th>Host SKU</th> 
+		        				<th class="right">Ref SKU</th> 
+		        				<th class="right">Buy</th> 
+		        				<th class="right">Free</th>
+		        				<th class="right pr_req">Purchare Req.</th>
+		        			</tr> 
+		        		</thead> 
+		        		<tbody><tr><td>DOVE AC AP DEO RLN ULTIMATE WHT 24X40ML - 20272347</td><td class="right">83.00</td><td class="right">24</td><td class="right">1</td><td class="right">83.00</td></tr>
+		        		<tr><td>DOVE AC AP DEO RLN ULTIMATE WHT 24X40ML - 20272347</td><td class="right">83.00</td><td class="right">24</td><td class="right">1</td><td class="right">83.00</td></tr>
+		        		<tr><td>DOVE AC AP DEO RLN ULTIMATE WHT 24X40ML - 20272347</td><td class="right">83.00</td><td class="right">24</td><td class="right">1</td><td class="right">83.00</td></tr>
+		        		</tbody> 
+		        		
+		        		</table>', 7)
 			->make();
 	}
 
