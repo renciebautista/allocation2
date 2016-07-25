@@ -65,8 +65,15 @@
 								<li>{{ HTML::linkRoute('activity.index', 'All') }}</li> 
 								<li>{{ HTML::linkAction('activity.index' , 'Unreleased',array('st' => ['1','2','3','4','5','6','7','8'],'title' => '')) }}</li>  
 								<li>{{ HTML::linkAction('activity.index' , 'Released',array('st' => ['9'],'title' => '')) }}</li>  
-								<li>{{ HTML::linkAction('ActivityController@create', 'Add New National Activity', [1]) }}</li> 
-								<li>{{ HTML::linkAction('ActivityController@create', 'Add New Customized Activity', [2]) }}</li> 
+								<li class="dropdown-submenu">
+								    <a tabindex="0" data-toggle="dropdown">New Activity</a>
+								    <ul class="dropdown-menu">
+								      	<li>{{ HTML::linkAction('ActivityController@create', 'National', [1]) }}</li> 
+										<li>{{ HTML::linkAction('ActivityController@create', 'Customized', [2]) }}</li>
+								    </ul>
+								</li>
+						
+								 
 								@endif
 
 								@if(Auth::user()->inRoles(['PMOG PLANNER','FIELD SALES']))

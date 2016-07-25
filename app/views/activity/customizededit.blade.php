@@ -370,13 +370,44 @@
 							<table class="table table-striped table-condensed table-hover">
 								<thead>
 									<tr>
-										<th>#</th>
 										<th>Fullname</th>
+										<th>Department</th>
+										<th>Status</th>
+										<th>Access</th>
 										<th colspan="3" class="text-center">Action</th>
 									</tr>
 								</thead>
 							  	<tbody>
-							  		
+							  		<tr>
+							  			<td>Rencie</td>
+							  			<td>Channel</td>
+							  			<td>For Approval</td>
+							  			<td></td>
+							  			<td></td>
+							  		</tr>
+							  		<tr>
+							  			<td>Rencie</td>
+							  			<td>Channel</td>
+							  			<td>Approve</td>
+							  			<td>Edit, Comment</td>
+							  			<td></td>
+							  		</tr>
+							  		<tr>
+							  			<td>Rencie 1</td>
+							  			<td>Channel</td>
+							  			<td>Deny</td>
+							  			<td></td>
+							  			<td>Re-process</td>
+
+							  		</tr>
+
+							  		<tr>
+							  			<td>Rencie</td>
+							  			<td>Field</td>
+							  			<td>Waiting For Release</td>
+							  			<td></td>
+							  			<td></td>
+							  		</tr>
 							  	</tbody>
 							  	
 							</table> 
@@ -651,61 +682,6 @@
 				</div>
 			</div>
 
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h3 class="panel-title">IO for Raising</h3>
-				</div>
-				<div class="panel-body">
-					<div id="c_without_budget">
-						<div class="row">
-							<div class="col-lg-12">
-								<div class="form-group">
-									<div class="row">
-										<div class="col-lg-12">
-											<table id="no_budget_table" class="table table-striped table-hover ">
-												<thead>
-													<tr>
-														<th style="width:9%;">Type</th>
-														<th>Budget Holder</th>
-														<th>Budget Name</th>
-														<th>Amount</th>
-														<th>Start Date</th>
-														<th>End Date</th>
-														<th>Remarks</th>
-														<th colspan="2">Action</th>
-													</tr>
-												</thead>
-												<tbody>
-												@foreach ($nobudgets as $nobudget)
-												<tr id="{{ $nobudget->id }}">
-													<td class="budget_ttstype">{{ $nobudget->budgettype->budget_type }}</td>
-													<td class="budget_no">{{ $nobudget->budget_no }}</td>
-													<td class="budget_name">{{ $nobudget->budget_name }}</td>
-													<td class="budget_amount">{{ number_format($nobudget->amount,2) }}</td>
-													<td class="budget_startdate">{{ date_format(date_create($nobudget->start_date),'m/d/Y') }}</td>
-													<td class="budget_enddate">{{ date_format(date_create($nobudget->end_date),'m/d/Y') }}</td>
-													<td class="budget_remarks">{{ $nobudget->remarks }}</td>
-													<td>
-														<a href="javascript:;" id="{{ $nobudget->id }}" class="ajaxEdit btn btn-primary btn-xs">Edit</a>
-													</td>
-													<td><a href="javascript:;" id="{{ $nobudget->id }}" class="ajaxDelete btn btn-danger btn-xs">Delete</a></td>
-												</tr>
-												@endforeach
-												</tbody>
-												
-											</table> 
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			
-
-			
 			<div class="row">
 					<div class="col-lg-12">
 						<div class="form-group">

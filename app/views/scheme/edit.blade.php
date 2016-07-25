@@ -40,11 +40,12 @@
 <div id="myTabContent" class="tab-content">
 	<div class="tab-pane fade active in" id="details">
 		<br>
+		{{ Form::open(array('action' => array('SchemeController@update', $scheme->id), 'files'=>true, 'method' => 'PUT', 'id' => 'updatescheme', 'class' => 'bs-component')) }}
+
 		<div class="panel panel-primary">
 			<div class="panel-heading">Scheme Details</div>
 			<div class="panel-body">
 
-					{{ Form::open(array('action' => array('SchemeController@update', $scheme->id), 'files'=>true, 'method' => 'PUT', 'id' => 'updatescheme', 'class' => 'bs-component')) }}
 					<div class="row">
 						<div class="col-lg-12">
 							<div class="form-group">
@@ -92,44 +93,6 @@
 						</div>
 					</div>
 
-					
-
-					<div class="row">
-						<div class="col-lg-12">
-							<div class="form-group">
-								<div class="row">
-									<div class="col-lg-4">
-										{{ Form::label('item_code', 'Promo Item Code', array('class' => 'control-label')) }}
-										{{ Form::text('item_code',$scheme->item_code, array('class' => 'form-control', 'placeholder' => 'Item Code','maxlength' => 8)) }}
-									</div>
-									
-
-									<div class="col-lg-8">
-										{{ Form::label('item_desc', 'Promo Item Description', array('class' => 'control-label')) }}
-										{{ Form::text('item_desc',$scheme->item_desc,array('id' => 'item_desc', 'class' => 'form-control', 'placeholder' => 'Item Description','maxlength' => 80)) }}
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-
-
-					<div class="row">
-						<div class="col-lg-12">
-							<div class="form-group">
-								<div class="row">
-									<div class="col-lg-4">
-										{{ Form::label('item_barcode', 'Promo Item Barcode', array('class' => 'control-label')) }}
-										{{ Form::text('item_barcode',$scheme->item_barcode, array('class' => 'form-control', 'placeholder' => 'Item Barcode','maxlength' => 13)) }}
-									</div>
-									<div class="col-lg-4">
-										{{ Form::label('item_casecode', 'Promo Item Casecode', array('class' => 'control-label')) }}
-										{{ Form::text('item_casecode',$scheme->item_casecode,array('class' => 'form-control', 'placeholder' => 'Item Casecode','maxlength' => 14)) }}
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
 
 					<div class="row">
 						<div class="col-lg-4">
@@ -313,7 +276,59 @@
 				  	</div>
 					</div>
 					<br>
+					
+
+
+			</div>
+		</div>
+
+		<div class="panel panel-primary">
+			<div class="panel-heading">Product Information</div>
+			<div class="panel-body">
 					<div class="row">
+						<div class="col-lg-12">
+							<div class="form-group">
+								<div class="row">
+									<div class="col-lg-4">
+										{{ Form::label('item_code', 'Promo Item Code', array('class' => 'control-label')) }}
+										{{ Form::text('item_code',$scheme->item_code, array('class' => 'form-control', 'placeholder' => 'Item Code','maxlength' => 8)) }}
+									</div>
+									
+
+									<div class="col-lg-8">
+										{{ Form::label('item_desc', 'Promo Item Description', array('class' => 'control-label')) }}
+										{{ Form::text('item_desc',$scheme->item_desc,array('id' => 'item_desc', 'class' => 'form-control', 'placeholder' => 'Item Description','maxlength' => 80)) }}
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="form-group">
+								<div class="row">
+									<div class="col-lg-4">
+										{{ Form::label('item_barcode', 'Promo Item Barcode', array('class' => 'control-label')) }}
+										{{ Form::text('item_barcode',$scheme->item_barcode, array('class' => 'form-control', 'placeholder' => 'Item Barcode','maxlength' => 13)) }}
+									</div>
+									<div class="col-lg-4">
+										{{ Form::label('item_casecode', 'Promo Item Casecode', array('class' => 'control-label')) }}
+										{{ Form::text('item_casecode',$scheme->item_casecode,array('class' => 'form-control', 'placeholder' => 'Item Casecode','maxlength' => 14)) }}
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					
+					
+
+			</div>
+		</div>
+
+		<div class="row">
 						<div class="col-lg-12">
 							<div class="form-group">
 								<div class="row">
@@ -325,10 +340,9 @@
 							</div>
 						</div>
 					</div>
-					{{ Form::close() }}
+					<br>
+		{{ Form::close() }}
 
-			</div>
-		</div>
 		@if($count > 0)
 		<div class="panel panel-warning">
 			<div class="panel-heading">
