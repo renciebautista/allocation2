@@ -14,6 +14,7 @@
 <div class="row">
 	<div class="col-lg-12">
 		<div class="form-group">
+			
 			{{ HTML::linkRoute($route, 'Back To Activity List', array(), array('class' => 'btn btn-default')) }}
 
 			@if(isset($submitstatus))
@@ -480,8 +481,12 @@
 											  	<td class="text-right">{{ number_format($scheme->final_pe_r,2) }}</td>
 											  	<td class="text-right">{{ number_format($scheme->final_total_cost,2) }}</td>
 											  	<td>
+											  		@if(Auth::user()->hasRole("ADMINISTRATOR"))
+											  		{{ HTML::linkAction('ReportController@scheme','View', $scheme->id, array('class' => 'btn btn-primary btn-xs')) }}
+											  		@else
 											  		{{ HTML::linkAction('SchemeController@edit','View', $scheme->id, array('class' => 'btn btn-primary btn-xs')) }}
 											  		<button class="btn btn-danger btn-xs disabled">Delete</button>
+											  		@endif
 											  	</td>
 											</tr>
 											@endforeach
