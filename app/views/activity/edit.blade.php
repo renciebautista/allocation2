@@ -693,12 +693,6 @@
 				<h3 class="panel-title">Participating Variants</h3>
 			</div>
 			<div class="panel-body">
-				<div class="row">
-					<div class="col-lg-12">
-						<button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#addSku">Add Participating Variants</button>
-					</div>
-				</div>
-				<br>
 				<div >
 					<div class="row">
 						<div class="col-lg-12">
@@ -706,21 +700,35 @@
 								<div class="row">
 									<div class="col-lg-12">
 										<table id="participating_sku" class="table table-striped table-hover ">
-											<thead>
-												<tr>
-													<th>Set Name</th>
-													<th>Host SKUs</th>
-													<th>Reference SKUs</th>
-													<th>Premium SKUs (ULP)</th>
-													<th class="right">Cost / Pcs</th>
-													<th class="right">Pcs / Case</th>
-													<th></th>
-													<th></th>
-												</tr>
-											</thead>
-											<tbody>
-											</tbody>
-										</table> 
+										<thead>
+											<tr>
+												<th style="width:9%;">Type</th>
+												<th>IO</th>
+												<th>Amount</th>
+												<th>Start Date</th>
+												<th>End Date</th>
+												<th>Remarks</th>
+												<th colspan="2">Action</th>
+											</tr>
+										</thead>
+										<tbody>
+
+											@foreach ($budgets as $budget)
+											<tr id="{{ $budget->id }}">
+												<td class="io_ttstype">{{ $budget->budgettype->budget_type }}</td>
+												<td class="io_no">{{ strtoupper($budget->io_number) }}</td>
+												<td class="io_amount">{{ number_format($budget->amount,2) }}</td>
+												<td class="io_startdate">{{ date_format(date_create($budget->start_date),'m/d/Y') }}</td>
+												<td class="io_enddate">{{ date_format(date_create($budget->end_date),'m/d/Y') }}</td>
+												<td class="io_remarks">{{ $budget->remarks }}</td>
+												<td>
+													<a href="javascript:;" id="{{ $budget->id }}" class="ajaxEdit btn btn-primary btn-xs">Edit</a>
+												</td>
+												<td><a href="javascript:;" id="{{ $budget->id }}" class="ajaxDelete btn btn-danger btn-xs">Delete</a></td>
+											</tr>
+											@endforeach
+										</tbody>
+									</table> 
 									</div>
 								</div>
 							</div>
