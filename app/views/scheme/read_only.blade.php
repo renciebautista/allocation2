@@ -16,8 +16,7 @@
 			@if(Auth::user()->hasRole("ADMINISTRATOR"))
 			<a class="btn btn-default" href="{{action('ReportController@review', $activity->id);}}#schemes">Back to Activity Details</a>
 			@else
-			<a class="btn btn-default" href="{{action('ActivityController@activities', $activity->id);}}#schemes">Back to Activity Details</a>
-
+			<a class="btn btn-default" href="{{action('ActivityController@edit', $activity->id);}}#schemes">Back to Activity Details</a>
 			@endif
 		</div>
 	</div>
