@@ -20,35 +20,7 @@ Queue::getIron()->ssl_verifypeer = false;
 
 
 Route::get('test', function(){
-	$a = '1';
-	echo $a . '</br>';
-	$b = &$a;
-	echo $b . '</br>';
-	$b = "2$b";
-	echo $b . '</br>';
-	echo $a.", ".$b;
-	// $data = ['draw' => 1, 'recordsTotal' => 1, 'recordsFiltered' => 1,
-	// 'data' => [['C16205','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
-	// 	['C11602','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
-	// 	['C11607','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
-	// 	['C11608','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
-	// 	['C11609','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
-	// 	['C11610','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
-	// 	['C11611','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
-	// 	['C11612','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
-	// 	['C11613','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
-	// 	['C11614','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
-	// 	['C11615','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
-	// 	['C11616','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
-	// 	['C11617','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
-	// 	['C11618','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
-	// 	['C11619','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
-	// 	['C11620','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
-	// 	['C11621','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
-	// 	['C11622','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', ''],
-	// 	['C11623','CANVASSER', 'Canvasser','NO','','', '','', '', '', '', '', '', '']]
-	// 	];
-	// return Response::json($data,200);
+	
 });
 
 
@@ -129,7 +101,8 @@ Route::group(array('before' => 'auth'), function()
 	Route::put('activity/updatebudget', 'ActivityController@updatebudget');
 
 	Route::get('activity/{id}/getpartskus', 'ActivityController@getpartskus');
-	Route::get('activity/{id}/partskus', 'ActivityController@partskus');
+	Route::get('activity/{id}/getpartskustable', 'ActivityController@getpartskustable');
+	Route::get('activity/{id}/partsku', 'ActivityController@partsku');
 	Route::post('activity/{id}/addpartskus', 'ActivityController@addpartskus');
 	Route::post('activity/deletepartskus', 'ActivityController@deletepartskus');
 	Route::post('activity/updatepartskus', 'ActivityController@updatepartskus');

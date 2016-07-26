@@ -639,8 +639,8 @@
 						<div class="form-group">
 							<div class="row">
 								<div class="col-lg-12">
-									{{ Form::label('non_ulp_premium_code', 'Code', array('class' => 'control-label')) }}
-									{{ Form::text('non_ulp_premium_code',($tradedeal) ?  $tradedeal->non_ulp_premium_code : '', array('class' => 'form-control', 'id' => 'non_ulp_premium_code')) }}
+									{{ Form::label('non_ulp_premium_desc', 'Description', array('class' => 'control-label')) }}
+									{{ Form::text('non_ulp_premium_desc',($tradedeal) ?  $tradedeal->non_ulp_premium_desc : '', array('class' => 'form-control', 'id' => 'non_ulp_premium_desc')) }}
 								</div>
 							</div>
 						</div>
@@ -650,14 +650,12 @@
 						<div class="form-group">
 							<div class="row">
 								<div class="col-lg-12">
-									{{ Form::label('non_ulp_premium_desc', 'Description', array('class' => 'control-label')) }}
-									{{ Form::text('non_ulp_premium_desc',($tradedeal) ?  $tradedeal->non_ulp_premium_desc : '', array('class' => 'form-control', 'id' => 'non_ulp_premium_desc')) }}
+									{{ Form::label('non_ulp_premium_code', 'Code', array('class' => 'control-label')) }}
+									{{ Form::text('non_ulp_premium_code',($tradedeal) ?  $tradedeal->non_ulp_premium_code : '', array('class' => 'form-control', 'id' => 'non_ulp_premium_code')) }}
 								</div>
 							</div>
 						</div>
 					</div>
-
-					
 
 					<div class="col-lg-3">
 						<div class="form-group">
@@ -693,6 +691,12 @@
 				<h3 class="panel-title">Participating Variants</h3>
 			</div>
 			<div class="panel-body">
+				<div class="row">
+					<div class="col-lg-12">
+						<button type="button" class="btn btn-primary btn-sm " id="add_sku">Add Participating SKU</button>
+					</div>
+				</div>
+				<br>
 				<div >
 					<div class="row">
 						<div class="col-lg-12">
@@ -702,31 +706,20 @@
 										<table id="participating_sku" class="table table-striped table-hover ">
 										<thead>
 											<tr>
-												<th style="width:9%;">Type</th>
-												<th>IO</th>
-												<th>Amount</th>
-												<th>Start Date</th>
-												<th>End Date</th>
-												<th>Remarks</th>
-												<th colspan="2">Action</th>
+												<th>Host SKU</th>
+												<th>Cost / Pcs</th>
+												<th>Pcs / Case</th>
+												<th>Reference SKU</th>
+												<th>Premium SKU (ULP)</th>
+												<th>Cost / Pcs</th>
+												<th>Pcs / Case</th>
+												<th></th>
+												<th></th>
 											</tr>
 										</thead>
 										<tbody>
 
-											@foreach ($budgets as $budget)
-											<tr id="{{ $budget->id }}">
-												<td class="io_ttstype">{{ $budget->budgettype->budget_type }}</td>
-												<td class="io_no">{{ strtoupper($budget->io_number) }}</td>
-												<td class="io_amount">{{ number_format($budget->amount,2) }}</td>
-												<td class="io_startdate">{{ date_format(date_create($budget->start_date),'m/d/Y') }}</td>
-												<td class="io_enddate">{{ date_format(date_create($budget->end_date),'m/d/Y') }}</td>
-												<td class="io_remarks">{{ $budget->remarks }}</td>
-												<td>
-													<a href="javascript:;" id="{{ $budget->id }}" class="ajaxEdit btn btn-primary btn-xs">Edit</a>
-												</td>
-												<td><a href="javascript:;" id="{{ $budget->id }}" class="ajaxDelete btn btn-danger btn-xs">Delete</a></td>
-											</tr>
-											@endforeach
+											
 										</tbody>
 									</table> 
 									</div>
@@ -763,10 +756,7 @@
 													<th>Channel Name</th>
 													<th>RTM Tagging</th>
 													<th>Deal Type</th>
-													<th>UOM</th>
-													<th>Buy</th>
-													<th>Free</th>
-													<th>Premium</th>
+													<th></th>
 												</tr>
 											</thead>
 											<tbody>
@@ -1325,159 +1315,58 @@
 
 
 @if($activity->activitytype->with_tradedeal)
-<!-- Modal -->
-<div class="modal fade modal-wide" id="addSku" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	<div class="modal-dialog ">
-		{{ Form::open(array('action' => array('ActivityController@addpartskus', $activity->id), 'method' => 'POST', 'class' => 'bs-component','id' => 'addpartsku')) }}
-		<div class="modal-content ">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<h4 class="modal-title" id="myModalLabel">Participating Variants</h4>
-			</div>
-
-			<div class="modal-body">
-				<div id="td-error"></div>
-
-		        <div class="row">
-		          	<div class="col-md-12">
-		          		<div class="form-group">
-		            		<label for="recipient-name" class="control-label">Set Name</label>
-		            		<input type="text" class="form-control" id="set_name" name="set_name">
-		       			</div>
-		          	</div>
-		        </div>
-
-		        <div class="row">
-		          	<div class="col-md-8">
-		          		<div class="form-group">
-		            		<label for="recipient-name" class="control-label">Host SKU</label>
-		            		{{ Form::select('host_sku', array('0' => '') + $host_skus, [], array('data-placeholder' => 'Select Host SKU','id' => 'host_skus', 'class' => 'form-control')) }}
-		       			</div>
-		          	</div>
-		          	<div class="col-md-2">
-		          		<div class="form-group">
-		            		<label for="recipient-name" class="control-label">Qty</label>
-		            		<input type="text" class="form-control" name="host_qty" id="host_qty" value="1">
-		       			</div>
-		          	</div>
-
-		          	<div class="col-md-2">
-		          		<br>
-		          		<button type="button" id="add-host-sku" class="btn btn-primary">Add</button>
-		          	</div>
-		          	
-		        </div>
-
-		        <div class="row">
-		          	<div class="col-md-12">
-		          		<table id="set_sku" class="table table-condensed"> 
-		        		<thead> 
-		        			<tr> 
-		        				<th>#</th> 
-		        				<th>Host SKU</th> 
-		        				<th class="right">Cost / Pcs</th> 
-		        				<th class="right">Pcs / Case</th> 
-		        				<th class="right">Qty</th>
-		        				<th class="right pr_req">Purchare Req.</th>
-		        				<th>Action</th>
-		        			</tr> 
-		        		</thead> 
-		        		<tbody> 
-		        			
-		        		</tbody> 
-		        		<tfoot>
-		        			<tr>
-		        				<th class="right" colspan="5">Total Purchase Requirement</th>
-		        				<th class="right"><span id="total_req"></span></th>
-		        				<th></th>
-		        			</tr>
-		        		</tfoot>
-		        		</table>
-		        	</div>
-		        </div>
-
-		        <div class="row">
-		          	<div class="col-md-12">
-		          		<div class="form-group">
-		            		<label for="reference-sku" class="control-label">Reference SKU</label>
-		            		{{ Form::select('ref_skus', array('0' => '') + $ref_skus, [], array('data-placeholder' => 'Select Reference SKU','id' => 'ref_skus', 'class' => 'form-control')) }}
-		       			</div>
-		          	</div>
-		        </div>
-
-		        <div id="refsku" class="row">
-		          	<div class="col-md-12">
-		          		<div class="form-group">
-		            		<label for="reference-sku" class="control-label">Premium SKU(ULP)</label>
-		            		{{ Form::select('pre_skus', array('0' => '') + $pre_skus, [], array('data-placeholder' => 'Select Premium SKU','id' => 'pre_skus', 'class' => 'form-control')) }}
-		       			</div>
-		          	</div>
-		        </div>
-	      	</div>
-
-			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				<button id="addsku" class="btn btn-primary">Submit</button>
-			</div>
-		</div>
-		{{ Form::close() }}
-	</div>
-</div>
-
 
 <!-- Modal -->
-<div class="modal fade" id="editSku" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal fade" id="addsku" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
-		{{ Form::open(array('action' => array('ActivityController@updatepartskus'), 'method' => 'POST', 'class' => 'bs-component','id' => 'editpartsku')) }}
-		{{ Form::hidden('sku_id', '', array('id' => 'sku_id')) }}
+		{{ Form::open(array('action' => array('ActivityController@addpartskus', $activity->id), 'method' => 'POST', 'class' => 'bs-component','id' => 'addpartskus')) }}
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<h4 class="modal-title" id="myModalLabel">Edit Participating Variants</h4>
+				<h4 class="modal-title" id="myModalLabel">Add Participating SKU</h4>
 			</div>
 			<div class="modal-body">
+				<div class="error-msg"></div>
 				<table class="table table-bordered">
 					<tbody>
 						<tr>
 							<td>Host SKU</td>
-							<td>
-								{{ Form::select('host_sku', array('0' => '') + $host_skus, [], array('data-placeholder' => 'Select Host SKU','id' => 'ehost_skus', 'class' => 'form-control')) }}
+							<td colspan="3">
+								{{ Form::select('host_sku', array('0' => '') + $host_skus, [], array('data-placeholder' => 'Select Host SKU','id' => 'host_sku', 'class' => 'form-control')) }}
 							</td>
 						</tr>
+						
 						<tr>
 							<td>Cost / Pcs</td>
 							<td>
-								<input class="form-control" name="host_cost_pcs" type="text" value="" id="ehost_cost_pcs" readonly =''>
+								<input class="form-control" name="host_cost_pcs" type="text" value="0" id="host_cost_pcs" readonly =''>
 							</td>
-						</tr>
-						<tr>
 							<td>Pcs / Case</td>
 							<td>
-								<input class="form-control" name="host_pcs_case" type="text" value="" id="ehost_pcs_case" readonly =''>
+								<input class="form-control" name="host_pcs_case" type="text" value="0" id="host_pcs_case" readonly =''>
 							</td>
 						</tr>
 						<tr>
 							<td>Reference SKU</td>
-							<td>
-								{{ Form::select('ref_sku', array('0' => '') + $ref_skus, [], array('data-placeholder' => 'Select Reference SKU','id' => 'eref_skus', 'class' => 'form-control')) }}
+							<td colspan="3">
+								{{ Form::select('ref_sku', array('0' => '') + $ref_skus, [], array('data-placeholder' => 'Select Reference SKU','id' => 'ref_sku', 'class' => 'form-control')) }}
 							</td>
 						</tr>
-						<tr>
-							<td>Premium SKU (ULP)</td>
-							<td>
-								{{ Form::select('pre_sku', array('0' => '') + $pre_skus, [], array('data-placeholder' => 'Select Premium SKU','id' => 'epre_skus', 'class' => 'form-control')) }}
+						<tr class="pre-sku">
+							<td>Premiun SKU (ULP)</td>
+							<td colspan="3">
+								{{ Form::select('pre_sku', array('0' => '') + $pre_skus, [], array('data-placeholder' => 'Select Premium SKU','id' => 'pre_sku', 'class' => 'form-control')) }}
 							</td>
 						</tr>
-						<tr>
+						
+						<tr class="pre-sku">
 							<td>Cost / Pcs</td>
 							<td>
-								<input class="form-control" name="pre_cost_pcs" type="text" value="" id="epre_cost_pcs" readonly =''>
+								<input class="form-control" name="pre_cost_pcs" type="text" value="0" id="pre_cost_pcs" readonly =''>
 							</td>
-						</tr>
-						<tr>
 							<td>Pcs / Case</td>
 							<td>
-								<input class="form-control" name="pre_pcs_case" type="text" value="" id="epre_pcs_case" readonly =''>
+								<input class="form-control" name="pre_pcs_case" type="text" value="0" id="pre_pcs_case" readonly =''>
 							</td>
 						</tr>
 					</tbody>
@@ -1485,7 +1374,7 @@
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				<button id="updatesku" class="btn btn-primary">Update</button>
+				<button id="submitsku" class="btn btn-primary">Submit</button>
 			</div>
 		</div>
 		{{ Form::close() }}
@@ -1493,7 +1382,7 @@
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="editChannel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal fade modal-wide" id="editChannel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		{{ Form::open(array('action' => array('ActivityController@updatedtchannel'), 'method' => 'POST', 'class' => 'bs-component','id' => 'updatedtchannel')) }}
 		{{ Form::hidden('ch_id', '', array('id' => 'ch_id')) }}
@@ -1507,37 +1396,65 @@
 					<tbody>
 						<tr>
 							<td>Deal Type</td>
-							<td>
-								{{ Form::select('deal_type', array('0' => '') + $dealtypes, [], array('data-placeholder' => 'Select Deal Type','id' => 'deal_type', 'class' => 'form-control')) }}
-							</td>
-						</tr>
-						
-						<tr>
-							<td>UOM</td>
-							<td>
-								{{ Form::select('deal_uom', array('0' => '') + $dealuoms, [], array('data-placeholder' => 'Select Unit Of Measurement','id' => 'deal_uom', 'class' => 'form-control')) }}
-							</td>
-						</tr>
-						<tr>
-							<td>Buy</td>
-							<td>
-								<input class="form-control" name="buy" type="text" value="" id="buy">
-							</td>
-						</tr>
-						<tr>
-							<td>Free</td>
-							<td>
-								<input class="form-control" name="free" type="text" value="" id="free">
-							</td>
-						</tr>
-						<tr>
-							<td>Premium</td>
-							<td>
-								<input class="form-control" name="pre_cost_pcs" type="text" value="" id="epre_cost_pcs">
+							<td colspan="3">
+								{{ Form::select('deal_type', array('0' => 'Select Deal Type') + $dealtypes, [], array('data-placeholder' => 'Select Deal Type','id' => 'deal_type', 'class' => 'form-control')) }}
 							</td>
 						</tr>
 					</tbody>
 				</table>
+				<div id="channel_skus">
+					<table id="channel_skus" class="table table-striped table-hover ">
+						<thead>
+							<tr>
+								<th><input name="select_all" value="1" type="checkbox"></th>
+								<th>Host SKU</th>
+								<th>Buy</th>
+								<th>Free</th>
+								<th>UOM</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+							</tr>
+						</tbody>
+					</table> 
+				</div>
+				<div id="collective" style="display: none;">
+					<table class="table">
+						<tbody>
+							<tr>
+
+								<td>Free</td>
+								<td> <input class="form-control"> </td>
+							</tr>
+							<tr>
+			
+								<td>UOM</td>
+								<td>
+									{{ Form::select('c_deal_type', array('0' => 'Select Deal Type') + $dealuoms, [], array('data-placeholder' => 'Select Deal Type','id' => 'c_deal_type', 'class' => 'form-control')) }}
+								</td>
+							</tr>
+							<tr>
+								<td>Premiun SKU (ULP)</td>
+								<td>
+									{{ Form::select('c_pre_sku', array('0' => 'Select Premium SKU') + $pre_skus, [], array('data-placeholder' => 'Select Premium SKU','id' => 'c_pre_sku', 'class' => 'form-control')) }}
+								</td>
+		
+							</tr>
+							
+							
+
+						</tbody>
+					</table>
+				</div>
+				
+				
+
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
