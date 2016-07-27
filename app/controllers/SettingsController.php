@@ -18,6 +18,8 @@ class SettingsController extends \BaseController {
 	{
 		$settings = Setting::find(1);
 		$settings->new_user_email = Input::get('new_user_email');
+		$settings->change_password = Input::get('change_password');
+		$settings->pasword_expiry = str_replace(",", "", Input::get('pasword_expiry'));
 		$settings->update();
 
 		return Redirect::action('SettingsController@index')

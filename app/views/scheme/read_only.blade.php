@@ -13,7 +13,11 @@
 <div class="row">
 	<div class="col-lg-12">
 		<div class="form-group">
+			@if(Auth::user()->hasRole("ADMINISTRATOR"))
+			<a class="btn btn-default" href="{{action('ReportController@review', $activity->id);}}#schemes">Back to Activity Details</a>
+			@else
 			<a class="btn btn-default" href="{{action('ActivityController@edit', $activity->id);}}#schemes">Back to Activity Details</a>
+			@endif
 		</div>
 	</div>
 
