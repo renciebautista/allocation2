@@ -958,4 +958,7 @@ table.dataTable thead tr.even th{
 	background-color: #f9f9f9;
 
 }
+.chosen-container{
+  width: 100% !important;
+}
     

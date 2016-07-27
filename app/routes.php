@@ -147,6 +147,9 @@ Route::group(array('before' => 'auth'), function()
 	Route::post('activity/{id}/duplicate','ActivityController@duplicate');
 	Route::get('activity/{id}/summary','ActivityController@summary');
 
+	Route::get('activity/{id}/members', 'ActivityController@members');
+
+
 	// customized
 	Route::get('activity/create/{id}',['as' => 'activity.create', 'uses' => 'ActivityController@create']);
 	Route::post('activity/store/{id}',['as' => 'activity.store', 'uses' => 'ActivityController@store']);
@@ -258,6 +261,8 @@ Route::group(array('before' => 'auth'), function()
 		}
 	});
 
+
+
 	Route::group(array('prefix' => 'api'), function()
 	{
 		Route::get('customerselected', 'api\CustomerController@customerselected');
@@ -291,6 +296,8 @@ Route::group(array('before' => 'auth'), function()
 		Route::post('sobweeks', 'api\SobController@weeks');
 		Route::post('sobweekactivitytype', 'api\SobController@weekactivitytype');
 		Route::post('weekbrand', 'api\SobController@weekbrand');
+
+		Route::get('getnewmembers', 'api\UserController@getnewmembers');
 	});//
 
 
@@ -406,6 +413,8 @@ Route::group(array('before' => 'auth'), function()
 		Route::post('settings', ['as' => 'settings.update', 'uses' => 'SettingsController@update']);
 
 		Route::resource('sobholiday', 'SobholidaysController');
+
+		Route::resource('departments', 'DepartmentsController');
 	});
 
 });

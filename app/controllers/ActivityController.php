@@ -2922,4 +2922,64 @@ class ActivityController extends BaseController {
 		}
 	}
 
+	public function members($id){
+		$skus = TradedealChannel::select(array(
+			'tradedeal_channels.id',  'tradedeal_channels.l5_desc', 'tradedeal_channels.rtm_tag', 
+			'tradedeal_types.tradedeal_type', 'tradedeal_channels.tradedeal_type_id',
+			DB::raw('CONCAT(pre_desc," - ",pre_code) as pre_sku'), 'free', 'pur_req'))
+			->join('tradedeal_types', 'tradedeal_types.id', '=', 'tradedeal_channels.tradedeal_type_id', 'left')
+			->join('tradedeal_uoms', 'tradedeal_uoms.id', '=', 'tradedeal_channels.tradedeal_uom_id', 'left')
+			->where('activity_id', $id);
+			
+		return Datatables::of($skus)
+			->set_index_column('id')	
+			->add_column('premuim', function($row){
+				$skus = TradedealChannelScheme::getSchemeSku($row->id);
+		        $body = '';
+		        $html = '<table class="table table-condensed table-bordered"> 
+			        		<thead> 
+			        			<tr> 
+			        				<th width="35%">Host SKU</th> 
+			        				<th width="35%">Premium SKU (ULP)</th> 
+			        				<th width="5%" class="right">Buy</th> 
+			        				<th width="5%" class="right">Free</th>
+			        				<th >UOM</th>
+			        				<th width="10%"class="right pr_req">Pur. Req.</th>
+			        			</tr> 
+			        		</thead> 
+			        		<tbody>%s</tbody></table>';
+		        if($row->tradedeal_type_id == 1){
+		        	foreach ($skus as $value) {
+						if($value->tradedeal_uom_id == 1){
+							$per = $value->host_cost * $value->buy;
+						}
+						if($value->tradedeal_uom_id == 2){
+							$per = $value->host_cost * $value->buy * 12;
+						}
+						if($value->tradedeal_uom_id == 3){
+							$per = $value->host_cost * $value->buy * $value->host_pcs_case;
+						}
+						
+						$body .= '<tr><td>'.$value->host_sku.'</td><td>'.$value->pre_sku.'</td><td class="right">'.$value->buy.'</td><td class="right">'.$value->free.'</td><td>'.$value->tradedeal_uom.'</td><td class="right">'.number_format($per,2).'</td></tr>';
+					}
+					
+					return str_replace("%s", $body, $html) ;
+		        }
+		        if($row->tradedeal_type_id == 2){
+		        	$first = false;
+		        	foreach ($skus as $value) {
+						if(!$first){
+							$body .= '<tr><td>'.$value->host_sku.'</td><td rowspan="2" style="vertical-align: middle;">'.$row->pre_sku.'</td><td class="right">'.$value->buy.'</td><td rowspan="2" class="right" style="vertical-align: middle;">'.$row->free.'</td><td rowspan="2" style="vertical-align: middle;">'.$value->tradedeal_uom.'</td><td rowspan="2" class="right" style="vertical-align: middle;">'.number_format($row->pur_req,2).'</td></tr>';
+							$first = true;
+						}else{
+							$body .= '<tr><td>'.$value->host_sku.'</td><td class="right">'.$value->buy.'</td></tr>';
+						}
+					}
+					return str_replace("%s", $body, $html) ;
+		        }
+				
+			}, 4)
+			->make();
+	}
+
 }

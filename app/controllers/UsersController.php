@@ -25,7 +25,8 @@ class UsersController extends Controller
 	public function create()
 	{
 		$groups = Role::getLists();
-		return View::make('users.create',compact('groups'));
+		$departments = Department::getLists();
+		return View::make('users.create',compact('groups', 'departments'));
 	}
 
 	/**
@@ -54,6 +55,7 @@ class UsersController extends Controller
 				$user->confirmation_code = md5(uniqid(mt_rand(), true));
 				$user->confirmed = 1;
 				$user->active = (Input::has('is_active')) ? 1 : 0;
+				$user->department_id = Input::get('department_id');
 				$user->save();
 
 				$role = Role::find(Input::get('group_id'));
@@ -78,7 +80,10 @@ class UsersController extends Controller
 		$user = User::with('roles')->findOrFail($id);
 		$groups = Role::getLists();
 		$role = $user->roles[0]->id;
-		return View::make('users.edit',compact('groups','user','role'));
+		$departments = Department::getLists();
+
+		// dd($user->department->department);
+		return View::make('users.edit',compact('groups','user','role','departments'));
 	}
 
 	public function show($id){
@@ -94,7 +99,8 @@ class UsersController extends Controller
 			'email' => 'required|email|unique:users,email,'.$id,
 			'first_name' => 'required',
 			'last_name' => 'required',
-			'group_id' => 'required|integer|min:1'
+			'group_id' => 'required|integer|min:1',
+			'department_id' => 'required|integer|min:1'
 		);
 
 		$validation = Validator::make($input, $rules);
@@ -111,6 +117,7 @@ class UsersController extends Controller
 				$user->email = Input::get('email');
 				$user->contact_no = Input::get('contact_no');
 				$user->active = (Input::has('is_active')) ? 1 : 0;
+				$user->department_id = Input::get('department_id');
 				$user->update();
 
 				$user->detachRoles($user->roles);

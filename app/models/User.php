@@ -16,8 +16,13 @@ class User extends Eloquent implements ConfideUserInterface {
 		'email' => 'required|email|unique:users',
 		'first_name' => 'required',
 		'last_name' => 'required',
-		'group_id' => 'required|integer|min:1'
+		'group_id' => 'required|integer|min:1',
+		'department_id' => 'required|integer|min:1',
 	);
+
+	public function department(){
+		return $this->belongsTo('Department','department_id','id');
+	}
 
   public static function forApproval(){
   	return self::select('users.id', 'users.first_name', 'users.last_name','users.email','users.contact_no')
@@ -27,8 +32,9 @@ class User extends Eloquent implements ConfideUserInterface {
 
 
 	public static function search($status,$type,$search){
-		return self::select('users.id', 'users.first_name', 'users.last_name','users.email','users.active')
+		return self::select('users.id', 'users.first_name', 'users.last_name','users.email','users.active', 'department')
 			->join('assigned_roles', 'users.id', '=', 'assigned_roles.user_id')
+			->join('departments', 'departments.id', '=', 'users.department_id', 'left')
 			->where(function($query) use ($search){
 				$query->where('first_name', 'LIKE' ,"%$search%")
 					->orwhere('last_name', 'LIKE' ,"%$search%")
@@ -247,6 +253,12 @@ class User extends Eloquent implements ConfideUserInterface {
         }
 
         return false;
+	}
+
+	public static function getUsers(){
+		return self::select(DB::raw("CONCAT(first_name,' ', last_name) as fullname"), 'id' )
+			->where('active',1)
+			->lists('fullname', 'id');
 	}
 	
 }

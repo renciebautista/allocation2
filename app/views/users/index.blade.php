@@ -89,10 +89,11 @@
 			<table class="table table-striped table-condensed table-hover table-bordered">
 				<thead>
 					<tr>
-						<th class="center">Full Name</th>
-						<th class="center">Group</th>
-						<th class="center">Email</th>
-						<th class="center">All Status</th>
+						<th>Full Name</th>
+						<th>Email</th>
+						<th>Department</th>
+						<th>Role</th>
+						<th>Status</th>
 						<th colspan="2" style="text-align:center; width:10%;">Action</th>
 					</tr>
 				</thead>
@@ -105,10 +106,12 @@
 					@foreach($users as $user)
 					<tr>
 						<td>{{ $user->getFullname() }}</td>
+						<td>{{ $user->email }}</td>
+						
+						<td>{{ $user->department }}</td>
 						<td>
 							{{ $user->roles[0]->name }}
 						</td>
-						<td>{{ $user->email }}</td>
 						<td class="center">{{ (($user->active == 1) ? 'Active':'Inactive') }}</td>
 						<td class="action">
 							{{ Form::open(array('method' => 'DELETE', 'action' => array('UsersController@destroy', $user->id))) }}                       

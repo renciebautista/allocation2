@@ -104,6 +104,7 @@
 								      <li>{{ HTML::linkRoute('group.index', 'Group') }}</li>  
 											<li>{{ HTML::linkAction('UsersController@index' , 'User') }}</li>
 											<li>{{ HTML::linkAction('UsersController@forapproval' , 'User For Approval') }}</li>
+											<li>{{ HTML::linkAction('DepartmentsController@index' , 'Departments') }}</li>
 								    </ul>
 								</li> 
 
