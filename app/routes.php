@@ -148,7 +148,7 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('activity/{id}/summary','ActivityController@summary');
 
 	Route::get('activity/{id}/members', 'ActivityController@members');
-
+	Route::post('activity/{id}/addmember', 'ActivityController@addmember');
 
 	// customized
 	Route::get('activity/create/{id}',['as' => 'activity.create', 'uses' => 'ActivityController@create']);

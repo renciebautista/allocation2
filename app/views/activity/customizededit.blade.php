@@ -375,40 +375,11 @@
 										<th>Department</th>
 										<th>Status</th>
 										<th>Access</th>
-										<th colspan="3" class="text-center">Action</th>
+										<th>Action</th>
 									</tr>
 								</thead>
 							  	<tbody>
-							  		<!-- <tr>
-							  			<td>Rencie</td>
-							  			<td>Channel</td>
-							  			<td>For Approval</td>
-							  			<td></td>
-							  			<td></td>
-							  		</tr>
-							  		<tr>
-							  			<td>Rencie</td>
-							  			<td>Channel</td>
-							  			<td>Approve</td>
-							  			<td>Edit, Comment</td>
-							  			<td></td>
-							  		</tr>
-							  		<tr>
-							  			<td>Rencie 1</td>
-							  			<td>Channel</td>
-							  			<td>Deny</td>
-							  			<td></td>
-							  			<td>Re-process</td>
-
-							  		</tr>
-
-							  		<tr>
-							  			<td>Rencie</td>
-							  			<td>Field</td>
-							  			<td>Waiting For Release</td>
-							  			<td></td>
-							  			<td></td>
-							  		</tr> -->
+							  		
 							  	</tbody>
 							  	
 							</table> 
@@ -1069,7 +1040,8 @@
 
 	<div class="modal fade" id="addMember" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
-			{{ Form::open(array('action' => array('SchemeController@updateallocation'), 'method' => 'POST', 'class' => 'bs-component','id' => 'addMember-form')) }}			<div class="modal-content">
+			{{ Form::open(array('action' => array('ActivityController@addmember', $activity->id), 'class' => 'bs-component','id' => 'addMember-form')) }}
+			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 					<h4 class="modal-title" id="myModalLabel">Add Member</h4>
@@ -1087,7 +1059,7 @@
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-					<button class="btn btn-primary">Update</button>
+					<button class="btn btn-primary">Submit</button>
 				</div>
 			</div>
 			{{ Form::close() }}

@@ -35,6 +35,32 @@ $(document).ready(function(){
 	    });
 	})
 
+	$("form[id='addMember-form']").on("submit",function(e){
+		var form = $(this);
+		var method = form.find('input[name="_method"]').val() || 'POST';
+		var url = form.prop('action');
+		$.ajax({
+			url: url,
+			data: form.serialize(),
+			method: "POST",
+			dataType: "json",
+			success: function(data){
+				if(data.success == "1"){
+					addMember.modal('hide');
+					reload_table();
+				}else{
+					bootbox.alert("An error occured while adding user.");
+				}
+			}
+		});
+		e.preventDefault();
+	});
+
+	function reload_table(){
+	    table.ajax.reload(null,false); //reload datatable ajax 
+	}
+
+
 	var table = $("#activity-members").DataTable({
 		"processing": true, //Feature control the processing indicator.
 	    "serverSide": true, //Feature control DataTables' server-side processing mode.
