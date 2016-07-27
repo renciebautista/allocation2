@@ -1430,13 +1430,13 @@
 							<tr>
 
 								<td>Free</td>
-								<td> <input class="form-control"> </td>
+								<td> <input name="c_free" id="c_free" class="form-control"> </td>
 							</tr>
 							<tr>
 			
 								<td>UOM</td>
 								<td>
-									{{ Form::select('c_deal_type', array('0' => 'Select Deal Type') + $dealuoms, [], array('data-placeholder' => 'Select Deal Type','id' => 'c_deal_type', 'class' => 'form-control')) }}
+									{{ Form::select('c_uom', $dealuoms, [], array('data-placeholder' => 'Select UOM','id' => 'c_uom', 'class' => 'form-control')) }}
 								</td>
 							</tr>
 							<tr>

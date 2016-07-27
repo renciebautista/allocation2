@@ -973,3 +973,12 @@ table.dataTable thead tr.even th{
     background-color: #f2dede;
     border-color: #ebccd1;
 }
+table .v-align{
+	vertical-align: middle;
+}
+#td-channels {
+	font-size: 10px;
+}
+#td-channels table {
+	font-size: 10px;
+}

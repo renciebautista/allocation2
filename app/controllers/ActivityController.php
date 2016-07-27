@@ -2803,41 +2803,58 @@ class ActivityController extends BaseController {
 		if(Request::ajax()){
 			$err = [];
 			$activity = Activity::find($id);
-			if(empty($activity)){
-				$err[] = 'Activity not found.';
+			$tradedeal = Tradedeal::where('activity_id', $activity->id)->first();
+			// dd($tradedeal);
+			if(empty($tradedeal)){
+				$err[] = 'No Trade Deal details';
 			}else{
-				$host_sku = Pricelist::getSku(Input::get('host_sku'));
-				$ref_sku = Sku::getSku(Input::get('ref_sku'));
+				if(empty($activity)){
+					$err[] = 'Activity not found.';
+				}else{
+					$host_sku = Pricelist::getSku(Input::get('host_sku'));
+					$ref_sku = Sku::getSku(Input::get('ref_sku'));
 
-				if(empty($host_sku)){
-					$err[] = 'No selected Host SKU.';
-				}
-
-				if(empty($ref_sku)){
-					$err[] = 'Reference SKU is required.';
-				}
-
-				if(count($err) == 0){
-					$part_sku = new TradedealPartSku;
-					$part_sku->activity_id = $id;
-					$part_sku->host_code = $host_sku->sap_code;
-					$part_sku->host_desc = $host_sku->sap_desc;
-					$part_sku->host_cost = $host_sku->price;
-					$part_sku->host_pcs_case = $host_sku->pack_size;
-					$part_sku->ref_code = $ref_sku->sku_code;
-					$part_sku->ref_desc = $ref_sku->sku_desc;
-					if(Input::get('pre_sku') != 0){
-						$pre_sku = Pricelist::getSku(Input::get('pre_sku'));
-						$part_sku->pre_code = $pre_sku->sap_code;
-						$part_sku->pre_desc = $pre_sku->sap_desc;
-						$part_sku->pre_cost = $pre_sku->price;
-						$part_sku->pre_pcs_case = $pre_sku->pack_size;
+					if(empty($host_sku)){
+						$err[] = 'No selected Host SKU.';
 					}
-					
-					$part_sku->save();
-				}	
-			}
 
+					if(empty($ref_sku)){
+						$err[] = 'Reference SKU is required.';
+					}
+
+					if(count($err) == 0){
+						$part_sku = new TradedealPartSku;
+						$part_sku->activity_id = $id;
+						$part_sku->host_code = $host_sku->sap_code;
+						$part_sku->host_desc = $host_sku->sap_desc;
+						$part_sku->host_cost = $host_sku->price;
+						$part_sku->host_pcs_case = $host_sku->pack_size;
+						$part_sku->ref_code = $ref_sku->sku_code;
+						$part_sku->ref_desc = $ref_sku->sku_desc;
+
+						if($tradedeal->non_ulp_premium == 1){
+							$part_sku->pre_code = $tradedeal->non_ulp_premium_code;
+							$part_sku->pre_desc = $tradedeal->non_ulp_premium_desc;
+							$part_sku->pre_cost = $tradedeal->non_ulp_premium_cost;
+							$part_sku->pre_pcs_case = $tradedeal->non_ulp_pcs_case;
+
+						}else{
+							if(Input::get('pre_sku') != 0){
+								$pre_sku = Pricelist::getSku(Input::get('pre_sku'));
+								$part_sku->pre_code = $pre_sku->sap_code;
+								$part_sku->pre_desc = $pre_sku->sap_desc;
+								$part_sku->pre_cost = $pre_sku->price;
+								$part_sku->pre_pcs_case = $pre_sku->pack_size;
+							}
+						}
+						
+						
+						$part_sku->save();
+					}	
+				}
+
+			}
+			
 			if(count($err) > 0){
 				$arr['success'] = 0;
 				$arr['err_msg'] = $err;
@@ -2956,8 +2973,9 @@ class ActivityController extends BaseController {
 	public function tdchannels($id){
 
 		$skus = TradedealChannel::select(array(
-			'tradedeal_channels.id', 'tradedeal_channels.l5_desc', 'tradedeal_channels.rtm_tag', 
-			'tradedeal_types.tradedeal_type'))
+			'tradedeal_channels.id',  'tradedeal_channels.l5_desc', 'tradedeal_channels.rtm_tag', 
+			'tradedeal_types.tradedeal_type', 'tradedeal_channels.tradedeal_type_id',
+			DB::raw('CONCAT(pre_desc," - ",pre_code) as pre_sku'), 'free', 'pur_req'))
 			->join('tradedeal_types', 'tradedeal_types.id', '=', 'tradedeal_channels.tradedeal_type_id', 'left')
 			->join('tradedeal_uoms', 'tradedeal_uoms.id', '=', 'tradedeal_channels.tradedeal_uom_id', 'left')
 			->where('activity_id', $id);
@@ -2966,71 +2984,137 @@ class ActivityController extends BaseController {
 			->set_index_column('id')	
 			->add_column('premuim', function($row){
 				$skus = TradedealChannelScheme::getSchemeSku($row->id);
-				
 		        $body = '';
-				foreach ($skus as $value) {
-					if($value->tradedeal_uom_id == 1){
-						$per = $value->host_cost * $value->buy;
-					}
+		        $html = '<table class="table table-condensed table-bordered"> 
+			        		<thead> 
+			        			<tr> 
+			        				<th width="35%">Host SKU</th> 
+			        				<th width="35%">Premium SKU (ULP)</th> 
+			        				<th width="5%" class="right">Buy</th> 
+			        				<th width="5%" class="right">Free</th>
+			        				<th >UOM</th>
+			        				<th width="10%"class="right pr_req">Pur. Req.</th>
+			        			</tr> 
+			        		</thead> 
+			        		<tbody>%s</tbody></table>';
+		        if($row->tradedeal_type_id == 1){
+		        	foreach ($skus as $value) {
+						if($value->tradedeal_uom_id == 1){
+							$per = $value->host_cost * $value->buy;
+						}
 
-					if($value->tradedeal_uom_id == 2){
-						$per = $value->host_cost * $value->buy * 12;
-					}
+						if($value->tradedeal_uom_id == 2){
+							$per = $value->host_cost * $value->buy * 12;
+						}
 
-					if($value->tradedeal_uom_id == 3){
-						$per = $value->host_cost * $value->buy * $value->host_pcs_case;
+						if($value->tradedeal_uom_id == 3){
+							$per = $value->host_cost * $value->buy * $value->host_pcs_case;
+						}
+						
+						$body .= '<tr><td>'.$value->host_sku.'</td><td>'.$value->pre_sku.'</td><td class="right">'.$value->buy.'</td><td class="right">'.$value->free.'</td><td>'.$value->tradedeal_uom.'</td><td class="right">'.number_format($per,2).'</td></tr>';
 					}
 					
-					$body .= '<tr><td>'.$value->host_sku.'</td><td>'.$value->pre_sku.'</td><td class="right">'.$value->buy.'</td><td class="right">'.$value->free.'</td><td>'.$value->tradedeal_uom.'</td><td class="right">'.number_format($per,2).'</td></tr>';
-				}
-				$html = '<table class="table table-condensed"> 
-		        		<thead> 
-		        			<tr> 
-		        				<th>Host SKU</th> 
-		        				<th>Premium SKU (ULP)</th> 
-		        				<th class="right">Buy</th> 
-		        				<th class="right">Free</th>
-		        				<th class="right">UOM</th>
-		        				<th class="right pr_req">Purchare Req.</th>
-		        			</tr> 
-		        		</thead> 
-		        		<tbody>%s</tbody></table>';
-				return str_replace("%s", $body, $html) ;
+					return str_replace("%s", $body, $html) ;
+		        }
+
+		        if($row->tradedeal_type_id == 2){
+		        	$first = false;
+		        	foreach ($skus as $value) {
+						if(!$first){
+							$body .= '<tr><td>'.$value->host_sku.'</td><td rowspan="2" style="vertical-align: middle;">'.$row->pre_sku.'</td><td class="right">'.$value->buy.'</td><td rowspan="2" class="right" style="vertical-align: middle;">'.$row->free.'</td><td rowspan="2" style="vertical-align: middle;">'.$value->tradedeal_uom.'</td><td rowspan="2" class="right" style="vertical-align: middle;">'.number_format($row->pur_req,2).'</td></tr>';
+							$first = true;
+						}else{
+							$body .= '<tr><td>'.$value->host_sku.'</td><td class="right">'.$value->buy.'</td></tr>';
+						}
+					}
+					return str_replace("%s", $body, $html) ;
+		        }
+				
+
 			}, 4)
 			->make();
 	}
 
 	public function updatedtchannel(){
 		if(Request::ajax()){
-			// dd(Input::all());
+
 			$selected = [];
 			if(Input::has('select')){
 				foreach (Input::get('select') as $value) {
 				 	$selected[] = $value;
 				}
 			}
-			$channel = TradedealChannel::find(Input::get('ch_id'));
-			if(!empty($channel)){
-				if(count($selected) > 0){
-					TradedealChannelScheme::where('tradedeal_channel_id', $channel->id)->delete();
-					foreach ($selected as $host_id) {
-						$part_sku = TradedealPartSku::find($host_id);
-						if(!empty($part_sku)){
-							$scheme = new TradedealChannelScheme;
-							$scheme->tradedeal_channel_id = $channel->id;
-							$scheme->tradedeal_part_sku_id = $part_sku->id;
-							$scheme->tradedeal_uom_id = Input::get('option')[$host_id];
-							$scheme->buy = Input::get('buy')[$host_id];
-							$scheme->free = Input::get('free')[$host_id];
-							$scheme->save();
+			$deal_type = Input::get('deal_type');
+			$x = Input::get('ch_id');
+			$channels = explode(",", $x );
+			if(count($channels)>0){
+				foreach ($channels as $channel_id) {
+					$channel = TradedealChannel::find($channel_id);
+					if(!empty($channel)){
+						if(count($selected) > 0){
+							TradedealChannelScheme::where('tradedeal_channel_id', $channel->id)->delete();
+							if($deal_type == 1){
+								foreach ($selected as $host_id) {
+									$part_sku = TradedealPartSku::find($host_id);
+									if(!empty($part_sku)){
+										$scheme = new TradedealChannelScheme;
+										$scheme->tradedeal_channel_id = $channel->id;
+										$scheme->tradedeal_part_sku_id = $part_sku->id;
+										$scheme->tradedeal_uom_id = Input::get('option')[$host_id];
+										$scheme->buy = Input::get('buy')[$host_id];
+										$scheme->free = Input::get('free')[$host_id];
+										$scheme->save();
+									}
+									
+								}
+							}
+
+							if($deal_type == 2){
+								$uom = Input::get('c_uom');
+								$free = Input::get('c_free');
+								$pur_req = 0;
+								foreach ($selected as $host_id) {
+									$part_sku = TradedealPartSku::find($host_id);
+									if(!empty($part_sku)){
+										$scheme = new TradedealChannelScheme;
+										$scheme->tradedeal_channel_id = $channel->id;
+										$scheme->tradedeal_part_sku_id = $part_sku->id;
+										$scheme->tradedeal_uom_id = $uom;
+										$scheme->buy = Input::get('buy')[$host_id];
+										$scheme->free = $free;
+										$scheme->save();
+
+										if($uom == 1){
+											$pur_req += $scheme->buy * $part_sku->host_cost;
+										}
+
+										if($uom == 2){
+											$pur_req += $scheme->buy * $part_sku->host_cost * 12;
+										}
+
+										if($uom == 3){
+											$pur_req += $scheme->buy * $part_sku->host_cost * $part_sku->host_pcs_case;
+										}
+									}
+								}
+								$pre_sku = Pricelist::getSku(Input::get('c_pre_sku'));
+								$channel->pre_code = $pre_sku->sap_code;
+								$channel->pre_desc = $pre_sku->sap_desc;
+								$channel->pre_cost = $pre_sku->price;
+								$channel->pre_pcs_case = $pre_sku->pack_size;
+								$channel->free = $free;
+								$channel->pur_req = $pur_req;
+							}
+							
 						}
+						$channel->tradedeal_type_id = $deal_type;
+						$channel->save();
 						
+						$arr['success'] = 1;
+					}else{
+						$arr['success'] = 0;
 					}
 				}
-				$channel->tradedeal_type_id = Input::get('deal_type');
-				$channel->save();
-				
-				$arr['success'] = 1;
 			}else{
 				$arr['success'] = 0;
 			}

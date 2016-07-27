@@ -23,7 +23,7 @@ $(document).ready(function() {
 	}
 
 	$('#alloc_in_weeks, #coverage, #non_ulp_premium_cost').inputNumber({ allowDecimals: true, maxDecimalDigits: 2 });
-	$('#non_ulp_pcs_case').inputNumber({ allowDecimals: false});
+	$('#non_ulp_pcs_case, #c_free').inputNumber({ allowDecimals: false});
 
 	$('#add_sku').on('click', function(e){
 		e.preventDefault(); // prevents button from submitting
@@ -235,6 +235,7 @@ $(document).ready(function() {
 	});
 
 	$('#editChannel').on('shown.bs.modal', function(){
+		$("#channel_skus > tbody").html("");
 		$('#collective').hide();
 		// <table id="channel_skus" class="table table-striped table-hover ">
 		// 				<thead>
