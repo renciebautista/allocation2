@@ -2,6 +2,7 @@
 
 @section('content')
 
+@include('shared.changepassword')
 @include('partials.notification')
 
 <div class="col-lg-12">

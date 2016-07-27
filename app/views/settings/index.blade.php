@@ -24,7 +24,21 @@
 			{{ Form::text('new_user_email', $settings->new_user_email ,array('class' => 'form-control', 'placeholder' => 'New user approver email')) }}
 		</div>
 
+		<div class="form-group">
+			<div class="checkbox">
+				<label>
+					{{ Form::checkbox('change_password', true, (($settings->change_password == 1) ? true : false)) }} Set Change Password Prompt
+				</label>
+			</div>
+		</div>
 
+		<div class="form-group">
+			{{ Form::label('pasword_expiry', 'Password Expiry (days)', array('class' => 'control-label')) }}
+			{{ Form::text('pasword_expiry', $settings->pasword_expiry ,array('class' => 'form-control', 'placeholder' => 'Password Expiry (days)')) }}
+		</div>
+
+
+		<br>
 		<div class="form-group">
 			{{ Form::submit('Update', array('class' => 'btn btn-primary')) }}
 		</div>
@@ -37,7 +51,7 @@
 @stop
 
 @section('page-script')
-
+	$('#pasword_expiry').inputNumber({ allowDecimals: false });
 @stop
 
 

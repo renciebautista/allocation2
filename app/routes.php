@@ -222,7 +222,7 @@ Route::group(array('before' => 'auth'), function()
 	Route::put('reports/allocation/{id}', 'AllocationReportController@update');
 	Route::post('reports/allocation/{id}/duplicate', 'AllocationReportController@duplicate');
 
-	Route::get('reports/activities', 'ReportController@activities');
+	Route::get('reports/activities', ['as' => 'reports.activities', 'uses' => 'ReportController@activities']);
 	Route::get('reports/{id}/preview', 'ReportController@preview');
 	Route::get('reports/{id}/download', 'ReportController@download');
 	Route::get('reports/{id}/document', 'ReportController@document');
@@ -420,7 +420,7 @@ Route::group(array('before' => 'auth'), function()
 		Route::post('settings', ['as' => 'settings.update', 'uses' => 'SettingsController@update']);
 
 		Route::resource('sobholiday', 'SobholidaysController');
-
+		
 		Route::get('level4/export', 'Level4Controller@export');
 		Route::get('level4/import', 'Level4Controller@import');
 		Route::post('level4/upload', 'Level4Controller@upload');
@@ -430,6 +430,9 @@ Route::group(array('before' => 'auth'), function()
 		Route::get('level5/import', 'Level5Controller@import');
 		Route::post('level5/upload', 'Level5Controller@upload');
 		Route::resource('level5', 'Level5Controller');
+
+		Route::get('reports/{id}/review', ['as' => 'reports.review', 'uses' => 'ReportController@review']);
+		Route::get('reports/{id}/scheme/', ['as' => 'reports.scheme', 'uses' => 'ReportController@scheme']);
 	});
 
 });

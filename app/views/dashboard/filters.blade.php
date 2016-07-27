@@ -3,6 +3,7 @@
 
 @section('content')
 
+@include('shared.changepassword')
 <div class="page-header" id="banner">
 	<div class="row">
 		<div class="col-lg-8 col-md-7 col-sm-6">
@@ -61,7 +62,7 @@
 		<div class="row">
 			<div class="col-lg-6">
 				<div class="form-group">
-					{{ Form::submit('Save', array('class' => 'btn btn-primary')) }}
+					{{ Form::submit('Update', array('class' => 'btn btn-primary')) }}
 					{{ HTML::linkAction('DashboardController@index', 'Back', array(), array('id' => 'back', 'class' => 'btn btn-default')) }}
 				</div>
 			</div>

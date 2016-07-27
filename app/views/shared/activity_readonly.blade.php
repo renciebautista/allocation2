@@ -14,8 +14,10 @@
 <div class="row">
 	<div class="col-lg-12">
 		<div class="form-group">
+			
 			{{ HTML::linkRoute($route, 'Back To Activity List', array(), array('class' => 'btn btn-default')) }}
 
+			@if(isset($submitstatus))
 			@if($activity->status_id < 9)
 				@if($recall)
 				<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myAction">
@@ -27,6 +29,7 @@
 			@else
 				<button type="button" class="btn btn-primary disabled" >Actions</button>
 			@endif
+			@endif
 			
 			@include('partials.downloaddoc')
 		</div>
@@ -34,6 +37,7 @@
 
 </div>
 
+@if(isset($submitstatus))
 <!-- Modal -->
 <div class="modal fade" id="myAction" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   	<div class="modal-dialog">
@@ -61,7 +65,7 @@
 	    </div>
   	</div>
 </div>
-
+@endif
 
 
 <ul class="nav nav-tabs">
@@ -477,8 +481,12 @@
 											  	<td class="text-right">{{ number_format($scheme->final_pe_r,2) }}</td>
 											  	<td class="text-right">{{ number_format($scheme->final_total_cost,2) }}</td>
 											  	<td>
+											  		@if(Auth::user()->hasRole("ADMINISTRATOR"))
+											  		{{ HTML::linkAction('ReportController@scheme','View', $scheme->id, array('class' => 'btn btn-primary btn-xs')) }}
+											  		@else
 											  		{{ HTML::linkAction('SchemeController@edit','View', $scheme->id, array('class' => 'btn btn-primary btn-xs')) }}
 											  		<button class="btn btn-danger btn-xs disabled">Delete</button>
+											  		@endif
 											  	</td>
 											</tr>
 											@endforeach
