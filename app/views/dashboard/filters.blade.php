@@ -62,7 +62,7 @@
 		<div class="row">
 			<div class="col-lg-6">
 				<div class="form-group">
-					{{ Form::submit('Save', array('class' => 'btn btn-primary')) }}
+					{{ Form::submit('Update', array('class' => 'btn btn-primary')) }}
 					{{ HTML::linkAction('DashboardController@index', 'Back', array(), array('id' => 'back', 'class' => 'btn btn-default')) }}
 				</div>
 			</div>

@@ -493,7 +493,9 @@ class Activity extends \Eloquent {
 			->get();
 	}
 
-	public static function summary($status,$type){
+	public static function summary($status,$type, $filters){
+		$division = $filters['division'];
+		// dd($division);
 		return self::select('activities.id','activities.circular_name','cycles.cycle_name',
 			'activities.edownload_date',
 			'activities.eimplementation_date','activities.end_date','activities.billing_date',

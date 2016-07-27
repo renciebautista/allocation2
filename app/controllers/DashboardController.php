@@ -22,11 +22,17 @@ class DashboardController extends \BaseController {
 		if($interval->days > $settings->pasword_expiry){
 			$change_password = true;
 		}
-		$ongoings = Activity::summary(9,'ongoing');
+
+		$filters['division'] = UserDivisionFilter::getList(Auth::id());
+		$filters['category'] = UserCategoryFilter::selected_category(Auth::id());
+		$filters['brand'] = UserBrandFilter::selected_brand(Auth::id());
+
+
+		$ongoings = Activity::summary(9,'ongoing',$filters);
 		// Helper::print_array($ongoings);
-		$upcomings = Activity::summary(9,'nextmonth');
+		$upcomings = Activity::summary(9,'nextmonth',$filters);
 		// Helper::print_array($upcomings);
-		$lastmonths = Activity::summary(9,'lastmonth');
+		$lastmonths = Activity::summary(9,'lastmonth',$filters);
 		// Helper::print_array($lastmonths);
 		return View::make('dashboard.index',compact('ongoings', 'upcomings', 'lastmonths', 'settings','change_password'));
 	}
@@ -35,7 +41,16 @@ class DashboardController extends \BaseController {
 	public function filters(){
 		$divisions = Sku::divisions();
 		$sel_divisions = UserDivisionFilter::getList(Auth::id());
-		return View::make('dashboard.filters', compact('divisions','sel_divisions'));
+		$datetime1 = date_create();
+		$datetime2 = date_create(Auth::user()->last_update);
+		$interval = date_diff($datetime1, $datetime2);
+
+		$settings = Setting::where('id', 1)->first();
+		$change_password = false;
+		if($interval->days > $settings->pasword_expiry){
+			$change_password = true;
+		}
+		return View::make('dashboard.filters', compact('divisions','sel_divisions', 'settings', 'change_password'));
 	}
 
 	public function savefilters(){
@@ -112,10 +127,12 @@ class DashboardController extends \BaseController {
 			$data = array();
 			$data['selection']= array();
 			if($filter != ''){
-				$data['selection'] = Sku::select('brand_code', 'brand_desc')
-				->whereIn('category_code',$filter)
-				->groupBy('brand_code')
-				->orderBy('brand_desc')->lists('brand_desc', 'brand_code');
+				$data['selection'] = Pricelist::select('brand_desc')
+					->where('active',1)
+					->where('launch',0)
+					->whereIn('category_code',$filter)
+					->groupBy('brand_desc')
+					->orderBy('brand_desc')->lists('brand_desc', 'brand_desc');
 			}
 
 			$data['selected'] = UserBrandFilter::selected_brand();
