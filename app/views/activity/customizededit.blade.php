@@ -1035,6 +1035,46 @@
 		<br>
 	</div>
 
+	<!-- members -->
+	<div class="tab-pane fade" id="jo">
+		<br>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Job Orders</h3>
+			</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-lg-12">
+						<button id="create-jo" class="btn btn-primary">Create Job Order</button>
+					</div>
+				</div>
+				<br>
+				<div class="row">
+					<div class="col-lg-12">
+						<div class="table-responsive">
+							<table id="activity-members" class="table table-striped table-condensed table-hover">
+								<thead>
+									<tr>
+										<th>Joborder #</th>
+										<th>Task</th>
+										<th>Sub Task</th>
+										<th>Assign To</th>
+										<th>Action</th>
+									</tr>
+								</thead>
+							  	<tbody>
+							  		
+							  	</tbody>
+							  	
+							</table> 
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
 
 	<!-- Modal -->
 
@@ -1067,6 +1107,34 @@
 		</div>
 	</div>
 
+	<div class="modal fade" id="createJo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			{{ Form::open(array('url'=>'apply/multiple_upload','method'=>'POST', 'files'=>true)) }}
+			
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="myModalLabel">Add Member</h4>
+				</div>
+				<div class="modal-body">
+					<div class="form-group">
+						<div class="row">
+							<div class="col-lg-12">
+								{{ Form::file('file[]', array('multiple'=>true)) }}
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<button class="btn btn-primary">Submit</button>
+				</div>
+			</div>
+			{{ Form::close() }}
+			<input type="hidden" id="hidden-1" value="{{ $scheme->id }}">
+		</div>
+	</div>
+
 </div>
 
 @include('javascript.activity.edit')
@@ -1075,6 +1143,7 @@
 
 @section('add-script')
 	{{ HTML::script('assets/js/customized.js') }}
+	{{ HTML::script('assets/js/joborder.js') }}
 @stop
 
 @section('page-script')

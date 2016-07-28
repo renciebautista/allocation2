@@ -14,7 +14,7 @@ class ActivityMember extends \Eloquent {
     }
 
     public static function getByDepartmentId($departments){
-        return self::join('users', 'users.id', '=', 'activity_menbers.user_id')
+        return self::join('users', 'users.id', '=', 'activity_members.user_id')
             ->join('departments', 'departments.id', '=', 'users.department_id')
             ->whereIn('users.department_id',$departments)
             ->get();

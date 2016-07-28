@@ -108,6 +108,8 @@
 								    </ul>
 								</li> 
 
+
+
 								<li class="dropdown-submenu">
 								    <a tabindex="0" data-toggle="dropdown">Activity Maintenance</a>
 								    <ul class="dropdown-menu">
@@ -151,6 +153,14 @@
 										<li>{{ HTML::linkRoute('customermaster.index', 'Customer & Sales Masterfile') }}</li> 
 								    </ul>
 								</li>
+
+								<li class="dropdown-submenu">
+								    <a tabindex="0" data-toggle="dropdown">Job Order Maintenance</a>
+								    <ul class="dropdown-menu">
+								      	<li>{{ HTML::linkRoute('tasks.index', 'Tasks') }}</li>  
+										<li>{{ HTML::linkRoute('subtasks.index', 'Sub Tasks') }}</li>  
+								    </ul>
+								</li> 
 							</ul>
 						</li>
 						@endif

@@ -255,7 +255,7 @@ class User extends Eloquent implements ConfideUserInterface {
         return false;
 	}
 
-	public static function getUsers($activity, $departments){
+	public static function getUsers($activity, $departments = null){
 		$activity_members = ActivityMember::where('activity_id', $activity->id)->get();
 		$users = [];
 		foreach ($activity_members as $member) {
@@ -263,7 +263,11 @@ class User extends Eloquent implements ConfideUserInterface {
 		}
 		return self::select(DB::raw("CONCAT(first_name,' ', last_name) as fullname"), 'id' )
 			->where('active',1)
-			->whereIn('department_id', $departments)
+			->where(function($query) use ($departments){
+				if($departments != null){
+					$query->whereIn('department_id', $departments);
+				}
+			})
 			->whereNotIn('id',$users )
 			->lists('fullname', 'id');
 	}

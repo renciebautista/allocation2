@@ -150,6 +150,8 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('activity/{id}/members', 'ActivityController@members');
 	Route::post('activity/{id}/addmember', 'ActivityController@addmember');
 
+	Route::get('activity/{id}/createjo', 'ActivityController@createjo');
+
 	// customized
 	Route::get('activity/create/{id}',['as' => 'activity.create', 'uses' => 'ActivityController@create']);
 	Route::post('activity/store/{id}',['as' => 'activity.store', 'uses' => 'ActivityController@store']);
@@ -416,6 +418,11 @@ Route::group(array('before' => 'auth'), function()
 
 
 		Route::resource('departments', 'DepartmentsController');
+
+		Route::resource('tasks', 'TasksController');
+		Route::resource('subtasks', 'SubtasksController');
+
+
 
 		Route::get('reports/{id}/review', ['as' => 'reports.review', 'uses' => 'ReportController@review']);
 		Route::get('reports/{id}/scheme/', ['as' => 'reports.scheme', 'uses' => 'ReportController@scheme']);

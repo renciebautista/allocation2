@@ -15,13 +15,14 @@ class UserController extends \BaseController {
 			$activity = Activity::find(Input::get('id'));
 			if(!empty($activity)){
 				if($activity->created_by == Auth::id()){
-					if(!$activity->channel_approve){
+					if(!$activity->channel_approved){
 						$departments = [2];
 						$data['user'] = User::getUsers($activity,$departments);
 					}else{
-						$departments = [];
-						$data['user'] = User::getUsers($activity,$departments);
+						$data['user'] = User::getUsers($activity);
 					}
+				}else{
+					$data['user'] = User::getUsers($activity);
 				}
 				
 				return \Response::json($data,200);

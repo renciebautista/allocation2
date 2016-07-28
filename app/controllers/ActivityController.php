@@ -1089,9 +1089,17 @@ class ActivityController extends BaseController {
 
 
 					if(!$activity->channel_approved){
-						$all_channels = ActivityMember::getByDepartmentId(['2']);
-						
+						$ch_members = ActivityMember::getByDepartmentId(['2']);
+						$approve = 1;
+						foreach ($ch_members as $member) {
+							if($member->activity_member_status_id < 3){
+								$approve = 0;
+							}
+						}
+						$activity->channel_approved = $approve;
+						$activity->save();
 					}
+
 					$arr['success'] = 1;
 				}
 				return json_encode($arr, 200);
@@ -3007,13 +3015,38 @@ class ActivityController extends BaseController {
 	}
 
 	public function members($id){
-		$skus = ActivityMember::select(array('activity_member_statuses.id','user_desc', 'department', 'activity_member_statuses.mem_status'))
+		$skus = ActivityMember::select(array('activity_member_statuses.id','user_desc', 'department', 'activity_member_statuses.mem_status', 'activity_members.activity_member_status_id'))
 			->join('activity_member_statuses', 'activity_member_statuses.id', '=', 'activity_members.activity_member_status_id')
 			->where('activity_id', $id);
 			
 		return Datatables::of($skus)
 			->remove_column('id')
+			->edit_column('mem_status', function($row) {
+                if($row->activity_member_status_id == 1){
+                	$class = 'text-primary';
+                }
+
+                if($row->activity_member_status_id == 2){
+                	$class = 'text-danger';
+                }
+
+                if($row->activity_member_status_id == 3){
+                	$class = 'text-success';
+                }
+
+                if($row->activity_member_status_id == 4){
+                	$class = 'ext-warning';
+                }
+
+                return '<p class="'.$class.'">'.$row->mem_status.'</p>';
+            })
 			->make();
+	}
+
+	public function createjo($id){
+		$activity = Activity::findOrFail($id);
+
+		return View::make('activity.createjo',compact('activity'));
 	}
 
 }
