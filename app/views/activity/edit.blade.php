@@ -596,20 +596,7 @@
 								</div>
 							</div>
 						</div>
-					</div>
-
-					<div class="col-lg-3">
-						<div class="form-group">
-							<div class="row">
-								<div class="col-lg-12">
-									{{ Form::label('coverage', 'Customer % Coverage', array('class' => 'control-label')) }}
-									{{ Form::text('coverage',($tradedeal) ? $tradedeal->coverage : '100.00', array('class' => 'form-control')) }}									
-								</div>
-							</div>
-						</div>
-					</div>
-
-					
+					</div>					
 				</div>
 
 
@@ -710,9 +697,6 @@
 												<th>Cost / Pcs</th>
 												<th>Pcs / Case</th>
 												<th>Reference SKU</th>
-												<th>Premium SKU (ULP)</th>
-												<th>Cost / Pcs</th>
-												<th>Pcs / Case</th>
 												<th></th>
 												<th></th>
 											</tr>
@@ -734,7 +718,7 @@
 
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				<h3 class="panel-title">Channels</h3>
+				<h3 class="panel-title">Schemes</h3>
 			</div>
 			<div class="panel-body">
 				<div class="row">
@@ -1352,23 +1336,6 @@
 								{{ Form::select('ref_sku', array('0' => '') + $ref_skus, [], array('data-placeholder' => 'Select Reference SKU','id' => 'ref_sku', 'class' => 'form-control')) }}
 							</td>
 						</tr>
-						<tr class="pre-sku">
-							<td>Premiun SKU (ULP)</td>
-							<td colspan="3">
-								{{ Form::select('pre_sku', array('0' => '') + $pre_skus, [], array('data-placeholder' => 'Select Premium SKU','id' => 'pre_sku', 'class' => 'form-control')) }}
-							</td>
-						</tr>
-						
-						<tr class="pre-sku">
-							<td>Cost / Pcs</td>
-							<td>
-								<input class="form-control" name="pre_cost_pcs" type="text" value="0" id="pre_cost_pcs" readonly =''>
-							</td>
-							<td>Pcs / Case</td>
-							<td>
-								<input class="form-control" name="pre_pcs_case" type="text" value="0" id="pre_pcs_case" readonly =''>
-							</td>
-						</tr>
 					</tbody>
 				</table>
 			</div>
@@ -1389,7 +1356,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<h4 class="modal-title" id="myModalLabel">Edit Channel</h4>
+				<h4 class="modal-title" id="myModalLabel">Edit Scheme</h4>
 			</div>
 			<div class="modal-body">
 				<table class="table table-bordered">
@@ -1410,6 +1377,7 @@
 								<th>Host SKU</th>
 								<th>Buy</th>
 								<th>Free</th>
+								<th>Coverage</th>
 								<th>UOM</th>
 							</tr>
 						</thead>
@@ -1434,6 +1402,13 @@
 							</tr>
 							<tr>
 			
+								<td>Coverage</td>
+								<td>
+									<input name="c_coverage" id="c_coverage" class="form-control" value="100.00">
+								</td>
+							</tr>
+							<tr>
+			
 								<td>UOM</td>
 								<td>
 									{{ Form::select('c_uom', $dealuoms, [], array('data-placeholder' => 'Select UOM','id' => 'c_uom', 'class' => 'form-control')) }}
@@ -1442,7 +1417,8 @@
 							<tr>
 								<td>Premiun SKU (ULP)</td>
 								<td>
-									{{ Form::select('c_pre_sku', array('0' => 'Select Premium SKU') + $pre_skus, [], array('data-placeholder' => 'Select Premium SKU','id' => 'c_pre_sku', 'class' => 'form-control')) }}
+									<select class="form-control" id="c_pre_sku" name="c_pre_sku" >
+									</select>
 								</td>
 		
 							</tr>

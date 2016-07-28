@@ -2,6 +2,63 @@ $(document).ready(function() {
 	var hostname = 'http://' + $(location).attr('host');
 	var activity_id = $('#activity_id').val();
 
+	$("#updateTradedeal").validate({
+		errorElement: "span", 
+		errorClass : "has-error",
+		rules: {
+			alloc_in_weeks: {
+				required: true,
+			},
+			non_ulp_premium_desc: {
+				required: {
+					depends: function(){
+                    	return $('#non_ulp_premium').is(':checked')
+                	}
+                }
+			},
+			non_ulp_premium_code: {
+				required: {
+					depends: function(){
+                    	return $('#non_ulp_premium').is(':checked')
+                	}
+                }
+			},
+			non_ulp_premium_cost: {
+				required: {
+					depends: function(){
+                    	return $('#non_ulp_premium').is(':checked')
+                	}
+                }
+			},
+			non_ulp_pcs_case: {
+				required: {
+					depends: function(){
+                    	return $('#non_ulp_premium').is(':checked')
+                	}
+                }
+			},
+
+		},
+		errorPlacement: function(error, element) {    
+		
+		},
+		highlight: function( element, errorClass, validClass ) {
+	    	$(element).closest('div').addClass(errorClass).removeClass(validClass);
+	    	
+	  	},
+	  	unhighlight: function( element, errorClass, validClass ) {
+	    	$(element).closest('div').removeClass(errorClass).addClass(validClass);
+	  	},
+	  	invalidHandler: function(form, validator) {
+	        var errors = validator.numberOfInvalids();
+	        if (errors) {
+	            $("html, body").animate({ scrollTop: 0 }, "fast");
+	           
+	        }
+	    }
+	});
+
+
 	$('#non_ulp_premium').click(function() {
 	    var $this = $(this);
 	    // $this will contain a reference to the checkbox   
@@ -22,8 +79,9 @@ $(document).ready(function() {
 		$('#non_ulp_premium_desc, #non_ulp_premium_code, #non_ulp_premium_cost, #non_ulp_pcs_case').val('').attr('disabled','disabled');
 	}
 
-	$('#alloc_in_weeks, #coverage, #non_ulp_premium_cost').inputNumber({ allowDecimals: true, maxDecimalDigits: 2 });
+	$('#alloc_in_weeks, #non_ulp_premium_cost').inputNumber({ allowDecimals: true, maxDecimalDigits: 2 });
 	$('#non_ulp_pcs_case, #c_free').inputNumber({ allowDecimals: false});
+	$('#c_coverage').inputNumber({ allowDecimals: false});
 
 	$('#add_sku').on('click', function(e){
 		e.preventDefault(); // prevents button from submitting
@@ -56,34 +114,8 @@ $(document).ready(function() {
 			allow_single_deselect: true
 		});
 
-		var non_ulp_premium = $('input[name="non_ulp_premium"]:checked').length > 0;
-		if(non_ulp_premium){
-			$('.pre-sku').hide();
-		}else{
-			$('.pre-sku').show();
-			$("#pre_sku").chosen({
-				search_contains: true,
-				allow_single_deselect: true
-			}).change(function() {
-			    $.ajax({
-			        async: false,
-			        type: "GET",
-			        url: hostname + '/api/pricelistsku/?code='+$(this).val(),
-			        contentType: "application/json; charset=utf-8",
-			        dataType: "json",
-			        success: function (data) { 
-			        	$('#pre_cost_pcs').val('');
-			        	$('#pre_cost_pcs').val(data.price);
-			        	$('#pre_pcs_case').val('');
-			        	$('#pre_pcs_case').val(data.pack_size);
-			        },
-			        error: function (msg) { roles = msg; }
-			    });
-			});
-		}
-
 	}).on('hide.bs.modal', function(){
-		$("#host_sku, #ref_sku, #pre_sku").val('').trigger("chosen:updated");
+		$("#host_sku, #ref_sku ").val('').trigger("chosen:updated");
 		$('#host_cost_pcs').val('');
 		$('#host_pcs_case').val('');
 		$('#pre_cost_pcs').val('');
@@ -133,7 +165,6 @@ $(document).ready(function() {
 			        }
 			        ul = ul + '</ul>'; 
 					$('#addpartskus .error-msg').text('').append(html.replace(/%s/g, ul));;
-					console.log();
 				}
 			}
 		});
@@ -178,6 +209,9 @@ $(document).ready(function() {
 	    
 	});
 
+	
+
+
 	$('#deal_type').change(function(e) {
 	  	// console.log(this.value);
 	  	$.ajax({
@@ -192,22 +226,24 @@ $(document).ready(function() {
 	        	var selected = $('#deal_type').val();
 
 	        	if(selected == 1){
-	        		var option = '<select name="option[%i]"">%s</select>';
+	        		var option = '<select disabled="disabled" name="option[%i]"">%s</select>';
 		        	var option_value = '';
 		        	$.each(data.uom, function(key, value) {
 					   option_value = option_value+'<option  value="'+key+'">'+value+'</option>';
 					})
 					option = option.replace(/%s/g, option_value);
 			        $.each(data.skus, function(key, value) {
-					    var newRowContent = '<tr><td><input name="select[]" value="'+value.id+'" type="checkbox"></td>';
+					    var newRowContent = '<tr><td><input class="sku-checkbox"  name="select[]" value="'+value.id+'" type="checkbox"></td>';
 					    newRowContent = newRowContent + '<td>'+value.host_sku+'</td>';
-					    newRowContent = newRowContent + '<td><input name="buy['+value.id+']"  type="text" class="num-int"></input></td>';
-					    newRowContent = newRowContent + '<td><input name="free['+value.id+']" type="text" class="num-int"></input></td>';
+					    newRowContent = newRowContent + '<td><input disabled="disabled" name="buy['+value.id+']"  type="text" class="num-int"></input></td>';
+					    newRowContent = newRowContent + '<td><input disabled="disabled" name="free['+value.id+']" type="text" class="num-int"></input></td>';
+					    newRowContent = newRowContent + '<td><input disabled="disabled" name="coverage['+value.id+']" type="text" class="cov-int" value="100.00"></input></td>';
 					    newRowContent = newRowContent + '<td>'+option.replace(/%i/g,value.id)+'</td></tr>';
 					    $("#channel_skus tbody").append(newRowContent);
 					})
 
 			        $('.num-int').inputNumber({ allowDecimals: false});
+			        $('.cov-int').inputNumber({ allowDecimals: true, maxDecimalDigits: 2 });
 	        	}else{
 	        		var option = '<select name="option[%i]"">%s</select>';
 		        	var option_value = '';
@@ -216,9 +252,10 @@ $(document).ready(function() {
 					})
 					option = option.replace(/%s/g, option_value);
 			        $.each(data.skus, function(key, value) {
-					    var newRowContent = '<tr><td><input name="select[]" value="'+value.id+'" type="checkbox"></td>';
+					    var newRowContent = '<tr><td><input class="sku-checkbox"name="select[]" value="'+value.id+'" type="checkbox"></td>';
 					    newRowContent = newRowContent + '<td>'+value.host_sku+'</td>';
-					    newRowContent = newRowContent + '<td><input name="buy['+value.id+']"  type="text" class="num-int"></input></td>';
+					    newRowContent = newRowContent + '<td><input disabled="disabled" name="buy['+value.id+']"  type="text" class="num-int"></input></td>';
+					    newRowContent = newRowContent + '<td>NA</td>';
 					    newRowContent = newRowContent + '<td>NA</td>';
 					    newRowContent = newRowContent + '<td>NA</td></tr>';
 					    $("#channel_skus tbody").append(newRowContent);
@@ -227,7 +264,32 @@ $(document).ready(function() {
 			        $('.num-int').inputNumber({ allowDecimals: false});
 			        $('#collective').show();
 	        	}
-	        	
+
+	        	$(document).on("click",".sku-checkbox", function () {
+				    var $this = $(this);
+				    // $this will contain a reference to the checkbox   
+				    if ($this.is(':checked')) {
+				    	$(this).closest('tr').find("td input:text,td select").each(function() {
+				            $(this).removeAttr('disabled');
+				        });
+				    	console.log();
+				        $('#c_pre_sku').append($('<option>', {
+						    value: $(this).val(),
+						    text: $(this).closest('tr').find("td:eq(1)").text()
+						}));
+
+
+				    } else {
+				    	$(this).closest('tr').find("td input:text,td select").each(function() {
+				            $(this).val('').attr('disabled','disabled')
+				            if($(this).attr('class') == 'cov-int'){
+				            	$(this).val('100.00');
+				            }
+				        });			
+
+				        $("#c_pre_sku option[value='"+$(this).val()+"']").remove();	       
+				    }
+				});
 
 	        },
 	        error: function (msg) { roles = msg; }
@@ -237,53 +299,6 @@ $(document).ready(function() {
 	$('#editChannel').on('shown.bs.modal', function(){
 		$("#channel_skus > tbody").html("");
 		$('#collective').hide();
-		// <table id="channel_skus" class="table table-striped table-hover ">
-		// 				<thead>
-		// 					<tr>
-		// 						<th><input name="select_all" value="1" type="checkbox"></th>
-		// 						<th>Host SKU</th>
-		// 						<th>Buy</th>
-		// 						<th>Free</th>
-		// 						<th>UOM</th>
-		// 					</tr>
-		// 				</thead>
-		// 				<tbody>
-		// 					<tr>
-		// 						<td></td>
-		// 						<td></td>
-		// 						<td></td>
-		// 						<td></td>
-		// 						<td></td>
-		// 					</tr>
-		// 				</tbody>
-		// 			</table> 
-		// $.ajax({
-	 //        async: false,
-	 //        type: "GET",
-	 //        url: hostname + '/activity/'+activity_id+'/getpartskus',
-	 //        contentType: "application/json; charset=utf-8",
-	 //        dataType: "json",
-	 //        success: function (data) { 
-	 //        	var option = '<select name="option[%i]"">%s</select>';
-	 //        	var option_value = '';
-	 //        	$.each(data.uom, function(key, value) {
-		// 		   option_value = option_value+'<option  value="'+key+'">'+value+'</option>';
-		// 		})
-		// 		option = option.replace(/%s/g, option_value);
-		//         $.each(data.skus, function(key, value) {
-		// 		    var newRowContent = '<tr><td><input name="select[]" value="'+value.id+'" type="checkbox"></td>';
-		// 		    newRowContent = newRowContent + '<td>'+value.host_sku+'</td>';
-		// 		    newRowContent = newRowContent + '<td><input name="buy['+value.id+']"  type="text" class="num-int"></input></td>';
-		// 		    newRowContent = newRowContent + '<td><input name="free['+value.id+']" type="text" class="num-int"></input></td>';
-		// 		    newRowContent = newRowContent + '<td>'+option.replace(/%i/g,value.id)+'</td></tr>';
-		// 		    $("#channel_skus tbody").append(newRowContent);
-		// 		})
-
-		//         $('.num-int').inputNumber({ allowDecimals: false});
-
-	 //        },
-	 //        error: function (msg) { roles = msg; }
-	 //    });
 	}).on('hide.bs.modal', function(){
 		$("#deal_type").val('').trigger("chosen:updated");
 		// $("#channel_skus > tbody").html("");
@@ -317,28 +332,6 @@ $(document).ready(function() {
 		e.preventDefault();
 	});
 
-	// $("form[id='editpartsku']").on("submit",function(e){
-	// 	var form = $(this);
-	// 	var method = form.find('input[name="_method"]').val() || 'POST';
-	// 	var url = form.prop('action');
-	// 	$.ajax({
-	// 		url: url,
-	// 		data: form.serialize(),
-	// 		method: "POST",
-	// 		dataType: "json",
-	// 		success: function(data){
-	// 			if(data.success == "1"){
-	// 				bootbox.alert("Participating variants was successfully added."); 
-	// 				$('#editSku').modal('hide');
-	// 				reload_table();
-
-	// 			}else{
-	// 				bootbox.alert("An error occured while updating."); 
-	// 			}
-	// 		}
-	// 	});
-	// 	e.preventDefault();
-	// });
 
 	$("form[id='updateTradedeal']").on("submit",function(e){
 		var form = $(this);
@@ -351,7 +344,6 @@ $(document).ready(function() {
 				dataType: "json",
 				success: function(data){
 					if(data.success == "1"){
-						//bootbox.alert("Trade deal was successfully updated."); 
 						location.reload();
 					}else{
 						bootbox.alert("An error occured while updating."); 

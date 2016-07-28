@@ -982,3 +982,8 @@ table .v-align{
 #td-channels table {
 	font-size: 10px;
 }
+#channel_skus input[disabled]{
+	cursor: not-allowed;
+    background-color: #eeeeee;
+    opacity: 1;
+}

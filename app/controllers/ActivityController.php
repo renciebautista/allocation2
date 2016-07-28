@@ -2806,7 +2806,6 @@ class ActivityController extends BaseController {
 			$tradedeal->activity_id = $id;
 		}
 		$tradedeal->alloc_in_weeks = str_replace(",", "", Input::get('alloc_in_weeks'));
-		$tradedeal->coverage = str_replace(",", "", Input::get('coverage'));
 		$tradedeal->non_ulp_premium = (Input::has('non_ulp_premium')) ? 1 : 0;
 
 		$tradedeal->non_ulp_premium_desc = Input::get('non_ulp_premium_desc');
@@ -2875,17 +2874,7 @@ class ActivityController extends BaseController {
 							$part_sku->pre_cost = $tradedeal->non_ulp_premium_cost;
 							$part_sku->pre_pcs_case = $tradedeal->non_ulp_pcs_case;
 
-						}else{
-							if(Input::get('pre_sku') != 0){
-								$pre_sku = Pricelist::getSku(Input::get('pre_sku'));
-								$part_sku->pre_code = $pre_sku->sap_code;
-								$part_sku->pre_desc = $pre_sku->sap_desc;
-								$part_sku->pre_cost = $pre_sku->price;
-								$part_sku->pre_pcs_case = $pre_sku->pack_size;
-							}
 						}
-						
-						
 						$part_sku->save();
 					}	
 				}
@@ -2907,8 +2896,7 @@ class ActivityController extends BaseController {
 
 		$skus = TradedealPartSku::select(array('id',
 			DB::raw('CONCAT(host_desc," - ",host_code) as host_sku'), 'host_cost', 'host_pcs_case',
-			DB::raw('CONCAT(ref_desc," - ",ref_code) as ref_sku'),
-			DB::raw('CONCAT(pre_desc," - ",pre_code) as pre_sku'), 'pre_cost', 'pre_pcs_case'))
+			DB::raw('CONCAT(ref_desc," - ",ref_code) as ref_sku')))
 			->where('activity_id', $id)
 			->orderBy('id');
 
@@ -3056,9 +3044,12 @@ class ActivityController extends BaseController {
 
 		        if($row->tradedeal_type_id == 2){
 		        	$first = false;
+		        	$cnt = count($skus);
 		        	foreach ($skus as $value) {
 						if(!$first){
-							$body .= '<tr><td>'.$value->host_sku.'</td><td rowspan="2" style="vertical-align: middle;">'.$row->pre_sku.'</td><td class="right">'.$value->buy.'</td><td rowspan="2" class="right" style="vertical-align: middle;">'.$row->free.'</td><td rowspan="2" style="vertical-align: middle;">'.$value->tradedeal_uom.'</td><td rowspan="2" class="right" style="vertical-align: middle;">'.number_format($row->pur_req,2).'</td></tr>';
+							$body .= '<tr><td>'.$value->host_sku.'</td><td rowspan="'.$cnt.'" style="vertical-align: middle;">'.$row->pre_sku.'</td><td class="right">'.$value->buy.'</td><td rowspan="'.$cnt.'" class="right" style="vertical-align: middle;">'
+							.$row->free.'</td><td rowspan="'.$cnt.'" style="vertical-align: middle;">'.$value->tradedeal_uom.'</td><td rowspan="'
+							.$cnt.'" class="right" style="vertical-align: middle;">'.number_format($row->pur_req,2).'</td></tr>';
 							$first = true;
 						}else{
 							$body .= '<tr><td>'.$value->host_sku.'</td><td class="right">'.$value->buy.'</td></tr>';
@@ -3100,6 +3091,7 @@ class ActivityController extends BaseController {
 										$scheme->tradedeal_uom_id = Input::get('option')[$host_id];
 										$scheme->buy = Input::get('buy')[$host_id];
 										$scheme->free = Input::get('free')[$host_id];
+										$scheme->coverage = Input::get('coverage')[$host_id];
 										$scheme->save();
 									}
 									
@@ -3109,6 +3101,7 @@ class ActivityController extends BaseController {
 							if($deal_type == 2){
 								$uom = Input::get('c_uom');
 								$free = Input::get('c_free');
+								$coverage = Input::get('c_coverage');
 								$pur_req = 0;
 								foreach ($selected as $host_id) {
 									$part_sku = TradedealPartSku::find($host_id);
@@ -3119,6 +3112,7 @@ class ActivityController extends BaseController {
 										$scheme->tradedeal_uom_id = $uom;
 										$scheme->buy = Input::get('buy')[$host_id];
 										$scheme->free = $free;
+										$scheme->coverage = $coverage;
 										$scheme->save();
 
 										if($uom == 1){
@@ -3134,18 +3128,24 @@ class ActivityController extends BaseController {
 										}
 									}
 								}
-								$pre_sku = Pricelist::getSku(Input::get('c_pre_sku'));
-								$channel->pre_code = $pre_sku->sap_code;
-								$channel->pre_desc = $pre_sku->sap_desc;
-								$channel->pre_cost = $pre_sku->price;
-								$channel->pre_pcs_case = $pre_sku->pack_size;
-								$channel->free = $free;
-								$channel->pur_req = $pur_req;
+								if(count($selected) > 0){
+									$free_sku = TradedealPartSku::find(Input::get('c_pre_sku'));
+									$pre_sku = Pricelist::getSku($free_sku->host_code);
+									$channel->pre_code = $pre_sku->sap_code;
+									$channel->pre_desc = $pre_sku->sap_desc;
+									$channel->pre_cost = $pre_sku->price;
+									$channel->pre_pcs_case = $pre_sku->pack_size;
+									$channel->free = $free;
+									$channel->pur_req = $pur_req;
+								}
+								
 							}
 							
 						}
-						$channel->tradedeal_type_id = $deal_type;
-						$channel->save();
+						if(count($selected) > 0){
+							$channel->tradedeal_type_id = $deal_type;
+							$channel->save();
+						}
 						
 						$arr['success'] = 1;
 					}else{
