@@ -255,9 +255,16 @@ class User extends Eloquent implements ConfideUserInterface {
         return false;
 	}
 
-	public static function getUsers(){
+	public static function getUsers($activity, $departments){
+		$activity_members = ActivityMember::where('activity_id', $activity->id)->get();
+		$users = [];
+		foreach ($activity_members as $member) {
+			$users[] = $member->user_id;
+		}
 		return self::select(DB::raw("CONCAT(first_name,' ', last_name) as fullname"), 'id' )
 			->where('active',1)
+			->whereIn('department_id', $departments)
+			->whereNotIn('id',$users )
 			->lists('fullname', 'id');
 	}
 	

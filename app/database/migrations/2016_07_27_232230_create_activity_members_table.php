@@ -20,6 +20,9 @@ class CreateActivityMembersTable extends Migration {
 			$table->foreign('activity_id')->references('id')->on('activities');
 			$table->integer('user_id')->unsigned();
 			$table->foreign('user_id')->references('id')->on('users');
+			$table->string('user_desc');
+			$table->string('department');
+			$table->integer('activity_member_status_id')->default(1);
 			$table->timestamps();
 		});
 	}

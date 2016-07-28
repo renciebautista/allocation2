@@ -71,13 +71,7 @@ class ActivityController extends BaseController {
 	 */
 	public function create($type = 1)
 	{
-		if($type == 2){
-			$activity_types = ActivityType::getWithNetworks();
-			$cycles = Cycle::getLists();
-			$objectives = Objective::getLists();
-			$divisions = Pricelist::divisions();
-			return View::make('activity.createcusomized', compact('cycles', 'activity_types', 'objectives', 'divisions'));
-		}else{
+		if($type == 1){
 			if(Auth::user()->hasRole("PROPONENT")){
 				$scope_types = ScopeType::getLists();
 				$planners = User::getApprovers(['PMOG PLANNER']);
@@ -92,6 +86,14 @@ class ActivityController extends BaseController {
 			}
 
 			return Response::make(View::make('shared/404'), 404);
+		}else{
+			// customized
+			$activity_types = ActivityType::getWithNetworks();
+			$cycles = Cycle::getLists();
+			$objectives = Objective::getLists();
+			$divisions = Pricelist::divisions();
+			return View::make('activity.createcusomized', compact('cycles', 'activity_types', 'objectives', 'divisions'));
+			
 		}
 		
 		
@@ -105,136 +107,7 @@ class ActivityController extends BaseController {
 	 */
 	public function store($type = 1)
 	{
-		if($type == 2){
-			$validation = Validator::make(Input::all(), Activity::$rules);
-				if($validation->passes())
-				{
-					$id =  DB::transaction(function()   {
-						$scope_id = 2;
-						$cycle_id = Input::get('cycle');
-						$activity_type_id = Input::get('activity_type');
-						$division_code = Input::get('division');
-						$category_code = Input::get('category');
-						$brand_code = Input::get('brand');
-
-						// foreach (Input::get('brand') as $brand) {
-						// 	$pricelistsku = Pricelist::where('brand_code', $brand)->first();
-						// 	$division_code[] = $pricelistsku->division_code;
-						// 	$category_code[] = $pricelistsku->category_code;
-						// 	$brand_code[] = $pricelistsku->brand_desc;
-						// }
-						
-						// Input::merge(array('division' => $division_code,
-						//  'category' => $category_code, 'brand' => $brand_code ));
-
-						// dd(Input::all());
-
-						$activity = new Activity;
-						$activity->created_by = Auth::id();
-						$activity->proponent_name = Auth::user()->getFullname();
-						$activity->contact_no = Auth::user()->contact_no;
-						
-						$scope = ScopeType::find($scope_id);
-						$activity->scope_type_id = $scope_id;
-						$activity->scope_desc = $scope->scope_name;
-
-						$cycle = Cycle::find($cycle_id);
-						$activity->cycle_id = $cycle_id;
-						$activity->cycle_desc = $cycle->cycle_name;
-
-						$activitytype = ActivityType::find($activity_type_id);
-						$activity->activity_type_id = $activity_type_id;
-						$activity->activitytype_desc = $activitytype->activity_type;
-						$activity->uom_desc = $activitytype->uom;
-
-						$activity->duration = (Input::get('lead_time') == '') ? 0 : Input::get('lead_time');
-						$activity->edownload_date = date('Y-m-d',strtotime(Input::get('download_date')));
-						$activity->eimplementation_date = date('Y-m-d',strtotime(Input::get('implementation_date')));
-						$activity->end_date = date('Y-m-d',strtotime(Input::get('end_date')));
-						$activity->circular_name = strtoupper(Input::get('activity_title'));
-						$activity->background = Input::get('background');
-						$activity->instruction = Input::get('instruction');
-						$activity->status_id = 1;
-						$activity->save();
-
-						// add timings
-						$networks = ActivityTypeNetwork::timings($activity->activity_type_id,$activity->edownload_date);
-						if(count($networks)> 0){
-							$activity_timing = array();
-
-							foreach ($networks as $network) {
-								$activity_timing[] = array('activity_id' => $activity->id,
-								 	'task_id' => $network->task_id,
-									'milestone' => $network->milestone, 
-									'task' => $network->task, 
-									'responsible' => $network->responsible,
-									'duration' => $network->duration, 
-									'depend_on' => $network->depend_on,
-									'show' => $network->show,
-									'start_date' => date('Y-m-d',strtotime($network->start_date)),
-									'end_date' => date('Y-m-d',strtotime($network->end_date)),
-									'final_start_date' => date('Y-m-d',strtotime($network->start_date)),
-									'final_end_date' => date('Y-m-d',strtotime($network->end_date)));
-							}
-							ActivityTiming::insert($activity_timing);
-						}
-						
-						$activity->activity_code =  ActivityRepository::generateActivityCode($activity,$scope,$cycle,$activitytype,$division_code,$category_code,$brand_code);
-						$activity->update();
-
-						// // add planner
-						// ActivityRepository::addPlanner($activity);
-						
-						// // add approver
-						// ActivityRepository::addApprovers($activity,$cycle);
-
-						// // add division
-						ActivityRepository::addDivisions($activity);
-						// // add category
-						ActivityRepository::addCategories($activity);
-						// // add brand
-						ActivityRepository::addBrands($activity);
-
-						// // add skus
-						// ActivityRepository::addSkus($activity);
-						
-						// add objective
-						ActivityRepository::addObjectives($activity);
-
-						// ActivityCutomerList::addCustomer($activity->id,array());
-
-						$path_1 = storage_path().'/uploads/'.$activity->cycle_id;
-
-						if(!File::exists($path_1)) {
-							File::makeDirectory($path_1);
-						}
-
-						$path = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id;
-						if(!File::exists($path)) {
-							File::makeDirectory($path);
-						}
-						$path2 = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
-						if(!File::exists($path2)) {
-							File::makeDirectory($path2);
-						}
-
-						return $activity->id;
-
-						
-					});
-
-					return Redirect::route('activity.edit',$id)
-						->with('class', 'alert-success')
-						->with('message', 'Activity "'.strtoupper(Input::get('activity_title')).'" was successfuly created.');
-					
-				}
-
-				return Redirect::route('activity.create', 2)
-					->withInput()
-					->withErrors($validation)
-					->with('class', 'alert-danger')
-					->with('message', 'There were validation errors.');
-		}else{
+		if($type == 1){
 			if(Auth::user()->hasRole("PROPONENT")){
 				$validation = Validator::make(Input::all(), Activity::$rules);
 				if($validation->passes())
@@ -355,6 +228,126 @@ class ActivityController extends BaseController {
 					->with('class', 'alert-danger')
 					->with('message', 'There were validation errors.');
 			}
+
+			
+		}else{
+			// customized
+			$validation = Validator::make(Input::all(), Activity::$rules);
+				if($validation->passes())
+				{
+					$id =  DB::transaction(function()   {
+						$scope_id = 2;
+						$cycle_id = Input::get('cycle');
+						$activity_type_id = Input::get('activity_type');
+						$division_code = Input::get('division');
+						$category_code = Input::get('category');
+						$brand_code = Input::get('brand');
+
+						$activity = new Activity;
+						$activity->created_by = Auth::id();
+						$activity->proponent_name = Auth::user()->getFullname();
+						$activity->contact_no = Auth::user()->contact_no;
+						
+						$scope = ScopeType::find($scope_id);
+						$activity->scope_type_id = $scope_id;
+						$activity->scope_desc = $scope->scope_name;
+
+						$cycle = Cycle::find($cycle_id);
+						$activity->cycle_id = $cycle_id;
+						$activity->cycle_desc = $cycle->cycle_name;
+
+						$activitytype = ActivityType::find($activity_type_id);
+						$activity->activity_type_id = $activity_type_id;
+						$activity->activitytype_desc = $activitytype->activity_type;
+						$activity->uom_desc = $activitytype->uom;
+
+						$activity->duration = (Input::get('lead_time') == '') ? 0 : Input::get('lead_time');
+						$activity->edownload_date = date('Y-m-d',strtotime(Input::get('download_date')));
+						$activity->eimplementation_date = date('Y-m-d',strtotime(Input::get('implementation_date')));
+						$activity->end_date = date('Y-m-d',strtotime(Input::get('end_date')));
+						$activity->circular_name = strtoupper(Input::get('activity_title'));
+						$activity->background = Input::get('background');
+						$activity->instruction = Input::get('instruction');
+						$activity->status_id = 1;
+						$activity->save();
+
+						// add timings
+						$networks = ActivityTypeNetwork::timings($activity->activity_type_id,$activity->edownload_date);
+						if(count($networks)> 0){
+							$activity_timing = array();
+
+							foreach ($networks as $network) {
+								$activity_timing[] = array('activity_id' => $activity->id,
+								 	'task_id' => $network->task_id,
+									'milestone' => $network->milestone, 
+									'task' => $network->task, 
+									'responsible' => $network->responsible,
+									'duration' => $network->duration, 
+									'depend_on' => $network->depend_on,
+									'show' => $network->show,
+									'start_date' => date('Y-m-d',strtotime($network->start_date)),
+									'end_date' => date('Y-m-d',strtotime($network->end_date)),
+									'final_start_date' => date('Y-m-d',strtotime($network->start_date)),
+									'final_end_date' => date('Y-m-d',strtotime($network->end_date)));
+							}
+							ActivityTiming::insert($activity_timing);
+						}
+						
+						$activity->activity_code =  ActivityRepository::generateActivityCode($activity,$scope,$cycle,$activitytype,$division_code,$category_code,$brand_code);
+						$activity->update();
+
+						// // add planner
+						// ActivityRepository::addPlanner($activity);
+						
+						// // add approver
+						// ActivityRepository::addApprovers($activity,$cycle);
+
+						// // add division
+						ActivityRepository::addDivisions($activity);
+						// // add category
+						ActivityRepository::addCategories($activity);
+						// // add brand
+						ActivityRepository::addBrands($activity);
+
+						// // add skus
+						// ActivityRepository::addSkus($activity);
+						
+						// add objective
+						ActivityRepository::addObjectives($activity);
+
+						// ActivityCutomerList::addCustomer($activity->id,array());
+
+						$path_1 = storage_path().'/uploads/'.$activity->cycle_id;
+
+						if(!File::exists($path_1)) {
+							File::makeDirectory($path_1);
+						}
+
+						$path = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id;
+						if(!File::exists($path)) {
+							File::makeDirectory($path);
+						}
+						$path2 = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
+						if(!File::exists($path2)) {
+							File::makeDirectory($path2);
+						}
+
+						return $activity->id;
+
+						
+					});
+
+					return Redirect::route('activity.edit',$id)
+						->with('class', 'alert-success')
+						->with('message', 'Activity "'.strtoupper(Input::get('activity_title')).'" was successfuly created.');
+					
+				}
+
+				return Redirect::route('activity.create', 2)
+					->withInput()
+					->withErrors($validation)
+					->with('class', 'alert-danger')
+					->with('message', 'There were validation errors.');
 		}
 	}
 
@@ -380,14 +373,14 @@ class ActivityController extends BaseController {
 	 */
 	public function edit($id)
 	{
-		if(Auth::user()->hasRole("PROPONENT")){
-			$activity = Activity::findOrFail($id);
-			
-			if(!Activity::myActivity($activity)){
-				return Response::make(View::make('shared/404'), 404);
-			}
+		$activity = Activity::findOrFail($id);
 
-			if($activity->scope_type_id == 1){
+		if($activity->scope_type_id == 1){
+			if(Auth::user()->hasRole("PROPONENT")){
+				if(!Activity::myActivity($activity)){
+					return Response::make(View::make('shared/404'), 404);
+				}
+
 				$sel_planner = ActivityPlanner::getPlanner($activity->id);
 				$sel_approver = ActivityApprover::getList($activity->id);
 				$sel_objectives = ActivityObjective::getList($activity->id);
@@ -457,16 +450,28 @@ class ActivityController extends BaseController {
 					 'scheme_customers', 'scheme_allcations', 'materials', 'force_allocs','sel_involves',
 					 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings', 'comments' ,'submitstatus', 'route', 'recall', 'submit_action'));
 				}
-			}else{
-				
+			}
+
+			if(Auth::user()->hasRole("PMOG PLANNER")){
+				if(!ActivityPlanner::myActivity($activity->id)){
+					if(!ActivityMember::myActivity($activity->id)){
+						return Response::make(View::make('shared/404'), 404);
+					}
+				}
+				$sel_planner = ActivityPlanner::getPlanner($activity->id);
+				$sel_approver = ActivityApprover::getList($activity->id);
 				$sel_objectives = ActivityObjective::getList($activity->id);
 				$sel_divisions = ActivityDivision::getList($activity->id);
-				
+				$sel_involves = ActivitySku::getSkus($activity->id);
+				// $involves = Pricelist::items();
+				$approvers = User::getApprovers(['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']);
+				// $channels = Channel::getList();
 				$objectives = Objective::getLists();
 				$budgets = ActivityBudget::getBudgets($activity->id);
 				$nobudgets = ActivityNobudget::getBudgets($activity->id);
 				$schemes = Scheme::getList($activity->id);
 				$scheme_summary = Scheme::getSummary($schemes);
+
 				$materials = ActivityMaterial::getList($activity->id);
 				// attachments
 				$fdapermits = ActivityFdapermit::getList($activity->id);
@@ -481,43 +486,54 @@ class ActivityController extends BaseController {
 
 				// $activity_roles = ActivityRole::getList($activity->id);
 
-				
+				$force_allocs = ForceAllocation::getlist($activity->id);
+				$areas = Area::getAreaWithGroup();
+				foreach ($areas as $key => $area) {
+					$area->multi = "1.00";
+					foreach ($force_allocs as $force_alloc) {
+						if($area->area_code == $force_alloc->area_code){
+							$area->multi = $force_alloc->multi;
+						}
+					}
+				}
 
-				$submitstatus = array('1' => 'SUBMIT ACTIVITY','4' => 'SAVE AS DRAFT');
-				$activity_types = ActivityType::getWithNetworks();
-				$cycles = Cycle::getLists();
-				// $divisions = Sku::getDivisionLists();
-				$divisions = Pricelist::divisions();
+				if($activity->status_id == 4){
+					$submitstatus = array('1' => 'SUBMIT ACTIVITY','2' => 'DENY ACTIVITY');
+					$scope_types = ScopeType::getLists($activity->id);
+					$planners = User::getApprovers(['PMOG PLANNER']);
+					$activity_types = ActivityType::getWithNetworks();
+					$cycles = Cycle::getLists();
+					// $divisions = Sku::getDivisionLists();
+					$divisions = Pricelist::divisions();
 
-				return View::make('activity.customizededit', compact('activity', 'planners', 'approvers', 'cycles',
-					 'activity_types', 'divisions' ,'objectives',  'users', 'budgets', 'nobudgets', 
-					 'sel_objectives', 'sel_divisions',  'schemes', 'scheme_summary', 'networks', 'timings' ,
+					return View::make('downloadedactivity.edit', compact('activity', 'scope_types', 'planners', 'approvers', 'cycles',
+					 'activity_types', 'divisions' , 'sel_divisions','objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
+					 'sel_objectives',  'schemes', 'scheme_summary', 'networks', 'areas', 'timings' ,'sel_involves',
 					 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings',
-					 'comments' ,'submitstatus'));
+					 'force_allocs', 'comments' ,'submitstatus'));
+				}else{
+					$submitstatus = array('3' => 'RECALL ACTIVITY');
+					$divisions = Sku::getDivisionLists();
+					$route = 'activity.index';
+					$recall = $activity->pmog_recall;
+					$submit_action = 'ActivityController@submittogcm';
+					return View::make('shared.activity_readonly', compact('activity', 'sel_planner', 'approvers', 'sel_divisions','divisions' ,
+					 'objectives',  'users', 'budgets', 'nobudgets','sel_approver',
+					 'sel_objectives',  'schemes', 'scheme_summary', 'networks', 'areas',
+					 'scheme_customers', 'scheme_allcations', 'materials', 'force_allocs', 'timings' ,'sel_involves',
+					 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings', 'comments' ,'submitstatus', 'route', 'recall', 'submit_action'));
+				}
 			}
 			
-		}
-
-		if(Auth::user()->hasRole("PMOG PLANNER")){
-			$activity = Activity::findOrFail($id);
-			if(!ActivityPlanner::myActivity($activity->id)){
-				return Response::make(View::make('shared/404'), 404);
-			}
-
-			$sel_planner = ActivityPlanner::getPlanner($activity->id);
-			$sel_approver = ActivityApprover::getList($activity->id);
+		}else{
 			$sel_objectives = ActivityObjective::getList($activity->id);
 			$sel_divisions = ActivityDivision::getList($activity->id);
-			$sel_involves = ActivitySku::getSkus($activity->id);
-			// $involves = Pricelist::items();
-			$approvers = User::getApprovers(['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']);
-			// $channels = Channel::getList();
+			
 			$objectives = Objective::getLists();
 			$budgets = ActivityBudget::getBudgets($activity->id);
 			$nobudgets = ActivityNobudget::getBudgets($activity->id);
 			$schemes = Scheme::getList($activity->id);
 			$scheme_summary = Scheme::getSummary($schemes);
-
 			$materials = ActivityMaterial::getList($activity->id);
 			// attachments
 			$fdapermits = ActivityFdapermit::getList($activity->id);
@@ -532,44 +548,22 @@ class ActivityController extends BaseController {
 
 			// $activity_roles = ActivityRole::getList($activity->id);
 
-			$force_allocs = ForceAllocation::getlist($activity->id);
-			$areas = Area::getAreaWithGroup();
-			foreach ($areas as $key => $area) {
-				$area->multi = "1.00";
-				foreach ($force_allocs as $force_alloc) {
-					if($area->area_code == $force_alloc->area_code){
-						$area->multi = $force_alloc->multi;
-					}
-				}
-			}
+			
 
-			if($activity->status_id == 4){
-				$submitstatus = array('1' => 'SUBMIT ACTIVITY','2' => 'DENY ACTIVITY');
-				$scope_types = ScopeType::getLists($activity->id);
-				$planners = User::getApprovers(['PMOG PLANNER']);
-				$activity_types = ActivityType::getWithNetworks();
-				$cycles = Cycle::getLists();
-				// $divisions = Sku::getDivisionLists();
-				$divisions = Pricelist::divisions();
+			$submitstatus = array('3' => 'APPROVE','2' => 'DENY');
+			$activity_types = ActivityType::getWithNetworks();
+			$cycles = Cycle::getLists();
+			// $divisions = Sku::getDivisionLists();
+			$divisions = Pricelist::divisions();
 
-				return View::make('downloadedactivity.edit', compact('activity', 'scope_types', 'planners', 'approvers', 'cycles',
-				 'activity_types', 'divisions' , 'sel_divisions','objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
-				 'sel_objectives',  'schemes', 'scheme_summary', 'networks', 'areas', 'timings' ,'sel_involves',
+			return View::make('activity.customizededit', compact('activity', 'planners', 'approvers', 'cycles',
+				 'activity_types', 'divisions' ,'objectives',  'users', 'budgets', 'nobudgets', 
+				 'sel_objectives', 'sel_divisions',  'schemes', 'scheme_summary', 'networks', 'timings' ,
 				 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings',
-				 'force_allocs', 'comments' ,'submitstatus'));
-			}else{
-				$submitstatus = array('3' => 'RECALL ACTIVITY');
-				$divisions = Sku::getDivisionLists();
-				$route = 'activity.index';
-				$recall = $activity->pmog_recall;
-				$submit_action = 'ActivityController@submittogcm';
-				return View::make('shared.activity_readonly', compact('activity', 'sel_planner', 'approvers', 'sel_divisions','divisions' ,
-				 'objectives',  'users', 'budgets', 'nobudgets','sel_approver',
-				 'sel_objectives',  'schemes', 'scheme_summary', 'networks', 'areas',
-				 'scheme_customers', 'scheme_allcations', 'materials', 'force_allocs', 'timings' ,'sel_involves',
-				 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings', 'comments' ,'submitstatus', 'route', 'recall', 'submit_action'));
-			}
+				 'comments' ,'submitstatus'));
+			
 		}
+		
 	}
 
 	/**
@@ -921,164 +915,188 @@ class ActivityController extends BaseController {
 
 	public function updateactivity($id){
 		if(Request::ajax()){
-			if(Auth::user()->hasRole("PROPONENT")){
-				$arr = DB::transaction(function() use ($id)  {
-					$activity = Activity::findOrFail($id);
-					
-					if(empty($activity)){
-						$arr['success'] = 0;
-						$arr['error'] = $validation['message'];
-					}else{
-						$status_id = (int) Input::get('submitstatus');
-						$planner_count = ActivityPlanner::getPlannerCount($activity->id);
-						$activity_status = 3;
-						$pro_recall = 0;
-						$pmog_recall = 0;
-						$allow_comment = false;
-						$allow_update = false;
 
-						// save as draft
-						if($status_id == 4){
-							$comment_status = "SAVED AS DRAFT";
-							$class = "text-success";
-							$allow_comment = true;
-						}
+			$activity = Activity::findOrFail($id);
 
-						// recall activity
-						if($status_id == 2){
-							$comment_status = "RECALLED ACTIVITY";
-							$class = "text-warning";
-							ActivityApprover::resetAll($activity->id);
-							$allow_update = true;
-							$allow_comment = true;
-						}
+			if($activity->scope_type_id == 1){
+				if(Auth::user()->hasRole("PROPONENT")){
+					$arr = DB::transaction(function() use ($id)  {
+						
+						
+						if(empty($activity)){
+							$arr['success'] = 0;
+							$arr['error'] = $validation['message'];
+						}else{
+							$status_id = (int) Input::get('submitstatus');
+							$planner_count = ActivityPlanner::getPlannerCount($activity->id);
+							$activity_status = 3;
+							$pro_recall = 0;
+							$pmog_recall = 0;
+							$allow_comment = false;
+							$allow_update = false;
 
-						// submit activity
-						if($status_id == 1){
-							if(count($planner_count) > 0){
-								if($activity->activitytype->with_scheme){
-									if($activity->activitytype->with_sob){
-										$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme','sob','submission_deadline','sob_start_week');
-									}else{
-										$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme','submission_deadline');
-									}
-								}else{
-									if($activity->activitytype->with_sob){
-										$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','sob', 'submission_deadline','sob_start_week');
-									}else{
-										$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','submission_deadline');
-									}
-
-								}
-								
-							}else{
-								if($activity->activitytype->with_scheme){
-									if($activity->activitytype->with_sob){
-										$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme','sob','submission_deadline','sob_start_week');
-									}else{
-										$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme','submission_deadline',);
-									}
-								}else{
-									if($activity->activitytype->with_sob){
-										$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','sob','submission_deadline', 'sob_start_week');
-									}else{
-										$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','submission_deadline');
-									}
-								}
+							// save as draft
+							if($status_id == 4){
+								$comment_status = "SAVED AS DRAFT";
+								$class = "text-success";
+								$allow_comment = true;
 							}
 
-							// dd($required_rules);
-
-							$validation = Activity::validForDownload($activity,$required_rules);
-
-							if($validation['status'] == 0){
-								$arr['success'] = 0;
-								$arr['error'] = $validation['message'];
-								$arr['success'] = 0;
-							}else{
+							// recall activity
+							if($status_id == 2){
+								$comment_status = "RECALLED ACTIVITY";
+								$class = "text-warning";
+								ActivityApprover::resetAll($activity->id);
 								$allow_update = true;
 								$allow_comment = true;
-								$pro_recall = 1;
-								$class = "text-success";
-								// check if there is a planner
-								if(count($planner_count) > 0){
-									$comment_status = "SUBMITTED TO PMOG PLANNER";
-									$activity_status = 4;
-								}else{
-									// check if there is GCOM Approver
-									$gcom_approvers = ActivityApprover::getApproverByRole($activity->id,'GCOM APPROVER');
-									if(count($gcom_approvers) > 0){
-										$comment_status = "SUBMITTED TO GCOM";
-										$activity_status = 5;
+							}
 
-										foreach ($gcom_approvers as $gcom_approver) {
-											$approver = ActivityApprover::find($gcom_approver->id);
-											$approver->show = 1;
-											$approver->for_approval = 1;
-											$approver->update();
+							// submit activity
+							if($status_id == 1){
+								if(count($planner_count) > 0){
+									if($activity->activitytype->with_scheme){
+										if($activity->activitytype->with_sob){
+											$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme','sob','submission_deadline','sob_start_week');
+										}else{
+											$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme','submission_deadline');
 										}
 									}else{
-										// check if there is CD OPS Approver
-										$cdops_approvers = ActivityApprover::getApproverByRole($activity->id,'CD OPS APPROVER');
-										if(count($cdops_approvers) > 0){
-											$comment_status = "SUBMITTED TO CD OPS";
-											$activity_status = 6;
+										if($activity->activitytype->with_sob){
+											$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','sob', 'submission_deadline','sob_start_week');
+										}else{
+											$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','submission_deadline');
+										}
 
-											foreach ($cdops_approvers as $cdops_approver) {
-												$approver = ActivityApprover::find($cdops_approver->id);
+									}
+									
+								}else{
+									if($activity->activitytype->with_scheme){
+										if($activity->activitytype->with_sob){
+											$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme','sob','submission_deadline','sob_start_week');
+										}else{
+											$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme','submission_deadline',);
+										}
+									}else{
+										if($activity->activitytype->with_sob){
+											$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','sob','submission_deadline', 'sob_start_week');
+										}else{
+											$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','submission_deadline');
+										}
+									}
+								}
+
+								// dd($required_rules);
+
+								$validation = Activity::validForDownload($activity,$required_rules);
+
+								if($validation['status'] == 0){
+									$arr['success'] = 0;
+									$arr['error'] = $validation['message'];
+									$arr['success'] = 0;
+								}else{
+									$allow_update = true;
+									$allow_comment = true;
+									$pro_recall = 1;
+									$class = "text-success";
+									// check if there is a planner
+									if(count($planner_count) > 0){
+										$comment_status = "SUBMITTED TO PMOG PLANNER";
+										$activity_status = 4;
+									}else{
+										// check if there is GCOM Approver
+										$gcom_approvers = ActivityApprover::getApproverByRole($activity->id,'GCOM APPROVER');
+										if(count($gcom_approvers) > 0){
+											$comment_status = "SUBMITTED TO GCOM";
+											$activity_status = 5;
+
+											foreach ($gcom_approvers as $gcom_approver) {
+												$approver = ActivityApprover::find($gcom_approver->id);
 												$approver->show = 1;
 												$approver->for_approval = 1;
 												$approver->update();
 											}
 										}else{
-											// check if there is CMD DIRECTOR Approver
-											$cmd_approvers = ActivityApprover::getApproverByRole($activity->id,'CMD DIRECTOR');
-											if(count($cmd_approvers) > 0){
-												$comment_status = "SUBMITTED TO CMD";
-												$activity_status = 7;
+											// check if there is CD OPS Approver
+											$cdops_approvers = ActivityApprover::getApproverByRole($activity->id,'CD OPS APPROVER');
+											if(count($cdops_approvers) > 0){
+												$comment_status = "SUBMITTED TO CD OPS";
+												$activity_status = 6;
 
-												foreach ($cmd_approvers as $cmd_approver) {
-													$approver = ActivityApprover::find($cmd_approver->id);
+												foreach ($cdops_approvers as $cdops_approver) {
+													$approver = ActivityApprover::find($cdops_approver->id);
 													$approver->show = 1;
 													$approver->for_approval = 1;
 													$approver->update();
+												}
+											}else{
+												// check if there is CMD DIRECTOR Approver
+												$cmd_approvers = ActivityApprover::getApproverByRole($activity->id,'CMD DIRECTOR');
+												if(count($cmd_approvers) > 0){
+													$comment_status = "SUBMITTED TO CMD";
+													$activity_status = 7;
+
+													foreach ($cmd_approvers as $cmd_approver) {
+														$approver = ActivityApprover::find($cmd_approver->id);
+														$approver->show = 1;
+														$approver->for_approval = 1;
+														$approver->update();
+													}
 												}
 											}
 										}
 									}
 								}
 							}
+
+							
+
+							if($allow_update){
+								$activity->status_id = $activity_status;
+								$activity->pro_recall = $pro_recall;
+								$activity->pmog_recall = $pmog_recall;
+								$activity->update();
+							}
+
+							if($allow_comment){
+								$comment = new ActivityComment;
+								$comment->created_by = Auth::id();
+								$comment->activity_id = $id;
+								$comment->comment = Input::get('submitremarks');
+								$comment->comment_status = $comment_status;
+								$comment->class = $class;
+								$comment->save();
+
+								$arr['success'] = 1;
+								Session::flash('class', 'alert-success');
+								Session::flash('message', 'Activity successfully updated.');
+							}
+							
+							
 						}
+						return $arr;
+					});
+					return json_encode($arr);
+				}
+				
+			}else{
+				$member = ActivityMember::where('user_id',Auth::id())->first();
+				if(empty($member)){
+					$arr['success'] = 0;
+					$arr['err_msg'] = 'Member not found';
+				}else{
+					$member->activity_member_status_id = Input::get('submitstatus');
+					$member->save();
 
-						
 
-						if($allow_update){
-							$activity->status_id = $activity_status;
-							$activity->pro_recall = $pro_recall;
-							$activity->pmog_recall = $pmog_recall;
-							$activity->update();
-						}
-
-						if($allow_comment){
-							$comment = new ActivityComment;
-							$comment->created_by = Auth::id();
-							$comment->activity_id = $id;
-							$comment->comment = Input::get('submitremarks');
-							$comment->comment_status = $comment_status;
-							$comment->class = $class;
-							$comment->save();
-
-							$arr['success'] = 1;
-							Session::flash('class', 'alert-success');
-							Session::flash('message', 'Activity successfully updated.');
-						}
-						
+					if(!$activity->channel_approved){
+						$all_channels = ActivityMember::getByDepartmentId(['2']);
 						
 					}
-					return $arr;
-				});
+					$arr['success'] = 1;
+				}
+				return json_encode($arr, 200);
 			}
-			return json_encode($arr);
+			
 		}
 
 	}
@@ -2972,6 +2990,8 @@ class ActivityController extends BaseController {
 					$new_user = new ActivityMember;
 					$new_user->activity_id = $activity->id;
 					$new_user->user_id = $user->id;
+					$new_user->user_desc = $user->first_name . ' ' . $user->last_name;
+					$new_user->department = $user->department->department;
 					$new_user->save();
 				}else{
 					$err[] = 'User not found.';
@@ -2987,9 +3007,8 @@ class ActivityController extends BaseController {
 	}
 
 	public function members($id){
-		$skus = ActivityMember::select(array('activity_members.id',
-			DB::raw('CONCAT(users.first_name," ",users.last_name) as full_name')))
-			->join('users', 'users.id', '=', 'activity_members.user_id')
+		$skus = ActivityMember::select(array('activity_member_statuses.id','user_desc', 'department', 'activity_member_statuses.mem_status'))
+			->join('activity_member_statuses', 'activity_member_statuses.id', '=', 'activity_members.activity_member_status_id')
 			->where('activity_id', $id);
 			
 		return Datatables::of($skus)
