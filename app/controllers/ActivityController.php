@@ -286,6 +286,7 @@ class ActivityController extends BaseController {
 			$pre_skus = \Pricelist::items();
 			$dealtypes = TradedealType::get()->lists('tradedeal_type', 'id');
 			$dealuoms = TradedealUom::get()->lists('tradedeal_uom', 'id');
+			$tradedealschemes = TradedealScheme::getScheme($tradedeal->id);
 
 			// $activity_roles = ActivityRole::getList($activity->id);
 
@@ -315,7 +316,7 @@ class ActivityController extends BaseController {
 				 'activity_types', 'divisions' , 'sel_divisions','objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
 				 'sel_objectives',  'schemes', 'scheme_summary', 'networks', 'areas', 'timings' ,'sel_involves',
 				 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings',
-				 'force_allocs', 'comments' ,'submitstatus', 'tradedeal', 'tradedeal_skus', 'dealtypes', 'dealuoms', 'host_skus', 'ref_skus', 'pre_skus'));
+				 'force_allocs', 'comments' ,'submitstatus', 'tradedeal', 'tradedeal_skus', 'dealtypes', 'dealuoms', 'host_skus', 'ref_skus', 'pre_skus', 'tradedealschemes'));
 			}
 
 			if($activity->status_id > 3){
@@ -2849,13 +2850,19 @@ class ActivityController extends BaseController {
 				}else{
 					$host_sku = Pricelist::getSku(Input::get('host_sku'));
 					$ref_sku = Sku::getSku(Input::get('ref_sku'));
-
+					$pre_sku = Pricelist::getSku(Input::get('pre_sku'));
 					if(empty($host_sku)){
 						$err[] = 'No selected Host SKU.';
 					}
 
 					if(empty($ref_sku)){
 						$err[] = 'Reference SKU is required.';
+					}
+
+					if(!$tradedeal->non_ulp_premium){
+						if(empty($pre_sku)){
+							$err[] = 'No Premium SKU selected';
+						}
 					}
 
 					if(count($err) == 0){
@@ -2873,8 +2880,16 @@ class ActivityController extends BaseController {
 							$part_sku->pre_desc = $tradedeal->non_ulp_premium_desc;
 							$part_sku->pre_cost = $tradedeal->non_ulp_premium_cost;
 							$part_sku->pre_pcs_case = $tradedeal->non_ulp_pcs_case;
-
+						}else{
+							if(Input::get('pre_sku') != 0){
+								
+								$part_sku->pre_code = $pre_sku->sap_code;
+								$part_sku->pre_desc = $pre_sku->sap_desc;
+								$part_sku->pre_cost = $pre_sku->price;
+								$part_sku->pre_pcs_case = $pre_sku->pack_size;
+							}
 						}
+						
 						$part_sku->save();
 					}	
 				}
@@ -2896,7 +2911,8 @@ class ActivityController extends BaseController {
 
 		$skus = TradedealPartSku::select(array('id',
 			DB::raw('CONCAT(host_desc," - ",host_code) as host_sku'), 'host_cost', 'host_pcs_case',
-			DB::raw('CONCAT(ref_desc," - ",ref_code) as ref_sku')))
+			DB::raw('CONCAT(ref_desc," - ",ref_code) as ref_sku'),
+			DB::raw('CONCAT(pre_desc," - ",pre_code) as pre_sku'), 'pre_cost', 'pre_pcs_case'))
 			->where('activity_id', $id)
 			->orderBy('id');
 
@@ -2949,14 +2965,12 @@ class ActivityController extends BaseController {
 		}
 	}
 
-	public function partsku(){
+	public function partsku($id){
 		if(Request::ajax()){
-			$id = Input::get('d_id');
 			$part_sku = TradedealPartSku::find($id);
 			return json_encode($part_sku);
 		}
 	}
-
 
 	public function updatepartskus(){
 		if(Request::ajax()){
@@ -2995,76 +3009,11 @@ class ActivityController extends BaseController {
 		}
 	}
 
-	public function tdchannels($id){
-
-		$skus = TradedealChannel::select(array(
-			'tradedeal_channels.id',  'tradedeal_channels.l5_desc', 'tradedeal_channels.rtm_tag', 
-			'tradedeal_types.tradedeal_type', 'tradedeal_channels.tradedeal_type_id',
-			DB::raw('CONCAT(pre_desc," - ",pre_code) as pre_sku'), 'free', 'pur_req'))
-			->join('tradedeal_types', 'tradedeal_types.id', '=', 'tradedeal_channels.tradedeal_type_id', 'left')
-			->join('tradedeal_uoms', 'tradedeal_uoms.id', '=', 'tradedeal_channels.tradedeal_uom_id', 'left')
-			->where('activity_id', $id);
-
-		return Datatables::of($skus)
-			->set_index_column('id')	
-			->add_column('premuim', function($row){
-				$skus = TradedealChannelScheme::getSchemeSku($row->id);
-		        $body = '';
-		        $html = '<table class="table table-condensed table-bordered"> 
-			        		<thead> 
-			        			<tr> 
-			        				<th width="35%">Host SKU</th> 
-			        				<th width="35%">Premium SKU (ULP)</th> 
-			        				<th width="5%" class="right">Buy</th> 
-			        				<th width="5%" class="right">Free</th>
-			        				<th >UOM</th>
-			        				<th width="10%"class="right pr_req">Pur. Req.</th>
-			        			</tr> 
-			        		</thead> 
-			        		<tbody>%s</tbody></table>';
-		        if($row->tradedeal_type_id == 1){
-		        	foreach ($skus as $value) {
-						if($value->tradedeal_uom_id == 1){
-							$per = $value->host_cost * $value->buy;
-						}
-
-						if($value->tradedeal_uom_id == 2){
-							$per = $value->host_cost * $value->buy * 12;
-						}
-
-						if($value->tradedeal_uom_id == 3){
-							$per = $value->host_cost * $value->buy * $value->host_pcs_case;
-						}
-						
-						$body .= '<tr><td>'.$value->host_sku.'</td><td>'.$value->pre_sku.'</td><td class="right">'.$value->buy.'</td><td class="right">'.$value->free.'</td><td>'.$value->tradedeal_uom.'</td><td class="right">'.number_format($per,2).'</td></tr>';
-					}
-					
-					return str_replace("%s", $body, $html) ;
-		        }
-
-		        if($row->tradedeal_type_id == 2){
-		        	$first = false;
-		        	$cnt = count($skus);
-		        	foreach ($skus as $value) {
-						if(!$first){
-							$body .= '<tr><td>'.$value->host_sku.'</td><td rowspan="'.$cnt.'" style="vertical-align: middle;">'.$row->pre_sku.'</td><td class="right">'.$value->buy.'</td><td rowspan="'.$cnt.'" class="right" style="vertical-align: middle;">'
-							.$row->free.'</td><td rowspan="'.$cnt.'" style="vertical-align: middle;">'.$value->tradedeal_uom.'</td><td rowspan="'
-							.$cnt.'" class="right" style="vertical-align: middle;">'.number_format($row->pur_req,2).'</td></tr>';
-							$first = true;
-						}else{
-							$body .= '<tr><td>'.$value->host_sku.'</td><td class="right">'.$value->buy.'</td></tr>';
-						}
-					}
-					return str_replace("%s", $body, $html) ;
-		        }
-				
-
-			}, 4)
-			->make();
-	}
-
-	public function updatedtchannel(){
+	public function addtradealscheme($id){
 		if(Request::ajax()){
+			$err = [];
+			$activity = Activity::find($id);
+			$tradedeal = Tradedeal::where('activity_id', $activity->id)->first();
 
 			$selected = [];
 			if(Input::has('select')){
@@ -3072,91 +3021,91 @@ class ActivityController extends BaseController {
 				 	$selected[] = $value;
 				}
 			}
-			$deal_type = Input::get('deal_type');
-			$x = Input::get('ch_id');
-			$channels = explode(",", $x );
-			if(count($channels)>0){
-				foreach ($channels as $channel_id) {
-					$channel = TradedealChannel::find($channel_id);
-					if(!empty($channel)){
-						if(count($selected) > 0){
-							TradedealChannelScheme::where('tradedeal_channel_id', $channel->id)->delete();
-							if($deal_type == 1){
-								foreach ($selected as $host_id) {
-									$part_sku = TradedealPartSku::find($host_id);
-									if(!empty($part_sku)){
-										$scheme = new TradedealChannelScheme;
-										$scheme->tradedeal_channel_id = $channel->id;
-										$scheme->tradedeal_part_sku_id = $part_sku->id;
-										$scheme->tradedeal_uom_id = Input::get('option')[$host_id];
-										$scheme->buy = Input::get('buy')[$host_id];
-										$scheme->free = Input::get('free')[$host_id];
-										$scheme->coverage = Input::get('coverage')[$host_id];
-										$scheme->save();
-									}
-									
-								}
-							}
-
-							if($deal_type == 2){
-								$uom = Input::get('c_uom');
-								$free = Input::get('c_free');
-								$coverage = Input::get('c_coverage');
-								$pur_req = 0;
-								foreach ($selected as $host_id) {
-									$part_sku = TradedealPartSku::find($host_id);
-									if(!empty($part_sku)){
-										$scheme = new TradedealChannelScheme;
-										$scheme->tradedeal_channel_id = $channel->id;
-										$scheme->tradedeal_part_sku_id = $part_sku->id;
-										$scheme->tradedeal_uom_id = $uom;
-										$scheme->buy = Input::get('buy')[$host_id];
-										$scheme->free = $free;
-										$scheme->coverage = $coverage;
-										$scheme->save();
-
-										if($uom == 1){
-											$pur_req += $scheme->buy * $part_sku->host_cost;
-										}
-
-										if($uom == 2){
-											$pur_req += $scheme->buy * $part_sku->host_cost * 12;
-										}
-
-										if($uom == 3){
-											$pur_req += $scheme->buy * $part_sku->host_cost * $part_sku->host_pcs_case;
-										}
-									}
-								}
-								if(count($selected) > 0){
-									$free_sku = TradedealPartSku::find(Input::get('c_pre_sku'));
-									$pre_sku = Pricelist::getSku($free_sku->host_code);
-									$channel->pre_code = $pre_sku->sap_code;
-									$channel->pre_desc = $pre_sku->sap_desc;
-									$channel->pre_cost = $pre_sku->price;
-									$channel->pre_pcs_case = $pre_sku->pack_size;
-									$channel->free = $free;
-									$channel->pur_req = $pur_req;
-								}
-								
-							}
-							
-						}
-						if(count($selected) > 0){
-							$channel->tradedeal_type_id = $deal_type;
-							$channel->save();
-						}
-						
-						$arr['success'] = 1;
-					}else{
-						$arr['success'] = 0;
-					}
-				}
-			}else{
-				$arr['success'] = 0;
+			$deal_type = TradedealType::find(Input::get('deal_type'));
+			if(empty($deal_type)){
+				$err[] = 'Invalid Deal Type';
 			}
+
+			$uom = TradedealUom::find(Input::get('uom'));
+			if(empty($uom)){
+				$err[] = 'Invalid Unit of Measurement';
+			}
+
+			if(Input::get('buy') == ''){
+				$err[] = 'Buy quantity is required';
+			}
+
+			if(Input::get('free') == ''){
+				$err[] = 'Free quantity is required';
+			}
+
+			if(count($err) == 0){
+				if(count($selected) > 0){
+					if($deal_type->id == 1){
+						$scheme = new TradedealScheme;
+						$scheme->tradedeal_id = $tradedeal->id;
+						$scheme->tradedeal_type_id = $deal_type->id;
+						$scheme->buy = str_replace(",", '', Input::get('buy'));
+						$scheme->free = str_replace(",", '', Input::get('free'));
+						$scheme->coverage = str_replace(",", '', Input::get('coverage'));
+						$scheme->tradedeal_uom_id = $uom->id;
+						if($tradedeal->non_ulp_premium){
+							$scheme->pre_code = $tradedeal->non_ulp_premium_desc;
+							$scheme->pre_desc = $tradedeal->non_ulp_premium_code;
+							$scheme->pre_cost = $tradedeal->non_ulp_premium_cost;
+							$scheme->pre_pcs_case = $tradedeal->non_ulp_pcs_case;
+						}else{
+							// $premuim_sku = TradedealPartSku::find(Input::get('premium_sku'));
+							// $scheme->pre_code = $premuim_sku->pre_code;
+							// $scheme->pre_desc = $premuim_sku->pre_desc;
+							// $scheme->pre_cost = $premuim_sku->pre_cost;
+							// $scheme->pre_pcs_case = $premuim_sku->pre_pcs_case;
+						}
+						$scheme->save();
+						foreach ($selected as $value) {
+							TradedealSchemeSku::create(['tradedeal_scheme_id' => $scheme->id,
+								'tradedeal_part_sku_id' => $value]);
+						}
+					}else{
+						$scheme = new TradedealScheme;
+						$scheme->tradedeal_id = $tradedeal->id;
+						$scheme->tradedeal_type_id = $deal_type->id;
+						$scheme->buy = str_replace(",", '', Input::get('buy'));
+						$scheme->free = str_replace(",", '', Input::get('free'));
+						$scheme->coverage = str_replace(",", '', Input::get('coverage'));
+						$scheme->tradedeal_uom_id = $uom->id;
+						if($tradedeal->non_ulp_premium){
+							$scheme->pre_code = $tradedeal->non_ulp_premium_desc;
+							$scheme->pre_desc = $tradedeal->non_ulp_premium_code;
+							$scheme->pre_cost = $tradedeal->non_ulp_premium_cost;
+							$scheme->pre_pcs_case = $tradedeal->non_ulp_pcs_case;
+						}else{
+							$premuim_sku = TradedealPartSku::find(Input::get('premium_sku'));
+							$scheme->pre_code = $premuim_sku->pre_code;
+							$scheme->pre_desc = $premuim_sku->pre_desc;
+							$scheme->pre_cost = $premuim_sku->pre_cost;
+							$scheme->pre_pcs_case = $premuim_sku->pre_pcs_case;
+						}
+						$scheme->save();
+						foreach ($selected as $value) {
+							TradedealSchemeSku::create(['tradedeal_scheme_id' => $scheme->id,
+								'tradedeal_part_sku_id' => $value]);
+						}
+					}
+					
+				}else{
+					$err[] = 'No selected Host SKU';
+				}
+			}
+
 			
 
+			if(count($err) > 0){
+				$arr['success'] = 0;
+				$arr['err_msg'] = $err;
+			}else{
+				$arr['success'] = 1;
+			}
 			
 			return json_encode($arr);
 		}

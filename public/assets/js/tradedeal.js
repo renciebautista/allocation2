@@ -80,14 +80,15 @@ $(document).ready(function() {
 	}
 
 	$('#alloc_in_weeks, #non_ulp_premium_cost').inputNumber({ allowDecimals: true, maxDecimalDigits: 2 });
-	$('#non_ulp_pcs_case, #c_free').inputNumber({ allowDecimals: false});
-	$('#c_coverage').inputNumber({ allowDecimals: false});
+	$('#non_ulp_pcs_case, #free, #buy').inputNumber({ allowDecimals: false});
+	$('#coverage').inputNumber({ allowDecimals: false});
 
 	$('#add_sku').on('click', function(e){
 		e.preventDefault(); // prevents button from submitting
 		$('#addsku').modal('show');
 	})
 
+	var non_ulp_premium = $('input[name="non_ulp_premium"]:checked').length > 0;
 	$('#addsku').on('shown.bs.modal', function(){
 		$("#host_sku").chosen({
 			search_contains: true,
@@ -114,13 +115,72 @@ $(document).ready(function() {
 			allow_single_deselect: true
 		});
 
+		if(non_ulp_premium){
+			// $('.pre-sku').hide();
+		}else{
+			// $('.pre-sku').show();
+			$("#pre_sku").chosen({
+				search_contains: true,
+				allow_single_deselect: true
+			}).change(function() {
+			    $.ajax({
+			        async: false,
+			        type: "GET",
+			        url: hostname + '/api/pricelistsku/?code='+$(this).val(),
+			        contentType: "application/json; charset=utf-8",
+			        dataType: "json",
+			        success: function (data) { 
+			        	$('#pre_cost_pcs').val('');
+			        	$('#pre_cost_pcs').val(data.price);
+			        	$('#pre_pcs_case').val('');
+			        	$('#pre_pcs_case').val(data.pack_size);
+			        },
+			        error: function (msg) { roles = msg; }
+			    });
+			});
+		}
+
 	}).on('hide.bs.modal', function(){
 		$("#host_sku, #ref_sku ").val('').trigger("chosen:updated");
 		$('#host_cost_pcs').val('');
 		$('#host_pcs_case').val('');
-		$('#pre_cost_pcs').val('');
-		$('#pre_pcs_case').val('');
 		$('#addpartskus .error-msg').text('');
+		if(non_ulp_premium){
+
+		}else{
+			$('#pre_cost_pcs').val('');
+			$('#pre_pcs_case').val('');
+			
+		}
+		
+	});
+
+	
+	$(document).on("click",".deletesku", function (e) {
+	    var id = $(this).attr('id');
+	    if(confirm('Are you sure delete this data?'))
+	    {
+	        // ajax delete data to database
+	        $.ajax({
+	            url : hostname + '/activity/deletepartskus',
+	            type: "POST",
+	            data: { 
+			        'd_id': id
+			    },
+	            dataType: "JSON",
+	            success: function(data)
+	            {
+	                //if success reload ajax table
+	                $('#modal_form').modal('hide');
+	                reload_table();
+	            },
+	            error: function (jqXHR, textStatus, errorThrown)
+	            {
+	                alert('Error deleting data');
+	            }
+	        });
+	 
+	    }
 	});
 
 
@@ -173,39 +233,9 @@ $(document).ready(function() {
 
 	// channels
 
-	var dtchtable = $('#td-channels').DataTable({
-		'ajax': {
-	         'url': hostname + '/activity/'+activity_id+'/tdchannels' 
-	      },
-	   'columnDefs': [
-	      {
-	         'targets': 0,
-	         'checkboxes': {
-	            'selectRow': true
-	         }
-	      }
-	   ],
-	   'select': {
-	      'style': 'multi'
-	   },
-	   'order': [[1, 'asc']]
-	});
-
-	$(document).on("click","#eChannel", function (e) {
+	$(document).on("click","#add-scheme", function (e) {
 		e.preventDefault(); // prevents button from submitting
-	    var rows_selected = dtchtable.column(0).checkboxes.selected();
-	    // Iterate over all selected checkboxes 
-	    var chId = new Array();
-	    $.each(rows_selected, function(index, rowId){
-	       	chId.push(rowId);
-	    });
-
-	    if(chId.length > 0){
-	    	$('#editChannel').modal('show');
-	    	$('#ch_id').val(chId);
-	    }else{
-	    	bootbox.alert("No channel selected, select a channel to edit."); 
-	    }
+	    $('#addScheme').modal('show');
 	    
 	});
 
@@ -225,28 +255,11 @@ $(document).ready(function() {
 	        	$('#collective').hide();
 	        	var selected = $('#deal_type').val();
 
-	        	if(selected == 1){
-	        		var option = '<select disabled="disabled" name="option[%i]"">%s</select>';
-		        	var option_value = '';
-		        	$.each(data.uom, function(key, value) {
-					   option_value = option_value+'<option  value="'+key+'">'+value+'</option>';
-					})
-					option = option.replace(/%s/g, option_value);
-			        $.each(data.skus, function(key, value) {
-					    var newRowContent = '<tr><td><input class="sku-checkbox"  name="select[]" value="'+value.id+'" type="checkbox"></td>';
-					    newRowContent = newRowContent + '<td>'+value.host_sku+'</td>';
-					    newRowContent = newRowContent + '<td><input disabled="disabled" name="buy['+value.id+']"  type="text" class="num-int"></input></td>';
-					    newRowContent = newRowContent + '<td><input disabled="disabled" name="free['+value.id+']" type="text" class="num-int"></input></td>';
-					    newRowContent = newRowContent + '<td><input disabled="disabled" name="coverage['+value.id+']" type="text" class="cov-int" value="100.00"></input></td>';
-					    newRowContent = newRowContent + '<td>'+option.replace(/%i/g,value.id)+'</td></tr>';
-					    $("#channel_skus tbody").append(newRowContent);
-					})
+	        	var option = '<select name="option[%i]"">%s</select>';
+		        var option_value = '';
 
-			        $('.num-int').inputNumber({ allowDecimals: false});
-			        $('.cov-int').inputNumber({ allowDecimals: true, maxDecimalDigits: 2 });
-	        	}else{
-	        		var option = '<select name="option[%i]"">%s</select>';
-		        	var option_value = '';
+	        	if(selected == 1){
+
 		        	$.each(data.uom, function(key, value) {
 					   option_value = option_value+'<option  value="'+key+'">'+value+'</option>';
 					})
@@ -254,40 +267,52 @@ $(document).ready(function() {
 			        $.each(data.skus, function(key, value) {
 					    var newRowContent = '<tr><td><input class="sku-checkbox"name="select[]" value="'+value.id+'" type="checkbox"></td>';
 					    newRowContent = newRowContent + '<td>'+value.host_sku+'</td>';
-					    newRowContent = newRowContent + '<td><input disabled="disabled" name="buy['+value.id+']"  type="text" class="num-int"></input></td>';
-					    newRowContent = newRowContent + '<td>NA</td>';
-					    newRowContent = newRowContent + '<td>NA</td>';
-					    newRowContent = newRowContent + '<td>NA</td></tr>';
+					    newRowContent = newRowContent + '<td>'+value.pre_sku+'</td></tr>';
 					    $("#channel_skus tbody").append(newRowContent);
-					})
+					});
 
-			        $('.num-int').inputNumber({ allowDecimals: false});
-			        $('#collective').show();
+					$('#pre_details').hide();
+
+	        	}else{
+	        		$.each(data.uom, function(key, value) {
+					   option_value = option_value+'<option  value="'+key+'">'+value+'</option>';
+					})
+					option = option.replace(/%s/g, option_value);
+			        $.each(data.skus, function(key, value) {
+					    var newRowContent = '<tr><td><input class="sku-checkbox"name="select[]" value="'+value.id+'" type="checkbox"></td>';
+					    newRowContent = newRowContent + '<td>'+value.host_sku+'</td>';
+					    newRowContent = newRowContent + '<td>NOT APPLICABLE</td></tr>';
+					    $("#channel_skus tbody").append(newRowContent);
+					});
+
+			        $('#pre_details').show();
 	        	}
+
+	        	$('#scheme-table').show();
 
 	        	$(document).on("click",".sku-checkbox", function () {
 				    var $this = $(this);
 				    // $this will contain a reference to the checkbox   
 				    if ($this.is(':checked')) {
-				    	$(this).closest('tr').find("td input:text,td select").each(function() {
-				            $(this).removeAttr('disabled');
-				        });
-				    	console.log();
-				        $('#c_pre_sku').append($('<option>', {
-						    value: $(this).val(),
-						    text: $(this).closest('tr').find("td:eq(1)").text()
-						}));
+				    	console.log($(this).val());
+				    	$.ajax({
+					        async: false,
+					        type: "GET",
+					        url: hostname + '/activity/'+$(this).val()+'/partsku',
+					        contentType: "application/json; charset=utf-8",
+					        dataType: "json",
+					        success: function (data) { 
+					        	console.log(data);
+					        	$('#premium_sku').append($('<option>', {
+								    value: data.id,
+								    text: data.pre_desc + " - " + data.pre_code
+								}));
+					        },
+					        error: function (msg) { }
+					    });
 
-
-				    } else {
-				    	$(this).closest('tr').find("td input:text,td select").each(function() {
-				            $(this).val('').attr('disabled','disabled')
-				            if($(this).attr('class') == 'cov-int'){
-				            	$(this).val('100.00');
-				            }
-				        });			
-
-				        $("#c_pre_sku option[value='"+$(this).val()+"']").remove();	       
+				    } else {		
+				        $("#premium_sku option[value='"+$(this).val()+"']").remove();	       
 				    }
 				});
 
@@ -296,22 +321,8 @@ $(document).ready(function() {
 	    });
 	});
 
-	$('#editChannel').on('shown.bs.modal', function(){
-		$("#channel_skus > tbody").html("");
-		$('#collective').hide();
-	}).on('hide.bs.modal', function(){
-		$("#deal_type").val('').trigger("chosen:updated");
-		// $("#channel_skus > tbody").html("");
-	});
 
-
-	function reload_dtchtable()
-	{
-	    dtchtable.ajax.reload(null,false); //reload datatable ajax 
-	    dtchtable.column(0).checkboxes.deselect();
-	}
-
-	$("form[id='updatedtchannel']").on("submit",function(e){
+	$("form[id='addtradealscheme']").on("submit",function(e){
 		var form = $(this);
 		var method = form.find('input[name="_method"]').val() || 'POST';
 		var url = form.prop('action');
@@ -322,10 +333,17 @@ $(document).ready(function() {
 			dataType: "json",
 			success: function(data){
 				if(data.success == "1"){
-					$('#editChannel').modal('hide');
-					reload_dtchtable();
+					location.reload();
 				}else{
-					bootbox.alert("An error occured while updating."); 
+					var obj = data.err_msg,  
+			        ul = '<ul>';         
+			        var html = '<div class="alert alert-danger alert-dismissible fade in" role="alert"> <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>%s</div>'; 
+			        for (var i = 0, l = obj.length; i < l; ++i) {
+			        	ul = ul + "<li>" + obj[i] + "</li>";
+			            
+			        }
+			        ul = ul + '</ul>'; 
+					$('#addtradealscheme .error-msg').text('').append(html.replace(/%s/g, ul));;
 				}
 			}
 		});

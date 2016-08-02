@@ -697,6 +697,9 @@
 												<th>Cost / Pcs</th>
 												<th>Pcs / Case</th>
 												<th>Reference SKU</th>
+												<th>Premium SKU</th>
+												<th>Cost / Pcs</th>
+												<th>Pcs / Case</th>
 												<th></th>
 												<th></th>
 											</tr>
@@ -715,7 +718,6 @@
 			</div>
 		</div>
 
-
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<h3 class="panel-title">Schemes</h3>
@@ -723,7 +725,7 @@
 			<div class="panel-body">
 				<div class="row">
 					<div class="col-lg-12">
-						<button type="button" class="btn btn-primary btn-sm " id="eChannel">Edit</button>
+						<button type="button" class="btn btn-primary btn-sm " id="add-scheme">Add Scheme</button>
 					</div>
 				</div>
 				<br>
@@ -733,20 +735,83 @@
 							<div class="form-group">
 								<div class="row">
 									<div class="col-lg-12">
-										<table id="td-channels" class="table table-striped table-hover ">
+										<table class="table table-condensed table-bordered ">
 											<thead>
 												<tr>
-													<th><input name="select_all" value="1" type="checkbox"></th>
-													<th>Channel Name</th>
-													<th>RTM Tagging</th>
+													<th >% Allocation</th>
+													<th >Scheme Name</th>
 													<th>Deal Type</th>
-													<th></th>
+													<th >SKU</th>
+													<th >UOM</th>
+													<th >Premium</th>
+													<th >UOM</th>
+													<th> Purchase Requirement </th>
+													<th>Channels</th>
+													
+													<th >Action</th>
 												</tr>
 											</thead>
 											<tbody>
+											@foreach($tradedealschemes as $scheme)
+												<?php $first = true; ?>
+												@foreach($scheme->host_skus as $host)
+													@if($first)
+														@if($scheme->tradedeal_type_id ==1)
+														<tr>
+															<td rowspan="{{ count($scheme->host_skus) }}">{{ $scheme->coverage }}</td>
+															<td rowspan="{{ count($scheme->host_skus) }}"></td>
+															<td rowspan="{{ count($scheme->host_skus) }}">{{ $scheme->dealType->tradedeal_type }}</td>
+															<td>{{ $host->host->hostDesc() }}</td>
+															<td>{{ $scheme->dealUom->tradedeal_uom}}</td>
+															<td>{{ $host->host->preDesc() }}</td>
+															<td>{{ $scheme->dealUom->tradedeal_uom}}</td>
+															<td></td>
+															<td rowspan="{{ count($scheme->host_skus) }}">
+																@foreach($scheme->channels as $channel)
+																{{ $channel->channel->l5_code }} - {{ $channel->channel->l5_desc}} <br>
+																@endforeach
+															</td>
+															<td rowspan="{{ count($scheme->host_skus) }}"></td>
+
+														</tr>
+														@else
+														<tr>
+															<td rowspan="{{ count($scheme->host_skus) }}">{{ $scheme->coverage }}</td>
+															<td rowspan="{{ count($scheme->host_skus) }}"></td>
+															<td rowspan="{{ count($scheme->host_skus) }}">{{ $scheme->dealType->tradedeal_type }}</td>
+															<td>{{ $host->host->hostDesc() }}</td>
+															<td rowspan="{{ count($scheme->host_skus) }}">{{ $scheme->dealUom->tradedeal_uom}}</td>
+															<td rowspan="{{ count($scheme->host_skus) }}">{{ $host->host->preDesc() }}</td>
+															<td rowspan="{{ count($scheme->host_skus) }}">{{ $scheme->dealUom->tradedeal_uom}}</td>
+															<td rowspan="{{ count($scheme->host_skus) }}"></td>
+															<td rowspan="{{ count($scheme->host_skus) }}"></td>
+															<td rowspan="{{ count($scheme->host_skus) }}"></td>
+
+														</tr>
+														@endif
+														<?php $first = false; ?>
+													@else
+														@if($scheme->tradedeal_type_id ==1)
+														<tr>
+															<td>{{ $host->host->hostDesc() }}</td>
+															<td>{{ $scheme->dealUom->tradedeal_uom}}</td>
+															<td>{{ $host->host->preDesc() }}</td>
+															<td>{{ $scheme->dealUom->tradedeal_uom}}</td>
+															<td></td>
+														</tr>
+														@else
+														<tr>
+															<td>{{ $host->host->hostDesc() }}</td>
+
+														</tr>
+														@endif
+													@endif
+												@endforeach
+											@endforeach
+												
 												
 											</tbody>
-										</table> 
+										</table>
 									</div>
 								</div>
 							</div>
@@ -755,6 +820,7 @@
 				</div>
 			</div>
 		</div>
+
 		
 		<div class="row">
 			<div class="col-lg-12">
@@ -1336,6 +1402,45 @@
 								{{ Form::select('ref_sku', array('0' => '') + $ref_skus, [], array('data-placeholder' => 'Select Reference SKU','id' => 'ref_sku', 'class' => 'form-control')) }}
 							</td>
 						</tr>
+						@if(!$tradedeal->non_ulp_premium)
+						<tr class="pre-sku">
+							<td>Premiun SKU</td>
+							<td colspan="3">
+								{{ Form::select('pre_sku', array('0' => '') + $pre_skus, [], array('data-placeholder' => 'Select Premium SKU','id' => 'pre_sku', 'class' => 'form-control')) }}
+							</td>
+						</tr>
+						<tr class="pre-sku">
+							<td>Cost / Pcs</td>
+							<td>
+								<input class="form-control" name="pre_cost_pcs" type="text" value="0" id="pre_cost_pcs" readonly =''>
+							</td>
+							<td>Pcs / Case</td>
+							<td>
+								<input class="form-control" name="pre_pcs_case" type="text" value="0" id="pre_pcs_case" readonly =''>
+							</td>
+						</tr>
+						@else
+						<tr class="pre-sku">
+							<td>Premiun SKU</td>
+							<td colspan="3">
+								<input class="form-control" name="pre_sku" type="text" value="{{ $tradedeal->non_ulp_premium_desc}} - {{ $tradedeal->non_ulp_premium_code }}" id="pre_sku" readonly =''>
+							</td>
+						</tr>
+						<tr class="pre-sku">
+							<td>Cost / Pcs</td>
+							<td>
+								<input class="form-control" name="pre_cost_pcs" type="text" value="{{ $tradedeal->non_ulp_premium_cost}}" id="pre_cost_pcs" readonly =''>
+							</td>
+							<td>Pcs / Case</td>
+							<td>
+								<input class="form-control" name="pre_pcs_case" type="text" value="{{ $tradedeal->non_ulp_pcs_case}}" id="pre_pcs_case" readonly =''>
+							</td>
+						</tr>
+
+						@endif
+						
+						
+						
 					</tbody>
 				</table>
 			</div>
@@ -1349,16 +1454,16 @@
 </div>
 
 <!-- Modal -->
-<div class="modal fade modal-wide" id="editChannel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal fade modal-wide" id="addScheme" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
-		{{ Form::open(array('action' => array('ActivityController@updatedtchannel'), 'method' => 'POST', 'class' => 'bs-component','id' => 'updatedtchannel')) }}
-		{{ Form::hidden('ch_id', '', array('id' => 'ch_id')) }}
+		{{ Form::open(array('action' => array('ActivityController@addtradealscheme', $activity->id), 'method' => 'POST', 'class' => 'bs-component','id' => 'addtradealscheme')) }}
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<h4 class="modal-title" id="myModalLabel">Edit Scheme</h4>
+				<h4 class="modal-title" id="myModalLabel">Add Scheme</h4>
 			</div>
 			<div class="modal-body">
+				<div class="error-msg"></div>
 				<table class="table table-bordered">
 					<tbody>
 						<tr>
@@ -1375,10 +1480,7 @@
 							<tr>
 								<th><input name="select_all" value="1" type="checkbox"></th>
 								<th>Host SKU</th>
-								<th>Buy</th>
-								<th>Free</th>
-								<th>Coverage</th>
-								<th>UOM</th>
+								<th>Premium SKU</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -1386,44 +1488,50 @@
 								<td></td>
 								<td></td>
 								<td></td>
-								<td></td>
-								<td></td>
 							</tr>
 						</tbody>
 					</table> 
 				</div>
-				<div id="collective" style="display: none;">
-					<table class="table">
+
+				<div>
+					<table id="scheme-table" style="display:none" class="table">
 						<tbody>
 							<tr>
 
+								<td>Buy</td>
+								<td> <input name="buy" id="buy" class="form-control"> </td>
 								<td>Free</td>
-								<td> <input name="c_free" id="c_free" class="form-control"> </td>
+								<td> <input name="free" id="free" class="form-control"> </td>
 							</tr>
 							<tr>
 			
 								<td>Coverage</td>
-								<td>
-									<input name="c_coverage" id="c_coverage" class="form-control" value="100.00">
+								<td colspan="3">
+									<input name="coverage" id="coverage" class="form-control" value="100.00">
 								</td>
 							</tr>
 							<tr>
-			
 								<td>UOM</td>
-								<td>
-									{{ Form::select('c_uom', $dealuoms, [], array('data-placeholder' => 'Select UOM','id' => 'c_uom', 'class' => 'form-control')) }}
+								<td colspan="3">
+									{{ Form::select('uom', $dealuoms, [], array('data-placeholder' => 'Select UOM','id' => 'uom', 'class' => 'form-control')) }}
 								</td>
 							</tr>
-							<tr>
-								<td>Premiun SKU (ULP)</td>
-								<td>
-									<select class="form-control" id="c_pre_sku" name="c_pre_sku" >
+							@if($tradedeal->non_ulp_premium)
+							<tr id="pre_details">
+								<td>Premiun SKU </td>
+								<td  colspan="3">
+									<input name="non_ulp" readonly="" id="non_ulp" class="form-control" value="{{$tradedeal->non_ulp_premium_desc}} - {{ $tradedeal->non_ulp_premium_code}}">
+								</td>
+							</tr>
+							@else
+							<tr id="pre_details">
+								<td>Premiun SKU </td>
+								<td  colspan="3">
+									<select class="form-control" id="premium_sku" name="premium_sku" >
 									</select>
 								</td>
-		
 							</tr>
-							
-							
+							@endif
 
 						</tbody>
 					</table>

@@ -20,7 +20,14 @@ Queue::getIron()->ssl_verifypeer = false;
 
 
 Route::get('test', function(){
-	
+	// $activity = Activity::find('586');
+	// $channels = TradedealChannel::where('activity_id', $activity->id)->get();
+	// foreach ($channels as $channel) {
+	// 	$ch = new TradedealSchemeChannel;
+	// 	$ch->tradedeal_scheme_id = 1;
+	// 	$ch->tradedeal_channel_id = $channel->id;
+	// 	$ch->save();
+	// }
 });
 
 
@@ -107,8 +114,9 @@ Route::group(array('before' => 'auth'), function()
 	Route::post('activity/deletepartskus', 'ActivityController@deletepartskus');
 	Route::post('activity/updatepartskus', 'ActivityController@updatepartskus');
 
+
 	Route::get('activity/{id}/tdchannels', 'ActivityController@tdchannels');
-	Route::post('activity/updatedtchannel', 'ActivityController@updatedtchannel');
+	Route::post('activity/{id}/addtradealscheme', 'ActivityController@addtradealscheme');
 
 	Route::post('activity/{id}/addnobudget', 'ActivityController@addnobudget');
 	Route::delete('activity/deletenobudget', 'ActivityController@deletenobudget');
