@@ -20,8 +20,14 @@ Queue::getIron()->ssl_verifypeer = false;
 
 
 Route::get('test', function(){
-	echo substr("2016",2) .'</br>';
-	echo str_pad("12",2, '0', STR_PAD_LEFT) .'</br>';
+	// $activity = Activity::find('586');
+	// $channels = TradedealChannel::where('activity_id', $activity->id)->get();
+	// foreach ($channels as $channel) {
+	// 	$ch = new TradedealSchemeChannel;
+	// 	$ch->tradedeal_scheme_id = 1;
+	// 	$ch->tradedeal_channel_id = $channel->id;
+	// 	$ch->save();
+	// }
 });
 
 
@@ -101,6 +107,17 @@ Route::group(array('before' => 'auth'), function()
 	Route::delete('activity/deletebudget', 'ActivityController@deletebudget');
 	Route::put('activity/updatebudget', 'ActivityController@updatebudget');
 
+	Route::get('activity/{id}/getpartskus', 'ActivityController@getpartskus');
+	Route::get('activity/{id}/getpartskustable', 'ActivityController@getpartskustable');
+	Route::get('activity/{id}/partsku', 'ActivityController@partsku');
+	Route::post('activity/{id}/addpartskus', 'ActivityController@addpartskus');
+	Route::post('activity/deletepartskus', 'ActivityController@deletepartskus');
+	Route::post('activity/updatepartskus', 'ActivityController@updatepartskus');
+
+
+	Route::get('activity/{id}/tdchannels', 'ActivityController@tdchannels');
+	Route::post('activity/{id}/addtradealscheme', 'ActivityController@addtradealscheme');
+
 	Route::post('activity/{id}/addnobudget', 'ActivityController@addnobudget');
 	Route::delete('activity/deletenobudget', 'ActivityController@deletenobudget');
 	Route::put('activity/updatenobudget', 'ActivityController@updatenobudget');
@@ -146,6 +163,10 @@ Route::group(array('before' => 'auth'), function()
 
 	Route::post('activity/{id}/duplicate','ActivityController@duplicate');
 	Route::get('activity/{id}/summary','ActivityController@summary');
+
+
+	Route::put('activity/{id}/updatetradedeal', 'ActivityController@updatetradedeal');
+	Route::get('tradedealscheme/{id}','ActivityController@tradedealscheme');
 	
 	Route::resource('activity', 'ActivityController');
 	
@@ -283,10 +304,16 @@ Route::group(array('before' => 'auth'), function()
 		Route::get('budgettype', 'api\BudgetTypeController@gettype');
 		Route::get('materialsource', 'api\MaterialController@getsource');
 
+		Route::get('hostsku', 'api\PriceListController@getHostSku');
+		Route::get('refrencesku', 'api\SkuController@getReferenceSku');
+		Route::get('premiumsku', 'api\PriceListController@getPremiumSku');
+
 		Route::post('sobyears', 'api\SobController@years');
 		Route::post('sobweeks', 'api\SobController@weeks');
 		Route::post('sobweekactivitytype', 'api\SobController@weekactivitytype');
 		Route::post('weekbrand', 'api\SobController@weekbrand');
+
+		Route::get('pricelistsku', 'api\PriceListController@getSku');
 	});//
 
 
@@ -402,7 +429,16 @@ Route::group(array('before' => 'auth'), function()
 		Route::post('settings', ['as' => 'settings.update', 'uses' => 'SettingsController@update']);
 
 		Route::resource('sobholiday', 'SobholidaysController');
+		
+		Route::get('level4/export', 'Level4Controller@export');
+		Route::get('level4/import', 'Level4Controller@import');
+		Route::post('level4/upload', 'Level4Controller@upload');
+		Route::resource('level4', 'Level4Controller');
 
+		Route::get('level5/export', 'Level5Controller@export');
+		Route::get('level5/import', 'Level5Controller@import');
+		Route::post('level5/upload', 'Level5Controller@upload');
+		Route::resource('level5', 'Level5Controller');
 
 		Route::get('reports/{id}/review', ['as' => 'reports.review', 'uses' => 'ReportController@review']);
 		Route::get('reports/{id}/scheme/', ['as' => 'reports.scheme', 'uses' => 'ReportController@scheme']);
