@@ -19,9 +19,19 @@ Queue::getIron()->ssl_verifypeer = false;
 */
 
 
-Route::get('test', function(){
-	echo substr("2016",2) .'</br>';
-	echo str_pad("12",2, '0', STR_PAD_LEFT) .'</br>';
+Route::get('testmail', function(){
+	$users = User::GetPlanners(['PROPONENT' ,'PMOG PLANNER','GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR','FIELD SALES']);
+	echo count($users);
+
+	$type = "mail4";
+
+	foreach ($users as $user) {
+		if($_ENV['MAIL_TEST']){
+			Queue::push('MailScheduler', array('type' => $type, 'user_id' => $user->user_id, 'role_id' => $user->role_id,),'etop');
+		}else{
+			// Queue::push('MailScheduler', array('type' => $type, 'user_id' => $user->user_id, 'role_id' => $user->role_id),'p_etop');
+		}
+	}
 });
 
 
