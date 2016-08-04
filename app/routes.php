@@ -20,14 +20,18 @@ Queue::getIron()->ssl_verifypeer = false;
 
 
 Route::get('test', function(){
-	// $activity = Activity::find('586');
-	// $channels = TradedealChannel::where('activity_id', $activity->id)->get();
-	// foreach ($channels as $channel) {
-	// 	$ch = new TradedealSchemeChannel;
-	// 	$ch->tradedeal_scheme_id = 1;
-	// 	$ch->tradedeal_channel_id = $channel->id;
-	// 	$ch->save();
-	// }
+	$users = User::GetPlanners(['PROPONENT' ,'PMOG PLANNER','GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR','FIELD SALES']);
+	echo count($users);
+
+	$type = "mail4";
+
+	foreach ($users as $user) {
+		if($_ENV['MAIL_TEST']){
+			Queue::push('MailScheduler', array('type' => $type, 'user_id' => $user->user_id, 'role_id' => $user->role_id,),'etop');
+		}else{
+			// Queue::push('MailScheduler', array('type' => $type, 'user_id' => $user->user_id, 'role_id' => $user->role_id),'p_etop');
+		}
+	}
 });
 
 
