@@ -286,7 +286,7 @@ class ActivityController extends BaseController {
 			$pre_skus = \Pricelist::items();
 			$dealtypes = TradedealType::get()->lists('tradedeal_type', 'id');
 			$dealuoms = TradedealUom::get()->lists('tradedeal_uom', 'id');
-			$tradedealschemes = TradedealScheme::getScheme($tradedeal->id);
+			// $tradedealschemes = TradedealScheme::getScheme($tradedeal->id);
 
 			// $activity_roles = ActivityRole::getList($activity->id);
 
@@ -3042,11 +3042,14 @@ class ActivityController extends BaseController {
 			if(count($err) == 0){
 				if(count($selected) > 0){
 					if($deal_type->id == 1){
+						$buy = str_replace(",", '', Input::get('buy'));
+						$free = str_replace(",", '', Input::get('free'));
 						$scheme = new TradedealScheme;
 						$scheme->tradedeal_id = $tradedeal->id;
+						$scheme->name = $deal_type->tradedeal_type.": ".$buy."+".$free." ".$uom->tradedeal_uom;
 						$scheme->tradedeal_type_id = $deal_type->id;
-						$scheme->buy = str_replace(",", '', Input::get('buy'));
-						$scheme->free = str_replace(",", '', Input::get('free'));
+						$scheme->buy = $buy;
+						$scheme->free = $free;
 						$scheme->coverage = str_replace(",", '', Input::get('coverage'));
 						$scheme->tradedeal_uom_id = $uom->id;
 						if($tradedeal->non_ulp_premium){
@@ -3067,11 +3070,14 @@ class ActivityController extends BaseController {
 								'tradedeal_part_sku_id' => $value]);
 						}
 					}else{
+						$buy = str_replace(",", '', Input::get('buy'));
+						$free = str_replace(",", '', Input::get('free'));
 						$scheme = new TradedealScheme;
 						$scheme->tradedeal_id = $tradedeal->id;
 						$scheme->tradedeal_type_id = $deal_type->id;
-						$scheme->buy = str_replace(",", '', Input::get('buy'));
-						$scheme->free = str_replace(",", '', Input::get('free'));
+						$scheme->name = $deal_type->tradedeal_type.": ".$buy."+".$free." ".$uom->tradedeal_uom;
+						$scheme->buy = $buy;
+						$scheme->free = $free;
 						$scheme->coverage = str_replace(",", '', Input::get('coverage'));
 						$scheme->tradedeal_uom_id = $uom->id;
 						if($tradedeal->non_ulp_premium){
@@ -3109,6 +3115,11 @@ class ActivityController extends BaseController {
 			
 			return json_encode($arr);
 		}
+	}
+
+	public function tradedealscheme($id){
+		$scheme = TradedealScheme::findOrFail($id);
+		return View::make('activity.tradedealscheme', compact('scheme'));
 	}
 
 }

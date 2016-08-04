@@ -166,6 +166,7 @@ Route::group(array('before' => 'auth'), function()
 
 
 	Route::put('activity/{id}/updatetradedeal', 'ActivityController@updatetradedeal');
+	Route::get('tradedealscheme/{id}','ActivityController@tradedealscheme');
 	
 	Route::resource('activity', 'ActivityController');
 	

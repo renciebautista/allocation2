@@ -726,6 +726,7 @@
 				<div class="row">
 					<div class="col-lg-12">
 						<button type="button" class="btn btn-primary btn-sm " id="add-scheme">Add Scheme</button>
+						<a class="btn btn-success btn-sm" href="#">Export Scheme</a>
 					</div>
 				</div>
 				<br>
@@ -735,81 +736,29 @@
 							<div class="form-group">
 								<div class="row">
 									<div class="col-lg-12">
-										<table class="table table-condensed table-bordered ">
+										<table class="table">
 											<thead>
 												<tr>
-													<th >% Allocation</th>
-													<th >Scheme Name</th>
+													<th>Scheme</th>
 													<th>Deal Type</th>
-													<th >SKU</th>
-													<th >UOM</th>
-													<th >Premium</th>
-													<th >UOM</th>
-													<th> Purchase Requirement </th>
-													<th>Channels</th>
-													
-													<th >Action</th>
+													<th>UOM</th>
+													<th>% Allocation</th>
+													<th>Action</th>
 												</tr>
 											</thead>
 											<tbody>
 											@foreach($tradedealschemes as $scheme)
-												<?php $first = true; ?>
-												@foreach($scheme->host_skus as $host)
-													@if($first)
-														@if($scheme->tradedeal_type_id ==1)
-														<tr>
-															<td rowspan="{{ count($scheme->host_skus) }}">{{ $scheme->coverage }}</td>
-															<td rowspan="{{ count($scheme->host_skus) }}"></td>
-															<td rowspan="{{ count($scheme->host_skus) }}">{{ $scheme->dealType->tradedeal_type }}</td>
-															<td>{{ $host->host->hostDesc() }}</td>
-															<td>{{ $scheme->dealUom->tradedeal_uom}}</td>
-															<td>{{ $host->host->preDesc() }}</td>
-															<td>{{ $scheme->dealUom->tradedeal_uom}}</td>
-															<td></td>
-															<td rowspan="{{ count($scheme->host_skus) }}">
-																@foreach($scheme->channels as $channel)
-																{{ $channel->channel->l5_code }} - {{ $channel->channel->l5_desc}} <br>
-																@endforeach
-															</td>
-															<td rowspan="{{ count($scheme->host_skus) }}"></td>
-
-														</tr>
-														@else
-														<tr>
-															<td rowspan="{{ count($scheme->host_skus) }}">{{ $scheme->coverage }}</td>
-															<td rowspan="{{ count($scheme->host_skus) }}"></td>
-															<td rowspan="{{ count($scheme->host_skus) }}">{{ $scheme->dealType->tradedeal_type }}</td>
-															<td>{{ $host->host->hostDesc() }}</td>
-															<td rowspan="{{ count($scheme->host_skus) }}">{{ $scheme->dealUom->tradedeal_uom}}</td>
-															<td rowspan="{{ count($scheme->host_skus) }}">{{ $host->host->preDesc() }}</td>
-															<td rowspan="{{ count($scheme->host_skus) }}">{{ $scheme->dealUom->tradedeal_uom}}</td>
-															<td rowspan="{{ count($scheme->host_skus) }}"></td>
-															<td rowspan="{{ count($scheme->host_skus) }}"></td>
-															<td rowspan="{{ count($scheme->host_skus) }}"></td>
-
-														</tr>
-														@endif
-														<?php $first = false; ?>
-													@else
-														@if($scheme->tradedeal_type_id ==1)
-														<tr>
-															<td>{{ $host->host->hostDesc() }}</td>
-															<td>{{ $scheme->dealUom->tradedeal_uom}}</td>
-															<td>{{ $host->host->preDesc() }}</td>
-															<td>{{ $scheme->dealUom->tradedeal_uom}}</td>
-															<td></td>
-														</tr>
-														@else
-														<tr>
-															<td>{{ $host->host->hostDesc() }}</td>
-
-														</tr>
-														@endif
-													@endif
-												@endforeach
+												<tr>
+													<td>{{ $scheme->name }}</td>
+													<td>{{ $scheme->dealType->tradedeal_type }}</td>
+													<td>{{ $scheme->dealUom->tradedeal_uom }}</td>
+													<td >{{ $scheme->coverage }}</td>
+													<td>
+														{{ HTML::linkAction('ActivityController@tradedealscheme' , 'Edit', $scheme->id) }} |
+														<a href="">Delete</a>
+													</td>
+												</tr>
 											@endforeach
-												
-												
 											</tbody>
 										</table>
 									</div>
