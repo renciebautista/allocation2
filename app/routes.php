@@ -23,7 +23,7 @@ Route::get('test', function(){
 	$users = User::GetPlanners(['PROPONENT' ,'PMOG PLANNER','GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR','FIELD SALES']);
 	echo count($users);
 
-	$type = "mail4";
+	$type = "mail5";
 
 	foreach ($users as $user) {
 		if($_ENV['MAIL_TEST']){

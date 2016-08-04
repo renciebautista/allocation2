@@ -198,6 +198,20 @@ class TestMail extends Command {
 				}
 			break;
 
+			case 'mail5':
+				
+				$data['user'] = $user->first_name;
+				$data['email'] = $user->email;
+				$data['fullname'] = $user->getFullname();
+
+				Mail::send('emails.mail5', $data, function($message) use ($data){
+					$message->to("rbautista@chasetech.com", $data['fullname']);
+					// $message->bcc("rosarah.reyes@unilever.com");
+					$message->subject('TEST ACTIVITy');
+				});	
+				
+			break;
+
 			default:
 			# code...
 			break;
