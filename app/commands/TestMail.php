@@ -204,12 +204,17 @@ class TestMail extends Command {
 				$data['email'] = $user->email;
 				$data['fullname'] = $user->getFullname();
 
+				// Mail::send('emails.mail5', $data, function($message) use ($data){
+				// 	$message->to("rbautista@chasetech.com", $data['fullname']);
+				// 	// $message->bcc("rosarah.reyes@unilever.com");
+				// 	$message->subject('TEST ACTIVITy');
+				// });
 				Mail::send('emails.mail5', $data, function($message) use ($data){
-					$message->to("rbautista@chasetech.com", $data['fullname']);
-					// $message->bcc("rosarah.reyes@unilever.com");
-					$message->subject('TEST ACTIVITy');
-				});	
+					$message->to(trim(strtolower($data['email'])), $data['fullname'])->subject('test');	
+				});
+
 				
+
 			break;
 
 			default:
