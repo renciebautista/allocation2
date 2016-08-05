@@ -29,7 +29,7 @@ Route::get('test', function(){
 
 	// $l4_codes[] = 'C01724';
 
-	$l4s = level4::whereIn('l4_code',$l4_codes)->get();
+	$l4s = Level4::whereIn('l4_code',$l4_codes)->get();
 	$l3_codes = [];
 	foreach ($l4s as $row) {
 		$l3_codes[] = $row->coc_03_code;
