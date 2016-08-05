@@ -275,18 +275,22 @@ class ActivityController extends BaseController {
 			$timings = ActivityTiming::getList($activity->id);
 
 			$tradedeal = Tradedeal::where('activity_id', $activity->id)->first();
-			// dd($tradedeal);
-			$tradedeal_skus = TradedealPartSku::where('activity_id', $activity->id)->get();
 
-			$acdivisions = \ActivityDivision::getList($activity->id);
-			$accategories = \ActivityCategory::selected_category($activity->id);
-			$acbrands = \ActivityBrand::selected_brand($activity->id);
-			$host_skus = Pricelist::involves($acbrands,$activity);
-			$ref_skus = Sku::items($acdivisions,$accategories,$acbrands);
-			$pre_skus = \Pricelist::items();
-			$dealtypes = TradedealType::get()->lists('tradedeal_type', 'id');
-			$dealuoms = TradedealUom::get()->lists('tradedeal_uom', 'id');
-			// $tradedealschemes = TradedealScheme::getScheme($tradedeal->id);
+			if(!empty($tradedeal)){
+				// dd($tradedeal);
+				$tradedeal_skus = TradedealPartSku::where('activity_id', $activity->id)->get();
+
+				$acdivisions = \ActivityDivision::getList($activity->id);
+				$accategories = \ActivityCategory::selected_category($activity->id);
+				$acbrands = \ActivityBrand::selected_brand($activity->id);
+				$host_skus = Pricelist::involves($acbrands,$activity);
+				$ref_skus = Sku::items($acdivisions,$accategories,$acbrands);
+				$pre_skus = \Pricelist::items();
+				$dealtypes = TradedealType::get()->lists('tradedeal_type', 'id');
+				$dealuoms = TradedealUom::get()->lists('tradedeal_uom', 'id');
+				$tradedealschemes = TradedealScheme::getScheme($tradedeal->id);
+			}
+			
 
 			// $activity_roles = ActivityRole::getList($activity->id);
 
@@ -2818,9 +2822,7 @@ class ActivityController extends BaseController {
 		// copy tradedeal channel
 		$channels = TradedealChannel::where('activity_id', $id)->get();
 		if(count($channels) == 0){
-			$chTemp = Level5::where('trade_deal',1)
-				->orderBy('l5_desc')
-				->get();
+			$chTemp = Level5::getForTradeDeal();
 
 			foreach ($chTemp as $ch) {
 				$tc = new TradedealChannel;
@@ -3119,7 +3121,62 @@ class ActivityController extends BaseController {
 
 	public function tradedealscheme($id){
 		$scheme = TradedealScheme::findOrFail($id);
-		return View::make('activity.tradedealscheme', compact('scheme'));
+		$tradedeal = Tradedeal::findOrFail($scheme->tradedeal_id);
+		$activity = Activity::findOrFail($tradedeal->activity_id);
+		$dealtypes = TradedealType::get()->lists('tradedeal_type', 'id');
+		$dealuoms = TradedealUom::get()->lists('tradedeal_uom', 'id');
+		$tradedeal_skus = TradedealPartSku::where('activity_id', $activity->id)->get();
+		$channels = TradedealChannel::where('activity_id', $activity->id)->get();
+		$sel_channels = TradedealSchemeChannel::getSelected($scheme);
+		return View::make('activity.tradedealscheme', compact('activity', 'scheme', 'dealtypes', 
+			'dealuoms', 'tradedeal_skus', 'channels', 'sel_channels'));
+	}
+
+	public function updatetradedealscheme($id){
+		$scheme = TradedealScheme::findOrFail($id);
+
+		$selected = Input::get('ch');
+		// dd($selected);
+		TradedealSchemeChannel::where('tradedeal_scheme_id', $scheme->id)->delete();
+		if(Input::has('ch')){
+			foreach ($selected as $value) {
+				$ch = new TradedealSchemeChannel;
+				$ch->tradedeal_scheme_id = $scheme->id;
+				$ch->tradedeal_channel_id = $value;
+				$ch->save();
+			}
+		}
+		
+
+		return Redirect::back()
+			->with('class', 'alert-success')
+			->with('message', 'Scheme successfuly updated');
+	}
+
+	public function exporttradedeal($id){
+		Excel::create("Iterim file", function($excel) use($id){
+			$excel->sheet('Sheet1', function($sheet)  use($id){
+				$activity = Activity::findOrFail($id);
+				$tradedeal_skus = TradedealPartSku::where('activity_id', $activity->id)->get();
+
+				$sheet->row(1, array('AREA', 'Distributor Code', 'Distributor Name', 'Site Name', 'Scheme Code', 'PIECES PER DEAL', 'Collective'));
+
+				// host
+				$col = 7;
+				foreach ($tradedeal_skus as $sku) {
+					$sheet->setCellValueByColumnAndRow($col,1, $sku->hostDesc());
+					$col++;
+				}
+
+				// premuim
+				foreach ($tradedeal_skus as $sku) {
+					$sheet->setCellValueByColumnAndRow($col,1, $sku->preDesc());
+					$col++;
+				}
+
+			})->download('xls');
+
+		});
 	}
 
 }

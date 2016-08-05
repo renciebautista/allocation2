@@ -26,4 +26,11 @@ class Level5 extends \Eloquent {
 			DB::rollback();
 		}
 	}
+
+	public static function getForTradeDeal(){
+		return self::where('trade_deal',1)
+				->orderBy('l5_desc')
+				->get();;
+	}
+
 }

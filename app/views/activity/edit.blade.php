@@ -726,7 +726,7 @@
 				<div class="row">
 					<div class="col-lg-12">
 						<button type="button" class="btn btn-primary btn-sm " id="add-scheme">Add Scheme</button>
-						<a class="btn btn-success btn-sm" href="#">Export Scheme</a>
+						<a class="btn btn-success btn-sm" href="{{action('ActivityController@exporttradedeal', $activity->id);}}">Export Schemes</a>
 					</div>
 				</div>
 				<br>

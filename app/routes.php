@@ -20,14 +20,91 @@ Queue::getIron()->ssl_verifypeer = false;
 
 
 Route::get('test', function(){
-	// $activity = Activity::find('586');
-	// $channels = TradedealChannel::where('activity_id', $activity->id)->get();
-	// foreach ($channels as $channel) {
-	// 	$ch = new TradedealSchemeChannel;
-	// 	$ch->tradedeal_scheme_id = 1;
-	// 	$ch->tradedeal_channel_id = $channel->id;
-	// 	$ch->save();
-	// }
+	$l5s = Level5::getForTradeDeal();
+	$l4_codes = [];
+	foreach ($l5s as $row) {
+		$l4_codes[] = $row->l4_code;
+		// echo $row->l5_desc . '</br>';
+	}
+
+	// $l4_codes[] = 'C01724';
+
+	$l4s = level4::whereIn('l4_code',$l4_codes)->get();
+	$l3_codes = [];
+	foreach ($l4s as $row) {
+		$l3_codes[] = $row->coc_03_code;
+	}
+
+	$l3s = SubChannel::whereIn('coc_03_code',$l3_codes)->get();
+	$channel_codes = [];
+	foreach ($l3s as $row) {
+		$channel_codes[] = $row->channel_code;
+	}
+
+	$accounts = Account::whereIn('channel_code',$channel_codes)
+		->where('active',1)
+		->get();
+	$shipto_codes = [];
+	foreach ($accounts as $row) {
+		$shipto_codes[] = $row->ship_to_code;
+	}
+
+	$shiptos = ShipTo::whereIn('ship_to_code',$shipto_codes)
+		->where('active',1)
+		->get();
+	$customer_codes = [];
+	foreach ($shiptos as $row) {
+		$customer_codes[] = $row->customer_code;
+	}
+
+	$customers = Customer::whereIn('customer_code',$customer_codes)
+		->where('active',1)
+		->orderBy('customer_name')
+		->groupBy('customer_code')
+		->get();
+
+	// echo count($customers);
+
+	foreach ($customers as $customer) {
+		echo $customer->customer_name . '</br>';
+		foreach ($shiptos as $shipto) {
+			if($shipto->customer_code == $customer->customer_code){
+				echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp-'. $shipto->ship_to_name . '</br>';
+				foreach ($accounts as $account) {
+					if($account->ship_to_code == $shipto->ship_to_code){
+						echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
+						echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp-'. $account->account_name . '</br>';
+						foreach ($l3s as $l3) {
+							if($l3->channel_code == $account->channel_code){
+								echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
+								echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
+								echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp-'. $l3->l3_desc . '</br>';
+								foreach ($l4s as $l4) {
+									if($l4->coc_03_code == $l3->coc_03_code){
+										echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
+										echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
+										echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
+										echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp-'. $l4->l4_desc . '</br>';
+										foreach ($l5s as $l5) {
+											if($l5->l4_code == $l4->l4_code){
+												echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
+												echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
+												echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
+												echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
+												echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp-'. $l5->l5_desc . '</br>';
+											}
+										}
+									}
+								}
+							}
+							
+						}
+					}
+					
+				}
+			}
+		}
+	}
 });
 
 
@@ -115,8 +192,13 @@ Route::group(array('before' => 'auth'), function()
 	Route::post('activity/updatepartskus', 'ActivityController@updatepartskus');
 
 
-	Route::get('activity/{id}/tdchannels', 'ActivityController@tdchannels');
+	// Route::get('activity/{id}/tdchannels', 'ActivityController@tdchannels');
+	Route::put('activity/{id}/updatetradedeal', 'ActivityController@updatetradedeal');
 	Route::post('activity/{id}/addtradealscheme', 'ActivityController@addtradealscheme');
+	Route::get('activity/{id}/exporttradedeal', 'ActivityController@exporttradedeal');
+
+	Route::get('tradedealscheme/{id}','ActivityController@tradedealscheme');
+	Route::put('tradedealscheme/{id}', 'ActivityController@updatetradedealscheme');
 
 	Route::post('activity/{id}/addnobudget', 'ActivityController@addnobudget');
 	Route::delete('activity/deletenobudget', 'ActivityController@deletenobudget');
@@ -165,8 +247,7 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('activity/{id}/summary','ActivityController@summary');
 
 
-	Route::put('activity/{id}/updatetradedeal', 'ActivityController@updatetradedeal');
-	Route::get('tradedealscheme/{id}','ActivityController@tradedealscheme');
+	
 	
 	Route::resource('activity', 'ActivityController');
 	
