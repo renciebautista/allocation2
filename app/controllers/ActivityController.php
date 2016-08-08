@@ -3128,8 +3128,9 @@ class ActivityController extends BaseController {
 		$tradedeal_skus = TradedealPartSku::where('activity_id', $activity->id)->get();
 		$channels = TradedealChannel::where('activity_id', $activity->id)->get();
 		$sel_channels = TradedealSchemeChannel::getSelected($scheme);
+		$sel_hosts = TradedealSchemeSku::getSelected($scheme);
 		return View::make('activity.tradedealscheme', compact('activity', 'tradedeal', 'scheme', 'dealtypes', 
-			'dealuoms', 'tradedeal_skus', 'channels', 'sel_channels'));
+			'dealuoms', 'tradedeal_skus', 'channels', 'sel_channels', 'sel_hosts'));
 	}
 
 	public function updatetradedealscheme($id){
@@ -3152,6 +3153,15 @@ class ActivityController extends BaseController {
 		$scheme->coverage = str_replace(",", '', Input::get('coverage'));
 		$scheme->tradedeal_uom_id = $uom->id;
 		$scheme->save();
+
+		TradedealSchemeSku::where('tradedeal_scheme_id', $scheme->id)->delete();
+		$selectedskus = [];
+		if(Input::has('skus')){
+			foreach (Input::get('skus') as $value) {
+			 	TradedealSchemeSku::create(['tradedeal_scheme_id' => $scheme->id,
+								'tradedeal_part_sku_id' => $value]);
+			}
+		}
 
 		TradedealSchemeChannel::where('tradedeal_scheme_id', $scheme->id)->delete();
 		if(Input::has('ch')){

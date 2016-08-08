@@ -66,7 +66,9 @@
                     <tbody>
                         @foreach($tradedeal_skus as $sku)
                             <tr>
-                                <td><input value="{{$sku->id}}" type="checkbox" class="sku-checkbox"></td>
+                                <td>
+                                    {{ Form::checkbox('skus[]', $sku->id, ((in_array($sku->id,$sel_hosts)) ? true : false), ['class' => 'sku-checkbox']) }}
+                                </td>
                                 <td>{{ $sku->hostDesc() }}</td>
                                 <td>{{ $sku->host_cost }}</td>
                                 <td>{{ $sku->host_pcs_case }}</td>

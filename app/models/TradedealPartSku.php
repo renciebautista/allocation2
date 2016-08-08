@@ -14,4 +14,5 @@ class TradedealPartSku extends \Eloquent {
 			return $this->attributes['pre_desc'] . ' - ' .$this->attributes['pre_code'];
 		}
 	}
+
 }
