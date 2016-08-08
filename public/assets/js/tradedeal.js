@@ -294,7 +294,6 @@ $(document).ready(function() {
 				    var $this = $(this);
 				    // $this will contain a reference to the checkbox   
 				    if ($this.is(':checked')) {
-				    	console.log($(this).val());
 				    	$.ajax({
 					        async: false,
 					        type: "GET",

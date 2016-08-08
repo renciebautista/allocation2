@@ -1491,7 +1491,7 @@
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				<button id="updatesku" class="btn btn-primary">Update</button>
+				<button id="updatesku" class="btn btn-primary">Save</button>
 			</div>
 		</div>
 		{{ Form::close() }}

@@ -3083,8 +3083,8 @@ class ActivityController extends BaseController {
 						$scheme->coverage = str_replace(",", '', Input::get('coverage'));
 						$scheme->tradedeal_uom_id = $uom->id;
 						if($tradedeal->non_ulp_premium){
-							$scheme->pre_code = $tradedeal->non_ulp_premium_desc;
-							$scheme->pre_desc = $tradedeal->non_ulp_premium_code;
+							$scheme->pre_code = $tradedeal->non_ulp_premium_code;
+							$scheme->pre_desc = $tradedeal->non_ulp_premium_desc;
 							$scheme->pre_cost = $tradedeal->non_ulp_premium_cost;
 							$scheme->pre_pcs_case = $tradedeal->non_ulp_pcs_case;
 						}else{
@@ -3128,15 +3128,31 @@ class ActivityController extends BaseController {
 		$tradedeal_skus = TradedealPartSku::where('activity_id', $activity->id)->get();
 		$channels = TradedealChannel::where('activity_id', $activity->id)->get();
 		$sel_channels = TradedealSchemeChannel::getSelected($scheme);
-		return View::make('activity.tradedealscheme', compact('activity', 'scheme', 'dealtypes', 
+		return View::make('activity.tradedealscheme', compact('activity', 'tradedeal', 'scheme', 'dealtypes', 
 			'dealuoms', 'tradedeal_skus', 'channels', 'sel_channels'));
 	}
 
 	public function updatetradedealscheme($id){
 		$scheme = TradedealScheme::findOrFail($id);
-
+		$tradedeal = Tradedeal::find($scheme->tradedeal_id);
+		$deal_type = TradedealType::find(Input::get('deal_type'));
+		$uom = TradedealUom::find(Input::get('uom'));
 		$selected = Input::get('ch');
-		// dd($selected);
+
+		$buy = str_replace(",", '', Input::get('buy'));
+		$free = str_replace(",", '', Input::get('free'));
+
+		// dd($uom);
+
+		$scheme->tradedeal_id = $tradedeal->id;
+		$scheme->name = $deal_type->tradedeal_type.": ".$buy."+".$free." ".$uom->tradedeal_uom;
+		$scheme->tradedeal_type_id = $deal_type->id;
+		$scheme->buy = $buy;
+		$scheme->free = $free;
+		$scheme->coverage = str_replace(",", '', Input::get('coverage'));
+		$scheme->tradedeal_uom_id = $uom->id;
+		$scheme->save();
+
 		TradedealSchemeChannel::where('tradedeal_scheme_id', $scheme->id)->delete();
 		if(Input::has('ch')){
 			foreach ($selected as $value) {
