@@ -82,7 +82,8 @@ $(document).ready(function() {
 		        if (chekcbox.is(':checked')){
 		        	var cost = accounting.unformat(row.find('td:eq(2)').text()) || 0;
 		        	total_cost = total_cost + cost;  
-		        }  				
+		        }  	
+
 	    	});
 
 	    	var pr = 0;
@@ -93,7 +94,7 @@ $(document).ready(function() {
 	        	pr = buy * total_cost * 12;
 	        }
 	        if(uom == 'CASES'){
-	        	pr = buy * total_cost * accounting.unformat(row.find('td:eq(3)').text()) || 0;
+	        	// pr = buy * total_cost * accounting.unformat(row.find('td:eq(3)').text()) || 0;
 	        }
 
 	        $('#p_req').val(accounting.formatNumber(pr,2) || 0);

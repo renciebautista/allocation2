@@ -21,13 +21,13 @@ Queue::getIron()->ssl_verifypeer = false;
 
 Route::get('test', function(){
 	$l5s = Level5::getForTradeDeal();
-	$l4_codes = [];
-	foreach ($l5s as $row) {
-		$l4_codes[] = $row->l4_code;
-		// echo $row->l5_desc . '</br>';
-	}
+	// $l4_codes = [];
+	// foreach ($l5s as $row) {
+	// 	$l4_codes[] = $row->l4_code;
+	// 	// echo $row->l5_desc . '</br>';
+	// }
 
-	// $l4_codes[] = 'C01724';
+	$l4_codes[] = 'C01724';
 
 	$l4s = Level4::whereIn('l4_code',$l4_codes)->get();
 	$l3_codes = [];
