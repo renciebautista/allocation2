@@ -1045,7 +1045,7 @@
 			<div class="panel-body">
 				<div class="row">
 					<div class="col-lg-12">
-						<button id="create-jo" class="btn btn-primary">Create Job Order</button>
+						{{ HTML::linkAction('ActivityController@createjo','Create Job Order', $activity->id, array('class' => 'btn btn-primary')) }}
 					</div>
 				</div>
 				<br>
@@ -1103,35 +1103,6 @@
 				</div>
 			</div>
 			{{ Form::close() }}
-			<input type="hidden" id="hidden-1" value="{{ $scheme->id }}">
-		</div>
-	</div>
-
-	<div class="modal fade" id="createJo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			{{ Form::open(array('url'=>'apply/multiple_upload','method'=>'POST', 'files'=>true)) }}
-			
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-					<h4 class="modal-title" id="myModalLabel">Add Member</h4>
-				</div>
-				<div class="modal-body">
-					<div class="form-group">
-						<div class="row">
-							<div class="col-lg-12">
-								{{ Form::file('file[]', array('multiple'=>true)) }}
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-					<button class="btn btn-primary">Submit</button>
-				</div>
-			</div>
-			{{ Form::close() }}
-			<input type="hidden" id="hidden-1" value="{{ $scheme->id }}">
 		</div>
 	</div>
 
@@ -1143,7 +1114,6 @@
 
 @section('add-script')
 	{{ HTML::script('assets/js/customized.js') }}
-	{{ HTML::script('assets/js/joborder.js') }}
 @stop
 
 @section('page-script')

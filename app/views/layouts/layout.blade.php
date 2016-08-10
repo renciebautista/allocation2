@@ -345,6 +345,8 @@
 
 	{{ HTML::script('assets/plugins/kartik/js/dependent-dropdown.min.js') }}
 	
+	{{ HTML::script('assets/plugins/multifile-2.2.0/jquery.MultiFile.js') }}
+	
 	{{ HTML::script('assets/js/function.js') }}
 
 	@yield('add-script')

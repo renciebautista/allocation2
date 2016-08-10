@@ -300,6 +300,8 @@ Route::group(array('before' => 'auth'), function()
 		Route::post('weekbrand', 'api\SobController@weekbrand');
 
 		Route::get('getnewmembers', 'api\UserController@getnewmembers');
+
+		Route::get('subtask', 'api\SubTaskController@getsubtask');
 	});//
 
 

@@ -271,5 +271,12 @@ class User extends Eloquent implements ConfideUserInterface {
 			->whereNotIn('id',$users )
 			->lists('fullname', 'id');
 	}
+
+	public static function getAll(){
+		return self::select(DB::raw("CONCAT(first_name,' ', last_name) as fullname"), 'id' )
+			->where('active',1)
+			->orderBy('fullname')
+			->lists('fullname', 'id');
+	}
 	
 }

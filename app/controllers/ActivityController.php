@@ -1079,11 +1079,14 @@ class ActivityController extends BaseController {
 				}
 				
 			}else{
-				$member = ActivityMember::where('user_id',Auth::id())->first();
+				$member = ActivityMember::where('user_id',Auth::id())
+					->where('activity_id', $activity->id)
+					->first();
 				if(empty($member)){
 					$arr['success'] = 0;
 					$arr['err_msg'] = 'Member not found';
 				}else{
+					// dd(Input::get('submitstatus'));
 					$member->activity_member_status_id = Input::get('submitstatus');
 					$member->save();
 
@@ -2946,8 +2949,6 @@ class ActivityController extends BaseController {
 
 	}
 
-	
-
 	public function activityroles($id){
 		$data['d'] = ActivityRole::getListData($id);
 		$data['msg'] = 'success';
@@ -3045,8 +3046,9 @@ class ActivityController extends BaseController {
 
 	public function createjo($id){
 		$activity = Activity::findOrFail($id);
-
-		return View::make('activity.createjo',compact('activity'));
+		$tasks = Task::getLists();
+		$users = User::getAll();
+		return View::make('activity.createjo',compact('activity', 'tasks', 'users'));
 	}
 
 }
