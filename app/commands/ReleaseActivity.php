@@ -47,19 +47,17 @@ class ReleaseActivity extends Command {
 		$data['cycle_ids'] = $cycle_ids;
 		$data['activities'] = Activity::Released($cycle_ids);
 		$data['cycles'] = Activity::ReleasedCyles($cycle_ids);
+		foreach ($data['cycles'] as $value) {
+			$cycle_names .= $value->cycle_name ." - ";
+		}
+		$data['cycle_names'] = substr($cycle_names, 0,-3);
 
 		$users = User::GetPlanners(['PROPONENT' ,'PMOG PLANNER','GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR','FIELD SALES']);
 		foreach ($users as $user) {
 			$data['user'] = $user->first_name;
 			$data['email'] = $user->email;
 			$data['fullname'] = $user->getFullname();
-			
-			foreach ($data['cycles'] as $value) {
-				$cycle_names .= $value->cycle_name ." - ";
-			}
-			
-			$data['cycle_names'] = substr($cycle_names, 0,-3);
-
+	
 			Mail::queue('emails.mail5', $data, function($message) use ($data){
 				$message->to("rbautista@chasetech.com", $data['fullname']);
 				// $message->bcc("rosarah.reyes@unilever.com");
