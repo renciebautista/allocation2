@@ -242,14 +242,15 @@ class CycleController extends \BaseController {
 					}
 
 					foreach ($users as $user) {
-						$data['activities'] = Activity::Released($cycle_ids);
-						if(count($data['activities']) > 0){
-							if($_ENV['MAIL_TEST']){
-								Queue::push('MailScheduler', array('type' => $type, 'user_id' => $user->user_id, 'role_id' => $user->role_id,),'etop');
-							}else{
-								Queue::push('MailScheduler', array('type' => $type, 'user_id' => $user->user_id, 'role_id' => $user->role_id),'p_etop');
-							}
-						}
+						// $data['activities'] = Activity::Released($cycle_ids);
+						
+						// if(count($data['activities']) > 0){
+						// 	if($_ENV['MAIL_TEST']){
+						// 		Queue::push('MailScheduler', array('type' => $type, 'user_id' => $user->user_id, 'role_id' => $user->role_id,),'etop');
+						// 	}else{
+						// 		Queue::push('MailScheduler', array('type' => $type, 'user_id' => $user->user_id, 'role_id' => $user->role_id),'p_etop');
+						// 	}
+						// }
 					}
 					
 				}else{
