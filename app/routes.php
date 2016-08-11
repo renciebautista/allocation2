@@ -26,11 +26,22 @@ Route::get('test', function(){
 	$type = "mail5";
 
 	foreach ($users as $user) {
-		if($_ENV['MAIL_TEST']){
-			Queue::push('MailScheduler', array('type' => $type, 'user_id' => $user->user_id, 'role_id' => $user->role_id,),'etop');
-		}else{
-			// Queue::push('MailScheduler', array('type' => $type, 'user_id' => $user->user_id, 'role_id' => $user->role_id),'p_etop');
-		}
+		$data['user'] = $user->first_name;
+		$data['email'] = $user->email;
+		$data['fullname'] = $user->getFullname();
+
+		// Mail::send('emails.mail5', $data, function($message) use ($data){
+		// 	$message->to("rbautista@chasetech.com", $data['fullname']);
+		// 	// $message->bcc("rosarah.reyes@unilever.com");
+		// 	$message->subject('TEST ACTIVITy');
+		// });
+
+
+		Mail::queue('emails.mail5', $data, function($message) use ($data){
+			$message->to("rbautista@chasetech.com", $data['fullname']);
+			// $message->bcc("rosarah.reyes@unilever.com");
+			$message->subject('TEST ACTIVITy');
+		});
 	}
 });
 
