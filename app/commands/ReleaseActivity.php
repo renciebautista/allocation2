@@ -53,6 +53,7 @@ class ReleaseActivity extends Command {
 		$data['cycle_names'] = substr($cycle_names, 0,-3);
 
 		$users = User::GetPlanners(['PROPONENT' ,'PMOG PLANNER','GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR','FIELD SALES']);
+		$cnt = 0;
 		foreach ($users as $user) {
 			$data['user'] = $user->first_name;
 			$data['email'] = $user->email;
@@ -94,7 +95,11 @@ class ReleaseActivity extends Command {
 					
 			// 	}
 			// }
+
+			$cnt++;
 		}
+
+		$this->line('Total email sent:'. $cnt);
 		
 	}
 
