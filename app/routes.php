@@ -48,6 +48,11 @@ Route::get('test', function(){
 
 
 //---------------------------------------------------
+Route::post('queue/massmail', function()
+{
+	return Queue::marshal();
+});
+
 Route::post('queue/sob', function()
 {
 	return Queue::marshal();
