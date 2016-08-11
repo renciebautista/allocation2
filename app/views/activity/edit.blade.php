@@ -602,8 +602,8 @@
 						<div class="form-group">
 							<div class="row">
 								<div class="col-lg-12">
-									{{ Form::label('total_premium', 'Total Premium (Pcs)', array('class' => 'control-label')) }}
-									{{ Form::text('total_premium','', array('class' => 'form-control')) }}
+									{{ Form::label('total_premium_pcs', 'Total Premium (Pcs)', array('class' => 'control-label')) }}
+									{{ Form::text('total_premium_pcs','', array('class' => 'form-control', 'readonly' => '')) }}
 								</div>
 							</div>
 						</div>
@@ -613,8 +613,9 @@
 						<div class="form-group">
 							<div class="row">
 								<div class="col-lg-12">
-									{{ Form::label('total_premium', 'Total Premium (Php)', array('class' => 'control-label')) }}
-									{{ Form::text('total_premium','', array('class' => 'form-control')) }}								</div>
+									{{ Form::label('total_premium_php', 'Total Premium (Php)', array('class' => 'control-label')) }}
+									{{ Form::text('total_premium_php','', array('class' => 'form-control', 'readonly' => '')) }}								
+								</div>
 							</div>
 						</div>
 					</div>					
@@ -1434,78 +1435,121 @@
 			</div>
 			<div class="modal-body">
 				<div class="error-msg"></div>
-				<table class="table table-bordered">
-					<tbody>
-						<tr>
-							<td>Deal Type</td>
-							<td colspan="3">
-								{{ Form::select('deal_type', array('0' => 'Select Deal Type') + $dealtypes, [], array('data-placeholder' => 'Select Deal Type','id' => 'deal_type', 'class' => 'form-control')) }}
-							</td>
-						</tr>
-					</tbody>
-				</table>
+
+				<div class="row">
+	  				<div class="col-lg-6">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('deal_type', 'Deal Type', array('class' => 'control-label')) }}
+			    					{{ Form::select('deal_type', array('0' => 'Select Deal Type') + $dealtypes, [], array('data-placeholder' => 'Select Deal Type','id' => 'deal_type', 'class' => 'form-control')) }}
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-lg-3">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('uom', 'Unit Of Measurement', array('class' => 'control-label')) }}
+									{{ Form::select('uom', $dealuoms, [], array('data-placeholder' => 'Select UOM','id' => 'uom', 'class' => 'form-control')) }}
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-lg-3">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('coverage', 'Coverage', array('class' => 'control-label')) }}
+									{{ Form::text('coverage','100', array('class' => 'form-control')) }}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+
 				<div id="channel_skus">
 					<table id="channel_skus" class="table table-striped table-hover ">
 						<thead>
 							<tr>
-								<th><input name="select_all" value="1" type="checkbox"></th>
-								<th>Host SKU</th>
+								<th style="width:5%"><input name="select-all" id="select-all" value="1" type="checkbox"></th>
+								<th style="width:8%">Qty</th>
+								<th style="width:50%">Host SKU</th>
 								<th>Premium SKU</th>
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-								<td></td>
-								<td></td>
-								<td></td>
-							</tr>
+
 						</tbody>
 					</table> 
 				</div>
 
-				<div>
-					<table id="scheme-table" style="display:none" class="table">
-						<tbody>
-							<tr>
-
-								<td>Buy</td>
-								<td> <input name="buy" id="buy" class="form-control"> </td>
-								<td>Free</td>
-								<td> <input name="free" id="free" class="form-control"> </td>
-							</tr>
-							<tr>
-			
-								<td>Coverage</td>
-								<td colspan="3">
-									<input name="coverage" id="coverage" class="form-control" value="100.00">
-								</td>
-							</tr>
-							<tr>
-								<td>UOM</td>
-								<td colspan="3">
-									{{ Form::select('uom', $dealuoms, [], array('data-placeholder' => 'Select UOM','id' => 'uom', 'class' => 'form-control')) }}
-								</td>
-							</tr>
-							@if($tradedeal->non_ulp_premium)
-							<tr id="pre_details">
-								<td>Premiun SKU </td>
-								<td  colspan="3">
-									<input name="non_ulp" readonly="" id="non_ulp" class="form-control" value="{{$tradedeal->non_ulp_premium_desc}} - {{ $tradedeal->non_ulp_premium_code}}">
-								</td>
-							</tr>
-							@else
-							<tr id="pre_details">
-								<td>Premiun SKU </td>
-								<td  colspan="3">
-									<select class="form-control" id="premium_sku" name="premium_sku" >
-									</select>
-								</td>
-							</tr>
-							@endif
-
-						</tbody>
-					</table>
+				<div class="row buy-free">
+					<div class="col-lg-3">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('buy', 'Buy', array('class' => 'control-label')) }}
+									{{ Form::text('buy','', array('class' => 'form-control')) }}
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-3">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('free', 'Free', array('class' => 'control-label')) }}
+									{{ Form::text('free','', array('class' => 'form-control')) }}
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
+
+				@if($tradedeal->non_ulp_premium)
+				
+				<div class="row premium">
+					<div class="col-lg-12">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('non_ulp', 'Premium SKU', array('class' => 'control-label')) }}
+									{{ Form::text('non_ulp',$tradedeal->non_ulp_premium_desc . " - " .$tradedeal->non_ulp_premium_code, array('class' => 'form-control', 'readonly' => '')) }}
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+
+				@else
+
+				<div class="row premium" >
+					<div class="col-lg-12">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('non_ulp', 'Premium SKU', array('class' => 'control-label')) }}
+									<select id="premium_sku" class="form-control" name="premium_sku">
+										
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+				
+				@endif
+
+
+
+
 				
 				
 

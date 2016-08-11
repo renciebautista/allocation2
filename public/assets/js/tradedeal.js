@@ -59,17 +59,30 @@ $(document).ready(function() {
 	});
 
 
-	$('#non_ulp_premium').click(function() {
+	$('#non_ulp_premium').click(function(e) {
 	    var $this = $(this);
+	    var rowCount = $('#participating_sku >tbody >tr >td.sorting_1').length;
+
 	    // $this will contain a reference to the checkbox   
 	    if ($this.is(':checked')) {
-	    	// the checkbox was checked 
-	        $('#non_ulp_premium_desc, #non_ulp_premium_code, #non_ulp_premium_cost, #non_ulp_pcs_case').removeAttr('disabled');
+	    	if(rowCount > 0){
+		    	alert('There is an existing ULP Premuim on the participating sku, please remove it.');
+		    	e.preventDefault(); // prevents button from submitting
+		    }else{
+		    	$('#non_ulp_premium_desc, #non_ulp_premium_code, #non_ulp_premium_cost, #non_ulp_pcs_case').removeAttr('disabled');
+		    }
 	    } else {
-	    	// the checkbox was unchecked
-	        $('#non_ulp_premium_desc, #non_ulp_premium_code, #non_ulp_premium_cost, #non_ulp_pcs_case').val('').attr('disabled','disabled');
+	    	if(rowCount > 0){
+		    	alert('There is an existing Non ULP Premuim on the participating sku, please remove it.');
+		    	e.preventDefault(); // prevents button from submitting
+		    }else{
+		    	// the checkbox was unchecked
+	        	$('#non_ulp_premium_desc, #non_ulp_premium_code, #non_ulp_premium_cost, #non_ulp_pcs_case').val('').attr('disabled','disabled');
+		    }
+	    	
 	       
 	    }
+
 	});
 
 	var non_ulp_premium = $('input[name="non_ulp_premium"]:checked').length > 0;
@@ -235,15 +248,25 @@ $(document).ready(function() {
 
 	$(document).on("click","#add-scheme", function (e) {
 		e.preventDefault(); // prevents button from submitting
+		$('#deal_type').val(0);
+		$('#uom').val(1);
+		$('#coverage').val(100);
+		$("#channel_skus > tbody").html("");
+		$('.buy-free').hide();
+		$('.premium').hide();
 	    $('#addScheme').modal('show');
 	    
 	});
 
+	$('#addScheme').on('shown.bs.modal', function(){
+		$("#premium_sku").empty();
+	});
 	
 
 
 	$('#deal_type').change(function(e) {
 	  	// console.log(this.value);
+	  	$('#select-all').prop('checked', false);
 	  	$.ajax({
 	        async: false,
 	        type: "GET",
@@ -251,12 +274,15 @@ $(document).ready(function() {
 	        contentType: "application/json; charset=utf-8",
 	        dataType: "json",
 	        success: function (data) { 
+
 	        	$("#channel_skus > tbody").html("");
 	        	$('#collective').hide();
+	        	$('.premium').hide();
 	        	var selected = $('#deal_type').val();
 
 	        	var option = '<select name="option[%i]"">%s</select>';
 		        var option_value = '';
+		        $('.buy-free').show();
 
 	        	if(selected == 1){
 
@@ -266,12 +292,13 @@ $(document).ready(function() {
 					option = option.replace(/%s/g, option_value);
 			        $.each(data.skus, function(key, value) {
 					    var newRowContent = '<tr><td><input class="sku-checkbox"name="select[]" value="'+value.id+'" type="checkbox"></td>';
+					    newRowContent = newRowContent + '<td><input style="width:40px" value="1" type="text" disabled="disabled"></td>';
 					    newRowContent = newRowContent + '<td>'+value.host_sku+'</td>';
 					    newRowContent = newRowContent + '<td>'+value.pre_sku+'</td></tr>';
 					    $("#channel_skus tbody").append(newRowContent);
 					});
 
-					$('#pre_details').hide();
+	
 
 	        	}else{
 	        		$.each(data.uom, function(key, value) {
@@ -280,44 +307,60 @@ $(document).ready(function() {
 					option = option.replace(/%s/g, option_value);
 			        $.each(data.skus, function(key, value) {
 					    var newRowContent = '<tr><td><input class="sku-checkbox"name="select[]" value="'+value.id+'" type="checkbox"></td>';
+					    newRowContent = newRowContent + '<td><input class="qty" style="width:40px" value="" type="text" disabled="disabled"></td>';
 					    newRowContent = newRowContent + '<td>'+value.host_sku+'</td>';
 					    newRowContent = newRowContent + '<td>NOT APPLICABLE</td></tr>';
 					    $("#channel_skus tbody").append(newRowContent);
 					});
 
-			        $('#pre_details').show();
+			        $('.premium').show();
+			        
 	        	}
 
 	        	$('#scheme-table').show();
 
-	        	$(document).on("click",".sku-checkbox", function () {
-				    var $this = $(this);
-				    // $this will contain a reference to the checkbox   
-				    if ($this.is(':checked')) {
-				    	$.ajax({
-					        async: false,
-					        type: "GET",
-					        url: hostname + '/activity/'+$(this).val()+'/partsku',
-					        contentType: "application/json; charset=utf-8",
-					        dataType: "json",
-					        success: function (data) { 
-					        	console.log(data);
-					        	$('#premium_sku').append($('<option>', {
-								    value: data.id,
-								    text: data.pre_desc + " - " + data.pre_code
-								}));
-					        },
-					        error: function (msg) { }
-					    });
-
-				    } else {		
-				        $("#premium_sku option[value='"+$(this).val()+"']").remove();	       
-				    }
-				});
-
 	        },
 	        error: function (msg) { roles = msg; }
 	    });
+	});
+	
+	$('#channel_skus').on('click','.sku-checkbox', function(e){
+	    var $this = $(this);
+	    var selected = $("#deal_type").val();
+	    if(selected == 2){
+		    if ($this.is(':checked')) {
+		    	$(this).closest("tr").find("input.qty").removeAttr('disabled').val('1');
+		    	$.ajax({
+			        async: false,
+			        type: "GET",
+			        url: hostname + '/activity/'+$(this).val()+'/partsku',
+			        contentType: "application/json; charset=utf-8",
+			        dataType: "json",
+			        success: function (data) { 
+			        	$('#premium_sku').append($('<option>', {
+						    value: data.id,
+						    text: data.pre_desc + " - " + data.pre_code
+						}));
+			        },
+			        error: function (msg) { }
+			    });
+
+		    } else {	
+		    	$(this).closest("tr").find("input.qty").removeAttr('disabled').val('').attr('disabled','disabled');	
+		        $("#premium_sku option[value='"+$(this).val()+"']").remove();	       
+		    }
+		}
+	})
+
+	$('#select-all').change(function() {
+    	var checkboxes = $(this).closest('table').find(':checkbox');
+	    if($(this).is(':checked')) {
+	        checkboxes.prop('checked', true);
+	        checkboxes.closest("tr").find("input.qty").removeAttr('disabled').val('1');
+	    } else {
+	        checkboxes.prop('checked', false);
+	        checkboxes.closest("tr").find("input.qty").removeAttr('disabled').val('').attr('disabled','disabled');
+	    }
 	});
 
 

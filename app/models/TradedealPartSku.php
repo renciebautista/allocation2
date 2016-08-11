@@ -15,4 +15,8 @@ class TradedealPartSku extends \Eloquent {
 		}
 	}
 
+	public static function getPartSkus($activity){
+		return self::where('activity_id', $activity->id)->get();
+	}
+
 }

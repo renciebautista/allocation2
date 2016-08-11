@@ -42,7 +42,6 @@ $(document).ready(function() {
 		var free = $('#free').val();
 		var uom = $("#uom option:selected").text();
 		$('#scheme_name').val(type + " : " + buy +"+"+free+" "+uom);
-
 		var individual = $("#deal_type option:selected").val();
 		if(individual == 1){
 			$('.collective').hide();
@@ -53,7 +52,7 @@ $(document).ready(function() {
 
 			$('#participating_sku').find(' tbody tr').each(function () {
 		        var row = $(this);
-		        var cost = accounting.unformat(row.find('td:eq(2)').text()) || 0;
+		        var cost = accounting.unformat(row.find('td:eq(3)').text()) || 0;
 		        var pr = 0;
 		        if(uom == 'PIECES'){
 		        	pr = buy * cost;
@@ -62,9 +61,9 @@ $(document).ready(function() {
 		        	pr = buy * cost * 12;
 		        }
 		        if(uom == 'CASES'){
-		        	pr = buy * cost * accounting.unformat(row.find('td:eq(3)').text()) || 0;
+		        	pr = buy * cost * accounting.unformat(row.find('td:eq(4)').text()) || 0;
 		        }
-		        row.find('td:eq(5)').text(accounting.formatNumber(pr,2) || 0);
+		        row.find('td:eq(6)').text(accounting.formatNumber(pr,2) || 0);
 	    	});
 
 		}else{

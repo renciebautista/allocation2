@@ -2804,7 +2804,7 @@ class ActivityController extends BaseController {
 	}
 
 	public function updatetradedeal($id){
-
+		$activity = Activity::findOrFail($id);
 		$tradedeal = Tradedeal::where('activity_id', $id)->first();
 		if(empty($tradedeal)){
 			$tradedeal = new Tradedeal;
@@ -2831,6 +2831,18 @@ class ActivityController extends BaseController {
 				$tc->l5_desc = $ch->l5_desc;
 				$tc->rtm_tag = $ch->rtm_tag;
 				$tc->save();
+			}
+		}
+
+		// update non ulp premium
+		if($tradedeal->non_ulp_premium){
+			$partskus = TradedealPartSku::getPartSkus($activity);
+			foreach ($partskus as $sku) {
+				$sku->pre_code = $tradedeal->non_ulp_premium_code;
+				$sku->pre_desc = $tradedeal->non_ulp_premium_desc;
+				$sku->pre_cost = $tradedeal->non_ulp_premium_cost;
+				$sku->pre_pcs_case = $tradedeal->non_ulp_pcs_case;
+				$sku->update();
 			}
 		}
 
@@ -3022,6 +3034,8 @@ class ActivityController extends BaseController {
 				foreach (Input::get('select') as $value) {
 				 	$selected[] = $value;
 				}
+			}else{
+				$err[] = 'No SKU selected';
 			}
 			$deal_type = TradedealType::find(Input::get('deal_type'));
 			if(empty($deal_type)){
@@ -3068,7 +3082,7 @@ class ActivityController extends BaseController {
 						}
 						$scheme->save();
 						foreach ($selected as $value) {
-							TradedealSchemeSku::create(['tradedeal_scheme_id' => $scheme->id,
+							TradedealSchemeSku::create(['qty' => 1, 'tradedeal_scheme_id' => $scheme->id,
 								'tradedeal_part_sku_id' => $value]);
 						}
 					}else{

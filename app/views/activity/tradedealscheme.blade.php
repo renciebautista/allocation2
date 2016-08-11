@@ -35,13 +35,17 @@
                 <div class="col-lg-12">
                     <div class="form-group">
                         <div class="row">
-                            <div class="col-lg-3">
+                            <div class="col-lg-6">
                                 {{ Form::label('deal_type', 'Deal Type', array('class' => 'control-label')) }}
                                 {{ Form::select('deal_type',$dealtypes, $scheme->tradedeal_type_id, array('class' => 'form-control', 'id' => 'deal_type')) }}
                             </div>
                             <div class="col-lg-3">
                                 {{ Form::label('uom', 'Deal UOM', array('class' => 'control-label')) }}
                                 {{ Form::select('uom', $dealuoms, $scheme->tradedeal_uom_id, array('class' => 'form-control', 'id' => 'uom')) }}
+                            </div>
+                            <div class="col-lg-3">
+                                {{ Form::label('coverage', 'Coverage', array('class' => 'control-label')) }}
+                                {{ Form::text('coverage', $scheme->coverage, array('id' => 'coverage', 'class' => 'form-control', 'placeholder' => 'Coverage')) }}
                             </div>
                         </div>
                     </div>
@@ -56,6 +60,7 @@
                     <thead>
                         <tr>
                             <th><input id="select-all-host" type="checkbox"></th>
+                            <th>Qty</th>
                             <th>Host SKU</th>
                             <th>Cost / Pcs</th>
                             <th>Pcs / Case</th>
@@ -68,6 +73,9 @@
                             <tr>
                                 <td>
                                     {{ Form::checkbox('skus[]', $sku->id, ((in_array($sku->id,$sel_hosts)) ? true : false), ['class' => 'sku-checkbox']) }}
+                                </td>
+                                <td>
+                                    {{ Form::text('qty['.$sku->id.']',$sku->qty, array('id' => 'qty', 'disabled' => 'disabled')) }}
                                 </td>
                                 <td>{{ $sku->hostDesc() }}</td>
                                 <td>{{ $sku->host_cost }}</td>
@@ -98,10 +106,7 @@
                                 {{ Form::text('free', $scheme->free, array('id' => 'free', 'class' => 'form-control', 'placeholder' => 'Free', 'id' => 'free')) }}
                             </div>
 
-                            <div class="col-lg-3">
-                                {{ Form::label('coverage', 'Coverage', array('class' => 'control-label')) }}
-                                {{ Form::text('coverage', $scheme->coverage, array('id' => 'coverage', 'class' => 'form-control', 'placeholder' => 'Coverage')) }}
-                            </div>
+                            
 
                             <div class="col-lg-3">
                                 {{ Form::label('p_req', 'Purchase Requirement (for Collective)', array('class' => 'control-label')) }}
