@@ -54,50 +54,53 @@ class ReleaseActivity extends Command {
 
 		$users = User::GetPlanners(['PROPONENT' ,'PMOG PLANNER','GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR','FIELD SALES']);
 		$cnt = 0;
-		foreach ($users as $user) {
-			$data['user'] = $user->first_name;
-			$data['email'] = $user->email;
-			$data['fullname'] = $user->getFullname();
-	
-			// Mail::queue('emails.mail5', $data, function($message) use ($data){
-			// 	$message->to("rbautista@chasetech.com", $data['fullname']);
-			// 	// $message->bcc("rosarah.reyes@unilever.com");
-			// 	$message->subject('TEST ACTIVITy');
-			// });
+		if(count($cycles)>0){
+			foreach ($users as $user) {
+				$data['user'] = $user->first_name;
+				$data['email'] = $user->email;
+				$data['fullname'] = $user->getFullname();
+		
+				// Mail::queue('emails.mail5', $data, function($message) use ($data){
+				// 	$message->to("rbautista@chasetech.com", $data['fullname']);
+				// 	// $message->bcc("rosarah.reyes@unilever.com");
+				// 	$message->subject('TEST ACTIVITy');
+				// });
 
-			if(count($data['activities'])>0){
-				if($_ENV['MAIL_TEST']){
-					if(count($data['cycles']) > 1){
-						Mail::queue('emails.mail4', $data, function($message) use ($data){
-							$message->to("rbautista@chasetech.com", $data['fullname']);
-							// $message->bcc("rosarah.reyes@unilever.com");
-							$message->subject('TOP ACTIVITIES FOR: ('.$data['cycle_names'].')');
-						});	
+				if(count($data['activities'])>0){
+					if($_ENV['MAIL_TEST']){
+						if(count($data['cycles']) > 1){
+							Mail::queue('emails.mail4', $data, function($message) use ($data){
+								$message->to("rbautista@chasetech.com", $data['fullname']);
+								// $message->bcc("rosarah.reyes@unilever.com");
+								$message->subject('TOP ACTIVITIES FOR: ('.$data['cycle_names'].')');
+							});	
+						}else{
+							Mail::queue('emails.mail4', $data, function($message) use ($data){
+								$message->to("rbautista@chasetech.com", $data['fullname']);
+								// $message->bcc("rosarah.reyes@unilever.com");
+								$message->subject('TOP ACTIVITIES FOR: '.$data['cycle_names']);
+							});	
+						}
 					}else{
-						Mail::queue('emails.mail4', $data, function($message) use ($data){
-							$message->to("rbautista@chasetech.com", $data['fullname']);
-							// $message->bcc("rosarah.reyes@unilever.com");
-							$message->subject('TOP ACTIVITIES FOR: '.$data['cycle_names']);
-						});	
+						if(count($data['cycles']) > 1){
+							Mail::queue('emails.mail4', $data, function($message) use ($data){
+								$message->to(trim(strtolower($data['email'])), $data['fullname']);
+								$message->subject('TOP ACTIVITIES FOR: ('.$data['cycle_names'].')');
+							});
+						}else{
+							Mail::queue('emails.mail4', $data, function($message) use ($data){
+								$message->to(trim(strtolower($data['email'])), $data['fullname']);
+								$message->subject('TOP ACTIVITIES FOR: '.$data['cycle_names']);
+							});
+						}
+						
 					}
-				}else{
-					if(count($data['cycles']) > 1){
-						Mail::queue('emails.mail4', $data, function($message) use ($data){
-							$message->to(trim(strtolower($data['email'])), $data['fullname']);
-							$message->subject('TOP ACTIVITIES FOR: ('.$data['cycle_names'].')');
-						});
-					}else{
-						Mail::queue('emails.mail4', $data, function($message) use ($data){
-							$message->to(trim(strtolower($data['email'])), $data['fullname']);
-							$message->subject('TOP ACTIVITIES FOR: '.$data['cycle_names']);
-						});
-					}
-					
 				}
-			}
 
-			$cnt++;
+				$cnt++;
+			}
 		}
+		
 
 		$this->line('Total email sent:'. $cnt);
 		
