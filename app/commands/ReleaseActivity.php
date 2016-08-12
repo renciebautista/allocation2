@@ -60,7 +60,7 @@ class ReleaseActivity extends Command {
 				$data['email'] = $user->email;
 				$data['fullname'] = $user->getFullname();
 		
-				// Mail::queue('emails.mail5', $data, function($message) use ($data){
+				// Mail::send('emails.mail5', $data, function($message) use ($data){
 				// 	$message->to("rbautista@chasetech.com", $data['fullname']);
 				// 	// $message->bcc("rosarah.reyes@unilever.com");
 				// 	$message->subject('TEST ACTIVITy');
@@ -69,13 +69,13 @@ class ReleaseActivity extends Command {
 				if(count($data['activities'])>0){
 					if($_ENV['MAIL_TEST']){
 						if(count($data['cycles']) > 1){
-							Mail::queue('emails.mail4', $data, function($message) use ($data){
+							Mail::send('emails.mail4', $data, function($message) use ($data){
 								$message->to("rbautista@chasetech.com", $data['fullname']);
 								// $message->bcc("rosarah.reyes@unilever.com");
 								$message->subject('TOP ACTIVITIES FOR: ('.$data['cycle_names'].')');
 							});	
 						}else{
-							Mail::queue('emails.mail4', $data, function($message) use ($data){
+							Mail::send('emails.mail4', $data, function($message) use ($data){
 								$message->to("rbautista@chasetech.com", $data['fullname']);
 								// $message->bcc("rosarah.reyes@unilever.com");
 								$message->subject('TOP ACTIVITIES FOR: '.$data['cycle_names']);
@@ -83,12 +83,12 @@ class ReleaseActivity extends Command {
 						}
 					}else{
 						if(count($data['cycles']) > 1){
-							Mail::queue('emails.mail4', $data, function($message) use ($data){
+							Mail::send('emails.mail4', $data, function($message) use ($data){
 								$message->to(trim(strtolower($data['email'])), $data['fullname']);
 								$message->subject('TOP ACTIVITIES FOR: ('.$data['cycle_names'].')');
 							});
 						}else{
-							Mail::queue('emails.mail4', $data, function($message) use ($data){
+							Mail::send('emails.mail4', $data, function($message) use ($data){
 								$message->to(trim(strtolower($data['email'])), $data['fullname']);
 								$message->subject('TOP ACTIVITIES FOR: '.$data['cycle_names']);
 							});
