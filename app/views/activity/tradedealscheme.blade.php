@@ -64,18 +64,18 @@
                             <th>Host SKU</th>
                             <th>Cost / Pcs</th>
                             <th>Pcs / Case</th>
-                            <th>Premium SKU (for Individual)</th>
-                            <th>Purchase Requirement (for Individual)</th>
+                            <th>Premium SKU</th>
+                            <th>Purchase Requirement</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($tradedeal_skus as $sku)
                             <tr>
                                 <td>
-                                    {{ Form::checkbox('skus[]', $sku->id, ((in_array($sku->id,$sel_hosts)) ? true : false), ['class' => 'sku-checkbox']) }}
+                                    {{ Form::checkbox('skus[]', $sku->id, ((in_array($sku->id,$sel_hosts['selection'])) ? true : false), ['class' => 'sku-checkbox']) }}
                                 </td>
                                 <td>
-                                    {{ Form::text('qty['.$sku->id.']',$sku->qty, array('id' => 'qty', 'disabled' => 'disabled')) }}
+                                    {{ Form::text('qty['.$sku->id.']',(isset($sel_hosts['values'][$sku->id])) ? $sel_hosts['values'][$sku->id] : 1, array('class' => 'qty', 'disabled' => 'disabled')) }}
                                 </td>
                                 <td>{{ $sku->hostDesc() }}</td>
                                 <td>{{ $sku->host_cost }}</td>
@@ -83,7 +83,7 @@
                                 <td class="individual">{{ $sku->preDesc() }}</td>
                                 <td class="individual"></td>
                                 <td class="collective">N/A</td>
-                                <td class="collective">N/A</td>
+                                <td class="collective"></td>
                             </tr>
                         @endforeach
                         
@@ -109,7 +109,7 @@
                             
 
                             <div class="col-lg-3">
-                                {{ Form::label('p_req', 'Purchase Requirement (for Collective)', array('class' => 'control-label')) }}
+                                {{ Form::label('p_req', 'Total Purchase Requirement (for Collective)', array('class' => 'control-label')) }}
                                 {{ Form::text('p_req', null, array('id' => 'p_req', 'class' => 'form-control', 'placeholder' => 'Purchase Requirement (for Collective)', 'id' => 'p_req')) }}
                             </div>
                         </div>

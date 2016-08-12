@@ -3039,6 +3039,9 @@ class ActivityController extends BaseController {
 			}else{
 				$err[] = 'No SKU selected';
 			}
+
+			
+
 			$deal_type = TradedealType::find(Input::get('deal_type'));
 			if(empty($deal_type)){
 				$err[] = 'Invalid Deal Type';
@@ -3084,10 +3087,12 @@ class ActivityController extends BaseController {
 						}
 						$scheme->save();
 						foreach ($selected as $value) {
-							TradedealSchemeSku::create(['qty' => 1, 'tradedeal_scheme_id' => $scheme->id,
+							TradedealSchemeSku::create(['qty' => 1, 
+								'tradedeal_scheme_id' => $scheme->id,
 								'tradedeal_part_sku_id' => $value]);
 						}
 					}else{
+						// dd(Input::all());
 						$buy = str_replace(",", '', Input::get('buy'));
 						$free = str_replace(",", '', Input::get('free'));
 						$scheme = new TradedealScheme;
@@ -3112,7 +3117,8 @@ class ActivityController extends BaseController {
 						}
 						$scheme->save();
 						foreach ($selected as $value) {
-							TradedealSchemeSku::create(['tradedeal_scheme_id' => $scheme->id,
+							TradedealSchemeSku::create(['qty' => Input::get('qty')[$value], 
+								'tradedeal_scheme_id' => $scheme->id,
 								'tradedeal_part_sku_id' => $value]);
 						}
 					}

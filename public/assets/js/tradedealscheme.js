@@ -30,7 +30,7 @@ $(document).ready(function() {
 	$('#deal_type, #uom').change(function() {
 		changeName();
 	});
-	$('#buy').on('blur',function() {
+	$('#buy, .qty').on('blur',function() {
 		changeName();
 	})
 
@@ -52,6 +52,7 @@ $(document).ready(function() {
 
 			$('#participating_sku').find(' tbody tr').each(function () {
 		        var row = $(this);
+		        row.closest("tr").find("input.qty").attr('disabled','disabled').val('1');
 		        var cost = accounting.unformat(row.find('td:eq(3)').text()) || 0;
 		        var pr = 0;
 		        if(uom == 'PIECES'){
@@ -79,22 +80,40 @@ $(document).ready(function() {
 				var row = $(this);
 		        var chekcbox = $(this).find('input:checked');
 		        if (chekcbox.is(':checked')){
-		        	var cost = accounting.unformat(row.find('td:eq(2)').text()) || 0;
-		        	total_cost = total_cost + cost;  
-		        }  	
+		        	row.closest("tr").find("input.qty").removeAttr('disabled');
+		        	var qty = accounting.unformat(row.closest("tr").find("input.qty").val());
+		        	var cost = accounting.unformat(row.find('td:eq(3)').text()) || 0;
+		        	var row_cost = 0;
+		        	if(uom == 'PIECES'){
+			        	row_cost = qty * cost;
+			        }
+			        if(uom == 'DOZENS'){
+			        	row_cost = qty * cost * 12;
+			        }
+			        if(uom == 'CASES'){
+			        	row_cost = qty * cost * accounting.unformat(row.find('td:eq(4)').text()) || 0;
+			        }
+			        row.find('td:eq(8)').text(accounting.formatNumber(row_cost,2) || 0);
+		        	total_cost = total_cost + row_cost;  
+		        	console.log(row_cost);
+
+		        }else{
+		        	row.closest("tr").find("input.qty").attr('disabled','disabled');
+		        } 	
 
 	    	});
 
 	    	var pr = 0;
-	        if(uom == 'PIECES'){
-	        	pr = buy * total_cost;
-	        }
-	        if(uom == 'DOZENS'){
-	        	pr = buy * total_cost * 12;
-	        }
-	        if(uom == 'CASES'){
-	        	// pr = buy * total_cost * accounting.unformat(row.find('td:eq(3)').text()) || 0;
-	        }
+	    	pr = buy * total_cost;
+	        // if(uom == 'PIECES'){
+	        // 	pr = buy * total_cost;
+	        // }
+	        // if(uom == 'DOZENS'){
+	        // 	pr = buy * total_cost * 12;
+	        // }
+	        // if(uom == 'CASES'){
+	        // 	pr = buy * total_cost;
+	        // }
 
 	        $('#p_req').val(accounting.formatNumber(pr,2) || 0);
 
@@ -119,8 +138,6 @@ $(document).ready(function() {
 	        }  
     	});
 	}
-
-
 
 	changeName();
 

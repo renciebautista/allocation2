@@ -292,7 +292,7 @@ $(document).ready(function() {
 					option = option.replace(/%s/g, option_value);
 			        $.each(data.skus, function(key, value) {
 					    var newRowContent = '<tr><td><input class="sku-checkbox"name="select[]" value="'+value.id+'" type="checkbox"></td>';
-					    newRowContent = newRowContent + '<td><input style="width:40px" value="1" type="text" disabled="disabled"></td>';
+					    newRowContent = newRowContent + '<td><input name="qty['+value.id+']" style="width:40px" value="1" type="text" disabled="disabled"></td>';
 					    newRowContent = newRowContent + '<td>'+value.host_sku+'</td>';
 					    newRowContent = newRowContent + '<td>'+value.pre_sku+'</td></tr>';
 					    $("#channel_skus tbody").append(newRowContent);
@@ -307,7 +307,7 @@ $(document).ready(function() {
 					option = option.replace(/%s/g, option_value);
 			        $.each(data.skus, function(key, value) {
 					    var newRowContent = '<tr><td><input class="sku-checkbox"name="select[]" value="'+value.id+'" type="checkbox"></td>';
-					    newRowContent = newRowContent + '<td><input class="qty" style="width:40px" value="" type="text" disabled="disabled"></td>';
+					    newRowContent = newRowContent + '<td><input name="qty['+value.id+']" class="qty" style="width:40px" value="" type="text" disabled="disabled"></td>';
 					    newRowContent = newRowContent + '<td>'+value.host_sku+'</td>';
 					    newRowContent = newRowContent + '<td>NOT APPLICABLE</td></tr>';
 					    $("#channel_skus tbody").append(newRowContent);
