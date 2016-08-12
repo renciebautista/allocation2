@@ -2,6 +2,10 @@ $(document).ready(function() {
 	var hostname = 'http://' + $(location).attr('host');
 	var activity_id = $('#activity_id').val();
 
+	function selected(){
+		return $('#deal_type').val();
+	}
+
 	$('#select-all').change(function() {
     	var checkboxes = $(this).closest('table').find(':checkbox');
 	    if($(this).is(':checked')) {
@@ -15,15 +19,20 @@ $(document).ready(function() {
     	var checkboxes = $(this).closest('table').find(':checkbox');
 	    if($(this).is(':checked')) {
 	        checkboxes.prop('checked', true);
+	        if(selected() == 2){
+		        $.each(checkboxes, function(obj){
+			    	if($(this).attr('name') == 'skus[]'){
+			    		addPremium($(this).val());
+			    	}
+			    })
+	    	}
 	    } else {
 	        checkboxes.prop('checked', false);
+	        $('#premium_sku').empty();
 	    }
-
-	    getcheckedhost();
 	});
 
 	$(document).on("click",".sku-checkbox", function () {
-	    getcheckedhost();
 	    changeName();
 	});
 
@@ -46,7 +55,7 @@ $(document).ready(function() {
 		if(individual == 1){
 			$('.collective').hide();
 			$('.individual').show();
-			$('#p_req').val('').attr('disabled','disabled');
+			$('#p_req').val('N/A').attr('disabled','disabled');
 			$('#premium_sku').val('').attr('disabled','disabled');
 			$('#non_premium_sku').val('N/A');
 
@@ -70,9 +79,10 @@ $(document).ready(function() {
 		}else{
 			$('.individual').hide();
 			$('.collective').show();
-			$('#p_req').removeAttr('disabled');
+			// $('#p_req').removeAttr('disabled');
 			$('#premium_sku').removeAttr('disabled');
-			$('#non_premium_sku').val($('#participating_sku').find(' tbody tr td:eq(4)').text());
+
+			$('#non_premium_sku').val($('#pre').val());
 
 			var total_cost = 0
 
@@ -95,10 +105,10 @@ $(document).ready(function() {
 			        }
 			        row.find('td:eq(8)').text(accounting.formatNumber(row_cost,2) || 0);
 		        	total_cost = total_cost + row_cost;  
-		        	console.log(row_cost);
-
+		        	addPremium(chekcbox.val());
 		        }else{
 		        	row.closest("tr").find("input.qty").attr('disabled','disabled');
+		        	removePremium( $(this).find("input[type='checkbox']").val());
 		        } 	
 
 	    	});
@@ -122,22 +132,59 @@ $(document).ready(function() {
 		
 	}
 
-
-	function getcheckedhost(){
-		$('#premium_sku').empty();
-		$('#participating_sku').find(' tbody tr').each(function () {
-	        var row = $(this);
-	        var chekcbox = $(this).find('input:checked');
-	        if (chekcbox.is(':checked')){
-	        	var id = chekcbox.val();
-	        	var desc = row.find('td:eq(1)').text();
-	        	$('#premium_sku').append($('<option>', {
-				    value: id,
-				    text: desc
-				}));   
-	        }  
-    	});
+	function addPremium(id){
+		$.ajax({
+	        async: false,
+	        type: "GET",
+	        url: hostname + '/activity/'+id+'/partsku',
+	        contentType: "application/json; charset=utf-8",
+	        dataType: "json",
+	        success: function (data) { 
+	        	var t = $('#premium_sku').find('option[value='+id+']').length > 0;
+	        	if(t == false){
+	        		// console.log(id+ '->' +$('#pre_id').val());
+	        		if(id == $('#pre_id').val()){
+		        		$('#premium_sku').append($('<option>', {
+						    value: data.id,
+						    text: data.pre_desc + " - " + data.pre_code,
+						    selected: 'selected'
+						}));
+	        		}else{
+		        		$('#premium_sku').append($('<option>', {
+						    value: data.id,
+						    text: data.pre_desc + " - " + data.pre_code
+						}));
+	        		}
+	        		
+	        	}
+	        	
+	        },
+	        error: function (msg) { }
+	    });
 	}
+	function removePremium(id){
+		$("#premium_sku option[value='"+id+"']").remove();
+        var length = $('#premium_sku > option').length;
+        if(length == '0'){
+        	$('#premium_sku').val(0);
+        }
+	}
+
+	var table = $('#channels').DataTable({
+      'columnDefs': [
+         {
+            'targets': 0,
+            'checkboxes': {
+               'selectRow': true
+            }
+         }
+      ],
+      'select': {
+         'style': 'multi'
+      },
+      'order': [[0, 'asc']]
+   });
+
 
 	changeName();
 

@@ -2952,7 +2952,7 @@ class ActivityController extends BaseController {
 	}
 
 	public function getpartskus($id){
-
+		$tradedeal = Tradedeal::where('activity_id',$id)->first();
 		$skus = TradedealPartSku::select(array('id',
 			DB::raw('CONCAT(host_desc," - ",host_code) as host_sku'), 'host_cost', 'host_pcs_case',
 			DB::raw('CONCAT(ref_desc," - ",ref_code) as ref_sku'),
@@ -3110,6 +3110,7 @@ class ActivityController extends BaseController {
 							$scheme->pre_pcs_case = $tradedeal->non_ulp_pcs_case;
 						}else{
 							$premuim_sku = TradedealPartSku::find(Input::get('premium_sku'));
+							$scheme->pre_id = $premuim_sku->id;
 							$scheme->pre_code = $premuim_sku->pre_code;
 							$scheme->pre_desc = $premuim_sku->pre_desc;
 							$scheme->pre_cost = $premuim_sku->pre_cost;
@@ -3148,7 +3149,7 @@ class ActivityController extends BaseController {
 		$dealtypes = TradedealType::get()->lists('tradedeal_type', 'id');
 		$dealuoms = TradedealUom::get()->lists('tradedeal_uom', 'id');
 		$tradedeal_skus = TradedealPartSku::where('activity_id', $activity->id)->get();
-		$channels = TradedealChannel::where('activity_id', $activity->id)->get();
+		$channels = TradedealChannel::getSchemeChannels($activity, $scheme);
 		$sel_channels = TradedealSchemeChannel::getSelected($scheme);
 		$sel_hosts = TradedealSchemeSku::getSelected($scheme);
 		return View::make('activity.tradedealscheme', compact('activity', 'tradedeal', 'scheme', 'dealtypes', 
@@ -3156,6 +3157,8 @@ class ActivityController extends BaseController {
 	}
 
 	public function updatetradedealscheme($id){
+
+		// dd(Input::all());
 		$scheme = TradedealScheme::findOrFail($id);
 		$tradedeal = Tradedeal::find($scheme->tradedeal_id);
 		$deal_type = TradedealType::find(Input::get('deal_type'));
@@ -3174,16 +3177,28 @@ class ActivityController extends BaseController {
 		$scheme->free = $free;
 		$scheme->coverage = str_replace(",", '', Input::get('coverage'));
 		$scheme->tradedeal_uom_id = $uom->id;
+		if(Input::has('premium_sku')){
+			$scheme->pre_id = Input::get('premium_sku');
+		}
 		$scheme->save();
 
 		TradedealSchemeSku::where('tradedeal_scheme_id', $scheme->id)->delete();
 		$selectedskus = [];
 		if(Input::has('skus')){
 			foreach (Input::get('skus') as $value) {
-			 	TradedealSchemeSku::create(['tradedeal_scheme_id' => $scheme->id,
-								'tradedeal_part_sku_id' => $value]);
+				if($deal_type->id == 1){
+					TradedealSchemeSku::create(['tradedeal_scheme_id' => $scheme->id,
+					'tradedeal_part_sku_id' => $value,
+					'qty' => 1]);
+				}else{
+					TradedealSchemeSku::create(['tradedeal_scheme_id' => $scheme->id,
+					'tradedeal_part_sku_id' => $value,
+					'qty' => Input::get('qty')[$value]]);
+				}
+				
 			}
 		}
+
 
 		TradedealSchemeChannel::where('tradedeal_scheme_id', $scheme->id)->delete();
 		if(Input::has('ch')){

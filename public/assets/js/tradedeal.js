@@ -261,11 +261,16 @@ $(document).ready(function() {
 	$('#addScheme').on('shown.bs.modal', function(){
 		$("#premium_sku").empty();
 	});
+
+	function selected(){
+		return $('#deal_type').val();
+	}
 	
 
 
 	$('#deal_type').change(function(e) {
 	  	// console.log(this.value);
+	  	$('#premium_sku').empty();
 	  	$('#select-all').prop('checked', false);
 	  	$.ajax({
 	        async: false,
@@ -278,13 +283,13 @@ $(document).ready(function() {
 	        	$("#channel_skus > tbody").html("");
 	        	$('#collective').hide();
 	        	$('.premium').hide();
-	        	var selected = $('#deal_type').val();
+	        	// var selected = $('#deal_type').val();
 
 	        	var option = '<select name="option[%i]"">%s</select>';
 		        var option_value = '';
 		        $('.buy-free').show();
 
-	        	if(selected == 1){
+	        	if(selected() == 1){
 
 		        	$.each(data.uom, function(key, value) {
 					   option_value = option_value+'<option  value="'+key+'">'+value+'</option>';
@@ -325,42 +330,61 @@ $(document).ready(function() {
 	});
 	
 	$('#channel_skus').on('click','.sku-checkbox', function(e){
+		// console.log(selected());
 	    var $this = $(this);
-	    var selected = $("#deal_type").val();
-	    if(selected == 2){
+	    if(selected() == 2){
 		    if ($this.is(':checked')) {
 		    	$(this).closest("tr").find("input.qty").removeAttr('disabled').val('1');
-		    	$.ajax({
-			        async: false,
-			        type: "GET",
-			        url: hostname + '/activity/'+$(this).val()+'/partsku',
-			        contentType: "application/json; charset=utf-8",
-			        dataType: "json",
-			        success: function (data) { 
-			        	$('#premium_sku').append($('<option>', {
-						    value: data.id,
-						    text: data.pre_desc + " - " + data.pre_code
-						}));
-			        },
-			        error: function (msg) { }
-			    });
-
+		    	addPremium($(this).val());
 		    } else {	
 		    	$(this).closest("tr").find("input.qty").removeAttr('disabled').val('').attr('disabled','disabled');	
-		        $("#premium_sku option[value='"+$(this).val()+"']").remove();	       
+		        $("#premium_sku option[value='"+$(this).val()+"']").remove();
+		        var length = $('#premium_sku > option').length;
+		        if(length == '0'){
+		        	$('#premium_sku').val(0);
+		        }
+
 		    }
 		}
 	})
 
+	function addPremium(id){
+		$.ajax({
+	        async: false,
+	        type: "GET",
+	        url: hostname + '/activity/'+id+'/partsku',
+	        contentType: "application/json; charset=utf-8",
+	        dataType: "json",
+	        success: function (data) { 
+	        	$('#premium_sku').append($('<option>', {
+				    value: data.id,
+				    text: data.pre_desc + " - " + data.pre_code
+				}));
+	        },
+	        error: function (msg) { }
+	    });
+	}
+
 	$('#select-all').change(function() {
     	var checkboxes = $(this).closest('table').find(':checkbox');
+
 	    if($(this).is(':checked')) {
 	        checkboxes.prop('checked', true);
 	        checkboxes.closest("tr").find("input.qty").removeAttr('disabled').val('1');
+	        if(selected() == 2){
+		        $.each(checkboxes, function(obj){
+			    	// console.log($(this).attr('name'));
+			    	if($(this).attr('name') == 'select[]'){
+			    		addPremium($(this).val());
+			    	}
+			    })
+	    	}
 	    } else {
 	        checkboxes.prop('checked', false);
 	        checkboxes.closest("tr").find("input.qty").removeAttr('disabled').val('').attr('disabled','disabled');
+	        $('#premium_sku').empty();
 	    }
+	    
 	});
 
 

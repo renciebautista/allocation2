@@ -18,6 +18,9 @@
         <div class="panel-body">
 
             {{ Form::open(array('action' => array('ActivityController@updatetradedealscheme', $scheme->id), 'files'=>true, 'method' => 'PUT', 'id' => 'updatescheme', 'class' => 'bs-component')) }}
+
+            {{ Form::hidden('pre_id', $scheme->pre_id, ['id' => 'pre_id']) }}
+            {{ Form::hidden('pre', $scheme->pre_desc. ' - ' .$scheme->pre_code, ['id' => 'pre']) }}
             <div class="row">
                 <div class="col-lg-12">
                     <div class="form-group">
@@ -110,7 +113,7 @@
 
                             <div class="col-lg-3">
                                 {{ Form::label('p_req', 'Total Purchase Requirement (for Collective)', array('class' => 'control-label')) }}
-                                {{ Form::text('p_req', null, array('id' => 'p_req', 'class' => 'form-control', 'placeholder' => 'Purchase Requirement (for Collective)', 'id' => 'p_req')) }}
+                                {{ Form::text('p_req', null, array('id' => 'p_req', 'class' => 'form-control', 'placeholder' => 'Purchase Requirement (for Collective)', 'id' => 'p_req', 'disabled' =>'disabled')) }}
                             </div>
                         </div>
                     </div>
@@ -148,6 +151,7 @@
                             <th>Channel Code</th>
                             <th>Channel</th>
                             <th>RTM Tag</th>
+                            <th>Scheme</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -159,6 +163,11 @@
                                 <td>{{ $channel->l5_code }}</td>
                                 <td>{{ $channel->l5_desc }}</td>
                                 <td>{{ $channel->rtm_tag }}</td>
+                                <td>
+                                    @if(!empty($channel->name))
+                                    {{ HTML::linkAction('ActivityController@tradedealscheme' , $channel->name,array('id' => $channel->scheme_id)) }}
+                                    @endif
+                                </td>
                             </tr>
                         @endforeach
                         
