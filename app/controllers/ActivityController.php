@@ -290,7 +290,7 @@ class ActivityController extends BaseController {
 				$tradedealschemes = TradedealScheme::getScheme($tradedeal->id);
 				
 			}else{
-				$tradedealschemes = [];
+				$tradedealschemes = TradedealScheme::getScheme(0);
 			}
 			
 
