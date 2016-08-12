@@ -1334,8 +1334,8 @@
 
 </div>
 
-
-@if($activity->activitytype->with_tradedeal)
+@if($tradedeal != null)
+@if($activity->activitytype->with_tradedeal) 
 
 <!-- Modal -->
 <div class="modal fade" id="addsku" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -1562,6 +1562,7 @@
 		{{ Form::close() }}
 	</div>
 </div>
+@endif
 @endif
 
 @include('javascript.activity.edit')

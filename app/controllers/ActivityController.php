@@ -275,20 +275,22 @@ class ActivityController extends BaseController {
 			$timings = ActivityTiming::getList($activity->id);
 
 			$tradedeal = Tradedeal::where('activity_id', $activity->id)->first();
+			$tradedeal_skus = TradedealPartSku::where('activity_id', $activity->id)->get();
 
-			if(!empty($tradedeal)){
-				// dd($tradedeal);
-				$tradedeal_skus = TradedealPartSku::where('activity_id', $activity->id)->get();
+			$acdivisions = \ActivityDivision::getList($activity->id);
+			$accategories = \ActivityCategory::selected_category($activity->id);
+			$acbrands = \ActivityBrand::selected_brand($activity->id);
+			$host_skus = Pricelist::involves($acbrands,$activity);
+			$ref_skus = Sku::items($acdivisions,$accategories,$acbrands);
+			$pre_skus = \Pricelist::items();
+			$dealtypes = TradedealType::get()->lists('tradedeal_type', 'id');
+			$dealuoms = TradedealUom::get()->lists('tradedeal_uom', 'id');
 
-				$acdivisions = \ActivityDivision::getList($activity->id);
-				$accategories = \ActivityCategory::selected_category($activity->id);
-				$acbrands = \ActivityBrand::selected_brand($activity->id);
-				$host_skus = Pricelist::involves($acbrands,$activity);
-				$ref_skus = Sku::items($acdivisions,$accategories,$acbrands);
-				$pre_skus = \Pricelist::items();
-				$dealtypes = TradedealType::get()->lists('tradedeal_type', 'id');
-				$dealuoms = TradedealUom::get()->lists('tradedeal_uom', 'id');
+			if($tradedeal != null){
 				$tradedealschemes = TradedealScheme::getScheme($tradedeal->id);
+				
+			}else{
+				$tradedealschemes = [];
 			}
 			
 
