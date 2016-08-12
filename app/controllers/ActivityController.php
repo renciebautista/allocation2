@@ -293,7 +293,7 @@ class ActivityController extends BaseController {
 				$tradedealschemes = [];
 			}
 			
-
+			dd($tradedealschemes);
 			// $activity_roles = ActivityRole::getList($activity->id);
 
 			$force_allocs = ForceAllocation::getlist($activity->id);
