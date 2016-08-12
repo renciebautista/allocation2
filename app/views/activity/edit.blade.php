@@ -1334,7 +1334,7 @@
 
 </div>
 
-@if($tradedeal != null)
+@if(!empty($tradedeal))
 @if($activity->activitytype->with_tradedeal) 
 
 <!-- Modal -->
