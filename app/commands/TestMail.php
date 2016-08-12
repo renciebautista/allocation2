@@ -176,13 +176,13 @@ class TestMail extends Command {
 							Mail::send('emails.mail4', $data, function($message) use ($data){
 								$message->to("rbautista@chasetech.com", $data['fullname']);
 								// $message->bcc("rosarah.reyes@unilever.com");
-								$message->subject('TOP ACTIVITIES FOR: ('.$data['cycle_names'].')');
+								$message->subject('Test - TOP ACTIVITIES FOR: ('.$data['cycle_names'].')');
 							});	
 						}else{
 							Mail::send('emails.mail4', $data, function($message) use ($data){
 								$message->to("rbautista@chasetech.com", $data['fullname']);
 								// $message->bcc("rosarah.reyes@unilever.com");
-								$message->subject('TOP ACTIVITIES FOR: '.$data['cycle_names']);
+								$message->subject('Test - TOP ACTIVITIES FOR: '.$data['cycle_names']);
 							});	
 						}
 					}else{
