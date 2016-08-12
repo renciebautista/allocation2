@@ -769,7 +769,6 @@
 												</tr>
 											</thead>
 											<tbody>
-											@if(count(tradedealschemes)>0)
 											@foreach($tradedealschemes as $scheme)
 												<tr>
 													<td>{{ $scheme->name }}</td>
@@ -782,7 +781,6 @@
 													</td>
 												</tr>
 											@endforeach
-											@endif
 											</tbody>
 										</table>
 									</div>
