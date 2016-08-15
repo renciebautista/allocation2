@@ -454,9 +454,7 @@ class ActivityController extends BaseController {
 
 			if(Auth::user()->hasRole("PMOG PLANNER")){
 				if(!ActivityPlanner::myActivity($activity->id)){
-					if(!ActivityMember::myActivity($activity->id)){
-						return Response::make(View::make('shared/404'), 404);
-					}
+					return Response::make(View::make('shared/404'), 404);
 				}
 				$sel_planner = ActivityPlanner::getPlanner($activity->id);
 				$sel_approver = ActivityApprover::getList($activity->id);
@@ -526,6 +524,7 @@ class ActivityController extends BaseController {
 			}
 			
 		}else{
+			// customized
 			$sel_objectives = ActivityObjective::getList($activity->id);
 			$sel_divisions = ActivityDivision::getList($activity->id);
 			
@@ -549,18 +548,36 @@ class ActivityController extends BaseController {
 			// $activity_roles = ActivityRole::getList($activity->id);
 
 			
+		
 
-			$submitstatus = array('3' => 'APPROVE','2' => 'DENY');
 			$activity_types = ActivityType::getWithNetworks();
 			$cycles = Cycle::getLists();
 			// $divisions = Sku::getDivisionLists();
 			$divisions = Pricelist::divisions();
+			$allowAdd = false;
+			if(!Activity::myActivity($activity)){
+				$member = ActivityMember::myActivity($activity->id);
+				if($member->activity_member_status_id == 3){
+					$allowAdd = true;
+					$submitstatus = array('3' => 'APPROVE','2' => 'DENY');
+				}
+			}else{
+				$allowAdd = true;
+				if(ActivityMember::allowToSubmit($activity)){
+					$submitstatus = array('1' => 'SUBMIT ACTIVITY','4' => 'SAVE AS DRAFT');
+				}else{
+					$submitstatus = array('4' => 'SAVE AS DRAFT');
+				}
+				
+			}
+			
+
 
 			return View::make('activity.customizededit', compact('activity', 'planners', 'approvers', 'cycles',
 				 'activity_types', 'divisions' ,'objectives',  'users', 'budgets', 'nobudgets', 
 				 'sel_objectives', 'sel_divisions',  'schemes', 'scheme_summary', 'networks', 'timings' ,
 				 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings',
-				 'comments' ,'submitstatus'));
+				 'comments' ,'submitstatus', 'allowAdd'));
 			
 		}
 		
@@ -921,8 +938,7 @@ class ActivityController extends BaseController {
 			if($activity->scope_type_id == 1){
 				if(Auth::user()->hasRole("PROPONENT")){
 					$arr = DB::transaction(function() use ($id)  {
-						
-						
+					
 						if(empty($activity)){
 							$arr['success'] = 0;
 							$arr['error'] = $validation['message'];
@@ -1079,33 +1095,38 @@ class ActivityController extends BaseController {
 				}
 				
 			}else{
-				$member = ActivityMember::where('user_id',Auth::id())
-					->where('activity_id', $activity->id)
-					->first();
-				if(empty($member)){
-					$arr['success'] = 0;
-					$arr['err_msg'] = 'Member not found';
-				}else{
-					// dd(Input::get('submitstatus'));
-					$member->activity_member_status_id = Input::get('submitstatus');
-					$member->save();
+				if(!Activity::myActivity($activity)){
+					$member = ActivityMember::where('user_id',Auth::id())
+						->where('activity_id', $activity->id)
+						->first();
+					if(empty($member)){
+						$arr['success'] = 0;
+						$arr['err_msg'] = 'Member not found';
+					}else{
+						// dd(Input::get('submitstatus'));
+						$member->activity_member_status_id = Input::get('submitstatus');
+						$member->save();
 
 
-					if(!$activity->channel_approved){
-						$ch_members = ActivityMember::getByDepartmentId(['2']);
-						$approve = 1;
-						foreach ($ch_members as $member) {
-							if($member->activity_member_status_id < 3){
-								$approve = 0;
+						if(!$activity->channel_approved){
+							$ch_members = ActivityMember::getByDepartmentId(['2']);
+							$approve = 1;
+							foreach ($ch_members as $member) {
+								if($member->activity_member_status_id < 3){
+									$approve = 0;
+								}
 							}
+							$activity->channel_approved = $approve;
+							$activity->save();
 						}
-						$activity->channel_approved = $approve;
-						$activity->save();
-					}
 
-					$arr['success'] = 1;
+						$arr['success'] = 1;
+					}
+					return json_encode($arr, 200);
+				}else{
+
 				}
-				return json_encode($arr, 200);
+				
 			}
 			
 		}

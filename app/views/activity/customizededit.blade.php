@@ -359,12 +359,15 @@
 				<h3 class="panel-title">Activity Members</h3>
 			</div>
 			<div class="panel-body">
+				@if($allowAdd)
 				<div class="row">
 					<div class="col-lg-12">
 						<button id="add-member" class="btn btn-primary">Add Member</button>
 					</div>
 				</div>
 				<br>
+				@endif
+
 				<div class="row">
 					<div class="col-lg-12">
 						<div class="table-responsive">
