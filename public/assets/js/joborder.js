@@ -44,5 +44,11 @@ $(document).ready(function(){
 		allow_single_deselect: true
 	});
 
+	$('#filer_input').filer({
+	    changeInput: true,
+	    showThumbs: true,
+	    addMore: true
+	});
+
 	
 });

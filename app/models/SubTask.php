@@ -8,9 +8,12 @@ class SubTask extends \Eloquent {
 		'subtask' => 'required'
 	);
 
+
+
 	public static function search($task,$search){
-		return self::select('sub_tasks.id', 'tasks.task', 'sub_tasks.sub_task')
+		return self::select('sub_tasks.id', 'tasks.task', 'sub_tasks.sub_task', 'departments.department')
 			->join('tasks', 'tasks.id', '=', 'sub_tasks.task_id')
+			->join('departments', 'departments.id', '=', 'sub_tasks.department_id')
 			->where(function($query) use ($search){
 				$query->where('sub_tasks.sub_task', 'LIKE' ,"%$search%")
 					->orwhere('tasks.task', 'LIKE' ,"%$search%");

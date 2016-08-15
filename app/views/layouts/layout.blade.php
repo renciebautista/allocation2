@@ -27,6 +27,11 @@
 
 		{{ HTML::style('assets/plugins/offline/offline-theme-default.css') }}
 		{{ HTML::style('assets/plugins/offline/offline-language-english.css') }}
+
+		{{ HTML::style('assets/plugins/jQuery.filer-1.0.5/css/jquery.filer.css') }}
+		{{ HTML::style('assets/plugins/jQuery.filer-1.0.5/css/themes/jquery.filer-dragdropbox-theme.css') }}
+
+
 		{{ HTML::style('assets/css/styles.css') }}
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
@@ -345,7 +350,7 @@
 
 	{{ HTML::script('assets/plugins/kartik/js/dependent-dropdown.min.js') }}
 	
-	{{ HTML::script('assets/plugins/multifile-2.2.0/jquery.MultiFile.js') }}
+	{{ HTML::script('assets/plugins/jQuery.filer-1.0.5/js/jquery.filer.min.js') }}
 	
 	{{ HTML::script('assets/js/function.js') }}
 

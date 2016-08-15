@@ -525,6 +525,9 @@ class ActivityController extends BaseController {
 			
 		}else{
 			// customized
+			$approvers = User::getApprovers(['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']);
+
+			$sel_approver = ActivityApprover::getList($activity->id);
 			$sel_objectives = ActivityObjective::getList($activity->id);
 			$sel_divisions = ActivityDivision::getList($activity->id);
 			
@@ -547,8 +550,6 @@ class ActivityController extends BaseController {
 
 			// $activity_roles = ActivityRole::getList($activity->id);
 
-			
-		
 
 			$activity_types = ActivityType::getWithNetworks();
 			$cycles = Cycle::getLists();
@@ -570,10 +571,8 @@ class ActivityController extends BaseController {
 				}
 				
 			}
-			
 
-
-			return View::make('activity.customizededit', compact('activity', 'planners', 'approvers', 'cycles',
+			return View::make('activity.customizededit', compact('activity', 'planners', 'approvers', 'sel_approver', 'cycles',
 				 'activity_types', 'divisions' ,'objectives',  'users', 'budgets', 'nobudgets', 
 				 'sel_objectives', 'sel_divisions',  'schemes', 'scheme_summary', 'networks', 'timings' ,
 				 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings',

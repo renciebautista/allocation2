@@ -25,7 +25,8 @@ class SubtasksController extends \BaseController {
 	public function create()
 	{
 		$tasks = Task::getLists();
-		return View::make('subtasks.create', compact('tasks'));
+		$departments = Department::getLists();
+		return View::make('subtasks.create', compact('tasks', 'departments'));
 	}
 
 	/**
@@ -46,6 +47,7 @@ class SubtasksController extends \BaseController {
 				$subtask = new Subtask;
 				$subtask->task_id = Input::get('task');
 				$subtask->sub_task = strtoupper(Input::get('subtask'));
+				$subtask->department_id = Input::get('department');
 				$subtask->save();
 			});
 			return Redirect::action('SubtasksController@index')
@@ -83,7 +85,8 @@ class SubtasksController extends \BaseController {
 	{
 		$tasks = Task::getLists();
 		$subtask = SubTask::findOrFail($id);
-		return View::make('subtasks.edit', compact('tasks', 'subtask'));
+		$departments = Department::getLists();
+		return View::make('subtasks.edit', compact('tasks', 'subtask', 'departments'));
 	}
 
 	/**
@@ -110,6 +113,7 @@ class SubtasksController extends \BaseController {
 		{
 			$subtask->task_id = Input::get('task');
 			$subtask->sub_task = strtoupper(Input::get('subtask'));
+			$subtask->department_id = Input::get('department');
 			$subtask->update();
 
 			return Redirect::action('SubtasksController@index')

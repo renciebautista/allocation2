@@ -30,6 +30,11 @@
 		</div>
 
 		<div class="form-group">
+			{{ Form::label('department', 'Assigned Department', array('class' => 'control-label')) }}
+			{{ Form::select('department', array('0' => 'Please Select') + $departments, 'default', array('class' => 'form-control')) }}
+		</div>
+
+		<div class="form-group">
 			{{ Form::submit('Submit', array('class' => 'btn btn-primary')) }}
 			{{ HTML::linkAction('SubtasksController@index', 'Back', array(), array('class' => 'btn btn-default')) }}
 		</div>
