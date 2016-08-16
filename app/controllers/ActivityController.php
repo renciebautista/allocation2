@@ -1096,7 +1096,9 @@ class ActivityController extends BaseController {
 				}
 				
 			}else{
-				if(!Activity::myActivity($activity)){
+				if(Activity::myActivity($activity)){
+					
+				}else{
 					$member = ActivityMember::where('user_id',Auth::id())
 						->where('activity_id', $activity->id)
 						->first();
@@ -1124,8 +1126,6 @@ class ActivityController extends BaseController {
 						$arr['success'] = 1;
 					}
 					return json_encode($arr, 200);
-				}else{
-
 				}
 				
 			}

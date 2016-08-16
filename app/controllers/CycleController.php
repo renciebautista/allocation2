@@ -216,7 +216,6 @@ class CycleController extends \BaseController {
 
 			$total_activities = 0;
 			if(count($cycle_ids) > 0){
-
 				$type = "mail4";
 				$forrelease = Activity::where('activities.status_id','>',7)
 					->where('activities.pdf', 1)
@@ -241,8 +240,15 @@ class CycleController extends \BaseController {
 						}
 					}
 
+					// if($_ENV['MAIL_TEST']){
+					// 	Queue::push('MassMail', [],'mmail');
+					// }else{
+					// 	Queue::push('MassMail', [],'p_mmail');
+					// }
+
 					foreach ($users as $user) {
 						$data['activities'] = Activity::Released($cycle_ids);
+						
 						if(count($data['activities']) > 0){
 							if($_ENV['MAIL_TEST']){
 								Queue::push('MailScheduler', array('type' => $type, 'user_id' => $user->user_id, 'role_id' => $user->role_id,),'etop');
