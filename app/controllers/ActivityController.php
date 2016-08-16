@@ -572,11 +572,13 @@ class ActivityController extends BaseController {
 				
 			}
 
+			$joborders = Joborder::getActivityJo($activity);
+
 			return View::make('activity.customizededit', compact('activity', 'planners', 'approvers', 'sel_approver', 'cycles',
 				 'activity_types', 'divisions' ,'objectives',  'users', 'budgets', 'nobudgets', 
 				 'sel_objectives', 'sel_divisions',  'schemes', 'scheme_summary', 'networks', 'timings' ,
 				 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings',
-				 'comments' ,'submitstatus', 'allowAdd'));
+				 'comments' ,'submitstatus', 'allowAdd', 'joborders'));
 			
 		}
 		
@@ -3069,6 +3071,39 @@ class ActivityController extends BaseController {
 		$tasks = Task::getLists();
 		$users = User::getAll();
 		return View::make('activity.createjo',compact('activity', 'tasks', 'users'));
+	}
+
+	public function storejo($id){
+		$activity = Activity::findOrFail($id);
+		$task = Task::findOrFail(Input::get('task'));
+		$subtask = SubTask::findOrFail(Input::get('sub_task'));
+		$validation = Validator::make(Input::all(), Joborder::$rules);
+		if($validation->passes()){
+			$joborder = new Joborder;
+			$joborder->activity_id = $activity->id;
+			$joborder->created_by = Auth::id();
+			$joborder->task_id = $task->id;
+			$joborder->task = $task->task;
+			$joborder->sub_task_id = $subtask->id;
+			$joborder->sub_task = $subtask->sub_task;
+			$joborder->department_id = $subtask->department_id;
+			$joborder->start_date = date('Y-m-d',strtotime(Input::get('start_date')));
+			$joborder->end_date = date('Y-m-d',strtotime(Input::get('end_date')));
+			$joborder->details = Input::get('details');
+			$joborder->save();
+
+			return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#jo")
+				->with('class', 'alert-success')
+				->with('message', 'Joborder was successfuly created.');
+						
+
+		}
+
+		return Redirect::route('activity.createjo', $id)
+					->withInput()
+					->withErrors($validation)
+					->with('class', 'alert-danger')
+					->with('message', 'There were validation errors.');
 	}
 
 }

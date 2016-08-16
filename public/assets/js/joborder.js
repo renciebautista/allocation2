@@ -39,16 +39,49 @@ $(document).ready(function(){
 		});
 	});
 
-	$("#assign_to").chosen({
-		search_contains: true,
-		allow_single_deselect: true
-	});
-
 	$('#filer_input').filer({
 	    changeInput: true,
 	    showThumbs: true,
 	    addMore: true
 	});
 
+	$("#myform").validate({
+	ignore: ':hidden:not(".multiselect")',
+	errorElement: "span", 
+	errorClass : "has-error",
+	rules: {
+		task: "is_natural_no_zero",
+		sub_task: "is_natural_no_zero",
+		cycle: {
+			is_natural_no_zero: true,
+			required: true
+		},
+		start_date: {
+			required: true,
+		},
+		end_date: {
+			required: true,
+		},
+		details: {
+			required: true,
+		},
+
+	},
+	errorPlacement: function(error, element) {               
+		
+	},
+	highlight: function( element, errorClass, validClass ) {
+    	$(element).closest('div').addClass(errorClass).removeClass(validClass);
+  	},
+  	unhighlight: function( element, errorClass, validClass ) {
+    	$(element).closest('div').removeClass(errorClass).addClass(validClass);
+  	},
+  	invalidHandler: function(form, validator) {
+        var errors = validator.numberOfInvalids();
+        if (errors) {
+              $("html, body").animate({ scrollTop: 0 }, "fast");
+        }
+    }
+});
 	
 });

@@ -1073,14 +1073,30 @@
 								<thead>
 									<tr>
 										<th>Joborder #</th>
+										<th>Start Date</th>
+										<th>End Date</th>
 										<th>Task</th>
 										<th>Sub Task</th>
+										<th>Department</th>
 										<th>Assign To</th>
+										<th>Status</th>
 										<th>Action</th>
 									</tr>
 								</thead>
 							  	<tbody>
-							  		
+							  		@foreach($joborders as $jo)
+							  		<tr>
+							  			<td>{{ $jo->id }}</td>
+							  			<td>{{ date_format(date_create($jo->start_date),'m/d/Y') }}</td>
+							  			<td>{{ date_format(date_create($jo->end_date),'m/d/Y') }}</td>
+							  			<td>{{ $jo->task }}</td>
+							  			<td>{{ $jo->sub_task }}</td>
+							  			<td>{{ $jo->department->department }}</td>
+							  			<td></td>
+							  			<td></td>
+							  			<td></td>
+							  		</tr>
+							  		@endforeach
 							  	</tbody>
 							  	
 							</table> 

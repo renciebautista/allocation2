@@ -98,6 +98,17 @@
 							</ul>
 						</li>
 						@endif
+
+						<li class="dropdown">
+							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="transaction">Job Orders <span class="caret"></span></a>
+							<ul class="dropdown-menu" aria-labelledby="transaction">
+								
+								<li>{{ HTML::linkRoute('activity.index', 'Unassigned Department Job Orders') }}</li> 
+								<li>{{ HTML::linkRoute('activity.index', 'Assigned Department Job Orders') }}</li> 
+								<li>{{ HTML::linkRoute('activity.index', 'My Job Orders') }}</li>
+								
+							</ul>
+						</li>
 						
 						@if(Auth::user()->hasRole("ADMINISTRATOR"))
 						<li class="dropdown">
