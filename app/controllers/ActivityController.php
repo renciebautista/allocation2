@@ -16,16 +16,16 @@ class ActivityController extends BaseController {
 	public function index()
 	{
 
-		if(Auth::user()->hasRole("FIELD SALES")){
-			Input::flash();
-			$cycles = Cycle::getLists();
-			$types = ActivityType::getLists();
-			$scopes = ScopeType::getLists();
-			$activities = Activity::searchField(Input::get('cy'),Input::get('ty'),Input::get('sc'),Input::get('title'));
-			return View::make('dashboard.field',compact('activities', 'cycles','types','scopes'));
-		}
+		// if(Auth::user()->hasRole("FIELD SALES")){
+		// 	Input::flash();
+		// 	$cycles = Cycle::getLists();
+		// 	$types = ActivityType::getLists();
+		// 	$scopes = ScopeType::getLists();
+		// 	$activities = Activity::searchField(Input::get('cy'),Input::get('ty'),Input::get('sc'),Input::get('title'));
+		// 	return View::make('dashboard.field',compact('activities', 'cycles','types','scopes'));
+		// }
 
-		if(Auth::user()->hasRole("PROPONENT")){
+		if(Auth::user()->inRoles(['PROPONENT','FIELD SALES'])){
 			Input::flash();
 			$statuses = ActivityStatus::availableStatus();
 			$cycles = Activity::availableCycles(Auth::id());
@@ -524,7 +524,7 @@ class ActivityController extends BaseController {
 			}
 			
 		}else{
-			// customized
+			
 			$approvers = User::getApprovers(['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']);
 
 			$sel_approver = ActivityApprover::getList($activity->id);
@@ -553,33 +553,61 @@ class ActivityController extends BaseController {
 
 			$activity_types = ActivityType::getWithNetworks();
 			$cycles = Cycle::getLists();
-			// $divisions = Sku::getDivisionLists();
 			$divisions = Pricelist::divisions();
+
 			$allowAdd = false;
-			if(!Activity::myActivity($activity)){
-				$member = ActivityMember::myActivity($activity->id);
-				if($member->activity_member_status_id == 3){
-					$allowAdd = true;
-					$submitstatus = array('3' => 'APPROVE','2' => 'DENY');
-				}
-			}else{
-				$allowAdd = true;
-				if(ActivityMember::allowToSubmit($activity)){
-					$submitstatus = array('1' => 'SUBMIT ACTIVITY','4' => 'SAVE AS DRAFT');
+			$show_action = true;
+			$allowJo = false;
+			$joborders = Joborder::getActivityJo($activity);
+			$view = 'activity.customizedreadonly';
+			$settings = Setting::find(1);
+			$ch_approvers = explode(",", $settings->customized_preapprover);
+
+			if(Activity::myActivity($activity)){ // cmd / field
+				if($activity->status_id > 3){
+					$view = 'activity.customizedreadonly';
+					$submitstatus = array('2' => 'RECALL ACTIVITY');
 				}else{
-					$submitstatus = array('4' => 'SAVE AS DRAFT');
+					$allowAdd = true;
+					$view = 'activity.customizededit';
+
+					if(ActivityMember::allowToSubmit($activity)){
+						$submitstatus = array('1' => 'SUBMIT ACTIVITY','4' => 'SAVE AS DRAFT');
+						$allowJo = true;
+					}else{
+						$submitstatus = array('4' => 'SAVE AS DRAFT');
+					}
+				}
+			}else{ //others
+				$activity_member = ActivityMember::myActivity($activity->id);
+				if($activity_member){ // members
+					if(in_array(Auth::user()->department_id, $ch_approvers)){
+						if($activity->status_id > 3){
+							$view = 'activity.customizedreadonly';
+							$show_action = false;
+						}else{
+							if($activity_member->activity_member_status_id > 1){
+								$show_action = false;
+							}
+							$allowAdd = true;
+							$submitstatus = array('3' => 'APPROVE','2' => 'DENY');
+							$view = 'activity.customizededit';
+						}
+					}else{
+						$show_action = false;
+						$view = 'activity.customizedreadonly';
+					}
+				}else{ //approvers
+					return Response::make(View::make('shared/404'), 404);
 				}
 				
 			}
-
-			$joborders = Joborder::getActivityJo($activity);
-
-			return View::make('activity.customizededit', compact('activity', 'planners', 'approvers', 'sel_approver', 'cycles',
-				 'activity_types', 'divisions' ,'objectives',  'users', 'budgets', 'nobudgets', 
-				 'sel_objectives', 'sel_divisions',  'schemes', 'scheme_summary', 'networks', 'timings' ,
-				 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings',
-				 'comments' ,'submitstatus', 'allowAdd', 'joborders'));
 			
+			return View::make($view, compact('activity', 'planners', 'approvers', 'sel_approver', 'cycles',
+					 'activity_types', 'divisions' ,'objectives',  'users', 'budgets', 'nobudgets', 
+					 'sel_objectives', 'sel_divisions',  'schemes', 'scheme_summary', 'networks', 'timings' ,
+					 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings',
+					 'comments' ,'submitstatus', 'allowAdd', 'joborders', 'show_action', 'allowJo'));
 		}
 		
 	}
@@ -930,6 +958,162 @@ class ActivityController extends BaseController {
 				->with('message', $message);
 	}
 
+	private function updateActivityStatus($activity){
+		$arr = DB::transaction(function() use ($activity)  {		
+			if(empty($activity)){
+				$arr['success'] = 0;
+				$arr['error'] = 'Activity not found';
+			}else{
+				$status_id = (int) Input::get('submitstatus');
+				$planner_count = ActivityPlanner::getPlannerCount($activity->id);
+				$activity_status = 3;
+				$pro_recall = 0;
+				$pmog_recall = 0;
+				$allow_comment = false;
+				$allow_update = false;
+
+				// save as draft
+				if($status_id == 4){
+					$comment_status = "SAVED AS DRAFT";
+					$class = "text-success";
+					$allow_comment = true;
+				}
+
+				// recall activity
+				if($status_id == 2){
+					$comment_status = "RECALLED ACTIVITY";
+					$class = "text-warning";
+					ActivityApprover::resetAll($activity->id);
+					$allow_update = true;
+					$allow_comment = true;
+				}
+
+				// submit activity
+				if($status_id == 1){
+					if(count($planner_count) > 0){
+						if($activity->activitytype->with_scheme){
+							if($activity->activitytype->with_sob){
+								$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme','sob','submission_deadline','sob_start_week');
+							}else{
+								$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme','submission_deadline');
+							}
+						}else{
+							if($activity->activitytype->with_sob){
+								$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','sob', 'submission_deadline','sob_start_week');
+							}else{
+								$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','submission_deadline');
+							}
+
+						}
+						
+					}else{
+						if($activity->activitytype->with_scheme){
+							if($activity->activitytype->with_sob){
+								$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme','sob','submission_deadline','sob_start_week');
+							}else{
+								$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme','submission_deadline',);
+							}
+						}else{
+							if($activity->activitytype->with_sob){
+								$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','sob','submission_deadline', 'sob_start_week');
+							}else{
+								$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','submission_deadline');
+							}
+						}
+					}
+
+					// dd($required_rules);
+
+					$validation = Activity::validForDownload($activity,$required_rules);
+
+					if($validation['status'] == 0){
+						$arr['success'] = 0;
+						$arr['error'] = $validation['message'];
+						$arr['success'] = 0;
+					}else{
+						$allow_update = true;
+						$allow_comment = true;
+						$pro_recall = 1;
+						$class = "text-success";
+						// check if there is a planner
+						if(count($planner_count) > 0){
+							$comment_status = "SUBMITTED TO PMOG PLANNER";
+							$activity_status = 4;
+						}else{
+							// check if there is GCOM Approver
+							$gcom_approvers = ActivityApprover::getApproverByRole($activity->id,'GCOM APPROVER');
+							if(count($gcom_approvers) > 0){
+								$comment_status = "SUBMITTED TO GCOM";
+								$activity_status = 5;
+
+								foreach ($gcom_approvers as $gcom_approver) {
+									$approver = ActivityApprover::find($gcom_approver->id);
+									$approver->show = 1;
+									$approver->for_approval = 1;
+									$approver->update();
+								}
+							}else{
+								// check if there is CD OPS Approver
+								$cdops_approvers = ActivityApprover::getApproverByRole($activity->id,'CD OPS APPROVER');
+								if(count($cdops_approvers) > 0){
+									$comment_status = "SUBMITTED TO CD OPS";
+									$activity_status = 6;
+
+									foreach ($cdops_approvers as $cdops_approver) {
+										$approver = ActivityApprover::find($cdops_approver->id);
+										$approver->show = 1;
+										$approver->for_approval = 1;
+										$approver->update();
+									}
+								}else{
+									// check if there is CMD DIRECTOR Approver
+									$cmd_approvers = ActivityApprover::getApproverByRole($activity->id,'CMD DIRECTOR');
+									if(count($cmd_approvers) > 0){
+										$comment_status = "SUBMITTED TO CMD";
+										$activity_status = 7;
+
+										foreach ($cmd_approvers as $cmd_approver) {
+											$approver = ActivityApprover::find($cmd_approver->id);
+											$approver->show = 1;
+											$approver->for_approval = 1;
+											$approver->update();
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+
+				
+
+				if($allow_update){
+					$activity->status_id = $activity_status;
+					$activity->pro_recall = $pro_recall;
+					$activity->pmog_recall = $pmog_recall;
+					$activity->update();
+				}
+
+				if($allow_comment){
+					$comment = new ActivityComment;
+					$comment->created_by = Auth::id();
+					$comment->activity_id =$activity->id;
+					$comment->comment = Input::get('submitremarks');
+					$comment->comment_status = $comment_status;
+					$comment->class = $class;
+					$comment->save();
+
+					$arr['success'] = 1;
+					Session::flash('class', 'alert-success');
+					Session::flash('message', 'Activity successfully updated.');
+				}
+				
+				
+			}
+			return $arr;
+		});
+		return $arr;
+	}
 
 	public function updateactivity($id){
 		if(Request::ajax()){
@@ -938,166 +1122,12 @@ class ActivityController extends BaseController {
 
 			if($activity->scope_type_id == 1){
 				if(Auth::user()->hasRole("PROPONENT")){
-					$arr = DB::transaction(function() use ($id)  {
-					
-						if(empty($activity)){
-							$arr['success'] = 0;
-							$arr['error'] = $validation['message'];
-						}else{
-							$status_id = (int) Input::get('submitstatus');
-							$planner_count = ActivityPlanner::getPlannerCount($activity->id);
-							$activity_status = 3;
-							$pro_recall = 0;
-							$pmog_recall = 0;
-							$allow_comment = false;
-							$allow_update = false;
-
-							// save as draft
-							if($status_id == 4){
-								$comment_status = "SAVED AS DRAFT";
-								$class = "text-success";
-								$allow_comment = true;
-							}
-
-							// recall activity
-							if($status_id == 2){
-								$comment_status = "RECALLED ACTIVITY";
-								$class = "text-warning";
-								ActivityApprover::resetAll($activity->id);
-								$allow_update = true;
-								$allow_comment = true;
-							}
-
-							// submit activity
-							if($status_id == 1){
-								if(count($planner_count) > 0){
-									if($activity->activitytype->with_scheme){
-										if($activity->activitytype->with_sob){
-											$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme','sob','submission_deadline','sob_start_week');
-										}else{
-											$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme','submission_deadline');
-										}
-									}else{
-										if($activity->activitytype->with_sob){
-											$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','sob', 'submission_deadline','sob_start_week');
-										}else{
-											$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','submission_deadline');
-										}
-
-									}
-									
-								}else{
-									if($activity->activitytype->with_scheme){
-										if($activity->activitytype->with_sob){
-											$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme','sob','submission_deadline','sob_start_week');
-										}else{
-											$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','scheme','submission_deadline',);
-										}
-									}else{
-										if($activity->activitytype->with_sob){
-											$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','sob','submission_deadline', 'sob_start_week');
-										}else{
-											$required_rules = array('budget','approver','cycle','division','category','brand','objective','background','customer','submission_deadline');
-										}
-									}
-								}
-
-								// dd($required_rules);
-
-								$validation = Activity::validForDownload($activity,$required_rules);
-
-								if($validation['status'] == 0){
-									$arr['success'] = 0;
-									$arr['error'] = $validation['message'];
-									$arr['success'] = 0;
-								}else{
-									$allow_update = true;
-									$allow_comment = true;
-									$pro_recall = 1;
-									$class = "text-success";
-									// check if there is a planner
-									if(count($planner_count) > 0){
-										$comment_status = "SUBMITTED TO PMOG PLANNER";
-										$activity_status = 4;
-									}else{
-										// check if there is GCOM Approver
-										$gcom_approvers = ActivityApprover::getApproverByRole($activity->id,'GCOM APPROVER');
-										if(count($gcom_approvers) > 0){
-											$comment_status = "SUBMITTED TO GCOM";
-											$activity_status = 5;
-
-											foreach ($gcom_approvers as $gcom_approver) {
-												$approver = ActivityApprover::find($gcom_approver->id);
-												$approver->show = 1;
-												$approver->for_approval = 1;
-												$approver->update();
-											}
-										}else{
-											// check if there is CD OPS Approver
-											$cdops_approvers = ActivityApprover::getApproverByRole($activity->id,'CD OPS APPROVER');
-											if(count($cdops_approvers) > 0){
-												$comment_status = "SUBMITTED TO CD OPS";
-												$activity_status = 6;
-
-												foreach ($cdops_approvers as $cdops_approver) {
-													$approver = ActivityApprover::find($cdops_approver->id);
-													$approver->show = 1;
-													$approver->for_approval = 1;
-													$approver->update();
-												}
-											}else{
-												// check if there is CMD DIRECTOR Approver
-												$cmd_approvers = ActivityApprover::getApproverByRole($activity->id,'CMD DIRECTOR');
-												if(count($cmd_approvers) > 0){
-													$comment_status = "SUBMITTED TO CMD";
-													$activity_status = 7;
-
-													foreach ($cmd_approvers as $cmd_approver) {
-														$approver = ActivityApprover::find($cmd_approver->id);
-														$approver->show = 1;
-														$approver->for_approval = 1;
-														$approver->update();
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-
-							
-
-							if($allow_update){
-								$activity->status_id = $activity_status;
-								$activity->pro_recall = $pro_recall;
-								$activity->pmog_recall = $pmog_recall;
-								$activity->update();
-							}
-
-							if($allow_comment){
-								$comment = new ActivityComment;
-								$comment->created_by = Auth::id();
-								$comment->activity_id = $id;
-								$comment->comment = Input::get('submitremarks');
-								$comment->comment_status = $comment_status;
-								$comment->class = $class;
-								$comment->save();
-
-								$arr['success'] = 1;
-								Session::flash('class', 'alert-success');
-								Session::flash('message', 'Activity successfully updated.');
-							}
-							
-							
-						}
-						return $arr;
-					});
-					return json_encode($arr);
+					return json_encode($this->updateActivityStatus($activity));
 				}
 				
 			}else{
 				if(Activity::myActivity($activity)){
-					
+					return json_encode($this->updateActivityStatus($activity));
 				}else{
 					$member = ActivityMember::where('user_id',Auth::id())
 						->where('activity_id', $activity->id)
@@ -3010,6 +3040,8 @@ class ActivityController extends BaseController {
 
 	public function addmember($id){
 		if(Request::ajax()){
+			$settings = Setting::find(1);
+			$approvers = explode(",", $settings->customized_preapprover);
 			$activity = Activity::find($id);
 			$err = [];
 			$data['success'] = 1;
@@ -3023,6 +3055,10 @@ class ActivityController extends BaseController {
 					$new_user->user_id = $user->id;
 					$new_user->user_desc = $user->first_name . ' ' . $user->last_name;
 					$new_user->department = $user->department->department;
+
+					if(!in_array($user->department_id, $approvers)){
+						$new_user->activity_member_status_id = 3;
+					}
 					$new_user->save();
 				}else{
 					$err[] = 'User not found.';
@@ -3060,7 +3096,7 @@ class ActivityController extends BaseController {
                 if($row->activity_member_status_id == 4){
                 	$class = 'ext-warning';
                 }
-
+                
                 return '<p class="'.$class.'">'.$row->mem_status.'</p>';
             })
 			->make();
@@ -3089,8 +3125,11 @@ class ActivityController extends BaseController {
 			$joborder->department_id = $subtask->department_id;
 			$joborder->start_date = date('Y-m-d',strtotime(Input::get('start_date')));
 			$joborder->end_date = date('Y-m-d',strtotime(Input::get('end_date')));
-			$joborder->details = Input::get('details');
 			$joborder->save();
+
+			JoborderComment::create(['joborder_id' => $joborder->id, 
+				'created_by' => Auth::user()->id,
+				'comment' => Input::get('details')]);
 
 			return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#jo")
 				->with('class', 'alert-success')

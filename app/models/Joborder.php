@@ -15,7 +15,21 @@ class Joborder extends \Eloquent {
 		return $this->belongsTo('Department');
 	}
 
+	public function status(){
+		return $this->belongsTo('JoborderStatus', 'joborder_status_id');
+	}
+
+	public function comments(){
+		return $this->hasMany('JoborderComment', 'joborder_id');
+	}
+
 	public static function getActivityJo($activity){
 		return self::where('activity_id', $activity->id)->get();
+	}
+
+	public static function unAssigned($user){
+		return self::where('department_id', $user->department_id)
+			->where('joborder_status_id', 1)
+			->get();
 	}
 }

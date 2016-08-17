@@ -6,6 +6,7 @@ use DB;
 use Activity;
 use Input;
 use Auth;
+use Setting;
 class UserController extends \BaseController {
 
 
@@ -15,15 +16,20 @@ class UserController extends \BaseController {
 			$activity = Activity::find(Input::get('id'));
 			if(!empty($activity)){
 				if($activity->created_by == Auth::id()){
+					$settings = Setting::find(1);
+					$approvers = explode(",", $settings->customized_preapprover);
 					if(!$activity->channel_approved){
-						$departments = [2];
-						$data['user'] = User::getUsers($activity,$departments);
+						$departments = $approvers;
 					}else{
-						$data['user'] = User::getUsers($activity);
+						$departments = [];
 					}
+					$data['user'] = User::getUsers($activity,$departments);
 				}else{
+
 					$data['user'] = User::getUsers($activity);
 				}
+
+				
 				
 				return \Response::json($data,200);
 

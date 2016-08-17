@@ -30,7 +30,6 @@ class CreateJobordersTable extends Migration {
 			$table->foreign('department_id')->references('id')->on('departments');
 			$table->date('start_date');
 			$table->date('end_date');
-			$table->string('details');
 			$table->timestamps();
 		});
 	}

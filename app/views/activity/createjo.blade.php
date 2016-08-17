@@ -75,8 +75,8 @@
 			<div class="form-group">
 				<div class="row">
 					<div class="col-lg-12">
-						{{ Form::label('details', 'Details', array('class' => 'control-label')) }}
-						{{ Form::textarea('details','',array('class' => 'form-control multiselect', 'placeholder' => 'Details', 'id' => 'details')) }}
+						{{ Form::label('files', 'Attach Files', array('class' => 'control-label')) }}
+						<input type="file" name="files[]" id="filer_input" multiple="multiple">
 					</div>
 					
 				</div>
@@ -89,14 +89,16 @@
 			<div class="form-group">
 				<div class="row">
 					<div class="col-lg-12">
-						{{ Form::label('files', 'Attach Files', array('class' => 'control-label')) }}
-						<input type="file" name="files[]" id="filer_input" multiple="multiple">
+						{{ Form::label('details', 'Details', array('class' => 'control-label')) }}
+						{{ Form::textarea('details','',array('class' => 'form-control multiselect', 'placeholder' => 'Details', 'id' => 'details')) }}
 					</div>
 					
 				</div>
 			</div>
 		</div>
 	</div>
+
+	
 
 	
 	<br>

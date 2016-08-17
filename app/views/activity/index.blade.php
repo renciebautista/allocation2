@@ -89,7 +89,9 @@
 						<div class="col-lg-12">
 							<div class="search">
 								<button type="submit" class="btn btn-success"><i class="fa fa-search"></i> Search</button>
+								@if(Auth::user()->inRoles(['PROPONENT']))
 								<a href="{{ URL::action('ActivityController@create', 1) }}" class="btn btn-primary">Add New National Activity</a>
+								@endif
 								<a href="{{ URL::action('ActivityController@create', 2) }}" class="btn btn-primary">Add New Customized Activity</a>
 							</div>
 						</div>
@@ -102,7 +104,7 @@
 </div>
 
 <hr>
-
+<p class="pull-right"><b>{{ count($activities)}} record/s found.</b></p>
 <div class="row">
 	<div class="col-lg-12">
 		<div class="table-responsive">
@@ -148,22 +150,28 @@
 							{{ HTML::linkAction('ActivityController@edit','View', $activity->id, array('class' => 'btn btn-success btn-xs')) }}
 						</td>
 						<td class="action">
+							@if($activity->created_by == Auth::user()->id)
 							{{ Form::open(array('method' => 'POST', 'action' => array('ActivityController@duplicate', $activity->id), 'class' => 'disable-button')) }}                       
 							{{ Form::submit('Duplicate', array('class'=> 'btn btn-primary btn-xs','onclick' => "if(!confirm('Are you sure to duplicate this record?')){return false;};")) }}
 							{{ Form::close() }}
+							@else
+							@endif
 						</td>
 						<td class="action">
-							@if($activity->status_id < 4)
-							{{ Form::open(array('method' => 'DELETE', 'action' => array('ActivityController@destroy', $activity->id), 'class' => 'disable-button')) }}                       
-							{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}
-							{{ Form::close() }}
-							@else
-							@if($activity->status_id == 9)
-								{{ HTML::linkAction('ReportController@download','Download', $activity->id, array('class' => 'btn btn-success btn-xs')) }}
-							@else
-								<button class="btn btn-danger btn-xs disabled">Delete</button>
-							@endif
-							
+							@if($activity->created_by == Auth::user()->id)
+								@if($activity->status_id < 4)
+								{{ Form::open(array('method' => 'DELETE', 'action' => array('ActivityController@destroy', $activity->id), 'class' => 'disable-button')) }}                       
+								{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}
+								{{ Form::close() }}
+								@else
+									@if($activity->status_id == 9)
+										{{ HTML::linkAction('ReportController@download','Download', $activity->id, array('class' => 'btn btn-success btn-xs')) }}
+									@else
+										<button class="btn btn-danger btn-xs disabled">Delete</button>
+									@endif
+								
+								@endif
+								@else
 							@endif
 						</td>
 						

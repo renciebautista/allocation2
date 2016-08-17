@@ -261,8 +261,10 @@ class User extends Eloquent implements ConfideUserInterface {
 		foreach ($activity_members as $member) {
 			$users[] = $member->user_id;
 		}
+		$users[] = Auth::user()->id;
 		return self::select(DB::raw("CONCAT(first_name,' ', last_name) as fullname"), 'id' )
 			->where('active',1)
+			->where('department_id', '>', 1)
 			->where(function($query) use ($departments){
 				if($departments != null){
 					$query->whereIn('department_id', $departments);

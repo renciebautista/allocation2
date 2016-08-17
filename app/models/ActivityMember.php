@@ -2,6 +2,7 @@
 
 class ActivityMember extends \Eloquent {
 	protected $fillable = [];
+    
 	public static function myActivity($activity_id){
     	return self::where('activity_id', $activity_id)
     		->where('user_id',Auth::id())
@@ -17,8 +18,12 @@ class ActivityMember extends \Eloquent {
     }
 
     public static function allowToSubmit($activity){
-        $members = self::where('department', 'CHANNELS')
-            ->where('activity_id', $activity->id)
+        $settings = Setting::find(1);
+        $approvers = explode(",", $settings->customized_preapprover);
+
+        $members = self::where('activity_id', $activity->id)
+            ->join('users', 'users.id', '=', 'activity_members.user_id')
+            ->whereIn('users.department_id',$approvers)
             ->get();
         if(count($members) > 0){
             $allow = false;

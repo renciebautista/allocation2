@@ -31,7 +31,7 @@
 		{{ HTML::style('assets/plugins/jQuery.filer-1.0.5/css/jquery.filer.css') }}
 		{{ HTML::style('assets/plugins/jQuery.filer-1.0.5/css/themes/jquery.filer-dragdropbox-theme.css') }}
 
-
+		{{ HTML::style('assets/css/timeline.css') }}
 		{{ HTML::style('assets/css/styles.css') }}
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
@@ -62,26 +62,31 @@
 
 				<div class="navbar-collapse collapse" id="navbar-main">
 					<ul class="nav navbar-nav">
-						@if(Auth::user()->inRoles(['PROPONENT','PMOG PLANNER','GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']))
+						@if(Auth::user()->inRoles(['PROPONENT','PMOG PLANNER','GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR', 'FIELD SALES']))
 						<li class="dropdown">
 							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="transaction">My Activities <span class="caret"></span></a>
 							<ul class="dropdown-menu" aria-labelledby="transaction">
-								@if(Auth::user()->inRoles(['PROPONENT']))
+								@if(Auth::user()->inRoles(['PROPONENT', 'FIELD SALES']))
 								<li>{{ HTML::linkRoute('activity.index', 'All') }}</li> 
 								<li>{{ HTML::linkAction('activity.index' , 'Unreleased',array('st' => ['1','2','3','4','5','6','7','8'],'title' => '')) }}</li>  
 								<li>{{ HTML::linkAction('activity.index' , 'Released',array('st' => ['9'],'title' => '')) }}</li>  
+
 								<li class="dropdown-submenu">
 								    <a tabindex="0" data-toggle="dropdown">New Activity</a>
 								    <ul class="dropdown-menu">
+								    	@if(Auth::user()->inRoles(['PROPONENT']))
 								      	<li>{{ HTML::linkAction('ActivityController@create', 'National', [1]) }}</li> 
+								      	@endif
+		
 										<li>{{ HTML::linkAction('ActivityController@create', 'Customized', [2]) }}</li>
+										
 								    </ul>
 								</li>
 						
 								 
 								@endif
 
-								@if(Auth::user()->inRoles(['PMOG PLANNER','FIELD SALES']))
+								@if(Auth::user()->inRoles(['PMOG PLANNER']))
 								<li>{{ HTML::linkRoute('activity.index', 'All') }}</li> 
 								<li>{{ HTML::linkAction('activity.index' , 'Unreleased',array('st' => ['1','2','3','4','5','6','7','8'],'title' => '')) }}</li>  
 								<li>{{ HTML::linkAction('activity.index' , 'Released',array('st' => ['9'],'title' => '')) }}</li>  
@@ -99,16 +104,7 @@
 						</li>
 						@endif
 
-						<li class="dropdown">
-							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="transaction">Job Orders <span class="caret"></span></a>
-							<ul class="dropdown-menu" aria-labelledby="transaction">
-								
-								<li>{{ HTML::linkRoute('activity.index', 'Unassigned Department Job Orders') }}</li> 
-								<li>{{ HTML::linkRoute('activity.index', 'Assigned Department Job Orders') }}</li> 
-								<li>{{ HTML::linkRoute('activity.index', 'My Job Orders') }}</li>
-								
-							</ul>
-						</li>
+						
 						
 						@if(Auth::user()->hasRole("ADMINISTRATOR"))
 						<li class="dropdown">
@@ -180,6 +176,17 @@
 							</ul>
 						</li>
 						@endif
+
+						<li class="dropdown">
+							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="transaction">Job Orders <span class="caret"></span></a>
+							<ul class="dropdown-menu" aria-labelledby="transaction">
+								
+								<li>{{ HTML::linkRoute('joborders.unassigned', 'Unassigned Department Job Orders') }}</li> 
+								<li>{{ HTML::linkRoute('joborders.assigned', 'Assigned Department Job Orders') }}</li> 
+								<li>{{ HTML::linkRoute('joborders.index', 'My Job Orders') }}</li>
+								
+							</ul>
+						</li>
 
 						<li class="dropdown">
 							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="report">Reports <span class="caret"></span></a>
@@ -362,6 +369,8 @@
 	{{ HTML::script('assets/plugins/kartik/js/dependent-dropdown.min.js') }}
 	
 	{{ HTML::script('assets/plugins/jQuery.filer-1.0.5/js/jquery.filer.min.js') }}
+
+	{{ HTML::script('assets/plugins/tinymce/js/tinymce/tinymce.min.js') }}
 	
 	{{ HTML::script('assets/js/function.js') }}
 

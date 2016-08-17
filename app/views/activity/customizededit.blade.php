@@ -17,9 +17,12 @@
 	<div class="col-lg-12">
 		<div class="form-group">
 			{{ HTML::linkRoute('activity.index', 'Back To Activity List', array(), array('class' => 'btn btn-default')) }}
+			@if($show_action)
 			<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myAction">
 			  	Actions
 			</button>
+			@endif
+
 
 			<div class="btn-group">
                   <a href="#" class="btn btn-info">Options</a>
@@ -36,6 +39,7 @@
 </div>
 
 <!-- Modal -->
+@if($show_action)
 <div class="modal fade" id="myAction" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   	<div class="modal-dialog">
   		<div class="modal-content">
@@ -65,10 +69,11 @@
 	    </div>
   	</div>
 </div>
+@endif
 
 
 <ul class="nav nav-tabs">
-	<li class="active"><a id="tab-summary" aria-expanded="true" href="#summary">Activity Summary</a></li>
+	<li class="active"><a id="tab-summary" aria-expanded="true" href="#timeline">Timeline</a></li>
 	<li class=""><a id="tab-activity" aria-expanded="true" href="#activity">Activity Details</a></li>
 	<li class=""><a id="tab-member" aria-expanded="true" href="#member">Activity Members</a></li>
 	<li class=""><a id="tab-customer" aria-expanded="false" href="#customer">Customer Details</a></li>
@@ -83,23 +88,25 @@
 <div id="myTabContent" class="tab-content">
 
 	<!-- summary -->
-	<div class="tab-pane fade active in" id="summary">
+	<div class="tab-pane fade active in" id="timeline">
 		<br>
 		<div class="panel panel-default">
 			<div class="panel-body">
 				<div class="col-md-9 col-sm-9 col-xs-12">
 					<div>
-						<h4>Recent Activity</h4>
-						<hr>
-						<ul>
-							<li>
-								<div></div>
-							</li>
-						</ul>
+							@include('shared.timeline')
+						
 					</div>
 				</div>
 			</div>
 		</div>
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="form-group">
+					<button class="btn btn-primary btn-style" type="submit">Next</button>
+				</div>
+			</div>
+		</div><br>
 	</div>
 
 	<!-- activity details -->
@@ -109,6 +116,19 @@
 		<div class="panel panel-default">
 		  	<div class="panel-heading">Activity Details</div>
 		  	<div class="panel-body">
+		  		<div class="row">
+					<div class="col-lg-6">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('created_by', 'Created By', array('class' => 'control-label')) }}
+									{{ Form::text('created_by',$activity->createdby->getFullname(), array('class' => 'form-control','readonly' => '')) }}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
 				<div class="row">
 					<div class="col-lg-6">
 						<div class="form-group">
@@ -391,7 +411,6 @@
 										<th>Fullname</th>
 										<th>Department</th>
 										<th>Status</th>
-										<th>Access</th>
 										<th>Action</th>
 									</tr>
 								</thead>
@@ -406,6 +425,14 @@
 				</div>
 			</div>
 		</div>
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="form-group">
+					<button class="btn btn-default btn-style" type="submit">Back</button>
+					<button class="btn btn-primary btn-style" type="submit">Next</button>
+				</div>
+			</div>
+		</div><br>
 	</div>
 
 	<!-- customer details -->
@@ -1060,12 +1087,17 @@
 				<h3 class="panel-title">Job Orders</h3>
 			</div>
 			<div class="panel-body">
+				@if($allowJo)
 				<div class="row">
 					<div class="col-lg-12">
 						{{ HTML::linkAction('ActivityController@createjo','Create Job Order', $activity->id, array('class' => 'btn btn-primary')) }}
 					</div>
 				</div>
+				@else
+				@endif
+
 				<br>
+				
 				<div class="row">
 					<div class="col-lg-12">
 						<div class="table-responsive">

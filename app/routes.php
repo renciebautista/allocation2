@@ -242,6 +242,14 @@ Route::group(array('before' => 'auth'), function()
 
 	Route::resource('faq', 'FaqController');
 
+	Route::get('joborders/unassigned', ['as' => 'joborders.unassigned', 'uses' => 'JoborderController@unassigned']);
+	Route::get('joborders/unassigned/{id}/edit', ['as' => 'joborders.unassignededit', 'uses' => 'JoborderController@unassignededit']);
+	Route::post('joborders/unassigned/{id}/edit', ['as' => 'joborders.unassignedstore', 'uses' => 'JoborderController@unassignedstore']);
+
+	Route::get('joborderimage/{random_name}', ['as' => 'joborders.download', 'uses' => 'JoborderController@download']);
+
+	Route::get('joborders/assigned', ['as' => 'joborders.assigned', 'uses' => 'JoborderController@assigned']);
+	Route::resource('joborders', 'JoborderController');
 	
 	Route::get('images/{cycle_id}/{type_id}/{activity_id}/{name}', function($cycle_id = null,$type_id = null,$activity_id = null,$name = null)
 	{
@@ -252,6 +260,20 @@ Route::group(array('before' => 'auth'), function()
 			$image->resize(300, 200, 1);
 			return $image->show();
 		}
+	});
+
+	Route::get('commentimage/{name}', function($name = null)
+	{
+		$file = CommentFile::where('random_name', $name)->first();
+		if(!empty($file)){
+			$path = storage_path().'/joborder_files/'.$file->random_name;
+			if (file_exists($path)) { 
+				$image = Image::create($path);
+				$image->resize(350, 350, 1);
+				return $image->show();
+			}
+		}
+		
 	});
 
 	Route::get('fdapermit/{cycle_id}/{type_id}/{activity_id}/{name}', function($cycle_id = null,$type_id = null,$activity_id = null,$name = null)
