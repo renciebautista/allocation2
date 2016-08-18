@@ -25,4 +25,12 @@ class TradedealScheme extends \Eloquent {
 		}
 		return $data;
 	}
+
+	public function premium(){
+		if($this->tradedeal_type_id == 1){
+			return 'BASED ON HOST';
+		}else{
+			return $this->pre_desc .' - '.$this->pre_code;
+		}
+	}
 }

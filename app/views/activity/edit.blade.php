@@ -765,6 +765,7 @@
 													<th>Deal Type</th>
 													<th>UOM</th>
 													<th>% Allocation</th>
+													<th>Premium SKU</th>
 													<th>Action</th>
 												</tr>
 											</thead>
@@ -774,7 +775,10 @@
 													<td>{{ $scheme->name }}</td>
 													<td>{{ $scheme->dealType->tradedeal_type }}</td>
 													<td>{{ $scheme->dealUom->tradedeal_uom }}</td>
-													<td >{{ $scheme->coverage }}</td>
+													<td>{{ $scheme->coverage }}</td>
+													<td>
+														{{ $scheme->premium()}}
+													</td>
 													<td>
 														{{ HTML::linkAction('ActivityController@tradedealscheme' , 'Edit', $scheme->id) }} |
 														<a href="">Delete</a>
