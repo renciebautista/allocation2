@@ -3074,8 +3074,8 @@ class ActivityController extends BaseController {
 						$scheme->coverage = str_replace(",", '', Input::get('coverage'));
 						$scheme->tradedeal_uom_id = $uom->id;
 						if($tradedeal->non_ulp_premium){
-							$scheme->pre_code = $tradedeal->non_ulp_premium_desc;
-							$scheme->pre_desc = $tradedeal->non_ulp_premium_code;
+							$scheme->pre_code = $tradedeal->non_ulp_premium_code;
+							$scheme->pre_desc = $tradedeal->non_ulp_premium_desc;
 							$scheme->pre_cost = $tradedeal->non_ulp_premium_cost;
 							$scheme->pre_pcs_case = $tradedeal->non_ulp_pcs_case;
 						}else{

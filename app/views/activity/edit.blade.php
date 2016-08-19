@@ -777,7 +777,16 @@
 													<td>{{ $scheme->dealUom->tradedeal_uom }}</td>
 													<td>{{ $scheme->coverage }}</td>
 													<td>
-														{{ $scheme->premium()}}
+														@if($tradedeal->non_ulp_premium)
+															{{ $scheme->premium()}}
+														@else
+															@if($scheme->tradedeal_type_id == 1)
+																See participating variants
+															@else
+																{{ $scheme->premium()}}
+															@endif
+														@endif
+														
 													</td>
 													<td>
 														{{ HTML::linkAction('ActivityController@tradedealscheme' , 'Edit', $scheme->id) }} |
