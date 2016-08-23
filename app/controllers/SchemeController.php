@@ -29,6 +29,7 @@ class SchemeController extends \BaseController {
 			$categories = ActivityCategory::selected_category($id);
 			$brands = ActivityBrand::selected_brand($id);
 
+			// dd($brands);
 			$skus = Sku::items($divisions,$categories,$brands);
 
 			$host = Pricelist::involves($brands,$activity);
@@ -949,39 +950,72 @@ class SchemeController extends \BaseController {
 	public function export($id){
 		$scheme = Scheme::findOrFail($id);
 		$activity = Activity::findOrFail($scheme->activity_id);
-		if((Activity::myActivity($activity)) || (ActivityPlanner::myActivity($activity->id))){
+		if(Auth::user()->hasRole("ADMINISTRATOR")){
 			$allocations = SchemeAllocation::getAllocationsForExport($id);
-			Excel::create($scheme->name, function($excel) use($allocations){
-				$excel->sheet('Detailed Allocation', function($sheet) use($allocations) {
-					$sheet->fromModel($allocations,null, 'A1', true);
-					$sheet->row(1, array(
-					  	'GROUP',
-						'AREA',
-						'SOLD TO',
-						'SHIP TO',	
-						'CHANNEL',	
-						'OUTLET',	
-						'SOLD TO GSV',	
-						'SOLD TO GSV PERCENTAGE',	
-						'SOLD TO ALLOCATION',
-						'SHIP TO GSV',
-						'SHIP TO GSV PERCENTAGE',	
-						'SHIP TO ALLOCATION',
-						'OUTLET GSV',
-						'OUTLET GSV PERCENTAGE',	
-						'OUTLET ALLOCATION',
-						'MULTIPLIER',
-						'COMPUTED ALLOCATION',	
-						'FORCE ALLOCATION',
-						'FINAL ALLOCATION'
-					));
+				Excel::create($scheme->name, function($excel) use($allocations){
+					$excel->sheet('Detailed Allocation', function($sheet) use($allocations) {
+						$sheet->fromModel($allocations,null, 'A1', true);
+						$sheet->row(1, array(
+						  	'GROUP',
+							'AREA',
+							'SOLD TO',
+							'SHIP TO',	
+							'CHANNEL',	
+							'OUTLET',	
+							'SOLD TO GSV',	
+							'SOLD TO GSV PERCENTAGE',	
+							'SOLD TO ALLOCATION',
+							'SHIP TO GSV',
+							'SHIP TO GSV PERCENTAGE',	
+							'SHIP TO ALLOCATION',
+							'OUTLET GSV',
+							'OUTLET GSV PERCENTAGE',	
+							'OUTLET ALLOCATION',
+							'MULTIPLIER',
+							'COMPUTED ALLOCATION',	
+							'FORCE ALLOCATION',
+							'FINAL ALLOCATION'
+						));
 
-				})->download('xls');
+					})->download('xls');
 
-			});
+				});
 		}else{
-			return Response::make(View::make('shared/404'), 404);
+			if((Activity::myActivity($activity)) || (ActivityPlanner::myActivity($activity->id))){
+				$allocations = SchemeAllocation::getAllocationsForExport($id);
+				Excel::create($scheme->name, function($excel) use($allocations){
+					$excel->sheet('Detailed Allocation', function($sheet) use($allocations) {
+						$sheet->fromModel($allocations,null, 'A1', true);
+						$sheet->row(1, array(
+						  	'GROUP',
+							'AREA',
+							'SOLD TO',
+							'SHIP TO',	
+							'CHANNEL',	
+							'OUTLET',	
+							'SOLD TO GSV',	
+							'SOLD TO GSV PERCENTAGE',	
+							'SOLD TO ALLOCATION',
+							'SHIP TO GSV',
+							'SHIP TO GSV PERCENTAGE',	
+							'SHIP TO ALLOCATION',
+							'OUTLET GSV',
+							'OUTLET GSV PERCENTAGE',	
+							'OUTLET ALLOCATION',
+							'MULTIPLIER',
+							'COMPUTED ALLOCATION',	
+							'FORCE ALLOCATION',
+							'FINAL ALLOCATION'
+						));
+
+					})->download('xls');
+
+				});
+			}else{
+				return Response::make(View::make('shared/404'), 404);
+			}
 		}
+		
 
 		
 	}
