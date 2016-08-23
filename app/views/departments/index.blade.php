@@ -32,6 +32,7 @@
 			<table class="table table-striped table-hover">
 				<thead>
 					<tr>
+						<th>Id</th>
 						<th>Department</th>
 						<th colspan="2" style="text-align:center;">Action</th>
 					</tr>
@@ -44,6 +45,7 @@
 					@else
 					@foreach($departments as $department)
 					<tr>
+						<td>{{ $department->id }}</td>
 						<td>{{ $department->department }}</td>
 						<td class="action">
 							{{ HTML::linkAction('DepartmentsController@edit','Edit', $department->id, array('class' => 'btn btn-info btn-xs')) }}

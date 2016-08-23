@@ -2,6 +2,7 @@
 /vendor
 /app/storage/uploads/*
 /app/storage/zipped/*
+app/storage/joborder_files/*
 /app/database/seeds/seed_files/*
 /app/storage/exports/*
 /public/barcode/*

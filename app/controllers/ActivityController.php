@@ -588,8 +588,9 @@ class ActivityController extends BaseController {
 						}else{
 							if($activity_member->activity_member_status_id > 1){
 								$show_action = false;
+								$allowAdd = true;
 							}
-							$allowAdd = true;
+							
 							$submitstatus = array('3' => 'APPROVE','2' => 'DENY');
 							$view = 'activity.customizededit';
 						}
@@ -1544,7 +1545,6 @@ class ActivityController extends BaseController {
 					Session::flash('message', 'Customer details, allocation per scheme and sob details were updated.');
 				} catch (Exception $e) {
 					DB::rollback();
-					echo $e;
 					$arr['success'] = 0;
 					Session::flash('class', 'alert-danger');
 					Session::flash('message', 'An error occcured while updating activity customers.');
@@ -1554,6 +1554,7 @@ class ActivityController extends BaseController {
 			}
 			
 			$arr['id'] = $id;
+			// dd($arr);
 			return json_encode($arr);
 		}
 	}
