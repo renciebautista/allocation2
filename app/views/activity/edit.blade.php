@@ -747,7 +747,7 @@
 			<div class="panel-body">
 				<div class="row">
 					<div class="col-lg-12">
-						<button type="button" class="btn btn-primary btn-sm " id="add-scheme">Add Scheme</button>
+						<a class="btn btn-primary btn-sm" href="{{action('ActivityController@createtradealscheme', $activity->id);}}">Add Scheme</a>
 						<a class="btn btn-success btn-sm" href="{{action('ActivityController@exporttradedeal', $activity->id);}}">Export Schemes</a>
 					</div>
 				</div>
@@ -758,7 +758,7 @@
 							<div class="form-group">
 								<div class="row">
 									<div class="col-lg-12">
-										<table class="table">
+										<table id="scheme-table" class="table">
 											<thead>
 												<tr>
 													<th>Scheme</th>
@@ -771,7 +771,7 @@
 											</thead>
 											<tbody>
 											@foreach($tradedealschemes as $scheme)
-												<tr>
+												<tr id="{{$scheme->id}}">
 													<td>{{ $scheme->name }}</td>
 													<td>{{ $scheme->dealType->tradedeal_type }}</td>
 													<td>{{ $scheme->dealUom->tradedeal_uom }}</td>
@@ -790,7 +790,7 @@
 													</td>
 													<td>
 														{{ HTML::linkAction('ActivityController@tradedealscheme' , 'Edit', $scheme->id) }} |
-														<a href="">Delete</a>
+														<a href="javascript:void(0)" id="{{$scheme->id}}" class="deletescheme">Delete</a>
 													</td>
 												</tr>
 											@endforeach
@@ -1437,144 +1437,6 @@
 	</div>
 </div>
 
-<!-- Modal -->
-<div class="modal fade modal-wide" id="addScheme" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
-		{{ Form::open(array('action' => array('ActivityController@addtradealscheme', $activity->id), 'method' => 'POST', 'class' => 'bs-component','id' => 'addtradealscheme')) }}
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<h4 class="modal-title" id="myModalLabel">Add Scheme</h4>
-			</div>
-			<div class="modal-body">
-				<div class="error-msg"></div>
-
-				<div class="row">
-	  				<div class="col-lg-6">
-						<div class="form-group">
-							<div class="row">
-								<div class="col-lg-12">
-									{{ Form::label('deal_type', 'Deal Type', array('class' => 'control-label')) }}
-			    					{{ Form::select('deal_type', array('0' => 'Select Deal Type') + $dealtypes, [], array('data-placeholder' => 'Select Deal Type','id' => 'deal_type', 'class' => 'form-control')) }}
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<div class="col-lg-3">
-						<div class="form-group">
-							<div class="row">
-								<div class="col-lg-12">
-									{{ Form::label('uom', 'Unit Of Measurement', array('class' => 'control-label')) }}
-									{{ Form::select('uom', $dealuoms, [], array('data-placeholder' => 'Select UOM','id' => 'uom', 'class' => 'form-control')) }}
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<div class="col-lg-3">
-						<div class="form-group">
-							<div class="row">
-								<div class="col-lg-12">
-									{{ Form::label('coverage', 'Coverage', array('class' => 'control-label')) }}
-									{{ Form::text('coverage','100', array('class' => 'form-control')) }}
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-
-
-				<div id="channel_skus">
-					<table id="channel_skus" class="table table-striped table-hover ">
-						<thead>
-							<tr>
-								<th style="width:5%"><input name="select-all" id="select-all" value="1" type="checkbox"></th>
-								<th style="width:8%">Qty</th>
-								<th style="width:50%">Host SKU</th>
-								<th>Premium SKU</th>
-							</tr>
-						</thead>
-						<tbody>
-
-						</tbody>
-					</table> 
-				</div>
-
-				<div class="row buy-free">
-					<div class="col-lg-3">
-						<div class="form-group">
-							<div class="row">
-								<div class="col-lg-12">
-									{{ Form::label('buy', 'Buy', array('class' => 'control-label')) }}
-									{{ Form::text('buy','', array('class' => 'form-control')) }}
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="col-lg-3">
-						<div class="form-group">
-							<div class="row">
-								<div class="col-lg-12">
-									{{ Form::label('free', 'Free', array('class' => 'control-label')) }}
-									{{ Form::text('free','', array('class' => 'form-control')) }}
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				@if($tradedeal->non_ulp_premium)
-				
-				<div class="row premium">
-					<div class="col-lg-12">
-						<div class="form-group">
-							<div class="row">
-								<div class="col-lg-12">
-									{{ Form::label('non_ulp', 'Premium SKU', array('class' => 'control-label')) }}
-									{{ Form::text('non_ulp',$tradedeal->non_ulp_premium_desc . " - " .$tradedeal->non_ulp_premium_code, array('class' => 'form-control', 'readonly' => '')) }}
-								</div>
-							</div>
-						</div>
-					</div>
-
-				</div>
-
-				@else
-
-				<div class="row premium" >
-					<div class="col-lg-12">
-						<div class="form-group">
-							<div class="row">
-								<div class="col-lg-12">
-									{{ Form::label('non_ulp', 'Premium SKU', array('class' => 'control-label')) }}
-									<select id="premium_sku" class="form-control" name="premium_sku">
-										
-									</select>
-								</div>
-							</div>
-						</div>
-					</div>
-
-				</div>
-				
-				@endif
-
-
-
-
-				
-				
-
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				<button id="updatesku" class="btn btn-primary">Save</button>
-			</div>
-		</div>
-		{{ Form::close() }}
-	</div>
-</div>
 @endif
 @endif
 

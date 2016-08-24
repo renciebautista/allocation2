@@ -3,7 +3,7 @@
 class TradedealChannel extends \Eloquent {
 	protected $fillable = [];
 
-	public static function getSchemeChannels($activity, $scheme){
+	public static function getSchemeChannels($activity){
 		$query = sprintf("select tradedeal_channels.id, tradedeal_channels.l5_code, tradedeal_channels.l5_desc,tradedeal_channels.rtm_tag,temp.name,temp.scheme_id
 			from tradedeal_channels
 			left join (

@@ -2,6 +2,8 @@ $(document).ready(function() {
 	var hostname = 'http://' + $(location).attr('host');
 	var activity_id = $('#activity_id').val();
 
+	$('.qty, #coverage').inputNumber({ allowDecimals: false});
+
 	function selected(){
 		return $('#deal_type').val();
 	}
@@ -26,6 +28,7 @@ $(document).ready(function() {
 			    	}
 			    })
 	    	}
+	    	changeName();
 	    } else {
 	        checkboxes.prop('checked', false);
 	        $('#premium_sku').empty();
@@ -39,7 +42,7 @@ $(document).ready(function() {
 	$('#deal_type, #uom').change(function() {
 		changeName();
 	});
-	$('#buy, .qty').on('blur',function() {
+	$('#buy, #free, .qty').on('blur',function() {
 		changeName();
 	})
 
@@ -58,27 +61,37 @@ $(document).ready(function() {
 			$('#p_req').val('N/A').attr('disabled','disabled');
 			$('#premium_sku').val('').attr('disabled','disabled');
 			$('#non_premium_sku').val('N/A');
+			$('#premium_sku_txt').show();
+			$('#premium_sku').hide();
 
 			$('#participating_sku').find(' tbody tr').each(function () {
 		        var row = $(this);
-		        row.closest("tr").find("input.qty").attr('disabled','disabled').val('1');
-		        var cost = accounting.unformat(row.find('td:eq(3)').text()) || 0;
-		        var pr = 0;
-		        if(uom == 'PIECES'){
-		        	pr = buy * cost;
-		        }
-		        if(uom == 'DOZENS'){
-		        	pr = buy * cost * 12;
-		        }
-		        if(uom == 'CASES'){
-		        	pr = buy * cost * accounting.unformat(row.find('td:eq(4)').text()) || 0;
-		        }
-		        row.find('td:eq(6)').text(accounting.formatNumber(pr,2) || 0);
+		        var chekcbox = $(this).find('input:checked');
+		        if (chekcbox.is(':checked')){
+			        row.closest("tr").find("input.qty").attr('disabled','disabled').val('1');
+			        buy = 1;
+			        var cost = accounting.unformat(row.find('td:eq(3)').text()) || 0;
+			        var pr = 0;
+			        if(uom == 'PIECES'){
+			        	pr = buy * cost;
+			        }
+			        if(uom == 'DOZENS'){
+			        	pr = buy * cost * 12;
+			        }
+			        if(uom == 'CASES'){
+			        	pr = buy * cost * accounting.unformat(row.find('td:eq(4)').text()) || 0;
+			        }
+			        row.find('td:eq(6)').text(accounting.formatNumber(pr,2) || 0);
+			    }else{
+			    	row.find('td:eq(6)').text(accounting.formatNumber(0.00,2) || 0);
+			    }
 	    	});
 
 		}else{
 			$('.individual').hide();
 			$('.collective').show();
+			$('#premium_sku_txt').hide();
+			$('#premium_sku').show();
 			// $('#p_req').removeAttr('disabled');
 			$('#premium_sku').removeAttr('disabled');
 
@@ -170,19 +183,77 @@ $(document).ready(function() {
         }
 	}
 
+	
+
+	$("#createtradedealscheme").validate({
+		errorElement: "span", 
+		errorClass : "has-error",
+		rules: {
+			coverage: {
+				required: true,
+			},
+			buy: {
+				required: true,
+			},
+			free: {
+				required: true,
+			},
+			
+		},
+		errorPlacement: function(error, element) {    
+		
+		},
+		highlight: function( element, errorClass, validClass ) {
+	    	$(element).closest('div').addClass(errorClass).removeClass(validClass);
+	    	
+	  	},
+	  	unhighlight: function( element, errorClass, validClass ) {
+	    	$(element).closest('div').removeClass(errorClass).addClass(validClass);
+	  	},
+	  	invalidHandler: function(form, validator) {
+	        var errors = validator.numberOfInvalids();
+	        if (errors) {
+	            $("html, body").animate({ scrollTop: 0 }, "fast");
+	           
+	        }
+	    }
+	});
+
 	var table = $('#channels').DataTable({
-      'columnDefs': [
-         {
-            'targets': 0,
-            'checkboxes': {
-               'selectRow': true
-            }
-         }
-      ],
-      'select': {
-         'style': 'multi'
-      },
-      'order': [[0, 'asc']]
+		'iDisplayLength': 100,
+      	// 'columnDefs': [
+       //   {
+       //      'targets': 0,
+       //      'checkboxes': {
+       //         'selectRow': true
+       //      }
+       //   }
+      	// ],
+      	// 'select': {
+       //   'style': 'multi'
+      	// },
+      	// 'order': [[0, 'asc']]
+   	});
+
+	// Handle form submission event
+   	$('#createtradedealscheme').on('submit', function(e){
+
+      	var form = this;
+      
+	      var rows_selected = table.column(0).checkboxes.selected();
+
+	      // Iterate over all selected checkboxes
+	      $.each(rows_selected, function(index, rowId){
+	         // Create a hidden element 
+	         // console.log();
+	         $(form).append(
+	             $('<input>')
+	                .attr('type', 'hidden')
+	                .attr('name', 'ch[]')
+	                .val($(rowId).val())
+	         );
+	      });
+      // e.preventDefault(); // prevents button from submitting
    });
 
 

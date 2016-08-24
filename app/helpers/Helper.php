@@ -11,6 +11,7 @@ class Helper {
     	echo '<pre>';
 		print_r($array);
 		echo '</pre>';
+		dd(1);
     }
 
     public static function sanitize($string, $force_lowercase = true, $anal = false) {

@@ -2968,9 +2968,18 @@ class ActivityController extends BaseController {
 		if(Request::ajax()){
 			$id = Input::get('d_id');
 			$part_sku = TradedealPartSku::find($id);
+			
 			if(empty($part_sku)){
 				$arr['success'] = 0;
 			}else{
+				$activity = Activity::find($part_sku->activity_id);
+				$tradedeal = Tradedeal::getActivityTradeDeal($activity);
+				$tradedealschemes = TradedealScheme::where('tradedeal_id', $tradedeal->id)->get();
+				foreach ($tradedealschemes as $row) {
+					TradedealSchemeSku::where('tradedeal_scheme_id', $row->id)->delete();
+					TradedealSchemeChannel::where('tradedeal_scheme_id', $row->id)->delete();
+					$row->delete();
+				}
 				TradedealHostSku::where('tradedeal_part_sku_id', $part_sku->id)->delete();
 				$part_sku->delete();
 				$arr['success'] = 1;
@@ -3025,121 +3034,125 @@ class ActivityController extends BaseController {
 		}
 	}
 
-	public function addtradealscheme($id){
-		if(Request::ajax()){
-			$err = [];
-			$activity = Activity::find($id);
-			$tradedeal = Tradedeal::where('activity_id', $activity->id)->first();
+	public function createtradealscheme($id){
+		$activity = Activity::findOrFail($id);
+		$tradedeal = Tradedeal::getActivityTradeDeal($activity);
+		$activity = Activity::findOrFail($activity->id);
+		$dealtypes = TradedealType::get()->lists('tradedeal_type', 'id');
+		$dealuoms = TradedealUom::get()->lists('tradedeal_uom', 'id');
+		$tradedeal_skus = TradedealPartSku::where('activity_id', $activity->id)->get();
+		$channels = TradedealChannel::getSchemeChannels($activity);
+		// $sel_channels = TradedealSchemeChannel::getSelected($scheme);
+		// $sel_hosts = TradedealSchemeSku::getSelected($scheme);
+		return View::make('activity.createtradedealscheme',compact('dealtypes', 'dealuoms', 'tradedeal_skus', 
+			'activity', 'tradedeal', 'channels'));
 
+	}
+
+	public function storetradealscheme($id){
+		// Helper::print_r(Input::all());
+		$activity = Activity::findOrFail($id);
+		$tradedeal = Tradedeal::where('activity_id', $activity->id)->first();
+		$rules = array(
+		    'skus' => 'required',
+		    'buy' => 'required|numeric',
+		    'free' => 'required|numeric'
+		);
+		$validation = Validator::make(Input::all(), $rules);
+		if($validation->passes()){
 			$selected = [];
-			if(Input::has('select')){
-				foreach (Input::get('select') as $value) {
+			if(Input::has('skus')){
+				foreach (Input::get('skus') as $value) {
 				 	$selected[] = $value;
 				}
-			}else{
-				$err[] = 'No SKU selected';
 			}
-
-			
-
 			$deal_type = TradedealType::find(Input::get('deal_type'));
-			if(empty($deal_type)){
-				$err[] = 'Invalid Deal Type';
-			}
-
 			$uom = TradedealUom::find(Input::get('uom'));
-			if(empty($uom)){
-				$err[] = 'Invalid Unit of Measurement';
-			}
-
-			if(Input::get('buy') == ''){
-				$err[] = 'Buy quantity is required';
-			}
-
-			if(Input::get('free') == ''){
-				$err[] = 'Free quantity is required';
-			}
-
-			if(count($err) == 0){
-				if(count($selected) > 0){
-					if($deal_type->id == 1){
-						$buy = str_replace(",", '', Input::get('buy'));
-						$free = str_replace(",", '', Input::get('free'));
-						$scheme = new TradedealScheme;
-						$scheme->tradedeal_id = $tradedeal->id;
-						$scheme->name = $deal_type->tradedeal_type.": ".$buy."+".$free." ".$uom->tradedeal_uom;
-						$scheme->tradedeal_type_id = $deal_type->id;
-						$scheme->buy = $buy;
-						$scheme->free = $free;
-						$scheme->coverage = str_replace(",", '', Input::get('coverage'));
-						$scheme->tradedeal_uom_id = $uom->id;
-						if($tradedeal->non_ulp_premium){
-							$scheme->pre_code = $tradedeal->non_ulp_premium_code;
-							$scheme->pre_desc = $tradedeal->non_ulp_premium_desc;
-							$scheme->pre_cost = $tradedeal->non_ulp_premium_cost;
-							$scheme->pre_pcs_case = $tradedeal->non_ulp_pcs_case;
-						}else{
-							// $premuim_sku = TradedealPartSku::find(Input::get('premium_sku'));
-							// $scheme->pre_code = $premuim_sku->pre_code;
-							// $scheme->pre_desc = $premuim_sku->pre_desc;
-							// $scheme->pre_cost = $premuim_sku->pre_cost;
-							// $scheme->pre_pcs_case = $premuim_sku->pre_pcs_case;
-						}
-						$scheme->save();
-						foreach ($selected as $value) {
-							TradedealSchemeSku::create(['qty' => 1, 
-								'tradedeal_scheme_id' => $scheme->id,
-								'tradedeal_part_sku_id' => $value]);
-						}
+			if(count($selected) > 0){
+				if($deal_type->id == 1){
+					$buy = str_replace(",", '', Input::get('buy'));
+					$free = str_replace(",", '', Input::get('free'));
+					$scheme = new TradedealScheme;
+					$scheme->tradedeal_id = $tradedeal->id;
+					$scheme->name = $deal_type->tradedeal_type.": ".$buy."+".$free." ".$uom->tradedeal_uom;
+					$scheme->tradedeal_type_id = $deal_type->id;
+					$scheme->buy = $buy;
+					$scheme->free = $free;
+					$scheme->coverage = str_replace(",", '', Input::get('coverage'));
+					$scheme->tradedeal_uom_id = $uom->id;
+					if($tradedeal->non_ulp_premium){
+						$scheme->pre_code = $tradedeal->non_ulp_premium_code;
+						$scheme->pre_desc = $tradedeal->non_ulp_premium_desc;
+						$scheme->pre_cost = $tradedeal->non_ulp_premium_cost;
+						$scheme->pre_pcs_case = $tradedeal->non_ulp_pcs_case;
 					}else{
-						// dd(Input::all());
-						$buy = str_replace(",", '', Input::get('buy'));
-						$free = str_replace(",", '', Input::get('free'));
-						$scheme = new TradedealScheme;
-						$scheme->tradedeal_id = $tradedeal->id;
-						$scheme->tradedeal_type_id = $deal_type->id;
-						$scheme->name = $deal_type->tradedeal_type.": ".$buy."+".$free." ".$uom->tradedeal_uom;
-						$scheme->buy = $buy;
-						$scheme->free = $free;
-						$scheme->coverage = str_replace(",", '', Input::get('coverage'));
-						$scheme->tradedeal_uom_id = $uom->id;
-						if($tradedeal->non_ulp_premium){
-							$scheme->pre_code = $tradedeal->non_ulp_premium_code;
-							$scheme->pre_desc = $tradedeal->non_ulp_premium_desc;
-							$scheme->pre_cost = $tradedeal->non_ulp_premium_cost;
-							$scheme->pre_pcs_case = $tradedeal->non_ulp_pcs_case;
-						}else{
-							$premuim_sku = TradedealPartSku::find(Input::get('premium_sku'));
-							$scheme->pre_id = $premuim_sku->id;
-							$scheme->pre_code = $premuim_sku->pre_code;
-							$scheme->pre_desc = $premuim_sku->pre_desc;
-							$scheme->pre_cost = $premuim_sku->pre_cost;
-							$scheme->pre_pcs_case = $premuim_sku->pre_pcs_case;
-						}
-						$scheme->save();
-						foreach ($selected as $value) {
-							TradedealSchemeSku::create(['qty' => Input::get('qty')[$value], 
-								'tradedeal_scheme_id' => $scheme->id,
-								'tradedeal_part_sku_id' => $value]);
-						}
+						// $premuim_sku = TradedealPartSku::find(Input::get('premium_sku'));
+						// $scheme->pre_code = $premuim_sku->pre_code;
+						// $scheme->pre_desc = $premuim_sku->pre_desc;
+						// $scheme->pre_cost = $premuim_sku->pre_cost;
+						// $scheme->pre_pcs_case = $premuim_sku->pre_pcs_case;
 					}
-					
+					$scheme->save();
+					foreach ($selected as $value) {
+						TradedealSchemeSku::create(['qty' => 1, 
+							'tradedeal_scheme_id' => $scheme->id,
+							'tradedeal_part_sku_id' => $value]);
+					}
+
+
 				}else{
-					$err[] = 'No selected Host SKU';
+					// dd(Input::all());
+					$buy = str_replace(",", '', Input::get('buy'));
+					$free = str_replace(",", '', Input::get('free'));
+					$scheme = new TradedealScheme;
+					$scheme->tradedeal_id = $tradedeal->id;
+					$scheme->tradedeal_type_id = $deal_type->id;
+					$scheme->name = $deal_type->tradedeal_type.": ".$buy."+".$free." ".$uom->tradedeal_uom;
+					$scheme->buy = $buy;
+					$scheme->free = $free;
+					$scheme->coverage = str_replace(",", '', Input::get('coverage'));
+					$scheme->tradedeal_uom_id = $uom->id;
+					if($tradedeal->non_ulp_premium){
+						$scheme->pre_code = $tradedeal->non_ulp_premium_code;
+						$scheme->pre_desc = $tradedeal->non_ulp_premium_desc;
+						$scheme->pre_cost = $tradedeal->non_ulp_premium_cost;
+						$scheme->pre_pcs_case = $tradedeal->non_ulp_pcs_case;
+					}else{
+						$premuim_sku = TradedealPartSku::find(Input::get('premium_sku'));
+						$scheme->pre_id = $premuim_sku->id;
+						$scheme->pre_code = $premuim_sku->pre_code;
+						$scheme->pre_desc = $premuim_sku->pre_desc;
+						$scheme->pre_cost = $premuim_sku->pre_cost;
+						$scheme->pre_pcs_case = $premuim_sku->pre_pcs_case;
+					}
+					$scheme->save();
+					foreach ($selected as $value) {
+						TradedealSchemeSku::create(['qty' => Input::get('qty')[$value], 
+							'tradedeal_scheme_id' => $scheme->id,
+							'tradedeal_part_sku_id' => $value]);
+					}
+				}
+
+				if(Input::has('ch')){
+					foreach (Input::get('ch') as $value) {
+						$ch = new TradedealSchemeChannel;
+						$ch->tradedeal_scheme_id = $scheme->id;
+						$ch->tradedeal_channel_id = $value;
+						$ch->save();
+					}
 				}
 			}
 
-			
-
-			if(count($err) > 0){
-				$arr['success'] = 0;
-				$arr['err_msg'] = $err;
-			}else{
-				$arr['success'] = 1;
-			}
-			
-			return json_encode($arr);
+			return Redirect::route('activity.tradedealscheme',$scheme->id)
+					->with('class', 'alert-success')
+					->with('message', 'Trade Deal scheme was successfuly created.');
 		}
+
+		return Redirect::route('activity.createtradealscheme', $activity->id)
+				->withInput()
+				->withErrors($validation)
+				->with('class', 'alert-danger')
+				->with('message', 'There were validation errors.');
 	}
 
 	public function tradedealscheme($id){
@@ -3214,6 +3227,24 @@ class ActivityController extends BaseController {
 		return Redirect::back()
 			->with('class', 'alert-success')
 			->with('message', 'Scheme successfuly updated');
+	}
+
+	public function deletetradedealscheme(){
+		if(Request::ajax()){
+			$id = Input::get('d_id');
+			$tradedealscheme = TradedealScheme::find($id);
+			if(empty($tradedealscheme)){
+				$arr['success'] = 0;
+			}else{
+				TradedealSchemeSku::where('tradedeal_scheme_id', $tradedealscheme->id)->delete();
+				TradedealSchemeChannel::where('tradedeal_scheme_id', $tradedealscheme->id)->delete();
+				$tradedealscheme->delete();
+				$arr['success'] = 1;
+				
+			}
+			$arr['id'] = $id;
+			return json_encode($arr);
+		}
 	}
 
 	public function exporttradedeal($id){

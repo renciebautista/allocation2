@@ -30,6 +30,7 @@ class ShipTo extends \Eloquent {
 					$shipto = new ShipTo;
 					$shipto->customer_code = $row->customer_code;
 					$shipto->ship_to_code = $row->ship_to_code;
+					$shipto->plant_code = $row->plant_code;
 					$shipto->ship_to_name = $row->ship_to_name;
 					$shipto->split = $row->split;
 					$shipto->leadtime = $row->leadtime;

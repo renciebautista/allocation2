@@ -5,7 +5,7 @@
 <div class="page-header" id="banner">
     <div class="row">
         <div class="col-lg-12 col-md-7 col-sm-6">
-            <h1>Trade Deal : {{ $scheme->name }}</h1>
+            <h1>Create Trade Deal Scheme</h1>
         </div>
     </div>
 </div>
@@ -16,18 +16,15 @@
 <div class="panel panel-primary">
     <div class="panel-heading">Scheme Details</div>
         <div class="panel-body">
-
-            {{ Form::open(array('action' => array('ActivityController@updatetradedealscheme', $scheme->id), 'files'=>true, 'method' => 'PUT', 'id' => 'updatescheme', 'class' => 'bs-component')) }}
-
-            {{ Form::hidden('pre_id', $scheme->pre_id, ['id' => 'pre_id']) }}
-            {{ Form::hidden('pre', $scheme->pre_desc. ' - ' .$scheme->pre_code, ['id' => 'pre']) }}
+            {{ Form::open(array('action' => array('ActivityController@storetradealscheme', $activity->id), 'id' => 'createtradedealscheme', 'class' => 'bs-component')) }}
+            {{ Form::hidden('pre', $tradedeal->non_ulp_premium_desc. ' - ' .$tradedeal->non_ulp_premium_code, ['id' => 'pre']) }}
             <div class="row">
                 <div class="col-lg-12">
                     <div class="form-group">
                         <div class="row">
                             <div class="col-lg-12">
                                 {{ Form::label('scheme_name', 'Scheme Name', array('class' => 'control-label')) }}
-                                {{ Form::text('scheme_name', $scheme->name, array('id' => 'scheme_name', 'class' => 'form-control', 'readonly' => '', 'id' => 'scheme_name')) }}
+                                {{ Form::text('scheme_name','', array('id' => 'scheme_name', 'class' => 'form-control', 'readonly' => '', 'id' => 'scheme_name')) }}
                             </div>
                         </div>
                     </div>
@@ -40,15 +37,15 @@
                         <div class="row">
                             <div class="col-lg-6">
                                 {{ Form::label('deal_type', 'Deal Type', array('class' => 'control-label')) }}
-                                {{ Form::select('deal_type',$dealtypes, $scheme->tradedeal_type_id, array('class' => 'form-control', 'id' => 'deal_type')) }}
+                                {{ Form::select('deal_type',$dealtypes, '', array('class' => 'form-control', 'id' => 'deal_type')) }}
                             </div>
                             <div class="col-lg-3">
                                 {{ Form::label('uom', 'Deal UOM', array('class' => 'control-label')) }}
-                                {{ Form::select('uom', $dealuoms, $scheme->tradedeal_uom_id, array('class' => 'form-control', 'id' => 'uom')) }}
+                                {{ Form::select('uom', $dealuoms, '', array('class' => 'form-control', 'id' => 'uom')) }}
                             </div>
                             <div class="col-lg-3">
                                 {{ Form::label('coverage', 'Coverage', array('class' => 'control-label')) }}
-                                {{ Form::text('coverage', $scheme->coverage, array('id' => 'coverage', 'class' => 'form-control', 'placeholder' => 'Coverage')) }}
+                                {{ Form::text('coverage', 100, array('id' => 'coverage', 'class' => 'form-control', 'placeholder' => 'Coverage')) }}
                             </div>
                         </div>
                     </div>
@@ -75,11 +72,12 @@
                         @foreach($tradedeal_skus as $sku)
                             <tr>
                                 <td>
-                                    {{ Form::checkbox('skus[]', $sku->id, ((in_array($sku->id,$sel_hosts['selection'])) ? true : false), ['class' => 'sku-checkbox']) }}
+                                    {{ Form::checkbox('skus[]', $sku->id, false, ['class' => 'sku-checkbox']) }}
                                 </td>
                                 <td>
-                                    {{ Form::text('qty['.$sku->id.']',(isset($sel_hosts['values'][$sku->id])) ? $sel_hosts['values'][$sku->id] : 1, array('class' => 'qty', 'disabled' => 'disabled')) }}
+                                    {{ Form::text('qty['.$sku->id.']', 1, array('class' => 'qty', 'disabled' => 'disabled')) }}
                                 </td>
+
                                 <td>{{ $sku->hostDesc() }}</td>
                                 <td>{{ $sku->host_cost }}</td>
                                 <td>{{ $sku->host_pcs_case }}</td>
@@ -101,12 +99,12 @@
                         <div class="row">
                             <div class="col-lg-3">
                                 {{ Form::label('buy', 'Buy', array('class' => 'control-label')) }}
-                                {{ Form::text('buy', $scheme->buy, array('id' => 'buy', 'class' => 'form-control', 'placeholder' => 'Buy', 'id' => 'buy')) }}
+                                {{ Form::text('buy', '', array('id' => 'buy', 'class' => 'form-control', 'placeholder' => 'Buy', 'id' => 'buy')) }}
                             </div>
 
                             <div class="col-lg-3">
                                 {{ Form::label('free', 'Free', array('class' => 'control-label')) }}
-                                {{ Form::text('free', $scheme->free, array('id' => 'free', 'class' => 'form-control', 'placeholder' => 'Free', 'id' => 'free')) }}
+                                {{ Form::text('free', '', array('id' => 'free', 'class' => 'form-control', 'placeholder' => 'Free', 'id' => 'free')) }}
                             </div>
 
                             
@@ -132,6 +130,7 @@
                                 @else
                                 <select class="form-control" id="premium_sku" name="premium_sku" disabled="disabled">
                                 </select>
+                                {{ Form::text('premium_sku_txt', 'N/A', array('id' => 'premium_sku_txt', 'class' => 'form-control', 'readonly' => '')) }}
 
                                 @endif
                                 
@@ -148,7 +147,7 @@
                     <table id="channels" class="table table-striped table-hover ">
                     <thead>
                         <tr>
-                            <th><input id="select-all" type="checkbox"></th>
+                            <th><input type="checkbox" name="select_all" value="1" id="example-select-all"></th>
                             <th>Channel Code</th>
                             <th>Channel</th>
                             <th>RTM Tag</th>
@@ -159,10 +158,10 @@
                         @foreach($channels as $channel)
                             <tr>
                                 <td>
-                                    @if((!empty($channel->name)) && ($channel->scheme_id != $scheme->id))
-                                        <i class="fa fa-check"></i>
+                                    @if(empty($channel->name))
+                                        {{ Form::checkbox('ch[]', $channel->id) }}
                                     @else
-                                         {{ Form::checkbox('ch[]', $channel->id, ((in_array($channel->id,$sel_channels)) ? true : false)) }}
+                                        <i class="fa fa-check"></i>
                                     @endif
                                     
                                 </td>
@@ -182,10 +181,10 @@
                 </div>
             </div>
             <a class="btn btn-default" href="{{action('ActivityController@edit', $activity->id);}}#tradedeal">Back</a>
-            <button  class="btn btn-primary">Update</button>
-
+            <button type="submit" class="btn btn-primary">Save</button>  
             {{ Form::close() }}
     </div>
+    
 </div>
 @stop
 

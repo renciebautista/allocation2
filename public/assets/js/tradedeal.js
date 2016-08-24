@@ -2,6 +2,8 @@ $(document).ready(function() {
 	var hostname = 'http://' + $(location).attr('host');
 	var activity_id = $('#activity_id').val();
 
+
+
 	$("#updateTradedeal").validate({
 		errorElement: "span", 
 		errorClass : "has-error",
@@ -196,6 +198,32 @@ $(document).ready(function() {
 	    }
 	});
 
+	$(document).on("click",".deletescheme", function (e) {
+		var del = $(this);
+	    var id = $(this).attr('id');
+	    if(confirm('Are you sure delete this data?'))
+	    {
+	        // ajax delete data to database
+	        $.ajax({
+	            url : hostname + '/activity/deletetradedealscheme',
+	            type: "POST",
+	            data: { 
+			        'd_id': id
+			    },
+	            dataType: "JSON",
+	            success: function(data)
+	            {
+	               	del.closest('tr').remove();
+	            },
+	            error: function (jqXHR, textStatus, errorThrown)
+	            {
+	                alert('Error deleting data');
+	            }
+	        });
+	 
+	    }
+	});
+
 
 	var table = $("#participating_sku").DataTable({
 		"processing": true, //Feature control the processing indicator.
@@ -246,21 +274,21 @@ $(document).ready(function() {
 
 	// channels
 
-	$(document).on("click","#add-scheme", function (e) {
-		e.preventDefault(); // prevents button from submitting
-		$('#deal_type').val(0);
-		$('#uom').val(1);
-		$('#coverage').val(100);
-		$("#channel_skus > tbody").html("");
-		$('.buy-free').hide();
-		$('.premium').hide();
-	    $('#addScheme').modal('show');
+	// $(document).on("click","#add-scheme", function (e) {
+	// 	e.preventDefault(); // prevents button from submitting
+	// 	$('#deal_type').val(0);
+	// 	$('#uom').val(1);
+	// 	$('#coverage').val(100);
+	// 	$("#channel_skus > tbody").html("");
+	// 	$('.buy-free').hide();
+	// 	$('.premium').hide();
+	//     $('#addScheme').modal('show');
 	    
-	});
+	// });
 
-	$('#addScheme').on('shown.bs.modal', function(){
-		$("#premium_sku").empty();
-	});
+	// $('#addScheme').on('shown.bs.modal', function(){
+	// 	$("#premium_sku").empty();
+	// });
 
 	function selected(){
 		return $('#deal_type').val();
