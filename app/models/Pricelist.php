@@ -285,7 +285,12 @@ class Pricelist extends \Eloquent {
 						$item->price_case = $row->price_case;
 						$item->price_case_tax = $row->price_case_tax;
 						$item->price = $row->price;
-						$item->srp = $row->srp;
+						if($row->srp == null){
+							$item->srp = 0.00;
+						}else{
+							$item->srp = $row->srp;
+						}
+						
 						$item->active = $row->active;
 						$item->launch = $row->launch;
 						$item->save();

@@ -104,12 +104,39 @@ Route::get('test', function(){
 				}
 			}
 		}
+	$users = User::GetPlanners(['PROPONENT' ,'PMOG PLANNER','GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR','FIELD SALES']);
+	echo count($users);
+
+	$type = "mail5";
+
+	foreach ($users as $user) {
+		$data['user'] = $user->first_name;
+		$data['email'] = $user->email;
+		$data['fullname'] = $user->getFullname();
+
+		// Mail::send('emails.mail5', $data, function($message) use ($data){
+		// 	$message->to("rbautista@chasetech.com", $data['fullname']);
+		// 	// $message->bcc("rosarah.reyes@unilever.com");
+		// 	$message->subject('TEST ACTIVITy');
+		// });
+
+
+		Mail::queue('emails.mail5', $data, function($message) use ($data){
+			$message->to("rbautista@chasetech.com", $data['fullname']);
+			// $message->bcc("rosarah.reyes@unilever.com");
+			$message->subject('TEST ACTIVITy');
+		});
 	}
 });
 
 
 
 //---------------------------------------------------
+Route::post('queue/massmail', function()
+{
+	return Queue::marshal();
+});
+
 Route::post('queue/sob', function()
 {
 	return Queue::marshal();
@@ -200,6 +227,7 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('tradedealscheme/{id}','ActivityController@tradedealscheme');
 	Route::put('tradedealscheme/{id}', 'ActivityController@updatetradedealscheme');
 
+
 	Route::post('activity/{id}/addnobudget', 'ActivityController@addnobudget');
 	Route::delete('activity/deletenobudget', 'ActivityController@deletenobudget');
 	Route::put('activity/updatenobudget', 'ActivityController@updatenobudget');
@@ -246,8 +274,6 @@ Route::group(array('before' => 'auth'), function()
 	Route::post('activity/{id}/duplicate','ActivityController@duplicate');
 	Route::get('activity/{id}/summary','ActivityController@summary');
 
-
-	
 	
 	Route::resource('activity', 'ActivityController');
 	
@@ -520,6 +546,7 @@ Route::group(array('before' => 'auth'), function()
 		// Route::get('level5/import', 'Level5Controller@import');
 		// Route::post('level5/upload', 'Level5Controller@upload');
 		// Route::resource('level5', 'Level5Controller');
+
 
 		Route::get('reports/{id}/review', ['as' => 'reports.review', 'uses' => 'ReportController@review']);
 		Route::get('reports/{id}/scheme/', ['as' => 'reports.scheme', 'uses' => 'ReportController@scheme']);

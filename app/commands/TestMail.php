@@ -133,7 +133,7 @@ class TestMail extends Command {
 					if($_ENV['MAIL_TEST']){
 						Mail::send($mail_template, $data, function($message) use ($data){
 							$message->to("rbautista@chasetech.com", $data['fullname']);
-							$message->bcc("rosarah.reyes@unilever.com");
+							// $message->bcc("rosarah.reyes@unilever.com");
 							$message->subject('TOP ACTIVITY STATUS');
 						});	
 					}else{
@@ -176,26 +176,57 @@ class TestMail extends Command {
 							Mail::send('emails.mail4', $data, function($message) use ($data){
 								$message->to("rbautista@chasetech.com", $data['fullname']);
 								// $message->bcc("rosarah.reyes@unilever.com");
-								$message->subject('TOP ACTIVITIES FOR: ('.$data['cycle_names'].')');
+								$message->subject('Test - TOP ACTIVITIES FOR: ('.$data['cycle_names'].')');
 							});	
 						}else{
 							Mail::send('emails.mail4', $data, function($message) use ($data){
 								$message->to("rbautista@chasetech.com", $data['fullname']);
 								// $message->bcc("rosarah.reyes@unilever.com");
-								$message->subject('TOP ACTIVITIES FOR: '.$data['cycle_names']);
+								$message->subject('Test - TOP ACTIVITIES FOR: '.$data['cycle_names']);
 							});	
 						}
 					}else{
-						Mail::send('emails.mail4', $data, function($message) use ($data){
-							if(count($data['cycles']) > 1){
-								$message->to(trim(strtolower($data['email'])), $data['fullname'])->subject('TOP ACTIVITIES FOR: ('.$data['cycle_names'].')');
-							}else{
-								$message->to(trim(strtolower($data['email'])), $data['fullname'])->subject('TOP ACTIVITIES FOR: '.$data['cycle_names']);
-							}
-							
-						});
+						if(count($data['cycles']) > 1){
+							Mail::send('emails.mail4', $data, function($message) use ($data){
+								$message->to(trim(strtolower($data['email'])), $data['fullname']);
+								$message->subject('TOP ACTIVITIES FOR: ('.$data['cycle_names'].')');
+							});
+						}else{
+							Mail::send('emails.mail4', $data, function($message) use ($data){
+								$message->to(trim(strtolower($data['email'])), $data['fullname']);
+								$message->subject('TOP ACTIVITIES FOR: '.$data['cycle_names']);
+							});
+						}
+						
 					}
 				}
+			break;
+
+			case 'mail5':
+				
+				$data['user'] = $user->first_name;
+				$data['email'] = $user->email;
+				$data['fullname'] = $user->getFullname();
+
+				// Mail::send('emails.mail5', $data, function($message) use ($data){
+				// 	$message->to("rbautista@chasetech.com", $data['fullname']);
+				// 	// $message->bcc("rosarah.reyes@unilever.com");
+				// 	$message->subject('TEST ACTIVITy');
+				// });
+
+
+				Mail::send('emails.mail5', $data, function($message) use ($data){
+					$message->to("rbautista@chasetech.com", $data['fullname']);
+					// $message->bcc("rosarah.reyes@unilever.com");
+					$message->subject('TEST ACTIVITy');
+				});
+
+				// Mail::send('emails.mail5', $data, function($message) use ($data){
+				// 	$message->to(trim(strtolower($data['email'])), $data['fullname'])->subject('test');	
+				// });
+
+				
+
 			break;
 
 			default:

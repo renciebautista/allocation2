@@ -773,7 +773,7 @@ class ActivityController extends BaseController {
 					
 					if(empty($activity)){
 						$arr['success'] = 0;
-						$arr['error'] = $validation['message'];
+						$arr['error'] = 'Activity not found';
 					}else{
 						$status_id = (int) Input::get('submitstatus');
 						$planner_count = ActivityPlanner::getPlannerCount($activity->id);
