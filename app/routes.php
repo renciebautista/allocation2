@@ -65,68 +65,46 @@ Route::get('test', function(){
 
 	// echo count($customers);
 
-	foreach ($customers as $customer) {
-		echo $customer->customer_name . '</br>';
-		foreach ($shiptos as $shipto) {
-			if($shipto->customer_code == $customer->customer_code){
-				echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp-'. $shipto->ship_to_name . '</br>';
-				foreach ($accounts as $account) {
-					if($account->ship_to_code == $shipto->ship_to_code){
-						echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
-						echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp-'. $account->account_name . '</br>';
-						foreach ($l3s as $l3) {
-							if($l3->channel_code == $account->channel_code){
-								echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
-								echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
-								echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp-'. $l3->l3_desc . '</br>';
-								foreach ($l4s as $l4) {
-									if($l4->coc_03_code == $l3->coc_03_code){
-										echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
-										echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
-										echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
-										echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp-'. $l4->l4_desc . '</br>';
-										foreach ($l5s as $l5) {
-											if($l5->l4_code == $l4->l4_code){
-												echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
-												echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
-												echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
-												echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
-												echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp-'. $l5->l5_desc . '</br>';
-											}
-										}
-									}
-								}
-							}
+	// foreach ($customers as $customer) {
+	// 	echo $customer->customer_name . '</br>';
+	// 	foreach ($shiptos as $shipto) {
+	// 		if($shipto->customer_code == $customer->customer_code){
+	// 			echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp-'. $shipto->ship_to_name . '</br>';
+	// 			foreach ($accounts as $account) {
+	// 				if($account->ship_to_code == $shipto->ship_to_code){
+	// 					echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
+	// 					echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp-'. $account->account_name . '</br>';
+	// 					foreach ($l3s as $l3) {
+	// 						if($l3->channel_code == $account->channel_code){
+	// 							echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
+	// 							echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
+	// 							echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp-'. $l3->l3_desc . '</br>';
+	// 							foreach ($l4s as $l4) {
+	// 								if($l4->coc_03_code == $l3->coc_03_code){
+	// 									echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
+	// 									echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
+	// 									echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
+	// 									echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp-'. $l4->l4_desc . '</br>';
+	// 									foreach ($l5s as $l5) {
+	// 										if($l5->l4_code == $l4->l4_code){
+	// 											echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
+	// 											echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
+	// 											echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
+	// 											echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
+	// 											echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp-'. $l5->l5_desc . '</br>';
+	// 										}
+	// 									}
+	// 								}
+	// 							}
+	// 						}
 							
-						}
-					}
+	// 					}
+	// 				}
 					
-				}
-			}
-		}
-	$users = User::GetPlanners(['PROPONENT' ,'PMOG PLANNER','GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR','FIELD SALES']);
-	echo count($users);
-
-	$type = "mail5";
-
-	foreach ($users as $user) {
-		$data['user'] = $user->first_name;
-		$data['email'] = $user->email;
-		$data['fullname'] = $user->getFullname();
-
-		// Mail::send('emails.mail5', $data, function($message) use ($data){
-		// 	$message->to("rbautista@chasetech.com", $data['fullname']);
-		// 	// $message->bcc("rosarah.reyes@unilever.com");
-		// 	$message->subject('TEST ACTIVITy');
-		// });
-
-
-		Mail::queue('emails.mail5', $data, function($message) use ($data){
-			$message->to("rbautista@chasetech.com", $data['fullname']);
-			// $message->bcc("rosarah.reyes@unilever.com");
-			$message->subject('TEST ACTIVITy');
-		});
-	}
+	// 			}
+	// 		}
+	// 	}
+	// }
 });
 
 
@@ -227,7 +205,6 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('tradedealscheme/{id}','ActivityController@tradedealscheme');
 	Route::put('tradedealscheme/{id}', 'ActivityController@updatetradedealscheme');
 
-
 	Route::post('activity/{id}/addnobudget', 'ActivityController@addnobudget');
 	Route::delete('activity/deletenobudget', 'ActivityController@deletenobudget');
 	Route::put('activity/updatenobudget', 'ActivityController@updatenobudget');
@@ -273,7 +250,6 @@ Route::group(array('before' => 'auth'), function()
 
 	Route::post('activity/{id}/duplicate','ActivityController@duplicate');
 	Route::get('activity/{id}/summary','ActivityController@summary');
-
 	
 	Route::resource('activity', 'ActivityController');
 	
