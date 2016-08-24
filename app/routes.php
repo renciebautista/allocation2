@@ -472,10 +472,10 @@ Route::group(array('before' => 'auth'), function()
 		Route::post('channel/upload', 'ChannelController@upload');
 		Route::resource('channel', 'ChannelController');
 
-		Route::get('subchannel/export', 'SubchannelController@export');
-		Route::get('subchannel/import', 'SubchannelController@import');
-		Route::post('subchannel/upload', 'SubchannelController@upload');
-		Route::resource('subchannel', 'SubchannelController');
+		// Route::get('subchannel/export', 'SubchannelController@export');
+		// Route::get('subchannel/import', 'SubchannelController@import');
+		// Route::post('subchannel/upload', 'SubchannelController@upload');
+		// Route::resource('subchannel', 'SubchannelController');
 
 		Route::get('holidays/getlist', 'HolidaysController@getlist');
 		Route::resource('holidays', 'HolidaysController');
@@ -511,15 +511,15 @@ Route::group(array('before' => 'auth'), function()
 
 		Route::resource('sobholiday', 'SobholidaysController');
 		
-		Route::get('level4/export', 'Level4Controller@export');
-		Route::get('level4/import', 'Level4Controller@import');
-		Route::post('level4/upload', 'Level4Controller@upload');
-		Route::resource('level4', 'Level4Controller');
+		// Route::get('level4/export', 'Level4Controller@export');
+		// Route::get('level4/import', 'Level4Controller@import');
+		// Route::post('level4/upload', 'Level4Controller@upload');
+		// Route::resource('level4', 'Level4Controller');
 
-		Route::get('level5/export', 'Level5Controller@export');
-		Route::get('level5/import', 'Level5Controller@import');
-		Route::post('level5/upload', 'Level5Controller@upload');
-		Route::resource('level5', 'Level5Controller');
+		// Route::get('level5/export', 'Level5Controller@export');
+		// Route::get('level5/import', 'Level5Controller@import');
+		// Route::post('level5/upload', 'Level5Controller@upload');
+		// Route::resource('level5', 'Level5Controller');
 
 		Route::get('reports/{id}/review', ['as' => 'reports.review', 'uses' => 'ReportController@review']);
 		Route::get('reports/{id}/scheme/', ['as' => 'reports.scheme', 'uses' => 'ReportController@scheme']);

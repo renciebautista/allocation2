@@ -33,4 +33,17 @@ class Level5 extends \Eloquent {
 				->get();;
 	}
 
+	public static function getChannels(){
+		return self::select('level5.trade_deal', 'level5.rtm_tag', 'level5.l5_desc', 'level5.l5_code',
+			'level4.l4_desc', 'level4.l4_code',
+			'sub_channels.l3_desc', 'sub_channels.channel_code', 'sub_channels.coc_03_code',
+			'channels.channel_code', 'channels.channel_name')
+			->join('level4', 'level4.l4_code', '=', 'level5.l4_code')
+			->join('sub_channels', 'sub_channels.coc_03_code', '=', 'level4.coc_03_code')
+			->join('channels', 'channels.channel_code', '=', 'sub_channels.channel_code')
+			// ->orderBy('channels.channel_name')
+			// ->orderBy('sub_channels.l3_desc')
+			->get();
+	}
+
 }

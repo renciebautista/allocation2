@@ -10,7 +10,7 @@ class ChannelController extends \BaseController {
 	 */
 	public function index()
 	{
-		$channels = Channel::all();
+		$channels = Level5::getChannels();
 		return View::make('channel.index',compact('channels'));
 	}
 
