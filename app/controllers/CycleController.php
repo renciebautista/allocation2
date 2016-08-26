@@ -256,9 +256,9 @@ class CycleController extends \BaseController {
 						
 						if(count($data['activities']) > 0){
 							if($_ENV['MAIL_TEST']){
-								Queue::push('MailScheduler', array('type' => $type, 'user_id' => $user->user_id, 'role_id' => $user->role_id,'etop',array('timeout' => $timeout));
+								Queue::push('MailScheduler', array('type' => $type, 'user_id' => $user->user_id, 'role_id' => $user->role_id) ,'etop', array('timeout' => $timeout));
 							}else{
-								Queue::push('MailScheduler', array('type' => $type, 'user_id' => $user->user_id, 'role_id' => $user->role_id,'p_etop'array('timeout' => $timeout));
+								Queue::push('MailScheduler', array('type' => $type, 'user_id' => $user->user_id, 'role_id' => $user->role_id) ,'p_etop', array('timeout' => $timeout));
 							}
 						}
 						$cnt++;
