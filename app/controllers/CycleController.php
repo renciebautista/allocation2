@@ -245,17 +245,23 @@ class CycleController extends \BaseController {
 					// }else{
 					// 	Queue::push('MassMail', [],'p_mmail');
 					// }
-
+					$cnt = 1;
+					$timeout = 1;
 					foreach ($users as $user) {
+						if($cnt == 11){
+							$timeout = $timeout + 5;
+							$cnt = 1;
+						}
 						$data['activities'] = Activity::Released($cycle_ids);
 						
 						if(count($data['activities']) > 0){
 							if($_ENV['MAIL_TEST']){
-								Queue::push('MailScheduler', array('type' => $type, 'user_id' => $user->user_id, 'role_id' => $user->role_id,),'etop');
+								Queue::push('MailScheduler', array('type' => $type, 'user_id' => $user->user_id, 'role_id' => $user->role_id,),'etop',array('timeout' => $timeout));
 							}else{
-								Queue::push('MailScheduler', array('type' => $type, 'user_id' => $user->user_id, 'role_id' => $user->role_id),'p_etop');
+								Queue::push('MailScheduler', array('type' => $type, 'user_id' => $user->user_id, 'role_id' => $user->role_id),'p_etop'array('timeout' => $timeout));
 							}
 						}
+						$cnt++;
 					}
 					
 				}else{
