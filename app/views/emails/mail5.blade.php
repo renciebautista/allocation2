@@ -51,35 +51,11 @@
 
 <body>
 
-	<h1>Hi {{ ucwords(strtolower($user)) }}!</h1>
+	<h1>Hi this is a test mail!</h1>
 	
 	
 	<hr>
-	<table width="100%" border="0" cellspacing="0" cellpadding="5">
-		<thead>
-			<tr class="blue">
-				<th class="center header1" colspan="12">Summary of Activities</th>
-			</tr>
-			<tr class="blue">
-				<th class="center"></th>
-				<th class="center">ID</th>
-				<th class="center">Status</th>
-				<th class="center">TOP Cycle</th>
-				<th class="center">Scope</th>
-				<th class="center">Activity Type</th>
-				<th class="center">Activity Title</th>
-				<th class="center">Proponent</th>
-				<th class="center">PMOG Partner</th>
-				<th class="center">Start Date</th>
-				<th class="center">End Date</th>
-				<th class="center">Billing Deadline</th>
-			</tr>
-		</thead>
-		<tbody>
-			
-		</tbody>
-		</table> 
-	<hr>
+	
 	<br>
 	<p><b>Disclaimer : </b>This is an auto-generated email. Please do not reply.</p>
 </body>

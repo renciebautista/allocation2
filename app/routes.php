@@ -18,6 +18,13 @@ Queue::getIron()->ssl_verifypeer = false;
 |
 */
 
+Route::get('textmail', function(){
+	Mail::send('emails.mail5', function($message){
+		$message->to("rbautista@chasetech.com", 'Rencie Bautista');
+		$message->subject('TEST ACTIVITy');
+	});
+});
+
 
 Route::get('test', function(){
 	$users = User::GetPlanners(['PROPONENT' ,'PMOG PLANNER','GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR','FIELD SALES']);
