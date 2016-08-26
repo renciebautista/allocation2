@@ -18,6 +18,19 @@ Queue::getIron()->ssl_verifypeer = false;
 |
 */
 
+Route::get('testmtdt', function(){
+	$sales = MtDtSales::all();
+	$cnt = 1;
+	foreach ($sales as $sale) {
+		$sale->plant_code = $cnt;
+		$sale->save();
+		$cnt++;
+		if($cnt == 119){
+			$cnt = 1;
+		}
+	}
+});
+
 
 Route::get('test', function(){
 	$l5s = Level5::getForTradeDeal();

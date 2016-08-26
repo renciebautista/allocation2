@@ -154,7 +154,7 @@ class AllocationRepository2  {
 		if(in_array("E1397", $_grps)){	
 		// get all DT Secondary Sales
 		// dd($channels);
-		$this->_dt_secondary_sales =DB::table('dt_secondary_sales')
+		$this->_dt_secondary_sales = DB::table('dt_secondary_sales')
 					->select(DB::raw("dt_secondary_sales.area_code,dt_secondary_sales.customer_code, SUM(gsv) as gsv"))
 					->join('sub_channels', 'dt_secondary_sales.coc_03_code', '=', 'sub_channels.coc_03_code')
 					->join(DB::raw("(SELECT DISTINCT(customer_code) FROM customers) customers"), 'dt_secondary_sales.customer_code', '=', 'customers.customer_code')
@@ -352,6 +352,7 @@ class AllocationRepository2  {
 
 				}
 
+				
 				if($customer->group_code == 'E1397'){
 					$abort = false;
 					$customer->gsv = 0;
@@ -519,7 +520,6 @@ class AllocationRepository2  {
 		}
 
 	}
-
 
 	public function additonal_outlet_sales($salescources,$customers,$customer_code,$_shiptos,$_accounts,$_outlets,$_outlet_sales,$account_name){
 		$additonal_sales = 0;
