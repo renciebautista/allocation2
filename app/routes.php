@@ -19,7 +19,7 @@ Queue::getIron()->ssl_verifypeer = false;
 */
 
 Route::get('textmail', function(){
-	Mail::send('emails.mail5', function($message){
+	Mail::send('emails.mail5', [], function($message){
 		$message->to("rbautista@chasetech.com", 'Rencie Bautista');
 		$message->subject('TEST ACTIVITy');
 	});
