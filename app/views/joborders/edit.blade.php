@@ -5,6 +5,7 @@
 
 <div class="row">
   	<div class="col-lg-10 col-md-offset-1">
+  		@include('partials.notification')
   		<div class="panel panel-default">
 			<div class="panel-heading">Job Order Details</div>
 			<div class="panel-body">
@@ -43,6 +44,33 @@
 				</tr>
 			</tbody>
 		</table>
+		<h2>Artworks</h2>
+		<div class="attachment">
+			<ul>
+			@foreach($artworks as $file)
+			<li>
+				<a target="_blank"href="{{route('joborders.artworkdownload', $file->random_name)}}">
+					{{ HTML::image('jorderartwork/'.$file->random_name, $file->file_name) }}
+				</a>
+				{{ Form::open(array('method' => 'DELETE', 'action' => array('JoborderController@artworkdelete', $file->random_name))) }}  
+				{{ Form::submit('Remove', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}
+				{{ Form::close() }}
+			</li>
+			
+			@endforeach
+			</ul>
+		</div>
+
+		{{ Form::open(array('action' => array('JoborderController@uploadphoto', $joborder->id) ,'class' => 'bs-component' ,'id' => 'myform', 'files'=>true)) }}
+		<div class="form-container">
+			<div class="form-group">
+				<input type="file" name="files[]" id="filer_input1" multiple="multiple">
+			</div>
+			<div class="form-group">
+				<button class="btn btn-primary btn-style" type="submit">Submit</button>
+			</div>
+		</div>	
+		{{ Form::close() }}
 		<hr>
 		<div>
 			@foreach($comments as $comment)
@@ -55,7 +83,7 @@
 			@endforeach
 			<div class="form-container">
 				<div class="form-group">
-					<input type="file" name="files[]" id="filer_input" multiple="multiple">
+					<input type="file" name="files[]" id="filer_input2" multiple="multiple">
 				</div>
 				<div class="form-group">
 					<textarea name="comment" id="comment"></textarea>
@@ -76,7 +104,13 @@
 @stop
 
 @section('page-script')
-	$('#filer_input').filer({
+	$('#filer_input1').filer({
+	    changeInput: true,
+	    showThumbs: true,
+	    addMore: true
+	});
+
+	$('#filer_input2').filer({
 	    changeInput: true,
 	    showThumbs: true,
 	    addMore: true

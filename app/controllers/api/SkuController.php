@@ -119,21 +119,21 @@ class SkuController extends \BaseController {
 
 				if(\Auth::user()->inRoles(['PROPONENT'])){
 					$user_id = \Auth::id();
+
+					$data2 = \LaunchSkuAccess::select('brand_desc')
+					->join('pricelists','pricelists.sap_code','=','launch_sku_access.sku_code','left')
+					->where('launch_sku_access.user_id',$user_id)
+					->where('active',1)
+					->where('launch',1)
+					->whereIn('category_code',$filter)
+					->groupBy('brand_desc')
+					->orderBy('brand_desc')->get();
+
+					foreach($data2 as $row) {
+					    $data->add($row);
+					}
 				}else{
 					
-				}
-
-				$data2 = \LaunchSkuAccess::select('brand_desc')
-				->join('pricelists','pricelists.sap_code','=','launch_sku_access.sku_code','left')
-				->where('launch_sku_access.user_id',$user_id)
-				->where('active',1)
-				->where('launch',1)
-				->whereIn('category_code',$filter)
-				->groupBy('brand_desc')
-				->orderBy('brand_desc')->get();
-
-				foreach($data2 as $row) {
-				    $data->add($row);
 				}
 			}
 

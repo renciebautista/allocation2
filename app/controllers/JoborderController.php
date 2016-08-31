@@ -56,7 +56,61 @@ class JoborderController extends \BaseController {
 	 */
 	public function edit($id)
 	{
+		$joborder = Joborder::findOrFail($id);
+		$artworks = JoborderArtwork::where('joborder_id', $joborder->id)->get();
+		$comments = $joborder->comments()->orderBy('created_at')->get();
+		return View::make('joborders.edit',compact('joborder', 'comments', 'artworks'));
+	}
+
+	public function uploadphoto($id){
+		if(Input::hasFile('files')){
+			$files = Input::file('files');
+			$distination = storage_path().'/joborder_files/';
+			foreach ($files as $file) {
+				if(!empty($file)){
+					$original_file_name = $file->getClientOriginalName();
+					$file_name = pathinfo($original_file_name, PATHINFO_FILENAME);
+					$extension = File::extension($original_file_name);
+					$actual_name = uniqid('img_').'.'.$extension;
+					$file->move($distination,$actual_name);
+
+					JoborderArtwork::create(['joborder_id' => $id,
+						'random_name' => $actual_name, 
+						'file_name' => $file_name.'.'.$extension]);
+				}
+				
+			}
+		}
+
+		return Redirect::to(URL::action('JoborderController@edit', array('id' => $id)))
+			->with('class', 'alert-success')
+			->with('message', 'Artwork was successfuly updated.');
 		
+	}
+
+	public function jorderartworkdownload($random_name = null)
+	{
+		$file = JoborderArtwork::where('random_name', $random_name)->first();
+		if(!empty($file)){
+			$path = storage_path().'/joborder_files/'.$file->random_name;
+			if (file_exists($path)) { 
+				return Response::download($path, $file->file_name);
+			}
+		}
+	}
+
+	public function artworkdelete($random_name = null){
+		$file = JoborderArtwork::where('random_name', $random_name)->first();
+		if(!empty($file)){
+			$path = storage_path().'/joborder_files/'.$file->random_name;
+			if (file_exists($path)) { 
+				File::delete($path);
+				$file->delete();
+			}
+		}
+		return Redirect::back()
+			->with('class', 'alert-success')
+			->with('message', 'Artwork was successfuly updated.');
 	}
 
 	/**

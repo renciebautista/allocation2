@@ -1137,7 +1137,9 @@
 							  			<td>{{ $jo->department->department }}</td>
 							  			<td></td>
 							  			<td></td>
-							  			<td></td>
+							  			<td>
+							  				{{ HTML::linkAction('JoborderController@edit','View', $jo->id, array('class' => 'btn btn-success btn-xs')) }}
+							  			</td>
 							  		</tr>
 							  		@endforeach
 							  	</tbody>

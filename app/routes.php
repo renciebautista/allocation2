@@ -242,6 +242,10 @@ Route::group(array('before' => 'auth'), function()
 
 	Route::resource('faq', 'FaqController');
 
+	Route::post('joborders/{id}/uploadphoto', ['as' => 'joborders.uploadphoto', 'uses' => 'JoborderController@uploadphoto']);
+	Route::delete('joborders/artworkdelete/{file}', ['as' => 'joborders.artworkdelete', 'uses' => 'JoborderController@artworkdelete']);
+
+
 	Route::get('joborders/unassigned', ['as' => 'joborders.unassigned', 'uses' => 'JoborderController@unassigned']);
 	Route::get('joborders/unassigned/{id}/edit', ['as' => 'joborders.unassignededit', 'uses' => 'JoborderController@unassignededit']);
 	Route::post('joborders/unassigned/{id}/edit', ['as' => 'joborders.unassignedstore', 'uses' => 'JoborderController@unassignedstore']);
@@ -275,6 +279,22 @@ Route::group(array('before' => 'auth'), function()
 		}
 		
 	});
+
+	Route::get('jorderartwork/{name}', function($name = null)
+	{
+		$file = JoborderArtwork::where('random_name', $name)->first();
+		if(!empty($file)){
+			$path = storage_path().'/joborder_files/'.$file->random_name;
+			if (file_exists($path)) { 
+				$image = Image::create($path);
+				$image->resize(350, 350, 1);
+				return $image->show();
+			}
+		}
+		
+	});
+
+	Route::get('jorderartworkdownload/{random_name}', ['as' => 'joborders.artworkdownload', 'uses' => 'JoborderController@jorderartworkdownload']);
 
 	Route::get('fdapermit/{cycle_id}/{type_id}/{activity_id}/{name}', function($cycle_id = null,$type_id = null,$activity_id = null,$name = null)
 	{
