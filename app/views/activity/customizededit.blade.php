@@ -1060,23 +1060,7 @@
 		<div class="panel panel-default">
 		  	<div class="panel-heading">Comments</div>
 		  	<div class="panel-body">
-				<ul class="comment">
-					@foreach($comments as $comment)
-	                <li class="left clearfix">
-	                    <div class="comment-body clearfix">
-	                        <div class="header">
-	                            <strong class="primary-font">{{ $comment->createdby->getFullname()}} 
-	                            	<p class="{{ $comment->class }}">({{ $comment->comment_status }})</p>
-	                            </strong> 
-	                            <small class="pull-right text-muted">
-	                                <i class="fa fa-clock-o fa-fw"></i>{{ date_format(date_create($comment->created_at),'m/d/Y H:m:s') }} 
-	                            </small>
-	                        </div>
-	                        <p>{{ $comment->comment }}</p>
-	                    </div>
-	                </li>
-	                @endforeach
-	            </ul>
+				
 		  	</div>
 		</div>
 
