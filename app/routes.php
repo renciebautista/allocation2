@@ -34,13 +34,14 @@ Route::get('testmtdt', function(){
 
 Route::get('test', function(){
 	$l5s = Level5::getForTradeDeal();
-	// $l4_codes = [];
-	// foreach ($l5s as $row) {
-	// 	$l4_codes[] = $row->l4_code;
-	// 	// echo $row->l5_desc . '</br>';
-	// }
+	
+	$l4_codes = [];
+	foreach ($l5s as $row) {
+		$l4_codes[] = $row->l4_code;
+		// echo $row->l5_desc . '</br>';
+	}
 
-	$l4_codes[] = 'C01724';
+	// $l4_codes[] = 'C01724';
 
 	$l4s = Level4::whereIn('l4_code',$l4_codes)->get();
 	$l3_codes = [];
@@ -76,48 +77,48 @@ Route::get('test', function(){
 		->groupBy('customer_code')
 		->get();
 
-	// echo count($customers);
+	echo count($customers);
 
-	// foreach ($customers as $customer) {
-	// 	echo $customer->customer_name . '</br>';
-	// 	foreach ($shiptos as $shipto) {
-	// 		if($shipto->customer_code == $customer->customer_code){
-	// 			echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp-'. $shipto->ship_to_name . '</br>';
-	// 			foreach ($accounts as $account) {
-	// 				if($account->ship_to_code == $shipto->ship_to_code){
-	// 					echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
-	// 					echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp-'. $account->account_name . '</br>';
-	// 					foreach ($l3s as $l3) {
-	// 						if($l3->channel_code == $account->channel_code){
-	// 							echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
-	// 							echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
-	// 							echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp-'. $l3->l3_desc . '</br>';
-	// 							foreach ($l4s as $l4) {
-	// 								if($l4->coc_03_code == $l3->coc_03_code){
-	// 									echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
-	// 									echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
-	// 									echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
-	// 									echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp-'. $l4->l4_desc . '</br>';
-	// 									foreach ($l5s as $l5) {
-	// 										if($l5->l4_code == $l4->l4_code){
-	// 											echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
-	// 											echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
-	// 											echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
-	// 											echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
-	// 											echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp-'. $l5->l5_desc . '</br>';
-	// 										}
-	// 									}
-	// 								}
-	// 							}
-	// 						}
+	foreach ($customers as $customer) {
+		echo $customer->customer_name . '</br>';
+		foreach ($shiptos as $shipto) {
+			if($shipto->customer_code == $customer->customer_code){
+				echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp-'. $shipto->ship_to_name . '</br>';
+				// foreach ($accounts as $account) {
+				// 	if($account->ship_to_code == $shipto->ship_to_code){
+				// 		echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
+				// 		echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp-'. $account->account_name . '</br>';
+				// 		foreach ($l3s as $l3) {
+				// 			if($l3->channel_code == $account->channel_code){
+				// 				echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
+				// 				echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
+				// 				echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp-'. $l3->l3_desc . '</br>';
+				// 				foreach ($l4s as $l4) {
+				// 					if($l4->coc_03_code == $l3->coc_03_code){
+				// 						echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
+				// 						echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
+				// 						echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
+				// 						echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp-'. $l4->l4_desc . '</br>';
+				// 						foreach ($l5s as $l5) {
+				// 							if($l5->l4_code == $l4->l4_code){
+				// 								echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
+				// 								echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
+				// 								echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
+				// 								echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
+				// 								echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp-'. $l5->l5_desc . '</br>';
+				// 							}
+				// 						}
+				// 					}
+				// 				}
+				// 			}
 							
-	// 					}
-	// 				}
+				// 		}
+				// 	}
 					
-	// 			}
-	// 		}
-	// 	}
-	// }
+				// }
+			}
+		}
+	}
 });
 
 
@@ -448,6 +449,11 @@ Route::group(array('before' => 'auth'), function()
 		Route::get('shipto/import', 'ShiptoController@import');
 		Route::post('shipto/upload', 'ShiptoController@upload');
 		Route::resource('shipto', 'ShiptoController');
+
+		Route::get('shiptoplantcode/export', 'ShiptoPlantCodeController@export');
+		Route::get('shiptoplantcode/import', 'ShiptoPlantCodeController@import');
+		Route::post('shiptoplantcode/upload', 'ShiptoPlantCodeController@upload');
+		Route::resource('shiptoplantcode', 'ShiptoPlantCodeController');
 
 		Route::get('customer/export', 'CustomerController@export');
 		Route::get('customer/import', 'CustomerController@import');

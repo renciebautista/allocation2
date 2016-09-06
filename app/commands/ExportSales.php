@@ -94,155 +94,199 @@ class ExportSales extends Command {
 		$writer->setShouldCreateNewSheetsAutomatically(true); // default value
 		$writer->openToFile($filePath); // write data to a file or to a PHP stream
 
-		$header = array('GROUP CODE', 'GROUP', 'AREA CODE', 'AREA CODE TWO', 'AREA', 'SOLD TO CODE', 'SOLD TO', 'SOLD TO STATUS (ACTIVE)','SALES MULTIPLIER', 'FROM DT', 
-					'SOB SOLD TO CODE', 'SHIP TO CODE', 'CUSTOMER SHIP TO NAME', '% SPLIT', 'LEAD TIME (DAYS)', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY',
-					'SUNDAY', 'SHIP TO POINT STATUS (ACTIVE)', 
-				 	'CHANNEL CODE', 'CHANNEL',  'ACCOUNT GROUP CODE', 'ACCOUNT GROUP', 'ACCOUNT NAME', 'ACCOUNT STATUS (ACTIVE)');
-		$writer->addRow($header);
+		// $header = array('GROUP CODE', 'GROUP', 'AREA CODE', 'AREA CODE TWO', 'AREA', 'SOLD TO CODE', 'SOLD TO', 'SOLD TO STATUS (ACTIVE)','SALES MULTIPLIER', 'FROM DT', 
+		// 			'SOB SOLD TO CODE', 'SHIP TO CODE', 'CUSTOMER SHIP TO NAME', '% SPLIT', 'LEAD TIME (DAYS)', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY',
+		// 			'SUNDAY', 'SHIP TO POINT STATUS (ACTIVE)', 
+		// 		 	'CHANNEL CODE', 'CHANNEL',  'ACCOUNT GROUP CODE', 'ACCOUNT GROUP', 'ACCOUNT NAME', 'ACCOUNT STATUS (ACTIVE)');
+		// $writer->addRow($header);
 
-		foreach ($data as $customer) {
-			$writer->addRow( array($customer['group_code'],
-				$customer['group_name'],
-				$customer['area_code'],
-				$customer['area_code_two'],
-				$customer['area_name'],
-				$customer['customer_code'],
-				$customer['customer_name'],
-				$customer['active'],
-				$customer['multiplier'],
-				$customer['from_dt'],
-				$customer['sob_customer_code']));
+		// foreach ($data as $customer) {
+		// 	$writer->addRow( array($customer['group_code'],
+		// 		$customer['group_name'],
+		// 		$customer['area_code'],
+		// 		$customer['area_code_two'],
+		// 		$customer['area_name'],
+		// 		$customer['customer_code'],
+		// 		$customer['customer_name'],
+		// 		$customer['active'],
+		// 		$customer['multiplier'],
+		// 		$customer['from_dt'],
+		// 		$customer['sob_customer_code']));
 
-			if(isset($customer['shiptos'])){
-				foreach ($customer['shiptos'] as $shipto) {
-					$writer->addRow(array($customer['group_code'],
-				 		$customer['group_name'],
-						$customer['area_code'],
-						$customer['area_code_two'],
-						$customer['area_name'],
-						$customer['customer_code'],
-						$customer['customer_name'],
-						$customer['active'],
-						$customer['multiplier'],
-						$customer['from_dt'],
-						$customer['sob_customer_code'],
-						$shipto['ship_to_code'],
-						$shipto['ship_to_name'],
-						$shipto['split'],
-						$shipto['leadtime'],
-						$shipto['mon'],
-						$shipto['tue'],
-						$shipto['wed'],
-						$shipto['thu'],
-						$shipto['fri'],
-						$shipto['sat'],
-						$shipto['sun'],
-						$shipto['active']));
-					if(isset($shipto['accounts'])){
-						foreach ($shipto['accounts'] as $account) {
-							$writer->addRow(array($customer['group_code'],
-						 		$customer['group_name'],
-								$customer['area_code'],
-								$customer['area_code_two'],
-								$customer['area_name'],
-								$customer['customer_code'],
-								$customer['customer_name'],
-								$customer['active'],
-								$customer['multiplier'],
-								$customer['from_dt'],
-								$customer['sob_customer_code'],
-								$shipto['ship_to_code'],
-								$shipto['ship_to_name'],
-								$shipto['split'],
-								$shipto['leadtime'],
-								$shipto['mon'],
-								$shipto['tue'],
-								$shipto['wed'],
-								$shipto['thu'],
-								$shipto['fri'],
-								$shipto['sat'],
-								$shipto['sun'],
-								$shipto['active'],
-								$account['channel_code'],
-								$account['channel_name'],
-								$account['account_group_code'],
-								$account['account_group_name'],
-								$account['account_name'],
-								$account['active']));
-						}
-					}
-			 	}
-			}
+		// 	if(isset($customer['shiptos'])){
+		// 		foreach ($customer['shiptos'] as $shipto) {
+		// 			$writer->addRow(array($customer['group_code'],
+		// 		 		$customer['group_name'],
+		// 				$customer['area_code'],
+		// 				$customer['area_code_two'],
+		// 				$customer['area_name'],
+		// 				$customer['customer_code'],
+		// 				$customer['customer_name'],
+		// 				$customer['active'],
+		// 				$customer['multiplier'],
+		// 				$customer['from_dt'],
+		// 				$customer['sob_customer_code'],
+		// 				$shipto['ship_to_code'],
+		// 				$shipto['ship_to_name'],
+		// 				$shipto['split'],
+		// 				$shipto['leadtime'],
+		// 				$shipto['mon'],
+		// 				$shipto['tue'],
+		// 				$shipto['wed'],
+		// 				$shipto['thu'],
+		// 				$shipto['fri'],
+		// 				$shipto['sat'],
+		// 				$shipto['sun'],
+		// 				$shipto['active']));
+		// 			if(isset($shipto['accounts'])){
+		// 				foreach ($shipto['accounts'] as $account) {
+		// 					$writer->addRow(array($customer['group_code'],
+		// 				 		$customer['group_name'],
+		// 						$customer['area_code'],
+		// 						$customer['area_code_two'],
+		// 						$customer['area_name'],
+		// 						$customer['customer_code'],
+		// 						$customer['customer_name'],
+		// 						$customer['active'],
+		// 						$customer['multiplier'],
+		// 						$customer['from_dt'],
+		// 						$customer['sob_customer_code'],
+		// 						$shipto['ship_to_code'],
+		// 						$shipto['ship_to_name'],
+		// 						$shipto['split'],
+		// 						$shipto['leadtime'],
+		// 						$shipto['mon'],
+		// 						$shipto['tue'],
+		// 						$shipto['wed'],
+		// 						$shipto['thu'],
+		// 						$shipto['fri'],
+		// 						$shipto['sat'],
+		// 						$shipto['sun'],
+		// 						$shipto['active'],
+		// 						$account['channel_code'],
+		// 						$account['channel_name'],
+		// 						$account['account_group_code'],
+		// 						$account['account_group_name'],
+		// 						$account['account_name'],
+		// 						$account['active']));
+		// 				}
+		// 			}
+		// 	 	}
+		// 	}
 		 	
-		}
+		// }
 
-		$sheet = $writer->getCurrentSheet();
-		$sheet->setName('Customer Masterfile');
+		// $sheet = $writer->getCurrentSheet();
+		// $sheet->setName('Customer Masterfile');
 
-		$newSheet = $writer->addNewSheetAndMakeItCurrent();
-		$sheet = $writer->getCurrentSheet();
-		$sheet->setName('MT Primary Sales');
+		// $newSheet = $writer->addNewSheetAndMakeItCurrent();
+		// $sheet = $writer->getCurrentSheet();
+		// $sheet->setName('MT Primary Sales');
 		
-		$mt_sales = DB::table('mt_primary_sales')->get();
-		foreach($mt_sales as $key => $value)
+		// $mt_sales = DB::table('mt_primary_sales')->get();
+		// foreach($mt_sales as $key => $value)
+		// {
+		// 	if(isset($value->gsv)){
+		// 		$value->gsv = (double) $value->gsv;
+		// 	}
+		// 	$mt_sales[$key] = (array) $value;
+		// }
+		// $export_data = $mt_sales;
+		// $header = array('record_id', 'area_code', 'customer_code', 'child_sku_code', 'gsv');
+		// $writer->addRow($header);
+		// $writer->addRows($export_data); // add multiple rows at a time
+
+		// $newSheet = $writer->addNewSheetAndMakeItCurrent();
+		// $sheet = $writer->getCurrentSheet();
+		// $sheet->setName('DT Secondary Sales');
+		// $dt_sales = DB::table('dt_secondary_sales')->get();
+		// foreach($dt_sales as $key => $value)
+		// {
+		// 	if(isset($value->gsv)){
+		// 		$value->gsv = (double) $value->gsv;
+		// 	}
+		// 	$dt_sales[$key] = (array) $value;
+		// }
+		// $export_data = $dt_sales;
+		// $header = array('record_id', 'area_code', 'customer_code', 'child_sku_code', 'coc_03_code', 'gsv');
+		// $writer->addRow($header);
+		// $writer->addRows($export_data); // add multiple rows at a time
+
+		// $newSheet = $writer->addNewSheetAndMakeItCurrent();
+		// $sheet = $writer->getCurrentSheet();
+		// $sheet->setName('Ship To Sales');
+		// $shipto_sales = DB::table('ship_to_sales')->get();
+		// foreach($shipto_sales as $key => $value)
+		// {
+		// 	if(isset($value->gsv)){
+		// 		$value->gsv = (double) $value->gsv;
+		// 	}
+		// 	$shipto_sales[$key] = (array) $value;
+		// }
+		// $export_data = $shipto_sales;
+		// $header = array('record_id', 'ship_to_code', 'child_sku_code','gsv');
+		// $writer->addRow($header);
+		// $writer->addRows($export_data); // add multiple rows at a time
+
+		// $newSheet = $writer->addNewSheetAndMakeItCurrent();
+		// $sheet = $writer->getCurrentSheet();
+		// $sheet->setName('Outlet Sales');
+		// $outlet_sales = DB::table('outlet_sales')->get();
+		// foreach($outlet_sales as $key => $value)
+		// {
+		// 	if(isset($value->gsv)){
+		// 		$value->gsv = (double) $value->gsv;
+		// 	}
+		// 	$outlet_sales[$key] = (array) $value;
+		// }
+		// $export_data = $outlet_sales;
+		// $header = array('record_id', 'area_code', 'customer_code', 'account_name', 'outlet_code', 'child_sku_code', 'coc_03_code', 'gsv');
+		// $writer->addRow($header);
+		// $writer->addRows($export_data); // add multiple rows at a time
+
+		// export groups
+		$newSheet = $writer->addNewSheetAndMakeItCurrent();
+		$sheet = $writer->getCurrentSheet();
+		$sheet->setName('Groups');
+		$groups = DB::table('groups')->get();
+		foreach($groups as $key => $value)
 		{
-			if(isset($value->gsv)){
-				$value->gsv = (double) $value->gsv;
-			}
-			$mt_sales[$key] = (array) $value;
+			$groups[$key] = (array) $value;
 		}
-		$export_data = $mt_sales;
-		$header = array('record_id', 'area_code', 'customer_code', 'child_sku_code', 'gsv');
+		$export_data = $groups;
+		$header = array('id', 'group_code', 'group');
 		$writer->addRow($header);
 		$writer->addRows($export_data); // add multiple rows at a time
 
+		// areas
 		$newSheet = $writer->addNewSheetAndMakeItCurrent();
 		$sheet = $writer->getCurrentSheet();
-		$sheet->setName('DT Secondary Sales');
-		$dt_sales = DB::table('dt_secondary_sales')->get();
-		foreach($dt_sales as $key => $value)
+		$sheet->setName('Areas');
+		$areas = DB::table('areas')->get();
+		foreach($areas as $key => $value)
 		{
-			if(isset($value->gsv)){
-				$value->gsv = (double) $value->gsv;
-			}
-			$dt_sales[$key] = (array) $value;
+			$areas[$key] = (array) $value;
 		}
-		$export_data = $dt_sales;
-		$header = array('record_id', 'area_code', 'customer_code', 'child_sku_code', 'coc_03_code', 'gsv');
+		$export_data = $areas;
+		$header = array('id', 'group_code', 'area_code', 'area_name');
 		$writer->addRow($header);
 		$writer->addRows($export_data); // add multiple rows at a time
 
+		// customers
 		$newSheet = $writer->addNewSheetAndMakeItCurrent();
 		$sheet = $writer->getCurrentSheet();
-		$sheet->setName('Ship To Sales');
-		$shipto_sales = DB::table('ship_to_sales')->get();
-		foreach($shipto_sales as $key => $value)
+		$sheet->setName('Customers');
+		$customers = DB::table('customers')->get();
+		foreach($customers as $key => $value)
 		{
-			if(isset($value->gsv)){
-				$value->gsv = (double) $value->gsv;
-			}
-			$shipto_sales[$key] = (array) $value;
+			$customers[$key] = (array) $value;
 		}
-		$export_data = $shipto_sales;
-		$header = array('record_id', 'ship_to_code', 'child_sku_code','gsv');
+		$export_data = $customers;
+		$header = array('id', 'area_code', 'area_code_two', 'customer_code', 'sob_customer_code', 'customer_name', 'active', 'multiplier', 'from_dt');
 		$writer->addRow($header);
 		$writer->addRows($export_data); // add multiple rows at a time
 
-		$newSheet = $writer->addNewSheetAndMakeItCurrent();
-		$sheet = $writer->getCurrentSheet();
-		$sheet->setName('Outlet Sales');
-		$outlet_sales = DB::table('outlet_sales')->get();
-		foreach($outlet_sales as $key => $value)
-		{
-			if(isset($value->gsv)){
-				$value->gsv = (double) $value->gsv;
-			}
-			$outlet_sales[$key] = (array) $value;
-		}
-		$export_data = $outlet_sales;
-		$header = array('record_id', 'area_code', 'customer_code', 'account_name', 'outlet_code', 'child_sku_code', 'coc_03_code', 'gsv');
-		$writer->addRow($header);
-		$writer->addRows($export_data); // add multiple rows at a time
+
 
 		$file = CustomerMasterfile::where('filename',$filename)->first();
 		if(empty($file)){
@@ -254,7 +298,10 @@ class ExportSales extends Command {
 		$writer->close();
 		$timeSecond = strtotime(date('Y-m-d H:i:s'));
 		$differenceInSeconds = $timeSecond - $timeFirst;
+		$this->line($filePath);
 		$this->line( 'Time used ' . $differenceInSeconds . " sec");
+
+
 	}
 
 	// /**

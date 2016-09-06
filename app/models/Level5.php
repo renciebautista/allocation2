@@ -46,4 +46,5 @@ class Level5 extends \Eloquent {
 			->get();
 	}
 
+
 }

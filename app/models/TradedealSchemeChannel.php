@@ -16,4 +16,15 @@ class TradedealSchemeChannel extends \Eloquent {
 
 		return $data;
 	}
+
+	public static function getChannels($scheme){
+		$records = self::join('tradedeal_channels', 'tradedeal_channels.id' , '=', 'tradedeal_scheme_channels.tradedeal_channel_id')
+			->where('tradedeal_scheme_id', $scheme->id)->get();
+		$data = [];
+		foreach ($records as $row) {
+			$data[] = $row->l5_code;
+		}
+
+		return $data;
+	}
 }

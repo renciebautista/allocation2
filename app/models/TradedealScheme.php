@@ -28,10 +28,5 @@ class TradedealScheme extends \Eloquent {
 
 	public function premium(){
 		return $this->pre_desc .' - '.$this->pre_code;
-		// if($this->tradedeal_type_id == 1){
-		// 	return 'See participating variants details';
-		// }else{
-			
-		// }
 	}
 }

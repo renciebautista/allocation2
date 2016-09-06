@@ -40,6 +40,13 @@ class MtDtSalesTableSeeder extends CsvSeeder {
 
 		$total = DB::table('mt_dt_sales')->sum('gsv');
 		echo 'Total MT DT Sales : '.$total.PHP_EOL; 
+
+		// update plant code mapping
+		$mappings = ShipToPlantCode::all();
+		foreach ($mappings as $row) {
+			MtDtSales::where('distributor_code', $row->distributor_code)
+				->update(['plant_code' => $row->plant_code]);
+		}
 	}
 
 }

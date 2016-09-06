@@ -28,7 +28,6 @@ class AllocationRepository2  {
 				'customers.area_code_two as area_code_two','multiplier','active','from_dt','sob_customer_code')
 			->join('areas', 'customers.area_code', '=', 'areas.area_code')
 			->join('groups', 'areas.group_code', '=', 'groups.group_code')
-			// ->where('customers.active', 1)
 			->orderBy('groups.id')
 			->orderBy('areas.id')
 			->orderBy('customers.id')
@@ -48,13 +47,12 @@ class AllocationRepository2  {
 
 		// get all ship to
 		$_shiptos = DB::table('ship_tos')
-			->select('customer_code','ship_to_code','ship_to_name','split')
+			->select('customer_code','ship_to_code','ship_to_name','split', 'plant_code')
 			->where('ship_tos.active', 1)
 			->get();
 
 		$_shiptos_list = DB::table('ship_tos')
-			->select('customer_code','ship_to_code','ship_to_name','split')
-			// ->where('ship_tos.active', 1)
+			->select('customer_code','ship_to_code','ship_to_name','split', 'plant_code')
 			->get();
 
 		// get all account
@@ -69,7 +67,6 @@ class AllocationRepository2  {
 			->select('accounts.id','ship_to_code','area_code', 'account_name', 'channel_name','accounts.account_group_code')
 			->join('channels', 'accounts.channel_code', '=', 'channels.channel_code')
 			->join('account_groups', 'accounts.account_group_code', '=', 'account_groups.account_group_code')
-			// ->where('active',1)
 			->get();
 
 		// get all outlet
@@ -135,17 +132,30 @@ class AllocationRepository2  {
 		// Helper::print_r($_chgrp);
 		// get all MT Primary Sales
 		if(in_array("E1398", $_grps)){
-			$this->_mt_primary_sales = DB::table('mt_primary_sales')
-					->select(DB::raw("mt_primary_sales.area_code,mt_primary_sales.customer_code, SUM(gsv) as gsv"))
-					->join(DB::raw("(SELECT DISTINCT(customer_code) FROM customers) customers"), 'mt_primary_sales.customer_code', '=', 'customers.customer_code')
+			// $this->_mt_primary_sales = DB::table('mt_primary_sales')
+			// 		->select(DB::raw("mt_primary_sales.area_code,mt_primary_sales.customer_code, SUM(gsv) as gsv"))
+			// 		->join(DB::raw("(SELECT DISTINCT(customer_code) FROM customers) customers"), 'mt_primary_sales.customer_code', '=', 'customers.customer_code')
+			// 		->whereIn('child_sku_code', $child_skus)
+			// 		->where(function($query) use ($_areas) {
+			// 			if(!empty($_areas['E1398'])){
+			// 				$query->whereIn('mt_primary_sales.area_code', $_areas['E1398']);
+			// 			}
+						
+			// 		})
+			// 		->groupBy(array('mt_primary_sales.area_code','mt_primary_sales.customer_code'))
+			// 		->get();
+
+			$this->_mt_primary_sales = DB::table('mt_dt_sales')
+					->select(DB::raw("mt_dt_sales.area_code,mt_dt_sales.customer_code, SUM(gsv) as gsv"))
+					->join(DB::raw("(SELECT DISTINCT(customer_code) FROM customers) customers"), 'mt_dt_sales.customer_code', '=', 'customers.customer_code')
 					->whereIn('child_sku_code', $child_skus)
 					->where(function($query) use ($_areas) {
 						if(!empty($_areas['E1398'])){
-							$query->whereIn('mt_primary_sales.area_code', $_areas['E1398']);
+							$query->whereIn('mt_dt_sales.area_code', $_areas['E1398']);
 						}
 						
 					})
-					->groupBy(array('mt_primary_sales.area_code','mt_primary_sales.customer_code'))
+					->groupBy(array('mt_dt_sales.area_code','mt_dt_sales.customer_code'))
 					->get();
 		}
 		
@@ -154,10 +164,29 @@ class AllocationRepository2  {
 		if(in_array("E1397", $_grps)){	
 		// get all DT Secondary Sales
 		// dd($channels);
-		$this->_dt_secondary_sales = DB::table('dt_secondary_sales')
-					->select(DB::raw("dt_secondary_sales.area_code,dt_secondary_sales.customer_code, SUM(gsv) as gsv"))
-					->join('sub_channels', 'dt_secondary_sales.coc_03_code', '=', 'sub_channels.coc_03_code')
-					->join(DB::raw("(SELECT DISTINCT(customer_code) FROM customers) customers"), 'dt_secondary_sales.customer_code', '=', 'customers.customer_code')
+		// $this->_dt_secondary_sales = DB::table('dt_secondary_sales')
+		// 			->select(DB::raw("dt_secondary_sales.area_code,dt_secondary_sales.customer_code, SUM(gsv) as gsv"))
+		// 			->join('sub_channels', 'dt_secondary_sales.coc_03_code', '=', 'sub_channels.coc_03_code')
+		// 			->join(DB::raw("(SELECT DISTINCT(customer_code) FROM customers) customers"), 'dt_secondary_sales.customer_code', '=', 'customers.customer_code')
+		// 			->whereIn('child_sku_code', $child_skus)
+		// 			// ->whereIn('channel_code', $channels)
+		// 			->where(function($query) use ($channels) {
+		// 				if(!empty($channels)){
+		// 					$query->whereIn('channel_code', $channels);
+		// 				}		
+		// 			})
+		// 			->where(function($query) use ($_areas) {
+		// 				if(!empty($_areas['E1397'])){
+		// 					$query->whereIn('dt_secondary_sales.area_code', $_areas['E1397']);
+		// 				}		
+		// 			})
+		// 			->groupBy(array('dt_secondary_sales.area_code','dt_secondary_sales.customer_code'))
+		// 			->get();
+
+		$this->_dt_secondary_sales = DB::table('mt_dt_sales')
+					->select(DB::raw("mt_dt_sales.area_code,mt_dt_sales.customer_code, SUM(gsv) as gsv"))
+					->join('sub_channels', 'mt_dt_sales.coc_03_code', '=', 'sub_channels.coc_03_code')
+					->join(DB::raw("(SELECT DISTINCT(customer_code) FROM customers) customers"), 'mt_dt_sales.customer_code', '=', 'customers.customer_code')
 					->whereIn('child_sku_code', $child_skus)
 					// ->whereIn('channel_code', $channels)
 					->where(function($query) use ($channels) {
@@ -167,20 +196,26 @@ class AllocationRepository2  {
 					})
 					->where(function($query) use ($_areas) {
 						if(!empty($_areas['E1397'])){
-							$query->whereIn('dt_secondary_sales.area_code', $_areas['E1397']);
+							$query->whereIn('mt_dt_sales.area_code', $_areas['E1397']);
 						}		
 					})
-					->groupBy(array('dt_secondary_sales.area_code','dt_secondary_sales.customer_code'))
+					->groupBy(array('mt_dt_sales.area_code','mt_dt_sales.customer_code'))
 					->get();
 		}
 
 		// get Ship To Sales
-		$_ship_to_sales = DB::table('ship_to_sales')
-					->select(DB::raw("ship_to_code, SUM(gsv) as gsv"))
-					->whereIn('child_sku_code', $child_skus)
-					->groupBy('ship_to_code')
-					->get();	
+		// $_ship_to_sales = DB::table('ship_to_sales')
+		// 			->select(DB::raw("ship_to_code, SUM(gsv) as gsv"))
+		// 			->whereIn('child_sku_code', $child_skus)
+		// 			->groupBy('ship_to_code')
+		// 			->get();
 
+		$_ship_to_sales = DB::table('mt_dt_sales')
+					->select(DB::raw("distributor_code as ship_to_code, plant_code, SUM(gsv) as gsv"))
+					->whereIn('child_sku_code', $child_skus)
+					->groupBy('plant_code')
+					->get();	
+ 
 		// get Outlet Sales
 		$_outlet_sales = DB::table('outlet_sales')
 					->select('area_code','customer_code','account_name','outlet_code','gsv')
@@ -257,7 +292,6 @@ class AllocationRepository2  {
 														}
 														
 													}
-													
 												}
 											}
 										}
@@ -296,7 +330,7 @@ class AllocationRepository2  {
 						$abort_shipto = false;
 						$_shipto->gsv = '';
 						foreach ($_ship_to_sales as $_ship_to_sale) {
-							if($_shipto->ship_to_code == $_ship_to_sale->ship_to_code){
+							if($_shipto->plant_code == $_ship_to_sale->plant_code){
 								// $_shipto->gsv = $_ship_to_sale->gsv;
 								if(in_array($customer->group_code, $_grps)){
 									if(!empty($_areas[$customer->group_code])){

@@ -137,6 +137,7 @@
 										<li>{{ HTML::linkRoute('customer.index', 'Customer') }}</li> 
 										<li>{{ HTML::linkRoute('customerremap.index', 'Customer Inactive / Active Mapping') }}</li>  
 										<li>{{ HTML::linkRoute('shipto.index', 'Ship To') }}</li>  
+										<li>{{ HTML::linkRoute('shiptoplantcode.index', 'Ship To / Plant Code Mapping') }}</li>  
 										<li>{{ HTML::linkRoute('account.index', 'Account') }}</li> 
 										<li>{{ HTML::linkRoute('channel.index', 'Channel / Sub Channels') }}</li> 
 										

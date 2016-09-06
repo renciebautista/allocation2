@@ -1,9 +1,9 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
-class CreateMtDtSalesTable extends Migration {
+class CreateShipToPlantCodesTable extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -12,18 +12,19 @@ class CreateMtDtSalesTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('mt_dt_sales', function(Blueprint $table)
+		Schema::create('ship_to_plant_codes', function(Blueprint $table)
 		{
-			
 			$table->increments('id');
+			$table->string('group_code');
+			$table->string('group');
 			$table->string('area_code');
+			$table->string('area');
 			$table->string('customer_code');
+			$table->string('customer');
 			$table->string('distributor_code');
+			$table->string('distributor_name');
 			$table->string('plant_code');
-			$table->string('coc_03_code');
-			$table->string('child_sku_code');
-			$table->decimal('gss',15,3);
-			$table->decimal('gsv',15,3);
+			$table->string('ship_to_name');
 		});
 	}
 
@@ -35,7 +36,7 @@ class CreateMtDtSalesTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('mt_dt_sales');
+		Schema::drop('ship_to_plant_codes');
 	}
 
 }

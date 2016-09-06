@@ -3222,6 +3222,12 @@ class ActivityController extends BaseController {
 				$ch->save();
 			}
 		}
+
+		// generate allocations
+
+		TradedealAllocRepository::insertAlllocation($scheme);
+
+
 		
 
 		return Redirect::back()
