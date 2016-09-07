@@ -162,19 +162,32 @@ class Activity extends \Eloquent {
 
 		if(in_array("sob", $required_array)){
 			$_required = false;
+			$_skip_sob = false;
 			$scheme = Scheme::getList($activity->id);
-
 			foreach ($scheme as $row) {
-				$sob = AllocationSob::where('scheme_id', $row->id)->get();
-				if(count($sob) < 1){
-					$_required = true;
+				if($row->compute == 2){
+					$_skip_sob = true;
+					break;
+				}
+				
+			}
+
+
+			if(!$_skip_sob){
+				foreach ($scheme as $row) {
+					$sob = AllocationSob::where('scheme_id', $row->id)->get();
+					if(count($sob) < 1){
+						$_required = true;
+					}
+				}
+
+				if($_required){
+					$required[] = 'SOB Allocation is required.';
+					$return['status'] = 0;
 				}
 			}
 
-			if($_required){
-				$required[] = 'SOB Allocation is required.';
-				$return['status'] = 0;
-			}
+			
 		}
 		
 		if(in_array("fdapermit", $required_array)){
@@ -194,10 +207,23 @@ class Activity extends \Eloquent {
 		}
 
 		if(in_array("submission_deadline", $required_array)){
-			if(strtotime($activity->cycle->submission_deadline) < strtotime(date('Y-m-d'))){
-				$required[] = 'Cycle Submission Deadline is already expired.';
-				$return['status'] = 0;
+			$_skip_sob = false;
+			$scheme = Scheme::getList($activity->id);
+			foreach ($scheme as $row) {
+				if($row->compute == 2){
+					$_skip_sob = true;
+					break;
+				}
+				
 			}
+
+			if(!$_skip_sob){
+				if(strtotime($activity->cycle->submission_deadline) < strtotime(date('Y-m-d'))){
+					$required[] = 'Cycle Submission Deadline is already expired.';
+					$return['status'] = 0;
+				}
+			}
+			
 		}
 
 		if(in_array("material_source", $required_array)){
@@ -212,17 +238,30 @@ class Activity extends \Eloquent {
 			$_failed = false;
 			$scheme = Scheme::getList($activity->id);
 			$schemes = [];
+
+			$_skip_sob = false;
+			$scheme = Scheme::getList($activity->id);
 			foreach ($scheme as $row) {
-				if(strtotime($row['sob_start_date']) < strtotime(date('Y-m-d'))){
-					$schemes[] = $row->name;
-					$_failed = true;
+				if($row->compute == 2){
+					$_skip_sob = true;
+					break;
+				}
+				
+			}
+			if(!$_skip_sob){
+				foreach ($scheme as $row) {
+					if(strtotime($row['sob_start_date']) < strtotime(date('Y-m-d'))){
+						$schemes[] = $row->name;
+						$_failed = true;
+					}
+				}
+
+				if($_failed){
+					$required[] = implode(',', $schemes).' SOB start date is less than today.';
+					$return['status'] = 0;
 				}
 			}
-
-			if($_failed){
-				$required[] = implode(',', $schemes).' SOB start date is less than today.';
-				$return['status'] = 0;
-			}
+			
 		}
 		
 
