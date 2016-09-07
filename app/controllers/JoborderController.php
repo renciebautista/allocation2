@@ -10,7 +10,9 @@ class JoborderController extends \BaseController {
 	 */
 	public function index()
 	{
-		//
+		$joborders = Joborder::unAssigned(Auth::user());
+		$statuses = JoborderStatus::getLists();
+		return View::make('joborders.index',compact('joborders', 'statuses'));
 	}
 
 	/**
@@ -148,47 +150,46 @@ class JoborderController extends \BaseController {
 		}
 	}
 
-	public function unassigned(){
-		$joborders = Joborder::unAssigned(Auth::user());
-		return View::make('joborders.unassigned',compact('joborders'));
-	}
-
-	public function unassignededit($id){
-		$joborder = Joborder::findOrFail($id);
-		$comments = $joborder->comments()->orderBy('created_at')->get();
-		return View::make('joborders.unassignededit',compact('joborder', 'comments'));
-	}
-
-	public function unassignedstore($id){
-		// dd(Input::all());
-		$joborder = Joborder::findOrFail($id);
-		$comment = JoborderComment::create(['joborder_id' => $joborder->id, 
-				'created_by' => Auth::user()->id,
-				'comment' => Input::get('comment')]);
-
-		if(Input::hasFile('files')){
-			$files = Input::file('files');
-			$distination = storage_path().'/joborder_files/';
-			foreach ($files as $file) {
-				if(!empty($file)){
-					$original_file_name = $file->getClientOriginalName();
-					$file_name = pathinfo($original_file_name, PATHINFO_FILENAME);
-					$extension = File::extension($original_file_name);
-					$actual_name = uniqid('img_').'.'.$extension;
-					$file->move($distination,$actual_name);
-
-					CommentFile::create(['comment_id' => $comment->id,
-						'random_name' => $actual_name, 
-						'file_name' => $file_name.'.'.$extension]);
-				}
-				
-			}
-			
-		}
+	// public function departments(){
 		
-		return Redirect::to(URL::action('JoborderController@unassignededit', array('id' => $joborder->id)))
-			->with('class', 'alert-success')
-			->with('message', 'Comment was successfuly posted.');
-	}
+	// }
+
+	// public function unassignededit($id){
+	// 	$joborder = Joborder::findOrFail($id);
+	// 	$comments = $joborder->comments()->orderBy('created_at')->get();
+	// 	return View::make('joborders.unassignededit',compact('joborder', 'comments'));
+	// }
+
+	// public function unassignedstore($id){
+	// 	// dd(Input::all());
+	// 	$joborder = Joborder::findOrFail($id);
+	// 	$comment = JoborderComment::create(['joborder_id' => $joborder->id, 
+	// 			'created_by' => Auth::user()->id,
+	// 			'comment' => Input::get('comment')]);
+
+	// 	if(Input::hasFile('files')){
+	// 		$files = Input::file('files');
+	// 		$distination = storage_path().'/joborder_files/';
+	// 		foreach ($files as $file) {
+	// 			if(!empty($file)){
+	// 				$original_file_name = $file->getClientOriginalName();
+	// 				$file_name = pathinfo($original_file_name, PATHINFO_FILENAME);
+	// 				$extension = File::extension($original_file_name);
+	// 				$actual_name = uniqid('img_').'.'.$extension;
+	// 				$file->move($distination,$actual_name);
+
+	// 				CommentFile::create(['comment_id' => $comment->id,
+	// 					'random_name' => $actual_name, 
+	// 					'file_name' => $file_name.'.'.$extension]);
+	// 			}
+				
+	// 		}
+			
+	// 	}
+		
+	// 	return Redirect::to(URL::action('JoborderController@unassignededit', array('id' => $joborder->id)))
+	// 		->with('class', 'alert-success')
+	// 		->with('message', 'Comment was successfuly posted.');
+	// }
 
 }

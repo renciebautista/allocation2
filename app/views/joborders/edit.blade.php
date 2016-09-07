@@ -89,7 +89,7 @@
 					<textarea name="comment" id="comment"></textarea>
 				</div>
 				<div class="form-group">
-					{{ HTML::linkAction('JoborderController@unassigned', 'Back', array(), array('class' => 'btn btn-default')) }}
+					{{ HTML::linkAction('JoborderController@index', 'Back', array(), array('class' => 'btn btn-default')) }}
 					<button class="btn btn-primary btn-style" type="submit">Submit</button>
 				</div>
 			</div>

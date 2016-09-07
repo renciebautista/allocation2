@@ -246,9 +246,10 @@ Route::group(array('before' => 'auth'), function()
 	Route::delete('joborders/artworkdelete/{file}', ['as' => 'joborders.artworkdelete', 'uses' => 'JoborderController@artworkdelete']);
 
 
-	Route::get('joborders/unassigned', ['as' => 'joborders.unassigned', 'uses' => 'JoborderController@unassigned']);
-	Route::get('joborders/unassigned/{id}/edit', ['as' => 'joborders.unassignededit', 'uses' => 'JoborderController@unassignededit']);
-	Route::post('joborders/unassigned/{id}/edit', ['as' => 'joborders.unassignedstore', 'uses' => 'JoborderController@unassignedstore']);
+	// Route::get('departments/joborders', ['as' => 'joborders.departments', 'uses' => 'JoborderController@departments']);
+	// Route::get('departments/joborders/{id}/edit', ['as' => 'joborders.edit', 'uses' => 'JoborderController@edit']);
+
+	// Route::post('joborders/unassigned/{id}/edit', ['as' => 'joborders.unassignedstore', 'uses' => 'JoborderController@unassignedstore']);
 
 	Route::get('joborderimage/{random_name}', ['as' => 'joborders.download', 'uses' => 'JoborderController@download']);
 

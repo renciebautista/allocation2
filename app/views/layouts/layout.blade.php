@@ -181,8 +181,7 @@
 							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="transaction">Job Orders <span class="caret"></span></a>
 							<ul class="dropdown-menu" aria-labelledby="transaction">
 								
-								<li>{{ HTML::linkRoute('joborders.unassigned', 'Unassigned Department Job Orders') }}</li> 
-								<li>{{ HTML::linkRoute('joborders.assigned', 'Assigned Department Job Orders') }}</li> 
+								<li>{{ HTML::linkRoute('joborders.index', 'Department Job Orders') }}</li> 
 								<li>{{ HTML::linkRoute('joborders.index', 'My Job Orders') }}</li>
 								
 							</ul>

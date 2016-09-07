@@ -11,6 +11,10 @@ class Joborder extends \Eloquent {
 		'details' => 'required'
 	);
 
+	public function activity(){
+		return $this->belongsTo('Activity');
+	}
+
 	public function department(){
 		return $this->belongsTo('Department');
 	}
