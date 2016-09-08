@@ -17,7 +17,7 @@ class AllocationRepository2  {
     }
 
 
-	public function customers($skus, $selected_channels, $selected_customers,$forced_areas){
+	public function customers($skus, $selected_channels, $selected_customers,$forced_areas, $tradedeal = false, $trade_channels){
 
 		$this->_customers = $selected_customers;
 		$salescources = DB::table('split_old_customers')->get();
@@ -188,7 +188,6 @@ class AllocationRepository2  {
 					->join('sub_channels', 'mt_dt_sales.coc_03_code', '=', 'sub_channels.coc_03_code')
 					->join(DB::raw("(SELECT DISTINCT(customer_code) FROM customers) customers"), 'mt_dt_sales.customer_code', '=', 'customers.customer_code')
 					->whereIn('child_sku_code', $child_skus)
-					// ->whereIn('channel_code', $channels)
 					->where(function($query) use ($channels) {
 						if(!empty($channels)){
 							$query->whereIn('channel_code', $channels);
@@ -213,6 +212,11 @@ class AllocationRepository2  {
 		$_ship_to_sales = DB::table('mt_dt_sales')
 					->select(DB::raw("distributor_code as ship_to_code, plant_code, SUM(gsv) as gsv"))
 					->whereIn('child_sku_code', $child_skus)
+					->where(function($query) use ($tradedeal, $trade_channels) {
+						if($tradedeal){
+							$query->whereIn('mt_dt_sales.coc_05_code', $trade_channels);
+						}		
+					})
 					->groupBy('plant_code')
 					->get();	
  

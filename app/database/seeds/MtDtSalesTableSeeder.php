@@ -23,6 +23,20 @@ class MtDtSalesTableSeeder extends CsvSeeder {
 		}
 		$this->filename = $folderpath.$latest.'/mt_dt_sales.csv';
 
+		$this->offset_rows = 1;
+	    $this->mapping = [
+	        2 => 'area_code',
+	        4 => 'customer_code',
+	        7 => 'distributor_code',
+	        9 => 'plant_code',
+	        11 => 'coc_03_code',
+	        13 => 'coc_04_code',
+	        15 => 'coc_05_code',
+	       	17 => 'child_sku_code',
+	       	19 => 'gss',
+	       	20 => 'gsv',
+	    ];
+
 		echo $latest .'-->'.$this->filename.PHP_EOL; 
 
 

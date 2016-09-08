@@ -126,8 +126,8 @@ $(document).ready(function() {
 
 	    	});
 
-	    	var pr = 0;
-	    	pr = buy * total_cost;
+	    	
+	    	pr = total_cost;
 	        // if(uom == 'PIECES'){
 	        // 	pr = buy * total_cost;
 	        // }

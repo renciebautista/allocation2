@@ -14,7 +14,6 @@ class CreateMtDtSalesTable extends Migration {
 	{
 		Schema::create('mt_dt_sales', function(Blueprint $table)
 		{
-			
 			$table->increments('id');
 			$table->string('area_code');
 			$table->string('customer_code');

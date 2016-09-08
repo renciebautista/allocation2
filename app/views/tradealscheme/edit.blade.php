@@ -17,7 +17,7 @@
     <div class="panel-heading">Scheme Details</div>
         <div class="panel-body">
 
-            {{ Form::open(array('action' => array('ActivityController@updatetradedealscheme', $scheme->id), 'files'=>true, 'method' => 'PUT', 'id' => 'updatescheme', 'class' => 'bs-component')) }}
+            {{ Form::open(array('action' => array('TradealSchemeController@update', $scheme->id), 'files'=>true, 'method' => 'PUT', 'id' => 'updatescheme', 'class' => 'bs-component')) }}
 
             {{ Form::hidden('pre_id', $scheme->pre_id, ['id' => 'pre_id']) }}
             {{ Form::hidden('pre', $scheme->pre_desc. ' - ' .$scheme->pre_code, ['id' => 'pre']) }}
@@ -171,7 +171,7 @@
                                 <td>{{ $channel->rtm_tag }}</td>
                                 <td>
                                     @if(!empty($channel->name))
-                                    {{ HTML::linkAction('ActivityController@tradedealscheme' , $channel->name,array('id' => $channel->scheme_id)) }}
+                                    {{ HTML::linkAction('TradealSchemeController@edit' , $channel->name,array('id' => $channel->scheme_id)) }}
                                     @endif
                                 </td>
                             </tr>

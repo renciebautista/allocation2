@@ -6,11 +6,13 @@ class TradedealAllocRepository  {
 		self::save($tradealscheme);
 	}
 
-	// public static function updateAllocation($skus,$scheme){
-	// 	SchemeAllocation::where('scheme_id',$scheme->id)->delete();
-	// 	AllocationSob::where('scheme_id', $scheme->id)->delete();
-	// 	self::save($skus,$scheme);
-	// }
+	public static function updateAllocation($tradealscheme){
+		TradedealSchemeAllocation::where('tradedeal_scheme_id',$tradealscheme->id)->delete();
+		// AllocationSob::where('scheme_id', $scheme->id)->delete();
+		self::save($tradealscheme);
+	}
+
+
 
 	
 	private static function save($tradealscheme){
@@ -20,135 +22,138 @@ class TradedealAllocRepository  {
 		$customers = ActivityCustomer::customers($tradedeal->activity_id);
 		$_channels = ActivityChannel2::channels($tradedeal->activity_id);
 
-		$scheme_skus = TradedealSchemeSku::select('tradedeal_scheme_skus.id', 'tradedeal_part_skus.ref_code')
+		$scheme_skus = TradedealSchemeSku::select('tradedeal_scheme_skus.id', 'tradedeal_part_skus.ref_code', 'qty', 'host_cost', 'host_pcs_case')
 			->join('tradedeal_part_skus', 'tradedeal_scheme_skus.tradedeal_part_sku_id', '=', 'tradedeal_part_skus.id')
 			->where('tradedeal_scheme_id', $tradealscheme->id)
+			->orderBy('tradedeal_part_skus.id')
 			->get();
 
-		$_customers = self::td_customers($tradealscheme);
 
-		// Helper::debug($_customers);
-
-		foreach ($_customers as $customer) {
-			if(!empty($customer->shiptos)){
-				foreach ($customer->shiptos as $shipto) {
-					// Helper::debug($customer->shiptos->ship_to_code);
-					$shipto_alloc = new TradedealSchemeAllocation;
-					$shipto_alloc->tradedeal_scheme_sku_id = 1;
-					$shipto_alloc->area_code = $customer->area_code;
-					$shipto_alloc->area = $customer->area_name;
-					$shipto_alloc->sold_to_code = $customer->customer_code;
-					$shipto_alloc->sold_to = $customer->customer_name;
-					$shipto_alloc->ship_to_code = $shipto->ship_to_code;
-					$shipto_alloc->plant_code = $shipto->plant_code;
-					$shipto_alloc->ship_to_name = $shipto->ship_to_name;
-					$shipto_alloc->sold_to_gsv = 0.00;
-					$shipto_alloc->save();
-				}
-			}
-			
-			
-		}
+		$trade_channels = TradedealSchemeChannel::getChannels($tradealscheme);
 		
-		// foreach ($scheme_skus as $row) {
-		// 	$skus = [];
-		// 	$skus[] = $row->ref_code;
-		// 	$_allocation = new AllocationRepository2;
-		// 	$allocations = $_allocation->customers($skus, $_channels, $customers,$forced_areas);
-		// 	Helper::debug($allocations);
-		// 	foreach ($allocations as $customer) {
-		// 		if(!empty($customer->shiptos)){
-		// 			foreach($customer->shiptos as $shipto){
-		// 				// if(in_array($shipto['ship_to_code'], $_td_customers)){
-		// 					$customer_alloc = new TradedealSchemeAllocation;
-		// 					$customer_alloc->tradedeal_scheme_sku_id = $row->id;
-		// 					$customer_alloc->area_code = $customer->area_code;
-		// 					$customer_alloc->area = $customer->area_name;
-		// 					$customer_alloc->sold_to_code = $customer->customer_code;
-		// 					$customer_alloc->sold_to = $customer->customer_name;
-		// 					$customer_alloc->ship_to_code = $shipto['ship_to_code'];
-		// 					$customer_alloc->plant_code = $shipto['plant_code'];
-		// 					$customer_alloc->ship_to_name = $shipto['ship_to_name'];
-		// 					$customer_alloc->sold_to_gsv = 0.00;
-		// 					$customer_alloc->save();
-		// 				// }
-		// 			}
-		// 		}
+		$td_customers = Level5::getCustomers($trade_channels);
 
-		// 	}
+		$skus = [];
+
+		if($tradealscheme->tradedeal_type_id == 1){
+			foreach ($scheme_skus as $row) {
+				unset($skus);
+				$skus[] = $row;
+				self::generate_allocation($_channels, $customers,$forced_areas,$trade_channels, $td_customers, $tradealscheme, $tradedeal, $skus);
+			}
+		}else{
+			foreach ($scheme_skus as $row) {
+				$skus[] = $row;
+			}
+			self::generate_allocation($_channels, $customers,$forced_areas,$trade_channels, $td_customers, $tradealscheme, $tradedeal, $skus);
+		}
+
+		
+		
+		// if($tradealscheme->tradedeal_type_id == 2){
+		// 	self::generate_allocation($skus, $_channels, $customers,$forced_areas,$trade_channels, $td_customers, $tradealscheme, $tradedeal, $host_sku);
 		// }
 		
 	}
 
-	private static function td_customers($tradealscheme){
-		$trade_channels = TradedealSchemeChannel::getChannels($tradealscheme);
-		
-		$l5s = Level5::whereIn('l5_code',$trade_channels)->get();
-		
-		$l4_codes = [];
-		foreach ($l5s as $row) {
-			$l4_codes[] = $row->l4_code;
+	private static function generate_allocation($_channels, $customers,$forced_areas,$trade_channels, $td_customers, $tradealscheme, $tradedeal, $host_sku){
+		$allocationRepo = new AllocationRepository2;
+		$skus = [];
+		foreach ($host_sku as $row) {
+			$skus[] =  $row->ref_code;
 		}
+		// Helper::debug($skus);
+		$gsvsales = $allocationRepo->customers($skus, $_channels, $customers,$forced_areas, true, $trade_channels, $td_customers);
 
+		if($tradealscheme->tradedeal_type_id == 1){
+			$sku = $host_sku[0];
+		}else{
+			$total_purchase_requirement = 0;
+			// $totat_qty = 0;
+			foreach ($host_sku as $col_sku) {
+				$uom = $tradealscheme->tradedeal_uom_id;
+				$col_sku_pr = $col_sku->qty * $col_sku->host_cost;
+		      	if($uom == 1){
 
-
-		$l4s = Level4::whereIn('l4_code',$l4_codes)->get();
-		$l3_codes = [];
-		foreach ($l4s as $row) {
-			$l3_codes[] = $row->coc_03_code;
-		}
-
-		// Helper::debug($l3_codes);
-
-		$l3s = SubChannel::whereIn('coc_03_code',$l3_codes)->get();
-		$channel_codes = [];
-		foreach ($l3s as $row) {
-			$channel_codes[] = $row->channel_code;
-		}
-
-		$accounts = Account::whereIn('channel_code',$channel_codes)
-			->where('active',1)
-			->get();
-		$shipto_codes = [];
-		foreach ($accounts as $row) {
-			$shipto_codes[] = $row->ship_to_code;
-		}
-
-		// return array_unique($shipto_codes);
-
-		$shiptos = ShipTo::whereIn('ship_to_code',$shipto_codes)
-			->where('active',1)
-			->get();
-
-		// Helper::debug($shipto_codes);
-
-		$customer_codes = [];
-		foreach ($shiptos as $row) {
-			$customer_codes[] = $row->customer_code;
-		}
-
-		$customers = Customer::join('areas', 'areas.area_code', '=', 'customers.area_code')
-			->whereIn('customer_code',$customer_codes)
-			->where('active',1)
-			->orderBy('customer_name')
-			->groupBy('customer_code')
-			->get();
-
-		foreach ($customers as $customer) {
-			$shipto_array = [];
-			foreach ($shiptos as $shipto) {
-				// Helper::debug($shipto);
-				if($shipto->customer_code == $customer->customer_code){
-					// Helper::debug($shipto);
-					$shipto_array[] = $shipto;
-				}
+		      	}
+		        if($uom == 2){
+		        	$col_sku_pr = $col_sku_pr * 12;
+		        }
+		        if($uom == 3){
+		        	$col_sku_pr = $col_sku_pr * $col_sku->host_pcs_case;
+		        }
+		        // $totat_qty = $totat_qty + $col_sku->qty;
+		        $total_purchase_requirement = $total_purchase_requirement + $col_sku_pr;
 			}
-			$customer->shiptos = $shipto_array;
+			$purchase_requirement = $total_purchase_requirement;
 		}
 
-		// Helper::debug($customers);
-		return $customers;
+		// Helper::debug($totat_qty);
 
+		foreach ($td_customers as $customer) {
+			$sold_to_gsv = 0;
+			$computed_deals = 0;
+			foreach ($gsvsales as $sale) {
+				if(!empty($sale->shiptos)){
+					foreach ($sale->shiptos as $shipto) {
+						if($customer->plant_code == $shipto['plant_code']){
+							$sold_to_gsv += $shipto['gsv'];
+						}
+					}
+				}
+				
+			}
+
+			
+
+			if($tradealscheme->tradedeal_type_id == 1){
+
+				// $sold_to_gsv = $sold_to_gsv * $sku->host_pcs_case;
+				
+				$purchase_requirement = 0;
+				$uom = $tradealscheme->tradedeal_uom_id;
+				$purchase_requirement = $sku->qty * $sku->host_cost;
+		      	if($uom == 1){
+
+		      	}
+		        if($uom == 2){
+		        	$purchase_requirement = $purchase_requirement * 12;
+		        }
+		        if($uom == 3){
+		        	$purchase_requirement = $purchase_requirement * $sku->host_pcs_case;
+		        }
+			}else{
+
+			}
+			
+			if($purchase_requirement == 0){
+				$computed_deals = 0;
+			}else{
+				$computed_deals = round(($sold_to_gsv * $tradedeal->alloc_in_weeks) / $purchase_requirement);
+			}
+			
+
+			$shipto_alloc = new TradedealSchemeAllocation;
+			$shipto_alloc->tradedeal_scheme_id = $tradealscheme->id;
+			if($tradealscheme->tradedeal_type_id == 1){
+				$shipto_alloc->tradedeal_scheme_sku_id = $sku->id;
+			}else{
+				$shipto_alloc->tradedeal_scheme_sku_id = 0;
+			}
+			
+			$shipto_alloc->area_code = $customer->area_code;
+			$shipto_alloc->area = $customer->area_name;
+			$shipto_alloc->sold_to_code = $customer->customer_code;
+			$shipto_alloc->sold_to = $customer->customer_name;
+			$shipto_alloc->ship_to_code = $customer->ship_to_code;
+			$shipto_alloc->plant_code = $customer->plant_code;
+			$shipto_alloc->ship_to_name = $customer->ship_to_name;
+			$shipto_alloc->sold_to_gsv = $sold_to_gsv;
+			$shipto_alloc->computed_deals = $computed_deals;
+
+			$shipto_alloc->save();
+			
+		}
 	}
 
 }

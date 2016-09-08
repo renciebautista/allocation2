@@ -789,7 +789,7 @@
 														
 													</td>
 													<td>
-														{{ HTML::linkAction('ActivityController@tradedealscheme' , 'Edit', $scheme->id) }} |
+														{{ HTML::linkAction('TradealSchemeController@edit' , 'Edit', $scheme->id) }} |
 														<a href="javascript:void(0)" id="{{$scheme->id}}" class="deletescheme">Delete</a>
 													</td>
 												</tr>

@@ -29,8 +29,15 @@ class Level5 extends \Eloquent {
 
 	public static function getForTradeDeal(){
 		return self::where('trade_deal',1)
-				->orderBy('l5_desc')
-				->get();;
+			->orderBy('l5_desc')
+			->get();;
+	}
+
+	public static function getL4ByL5($l5_code){
+		return self::where('l5_code',$l5_code)
+			->where('trade_deal',1)
+			->orderBy('l5_desc')
+			->get();;
 	}
 
 	public static function getChannels(){
@@ -43,6 +50,24 @@ class Level5 extends \Eloquent {
 			->join('channels', 'channels.channel_code', '=', 'sub_channels.channel_code')
 			// ->orderBy('channels.channel_name')
 			// ->orderBy('sub_channels.l3_desc')
+			->get();
+	}
+
+	public static function getCustomers($l5_code){
+		return self::select('customers.area_code', 'areas.area_name', 'customers.customer_code',
+			'customers.customer_name', 'ship_tos.ship_to_code', 'ship_tos.plant_code', 'ship_tos.ship_to_name')
+			->join('level4', 'level4.l4_code', '=', 'level5.l4_code')
+			->join('sub_channels', 'sub_channels.coc_03_code', '=', 'level4.coc_03_code')
+			->join('accounts', 'accounts.channel_code', '=', 'sub_channels.channel_code')
+			->join('ship_tos', 'ship_tos.ship_to_code', '=', 'accounts.ship_to_code')
+			->join('customers', 'customers.customer_code', '=', 'ship_tos.customer_code')
+			->join('areas', 'areas.area_code', '=', 'customers.area_code')
+			->whereIn('level5.l5_code', $l5_code)
+			->where('accounts.active',1)
+			->where('ship_tos.active',1)
+			->groupBy('ship_tos.ship_to_code')
+			->orderBy('customers.customer_name')
+			->orderBy('ship_tos.ship_to_name')
 			->get();
 	}
 
