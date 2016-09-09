@@ -41,7 +41,7 @@ Route::get('test', function(){
 		// echo $row->l5_desc . '</br>';
 	}
 
-	echo count($l4_codes). '</br>';
+	echo  count($l4_codes). '</br>';
 
 	// $l4_codes[] = 'C01724';
 
@@ -76,6 +76,8 @@ Route::get('test', function(){
 		->where('active',1)
 		->orderBy('ship_to_name')
 		->get();
+
+	echo count($shiptos). '</br>';
 
 	// $customer_codes = [];
 	// foreach ($shiptos as $row) {

@@ -7,6 +7,8 @@ class UpdateLatestSalesTableSeeder extends Seeder {
 
 	public function run()
 	{
+		set_time_limit(0);
+		ini_set('memory_limit', -1);
 		Eloquent::unguard();
 		DB::statement('SET FOREIGN_KEY_CHECKS=0;');
 		$timeFirst  = strtotime(date('Y-m-d H:i:s'));

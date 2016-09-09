@@ -63,13 +63,13 @@ $(document).ready(function() {
 			$('#non_premium_sku').val('N/A');
 			$('#premium_sku_txt').show();
 			$('#premium_sku').hide();
-
+			 buy = $('#buy').val() || 0;
 			$('#participating_sku').find(' tbody tr').each(function () {
 		        var row = $(this);
 		        var chekcbox = $(this).find('input:checked');
 		        if (chekcbox.is(':checked')){
 			        row.closest("tr").find("input.qty").attr('disabled','disabled').val('1');
-			        buy = 1;
+			       
 			        var cost = accounting.unformat(row.find('td:eq(3)').text()) || 0;
 			        var pr = 0;
 			        if(uom == 'PIECES'){
@@ -92,7 +92,6 @@ $(document).ready(function() {
 			$('.collective').show();
 			$('#premium_sku_txt').hide();
 			$('#premium_sku').show();
-			// $('#p_req').removeAttr('disabled');
 			$('#premium_sku').removeAttr('disabled');
 
 			$('#non_premium_sku').val($('#pre').val());
@@ -125,19 +124,7 @@ $(document).ready(function() {
 		        } 	
 
 	    	});
-
-	    	
 	    	pr = total_cost;
-	        // if(uom == 'PIECES'){
-	        // 	pr = buy * total_cost;
-	        // }
-	        // if(uom == 'DOZENS'){
-	        // 	pr = buy * total_cost * 12;
-	        // }
-	        // if(uom == 'CASES'){
-	        // 	pr = buy * total_cost;
-	        // }
-
 	        $('#p_req').val(accounting.formatNumber(pr,2) || 0);
 
 		}
