@@ -10,7 +10,7 @@ class JoborderController extends \BaseController {
 	 */
 	public function index()
 	{
-		$joborders = Joborder::unAssigned(Auth::user());
+		$joborders = Joborder::departmentJoborder(Auth::user());
 		$statuses = JoborderStatus::getLists();
 		return View::make('joborders.index',compact('joborders', 'statuses'));
 	}
@@ -46,7 +46,7 @@ class JoborderController extends \BaseController {
 	 */
 	public function show($id)
 	{
-		//
+		return Redirect::route('joborders.edit',$id);
 	}
 
 	/**
@@ -61,10 +61,13 @@ class JoborderController extends \BaseController {
 		$joborder = Joborder::findOrFail($id);
 		$artworks = JoborderArtwork::where('joborder_id', $joborder->id)->get();
 		$comments = $joborder->comments()->orderBy('created_at')->get();
-		return View::make('joborders.edit',compact('joborder', 'comments', 'artworks'));
+		$jostatus = JoborderStatus::getLists();
+		$dept_users = User::getDepartmentStaff($joborder->department_id);
+		return View::make('joborders.edit',compact('joborder', 'comments', 'artworks', 'jostatus', 'dept_users'));
 	}
 
 	public function uploadphoto($id){
+		$joborder = Joborder::findOrFail($id);
 		if(Input::hasFile('files')){
 			$files = Input::file('files');
 			$distination = storage_path().'/joborder_files/';
@@ -83,6 +86,7 @@ class JoborderController extends \BaseController {
 				
 			}
 		}
+
 
 		return Redirect::to(URL::action('JoborderController@edit', array('id' => $id)))
 			->with('class', 'alert-success')
@@ -124,7 +128,41 @@ class JoborderController extends \BaseController {
 	 */
 	public function update($id)
 	{
-		//
+		$joborder = Joborder::findOrFail($id);
+		$comment = JoborderComment::create(['joborder_id' => $joborder->id, 
+				'created_by' => Auth::user()->id,
+				'comment' => Input::get('comment')]);
+
+		if(Input::hasFile('files')){
+			$files = Input::file('files');
+			$distination = storage_path().'/joborder_files/';
+			foreach ($files as $file) {
+				if(!empty($file)){
+					$original_file_name = $file->getClientOriginalName();
+					$file_name = pathinfo($original_file_name, PATHINFO_FILENAME);
+					$extension = File::extension($original_file_name);
+					$actual_name = uniqid('img_').'.'.$extension;
+					$file->move($distination,$actual_name);
+
+					CommentFile::create(['comment_id' => $comment->id,
+						'random_name' => $actual_name, 
+						'file_name' => $file_name.'.'.$extension]);
+				}
+				
+			}
+			
+		}
+		
+		if(Input::has('assigned_to')){
+			$joborder->assigned_to = Input::get('assigned_to');
+			$joborder->joborder_status_id = 2;
+			$joborder->save();
+		}
+
+
+		return Redirect::back()
+			->with('class', 'alert-success')
+			->with('message', 'Comment was successfuly posted.');
 	}
 
 	/**
@@ -160,36 +198,8 @@ class JoborderController extends \BaseController {
 	// 	return View::make('joborders.unassignededit',compact('joborder', 'comments'));
 	// }
 
-	// public function unassignedstore($id){
-	// 	// dd(Input::all());
-	// 	$joborder = Joborder::findOrFail($id);
-	// 	$comment = JoborderComment::create(['joborder_id' => $joborder->id, 
-	// 			'created_by' => Auth::user()->id,
-	// 			'comment' => Input::get('comment')]);
-
-	// 	if(Input::hasFile('files')){
-	// 		$files = Input::file('files');
-	// 		$distination = storage_path().'/joborder_files/';
-	// 		foreach ($files as $file) {
-	// 			if(!empty($file)){
-	// 				$original_file_name = $file->getClientOriginalName();
-	// 				$file_name = pathinfo($original_file_name, PATHINFO_FILENAME);
-	// 				$extension = File::extension($original_file_name);
-	// 				$actual_name = uniqid('img_').'.'.$extension;
-	// 				$file->move($distination,$actual_name);
-
-	// 				CommentFile::create(['comment_id' => $comment->id,
-	// 					'random_name' => $actual_name, 
-	// 					'file_name' => $file_name.'.'.$extension]);
-	// 			}
-				
-	// 		}
-			
-	// 	}
+	public function udpate($id){
 		
-	// 	return Redirect::to(URL::action('JoborderController@unassignededit', array('id' => $joborder->id)))
-	// 		->with('class', 'alert-success')
-	// 		->with('message', 'Comment was successfuly posted.');
-	// }
+	}
 
 }

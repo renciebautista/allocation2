@@ -280,5 +280,34 @@ class User extends Eloquent implements ConfideUserInterface {
 			->orderBy('fullname')
 			->lists('fullname', 'id');
 	}
+
+	public static function updateinfo($records){
+		DB::beginTransaction();
+			try {
+				$records->each(function($row)  {
+				if(!is_null($row->email_address)){
+					$user = User::where('email', $row->email_address)->first();
+					if(!empty($user)){
+						$department = Department::firstOrCreate(['department' => $row->department]);
+						$user->department_id = $department->id;
+						$user->save();
+					}
+				}
+				
+			});
+			DB::commit();
+		} catch (\Exception $e) {
+			// dd($e);
+			DB::rollback();
+		}
+	}
+
+	public static function getDepartmentStaff($department_id){
+		
+		return self::select(DB::raw("CONCAT(first_name,' ', last_name) as fullname"), 'id' )
+			->where('active',1)
+			->where('department_id',$department_id)
+			->lists('fullname', 'id');
+	}
 	
 }

@@ -40,7 +40,9 @@
 				</tr>
 				<tr> 
 					<td>Assigned To</td> 
-					<td colspan="3"></td> 
+					<td colspan="3">
+						{{ $joborder->assignedto->getFullname() }}
+					</td> 
 				</tr>
 			</tbody>
 		</table>
@@ -77,22 +79,67 @@
 			<div class="comment_list">
 				<div clas="right">
 					<h3>{{ $comment->createdBy->getFullname()}} <small>{{ Carbon::createFromTimeStamp(strtotime($comment->created_at))->diffForHumans()}}</small></h3>
-					<p><?php echo nl2br($comment->comment) ?></p>
+					<div class="comments">
+						<p><?php echo nl2br($comment->comment) ?></p>
+						<div class="attachment">
+							<ul>
+							@foreach($comment->files as $file)
+							<li>
+								<a target="_blank"href="{{route('joborders.download', $file->random_name)}}">
+									{{ HTML::image('commentimage/'.$file->random_name, $file->file_name) }}
+									<div class="file-name">{{ $file->file_name }}</div>
+								</a>
+								
+							</li>
+							
+							@endforeach
+							</ul>
+						</div>
+						
+					</div>
+					
+
 				</div>
 			</div>
 			@endforeach
+			{{ Form::open(array('route' => array('joborders.update', $joborder->id), 'method' => 'PUT',  'class' => 'bs-component', 'files'=>true)) }}			
 			<div class="form-container">
 				<div class="form-group">
-					<input type="file" name="files[]" id="filer_input2" multiple="multiple">
+					<input type="file" name="files" id="filer_input2" multiple="multiple">
 				</div>
+
+				@if($joborder->joborder_status_id == 1)
+				<div class="form-group">
+					<div class="row">
+						<div class="col-lg-6">
+							{{ Form::label('assigned_to', 'Assign To', array('class' => 'control-label')) }}
+							{{ Form::select('assigned_to', array('0' => 'Please Select') + $dept_users, [], array('class' => 'form-control')) }}
+						</div>
+					</div>
+					
+				</div>
+				<br>
+				@endif
 				<div class="form-group">
 					<textarea name="comment" id="comment"></textarea>
 				</div>
+				<div class="form-group">
+					<div class="row">
+						<div class="col-lg-6">
+							{{ Form::label('status', 'Status', array('class' => 'control-label')) }}
+							{{ Form::select('jo_status', array('0' => 'Please Select') + $jostatus, [], array('class' => 'form-control')) }}
+						</div>
+					</div>
+					
+				</div>
+				<br>
+				
 				<div class="form-group">
 					{{ HTML::linkAction('JoborderController@index', 'Back', array(), array('class' => 'btn btn-default')) }}
 					<button class="btn btn-primary btn-style" type="submit">Submit</button>
 				</div>
 			</div>
+			{{ Form::close()}}
 			
 		</div>
   		

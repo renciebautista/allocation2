@@ -103,7 +103,6 @@
 							</ul>
 						</li>
 						@endif
-
 						
 						
 						@if(Auth::user()->hasRole("ADMINISTRATOR"))
@@ -113,10 +112,10 @@
 								<li class="dropdown-submenu">
 								    <a tabindex="0" data-toggle="dropdown">Users Maintenance</a>
 								    <ul class="dropdown-menu">
-								      <li>{{ HTML::linkRoute('group.index', 'Group') }}</li>  
-											<li>{{ HTML::linkAction('UsersController@index' , 'User') }}</li>
-											<li>{{ HTML::linkAction('UsersController@forapproval' , 'User For Approval') }}</li>
-											<li>{{ HTML::linkAction('DepartmentsController@index' , 'Departments') }}</li>
+								      	<li>{{ HTML::linkRoute('group.index', 'Roles') }}</li>  
+								      	<li>{{ HTML::linkAction('DepartmentsController@index' , 'Departments') }}</li>
+										<li>{{ HTML::linkAction('UsersController@index' , 'Users') }}</li>
+										<li>{{ HTML::linkAction('UsersController@forapproval' , 'Users For Approval') }}</li>
 								    </ul>
 								</li> 
 
@@ -177,15 +176,16 @@
 						</li>
 						@endif
 
+						@if(Auth::user()->ability([], ['manage_department_jo', 'manage_my_jo']))
 						<li class="dropdown">
 							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="transaction">Job Orders <span class="caret"></span></a>
 							<ul class="dropdown-menu" aria-labelledby="transaction">
-								
 								<li>{{ HTML::linkRoute('joborders.index', 'Department Job Orders') }}</li> 
 								<li>{{ HTML::linkRoute('joborders.index', 'My Job Orders') }}</li>
 								
 							</ul>
 						</li>
+						@endif
 
 						<li class="dropdown">
 							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="report">Reports <span class="caret"></span></a>
@@ -268,7 +268,7 @@
 
 					<ul class="nav navbar-nav navbar-right">
 						<li class="dropdown">
-							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="download">{{ ucwords(strtolower(Auth::user()->getFullname())) }} [ {{ Auth::user()->roles[0]->name }} ]<span class="caret"></span></a>
+							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="download">{{ ucwords(strtolower(Auth::user()->getFullname())) }} [ {{ strtoupper(Auth::user()->department->department) }} ]<span class="caret"></span></a>
 							<ul class="dropdown-menu" aria-labelledby="download">  
 								<li>{{ HTML::linkAction('ProfileController@index', 'My Profile') }}</li>  
 								<li>{{ HTML::linkAction('ProfileController@changepassword', 'Change Password') }}</li>  

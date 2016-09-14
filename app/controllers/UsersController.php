@@ -271,4 +271,33 @@ class UsersController extends Controller
 					->with('message', 'User list successfuly updated.');
 
 	}
+
+	public function updateinfo(){
+		return View::make('users.updateinfo');
+	}
+
+	public function uploadinfo(){
+		if(Input::hasFile('file')){
+			$file_path = Input::file('file')->move(storage_path().'/uploads/temp/',Input::file('file')->getClientOriginalName());
+			Excel::selectSheets('Sheet1')->load($file_path, function($reader) {
+				User::updateinfo($reader->get());
+			});
+
+
+			if (File::exists($file_path))
+			{
+			    File::delete($file_path);
+			}
+			
+			return Redirect::action('UsersController@index')
+					->with('class', 'alert-success')
+					->with('message', 'Users information successfuly updated');
+		}else{
+
+			return Redirect::action('UsersController@updateinfo')
+				->with('class', 'alert-danger')
+				->with('message', 'A file upload is required.');
+		}
+		
+	}
 }

@@ -359,6 +359,8 @@ Route::group(array('before' => 'auth'), function()
 		Route::get('launchskus/export','LaunchSkuController@export');
 		Route::resource('launchskus','LaunchSkuController');
 
+		Route::get('group/{id}/permissions','GroupController@permissions');
+		Route::post('group/{id}/updatepermissions','GroupController@updatepermissions');
 		Route::resource('group', 'GroupController');
 
 		Route::get('customerremap/export', 'CustomerRemapController@export');
@@ -436,6 +438,10 @@ Route::group(array('before' => 'auth'), function()
 		Route::get('users/{id}/approve', 'UsersController@approve');
 		Route::post('users/{id}/setapprove', 'UsersController@setapprove');
 		Route::post('users/{id}/deny', 'UsersController@deny');
+
+		Route::get('users/updateinfo', 'UsersController@updateinfo');
+		Route::post('users/uploadinfo', 'UsersController@uploadinfo');
+
 		Route::resource('users', 'UsersController');
 		
 		Route::post('cycle/rerun', 'CycleController@rerun');

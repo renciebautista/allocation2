@@ -79,6 +79,8 @@
 <div class="row">
 	<div class="col-lg-12">
 		{{ HTML::linkAction('UsersController@exportuser' , 'Export User List',array('st' => Input::get('status'),'grp' => Input::get('group'),'ser' => Input::get('search')),['class' => 'btn btn-success']) }}
+		{{ HTML::linkAction('UsersController@updateinfo' , 'Update User Info',[],['class' => 'btn btn-success']) }}
+
 	</div>
 </div>
 <br>
