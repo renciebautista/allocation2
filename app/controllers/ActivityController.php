@@ -286,15 +286,14 @@ class ActivityController extends BaseController {
 			$dealtypes = TradedealType::get()->lists('tradedeal_type', 'id');
 			$dealuoms = TradedealUom::get()->lists('tradedeal_uom', 'id');
 
+			$tradedealschemes = [];
+			$td_shiptos = [];
+			$td_premiums = [];
 			if($tradedeal != null){
 				$tradedealschemes = TradedealScheme::getScheme($tradedeal->id);
-				
-			}else{
-				$tradedealschemes = [];
+				$td_shiptos = TradedealSchemeAllocation::getShiptoBy($activity);
+				$td_premiums = TradedealSchemeFreeItem::getPremiumsBy($activity);
 			}
-			
-			// dd($tradedealschemes);
-			// $activity_roles = ActivityRole::getList($activity->id);
 
 			$force_allocs = ForceAllocation::getlist($activity->id);
 			$areas = Area::getAreaWithGroup();
@@ -307,7 +306,7 @@ class ActivityController extends BaseController {
 					}
 				}
 			}
-			// Helper::print_r($areas);
+
 			if($activity->status_id < 4){
 				$submitstatus = array('1' => 'SUBMIT ACTIVITY','4' => 'SAVE AS DRAFT');
 				$scope_types = ScopeType::getLists($activity->id);
@@ -322,7 +321,7 @@ class ActivityController extends BaseController {
 				 'activity_types', 'divisions' , 'sel_divisions','objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
 				 'sel_objectives',  'schemes', 'scheme_summary', 'networks', 'areas', 'timings' ,'sel_involves',
 				 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings',
-				 'force_allocs', 'comments' ,'submitstatus', 'tradedeal', 'tradedeal_skus', 'dealtypes', 'dealuoms', 'host_skus', 'ref_skus', 'pre_skus', 'tradedealschemes'));
+				 'force_allocs', 'comments' ,'submitstatus', 'tradedeal', 'tradedeal_skus', 'dealtypes', 'dealuoms', 'host_skus', 'ref_skus', 'pre_skus', 'tradedealschemes', 'td_shiptos', 'td_premiums'));
 			}
 
 			if($activity->status_id > 3){
@@ -2857,7 +2856,6 @@ class ActivityController extends BaseController {
 			$err = [];
 			$activity = Activity::find($id);
 			$tradedeal = Tradedeal::where('activity_id', $activity->id)->first();
-			// dd($tradedeal);
 			if(empty($tradedeal)){
 				$err[] = 'No Trade Deal details';
 			}else{
@@ -2866,6 +2864,8 @@ class ActivityController extends BaseController {
 				}else{
 					$host_sku = Pricelist::getSku(Input::get('host_sku'));
 					$ref_sku = Sku::getSku(Input::get('ref_sku'));
+					$ref_sku2 = Pricelist::getSku(Input::get('ref_sku'));
+					// Helper::debug($ref_sku2);
 					$pre_sku = Pricelist::getSku(Input::get('pre_sku'));
 					if(empty($host_sku)){
 						$err[] = 'No selected Host SKU.';
@@ -2890,6 +2890,7 @@ class ActivityController extends BaseController {
 						$part_sku->host_pcs_case = $host_sku->pack_size;
 						$part_sku->ref_code = $ref_sku->sku_code;
 						$part_sku->ref_desc = $ref_sku->sku_desc;
+						$part_sku->ref_pcs_case = $ref_sku2->pack_size;
 
 						if($tradedeal->non_ulp_premium == 1){
 							$part_sku->pre_code = $tradedeal->non_ulp_premium_code;
@@ -3042,32 +3043,83 @@ class ActivityController extends BaseController {
 		$dealuoms = TradedealUom::get()->lists('tradedeal_uom', 'id');
 		$tradedeal_skus = TradedealPartSku::where('activity_id', $activity->id)->get();
 		$channels = TradedealChannel::getSchemeChannels($activity);
-		// $sel_channels = TradedealSchemeChannel::getSelected($scheme);
-		// $sel_hosts = TradedealSchemeSku::getSelected($scheme);
 		return View::make('activity.createtradedealscheme',compact('dealtypes', 'dealuoms', 'tradedeal_skus', 
 			'activity', 'tradedeal', 'channels'));
 
 	}
 
 	public function storetradealscheme($id){
-		// Helper::print_r(Input::all());
+
 		$activity = Activity::findOrFail($id);
 		$tradedeal = Tradedeal::where('activity_id', $activity->id)->first();
+
+		$selected = [];
+		$free_pcs_case = [];
+		$invalid_premiums = true;
+		if(Input::has('skus')){
+			foreach (Input::get('skus') as $value) {
+			 	$selected[] = $value;
+			 	$free_sku = TradedealPartSku::find($value);
+			 	// Helper::debug($free_sku);
+				$free_pcs_case[] = $free_sku->pre_pcs_case;
+			}
+			$result = array_unique($free_pcs_case);
+
+
+
+			if(count($result) > 1){
+				$invalid_premiums = false;
+			}
+		}
+
+
+
+		$deal_type = TradedealType::find(Input::get('deal_type'));
+		$uom = TradedealUom::find(Input::get('uom'));
+
+
+		$invalid_collective = true;
+		
+		if(($deal_type->id == 2) && ($uom->id == 3)){
+			$host_pcs_case = [];
+			foreach ($selected as $value) {
+				$part_sku = TradedealPartSku::find($value);
+				$host_pcs_case[] = $part_sku->host_pcs_case;
+			}
+			$result = array_unique($host_pcs_case);
+
+			if(count($result) > 1){
+				$invalid_collective = false;
+			}
+
+		}
+
+
+		Validator::extend('invalid_premiums', function($attribute, $value, $parameters) {
+		    return $parameters[0];
+		});
+
+		$messages = array(
+		    'invalid_premiums' => 'Combination of Premium SKU with different pcs/case value is not allowed',
+		    'invalid_collective' => 'Combination of participating SKU with different pcs/case value is not allowed',
+		);
+
+
+
+		Validator::extend('invalid_collective', function($attribute, $value, $parameters) {
+		    return $parameters[0];
+		});
+
 		$rules = array(
-		    'skus' => 'required',
+		    'skus' => 'required|invalid_collective:'.$invalid_collective.'|invalid_premiums:'.$invalid_premiums,
 		    'buy' => 'required|numeric',
 		    'free' => 'required|numeric'
 		);
-		$validation = Validator::make(Input::all(), $rules);
+
+		$validation = Validator::make(Input::all(), $rules, $messages);
+
 		if($validation->passes()){
-			$selected = [];
-			if(Input::has('skus')){
-				foreach (Input::get('skus') as $value) {
-				 	$selected[] = $value;
-				}
-			}
-			$deal_type = TradedealType::find(Input::get('deal_type'));
-			$uom = TradedealUom::find(Input::get('uom'));
+
 			if(count($selected) > 0){
 				if($deal_type->id == 1){
 					$buy = str_replace(",", '', Input::get('buy'));
@@ -3080,11 +3132,19 @@ class ActivityController extends BaseController {
 					$scheme->free = $free;
 					$scheme->coverage = str_replace(",", '', Input::get('coverage'));
 					$scheme->tradedeal_uom_id = $uom->id;
+					$pcs_deal = 1;
+					if($scheme->tradedeal_uom_id == 2){
+						$pcs_deal = 12;
+					}
+					if($scheme->tradedeal_uom_id == 3){
+						$pcs_deal = $tradedeal->non_ulp_pcs_case;
+					}
 					if($tradedeal->non_ulp_premium){
 						$scheme->pre_code = $tradedeal->non_ulp_premium_code;
 						$scheme->pre_desc = $tradedeal->non_ulp_premium_desc;
 						$scheme->pre_cost = $tradedeal->non_ulp_premium_cost;
 						$scheme->pre_pcs_case = $tradedeal->non_ulp_pcs_case;
+						$scheme->pcs_deal = $pcs_deal;
 					}else{
 						// $premuim_sku = TradedealPartSku::find(Input::get('premium_sku'));
 						// $scheme->pre_code = $premuim_sku->pre_code;
@@ -3141,9 +3201,11 @@ class ActivityController extends BaseController {
 						$ch->save();
 					}
 				}
+
+				TradedealAllocRepository::updateAllocation($scheme);
 			}
 
-			return Redirect::route('activity.tradedealscheme',$scheme->id)
+			return Redirect::route('tradedealscheme.edit',$scheme->id)
 					->with('class', 'alert-success')
 					->with('message', 'Trade Deal scheme was successfuly created.');
 		}

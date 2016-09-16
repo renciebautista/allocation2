@@ -78,65 +78,141 @@ class TradealSchemeController extends \BaseController {
 	 */
 	public function update($id)
 	{
-		// dd(Input::all());
-		$scheme = TradedealScheme::findOrFail($id);
-		$tradedeal = Tradedeal::find($scheme->tradedeal_id);
+
 		$deal_type = TradedealType::find(Input::get('deal_type'));
 		$uom = TradedealUom::find(Input::get('uom'));
-		$selected = Input::get('ch');
-
-		$buy = str_replace(",", '', Input::get('buy'));
-		$free = str_replace(",", '', Input::get('free'));
-
-		// dd($uom);
-
-		$scheme->tradedeal_id = $tradedeal->id;
-		$scheme->name = $deal_type->tradedeal_type.": ".$buy."+".$free." ".$uom->tradedeal_uom;
-		$scheme->tradedeal_type_id = $deal_type->id;
-		$scheme->buy = $buy;
-		$scheme->free = $free;
-		$scheme->coverage = str_replace(",", '', Input::get('coverage'));
-		$scheme->tradedeal_uom_id = $uom->id;
-		if(Input::has('premium_sku')){
-			$scheme->pre_id = Input::get('premium_sku');
-		}
-		$scheme->save();
-
-		TradedealSchemeSku::where('tradedeal_scheme_id', $scheme->id)->delete();
-		$selectedskus = [];
+		
+		$selected_skus = [];
+		$free_pcs_case = [];
+		$invalid_premiums = true;
 		if(Input::has('skus')){
 			foreach (Input::get('skus') as $value) {
-				if($deal_type->id == 1){
-					TradedealSchemeSku::create(['tradedeal_scheme_id' => $scheme->id,
-					'tradedeal_part_sku_id' => $value,
-					'qty' => 1]);
-				}else{
-					TradedealSchemeSku::create(['tradedeal_scheme_id' => $scheme->id,
-					'tradedeal_part_sku_id' => $value,
-					'qty' => Input::get('qty')[$value]]);
+			 	$selected_skus[] = $value;
+			 	$free_sku = TradedealPartSku::find($value);
+				$free_pcs_case[] = $free_sku->pre_pcs_case;
+			}
+			$result = array_unique($free_pcs_case);
+			if(count($result) > 1){
+				$invalid_premiums = false;
+			}
+		}
+
+		$invalid_collective = true;
+		if(($deal_type->id == 2) && ($uom->id == 3)){
+			$host_pcs_case = [];
+			if(count($selected_skus) > 0){
+				foreach ($selected_skus as $value) {
+					$part_sku = TradedealPartSku::find($value);
+					$host_pcs_case[] = $part_sku->host_pcs_case;
 				}
-				
 			}
+			
+			$result = array_unique($host_pcs_case);
+
+			if(count($result) > 1){
+				$invalid_collective = false;
+			}
+
 		}
 
+		Validator::extend('invalid_collective', function($attribute, $value, $parameters) {
+		    return $parameters[0];
+		});
 
-		TradedealSchemeChannel::where('tradedeal_scheme_id', $scheme->id)->delete();
-		if(Input::has('ch')){
-			foreach ($selected as $value) {
-				$ch = new TradedealSchemeChannel;
-				$ch->tradedeal_scheme_id = $scheme->id;
-				$ch->tradedeal_channel_id = $value;
-				$ch->save();
+		Validator::extend('invalid_premiums', function($attribute, $value, $parameters) {
+		    return $parameters[0];
+		});
+		Validator::extend('invalid_collective', function($attribute, $value, $parameters) {
+		    return $parameters[0];
+		});
+
+		$messages = array(
+		    'invalid_premiums' => 'Combination of Premium SKU with different pcs/case value is not allowed',
+		    'invalid_collective' => 'Combination of participating SKU with different pcs/case value is not allowed',
+		);
+
+
+		$rules = array(
+		    'skus' => 'required|invalid_collective:'.$invalid_collective.'|invalid_premiums:'.$invalid_premiums,
+		    'buy' => 'required|numeric',
+		    'free' => 'required|numeric'
+		);
+
+		$validation = Validator::make(Input::all(), $rules, $messages);
+
+		if($validation->passes()){
+			$scheme = TradedealScheme::findOrFail($id);
+			$tradedeal = Tradedeal::find($scheme->tradedeal_id);
+			$selected = Input::get('ch');
+
+			$buy = str_replace(",", '', Input::get('buy'));
+			$free = str_replace(",", '', Input::get('free'));
+
+			$scheme->tradedeal_id = $tradedeal->id;
+			$scheme->name = $deal_type->tradedeal_type.": ".$buy."+".$free." ".$uom->tradedeal_uom;
+			$scheme->tradedeal_type_id = $deal_type->id;
+			$scheme->buy = $buy;
+			$scheme->free = $free;
+			$scheme->coverage = str_replace(",", '', Input::get('coverage'));
+			$scheme->tradedeal_uom_id = $uom->id;
+
+			$pcs_deal = 1;
+			if($scheme->tradedeal_uom_id == 2){
+				$pcs_deal = 12;
 			}
+			if($scheme->tradedeal_uom_id == 3){
+				$pcs_deal = $tradedeal->non_ulp_pcs_case;
+			}
+			$scheme->pcs_deal = $pcs_deal;
+
+			if(Input::has('premium_sku')){
+				$scheme->pre_id = Input::get('premium_sku');
+			}
+			$scheme->save();
+
+			TradedealSchemeSku::where('tradedeal_scheme_id', $scheme->id)->delete();
+			$selectedskus = [];
+			if(Input::has('skus')){
+				foreach (Input::get('skus') as $value) {
+					if($deal_type->id == 1){
+						TradedealSchemeSku::create(['tradedeal_scheme_id' => $scheme->id,
+						'tradedeal_part_sku_id' => $value,
+						'qty' => 1]);
+					}else{
+						TradedealSchemeSku::create(['tradedeal_scheme_id' => $scheme->id,
+						'tradedeal_part_sku_id' => $value,
+						'qty' => Input::get('qty')[$value]]);
+					}
+					
+				}
+			}
+
+
+			TradedealSchemeChannel::where('tradedeal_scheme_id', $scheme->id)->delete();
+			if(Input::has('ch')){
+				foreach ($selected as $value) {
+					$ch = new TradedealSchemeChannel;
+					$ch->tradedeal_scheme_id = $scheme->id;
+					$ch->tradedeal_channel_id = $value;
+					$ch->save();
+				}
+			}
+
+			// update trade deal scheme allocations
+
+			TradedealAllocRepository::updateAllocation($scheme);
+			
+			return Redirect::back()
+				->with('class', 'alert-success')
+				->with('message', 'Scheme successfuly updated');
 		}
 
-		// update trade deal scheme allocations
-
-		TradedealAllocRepository::updateAllocation($scheme);
-		
 		return Redirect::back()
-			->with('class', 'alert-success')
-			->with('message', 'Scheme successfuly updated');
+				->withInput()
+				->withErrors($validation)
+				->with('class', 'alert-danger')
+				->with('message', 'There were validation errors.');
+		
 	}
 
 	/**

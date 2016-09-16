@@ -8,6 +8,7 @@ class TradedealAllocRepository  {
 
 	public static function updateAllocation($tradealscheme){
 		TradedealSchemeAllocation::where('tradedeal_scheme_id',$tradealscheme->id)->delete();
+		TradedealSchemeFreeItem::where('tradedeal_scheme_id',$tradealscheme->id)->delete();
 		self::save($tradealscheme);
 	}
 
@@ -21,7 +22,8 @@ class TradedealAllocRepository  {
 		$customers = ActivityCustomer::customers($tradedeal->activity_id);
 		$_channels = ActivityChannel2::channels($tradedeal->activity_id);
 
-		$scheme_skus = TradedealSchemeSku::select('tradedeal_scheme_skus.id', 'tradedeal_part_skus.ref_code', 'qty', 'host_cost', 'host_pcs_case')
+		$scheme_skus = TradedealSchemeSku::select('tradedeal_scheme_skus.id', 'tradedeal_part_skus.ref_code', 'qty', 'host_cost', 'host_pcs_case', 'ref_pcs_case',
+			'pre_code', 'pre_desc', 'pre_cost', 'pre_pcs_case')
 			->join('tradedeal_part_skus', 'tradedeal_scheme_skus.tradedeal_part_sku_id', '=', 'tradedeal_part_skus.id')
 			->where('tradedeal_scheme_id', $tradealscheme->id)
 			->orderBy('tradedeal_part_skus.id')
@@ -37,12 +39,28 @@ class TradedealAllocRepository  {
 			foreach ($scheme_skus as $row) {
 				unset($skus);
 				$skus[] = $row;
+				$pcs_deal = 1;
+				$uom = $tradealscheme->tradedeal_uom_id;
+				if($uom == 2){
+					$pcs_deal = 12;
+				}
+
+				if($uom == 3){
+					$pcs_deal = $row->host_pcs_case;
+				}
+
+				TradedealSchemeFreeItem::create(['tradedeal_scheme_id' => $tradealscheme->id,
+					'tradedeal_scheme_sku_id' => $row->id,
+					'pre_code' => $row->pre_code,
+					'pre_desc' => $row->pre_desc
+				]);
 				self::generate_allocation($_channels, $customers,$forced_areas,$trade_channels, $td_customers, $tradealscheme, $tradedeal, $skus);
 			}
 		}else{
 			foreach ($scheme_skus as $row) {
 				$skus[] = $row;
 			}
+
 			self::generate_allocation($_channels, $customers,$forced_areas,$trade_channels, $td_customers, $tradealscheme, $tradedeal, $skus);
 		}
 		
@@ -56,6 +74,7 @@ class TradedealAllocRepository  {
 		}
 		
 		$gsvsales = $allocationRepo->customers($skus, $_channels, $customers,$forced_areas, true, $trade_channels, $td_customers);
+		// Helper::debug($gsvsales);
 		$individual = false;
 		if($tradealscheme->tradedeal_type_id == 1){
 			$individual = true;
@@ -91,11 +110,11 @@ class TradedealAllocRepository  {
 	        	$uom_multiplpier  = 12;
 	        }
 	        if($uom == 3){
-	        	$uom_multiplpier = $sku->host_pcs_case;
+	        	$uom_multiplpier = $host_sku[0]->host_pcs_case;
 	        }
 	       
 			if($individual){
-				$weekly_run_rates = ( $sold_to_gsv / 52 ) * $sku->host_cost ;
+				$weekly_run_rates = ( $sold_to_gsv / 52 ) * $sku->host_cost * $sku->ref_pcs_case ;
 				$pur_req = $sku->host_cost * $tradealscheme->buy * $uom_multiplpier;
 			}else{
 				$total_cost = 0;
@@ -104,7 +123,7 @@ class TradedealAllocRepository  {
 					$total_cost +=  $row->host_cost;
 					$total_pur_req += $row->host_cost * $row->qty * $uom_multiplpier;
 				}
-				$weekly_run_rates = ( $sold_to_gsv / 52 ) * $total_cost;
+				$weekly_run_rates = ( $sold_to_gsv / 52 ) * $total_cost * $host_sku[0]->ref_pcs_case ;
 				$pur_req = $total_pur_req;
 			}
 

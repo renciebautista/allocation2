@@ -29,4 +29,6 @@ class TradedealScheme extends \Eloquent {
 	public function premium(){
 		return $this->pre_desc .' - '.$this->pre_code;
 	}
+
+	
 }

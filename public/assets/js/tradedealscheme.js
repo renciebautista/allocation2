@@ -63,7 +63,8 @@ $(document).ready(function() {
 			$('#non_premium_sku').val('N/A');
 			$('#premium_sku_txt').show();
 			$('#premium_sku').hide();
-			 buy = $('#buy').val() || 0;
+			$('#buy').removeAttr('readonly');
+			buy = $('#buy').val() || 0;
 			$('#participating_sku').find(' tbody tr').each(function () {
 		        var row = $(this);
 		        var chekcbox = $(this).find('input:checked');
@@ -71,6 +72,7 @@ $(document).ready(function() {
 			        row.closest("tr").find("input.qty").attr('disabled','disabled').val('1');
 			       
 			        var cost = accounting.unformat(row.find('td:eq(3)').text()) || 0;
+
 			        var pr = 0;
 			        if(uom == 'PIECES'){
 			        	pr = buy * cost;
@@ -81,25 +83,29 @@ $(document).ready(function() {
 			        if(uom == 'CASES'){
 			        	pr = buy * cost * accounting.unformat(row.find('td:eq(4)').text()) || 0;
 			        }
-			        row.find('td:eq(6)').text(accounting.formatNumber(pr,2) || 0);
+			        row.find('td:eq(7)').text(accounting.formatNumber(pr,2) || 0);
 			    }else{
-			    	row.find('td:eq(6)').text(accounting.formatNumber(0.00,2) || 0);
+			    	row.find('td:eq(7)').text(accounting.formatNumber(0.00,2) || 0);
 			    }
 	    	});
 
-		}else{
+		}else if(individual == 2){
 			$('.individual').hide();
 			$('.collective').show();
 			$('#premium_sku_txt').hide();
 			$('#premium_sku').show();
 			$('#premium_sku').removeAttr('disabled');
 
+			$('#buy').attr('readonly','readonly');
+
 			$('#non_premium_sku').val($('#pre').val());
 
-			var total_cost = 0
+			var total_cost = 0;
+			var total_buy = 1;
 
 			$('#participating_sku').find(' tbody tr').each(function () {
 				var row = $(this);
+				row.find('td:eq(10)').text(accounting.formatNumber(0.00,2) || 0);
 		        var chekcbox = $(this).find('input:checked');
 		        if (chekcbox.is(':checked')){
 		        	row.closest("tr").find("input.qty").removeAttr('disabled');
@@ -115,18 +121,72 @@ $(document).ready(function() {
 			        if(uom == 'CASES'){
 			        	row_cost = qty * cost * accounting.unformat(row.find('td:eq(4)').text()) || 0;
 			        }
-			        row.find('td:eq(8)').text(accounting.formatNumber(row_cost,2) || 0);
+			        row.find('td:eq(10)').text(accounting.formatNumber(row_cost,2) || 0);
 		        	total_cost = total_cost + row_cost;  
+		        	addPremium(chekcbox.val());
+		        	total_buy = total_buy + qty;
+		        }else{
+		        	row.closest("tr").find("input.qty").attr('disabled','disabled');
+		        	removePremium( $(this).find("input[type='checkbox']").val());
+		        } 	
+
+
+	    	});
+	    	pr = total_cost;
+	        $('#p_req').val(accounting.formatNumber(pr,2) || 0);
+	        $('#buy').val(total_buy);
+
+		}else if(individual == 3){
+			$('.individual').hide();
+			$('.collective').show();
+			$('#premium_sku_txt').hide();
+			$('#premium_sku').show();
+			$('#premium_sku').removeAttr('disabled');
+
+			$('#buy').removeAttr('readonly');
+			buy = $('#buy').val() || 0;
+
+			$('#non_premium_sku').val($('#pre').val());
+
+			var total_cost = 0;
+			var total_buy = 1;
+
+			$('#participating_sku').find(' tbody tr').each(function () {
+				var row = $(this);
+				row.find('td:eq(10)').text(accounting.formatNumber(0.00,2) || 0);
+		        var chekcbox = $(this).find('input:checked');
+		        if (chekcbox.is(':checked')){
+		        	row.closest("tr").find("input.qty").attr('disabled','disabled').val('1');
+		        	var cost = accounting.unformat(row.find('td:eq(3)').text()) || 0;
+		        	var row_cost = 0;
+		        	if(uom == 'PIECES'){
+			        	row_cost = buy * cost;
+			        }
+			        if(uom == 'DOZENS'){
+			        	row_cost = buy * cost * 12;
+			        }
+			        if(uom == 'CASES'){
+			        	row_cost = buy * cost * accounting.unformat(row.find('td:eq(4)').text()) || 0;
+			        }
+			        row.find('td:eq(10)').text(accounting.formatNumber(row_cost,2) || 0);
+			        if(total_cost == 0){
+			        	total_cost = row_cost;
+			        }else{
+			        	if(total_cost > row_cost){
+				        	total_cost = row_cost;
+				        }
+			        }
+
 		        	addPremium(chekcbox.val());
 		        }else{
 		        	row.closest("tr").find("input.qty").attr('disabled','disabled');
 		        	removePremium( $(this).find("input[type='checkbox']").val());
 		        } 	
 
+
 	    	});
 	    	pr = total_cost;
 	        $('#p_req').val(accounting.formatNumber(pr,2) || 0);
-
 		}
 
 		

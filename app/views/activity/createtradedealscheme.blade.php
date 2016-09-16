@@ -62,10 +62,11 @@
                             <th><input id="select-all-host" type="checkbox"></th>
                             <th>Qty</th>
                             <th>Host SKU</th>
-                            <th>Cost / Pcs</th>
-                            <th>Pcs / Case</th>
+                            <th class="right">Cost / Pcs</th>
+                            <th class="right">Pcs / Case</th>
                             <th>Premium SKU</th>
-                            <th>Purchase Requirement</th>
+                            <th class="right" style="max-width:100px;">Pcs / Case</th>
+                            <th class="right" style="max-width:150px;">Purchase Requirement</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -79,12 +80,14 @@
                                 </td>
 
                                 <td>{{ $sku->hostDesc() }}</td>
-                                <td>{{ $sku->host_cost }}</td>
-                                <td>{{ $sku->host_pcs_case }}</td>
+                                <td class="right">{{ $sku->host_cost }}</td>
+                                <td class="right">{{ $sku->host_pcs_case }}</td>
                                 <td class="individual">{{ $sku->preDesc() }}</td>
-                                <td class="individual"></td>
+                                <td class="individual right">{{ $sku->pre_pcs_case }}</td>
+                                <td class="individual right"></td>
                                 <td class="collective">N/A</td>
-                                <td class="collective"></td>
+                                <td class="collective right">N/A</td>
+                                <td class="collective right"></td>
                             </tr>
                         @endforeach
                         
@@ -170,7 +173,7 @@
                                 <td>{{ $channel->rtm_tag }}</td>
                                 <td>
                                     @if(!empty($channel->name))
-                                    {{ HTML::linkAction('ActivityController@tradedealscheme' , $channel->name,array('id' => $channel->scheme_id)) }}
+                                    {{ HTML::linkAction('TradealSchemeController@edit' , $channel->name,array('id' => $channel->scheme_id)) }}
                                     @endif
                                 </td>
                             </tr>

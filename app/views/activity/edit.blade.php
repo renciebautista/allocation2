@@ -805,6 +805,57 @@
 			</div>
 		</div>
 
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Allocation Summary</h3>
+			</div>
+			<div class="panel-body">
+				
+				<div >
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="form-group">
+								<div class="row">
+									<div class="col-lg-12">
+										<table id="scheme-table" class="table">
+											<thead>
+												<tr>
+													<th>Area</th>
+													<th>Distributor</th>
+													<th>Scheme</th>
+													<th class="right">Pcs / Deal</th>
+													<th class="right">Collective</th>
+													@foreach($td_premiums as $premium)
+													<th class="right">{{ $premium->pre_desc }}</th>
+													@endforeach
+												</tr>
+											</thead>
+											<tbody>
+											@foreach($td_shiptos as $shipto)
+												<tr>
+													<td>{{ $shipto->area }}</td>
+													<td>{{ $shipto->ship_to_name }}</td>
+													<td>{{ $shipto->scheme_name }}</td>
+													<td class="right">{{ number_format($shipto->pcs_deal,2) }}</td>
+													<td class="right"></td>
+													@foreach($td_premiums as $premium)
+													<td class="right">
+														
+													</td>
+													@endforeach
+												</tr>
+											@endforeach
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
 		
 		<div class="row">
 			<div class="col-lg-12">
