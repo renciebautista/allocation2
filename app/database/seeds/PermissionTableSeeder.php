@@ -14,7 +14,7 @@ class PermissionTableSeeder extends Seeder {
 			$p = Permission::all();
 			if(count($p) > 0){
 				$per = Permission::where('name', $permission['name'])->get();
-				if(empty($per)){
+				if(count($per ) < 1 ){
 					$newPermission = new Permission;
 					$newPermission->name = $permission['name'];
 					$newPermission->display_name = $permission['display_name'];
@@ -22,9 +22,9 @@ class PermissionTableSeeder extends Seeder {
 				}
 			}else{
 				$newPermission = new Permission;
-					$newPermission->name = $permission['name'];
-					$newPermission->display_name = $permission['display_name'];
-					$newPermission->save();
+				$newPermission->name = $permission['name'];
+				$newPermission->display_name = $permission['display_name'];
+				$newPermission->save();
 			}
 			
 			
