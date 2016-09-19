@@ -3130,6 +3130,12 @@ class ActivityController extends BaseController {
 				'created_by' => Auth::user()->id,
 				'comment' => Input::get('details')]);
 
+			$url = route('joborders.edit', $joborder->id); 
+			$message = '<a href="'.$url.'" class="linked-object-link">Job Order #'.$joborder->id.'</a>';
+			ActivityTimeline::addTimeline($activity, Auth::user(), "created a joborder",$message);
+
+
+
 			return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#jo")
 				->with('class', 'alert-success')
 				->with('message', 'Joborder was successfuly created.');
@@ -3153,7 +3159,7 @@ class ActivityController extends BaseController {
 		$comment->comment = Input::get('comment');
 		$comment->save();
 
-		ActivityTimeline::addTimeline($activity, Auth::user(), "add a comment", Input::get('comment'));
+		ActivityTimeline::addTimeline($activity, Auth::user(), "posted a comment", Input::get('comment'));
 
 		return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#comments")
 			->with('class', 'alert-success')

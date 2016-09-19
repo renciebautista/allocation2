@@ -90,13 +90,14 @@
 	<!-- summary -->
 	<div class="tab-pane fade active in" id="timeline">
 		<br>
-		<div class="panel panel-default">
-			<div class="panel-body">
-				<div class="col-md-9 col-sm-9 col-xs-12">
-					<div>
-							@include('shared.timeline2')
-					</div>
-				</div>
+		<div class="col-md-9 col-sm-9 col-xs-12">
+			<div>
+				@include('shared.timeline2')
+			</div>
+		</div>
+		<div class="col-md-3 col-sm-3 col-xs-12">
+			<div>
+				@include('shared.rightside')
 			</div>
 		</div>
 		<div class="row">
