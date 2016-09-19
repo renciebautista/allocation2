@@ -987,7 +987,7 @@ table.dataTable thead tr.even th{
 }
 .comment_list .comment {
 	/*font-size: 12px;*/
-	margin-left: 20px;
+	margin-left: 40px;
 }
 
 .comment_list h3 {
@@ -1029,3 +1029,4 @@ div.mce-edit-area{
     filter:none;
 	padding:5px; 
 }
+

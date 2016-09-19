@@ -94,8 +94,7 @@
 			<div class="panel-body">
 				<div class="col-md-9 col-sm-9 col-xs-12">
 					<div>
-							@include('shared.timeline')
-						
+							@include('shared.timeline2')
 					</div>
 				</div>
 			</div>
@@ -1060,7 +1059,26 @@
 		<div class="panel panel-default">
 		  	<div class="panel-heading">Comments</div>
 		  	<div class="panel-body">
-				
+		  		@foreach($comments as $comment)
+				<div class="comment_list">
+					<div clas="right">
+						<h3>{{ $comment->createdBy->getFullname()}} <small> {{ Carbon::createFromTimeStamp(strtotime($comment->created_at))->diffForHumans()}}</small></h3>
+						<div class="comment">
+							<p><?php echo nl2br($comment->comment) ?></p>
+						</div>
+						
+					</div>
+				</div>
+				@endforeach
+				{{ Form::open(array('action' => array('ActivityController@storecomment', $activity->id) ,'class' => 'bs-component' ,'id' => 'myform', 'files'=>true)) }}
+
+				<div class="form-group">
+					{{ Form::textarea('comment','',array('class' => 'form-control', 'placeholder' => 'Comments', 'rows' => '3')) }}
+				</div>
+				<div class="form-group">
+					<button class="btn btn-primary">Post</button>	    
+				</div>
+				{{ Form::close()}}
 		  	</div>
 		</div>
 

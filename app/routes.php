@@ -156,6 +156,8 @@ Route::group(array('before' => 'auth'), function()
 	// customized
 	Route::get('activity/create/{id}',['as' => 'activity.create', 'uses' => 'ActivityController@create']);
 	Route::post('activity/store/{id}',['as' => 'activity.store', 'uses' => 'ActivityController@store']);
+
+	Route::post('activity/comment/{id}',['as' => 'activity.storecomment', 'uses' => 'ActivityController@storecomment']);
 	
 	Route::resource('activity', 'ActivityController');
 	

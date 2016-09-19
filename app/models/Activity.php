@@ -47,6 +47,11 @@ class Activity extends \Eloquent {
         return $this->belongsToMany('Objective','activity_objectives');
     }
 
+    public function timelines()
+    {
+        return $this->hasMany('ActivityTimeline');
+    }
+
    	public function pmog()
     {
         return $this->belongsToMany('User', 'activity_planners', 'activity_id', 'user_id');

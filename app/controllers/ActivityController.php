@@ -374,6 +374,8 @@ class ActivityController extends BaseController {
 	public function edit($id)
 	{
 		$activity = Activity::findOrFail($id);
+		$comments = ActivityComment::getList($activity->id);
+		$timelines = ActivityTimeline::getTop($activity);
 
 		if($activity->scope_type_id == 1){
 			if(Auth::user()->hasRole("PROPONENT")){
@@ -401,8 +403,6 @@ class ActivityController extends BaseController {
 				$artworks = ActivityArtwork::getList($activity->id);
 				$backgrounds = ActivityBackground::getList($activity->id);
 				$bandings = ActivityBanding::getList($activity->id);
-				// comments
-				$comments = ActivityComment::getList($activity->id);
 
 				$timings = ActivityTiming::getList($activity->id);
 
@@ -477,8 +477,6 @@ class ActivityController extends BaseController {
 				$artworks = ActivityArtwork::getList($activity->id);
 				$backgrounds = ActivityBackground::getList($activity->id);
 				$bandings = ActivityBanding::getList($activity->id);
-				// comments
-				$comments = ActivityComment::getList($activity->id);
 
 				$timings = ActivityTiming::getList($activity->id);
 
@@ -608,7 +606,7 @@ class ActivityController extends BaseController {
 					 'activity_types', 'divisions' ,'objectives',  'users', 'budgets', 'nobudgets', 
 					 'sel_objectives', 'sel_divisions',  'schemes', 'scheme_summary', 'networks', 'timings' ,
 					 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings',
-					 'comments' ,'submitstatus', 'allowAdd', 'joborders', 'show_action', 'allowJo'));
+					 'comments' ,'submitstatus', 'allowAdd', 'joborders', 'show_action', 'allowJo', 'timelines'));
 		}
 		
 	}
@@ -3144,6 +3142,22 @@ class ActivityController extends BaseController {
 					->withErrors($validation)
 					->with('class', 'alert-danger')
 					->with('message', 'There were validation errors.');
+	}
+
+	public function storecomment($id){
+		$activity = Activity::findOrFail($id);
+
+		$comment = new ActivityComment;
+		$comment->created_by = Auth::id();
+		$comment->activity_id =$activity->id;
+		$comment->comment = Input::get('comment');
+		$comment->save();
+
+		ActivityTimeline::addTimeline($activity, Auth::user(), "add a comment", Input::get('comment'));
+
+		return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#comments")
+			->with('class', 'alert-success')
+			->with('message', 'Comments successfuly posted.');
 	}
 
 }

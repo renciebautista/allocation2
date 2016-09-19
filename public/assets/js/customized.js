@@ -3,6 +3,8 @@ $(document).ready(function(){
 	var addMember = $('#addMember');
 	var activity_id = $('#act_id').val();
 
+	
+
 	$('#add-member').on('click', function(){
 		addMember.modal('show');
 	});
