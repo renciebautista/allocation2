@@ -11,12 +11,7 @@ class DepartmentTableSeederTableSeeder extends Seeder {
 		DB::table('departments')->truncate();
 
 		DB::statement("INSERT INTO departments (id, department) VALUES
-			(1, 'ADMIN'),
-			(2, 'CMD'),
-			(3, 'FIELD'),
-			(4, 'CHANNEL'),
-			(5, 'PMOG'),
-			(6, 'OTHERS');");
+			(1, 'ADMINISTRATOR');");
 		DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 	}
 
