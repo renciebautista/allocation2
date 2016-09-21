@@ -156,19 +156,30 @@ class TradealSchemeController extends \BaseController {
 			$scheme->coverage = str_replace(",", '', Input::get('coverage'));
 			$scheme->tradedeal_uom_id = $uom->id;
 
-			$pcs_deal = 1;
-			if($scheme->tradedeal_uom_id == 2){
+			$pcs_deal = 0;
+			if($scheme->tradedeal_uom_id == 1){
+				$pcs_deal = 1;
+			}else if($scheme->tradedeal_uom_id == 2){
 				$pcs_deal = 12;
+			}else{
+				if($tradedeal->non_ulp_premium){
+
+				}else{
+					if(Input::has('skus')){
+						$premium = TradedealPartSku::where('id', Input::get('skus')[0])->first();
+					}
+					$pcs_deal = $premium->pre_pcs_case;
+				}
 			}
-			if($scheme->tradedeal_uom_id == 3){
-				$pcs_deal = $tradedeal->non_ulp_pcs_case;
-			}
+
 			$scheme->pcs_deal = $pcs_deal;
 
 			if(Input::has('premium_sku')){
 				$scheme->pre_id = Input::get('premium_sku');
 			}
 			$scheme->save();
+
+
 
 			TradedealSchemeSku::where('tradedeal_scheme_id', $scheme->id)->delete();
 			$selectedskus = [];
@@ -178,10 +189,14 @@ class TradealSchemeController extends \BaseController {
 						TradedealSchemeSku::create(['tradedeal_scheme_id' => $scheme->id,
 						'tradedeal_part_sku_id' => $value,
 						'qty' => 1]);
-					}else{
+					}else if($deal_type->id == 2){
 						TradedealSchemeSku::create(['tradedeal_scheme_id' => $scheme->id,
 						'tradedeal_part_sku_id' => $value,
 						'qty' => Input::get('qty')[$value]]);
+					}else{
+						TradedealSchemeSku::create(['tradedeal_scheme_id' => $scheme->id,
+						'tradedeal_part_sku_id' => $value,
+						'qty' => 1]);
 					}
 					
 				}

@@ -101,7 +101,7 @@ $(document).ready(function() {
 			$('#non_premium_sku').val($('#pre').val());
 
 			var total_cost = 0;
-			var total_buy = 1;
+			var total_buy = 0;
 
 			$('#participating_sku').find(' tbody tr').each(function () {
 				var row = $(this);

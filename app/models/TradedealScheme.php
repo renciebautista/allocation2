@@ -14,7 +14,10 @@ class TradedealScheme extends \Eloquent {
 	public static function getScheme($id){
 		$data = self::where('tradedeal_id', $id)
 			->with('dealType')
+			->orderBy('tradedeal_type_id')
+			->orderBy('tradedeal_uom_id')
 			->get();
+
 		foreach ($data as $key => $value) {
 			$host_skus = TradedealSchemeSku::with('host')
 				->where('tradedeal_scheme_id', $value->id)->get();

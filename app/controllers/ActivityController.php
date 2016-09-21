@@ -3132,12 +3132,21 @@ class ActivityController extends BaseController {
 					$scheme->free = $free;
 					$scheme->coverage = str_replace(",", '', Input::get('coverage'));
 					$scheme->tradedeal_uom_id = $uom->id;
-					$pcs_deal = 1;
-					if($scheme->tradedeal_uom_id == 2){
+					$pcs_deal = 0;
+					if($scheme->tradedeal_uom_id == 1){
+						$pcs_deal = 1;
+					}else if($scheme->tradedeal_uom_id == 2){
 						$pcs_deal = 12;
-					}
-					if($scheme->tradedeal_uom_id == 3){
-						$pcs_deal = $tradedeal->non_ulp_pcs_case;
+					}else{
+						if($tradedeal->non_ulp_premium){
+
+						}else{
+							if(Input::has('skus')){
+								$premium = TradedealPartSku::where('id', Input::get('skus')[0])->first();
+							}
+							$pcs_deal = $premium->pre_pcs_case;
+						}
+						
 					}
 					if($tradedeal->non_ulp_premium){
 						$scheme->pre_code = $tradedeal->non_ulp_premium_code;
@@ -3152,6 +3161,8 @@ class ActivityController extends BaseController {
 						// $scheme->pre_cost = $premuim_sku->pre_cost;
 						// $scheme->pre_pcs_case = $premuim_sku->pre_pcs_case;
 					}
+					$scheme->pcs_deal = $pcs_deal;
+					
 					$scheme->save();
 					foreach ($selected as $value) {
 						TradedealSchemeSku::create(['qty' => 1, 
@@ -3160,8 +3171,7 @@ class ActivityController extends BaseController {
 					}
 
 
-				}else{
-					// dd(Input::all());
+				}else if($deal_type->id == 2){
 					$buy = str_replace(",", '', Input::get('buy'));
 					$free = str_replace(",", '', Input::get('free'));
 					$scheme = new TradedealScheme;
@@ -3172,6 +3182,23 @@ class ActivityController extends BaseController {
 					$scheme->free = $free;
 					$scheme->coverage = str_replace(",", '', Input::get('coverage'));
 					$scheme->tradedeal_uom_id = $uom->id;
+
+					$pcs_deal = 0;
+					if($scheme->tradedeal_uom_id == 1){
+						$pcs_deal = 1;
+					}else if($scheme->tradedeal_uom_id == 2){
+						$pcs_deal = 12;
+					}else{
+						if($tradedeal->non_ulp_premium){
+
+						}else{
+							$premuim_sku = TradedealPartSku::find(Input::get('premium_sku'));
+							$pcs_deal = $premuim_sku->pre_pcs_case;
+						}
+						
+					}
+					$scheme->pcs_deal = $pcs_deal;
+
 					if($tradedeal->non_ulp_premium){
 						$scheme->pre_code = $tradedeal->non_ulp_premium_code;
 						$scheme->pre_desc = $tradedeal->non_ulp_premium_desc;
@@ -3188,6 +3215,55 @@ class ActivityController extends BaseController {
 					$scheme->save();
 					foreach ($selected as $value) {
 						TradedealSchemeSku::create(['qty' => Input::get('qty')[$value], 
+							'tradedeal_scheme_id' => $scheme->id,
+							'tradedeal_part_sku_id' => $value]);
+					}
+				}else{
+					// dd(Input::all());
+					$buy = str_replace(",", '', Input::get('buy'));
+					$free = str_replace(",", '', Input::get('free'));
+					$scheme = new TradedealScheme;
+					$scheme->tradedeal_id = $tradedeal->id;
+					$scheme->tradedeal_type_id = $deal_type->id;
+					$scheme->name = $deal_type->tradedeal_type.": ".$buy."+".$free." ".$uom->tradedeal_uom;
+					$scheme->buy = $buy;
+					$scheme->free = $free;
+					$scheme->coverage = str_replace(",", '', Input::get('coverage'));
+					$scheme->tradedeal_uom_id = $uom->id;
+
+
+					$pcs_deal = 0;
+					if($scheme->tradedeal_uom_id == 1){
+						$pcs_deal = 1;
+					}else if($scheme->tradedeal_uom_id == 2){
+						$pcs_deal = 12;
+					}else{
+						if($tradedeal->non_ulp_premium){
+
+						}else{
+							$premuim_sku = TradedealPartSku::find(Input::get('premium_sku'));
+							$pcs_deal = $premuim_sku->pre_pcs_case;
+						}
+						
+					}
+					$scheme->pcs_deal = $pcs_deal;
+					
+					if($tradedeal->non_ulp_premium){
+						$scheme->pre_code = $tradedeal->non_ulp_premium_code;
+						$scheme->pre_desc = $tradedeal->non_ulp_premium_desc;
+						$scheme->pre_cost = $tradedeal->non_ulp_premium_cost;
+						$scheme->pre_pcs_case = $tradedeal->non_ulp_pcs_case;
+					}else{
+						$premuim_sku = TradedealPartSku::find(Input::get('premium_sku'));
+						$scheme->pre_id = $premuim_sku->id;
+						$scheme->pre_code = $premuim_sku->pre_code;
+						$scheme->pre_desc = $premuim_sku->pre_desc;
+						$scheme->pre_cost = $premuim_sku->pre_cost;
+						$scheme->pre_pcs_case = $premuim_sku->pre_pcs_case;
+					}
+					$scheme->save();
+					foreach ($selected as $value) {
+						TradedealSchemeSku::create(['qty' => 1, 
 							'tradedeal_scheme_id' => $scheme->id,
 							'tradedeal_part_sku_id' => $value]);
 					}
@@ -3224,6 +3300,8 @@ class ActivityController extends BaseController {
 			if(empty($tradedealscheme)){
 				$arr['success'] = 0;
 			}else{
+				TradedealSchemeAllocation::where('tradedeal_scheme_id', $tradedealscheme->id)->delete();
+				TradedealSchemeFreeItem::where('tradedeal_scheme_id', $tradedealscheme->id)->delete();
 				TradedealSchemeSku::where('tradedeal_scheme_id', $tradedealscheme->id)->delete();
 				TradedealSchemeChannel::where('tradedeal_scheme_id', $tradedealscheme->id)->delete();
 				$tradedealscheme->delete();

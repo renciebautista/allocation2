@@ -68,8 +68,8 @@
                             <th class="right">Cost / Pcs</th>
                             <th class="right">Pcs / Case</th>
                             <th>Premium SKU</th>
-                            <th class="right">Pcs / Case</th>
-                            <th class="right">Purchase Requirement</th>
+                            <th class="right" style="max-width:100px;">Pcs / Case</th>
+                            <th class="right" style="max-width:150px;">Purchase Requirement</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -88,7 +88,8 @@
                                 <td class="individual right">{{ $sku->pre_pcs_case }}</td>
                                 <td class="individual right"></td>
                                 <td class="collective">N/A</td>
-                                <td class="collective"></td>
+                                <td class="collective right">N/A</td>
+                                <td class="collective right"></td>
                             </tr>
                         @endforeach
                         

@@ -39,16 +39,6 @@ class TradedealAllocRepository  {
 			foreach ($scheme_skus as $row) {
 				unset($skus);
 				$skus[] = $row;
-				$pcs_deal = 1;
-				$uom = $tradealscheme->tradedeal_uom_id;
-				if($uom == 2){
-					$pcs_deal = 12;
-				}
-
-				if($uom == 3){
-					$pcs_deal = $row->host_pcs_case;
-				}
-
 				TradedealSchemeFreeItem::create(['tradedeal_scheme_id' => $tradealscheme->id,
 					'tradedeal_scheme_sku_id' => $row->id,
 					'pre_code' => $row->pre_code,
@@ -56,10 +46,27 @@ class TradedealAllocRepository  {
 				]);
 				self::generate_allocation($_channels, $customers,$forced_areas,$trade_channels, $td_customers, $tradealscheme, $tradedeal, $skus);
 			}
-		}else{
+		}else if($tradealscheme->tradedeal_type_id == 2){
 			foreach ($scheme_skus as $row) {
 				$skus[] = $row;
 			}
+
+			self::generate_allocation($_channels, $customers,$forced_areas,$trade_channels, $td_customers, $tradealscheme, $tradedeal, $skus);
+		}else{
+			$lowest_cost = 0;
+			$skus = [];
+			foreach ($scheme_skus as $row) {
+				if($lowest_cost == 0){
+			        	$lowest_cost = $row->host_cost;
+			        	$skus[0] = $row;
+			        }else{
+			        	if($lowest_cost > $row->host_cost){
+				        	$lowest_cost = $row->host_cost;
+				        	$skus[0] = $row;
+				        }
+			        }
+			}
+			// Helper::debug($skus);
 
 			self::generate_allocation($_channels, $customers,$forced_areas,$trade_channels, $td_customers, $tradealscheme, $tradedeal, $skus);
 		}
@@ -75,13 +82,13 @@ class TradedealAllocRepository  {
 		
 		$gsvsales = $allocationRepo->customers($skus, $_channels, $customers,$forced_areas, true, $trade_channels, $td_customers);
 		// Helper::debug($gsvsales);
-		$individual = false;
-		if($tradealscheme->tradedeal_type_id == 1){
-			$individual = true;
-		}
+		// $individual = false;
+		// if($tradealscheme->tradedeal_type_id == 1){
+		// 	$individual = true;
+		// }
 
 
-		if($individual){
+		if(($tradealscheme->tradedeal_type_id == 1) || ($tradealscheme->tradedeal_type_id == 3)){
 			$sku = $host_sku[0];
 		}
 
@@ -112,11 +119,13 @@ class TradedealAllocRepository  {
 	        if($uom == 3){
 	        	$uom_multiplpier = $host_sku[0]->host_pcs_case;
 	        }
+
+	        // Helper::debug($tradealscheme->tradedeal_type_id);
 	       
-			if($individual){
+			if($tradealscheme->tradedeal_type_id == 1){
 				$weekly_run_rates = ( $sold_to_gsv / 52 ) * $sku->host_cost * $sku->ref_pcs_case ;
 				$pur_req = $sku->host_cost * $tradealscheme->buy * $uom_multiplpier;
-			}else{
+			}else if($tradealscheme->tradedeal_type_id == 2){
 				$total_cost = 0;
 				$total_pur_req = 0;
 				foreach ($host_sku as $row) {
@@ -125,6 +134,10 @@ class TradedealAllocRepository  {
 				}
 				$weekly_run_rates = ( $sold_to_gsv / 52 ) * $total_cost * $host_sku[0]->ref_pcs_case ;
 				$pur_req = $total_pur_req;
+			}else{
+				// Helper::debug(1);
+				$weekly_run_rates = ( $sold_to_gsv / 52 ) * $sku->host_cost * $sku->ref_pcs_case ;
+				$pur_req = $sku->host_cost * $tradealscheme->buy * $uom_multiplpier;
 			}
 
 			$computed_pcs = round($weekly_run_rates * $tradedeal->alloc_in_weeks / $pur_req) * $uom_multiplpier * $tradealscheme->free;
@@ -132,7 +145,7 @@ class TradedealAllocRepository  {
 			if(!empty($tradealscheme)){
 				$shipto_alloc = new TradedealSchemeAllocation;
 				$shipto_alloc->tradedeal_scheme_id = $tradealscheme->id;
-				if($individual){
+				if($tradealscheme->tradedeal_type_id == 1){
 					$shipto_alloc->tradedeal_scheme_sku_id = $sku->id;
 				}else{
 					$shipto_alloc->tradedeal_scheme_sku_id = 0;

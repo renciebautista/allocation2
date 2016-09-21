@@ -14,7 +14,8 @@ class TradedealSchemeAllocation extends \Eloquent {
 			->where('activity_id', $activity->id)
 			->orderBy('area')
 			->orderBy('ship_to_name')
-			->orderBy('tradedeal_schemes.name')
+			->orderBy('tradedeal_schemes.tradedeal_type_id')
+			->orderBy('tradedeal_schemes.tradedeal_uom_id')
 			->groupBy('scheme_name', 'plant_code')
 			->get();
 
