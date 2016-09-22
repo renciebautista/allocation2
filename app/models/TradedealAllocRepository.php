@@ -124,7 +124,9 @@ class TradedealAllocRepository  {
 				}
 				
 			}
-
+			
+			$cov_multiplier = $tradealscheme->coverage/100;
+			$sold_to_gsv = $sold_to_gsv * $cov_multiplier;
 
 			$uom_multiplpier  = 1;
 			if($uom == 1){
