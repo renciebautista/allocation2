@@ -840,7 +840,11 @@
 													<td class="right"></td>
 													@foreach($td_premiums as $premium)
 													<td class="right">
-														
+														@foreach($shipto->allocs as $key => $alloc)
+															@if($key == $premium->pre_code)
+																{{ $alloc }}
+															@endif
+														@endforeach
 													</td>
 													@endforeach
 												</tr>

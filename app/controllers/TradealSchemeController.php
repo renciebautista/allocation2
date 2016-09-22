@@ -163,13 +163,14 @@ class TradealSchemeController extends \BaseController {
 				$pcs_deal = 12;
 			}else{
 				if($tradedeal->non_ulp_premium){
-
+					$pcs_deal = $tradedeal->non_ulp_pcs_case;
 				}else{
 					if(Input::has('skus')){
 						$premium = TradedealPartSku::where('id', Input::get('skus')[0])->first();
 					}
 					$pcs_deal = $premium->pre_pcs_case;
 				}
+				
 			}
 
 			$scheme->pcs_deal = $pcs_deal;
@@ -178,7 +179,6 @@ class TradealSchemeController extends \BaseController {
 				$scheme->pre_id = Input::get('premium_sku');
 			}
 			$scheme->save();
-
 
 
 			TradedealSchemeSku::where('tradedeal_scheme_id', $scheme->id)->delete();

@@ -8,7 +8,6 @@ class TradedealAllocRepository  {
 
 	public static function updateAllocation($tradealscheme){
 		TradedealSchemeAllocation::where('tradedeal_scheme_id',$tradealscheme->id)->delete();
-		TradedealSchemeFreeItem::where('tradedeal_scheme_id',$tradealscheme->id)->delete();
 		self::save($tradealscheme);
 	}
 
@@ -39,19 +38,20 @@ class TradedealAllocRepository  {
 			foreach ($scheme_skus as $row) {
 				unset($skus);
 				$skus[] = $row;
-				TradedealSchemeFreeItem::create(['tradedeal_scheme_id' => $tradealscheme->id,
-					'tradedeal_scheme_sku_id' => $row->id,
-					'pre_code' => $row->pre_code,
-					'pre_desc' => $row->pre_desc
-				]);
 				self::generate_allocation($_channels, $customers,$forced_areas,$trade_channels, $td_customers, $tradealscheme, $tradedeal, $skus);
 			}
 		}else if($tradealscheme->tradedeal_type_id == 2){
 			foreach ($scheme_skus as $row) {
 				$skus[] = $row;
 			}
+			if(!$tradedeal->non_ulp_premium){
+				$collective_premium = TradedealPartSku::findOrFail($tradealscheme->pre_id);
+			}else{
+				$collective_premium = $tradedeal;
+			}
+			
 
-			self::generate_allocation($_channels, $customers,$forced_areas,$trade_channels, $td_customers, $tradealscheme, $tradedeal, $skus);
+			self::generate_allocation($_channels, $customers,$forced_areas,$trade_channels, $td_customers, $tradealscheme, $tradedeal, $skus, $collective_premium);
 		}else{
 			$lowest_cost = 0;
 			$skus = [];
@@ -66,31 +66,48 @@ class TradedealAllocRepository  {
 				        }
 			        }
 			}
-			// Helper::debug($skus);
 
-			self::generate_allocation($_channels, $customers,$forced_areas,$trade_channels, $td_customers, $tradealscheme, $tradedeal, $skus);
+			
+
+			if(!$tradedeal->non_ulp_premium){
+				$collective_premium = TradedealPartSku::findOrFail($tradealscheme->pre_id);
+			}else{
+				$collective_premium = $tradedeal;
+			}
+
+			self::generate_allocation($_channels, $customers,$forced_areas,$trade_channels, $td_customers, $tradealscheme, $tradedeal, $skus, $collective_premium);
 		}
 		
 	}
 
-	private static function generate_allocation($_channels, $customers,$forced_areas,$trade_channels, $td_customers, $tradealscheme, $tradedeal, $host_sku){
+	private static function generate_allocation($_channels, $customers,$forced_areas,$trade_channels, $td_customers, $tradealscheme, $tradedeal, $host_sku, $collective_premium = null){
 		$allocationRepo = new AllocationRepository2;
 		$skus = [];
+
 		foreach ($host_sku as $row) {
-			$skus[] =  $row->ref_code;
+			$skus[] = $row->ref_code;
 		}
 		
 		$gsvsales = $allocationRepo->customers($skus, $_channels, $customers,$forced_areas, true, $trade_channels, $td_customers);
-		// Helper::debug($gsvsales);
-		// $individual = false;
-		// if($tradealscheme->tradedeal_type_id == 1){
-		// 	$individual = true;
-		// }
 
+		
 
-		if(($tradealscheme->tradedeal_type_id == 1) || ($tradealscheme->tradedeal_type_id == 3)){
+		if(!is_null($collective_premium)){
+			if(isset($collective_premium->pre_code)){
+				$premium['pre_code'] = $collective_premium->pre_code;
+				$premium['pre_desc'] = $collective_premium->pre_desc;
+			}else{
+				$premium['pre_code'] = $collective_premium->non_ulp_premium_code;
+				$premium['pre_desc'] = $collective_premium->non_ulp_premium_desc;
+			}
 			$sku = $host_sku[0];
+		}else{
+			$sku = $host_sku[0];
+			$premium['pre_code'] = $host_sku[0]->pre_code;
+			$premium['pre_desc'] = $host_sku[0]->pre_desc;
 		}
+		
+		// Helper::debug($sku);
 
 		$uom = $tradealscheme->tradedeal_uom_id;
 
@@ -119,8 +136,6 @@ class TradedealAllocRepository  {
 	        if($uom == 3){
 	        	$uom_multiplpier = $host_sku[0]->host_pcs_case;
 	        }
-
-	        // Helper::debug($tradealscheme->tradedeal_type_id);
 	       
 			if($tradealscheme->tradedeal_type_id == 1){
 				$weekly_run_rates = ( $sold_to_gsv / 52 ) * $sku->host_cost * $sku->ref_pcs_case ;
@@ -135,7 +150,6 @@ class TradedealAllocRepository  {
 				$weekly_run_rates = ( $sold_to_gsv / 52 ) * $total_cost * $host_sku[0]->ref_pcs_case ;
 				$pur_req = $total_pur_req;
 			}else{
-				// Helper::debug(1);
 				$weekly_run_rates = ( $sold_to_gsv / 52 ) * $sku->host_cost * $sku->ref_pcs_case ;
 				$pur_req = $sku->host_cost * $tradealscheme->buy * $uom_multiplpier;
 			}
@@ -145,12 +159,14 @@ class TradedealAllocRepository  {
 			if(!empty($tradealscheme)){
 				$shipto_alloc = new TradedealSchemeAllocation;
 				$shipto_alloc->tradedeal_scheme_id = $tradealscheme->id;
-				if($tradealscheme->tradedeal_type_id == 1){
-					$shipto_alloc->tradedeal_scheme_sku_id = $sku->id;
-				}else{
+
+				if($tradealscheme->tradedeal_type_id > 1){
 					$shipto_alloc->tradedeal_scheme_sku_id = 0;
+				}else{
+					$shipto_alloc->tradedeal_scheme_sku_id = $sku->id;
 				}
 				
+
 				$shipto_alloc->area_code = $customer->area_code;
 				$shipto_alloc->area = $customer->area_name;
 				$shipto_alloc->sold_to_code = $customer->customer_code;
@@ -162,6 +178,10 @@ class TradedealAllocRepository  {
 				$shipto_alloc->weekly_run_rates = $weekly_run_rates;
 				$shipto_alloc->pur_req = $pur_req;
 				$shipto_alloc->computed_pcs = $computed_pcs;
+
+				$shipto_alloc->pre_code = $premium['pre_code'];
+				$shipto_alloc->pre_desc = $premium['pre_desc'];
+
 				$shipto_alloc->save();
 			}
 			
