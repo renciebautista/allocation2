@@ -824,7 +824,6 @@
 													<th>Distributor</th>
 													<th>Scheme</th>
 													<th class="right">Pcs / Deal</th>
-													<th class="right">Collective</th>
 													@foreach($td_premiums as $premium)
 													<th class="right">{{ $premium->pre_desc }}</th>
 													@endforeach
@@ -837,7 +836,6 @@
 													<td>{{ $shipto->ship_to_name }}</td>
 													<td>{{ $shipto->scheme_name }}</td>
 													<td class="right">{{ number_format($shipto->pcs_deal,2) }}</td>
-													<td class="right"></td>
 													@foreach($td_premiums as $premium)
 													<td class="right">
 														@foreach($shipto->allocs as $key => $alloc)

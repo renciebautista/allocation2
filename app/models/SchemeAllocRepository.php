@@ -16,6 +16,7 @@ class SchemeAllocRepository
 		$activity = Activity::find($scheme->activity_id);
 		$forced_areas = ForceAllocation::getForcedAreas($scheme->activity_id);
 		$customers = ActivityCustomer::customers($scheme->activity_id);
+
 		$_channels = ActivityChannel2::channels($scheme->activity_id);
 
 

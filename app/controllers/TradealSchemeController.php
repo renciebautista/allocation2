@@ -84,6 +84,7 @@ class TradealSchemeController extends \BaseController {
 		
 		$selected_skus = [];
 		$free_pcs_case = [];
+
 		$invalid_premiums = true;
 		if(Input::has('skus')){
 			foreach (Input::get('skus') as $value) {
@@ -91,6 +92,7 @@ class TradealSchemeController extends \BaseController {
 			 	$free_sku = TradedealPartSku::find($value);
 				$free_pcs_case[] = $free_sku->pre_pcs_case;
 			}
+			
 			$result = array_unique($free_pcs_case);
 			if(count($result) > 1){
 				$invalid_premiums = false;
