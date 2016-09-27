@@ -625,8 +625,9 @@ class ActivityController extends BaseController {
 	 * @return Response
 	 */
 	public function update($id)
-	{
-		if(Auth::user()->hasRole("PROPONENT")){
+	{	
+		if(Auth::user()->ability([], ['create_national', 'create_customized'])){
+		// if(Auth::user()->hasRole("PROPONENT")){
 			if(Request::ajax()){
 				$activity = Activity::find($id);
 				if((empty($activity)) || (!Activity::myActivity($activity))){
