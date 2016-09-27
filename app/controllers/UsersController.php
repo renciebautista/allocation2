@@ -58,7 +58,7 @@ class UsersController extends Controller
 				$user->department_id = Input::get('department_id');
 				$user->save();
 
-				dd($user);
+				// dd($user);
 
 				$role = Role::find(Input::get('group_id'));
 
