@@ -58,6 +58,8 @@ class UsersController extends Controller
 				$user->department_id = Input::get('department_id');
 				$user->save();
 
+				dd($user);
+
 				$role = Role::find(Input::get('group_id'));
 
 				$user->roles()->attach($role->id); // id only

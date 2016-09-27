@@ -30,4 +30,29 @@ class Department extends \Eloquent {
 		}
 		return false;
 	}
+
+	public static function import($records){
+		DB::beginTransaction();
+			try {
+			$records->each(function($row)  {
+				if(!is_null($row->department)){
+
+					$department = self::find($row->id);
+					// dd($department);
+					if(empty($department)){
+						$department = new Department;
+						$department->department = $row->department;
+						$department->save();
+					}else{
+						$department->department = $row->department;
+						$department->update();
+					}
+				}
+				
+			});
+			DB::commit();
+		} catch (\Exception $e) {
+			DB::rollback();
+		}
+	}
 }

@@ -10,7 +10,7 @@ class User extends Eloquent implements ConfideUserInterface {
 
     
     public static $rules = array(
-    	'username' => 'required|unique:users',
+    	'username' => 'required|alpha_num|unique:users',
     	'password' => 'required|min:6|confirmed',
 		'password_confirmation' => 'same:password',
 		'email' => 'required|email|unique:users',

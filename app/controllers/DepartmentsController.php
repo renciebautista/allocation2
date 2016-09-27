@@ -164,4 +164,33 @@ class DepartmentsController extends \BaseController {
 		});
 	}
 
+	public function upload(){
+		return View::make('departments.upload');
+	}
+
+	public function uploaddepartment(){
+		if(Input::hasFile('file')){
+			$file_path = Input::file('file')->move(storage_path().'/uploads/temp/',Input::file('file')->getClientOriginalName());
+			Excel::selectSheets('Sheet1')->load($file_path, function($reader) {
+				Department::import($reader->get());
+			});
+
+
+			if (File::exists($file_path))
+			{
+			    File::delete($file_path);
+			}
+			
+			return Redirect::action('DepartmentsController@index')
+					->with('class', 'alert-success')
+					->with('message', 'Department list successfuly updated');
+		}else{
+
+			return Redirect::action('DepartmentsController@upload')
+				->with('class', 'alert-danger')
+				->with('message', 'A file upload is required.');
+		}
+		
+	}
+
 }

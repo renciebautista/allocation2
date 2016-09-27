@@ -472,6 +472,7 @@ Route::group(array('before' => 'auth'), function()
 
 		Route::get('departments/export', ['as' => 'departments.export', 'uses' => 'DepartmentsController@export']);
 		Route::get('departments/upload', ['as' => 'departments.upload', 'uses' => 'DepartmentsController@upload']);
+		Route::post('departments/upload', ['as' => 'departments.uploaddepartment', 'uses' => 'DepartmentsController@uploaddepartment']);
 		Route::resource('departments', 'DepartmentsController');
 
 		Route::resource('tasks', 'TasksController');
