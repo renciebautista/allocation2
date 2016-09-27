@@ -10,7 +10,9 @@ class PermissionTableSeeder extends Seeder {
 		$permissions = [['name' => 'manage_department_jo', 'display_name' => 'Manage Department Job Orders'],
 		['name' => 'manage_my_jo', 'display_name' => 'Manage My Job Orders'],
 		['name' => 'create_national', 'display_name' => 'Allow to create National Activity'],
-		['name' => 'create_customized', 'display_name' => 'Allow to create Customized Activity']];
+		['name' => 'create_customized', 'display_name' => 'Allow to create Customized Activity'],
+		['name' => 'update_customized', 'display_name' => 'Allow to update Customized Activity'],
+		['name' => 'update_national', 'display_name' => 'Allow to update National Activity']];
 		foreach ($permissions as $permission) {
 			// dd($permission['display_name']);
 			$p = Permission::all();

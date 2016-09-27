@@ -628,7 +628,7 @@ class ActivityController extends BaseController {
 	{	
 		$activity = Activity::findOrFail($id);
 
-		if(Auth::user()->ability([], ['create_national', 'create_customized'])){ // if(Auth::user()->hasRole("PROPONENT")){
+		if(Auth::user()->ability([], ['update_customized', 'update_national'])){ // if(Auth::user()->hasRole("PROPONENT")){
 			if(Request::ajax()){
 				if((empty($activity)) || (!Activity::myActivity($activity))){
 					$arr['success'] = 0;
