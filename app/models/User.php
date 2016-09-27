@@ -31,7 +31,7 @@ class User extends Eloquent implements ConfideUserInterface {
   }
 
 
-	public static function search($status,$type,$search){
+	public static function search($department, $status, $type, $search){
 		return self::select('users.id', 'users.first_name', 'users.last_name','users.email','users.active', 'department')
 			->join('assigned_roles', 'users.id', '=', 'assigned_roles.user_id')
 			->join('departments', 'departments.id', '=', 'users.department_id', 'left')
@@ -53,6 +53,12 @@ class User extends Eloquent implements ConfideUserInterface {
 			->where(function($query) use ($type){
 				if($type > 0){
 					$query->where('role_id', $type);
+				}
+					
+			})
+			->where(function($query) use ($department){
+				if($department > 0){
+					$query->where('department_id', $department);
 				}
 					
 			})

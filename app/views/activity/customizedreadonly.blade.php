@@ -17,6 +17,12 @@
 	<div class="col-lg-12">
 		<div class="form-group">
 			{{ HTML::linkRoute('activity.index', 'Back To Activity List', array(), array('class' => 'btn btn-default')) }}
+			@if($show_action)
+			<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myAction">
+			  	Actions
+			</button>
+			@endif
+
 			<div class="btn-group">
                   <a href="#" class="btn btn-info">Options</a>
                   <a href="#" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="caret"></span></a>
@@ -37,7 +43,7 @@
   	<div class="modal-dialog">
   		<div class="modal-content">
   			
-	    	{{ Form::open(array('action' => array('ActivityController@updateactivity', $activity->id), 'class' => 'bs-component','id' => 'submitactivity')) }}
+	    	{{ Form::open(array('action' => array('ActivityController@updateactivity', $activity->id), 'class' => 'bs-component','id' => 'updateactivity')) }}
 	      	<div class="modal-header">
 	        	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</button>
 	        	<h4 class="modal-title" id="myModalLabel">Activity Actions</h4>
@@ -86,8 +92,7 @@
 			<div class="panel-body">
 				<div class="col-md-9 col-sm-9 col-xs-12">
 					<div>
-						@include('shared.timeline')
-						
+						@include('shared.timeline2')
 					</div>
 				</div>
 			</div>
@@ -972,23 +977,18 @@
 		<div class="panel panel-default">
 		  	<div class="panel-heading">Comments</div>
 		  	<div class="panel-body">
-				<ul class="comment">
-					@foreach($comments as $comment)
-	                <li class="left clearfix">
-	                    <div class="comment-body clearfix">
-	                        <div class="header">
-	                            <strong class="primary-font">{{ $comment->createdby->getFullname()}} 
-	                            	<p class="{{ $comment->class }}">({{ $comment->comment_status }})</p>
-	                            </strong> 
-	                            <small class="pull-right text-muted">
-	                                <i class="fa fa-clock-o fa-fw"></i>{{ date_format(date_create($comment->created_at),'m/d/Y H:m:s') }} 
-	                            </small>
-	                        </div>
-	                        <p>{{ $comment->comment }}</p>
-	                    </div>
-	                </li>
-	                @endforeach
-	            </ul>
+		  		@foreach($comments as $comment)
+				<div class="comment_list">
+					<div clas="right">
+						<h3>{{ $comment->createdBy->getFullname()}} <small> {{ Carbon::createFromTimeStamp(strtotime($comment->created_at))->diffForHumans()}}</small></h3>
+						<div class="comment">
+							<p><?php echo nl2br($comment->comment) ?></p>
+						</div>
+						
+					</div>
+				</div>
+				@endforeach
+				
 		  	</div>
 		</div>
 

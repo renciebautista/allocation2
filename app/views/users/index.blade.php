@@ -17,26 +17,37 @@
 	<div class="panel-body">
 		{{ Form::open(array('method' => 'get','class' => 'bs-component')) }}
 		<div class="row">
-			<div class="col-lg-6">
+			<div class="col-lg-4">
 				<div class="form-group">
 					<div class="row">
 						<div class="col-lg-12">
-						{{ Form::label('status', 'Status', array('class' => 'control-label')) }}
-						{{ Form::select('status', array('0' => 'ALL STATUS') + $status , null, array('id' => 'status','class' => 'form-control')) }}
+						{{ Form::label('department', 'Department', array('class' => 'control-label')) }}
+						{{ Form::select('department', array('0' => 'ALL DEPARTMENT') + $departments , null, array('id' => 'departments','class' => 'form-control')) }}
 						</div>
 					</div>
 				</div>
 			</div>
-			<div class="col-lg-6">
+			<div class="col-lg-4">
 				<div class="form-group">
 					<div class="row">
 						<div class="col-lg-12">
-						{{ Form::label('group', 'Group', array('class' => 'control-label')) }}
+						{{ Form::label('group', 'Role', array('class' => 'control-label')) }}
 						{{ Form::select('group', array('0' => 'ALL GROUP') + $groups, null, array('id' => 'cycle','class' => 'form-control')) }}
 						</div>
 					</div>
 				</div>
 			</div>
+			<div class="col-lg-4">
+				<div class="form-group">
+					<div class="row">
+						<div class="col-lg-12">
+						{{ Form::label('status', 'Status', array('class' => 'control-label')) }}
+						{{ Form::select('status', array('0' => 'ALL STATUS') + $status, null, array('id' => 'status','class' => 'form-control')) }}
+						</div>
+					</div>
+				</div>
+			</div>
+			
 		</div>
 
 		<div class="row">

@@ -89,10 +89,12 @@
 						<div class="col-lg-12">
 							<div class="search">
 								<button type="submit" class="btn btn-success"><i class="fa fa-search"></i> Search</button>
-								@if(Auth::user()->inRoles(['PROPONENT']))
+								@if(Auth::user()->ability([], ['create_national']))
 								<a href="{{ URL::action('ActivityController@create', 1) }}" class="btn btn-primary">Add New National Activity</a>
 								@endif
+								@if(Auth::user()->ability([], ['create_customized']))
 								<a href="{{ URL::action('ActivityController@create', 2) }}" class="btn btn-primary">Add New Customized Activity</a>
+								@endif
 							</div>
 						</div>
 					</div>

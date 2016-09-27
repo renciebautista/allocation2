@@ -71,17 +71,19 @@
 								<li>{{ HTML::linkAction('activity.index' , 'Unreleased',array('st' => ['1','2','3','4','5','6','7','8'],'title' => '')) }}</li>  
 								<li>{{ HTML::linkAction('activity.index' , 'Released',array('st' => ['9'],'title' => '')) }}</li>  
 
+								@if(Auth::user()->ability([], ['create_national', 'create_customized']))
 								<li class="dropdown-submenu">
 								    <a tabindex="0" data-toggle="dropdown">New Activity</a>
 								    <ul class="dropdown-menu">
-								    	@if(Auth::user()->inRoles(['PROPONENT']))
+								    	@if(Auth::user()->ability([], ['create_national']))
 								      	<li>{{ HTML::linkAction('ActivityController@create', 'National', [1]) }}</li> 
 								      	@endif
-		
+										@if(Auth::user()->ability([], ['create_customized']))
 										<li>{{ HTML::linkAction('ActivityController@create', 'Customized', [2]) }}</li>
-										
+										@endif
 								    </ul>
 								</li>
+								@endif
 						
 								 
 								@endif

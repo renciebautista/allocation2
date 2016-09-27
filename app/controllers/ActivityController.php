@@ -79,7 +79,6 @@ class ActivityController extends BaseController {
 				$activity_types = ActivityType::getWithNetworks();
 				$cycles = Cycle::getLists();
 				$divisions = Pricelist::divisions();
-				
 				$objectives = Objective::getLists();
 				return View::make('activity.create', compact('scope_types', 'planners', 'approvers', 'cycles',
 				 'activity_types', 'divisions' , 'objectives',  'users', 'type'));
@@ -87,7 +86,6 @@ class ActivityController extends BaseController {
 
 			return Response::make(View::make('shared/404'), 404);
 		}else{
-			// customized
 			$activity_types = ActivityType::getWithNetworks();
 			$cycles = Cycle::getLists();
 			$objectives = Objective::getLists();
@@ -587,10 +585,18 @@ class ActivityController extends BaseController {
 							if($activity_member->activity_member_status_id > 1){
 								$show_action = false;
 								$allowAdd = true;
+								if($activity_member->activity_member_status_id == 2){
+									$view = 'activity.customizedreadonly';
+								}else{
+									$view = 'activity.customizededit';
+								}
+								
+							}else{
+								$submitstatus = array('3' => 'APPROVE','2' => 'DENY');
+								$view = 'activity.customizedreadonly';
 							}
 							
-							$submitstatus = array('3' => 'APPROVE','2' => 'DENY');
-							$view = 'activity.customizededit';
+							
 						}
 					}else{
 						$show_action = false;
@@ -1115,6 +1121,7 @@ class ActivityController extends BaseController {
 	}
 
 	public function updateactivity($id){
+
 		if(Request::ajax()){
 
 			$activity = Activity::findOrFail($id);
@@ -1138,6 +1145,16 @@ class ActivityController extends BaseController {
 						// dd(Input::get('submitstatus'));
 						$member->activity_member_status_id = Input::get('submitstatus');
 						$member->save();
+
+						if(Input::get('submitstatus') == 3){
+							ActivityTimeline::addTimeline($activity, Auth::user(), "approved the activity", Input::get('submitremarks'));
+						}
+
+						if(Input::get('submitstatus') == 2){
+							ActivityTimeline::addTimeline($activity, Auth::user(), "denied the activity", Input::get('submitremarks'));
+						}
+
+
 
 
 						if(!$activity->channel_approved){

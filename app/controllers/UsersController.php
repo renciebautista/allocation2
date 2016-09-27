@@ -11,10 +11,11 @@ class UsersController extends Controller
 	public function index()
 	{
 		Input::flash();
+		$departments = Department::getLists();
 		$status = array('1' => 'ACTIVE','2' => 'IN-ACTIVE');
 		$groups = Role::getLists();
-		$users = User::search(Input::get('status'),Input::get('group'),Input::get('search'));
-		return View::make('users.index',compact('users', 'status', 'groups'));
+		$users = User::search(Input::get('department'), Input::get('status'),Input::get('group'),Input::get('search'));
+		return View::make('users.index',compact('users', 'status', 'groups', 'departments'));
 	}
 
 	/**
