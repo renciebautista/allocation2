@@ -470,7 +470,8 @@ Route::group(array('before' => 'auth'), function()
 
 		Route::resource('sobholiday', 'SobholidaysController');
 
-
+		Route::get('departments/export', ['as' => 'departments.export', 'uses' => 'DepartmentsController@export']);
+		Route::get('departments/upload', ['as' => 'departments.upload', 'uses' => 'DepartmentsController@upload']);
 		Route::resource('departments', 'DepartmentsController');
 
 		Route::resource('tasks', 'TasksController');

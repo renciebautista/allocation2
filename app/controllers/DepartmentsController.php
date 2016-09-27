@@ -154,4 +154,14 @@ class DepartmentsController extends \BaseController {
 				->with('message', $message);
 	}
 
+	public function export(){
+		$departments = Department::all();
+		Excel::create("Department", function($excel) use($departments){
+			$excel->sheet('Sheet1', function($sheet) use($departments) {
+				$sheet->fromModel($departments,null, 'A1', true);
+
+			})->download('xls');
+		});
+	}
+
 }

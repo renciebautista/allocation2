@@ -21,6 +21,9 @@
 		  	</div>
 		  	<button type="submit" class="btn btn-success"><i class="fa fa-search"></i> Search</button>
 		  	<a href="{{ URL::action('DepartmentsController@create') }}" class="btn btn-primary"><i class="fa fa-plus"></i> Department</a>
+		  	<a href="{{ URL::action('DepartmentsController@export') }}" class="btn btn-success"> Export</a>
+		  	<a href="{{ URL::action('DepartmentsController@upload') }}" class="btn btn-success"> Upload</a>
+
 		{{ Form::close() }}
 	</div>
 </div>
