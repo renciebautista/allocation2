@@ -626,10 +626,10 @@ class ActivityController extends BaseController {
 	 */
 	public function update($id)
 	{	
-		if(Auth::user()->ability([], ['create_national', 'create_customized'])){
-		// if(Auth::user()->hasRole("PROPONENT")){
+		$activity = Activity::findOrFail($id);
+
+		if(Auth::user()->ability([], ['create_national', 'create_customized'])){ // if(Auth::user()->hasRole("PROPONENT")){
 			if(Request::ajax()){
-				$activity = Activity::find($id);
 				if((empty($activity)) || (!Activity::myActivity($activity))){
 					$arr['success'] = 0;
 				}else{
@@ -700,25 +700,25 @@ class ActivityController extends BaseController {
 								}
 							}
 							
-							// add planner
+							// update planner
 							ActivityRepository::addPlanner($activity);
 							
-							// add approver
+							// update approver
 							ActivityRepository::addApprovers($activity,$cycle);
 
-							// add division
+							// update division
 							ActivityRepository::addDivisions($activity);
 
-							// add category
+							// update category
 							ActivityRepository::addCategories($activity);
 
-							// add brand
+							// update brand
 							ActivityRepository::addBrands($activity);
 
-							// add skus
+							// update skus
 							ActivityRepository::addSkus($activity);
 							
-							// add objective
+							// update objective
 							ActivityRepository::addObjectives($activity);
 							
 
@@ -758,7 +758,6 @@ class ActivityController extends BaseController {
 
 		if(Auth::user()->hasRole("PMOG PLANNER")){
 			if(Request::ajax()){
-				$activity = Activity::find($id);
 				if((empty($activity)) || (!ActivityPlanner::myActivity($activity->id))){
 					$arr['success'] = 0;
 				}else{
@@ -782,8 +781,8 @@ class ActivityController extends BaseController {
 
 							$activity->activity_code =  ActivityRepository::generateActivityCode($activity,$scope,$cycle,$activity_type,$division_code,$category_code,$brand_code);
 							
-							$activity->scope_type_id = $scope_id;
-							$activity->scope_desc = $scope->scope_name;
+							// $activity->scope_type_id = $scope_id;
+							// $activity->scope_desc = $scope->scope_name;
 
 							$activity->cycle_id = $cycle_id;
 							$activity->cycle_desc = $cycle->cycle_name;
