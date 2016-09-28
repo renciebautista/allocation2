@@ -2866,8 +2866,9 @@ class ActivityController extends BaseController {
 				}else{
 					$host_sku = Pricelist::getSku(Input::get('host_sku'));
 					$ref_sku = Sku::getSku(Input::get('ref_sku'));
+
 					$ref_sku2 = Pricelist::getSku(Input::get('ref_sku'));
-					// Helper::debug($ref_sku2);
+
 					$pre_sku = Pricelist::getSku(Input::get('pre_sku'));
 					if(empty($host_sku)){
 						$err[] = 'No selected Host SKU.';
@@ -2888,6 +2889,7 @@ class ActivityController extends BaseController {
 						$part_sku->activity_id = $id;
 						$part_sku->host_code = $host_sku->sap_code;
 						$part_sku->host_desc = $host_sku->sap_desc;
+						$part_sku->brand_shortcut = $host_sku->brand_shortcut;
 						$part_sku->host_cost = $host_sku->price;
 						$part_sku->host_pcs_case = $host_sku->pack_size;
 						$part_sku->ref_code = $ref_sku->sku_code;
@@ -2983,7 +2985,6 @@ class ActivityController extends BaseController {
 					TradedealSchemeChannel::where('tradedeal_scheme_id', $row->id)->delete();
 					$row->delete();
 				}
-				TradedealHostSku::where('tradedeal_part_sku_id', $part_sku->id)->delete();
 				$part_sku->delete();
 				$arr['success'] = 1;
 				
@@ -3055,6 +3056,8 @@ class ActivityController extends BaseController {
 
 		$activity = Activity::findOrFail($id);
 		$tradedeal = Tradedeal::where('activity_id', $activity->id)->first();
+		$deal_type = TradedealType::find(Input::get('deal_type'));
+		$uom = TradedealUom::find(Input::get('uom'));
 
 		$selected = [];
 		$free_pcs_case = [];
@@ -3067,17 +3070,13 @@ class ActivityController extends BaseController {
 			}
 			$result = array_unique($free_pcs_case);
 
-
-
-			if(count($result) > 1){
-				$invalid_premiums = false;
+			if($uom->id == 3){
+				if(count($result) > 1){
+					$invalid_premiums = false;
+				}
 			}
+			
 		}
-
-
-
-		$deal_type = TradedealType::find(Input::get('deal_type'));
-		$uom = TradedealUom::find(Input::get('uom'));
 
 
 		$invalid_collective = true;

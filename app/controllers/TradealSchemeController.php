@@ -92,11 +92,13 @@ class TradealSchemeController extends \BaseController {
 			 	$free_sku = TradedealPartSku::find($value);
 				$free_pcs_case[] = $free_sku->pre_pcs_case;
 			}
-			
-			$result = array_unique($free_pcs_case);
-			if(count($result) > 1){
-				$invalid_premiums = false;
+			if($uom->id == 3){
+				$result = array_unique($free_pcs_case);
+				if(count($result) > 1){
+					$invalid_premiums = false;
+				}
 			}
+			
 		}
 
 		$invalid_collective = true;
@@ -218,6 +220,7 @@ class TradealSchemeController extends \BaseController {
 			// update trade deal scheme allocations
 
 			TradedealAllocRepository::updateAllocation($scheme);
+			LeTemplateRepository::generateTemplate($scheme);
 			
 			return Redirect::back()
 				->with('class', 'alert-success')

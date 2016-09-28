@@ -12,8 +12,6 @@ class TradedealAllocRepository  {
 	}
 
 
-
-	
 	private static function save($tradealscheme){
 		$tradedeal = Tradedeal::find($tradealscheme->tradedeal_id);
 		$activity = Activity::find($tradedeal->activity_id);

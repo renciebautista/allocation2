@@ -80,5 +80,22 @@ class TradedealSchemeAllocation extends \Eloquent {
 
 	}
 
+	public static function getAllocation($scheme,$host_sku){
+		return self::where('tradedeal_scheme_id', $scheme->id)
+		->where('tradedeal_scheme_sku_id', $host_sku->id)
+		->get();
+	}
+
+	public static function getCollectiveAllocation($scheme){
+		return self::where('tradedeal_scheme_id', $scheme->id)
+		->get();
+	}
+
+	public static function getTotalDeals($scheme,$host_sku){
+		return self::where('tradedeal_scheme_id', $scheme->id)
+			->where('tradedeal_scheme_sku_id', $host_sku->id)
+			->sum('computed_pcs');
+	}
+
 	
 }
