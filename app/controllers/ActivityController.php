@@ -628,6 +628,12 @@ class ActivityController extends BaseController {
 	{	
 		$activity = Activity::findOrFail($id);
 
+		#initiator
+
+		#planner for national
+
+		#member 
+
 		if(Auth::user()->ability([], ['update_customized', 'update_national'])){ // if(Auth::user()->hasRole("PROPONENT")){
 			if(Request::ajax()){
 				if((empty($activity)) || (!Activity::myActivity($activity))){
