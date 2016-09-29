@@ -62,8 +62,9 @@ class JoborderController extends \BaseController {
 		$artworks = JoborderArtwork::where('joborder_id', $joborder->id)->get();
 		$comments = $joborder->comments()->orderBy('created_at')->get();
 		$jostatus = JoborderStatus::getLists();
+		$joudpatestatus = JoborderStatus::getUpdateLists();
 		$dept_users = User::getDepartmentStaff($joborder->department_id);
-		return View::make('joborders.edit',compact('joborder', 'comments', 'artworks', 'jostatus', 'dept_users'));
+		return View::make('joborders.edit',compact('joborder', 'comments', 'artworks', 'jostatus', 'dept_users', 'joudpatestatus'));
 	}
 
 	public function uploadphoto($id){

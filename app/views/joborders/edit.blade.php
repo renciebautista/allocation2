@@ -151,15 +151,17 @@
 						<div class="form-group">
 							<textarea name="comment" id="comment"></textarea>
 						</div>
+						@if(($joborder->joborder_status_id > 1) && (Auth::user()->ability([], ['manage_department_jo'])))
 						<div class="form-group">
 							<div class="row">
 								<div class="col-lg-6">
 									{{ Form::label('status', 'Status', array('class' => 'control-label')) }}
-									{{ Form::select('jo_status', array('0' => 'Please Select') + $jostatus, [], array('class' => 'form-control')) }}
+									{{ Form::select('jo_status', array('0' => 'Please Select') + $joudpatestatus, [], array('class' => 'form-control')) }}
 								</div>
 							</div>
 							
 						</div>
+						@endif
 						<br>
 						
 						<div class="form-group">
