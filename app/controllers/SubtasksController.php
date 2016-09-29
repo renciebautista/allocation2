@@ -38,7 +38,7 @@ class SubtasksController extends \BaseController {
 	public function store()
 	{
 		$input = Input::all();
-		$validation = Validator::make($input, Subtask::$rules);
+		$validation = Validator::make($input, SubTask::$rules);
 
 		if($validation->passes())
 		{
