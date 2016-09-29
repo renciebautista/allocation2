@@ -762,7 +762,8 @@ class ActivityController extends BaseController {
 			}
 		}
 
-		if(Auth::user()->hasRole("PMOG PLANNER")){
+		// if(Auth::user()->hasRole("PMOG PLANNER")){
+		if(ActivityPlanner::myActivity($activity->id)){
 			if(Request::ajax()){
 				if((empty($activity)) || (!ActivityPlanner::myActivity($activity->id))){
 					$arr['success'] = 0;

@@ -19,6 +19,10 @@
 					<td>{{ date_format(date_create($joborder->created_at),'m/d/Y H:m:s') }}</td> 
 				</tr>
 				<tr> 
+					<td>Activity</td> 
+					<td colspan="3">{{ $joborder->activity->id}} - {{ $joborder->activity->circular_name }}</td> 
+				</tr>
+				<tr> 
 					<td>Status</td> 
 					<td colspan="3">{{ $joborder->status->joborder_status }}</td> 
 				</tr>
@@ -37,6 +41,12 @@
 				<tr> 
 					<td>End Date</td> 
 					<td colspan="3">{{ date_format(date_create($joborder->end_date),'m/d/Y') }}</td> 
+				</tr>
+				<tr> 
+					<td>Created By</td> 
+					<td colspan="3">
+						{{ $joborder->createdBy->getFullname() }}
+					</td> 
 				</tr>
 				<tr> 
 					<td>Assigned To</td> 

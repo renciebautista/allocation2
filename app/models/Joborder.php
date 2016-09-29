@@ -16,6 +16,10 @@ class Joborder extends \Eloquent {
 	}
 
 	public function assignedto(){
+		return $this->belongsTo('User', 'assignedto');
+	}
+
+	public function createdBy(){
 		return $this->belongsTo('User', 'created_by');
 	}
 

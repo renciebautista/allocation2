@@ -422,7 +422,8 @@ class SchemeController extends \BaseController {
 				}
 			}
 
-			if(Auth::user()->hasRole("PMOG PLANNER")){
+			// if(Auth::user()->hasRole("PMOG PLANNER")){
+			if(ActivityPlanner::myActivity($activity->id)){
 				if($activity->status_id == 4){
 					return View::make('scheme.edit',compact('scheme', 'activity_schemes', 'id_index', 'activity', 'skus', 'sel_skus', 'sel_hosts',
 						'sel_premuim','allocations', 'total_sales', 'qty','id', 'summary', 'total_gsv','ac_groups', 'groups','host_sku','premuim_sku',
