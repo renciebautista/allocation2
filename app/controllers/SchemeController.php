@@ -247,6 +247,7 @@ class SchemeController extends \BaseController {
 
 
 		if((Activity::myActivity($activity)) || (ActivityPlanner::myActivity($activity->id))){
+		// if(Auth::user()->hasRole("PROPONENT")){
 			$activity_schemes = Scheme::getIdList($activity->id);
 			$id_index = array_search($id, $activity_schemes);
 
