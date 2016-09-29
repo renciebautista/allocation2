@@ -76,16 +76,15 @@
 				<thead>
 					<tr>
 						<th>Joborder #</th>
-						<th>Status</th>
 						<th>Activity Title</th>
 						<th>Task</th>
 						<th>Sub Task</th>
 						<th>Department</th>
 						<th>Assign To</th>
-						
 						<th>Start Date</th>
 						<th>End Date</th>
 						<th>Date Created</th>
+						<th>Status</th>
 						<th>Action</th>
 					</tr>
 				</thead>
@@ -93,7 +92,6 @@
 			  		@foreach($joborders as $jo)
 			  		<tr>
 			  			<td>{{ $jo->id }}</td>
-			  			<td>{{ $jo->status->joborder_status }}</td>
 			  			<td>{{ $jo->activity->id . ' - '. $jo->activity->circular_name  }}</td>
 			  			<td>{{ $jo->task }}</td>
 			  			<td>{{ $jo->sub_task }}</td>
@@ -103,6 +101,7 @@
 			  			<td>{{ date_format(date_create($jo->start_date),'m/d/Y') }}</td>
 			  			<td>{{ date_format(date_create($jo->end_date),'m/d/Y') }}</td>
 			  			<td>{{ date_format(date_create($jo->created_at),'m/d/Y H:m:s') }}</td>
+			  			<td>{{ $jo->status->joborder_status }}</td>
 			  			<td>
 			  				{{ HTML::linkAction('JoborderController@edit','View', $jo->id, array('class' => 'btn btn-success btn-xs')) }}
 			  			</td>

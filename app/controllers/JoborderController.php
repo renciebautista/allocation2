@@ -189,8 +189,5 @@ class JoborderController extends \BaseController {
 		}
 	}
 
-	public function udpate($id){
-		
-	}
 
 }

@@ -44,4 +44,10 @@ class Joborder extends \Eloquent {
 			// ->where('joborder_status_id', 1)
 			->get();
 	}
+
+	public static function myJoborder($user){
+		return self::where('assigned_to', $user->id)
+			// ->where('joborder_status_id', 1)
+			->get();
+	}
 }

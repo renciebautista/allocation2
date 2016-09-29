@@ -246,17 +246,11 @@ Route::group(array('before' => 'auth'), function()
 
 	Route::post('joborders/{id}/uploadphoto', ['as' => 'joborders.uploadphoto', 'uses' => 'JoborderController@uploadphoto']);
 	Route::delete('joborders/artworkdelete/{file}', ['as' => 'joborders.artworkdelete', 'uses' => 'JoborderController@artworkdelete']);
-
-
-	// Route::get('departments/joborders', ['as' => 'joborders.departments', 'uses' => 'JoborderController@departments']);
-	// Route::get('departments/joborders/{id}/edit', ['as' => 'joborders.edit', 'uses' => 'JoborderController@edit']);
-
-	// Route::post('joborders/unassigned/{id}/edit', ['as' => 'joborders.unassignedstore', 'uses' => 'JoborderController@unassignedstore']);
-
 	Route::get('joborderimage/{random_name}', ['as' => 'joborders.download', 'uses' => 'JoborderController@download']);
-
 	Route::get('joborders/assigned', ['as' => 'joborders.assigned', 'uses' => 'JoborderController@assigned']);
 	Route::resource('joborders', 'JoborderController');
+
+	Route::resource('myjoborders', 'MyJobOrderController');
 	
 	Route::get('images/{cycle_id}/{type_id}/{activity_id}/{name}', function($cycle_id = null,$type_id = null,$activity_id = null,$name = null)
 	{
