@@ -634,7 +634,7 @@ class ActivityController extends BaseController {
 
 		#member 
 
-		if(Auth::user()->ability([], ['update_customized', 'update_national'])){ // if(Auth::user()->hasRole("PROPONENT")){
+		if(Activity::myActivity($activity)){
 			if(Request::ajax()){
 				if((empty($activity)) || (!Activity::myActivity($activity))){
 					$arr['success'] = 0;

@@ -245,6 +245,7 @@ class SchemeController extends \BaseController {
 			return View::make('activity.updating');
 		}
 
+
 		if((Activity::myActivity($activity)) || (ActivityPlanner::myActivity($activity->id))){
 			$activity_schemes = Scheme::getIdList($activity->id);
 			$id_index = array_search($id, $activity_schemes);
@@ -408,7 +409,8 @@ class SchemeController extends \BaseController {
 
 			$sobdivisions = Pricelist::divisions();
 
-			if(Auth::user()->hasRole("PROPONENT")){
+			// if(Auth::user()->hasRole("PROPONENT")){
+			if(Activity::myActivity($activity)){
 				if($activity->status_id < 4){
 					return View::make('scheme.edit',compact('scheme', 'activity_schemes', 'id_index', 'activity', 'skus', 'sel_skus', 'sel_hosts',
 						'sel_premuim','allocations', 'total_sales', 'qty','id','total_gsv', 'ac_groups', 'groups','host_sku','premuim_sku',

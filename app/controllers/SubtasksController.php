@@ -44,7 +44,7 @@ class SubtasksController extends \BaseController {
 		{
 			DB::transaction(function()
 			{
-				$subtask = new Subtask;
+				$subtask = new SubTask;
 				$subtask->task_id = Input::get('task');
 				$subtask->sub_task = strtoupper(Input::get('subtask'));
 				$subtask->department_id = Input::get('department');

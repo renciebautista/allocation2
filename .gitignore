@@ -5,6 +5,7 @@
 /app/storage/joborder_files/*
 /app/database/seeds/seed_files/*
 /app/storage/exports/*
+/app/storage/le/*
 /public/barcode/*
 composer.phar
 composer.lock
