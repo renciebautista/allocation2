@@ -51,7 +51,9 @@
 				<tr> 
 					<td>Assigned To</td> 
 					<td colspan="3">
+						@if($joborder->assigned_to > 0)
 						{{ $joborder->assignedto->getFullname() }}
+						@endif
 					</td> 
 				</tr>
 			</tbody>
@@ -101,7 +103,6 @@
 								</a>
 								
 							</li>
-							
 							@endforeach
 							</ul>
 						</div>
