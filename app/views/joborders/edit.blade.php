@@ -9,7 +9,6 @@
   		<div class="panel panel-default">
 			<div class="panel-heading">Job Order Details</div>
 			<div class="panel-body">
-
 				<table id="joborder" class="table table-bordered"> 
 					<tbody>
 						<tr> 
@@ -58,8 +57,7 @@
 						</tr>
 					</tbody>
 				</table>
-
-					
+			</div>		
 		</div>
 
 		<div class="panel panel-default">
@@ -80,36 +78,23 @@
 					@endforeach
 					</ul>
 				</div>
-				
-				{{ Form::open(array('action' => array('JoborderController@uploadphoto', $joborder->id) ,'class' => 'bs-component' ,'id' => 'myform', 'files'=>true)) }}
-				<div class="form-container">
-					<div class="form-group">
-						<input type="file" name="files[]" id="filer_input1" multiple="multiple">
-					</div>
-					<div class="form-group">
-						<button class="btn btn-primary btn-style" type="submit">Submit</button>
-					</div>
+					{{ Form::open(array('action' => array('JoborderController@uploadphoto', $joborder->id) ,'class' => 'bs-component' ,'id' => 'myform', 'files'=>true)) }}
+					<div class="form-container">
+						<div class="form-group">
+							<input type="file" name="files[]" id="filer_input1" multiple="multiple">
+						</div>
+						<div class="form-group">
+							<button class="btn btn-primary btn-style" type="submit">Submit</button>
+						</div>
+					</div>	
+					{{ Form::close() }}
+					<hr>
 				</div>	
-				{{ Form::close() }}
-				<hr>
-					
 		</div>
 
 		<div class="panel panel-default">
-			<div class="panel-heading">Insert Comment</div>
+			<div class="panel-heading">Comments</div>
 			<div class="panel-body">
-
-				{{ Form::open(array('action' => array('JoborderController@uploadphoto', $joborder->id) ,'class' => 'bs-component' ,'id' => 'myform', 'files'=>true)) }}
-				<div class="form-container">
-					<div class="form-group">
-						<input type="file" name="files[]" id="filer_input1" multiple="multiple">
-					</div>
-					<div class="form-group">
-						<button class="btn btn-primary btn-style" type="submit">Submit</button>
-					</div>
-				</div>	
-				{{ Form::close() }}
-				<hr>
 				<div>
 					@foreach($comments as $comment)
 					<div class="comment_list">
@@ -137,6 +122,14 @@
 						</div>
 					</div>
 					@endforeach
+				</div>
+			</div>	
+		</div>
+
+		<div class="panel panel-default">
+			<div class="panel-heading">Insert Comment</div>
+			<div class="panel-body">
+				<div>
 					{{ Form::open(array('route' => array('joborders.update', $joborder->id), 'method' => 'PUT',  'class' => 'bs-component', 'files'=>true)) }}			
 					<div class="form-container">
 						<div class="form-group">
@@ -174,8 +167,9 @@
 							<button class="btn btn-primary btn-style" type="submit">Submit</button>
 						</div>
 					</div>
-					{{ Form::close()}}
-					
+					{{ Form::close()}}	
+				</div>
+			</div>
 		</div>
   		
 		
