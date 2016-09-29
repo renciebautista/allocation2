@@ -188,16 +188,6 @@ class JoborderController extends \BaseController {
 		}
 	}
 
-	// public function departments(){
-		
-	// }
-
-	// public function unassignededit($id){
-	// 	$joborder = Joborder::findOrFail($id);
-	// 	$comments = $joborder->comments()->orderBy('created_at')->get();
-	// 	return View::make('joborders.unassignededit',compact('joborder', 'comments'));
-	// }
-
 	public function udpate($id){
 		
 	}

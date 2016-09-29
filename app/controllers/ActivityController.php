@@ -3150,15 +3150,33 @@ class ActivityController extends BaseController {
 			$joborder->end_date = date('Y-m-d',strtotime(Input::get('end_date')));
 			$joborder->save();
 
-			JoborderComment::create(['joborder_id' => $joborder->id, 
+			$comment = JoborderComment::create(['joborder_id' => $joborder->id, 
 				'created_by' => Auth::user()->id,
 				'comment' => Input::get('details')]);
+
+			if(Input::hasFile('files')){
+				$files = Input::file('files');
+				$distination = storage_path().'/joborder_files/';
+				foreach ($files as $file) {
+					if(!empty($file)){
+						$original_file_name = $file->getClientOriginalName();
+						$file_name = pathinfo($original_file_name, PATHINFO_FILENAME);
+						$extension = File::extension($original_file_name);
+						$actual_name = uniqid('img_').'.'.$extension;
+						$file->move($distination,$actual_name);
+
+						CommentFile::create(['comment_id' => $comment->id,
+							'random_name' => $actual_name, 
+							'file_name' => $file_name.'.'.$extension]);
+					}
+					
+				}
+				
+			}
 
 			$url = route('joborders.edit', $joborder->id); 
 			$message = '<a href="'.$url.'" class="linked-object-link">Job Order #'.$joborder->id.'</a>';
 			ActivityTimeline::addTimeline($activity, Auth::user(), "created a joborder",$message);
-
-
 
 			return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#jo")
 				->with('class', 'alert-success')
