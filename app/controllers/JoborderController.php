@@ -60,7 +60,7 @@ class JoborderController extends \BaseController {
 	{
 		$joborder = Joborder::findOrFail($id);
 		$artworks = JoborderArtwork::where('joborder_id', $joborder->id)->get();
-		$comments = $joborder->comments()->orderBy('created_at')->get();
+		$comments = $joborder->comments()->orderBy('created_at', 'desc')->get();
 		$jostatus = JoborderStatus::getLists();
 		$joudpatestatus = JoborderStatus::getUpdateLists();
 		$dept_users = User::getDepartmentStaff($joborder->department_id);

@@ -1138,10 +1138,14 @@
 							  			<td>{{ $jo->task }}</td>
 							  			<td>{{ $jo->sub_task }}</td>
 							  			<td>{{ $jo->department->department }}</td>
-							  			<td></td>
-							  			<td></td>
 							  			<td>
-							  				{{ HTML::linkAction('JoborderController@edit','View', $jo->id, array('class' => 'btn btn-success btn-xs')) }}
+							  				@if($jo->assigned_to > 0)
+							  				{{ $jo->department->assignedto->getFullname() }}
+							  				@endif
+							  			</td>
+							  			<td>{{ $jo->status->joborder_status }}</td>
+							  			<td>
+							  				{{ HTML::linkAction('ActivityController@joborder','View', $jo->id, array('class' => 'btn btn-success btn-xs')) }}
 							  			</td>
 							  		</tr>
 							  		@endforeach

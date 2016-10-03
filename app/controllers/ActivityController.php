@@ -3125,6 +3125,13 @@ class ActivityController extends BaseController {
 			->make();
 	}
 
+	public function joborder($id){
+		$joborder = Joborder::findOrFail($id);
+		$artworks = JoborderArtwork::where('joborder_id', $joborder->id)->get();
+		$comments = $joborder->comments()->orderBy('created_at', 'desc')->get();
+		return View::make('activity.joborder',compact('joborder', 'comments', 'artworks'));
+	}
+
 	public function createjo($id){
 		$activity = Activity::findOrFail($id);
 		$tasks = Task::getLists();
@@ -3155,10 +3162,12 @@ class ActivityController extends BaseController {
 				'comment' => Input::get('details')]);
 
 			if(Input::hasFile('files')){
+
 				$files = Input::file('files');
 				$distination = storage_path().'/joborder_files/';
 				foreach ($files as $file) {
 					if(!empty($file)){
+
 						$original_file_name = $file->getClientOriginalName();
 						$file_name = pathinfo($original_file_name, PATHINFO_FILENAME);
 						$extension = File::extension($original_file_name);
@@ -3178,7 +3187,7 @@ class ActivityController extends BaseController {
 			$message = '<a href="'.$url.'" class="linked-object-link">Job Order #'.$joborder->id.'</a>';
 			ActivityTimeline::addTimeline($activity, Auth::user(), "created a joborder",$message);
 
-			return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#jo")
+			return Redirect::to(URL::action('ActivityController@joborder', array('id' => $joborder->id)))
 				->with('class', 'alert-success')
 				->with('message', 'Joborder was successfuly created.');
 						
@@ -3191,6 +3200,48 @@ class ActivityController extends BaseController {
 					->with('class', 'alert-danger')
 					->with('message', 'There were validation errors.');
 	}
+
+	public function joborderuploadphoto($id){
+		$joborder = Joborder::findOrFail($id);
+		if(Input::hasFile('files')){
+			$files = Input::file('files');
+			$distination = storage_path().'/joborder_files/';
+			foreach ($files as $file) {
+				if(!empty($file)){
+					$original_file_name = $file->getClientOriginalName();
+					$file_name = pathinfo($original_file_name, PATHINFO_FILENAME);
+					$extension = File::extension($original_file_name);
+					$actual_name = uniqid('img_').'.'.$extension;
+					$file->move($distination,$actual_name);
+
+					JoborderArtwork::create(['joborder_id' => $id,
+						'random_name' => $actual_name, 
+						'file_name' => $file_name.'.'.$extension]);
+				}
+				
+			}
+		}
+
+		return Redirect::to(URL::action('ActivityController@joborder', array('id' => $id)))
+			->with('class', 'alert-success')
+			->with('message', 'Artwork was successfuly updated.');
+		
+	}
+
+	public function joborderartworkdelete($random_name = null){
+		$file = JoborderArtwork::where('random_name', $random_name)->first();
+		if(!empty($file)){
+			$path = storage_path().'/joborder_files/'.$file->random_name;
+			if (file_exists($path)) { 
+				File::delete($path);
+				$file->delete();
+			}
+		}
+		return Redirect::back()
+			->with('class', 'alert-success')
+			->with('message', 'Artwork was successfuly updated.');
+	}
+
 
 	public function storecomment($id){
 		$activity = Activity::findOrFail($id);

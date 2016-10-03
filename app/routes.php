@@ -158,6 +158,10 @@ Route::group(array('before' => 'auth'), function()
 	Route::post('activity/store/{id}',['as' => 'activity.store', 'uses' => 'ActivityController@store']);
 
 	Route::post('activity/comment/{id}',['as' => 'activity.storecomment', 'uses' => 'ActivityController@storecomment']);
+
+	Route::get('activity/{id}/joborder', 'ActivityController@joborder');
+	Route::post('activity/{id}/joborderuploadphoto', 'ActivityController@joborderuploadphoto');
+	Route::delete('activity/joborderartworkdelete/{file}', 'ActivityController@joborderartworkdelete');
 	
 	Route::resource('activity', 'ActivityController');
 	

@@ -24,7 +24,7 @@
 @include('partials.notification')
 
 <div class="well ">
-	{{ Form::open(array('action' => array('ActivityController@storejo', $activity->id) ,'class' => 'bs-component' ,'id' => 'myform')) }}
+	{{ Form::open(array('action' => array('ActivityController@storejo', $activity->id) ,'class' => 'bs-component' ,'id' => 'myform', 'files'=>true)) }}
 
 	<div class="row">
 		<div class="col-lg-12">
