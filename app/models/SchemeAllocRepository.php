@@ -22,11 +22,9 @@ class SchemeAllocRepository
 
 		$_allocation = new AllocationRepository2;
 		$allocations = $_allocation->customers($skus, $_channels, $customers,$forced_areas);
-		// Helper::debug($allocations);
-	   	// dd($allocations);
-	   	
+
 		$_areasales =  $_allocation->area_sales();
-	   	
+	   		   	
 
 		$total_sales = $_allocation->total_gsv();
 		$force_total_sales = $_allocation->force_total_gsv();
@@ -44,7 +42,7 @@ class SchemeAllocRepository
 			$scheme_alloc->area = $customer->area_name;
 
 			$scheme_alloc->sold_to_code = $customer->customer_code;
-			$scheme_alloc->sob_customer_code = $customer->sob_customer_code;
+			// $scheme_alloc->sob_customer_code = $customer->sob_customer_code;
 			$scheme_alloc->sold_to = $customer->customer_name;
 
 
@@ -155,7 +153,11 @@ class SchemeAllocRepository
 					$shipto_alloc->area = $customer->area_name;
 
 					$shipto_alloc->sold_to_code = $customer->customer_code;
-					$shipto_alloc->sob_customer_code = $customer->sob_customer_code;
+					// $shipto_alloc->sob_customer_code = $customer->sob_customer_code;
+					if(!empty($shipto['sold_to_code'])){
+						$shipto_alloc->sob_customer_code = $shipto['sold_to_code'];
+					}
+					
 					$shipto_alloc->sold_to = $customer->customer_name;
 
 					$shipto_alloc->ship_to_code = $shipto['ship_to_code'];
@@ -286,7 +288,11 @@ class SchemeAllocRepository
 							$account_alloc->area = $customer->area_name;
 
 							$account_alloc->sold_to_code = $customer->customer_code;
-							$account_alloc->sob_customer_code = $customer->sob_customer_code;
+							// $account_alloc->sob_customer_code = $customer->sob_customer_code;
+							if(!empty($shipto['sold_to_code'])){
+								$account_alloc->sob_customer_code = $shipto['sold_to_code'];
+							}
+							
 							$account_alloc->sold_to = $customer->customer_name;
 
 							$account_alloc->ship_to_code = $shipto['ship_to_code'];
@@ -398,7 +404,12 @@ class SchemeAllocRepository
 							$others_alloc->area = $customer->area_name;
 
 							$others_alloc->sold_to_code = $customer->customer_code;
-							$others_alloc->sob_customer_code = $customer->sob_customer_code;
+							// $others_alloc->sob_customer_code = $customer->sob_customer_code;
+							if(!empty($shipto['sold_to_code'])){
+								$others_alloc->sob_customer_code = $shipto['sold_to_code'];
+							}
+							
+
 							$others_alloc->sold_to = $customer->customer_name;
 
 							$others_alloc->ship_to_code = $shipto['ship_to_code'];
@@ -567,6 +578,7 @@ class SchemeAllocRepository
 
 							$account_alloc->sold_to_code = $customer->customer_code;
 							$account_alloc->sob_customer_code = $customer->sob_customer_code;
+
 							$account_alloc->sold_to = $customer->customer_name;
 
 							$account_alloc->ship_to_code = $shipto['ship_to_code'];

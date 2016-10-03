@@ -48,12 +48,12 @@ class AllocationRepository  {
 
 		// get all ship to
 		$_shiptos = DB::table('ship_tos')
-			->select('customer_code','ship_to_code','ship_to_name','split')
+			->select('customer_code','sold_to_code', 'ship_to_code','ship_to_name','split')
 			->where('ship_tos.active', 1)
 			->get();
 
 		$_shiptos_list = DB::table('ship_tos')
-			->select('customer_code','ship_to_code','ship_to_name','split')
+			->select('customer_code','sold_to_code','ship_to_code','ship_to_name','split')
 			// ->where('ship_tos.active', 1)
 			->get();
 

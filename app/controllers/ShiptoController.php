@@ -93,6 +93,7 @@ class ShiptoController extends \BaseController {
 
 			try {
 				$shipto->customer_code = strtoupper(Input::get('customer_code'));
+				$shipto->sold_to_code = strtoupper(Input::get('sold_to_code'));
 				$shipto->ship_to_code = strtoupper(Input::get('ship_to_code'));
 				$shipto->ship_to_name = strtoupper(Input::get('ship_to_name'));
 				if(Input::get('split') == ''){

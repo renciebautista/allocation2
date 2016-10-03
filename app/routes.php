@@ -32,6 +32,7 @@ Route::get('testmtdt', function(){
 });
 
 
+<<<<<<< HEAD
 Route::get('test', function(){
 	$l5s = Level5::getL4ByL5('C11622');
 	
@@ -133,6 +134,21 @@ Route::get('test', function(){
 			// }
 		}
 	// }
+=======
+Route::get('testmail', function(){
+	$users = User::GetPlanners(['PROPONENT' ,'PMOG PLANNER','GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR','FIELD SALES']);
+	echo count($users);
+
+	$type = "mail4";
+
+	foreach ($users as $user) {
+		if($_ENV['MAIL_TEST']){
+			Queue::push('MailScheduler', array('type' => $type, 'user_id' => $user->user_id, 'role_id' => $user->role_id,),'etop');
+		}else{
+			// Queue::push('MailScheduler', array('type' => $type, 'user_id' => $user->user_id, 'role_id' => $user->role_id),'p_etop');
+		}
+	}
+>>>>>>> etop
 });
 
 
