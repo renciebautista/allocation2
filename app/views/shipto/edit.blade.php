@@ -24,6 +24,11 @@
 		</div>
 
 		<div class="form-group">
+			{{ Form::label('sold_to_code', 'SOB Sold To Code', array('class' => 'control-label')) }}
+			{{ Form::text('sold_to_code',$shipto->sold_to_code,array('class' => 'form-control', 'placeholder' => 'SOB Sold To Code')) }}
+		</div>
+
+		<div class="form-group">
 			{{ Form::label('ship_to_code', 'Ship To Code', array('class' => 'control-label')) }}
 			{{ Form::text('ship_to_code',$shipto->ship_to_code,array('class' => 'form-control', 'placeholder' => 'Ship To Code')) }}
 		</div>

@@ -48,7 +48,7 @@
           <tr>
             <th>Area</th>
             <th>Customer Code</th>
-            <th>SOB Sold to Code</th>
+            <!-- <th>SOB Sold to Code</th> -->
             <th>Customer Name</th>
             <th>Sales Multiplier</th>
             <th>Active</th>
@@ -65,7 +65,7 @@
           <tr>
             <td>{{ $customer->area_name }}</td>
             <td>{{ $customer->customer_code }}</td>
-            <td>{{ $customer->sob_customer_code }}</td>
+            <!-- <td>{{ $customer->sob_customer_code }}</td> -->
             <td>{{ $customer->customer_name }}</td>
             <td>{{ $customer->multiplier }}</td>
             <td>{{ (($customer->active == 1) ? 'Active':'Inactive') }}</td>

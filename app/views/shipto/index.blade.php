@@ -41,6 +41,7 @@
           </tr>
           <tr>
             <th>Customer Code</th>
+            <th>SOB Sold to Code</th>
             <th>Ship To Code</th>
             <th>Ship To Name</th>
             <th>Split %</th>
@@ -66,6 +67,7 @@
           @foreach($shiptos as $shipto)
           <tr>
             <td>{{ $shipto->customer_code }}</td>
+            <td>{{ $shipto->sold_to_code }}</td>
             <td>{{ $shipto->ship_to_code }}</td>
             <td>{{ $shipto->ship_to_name }}</td>
             <td class="center">{{ $shipto->split }}</td>
