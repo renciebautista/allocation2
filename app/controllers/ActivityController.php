@@ -1288,22 +1288,25 @@ class ActivityController extends BaseController {
 
 					// update all schemes
 					$schemes = Scheme::getList($activity->id);
+					if (!App::environment('local')){
+						foreach ($schemes as $scheme) {
+							if($scheme->compute == 1){
+								$scheme->updating = 1;
+								$scheme->update();
 
-					foreach ($schemes as $scheme) {
-						if($scheme->compute == 1){
-							$scheme->updating = 1;
-							$scheme->update();
-							if($_ENV['MAIL_TEST']){
-								Queue::push('SchemeScheduler', array('id' => $scheme->id),'scheme');
+								if($_ENV['MAIL_TEST']){
+									Queue::push('SchemeScheduler', array('id' => $scheme->id),'scheme');
+								}else{
+									Queue::push('SchemeScheduler', array('id' => $scheme->id),'p_scheme');
+								}
 							}else{
-								Queue::push('SchemeScheduler', array('id' => $scheme->id),'p_scheme');
+								$scheme->updating = 0;
+								$scheme->update();
 							}
-						}else{
-							$scheme->updating = 0;
-							$scheme->update();
+							
 						}
-						
 					}
+					
 					// end update
 					$arr['success'] = 1;
 					Session::flash('class', 'alert-success');

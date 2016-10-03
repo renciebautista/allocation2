@@ -28,13 +28,14 @@ class MtDtSalesTableSeeder extends CsvSeeder {
 	        2 => 'area_code',
 	        4 => 'customer_code',
 	        7 => 'distributor_code',
-	        9 => 'plant_code',
-	        11 => 'coc_03_code',
-	        13 => 'coc_04_code',
-	        15 => 'coc_05_code',
-	       	17 => 'child_sku_code',
-	       	19 => 'gss',
-	       	20 => 'gsv',
+	        8 => 'plant_code',
+	        10 => 'account_name',
+	        12 => 'coc_03_code',
+	        14 => 'coc_04_code',
+	        16 => 'coc_05_code',
+	       	18 => 'child_sku_code',
+	       	20 => 'gss',
+	       	21 => 'gsv',
 	    ];
 
 		echo $latest .'-->'.$this->filename.PHP_EOL; 
