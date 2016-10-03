@@ -33,7 +33,7 @@ class CreateTradedealSchemeFreeItemsTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('tradedeal_scheme_free_items');
+		Schema::dropIfExists('tradedeal_scheme_free_items');
 	}
 
 }
