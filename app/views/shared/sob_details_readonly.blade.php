@@ -102,9 +102,15 @@
 				@endif
 			</div>
 			@else
-			<div class="panel-body">
-				<h2>No SOB Allocation created.</h2>
-				</div>
+				@if($activity->cycle->sob_deadline < date('Y-m-d') )
+					<div class="panel-body">
+						<h2>SOB Deadline had already expired.</h2>
+					</div>
+				@else
+					<div class="panel-body">
+						<h2>No SOB Allocation created.</h2>
+					</div>
+				@endif
 			@endif
 		</div>
 		
