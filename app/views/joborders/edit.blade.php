@@ -151,6 +151,7 @@
 						<div class="form-group">
 							<textarea name="comment" id="comment"></textarea>
 						</div>
+						@if(!$staff)
 						@if(($joborder->joborder_status_id > 1) && (Auth::user()->ability([], ['manage_department_jo'])))
 						<div class="form-group">
 							<div class="row">
@@ -162,10 +163,15 @@
 							
 						</div>
 						@endif
+						@endif
 						<br>
 						
 						<div class="form-group">
+							@if(!$staff)
 							{{ HTML::linkAction('JoborderController@index', 'Back', array(), array('class' => 'btn btn-default')) }}
+							@else
+							{{ HTML::linkAction('MyJobOrderController@index', 'Back', array(), array('class' => 'btn btn-default')) }}
+							@endif
 							<button class="btn btn-primary btn-style" type="submit">Submit</button>
 						</div>
 					</div>

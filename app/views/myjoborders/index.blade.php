@@ -33,6 +33,8 @@
 					<div class="row">
 						<div class="col-lg-12">
 						{{ Form::label('tsk', 'Task', array('class' => 'control-label')) }}
+						{{ Form::select('tsk[]', $jotasks, null, array('id' => 'tsk','class' => 'form-control', 'multiple' => 'multiple')) }}
+
 						</div>
 					</div>
 				</div>
@@ -41,7 +43,8 @@
 				<div class="form-group">
 					<div class="row">
 						<div class="col-lg-12">
-						{{ Form::label('tsk', 'Sub Task', array('class' => 'control-label')) }}
+						{{ Form::label('stk', 'Sub Task', array('class' => 'control-label')) }}
+						{{ Form::select('stk[]', $josubtasks, null, array('id' => 'stk','class' => 'form-control', 'multiple' => 'multiple')) }}
 						</div>
 					</div>
 				</div>
@@ -102,7 +105,7 @@
 			  			<td>{{ date_format(date_create($jo->created_at),'m/d/Y H:m:s') }}</td>
 			  			<td>{{ $jo->status->joborder_status }}</td>
 			  			<td>
-			  				{{ HTML::linkAction('JoborderController@edit','View', $jo->id, array('class' => 'btn btn-success btn-xs')) }}
+			  				{{ HTML::linkAction('MyJobOrderController@edit','View', $jo->id, array('class' => 'btn btn-success btn-xs')) }}
 			  			</td>
 			  		</tr>
 			  		@endforeach
@@ -112,5 +115,16 @@
 		</div>
 	</div>
 </div>
+
+@stop
+
+@section('page-script')
+
+$('#st,#tsk,#stk').multiselect({
+	maxHeight: 200,
+	includeSelectAllOption: true,
+	enableCaseInsensitiveFiltering: true,
+	enableFiltering: true
+});
 
 @stop

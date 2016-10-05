@@ -313,6 +313,7 @@ class User extends Eloquent implements ConfideUserInterface {
 		return self::select(DB::raw("CONCAT(first_name,' ', last_name) as fullname"), 'id' )
 			->where('active',1)
 			->where('department_id',$department_id)
+			->orderBy('fullname')
 			->lists('fullname', 'id');
 	}
 

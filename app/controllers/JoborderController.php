@@ -10,9 +10,14 @@ class JoborderController extends \BaseController {
 	 */
 	public function index()
 	{
-		$joborders = Joborder::departmentJoborder(Auth::user());
+		Input::flash();
+		$joborders = Joborder::departmentJoborder(Auth::user(), Input::get('st'),  Input::get('tsk'),  Input::get('stk'),  Input::get('dept'),  Input::get('ato'));
+		$jotasks = Joborder::getDeptJoTask(Auth::user());
+		$josubtasks = Joborder::getDeptJoSubTask(Auth::user());
+		$jodepts = Joborder::getJoDept(Auth::user());
+		$assigntos = Joborder::getAssinged(Auth::user());
 		$statuses = JoborderStatus::getLists();
-		return View::make('joborders.index',compact('joborders', 'statuses'));
+		return View::make('joborders.index',compact('joborders', 'statuses', 'jotasks', 'josubtasks', 'jodepts', 'assigntos'));
 	}
 
 	/**
@@ -59,12 +64,17 @@ class JoborderController extends \BaseController {
 	public function edit($id)
 	{
 		$joborder = Joborder::findOrFail($id);
-		$artworks = JoborderArtwork::where('joborder_id', $joborder->id)->get();
-		$comments = $joborder->comments()->orderBy('created_at', 'desc')->get();
-		$jostatus = JoborderStatus::getLists();
-		$joudpatestatus = JoborderStatus::getUpdateLists();
-		$dept_users = User::getDepartmentStaff($joborder->department_id);
-		return View::make('joborders.edit',compact('joborder', 'comments', 'artworks', 'jostatus', 'dept_users', 'joudpatestatus'));
+		if($joborder->department_id != Auth::user()->department_id){
+			return Response::make(View::make('shared/404'), 404);
+		}else{
+			$artworks = JoborderArtwork::where('joborder_id', $joborder->id)->get();
+			$comments = $joborder->comments()->orderBy('created_at', 'desc')->get();
+			$jostatus = JoborderStatus::getLists();
+			$joudpatestatus = JoborderStatus::getUpdateLists();
+			$dept_users = User::getDepartmentStaff($joborder->department_id);
+			$staff = false;
+			return View::make('joborders.edit',compact('joborder', 'comments', 'artworks', 'jostatus', 'dept_users', 'joudpatestatus', 'staff'));
+		}
 	}
 
 	public function uploadphoto($id){
@@ -88,8 +98,7 @@ class JoborderController extends \BaseController {
 			}
 		}
 
-
-		return Redirect::to(URL::action('JoborderController@edit', array('id' => $id)))
+		return Redirect::back()
 			->with('class', 'alert-success')
 			->with('message', 'Artwork was successfuly updated.');
 		
