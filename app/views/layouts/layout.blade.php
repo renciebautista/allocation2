@@ -102,6 +102,10 @@
 								@if(Auth::user()->inRoles(['CMD DIRECTOR']))
 								<li>{{ HTML::linkAction('submittedactivity.index' , 'For Approval',array('st' => ['7'],'title' => '')) }}</li>  
 								@endif 
+
+								@if(Auth::user()->isChannelApprover())
+								<li>{{ HTML::linkAction('activity.preapprove' , 'Customized For Approval') }}</li>  
+								@endif
 							</ul>
 						</li>
 						@endif

@@ -5,7 +5,7 @@ class ActivityMember extends \Eloquent {
     
 	public static function myActivity($activity_id){
     	return self::where('activity_id', $activity_id)
-    		->where('user_id',Auth::id())
+    		->where('user_id',Auth::user()->id)
     		->first();
     }
 
@@ -41,5 +41,18 @@ class ActivityMember extends \Eloquent {
             return false;
         }
         
+    }
+
+    public static function getActivities($user_id){
+        $list = array();
+        $data = self::where('user_id',$user_id)
+        ->where('activity_member_status_id',1)
+        ->get();
+        if(!empty($data)){
+            foreach ($data as $row) {
+                $list[] = $row->activity_id;
+            }
+        }
+        return $list;
     }
 }

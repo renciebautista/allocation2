@@ -75,6 +75,7 @@
 						<th>Tasks</th>
 						<th>Sub Task</th>
 						<th>Assigned Department</th>
+						<th>Lead Time (days)</th>
 						<th colspan="2" style="text-align:center;">Action</th>
 					</tr>
 				</thead>
@@ -89,6 +90,7 @@
 						<td>{{ $task->task }}</td>
 						<td>{{ $task->sub_task }}</td>
 						<td>{{ $task->department }}</td>
+						<td>{{ $task->lead_time }}</td>
 						<td class="action">
 							{{ HTML::linkAction('SubtasksController@edit','Edit', $task->id, array('class' => 'btn btn-info btn-xs')) }}
 						</td>

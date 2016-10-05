@@ -315,5 +315,12 @@ class User extends Eloquent implements ConfideUserInterface {
 			->where('department_id',$department_id)
 			->lists('fullname', 'id');
 	}
+
+	public function isChannelApprover(){
+		$settings = Setting::where('id', 1)->first();
+		$pre_channels = explode(",", $settings->customized_preapprover);
+
+		return in_array(Auth::user()->department_id, $pre_channels);
+	}
 	
 }

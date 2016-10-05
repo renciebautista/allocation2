@@ -1071,6 +1071,12 @@
 					</div>
 				</div>
 				@endforeach
+		  	</div>
+		</div>
+
+		<div class="panel panel-default">
+		  	<div class="panel-heading">Insert Comment</div>
+		  	<div class="panel-body">
 				{{ Form::open(array('action' => array('ActivityController@storecomment', $activity->id) ,'class' => 'bs-component' ,'id' => 'myform', 'files'=>true)) }}
 
 				<div class="form-group">
@@ -1140,7 +1146,7 @@
 							  			<td>{{ $jo->department->department }}</td>
 							  			<td>
 							  				@if($jo->assigned_to > 0)
-							  				{{ $jo->department->assignedto->getFullname() }}
+							  				{{ $jo->assignedto->getFullname() }}
 							  				@endif
 							  			</td>
 							  			<td>{{ $jo->status->joborder_status }}</td>

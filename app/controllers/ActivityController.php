@@ -50,6 +50,7 @@ class ActivityController extends BaseController {
 			return View::make('downloadedactivity.index',compact('statuses', 'activities', 'cycles', 'scopes', 'types', 'proponents'));
 		}
 
+
 		if(Auth::user()->hasRole("ADMINISTRATOR")){
 			Input::flash();
 			$cycles = Cycle::getLists();
@@ -522,7 +523,6 @@ class ActivityController extends BaseController {
 		}else{
 			
 			$approvers = User::getApprovers(['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']);
-
 			$sel_approver = ActivityApprover::getList($activity->id);
 			$sel_objectives = ActivityObjective::getList($activity->id);
 			$sel_divisions = ActivityDivision::getList($activity->id);
@@ -582,27 +582,15 @@ class ActivityController extends BaseController {
 							$view = 'activity.customizedreadonly';
 							$show_action = false;
 						}else{
-							if($activity_member->activity_member_status_id > 1){
-								$show_action = false;
-								$allowAdd = true;
-								if($activity_member->activity_member_status_id == 2){
-									$view = 'activity.customizedreadonly';
-								}else{
-									$view = 'activity.customizededit';
-								}
-								
-							}else{
-								$submitstatus = array('3' => 'APPROVE','2' => 'DENY');
-								$view = 'activity.customizedreadonly';
-							}
-							
-							
+							$allowAdd = true;
+							$show_action = false;
+							$view = 'activity.customizedreadonly';
 						}
 					}else{
 						$show_action = false;
 						$view = 'activity.customizedreadonly';
 					}
-				}else{ //approvers
+				}else{ 
 					return Response::make(View::make('shared/404'), 404);
 				}
 				
@@ -3185,7 +3173,7 @@ class ActivityController extends BaseController {
 
 			$url = route('joborders.edit', $joborder->id); 
 			$message = '<a href="'.$url.'" class="linked-object-link">Job Order #'.$joborder->id.'</a>';
-			ActivityTimeline::addTimeline($activity, Auth::user(), "created a joborder",$message);
+			ActivityTimeline::addTimeline($activity, Auth::user(), "created a job order",$message);
 
 			return Redirect::to(URL::action('ActivityController@joborder', array('id' => $joborder->id)))
 				->with('class', 'alert-success')
@@ -3257,6 +3245,159 @@ class ActivityController extends BaseController {
 		return Redirect::to(URL::action('ActivityController@edit', array('id' => $id)) . "#comments")
 			->with('class', 'alert-success')
 			->with('message', 'Comments successfuly posted.');
+	}
+
+
+	// customized pre approval
+	public function preapprove(){
+		if(!Auth::user()->isChannelApprover()){
+			return View::make('shared.404');
+		}else{
+			Input::flash();
+			$cycles = Cycle::getLists();
+			$types = ActivityType::getLists();
+			$proponents = Activity::getCustomProponent(Auth::user()->id);
+			$activities = Activity::searchCustomForApproval(Auth::user()->id, Input::get('pr'), Input::get('title'),  Input::get('cy'),  Input::get('ty'));
+			return View::make('activity.preapprove',compact('activities', 'cycles', 'types', 'proponents','s'));
+
+		}
+	}
+
+	public function preapproveedit($id){
+		$activity = Activity::findOrFail($id);
+		if((!Auth::user()->isChannelApprover()) || (!ActivityMember::myActivity($activity->id))){
+			return View::make('shared.404');
+		}else{
+
+			$activityIdList = Activity::getCustomIdList();		
+
+			$id_index = array_search($id, $activityIdList);
+
+			// activity details
+			$approver = ActivityApprover::getApprover($id,Auth::id());
+
+			$planner = ActivityPlanner::where('activity_id', $activity->id)->first();
+			$approvers = ActivityApprover::getNames($activity->id);
+
+			$objectives = ActivityObjective::where('activity_id', $activity->id)->get();
+
+			$budgets = ActivityBudget::with('budgettype')->where('activity_id', $id)->get();
+			$nobudgets = ActivityNobudget::with('budgettype')->where('activity_id', $id)->get();
+
+			$schemes = Scheme::getList($id);
+
+			$skuinvolves = array();
+			foreach ($schemes as $scheme) {
+				$involves = SchemeHostSku::where('scheme_id',$scheme->id)
+					->join('pricelists', 'scheme_host_skus.sap_code', '=', 'pricelists.sap_code')
+					->get();
+
+				$premiums = SchemePremuimSku::where('scheme_id',$scheme->id)
+					->join('pricelists', 'scheme_premuim_skus.sap_code', '=', 'pricelists.sap_code')
+					->get();
+				
+				$_involves = array();
+				foreach ($involves as $value) {
+					$_involves[] = $value;
+				}
+				$_premiums = array();
+				foreach ($premiums as $premium) {
+					$_premiums[] = $premium;
+				}
+
+				$scheme->allocations = SchemeAllocation::getAllocations($scheme->id);
+				$non_ulp = explode(",", $scheme->ulp_premium);
+				
+
+				$skuinvolves[$scheme->id]['premiums'] = $_premiums;
+				$skuinvolves[$scheme->id]['involves'] = $_involves;
+				$skuinvolves[$scheme->id]['non_ulp'] = $non_ulp;
+			}
+
+			//Involved Area
+			$areas = ActivityCutomerList::getSelectedAreas($activity->id);
+			$channels = ActivityChannelList::getSelectecdChannels($activity->id);
+
+			$materials = ActivityMaterial::where('activity_id', $activity->id)->get();
+
+			$fdapermits = ActivityFdapermit::getList($activity->id);
+
+			$networks = ActivityTiming::getTimings($activity->id,true);
+
+			$activity_roles = ActivityRole::getListData($activity->id);
+
+			$artworks = ActivityArtwork::getList($activity->id);
+
+			$pispermit = ActivityFis::where('activity_id', $activity->id)->first();
+
+			$sku_involves = ActivitySku::getInvolves($activity->id);
+
+			// // Product Information Sheet
+			$path = '/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
+			if($pispermit){
+				try {
+					$pis = Excel::selectSheets('Output')->load(storage_path().$path."/".$pispermit->hash_name)->get();
+				} catch (Exception $e) {
+					return View::make('shared.invalidpis');
+				}
+
+			}else{
+				$pis = array();
+			}
+
+			// attachments
+			
+			$fis = ActivityFis::getList($activity->id);
+			$artworks = ActivityArtwork::getList($activity->id);
+			$backgrounds = ActivityBackground::getList($activity->id);
+			$bandings = ActivityBanding::getList($activity->id);
+
+			// sob
+
+			$soballocation = AllocationSob::getByActivity($activity->id);
+			// Helper::print_r($schemes);
+			// dd($schemes);
+			// comments
+			$comments = ActivityComment::getList($activity->id);
+
+			return View::make('activity.preapproveedit',compact('activity','comments','approver', 'objectives', 'valid',
+			'activity' ,'approvers', 'planner','budgets','nobudgets','schemes','skuinvolves', 'sku_involves',
+			'materials','non_ulp','networks','artworks', 'pis' , 'areas','channels', 
+			'fdapermits','fis', 'backgrounds', 'bandings' ,'activity_roles',
+			'activityIdList','id_index','status', 'soballocation'));
+
+		}
+	}
+
+	public function updatecustom($id){
+		$activity = Activity::findOrFail($id);
+		if((!Auth::user()->isChannelApprover()) || (!ActivityMember::myActivity($activity->id))){
+			return View::make('shared.404');
+		}else{
+			$member = ActivityMember::myActivity($activity->id);
+			if(!empty($member)){
+				if(Input::get('action') == 'approve'){
+					$member->activity_member_status_id = 3;
+					$member->update();
+					ActivityTimeline::addTimeline($activity, Auth::user(), "approved the activity",'');
+				}else{
+					$member->activity_member_status_id = 2;
+					$member->update();
+					ActivityTimeline::addTimeline($activity, Auth::user(), "denied the activity",'');
+				}
+			}
+
+			$activityIdList = Activity::getCustomIdList();	
+			if(!empty($activityIdList)){
+				return Redirect::route('activity.preapproveedit',$activityIdList[0])
+					->with('class', 'alert-success')
+					->with('message', 'Activity was successfuly updated.');	
+			}else{
+				return Redirect::route('activity.preapprove')
+					->with('class', 'alert-success')
+					->with('message', 'Activity was successfuly updated.');	
+			}	
+		}
 	}
 
 }

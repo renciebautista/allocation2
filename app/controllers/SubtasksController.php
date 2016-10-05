@@ -48,6 +48,7 @@ class SubtasksController extends \BaseController {
 				$subtask->task_id = Input::get('task');
 				$subtask->sub_task = strtoupper(Input::get('subtask'));
 				$subtask->department_id = Input::get('department');
+				$subtask->lead_time = Input::get('lead_time');
 				$subtask->save();
 			});
 			return Redirect::action('SubtasksController@index')
@@ -103,6 +104,7 @@ class SubtasksController extends \BaseController {
 
 		$rules = array(
 			'task' => 'required|integer|min:1,'.$id,
+			'lead_time' => 'required|integer|min:1',
 			'subtask' => 'required'
 			
 		);
@@ -114,6 +116,7 @@ class SubtasksController extends \BaseController {
 			$subtask->task_id = Input::get('task');
 			$subtask->sub_task = strtoupper(Input::get('subtask'));
 			$subtask->department_id = Input::get('department');
+			$subtask->lead_time = Input::get('lead_time');
 			$subtask->update();
 
 			return Redirect::action('SubtasksController@index')

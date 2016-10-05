@@ -154,6 +154,9 @@ Route::group(array('before' => 'auth'), function()
 	Route::post('activity/{id}/createjo', ['as' => 'activity.storejo', 'uses' => 'ActivityController@storejo']);
 
 	// customized
+	Route::post('activity/updatecustom/{id}',['as' => 'activity.updatecustom', 'uses' => 'ActivityController@updatecustom']);
+	Route::get('activity/preapprove',['as' => 'activity.preapprove', 'uses' => 'ActivityController@preapprove']);
+	Route::get('activity/preapprove/{id}',['as' => 'activity.preapproveedit', 'uses' => 'ActivityController@preapproveedit']);
 	Route::get('activity/create/{id}',['as' => 'activity.create', 'uses' => 'ActivityController@create']);
 	Route::post('activity/store/{id}',['as' => 'activity.store', 'uses' => 'ActivityController@store']);
 

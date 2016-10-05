@@ -453,7 +453,7 @@ class Activity extends \Eloquent {
 			->join('users', 'activity_members.user_id','=','users.id')
 			->join('users as propo', 'activities.created_by','=','propo.id')
 			->where('activity_members.user_id',$user_id)
-			// ->where('activities.id',587)
+			->where('activity_members.activity_member_status_id', '>', 1)
 			->where(function($query) use ($proponent_id){
 				if($proponent_id > 0){
 					$query->whereIn('activities.created_by', $proponent_id);
@@ -991,5 +991,60 @@ class Activity extends \Eloquent {
 		}else{
 			return false;
 		}
+	}
+
+	public static function getCustomProponent($user_id){
+		return self::select('proponent_name','created_by')
+				->join('activity_members', 'activities.id', '=', 'activity_members.activity_id')
+				->where('scope_type_id', 2)
+				->where('activity_members.activity_member_status_id', 1)
+				->where('activity_members.user_id',$user_id)
+				->groupBy('created_by')
+				->orderBy('proponent_name')
+				->lists('proponent_name', 'created_by');
+	}
+
+	public static function searchCustomForApproval($user_id, $proponent_id, $title, $cycle, $type){
+		return self::select('activities.id','activities.circular_name','activities.edownload_date',
+			'activities.eimplementation_date','activities.end_date','activities.billing_date',
+			'activity_statuses.status','cycles.cycle_name',
+			'scope_types.scope_name','activity_types.activity_type',
+			DB::raw('CONCAT(propo.first_name, " ", propo.last_name) AS proponent'))
+			->join('activity_statuses', 'activities.status_id','=','activity_statuses.id')
+			->join('cycles', 'activities.cycle_id','=','cycles.id')
+			->join('scope_types', 'activities.scope_type_id','=','scope_types.id')
+			->join('activity_types', 'activities.activity_type_id','=','activity_types.id')
+			->join('activity_members', 'activities.id','=','activity_members.activity_id')
+			->join('users', 'activity_members.user_id','=','users.id')
+			->join('users as propo', 'activities.created_by','=','propo.id')
+			->where('activity_members.user_id',$user_id)
+			->where('scope_type_id', 2)
+			->where('activity_members.activity_member_status_id', 1)
+			->where(function($query) use ($proponent_id){
+				if($proponent_id > 0){
+					$query->whereIn('activities.created_by', $proponent_id);
+				}
+			})
+			->where(function($query) use ($title){
+				$query->where('activities.circular_name', 'LIKE' ,"%$title%");
+			})
+			->where(function($query) use ($cycle){
+				if($cycle > 0){
+					$query->whereIn('activities.cycle_id', $cycle);
+				}
+			})
+			->where(function($query) use ($type){
+				if($type > 0){
+					$query->whereIn('activities.activity_type_id', $type);
+				}
+			})
+			->orderBy('activity_types.activity_type')
+			->orderBy('activities.circular_name')
+			->orderBy('activities.id')
+			->get();
+	}
+
+	public static function getCustomIdList(){
+		return ActivityMember::getActivities(Auth::user()->id);
 	}
 }

@@ -35,6 +35,11 @@
 		</div>
 
 		<div class="form-group">
+			{{ Form::label('lead_time', 'Lead Time (days)', array('class' => 'control-label')) }}
+			{{ Form::text('lead_time','',array('class' => 'form-control', 'placeholder' => 'Lead Time (days)')) }}
+		</div>
+
+		<div class="form-group">
 			{{ Form::submit('Submit', array('class' => 'btn btn-primary')) }}
 			{{ HTML::linkAction('SubtasksController@index', 'Back', array(), array('class' => 'btn btn-default')) }}
 		</div>
@@ -46,6 +51,11 @@
 @stop
 
 @section('page-script')
+
+$('#lead_time').inputNumber({ 
+		allowDecimals: true,
+		maxDecimalDigits: 2
+	});
 
 $("#myform").validate({
 	errorElement: "span", 

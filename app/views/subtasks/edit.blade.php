@@ -34,6 +34,11 @@
 		</div>
 
 		<div class="form-group">
+			{{ Form::label('lead_time', 'Lead Time (days)', array('class' => 'control-label')) }}
+			{{ Form::text('lead_time',$subtask->lead_time ,array('class' => 'form-control', 'placeholder' => 'Lead Time (days)')) }}
+		</div>
+
+		<div class="form-group">
 			{{ Form::submit('Update', array('class' => 'btn btn-primary')) }}
 			{{ HTML::linkAction('SubtasksController@index', 'Back', array(), array('class' => 'btn btn-default')) }}
 		</div>

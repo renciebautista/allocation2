@@ -12,8 +12,6 @@ class SubTaskController extends \BaseController {
 			if(!empty($task)){
 				$data['subtasks'] = \SubTask::where('task_id', $task->id)->lists('sub_task', 'id');
 			}
-			
-
 			return \Response::json($data,200);
 		}
 	}

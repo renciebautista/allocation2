@@ -389,8 +389,6 @@
 										<th>Fullname</th>
 										<th>Department</th>
 										<th>Status</th>
-										<th>Access</th>
-										<th>Action</th>
 									</tr>
 								</thead>
 							  	<tbody>
@@ -988,7 +986,22 @@
 					</div>
 				</div>
 				@endforeach
-				
+
+		  	</div>
+		</div>
+
+		<div class="panel panel-default">
+		  	<div class="panel-heading">Insert Comment</div>
+		  	<div class="panel-body">
+				{{ Form::open(array('action' => array('ActivityController@storecomment', $activity->id) ,'class' => 'bs-component' ,'id' => 'myform', 'files'=>true)) }}
+
+				<div class="form-group">
+					{{ Form::textarea('comment','',array('class' => 'form-control', 'placeholder' => 'Comments', 'rows' => '3')) }}
+				</div>
+				<div class="form-group">
+					<button class="btn btn-primary">Post</button>	    
+				</div>
+				{{ Form::close()}}
 		  	</div>
 		</div>
 
