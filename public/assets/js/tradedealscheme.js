@@ -153,7 +153,7 @@ $(document).ready(function() {
 
 			$('#participating_sku').find(' tbody tr').each(function () {
 				var row = $(this);
-				row.find('td:eq(10)').text(accounting.formatNumber(0.00,2) || 0);
+				row.find('td:eq(11)').text(accounting.formatNumber(0.00,2) || 0);
 		        var chekcbox = $(this).find('input:checked');
 		        if (chekcbox.is(':checked')){
 		        	row.closest("tr").find("input.qty").attr('disabled','disabled').val('1');
@@ -168,7 +168,7 @@ $(document).ready(function() {
 			        if(uom == 'CASES'){
 			        	row_cost = buy * cost * accounting.unformat(row.find('td:eq(4)').text()) || 0;
 			        }
-			        row.find('td:eq(10)').text(accounting.formatNumber(row_cost,2) || 0);
+			        row.find('td:eq(11)').text(accounting.formatNumber(row_cost,2) || 0);
 			        if(total_cost == 0){
 			        	total_cost = row_cost;
 			        }else{

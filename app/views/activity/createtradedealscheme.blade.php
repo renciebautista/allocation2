@@ -64,6 +64,7 @@
                             <th>Host SKU</th>
                             <th class="right">Cost / Pcs</th>
                             <th class="right">Pcs / Case</th>
+                            <th>Variant</th>
                             <th>Premium SKU</th>
                             <th class="right" style="max-width:100px;">Pcs / Case</th>
                             <th class="right" style="max-width:150px;">Purchase Requirement</th>
@@ -82,6 +83,7 @@
                                 <td>{{ $sku->hostDesc() }}</td>
                                 <td class="right">{{ $sku->host_cost }}</td>
                                 <td class="right">{{ $sku->host_pcs_case }}</td>
+                                <td>{{ $sku->variant }}</td>
                                 <td class="individual">{{ $sku->preDesc() }}</td>
                                 <td class="individual right">{{ $sku->pre_pcs_case }}</td>
                                 <td class="individual right"></td>

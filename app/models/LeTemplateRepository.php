@@ -44,8 +44,9 @@ class LeTemplateRepository  {
 		}
 
 		if($tradedealscheme->tradedeal_type_id == 3){
-			$host_sku = TradedealPartSku::find($tradedealscheme->pre_id);
-			self::generateCollective($tradedealscheme, $tradedeal, $activity, $host_sku, $scheme_uom_abv, $scheme_uom_abv2);
+			// $host_sku = TradedealPartSku::find($tradedealscheme->pre_id);
+			$host_skus = TradedealSchemeSku::getHostSku($tradedealscheme);
+			self::generateCollective($tradedealscheme, $tradedeal, $activity, $host_skus, $scheme_uom_abv, $scheme_uom_abv2);
 		}
 	}
 
@@ -207,11 +208,11 @@ class LeTemplateRepository  {
 		})->store('csv', storage_path('le/'.$tradedealscheme->id.'/'.$folder_name));
 	}
 
-	private static function generateCollective($tradedealscheme, $tradedeal, $activity, $host_sku, $scheme_uom_abv, $scheme_uom_abv2){
+	private static function generateCollective($tradedealscheme, $tradedeal, $activity, $host_skus, $scheme_uom_abv, $scheme_uom_abv2){
 		set_time_limit(0);
-		$folder_name = $tradedealscheme->dealType->tradedeal_type. ' - ' . $host_sku->host_desc .' '. $tradedealscheme->buy.' + '.$tradedealscheme->free.' '.$scheme_uom_abv2;
-		Excel::create($tradedealscheme->dealType->tradedeal_type. ' - ' . $host_sku->host_desc. ' - 1 Header', function($excel) use ($tradedealscheme, $tradedeal, $activity, $host_sku) {
-		    $excel->sheet('Sheet1', function($sheet) use ($tradedealscheme, $tradedeal, $activity, $host_sku) {
+		$folder_name = $tradedealscheme->dealType->tradedeal_type. ' - ' . $tradedealscheme->buy.' + '.$tradedealscheme->free.' '.$scheme_uom_abv2;
+		Excel::create($tradedealscheme->dealType->tradedeal_type. '  - 1 Header', function($excel) use ($tradedealscheme, $tradedeal, $activity, $host_skus) {
+		    $excel->sheet('Sheet1', function($sheet) use ($tradedealscheme, $tradedeal, $activity, $host_skus) {
 		    	$allocations = TradedealSchemeAllocation::getCollectiveAllocation($tradedealscheme);
 		    	$sub_types = TradedealSchemeChannel::getSelectedDetails($tradedealscheme);
 		    	$materials = TradedealSchemeSku::getHostSku($tradedealscheme);
@@ -228,20 +229,20 @@ class LeTemplateRepository  {
 		    		'Get Mat 9', 'Get Qty 9','Get Mat 10', 'Get Qty 10');
 
 		    	$sheet->row(1, $header);
+		    	$brands =[];
+		    	foreach ($host_skus as $host) {
+		    		$brands[] = $host->brand_shortcut;
+		    	}
  	
-		    	$scheme_uom_abv;
-		    	if($tradedealscheme->tradedeal_uom_id == 1){
-		    		$scheme_uom_abv = 'P';
+		    	$brand = array_unique($brands);
+		    	$brand_short_cut = 'MTL';
+		    	if(count($brand) == 1){
+		    		$brand_short_cut = $brand[0];
 		    	}
-		    	if($tradedealscheme->tradedeal_uom_id == 2){
-		    		$scheme_uom_abv = 'D';
-		    	}
-		    	if($tradedealscheme->tradedeal_uom_id == 3){
-		    		$scheme_uom_abv = 'C';
-		    	}
+		    	$month_year = date('ym',strtotime($activity->eimplementation_date));
+		    	$series = TradeCollectiveSeries::getSeries($month_year, $tradedealscheme->id);
 
-		    	// $brand = $host_sku->brand_shortcut;
-		    	$deal_id = date('ym').$scheme_uom_abv.$tradedealscheme->id;
+		    	$deal_id = $month_year.$scheme_uom_abv;
 		    	$pro_desc = 'C '. $tradedealscheme->buy.' + '.$tradedealscheme->free;
 
 		    	$budgets = ActivityBudget::getBudgets($activity->id);
