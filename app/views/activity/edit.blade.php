@@ -718,6 +718,7 @@
 												<th>Host SKU</th>
 												<th>Cost / Pcs</th>
 												<th>Pcs / Case</th>
+												<th>Variant</th>
 												<th>Reference SKU</th>
 												<th>Premium SKU</th>
 												<th>Cost / Pcs</th>
@@ -1432,6 +1433,12 @@
 							<td>Pcs / Case</td>
 							<td>
 								<input class="form-control" name="host_pcs_case" type="text" value="0" id="host_pcs_case" readonly =''>
+							</td>
+						</tr>
+						<tr>
+							<td>Variants</td>
+							<td colspan="3">
+								<input class="form-control" name="variant" type="text" value="" id="variant">
 							</td>
 						</tr>
 						<tr>

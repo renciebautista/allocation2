@@ -7,6 +7,9 @@ use Box\Spout\Common\Type;
 class LeTemplateRepository  {
 
 	public static function generateTemplate($tradedealscheme){
+
+		File::cleanDirectory(storage_path('le/'.$tradedealscheme->id));
+
 		$tradedeal = Tradedeal::findorFail($tradedealscheme->tradedeal_id);
 		$activity = Activity::findorFail($tradedeal->activity_id);
 
@@ -47,6 +50,7 @@ class LeTemplateRepository  {
 	}
 
 	private static function generateIndividualHeader($tradedealscheme, $tradedeal, $activity, $host_sku, $scheme_uom_abv, $scheme_uom_abv2 ){
+
 		$folder_name = $tradedealscheme->dealType->tradedeal_type. ' - ' . $host_sku->host_desc .' '. $tradedealscheme->buy.' + '.$tradedealscheme->free.' '.$scheme_uom_abv2;
 
 		Excel::create($tradedealscheme->dealType->tradedeal_type. ' - ' . $host_sku->host_desc. ' - 1 Header', function($excel) use ($tradedealscheme, $tradedeal, $activity, $host_sku,$scheme_uom_abv,$scheme_uom_abv2) {
@@ -70,7 +74,9 @@ class LeTemplateRepository  {
 		    	
 
 		    	$brand = $host_sku->brand_shortcut;
-		    	$deal_id = 'B'.date('ym',strtotime($activity->eimplementation_date)).$scheme_uom_abv.$brand.$tradedealscheme->id;
+		    	$month_year = date('ym',strtotime($activity->eimplementation_date));
+		    	$series = TradeIndividualSeries::getSeries($month_year, $tradedealscheme->id, $host_sku->host_id);
+		    	$deal_id = 'B'.$month_year.$scheme_uom_abv.$brand. substr($host_sku->variant,0,1).sprintf("%02d", $series->series);
 
 		    	$budgets = ActivityBudget::getBudgets($activity->id);
 		    	$io_number = '';

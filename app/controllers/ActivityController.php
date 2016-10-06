@@ -2892,6 +2892,7 @@ class ActivityController extends BaseController {
 						$part_sku->activity_id = $id;
 						$part_sku->host_code = $host_sku->sap_code;
 						$part_sku->host_desc = $host_sku->sap_desc;
+						$part_sku->variant = strtoupper(Input::get('variant'));
 						$part_sku->brand_shortcut = $host_sku->brand_shortcut;
 						$part_sku->host_cost = $host_sku->price;
 						$part_sku->host_pcs_case = $host_sku->pack_size;
@@ -2934,7 +2935,7 @@ class ActivityController extends BaseController {
 	public function getpartskustable($id){
 
 		$skus = TradedealPartSku::select(array('id',
-			DB::raw('CONCAT(host_desc," - ",host_code) as host_sku'), 'host_cost', 'host_pcs_case',
+			DB::raw('CONCAT(host_desc," - ",host_code) as host_sku'), 'host_cost', 'host_pcs_case', 'variant',
 			DB::raw('CONCAT(ref_desc," - ",ref_code) as ref_sku'),
 			DB::raw('CONCAT(pre_desc," - ",pre_code) as pre_sku'), 'pre_cost', 'pre_pcs_case'))
 			->where('activity_id', $id)
@@ -2942,8 +2943,8 @@ class ActivityController extends BaseController {
 
 		return Datatables::of($skus)
 			->remove_column('id')
-			->add_column('edit', '<a href="javascript:void(0)" id="{{$id}}" class="deletesku" >Edit</a>', 8)
-			->add_column('delete', '<a href="javascript:void(0)" id="{{$id}}" class="deletesku" >Delete</a>', 9)
+			->add_column('edit', '<a href="javascript:void(0)" id="{{$id}}" class="deletesku" >Edit</a>', 9)
+			->add_column('delete', '<a href="javascript:void(0)" id="{{$id}}" class="deletesku" >Delete</a>', 10)
 			->edit_column('host_cost', function($row) {
 			        return "<span class='pull-right'> {$row->host_cost} </span>";
 			    })	

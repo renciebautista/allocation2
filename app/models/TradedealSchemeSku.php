@@ -25,7 +25,8 @@ class TradedealSchemeSku extends \Eloquent {
 
 	public static function getHostSku($scheme){
 		return self::select('tradedeal_scheme_skus.id', 'tradedeal_part_skus.host_desc', 'tradedeal_part_skus.brand_shortcut',
-			'tradedeal_part_skus.pre_cost', 'tradedeal_part_skus.host_code', 'tradedeal_part_skus.host_pcs_case',
+			'tradedeal_part_skus.pre_cost', 'tradedeal_part_skus.host_code', 'tradedeal_part_skus.host_pcs_case', 'variant',
+			'tradedeal_part_skus.id as host_id',
 			'tradedeal_part_skus.pre_code', 'tradedeal_part_skus.pre_pcs_case')
 			->join('tradedeal_part_skus', 'tradedeal_part_skus.id' , '=', 'tradedeal_scheme_skus.tradedeal_part_sku_id')
 			->where('tradedeal_scheme_id', $scheme->id)->get();

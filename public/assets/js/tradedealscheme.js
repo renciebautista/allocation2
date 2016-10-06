@@ -83,9 +83,9 @@ $(document).ready(function() {
 			        if(uom == 'CASES'){
 			        	pr = buy * cost * accounting.unformat(row.find('td:eq(4)').text()) || 0;
 			        }
-			        row.find('td:eq(7)').text(accounting.formatNumber(pr,2) || 0);
+			        row.find('td:eq(8)').text(accounting.formatNumber(pr,2) || 0);
 			    }else{
-			    	row.find('td:eq(7)').text(accounting.formatNumber(0.00,2) || 0);
+			    	row.find('td:eq(8)').text(accounting.formatNumber(0.00,2) || 0);
 			    }
 	    	});
 
