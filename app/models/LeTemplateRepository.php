@@ -90,7 +90,12 @@ class LeTemplateRepository  {
 		    	
 		    	$start_date = date('d.m.Y', strtotime($activity->eimplementation_date));
 		    	$end_date = date('d.m.Y', strtotime($activity->end_date));
-		    	$deal_desc = $tradedealscheme->buy.'+'.$tradedealscheme->free.' '.$host_sku->host_desc.' + '.$host_sku->pre_desc;
+
+		    	$_scheme = $tradedealscheme->buy.'+'.$tradedealscheme->free;
+		    	$_uom = $scheme_uom_abv2;
+		    	$deal_desc = $_scheme.' '.$_uom.' '.$brand;
+
+
 		    	$total_deals = TradedealSchemeAllocation::getTotalDeals($tradedealscheme,$host_sku);
 		    	$deal_amount =  number_format($total_deals * $host_sku->pre_cost, 2, '.', '');
 		    	foreach ($allocations as $value) {
@@ -131,7 +136,9 @@ class LeTemplateRepository  {
 
 
 		    	$brand = $host_sku->brand_shortcut;
-		    	$deal_id = 'B'.date('ym').$scheme_uom_abv.$brand.$tradedealscheme->id;
+		    	$month_year = date('ym',strtotime($activity->eimplementation_date));
+		    	$series = TradeIndividualSeries::getSeries($month_year, $tradedealscheme->id, $host_sku->host_id);
+		    	$deal_id = 'B'.$month_year.$scheme_uom_abv.$brand. substr($host_sku->variant,0,1).sprintf("%02d", $series->series);
 
 		    	$min_buy = $tradedealscheme->buy;
 		    	if($tradedealscheme->tradedeal_type_id == 2){
@@ -188,7 +195,9 @@ class LeTemplateRepository  {
 		    	$sheet->row(1, $header);
 
 		    	$brand = $host_sku->brand_shortcut;
-		    	$deal_id = 'B'.date('ym',strtotime($activity->eimplementation_date)).$scheme_uom_abv.$brand.$tradedealscheme->id;
+		    	$month_year = date('ym',strtotime($activity->eimplementation_date));
+		    	$series = TradeIndividualSeries::getSeries($month_year, $tradedealscheme->id, $host_sku->host_id);
+		    	$deal_id = 'B'.$month_year.$scheme_uom_abv.$brand. substr($host_sku->variant,0,1).sprintf("%02d", $series->series);
 
 		    	$row = 2;
 		    	foreach ($allocations as $value) {
@@ -211,8 +220,8 @@ class LeTemplateRepository  {
 	private static function generateCollective($tradedealscheme, $tradedeal, $activity, $host_skus, $scheme_uom_abv, $scheme_uom_abv2){
 		set_time_limit(0);
 		$folder_name = $tradedealscheme->dealType->tradedeal_type. ' - ' . $tradedealscheme->buy.' + '.$tradedealscheme->free.' '.$scheme_uom_abv2;
-		Excel::create($tradedealscheme->dealType->tradedeal_type. '  - 1 Header', function($excel) use ($tradedealscheme, $tradedeal, $activity, $host_skus) {
-		    $excel->sheet('Sheet1', function($sheet) use ($tradedealscheme, $tradedeal, $activity, $host_skus) {
+		Excel::create($tradedealscheme->dealType->tradedeal_type. '  - 1 Header', function($excel) use ($tradedealscheme, $tradedeal, $activity, $host_skus,$scheme_uom_abv) {
+		    $excel->sheet('Sheet1', function($sheet) use ($tradedealscheme, $tradedeal, $activity, $host_skus,$scheme_uom_abv) {
 		    	$allocations = TradedealSchemeAllocation::getCollectiveAllocation($tradedealscheme);
 		    	$sub_types = TradedealSchemeChannel::getSelectedDetails($tradedealscheme);
 		    	$materials = TradedealSchemeSku::getHostSku($tradedealscheme);
@@ -242,7 +251,7 @@ class LeTemplateRepository  {
 		    	$month_year = date('ym',strtotime($activity->eimplementation_date));
 		    	$series = TradeCollectiveSeries::getSeries($month_year, $tradedealscheme->id);
 
-		    	$deal_id = $month_year.$scheme_uom_abv;
+		    	$deal_id = $month_year.$scheme_uom_abv.$brand_short_cut.sprintf("%02d", $series->series);
 		    	$pro_desc = 'C '. $tradedealscheme->buy.' + '.$tradedealscheme->free;
 
 		    	$budgets = ActivityBudget::getBudgets($activity->id);

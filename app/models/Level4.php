@@ -2,7 +2,7 @@
 
 class Level4 extends \Eloquent {
 	protected $table = 'level4';
-	protected $fillable = [];
+	protected $fillable = ['coc_03_code', 'l4_code', 'l4_desc'];
 	public $timestamps = false;
 
 	public static function import($records){

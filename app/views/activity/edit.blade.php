@@ -602,7 +602,7 @@
 						<div class="form-group">
 							<div class="row">
 								<div class="col-lg-12">
-									{{ Form::label('total_premium_pcs', 'Total Premium (Pcs)', array('class' => 'control-label')) }}
+									{{ Form::label('total_premium_pcs', 'Total Allocation (Pcs)', array('class' => 'control-label')) }}
 									{{ Form::text('total_premium_pcs','', array('class' => 'form-control', 'readonly' => '')) }}
 								</div>
 							</div>
@@ -697,7 +697,7 @@
 
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				<h3 class="panel-title">Participating Variants</h3>
+				<h3 class="panel-title">Participating SKU</h3>
 			</div>
 			<div class="panel-body">
 				<div class="row">
@@ -723,6 +723,7 @@
 												<th>Premium SKU</th>
 												<th>Cost / Pcs</th>
 												<th>Pcs / Case</th>
+												<th>Variant</th>
 												<th></th>
 												<th></th>
 											</tr>
@@ -1436,7 +1437,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td>Variants</td>
+							<td>Variant</td>
 							<td colspan="3">
 								<input class="form-control" name="variant" type="text" value="" id="variant">
 							</td>
@@ -1447,7 +1448,24 @@
 								{{ Form::select('ref_sku', array('0' => '') + $ref_skus, [], array('data-placeholder' => 'Select Reference SKU','id' => 'ref_sku', 'class' => 'form-control')) }}
 							</td>
 						</tr>
+
+						
+						
+						
+						
+					</tbody>
+				</table>
+
+				<table class="table table-bordered">
+					<tbody>
+						
+						
 						@if(!$tradedeal->non_ulp_premium)
+						<tr>
+							<td colspan="4">
+								<a class="btn btn-success btn-sm" href="{{action('ActivityController@exporttradedeal', $activity->id);}}">Same as Host SKU</a>
+							</td>
+						</tr>
 						<tr class="pre-sku">
 							<td>Premiun SKU</td>
 							<td colspan="3">
@@ -1462,6 +1480,12 @@
 							<td>Pcs / Case</td>
 							<td>
 								<input class="form-control" name="pre_pcs_case" type="text" value="0" id="pre_pcs_case" readonly =''>
+							</td>
+						</tr>
+						<tr>
+							<td>Variant</td>
+							<td colspan="3">
+								<input class="form-control" name="pre_variant" type="text" value="" id="pre_variant">
 							</td>
 						</tr>
 						@else
@@ -1510,6 +1534,8 @@
 @stop
 
 @section('page-script')
+
+$("#variant, #pre_variant").attr('maxlength','6');
 
 $("#fisupload").uploadifyTable({
 	'multi': false,

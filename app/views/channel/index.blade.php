@@ -50,7 +50,7 @@
         <tbody>
           @if(count($channels) == 0)
           <tr>
-            <td colspan="9">No record found!</td>
+            <td colspan="11">No record found!</td>
           </tr>
           @else
           @foreach($channels as $channel)

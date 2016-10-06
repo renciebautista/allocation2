@@ -85,8 +85,8 @@ class ChannelController extends \BaseController {
 	}
 
 	public function export(){
-		$channels = Channel::all();
-
+		// $channels = Channel::all();
+		$channels = Level5::getChannels();
 		Excel::create("Channels", function($excel) use($channels){
 			$excel->sheet('Sheet1', function($sheet) use($channels) {
 				$sheet->fromModel($channels,null, 'A1', true);
