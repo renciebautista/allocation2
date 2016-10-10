@@ -94,15 +94,18 @@ class TradedealAllocRepository  {
 			if(isset($collective_premium->pre_code)){
 				$premium['pre_code'] = $collective_premium->pre_code;
 				$premium['pre_desc'] = $collective_premium->pre_desc;
+				$premium['cost'] = $collective_premium->pre_cost;
 			}else{
 				$premium['pre_code'] = $collective_premium->non_ulp_premium_code;
 				$premium['pre_desc'] = $collective_premium->non_ulp_premium_desc;
+				$premium['cost'] = $collective_premium->non_ulp_premium_cost;
 			}
 			$sku = $host_sku[0];
 		}else{
 			$sku = $host_sku[0];
 			$premium['pre_code'] = $host_sku[0]->pre_code;
 			$premium['pre_desc'] = $host_sku[0]->pre_desc;
+			$premium['cost'] = $host_sku[0]->pre_cost;
 		}
 		
 		// Helper::debug($sku);
@@ -178,6 +181,7 @@ class TradedealAllocRepository  {
 				$shipto_alloc->weekly_run_rates = $weekly_run_rates;
 				$shipto_alloc->pur_req = $pur_req;
 				$shipto_alloc->computed_pcs = $computed_pcs;
+				$shipto_alloc->computed_cost = $computed_pcs * $premium['cost'];
 
 				$shipto_alloc->pre_code = $premium['pre_code'];
 				$shipto_alloc->pre_desc = $premium['pre_desc'];

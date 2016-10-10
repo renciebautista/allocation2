@@ -36,37 +36,47 @@ class LeTemplateRepository  {
 				self::generateIndividualMechanics($tradedealscheme, $tradedeal, $activity, $host_sku, $scheme_uom_abv, $scheme_uom_abv2);
 				self::generateIndividualSiteAllocation($tradedealscheme, $tradedeal, $activity, $host_sku, $scheme_uom_abv, $scheme_uom_abv2);
 			}
-			
 		}
 
 		if($tradedealscheme->tradedeal_type_id == 2){
-			
+			$host_skus = TradedealSchemeSku::getHostSku($tradedealscheme);
+			self::generateCollective($tradedealscheme, $tradedeal, $activity, $host_skus, $scheme_uom_abv, $scheme_uom_abv2);
 		}
 
 		if($tradedealscheme->tradedeal_type_id == 3){
-			// $host_sku = TradedealPartSku::find($tradedealscheme->pre_id);
 			$host_skus = TradedealSchemeSku::getHostSku($tradedealscheme);
 			self::generateCollective($tradedealscheme, $tradedeal, $activity, $host_skus, $scheme_uom_abv, $scheme_uom_abv2);
 		}
 	}
 
+	private static function getdealId($activity, $tradedealscheme, $host_sku, $scheme_uom_abv){
+		$brand = $host_sku->brand_shortcut;
+    	$month_year = date('ym',strtotime($activity->eimplementation_date));
+    	$host_variant = substr(strtoupper($host_sku->variant),0,1);
+    	$series = TradeIndividualSeries::getSeries($month_year, $tradedealscheme->id, $host_sku->host_id);
+    	return 'B'.$month_year.$scheme_uom_abv.$brand.$host_variant .sprintf("%02d", $series->series);
+	}
+
 	private static function generateIndividualHeader($tradedealscheme, $tradedeal, $activity, $host_sku, $scheme_uom_abv, $scheme_uom_abv2 ){
 
-		$folder_name = $tradedealscheme->dealType->tradedeal_type. ' - ' . $host_sku->host_desc .' '. $tradedealscheme->buy.' + '.$tradedealscheme->free.' '.$scheme_uom_abv2;
+		// $folder_name = $tradedealscheme->dealType->tradedeal_type. ' - ' . $host_sku->host_desc .' '. $tradedealscheme->buy.' + '.$tradedealscheme->free.' '.$scheme_uom_abv2;
+		$folder_name = self::getdealId($activity, $tradedealscheme, $host_sku, $scheme_uom_abv);
 
 		Excel::create($tradedealscheme->dealType->tradedeal_type. ' - ' . $host_sku->host_desc. ' - 1 Header', function($excel) use ($tradedealscheme, $tradedeal, $activity, $host_sku,$scheme_uom_abv,$scheme_uom_abv2) {
 		    $excel->sheet('Sheet1', function($sheet) use ($tradedealscheme, $tradedeal, $activity, $host_sku,$scheme_uom_abv,$scheme_uom_abv2) {
 		    	$allocations = TradedealSchemeAllocation::getAllocation($tradedealscheme, $host_sku);
 
+
 		    	if($tradedeal->nonUlpPremium()){
 		    		$header = array('DEAL ID', 'PROMO TYPE', 'IONUMBER', 'START DATE',
 			    	 	'END DATE', 'DEAL DESCRIPTION', 'DEAL AMOUNT', 'SALES ORG', 
 			    	 	'DISTRIBUTOR ID', 'ALLOCATED BUDGET', 'Non Unilever Flag');
-		    		
+		    		$free = $host_sku->pre_desc;
 		    	}else{
 		    		$header = array('DEAL ID', 'IONUMBER', 'START DATE',
 			    	 	'END DATE', 'DEAL DESCRIPTION', 'DEAL AMOUNT', 'SALES ORG', 
 			    	 	'DISTRIBUTOR ID', 'ALLOCATED BUDGET');
+		    		$free = $host_sku->pre_variant;
 		    	}
 
 		    	$sheet->row(1, $header);
@@ -76,8 +86,9 @@ class LeTemplateRepository  {
 
 		    	$brand = $host_sku->brand_shortcut;
 		    	$month_year = date('ym',strtotime($activity->eimplementation_date));
+		    	$host_variant = substr(strtoupper($host_sku->variant),0,1);
 		    	$series = TradeIndividualSeries::getSeries($month_year, $tradedealscheme->id, $host_sku->host_id);
-		    	$deal_id = 'B'.$month_year.$scheme_uom_abv.$brand. substr($host_sku->variant,0,1).sprintf("%02d", $series->series);
+		    	$deal_id = 'B'.$month_year.$scheme_uom_abv.$brand.$host_variant .sprintf("%02d", $series->series);
 
 		    	$budgets = ActivityBudget::getBudgets($activity->id);
 		    	$io_number = '';
@@ -93,8 +104,9 @@ class LeTemplateRepository  {
 
 		    	$_scheme = $tradedealscheme->buy.'+'.$tradedealscheme->free;
 		    	$_uom = $scheme_uom_abv2;
-		    	$deal_desc = $_scheme.' '.$_uom.' '.$brand;
 
+
+		    	$deal_desc = $_scheme.' '.$_uom.' '.$brand. ' '.$host_variant.'+'.$host_sku->pre_brand_shortcut.' '.$free;
 
 		    	$total_deals = TradedealSchemeAllocation::getTotalDeals($tradedealscheme,$host_sku);
 		    	$deal_amount =  number_format($total_deals * $host_sku->pre_cost, 2, '.', '');
@@ -116,12 +128,12 @@ class LeTemplateRepository  {
 		    		
 		    	}
 		    });
-		})->store('csv', storage_path('le/'.$tradedealscheme->id.'/'.$folder_name));
+		})->store('csv', storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name));
 	}
 
 	private static function generateIndividualMechanics($tradedealscheme, $tradedeal, $activity, $host_sku, $scheme_uom_abv, $scheme_uom_abv2){
-		$folder_name = $tradedealscheme->dealType->tradedeal_type. ' - ' . $host_sku->host_desc .' '. $tradedealscheme->buy.' + '.$tradedealscheme->free.' '.$scheme_uom_abv2;
-
+		// $folder_name = $tradedealscheme->dealType->tradedeal_type. ' - ' . $host_sku->host_desc .' '. $tradedealscheme->buy.' + '.$tradedealscheme->free.' '.$scheme_uom_abv2;
+		$folder_name = self::getdealId($activity, $tradedealscheme, $host_sku, $scheme_uom_abv);
 		Excel::create($tradedealscheme->dealType->tradedeal_type. ' - ' . $host_sku->host_desc. ' - 2 Mechanics', function($excel) use ($tradedealscheme, $tradedeal, $activity, $host_sku, $scheme_uom_abv, $scheme_uom_abv2) {
 		    $excel->sheet('Sheet1', function($sheet) use ($tradedealscheme, $tradedeal, $activity, $host_sku, $scheme_uom_abv, $scheme_uom_abv2) {
 		    	
@@ -137,8 +149,9 @@ class LeTemplateRepository  {
 
 		    	$brand = $host_sku->brand_shortcut;
 		    	$month_year = date('ym',strtotime($activity->eimplementation_date));
+		    	$host_variant = substr(strtoupper($host_sku->variant),0,1);
 		    	$series = TradeIndividualSeries::getSeries($month_year, $tradedealscheme->id, $host_sku->host_id);
-		    	$deal_id = 'B'.$month_year.$scheme_uom_abv.$brand. substr($host_sku->variant,0,1).sprintf("%02d", $series->series);
+		    	$deal_id = 'B'.$month_year.$scheme_uom_abv.$brand.$host_variant .sprintf("%02d", $series->series);
 
 		    	$min_buy = $tradedealscheme->buy;
 		    	if($tradedealscheme->tradedeal_type_id == 2){
@@ -179,11 +192,12 @@ class LeTemplateRepository  {
 					$row++;
 		    	}
 		    });
-		})->store('csv', storage_path('le/'.$tradedealscheme->id.'/'.$folder_name));
+		})->store('csv', storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name));
 	}
 
 	private static function generateIndividualSiteAllocation($tradedealscheme, $tradedeal, $activity, $host_sku, $scheme_uom_abv, $scheme_uom_abv2){
-		$folder_name = $tradedealscheme->dealType->tradedeal_type. ' - ' . $host_sku->host_desc .' '. $tradedealscheme->buy.' + '.$tradedealscheme->free.' '.$scheme_uom_abv2;
+		// $folder_name = $tradedealscheme->dealType->tradedeal_type. ' - ' . $host_sku->host_desc .' '. $tradedealscheme->buy.' + '.$tradedealscheme->free.' '.$scheme_uom_abv2;
+		$folder_name = self::getdealId($activity, $tradedealscheme, $host_sku, $scheme_uom_abv);
 
 		Excel::create($tradedealscheme->dealType->tradedeal_type. ' - ' . $host_sku->host_desc. ' - 4 Site Allocation', function($excel) use ($tradedealscheme, $tradedeal, $activity, $host_sku,$scheme_uom_abv, $scheme_uom_abv2) {
 		    $excel->sheet('Sheet1', function($sheet) use ($tradedealscheme, $tradedeal, $activity, $host_sku, $scheme_uom_abv, $scheme_uom_abv2) {
@@ -196,8 +210,9 @@ class LeTemplateRepository  {
 
 		    	$brand = $host_sku->brand_shortcut;
 		    	$month_year = date('ym',strtotime($activity->eimplementation_date));
+		    	$host_variant = substr(strtoupper($host_sku->variant),0,1);
 		    	$series = TradeIndividualSeries::getSeries($month_year, $tradedealscheme->id, $host_sku->host_id);
-		    	$deal_id = 'B'.$month_year.$scheme_uom_abv.$brand. substr($host_sku->variant,0,1).sprintf("%02d", $series->series);
+		    	$deal_id = 'B'.$month_year.$scheme_uom_abv.$brand.$host_variant .sprintf("%02d", $series->series);
 
 		    	$row = 2;
 		    	foreach ($allocations as $value) {
@@ -214,18 +229,19 @@ class LeTemplateRepository  {
 		    		
 		    	}
 		    });
-		})->store('csv', storage_path('le/'.$tradedealscheme->id.'/'.$folder_name));
+		})->store('csv', storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name));
 	}
 
 	private static function generateCollective($tradedealscheme, $tradedeal, $activity, $host_skus, $scheme_uom_abv, $scheme_uom_abv2){
 		set_time_limit(0);
-		$folder_name = $tradedealscheme->dealType->tradedeal_type. ' - ' . $tradedealscheme->buy.' + '.$tradedealscheme->free.' '.$scheme_uom_abv2;
+		// $folder_name = $tradedealscheme->dealType->tradedeal_type. ' - ' . $tradedealscheme->buy.' + '.$tradedealscheme->free.' '.$scheme_uom_abv2;
+		$folder_name = self::getdealId($activity, $tradedealscheme, $host_sku, $scheme_uom_abv);
+		
 		Excel::create($tradedealscheme->dealType->tradedeal_type. '  - 1 Header', function($excel) use ($tradedealscheme, $tradedeal, $activity, $host_skus,$scheme_uom_abv) {
 		    $excel->sheet('Sheet1', function($sheet) use ($tradedealscheme, $tradedeal, $activity, $host_skus,$scheme_uom_abv) {
 		    	$allocations = TradedealSchemeAllocation::getCollectiveAllocation($tradedealscheme);
 		    	$sub_types = TradedealSchemeChannel::getSelectedDetails($tradedealscheme);
 		    	$materials = TradedealSchemeSku::getHostSku($tradedealscheme);
-
 
 		    	$header = array('Promotion Number', 'Promotion Description', 'U2K2 I/O No', 'Start Date', 'End Date',
 		    		'BUY Quota', 'Quota UOM', 'GET Quota', 'Quota UOM', 'Quantity Type', 'Header Qty', 'Site', 'Site BUY Quota',
@@ -252,7 +268,7 @@ class LeTemplateRepository  {
 		    	$series = TradeCollectiveSeries::getSeries($month_year, $tradedealscheme->id);
 
 		    	$deal_id = $month_year.$scheme_uom_abv.$brand_short_cut.sprintf("%02d", $series->series);
-		    	$pro_desc = 'C '. $tradedealscheme->buy.' + '.$tradedealscheme->free;
+		    	$pro_desc = $tradedealscheme->buy.' + '.$tradedealscheme->free;
 
 		    	$budgets = ActivityBudget::getBudgets($activity->id);
 		    	$io_number = '';
@@ -295,7 +311,7 @@ class LeTemplateRepository  {
 		    		}
 		    	}
 		    });
-		})->store('csv', storage_path('le/'.$tradedealscheme->id.'/'.$folder_name));
+		})->store('csv', storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name));
 	}
 
 }

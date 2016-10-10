@@ -602,8 +602,8 @@
 						<div class="form-group">
 							<div class="row">
 								<div class="col-lg-12">
-									{{ Form::label('total_premium_pcs', 'Total Allocation (Pcs)', array('class' => 'control-label')) }}
-									{{ Form::text('total_premium_pcs','', array('class' => 'form-control', 'readonly' => '')) }}
+									{{ Form::label('total_allocation_pcs', 'Total Allocation (Pcs)', array('class' => 'control-label')) }}
+									{{ Form::text('total_allocation_pcs',number_format($total_deals), array('class' => 'form-control', 'readonly' => '')) }}
 								</div>
 							</div>
 						</div>
@@ -614,7 +614,7 @@
 							<div class="row">
 								<div class="col-lg-12">
 									{{ Form::label('total_premium_php', 'Total Premium (Php)', array('class' => 'control-label')) }}
-									{{ Form::text('total_premium_php','', array('class' => 'form-control', 'readonly' => '')) }}								
+									{{ Form::text('total_premium_php',number_format($total_premium_cost,2), array('class' => 'form-control', 'readonly' => '')) }}								
 								</div>
 							</div>
 						</div>
@@ -626,18 +626,23 @@
 		</div>
 
 		<div class="panel panel-default">
-		  	<div class="panel-heading">Non ULP Premium</div>
+		  	<div class="panel-heading">Premium Type</div>
 
 		  	<div class="panel-body">
 				
 				<div class="row">
 					<div class="col-lg-3">
 						<div class="form-group">
-							<div class="checkbox">
-						        <label>
-						        	{{ Form::checkbox('non_ulp_premium',1, ($tradedeal) ?  $tradedeal->non_ulp_premium : 1,['id' => 'non_ulp_premium']) }} Yes
-						        </label>
-						    </div>
+							<div class="radio">
+							  	<label>
+							  		{{ Form::radio('non_ulp_premium', '1', $tradedeal->non_ulp_premium,['id' => 'non_ulp_premium']) }} non-ULP Premium
+							  	</label>
+							</div>
+							<div class="radio">
+							  	<label>
+							    	{{ Form::radio('non_ulp_premium', '0', !$tradedeal->non_ulp_premium,['id' => 'non_ulp_premium']) }} ULP Premium
+							  	</label>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -751,7 +756,7 @@
 					<div class="col-lg-12">
 						<a class="btn btn-primary btn-sm" href="{{action('ActivityController@createtradealscheme', $activity->id);}}">Add Scheme</a>
 						<a class="btn btn-success btn-sm" href="{{action('ActivityController@exporttradedeal', $activity->id);}}">Export Schemes</a>
-						<a class="btn btn-success btn-sm" href="{{action('ActivityController@exporttradedeal', $activity->id);}}">Export LE Templates</a>
+						<a class="btn btn-success btn-sm" href="{{action('TradealSchemeController@exportle', $activity->id);}}">Export LE Templates</a>
 					</div>
 				</div>
 				<br>
@@ -1448,11 +1453,6 @@
 								{{ Form::select('ref_sku', array('0' => '') + $ref_skus, [], array('data-placeholder' => 'Select Reference SKU','id' => 'ref_sku', 'class' => 'form-control')) }}
 							</td>
 						</tr>
-
-						
-						
-						
-						
 					</tbody>
 				</table>
 
@@ -1463,7 +1463,7 @@
 						@if(!$tradedeal->non_ulp_premium)
 						<tr>
 							<td colspan="4">
-								<a class="btn btn-success btn-sm" href="{{action('ActivityController@exporttradedeal', $activity->id);}}">Same as Host SKU</a>
+								<button id="copy_host" type="button" class="btn btn-success btn-sm">Same as Host SKU</button>
 							</td>
 						</tr>
 						<tr class="pre-sku">
@@ -1536,6 +1536,7 @@
 @section('page-script')
 
 $("#variant, #pre_variant").attr('maxlength','6');
+$("#non_ulp_premium_desc").attr('maxlength','13');
 
 $("#fisupload").uploadifyTable({
 	'multi': false,

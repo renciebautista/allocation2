@@ -33,5 +33,9 @@ class TradedealScheme extends \Eloquent {
 		return $this->pre_desc .' - '.$this->pre_code;
 	}
 
+
+	public static function total_deals($activity){
+		return self::join('');
+	}
 	
 }

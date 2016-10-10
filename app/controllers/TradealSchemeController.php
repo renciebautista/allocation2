@@ -1,5 +1,5 @@
 <?php
-
+use Alchemy\Zippy\Zippy;
 class TradealSchemeController extends \BaseController {
 
 	/**
@@ -245,6 +245,29 @@ class TradealSchemeController extends \BaseController {
 	public function destroy($id)
 	{
 		//
+	}
+
+	public function exportle($id){
+		$zippy = Zippy::load();
+		$activity = Activity::findOrFail($id);
+		$tradedeal = Tradedeal::getActivityTradeDeal($activity);
+
+		$folders = array();
+		$foldername = preg_replace('/[^A-Za-z0-9 _ .-]/', '_', $activity->circular_name);
+		$folder_name = str_replace(":","_", $foldername);
+		$zip_path = storage_path().'/zipped/le/'.strtoupper(Helper::sanitize($folder_name)).'.zip';
+		// dd($zip_path);
+		File::delete($zip_path);
+		$nofile = 'public/nofile/robots.txt';
+		$path = '/le/'.$activity->id;
+		$distination = storage_path().$path ;
+		
+		$folder[$foldername] = storage_path().$path.'/';
+		
+
+		// Helper::print_r($folder);
+		$archive = $zippy->create($zip_path,$folder,true);
+		return Response::download($zip_path);
 	}
 
 }

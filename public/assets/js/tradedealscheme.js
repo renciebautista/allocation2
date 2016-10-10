@@ -71,7 +71,7 @@ $(document).ready(function() {
 		        if (chekcbox.is(':checked')){
 			        row.closest("tr").find("input.qty").attr('disabled','disabled').val('1');
 			       
-			        var cost = accounting.unformat(row.find('td:eq(3)').text()) || 0;
+			        var cost = accounting.unformat(row.find('td:eq(4)').text()) || 0;
 
 			        var pr = 0;
 			        if(uom == 'PIECES'){
@@ -81,11 +81,11 @@ $(document).ready(function() {
 			        	pr = buy * cost * 12;
 			        }
 			        if(uom == 'CASES'){
-			        	pr = buy * cost * accounting.unformat(row.find('td:eq(4)').text()) || 0;
+			        	pr = buy * cost * accounting.unformat(row.find('td:eq(5)').text()) || 0;
 			        }
-			        row.find('td:eq(8)').text(accounting.formatNumber(pr,2) || 0);
+			        row.find('td:eq(9)').text(accounting.formatNumber(pr,2) || 0);
 			    }else{
-			    	row.find('td:eq(8)').text(accounting.formatNumber(0.00,2) || 0);
+			    	row.find('td:eq(9)').text(accounting.formatNumber(0.00,2) || 0);
 			    }
 	    	});
 
@@ -105,12 +105,12 @@ $(document).ready(function() {
 
 			$('#participating_sku').find(' tbody tr').each(function () {
 				var row = $(this);
-				row.find('td:eq(10)').text(accounting.formatNumber(0.00,2) || 0);
+				row.find('td:eq(13)').text(accounting.formatNumber(0.00,2) || 0);
 		        var chekcbox = $(this).find('input:checked');
 		        if (chekcbox.is(':checked')){
 		        	row.closest("tr").find("input.qty").removeAttr('disabled');
 		        	var qty = accounting.unformat(row.closest("tr").find("input.qty").val());
-		        	var cost = accounting.unformat(row.find('td:eq(3)').text()) || 0;
+		        	var cost = accounting.unformat(row.find('td:eq(4)').text()) || 0;
 		        	var row_cost = 0;
 		        	if(uom == 'PIECES'){
 			        	row_cost = qty * cost;
@@ -119,9 +119,9 @@ $(document).ready(function() {
 			        	row_cost = qty * cost * 12;
 			        }
 			        if(uom == 'CASES'){
-			        	row_cost = qty * cost * accounting.unformat(row.find('td:eq(4)').text()) || 0;
+			        	row_cost = qty * cost * accounting.unformat(row.find('td:eq(5)').text()) || 0;
 			        }
-			        row.find('td:eq(10)').text(accounting.formatNumber(row_cost,2) || 0);
+			        row.find('td:eq(13)').text(accounting.formatNumber(row_cost,2) || 0);
 		        	total_cost = total_cost + row_cost;  
 		        	addPremium(chekcbox.val());
 		        	total_buy = total_buy + qty;
@@ -153,11 +153,11 @@ $(document).ready(function() {
 
 			$('#participating_sku').find(' tbody tr').each(function () {
 				var row = $(this);
-				row.find('td:eq(11)').text(accounting.formatNumber(0.00,2) || 0);
+				row.find('td:eq(13)').text(accounting.formatNumber(0.00,2) || 0);
 		        var chekcbox = $(this).find('input:checked');
 		        if (chekcbox.is(':checked')){
 		        	row.closest("tr").find("input.qty").attr('disabled','disabled').val('1');
-		        	var cost = accounting.unformat(row.find('td:eq(3)').text()) || 0;
+		        	var cost = accounting.unformat(row.find('td:eq(4)').text()) || 0;
 		        	var row_cost = 0;
 		        	if(uom == 'PIECES'){
 			        	row_cost = buy * cost;
@@ -166,9 +166,9 @@ $(document).ready(function() {
 			        	row_cost = buy * cost * 12;
 			        }
 			        if(uom == 'CASES'){
-			        	row_cost = buy * cost * accounting.unformat(row.find('td:eq(4)').text()) || 0;
+			        	row_cost = buy * cost * accounting.unformat(row.find('td:eq(5)').text()) || 0;
 			        }
-			        row.find('td:eq(11)').text(accounting.formatNumber(row_cost,2) || 0);
+			        row.find('td:eq(13)').text(accounting.formatNumber(row_cost,2) || 0);
 			        if(total_cost == 0){
 			        	total_cost = row_cost;
 			        }else{
