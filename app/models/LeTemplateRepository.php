@@ -59,7 +59,6 @@ class LeTemplateRepository  {
 
 	private static function generateIndividualHeader($tradedealscheme, $tradedeal, $activity, $host_sku, $scheme_uom_abv, $scheme_uom_abv2 ){
 
-		// $folder_name = $tradedealscheme->dealType->tradedeal_type. ' - ' . $host_sku->host_desc .' '. $tradedealscheme->buy.' + '.$tradedealscheme->free.' '.$scheme_uom_abv2;
 		$folder_name = self::getdealId($activity, $tradedealscheme, $host_sku, $scheme_uom_abv);
 
 		Excel::create($tradedealscheme->dealType->tradedeal_type. ' - ' . $host_sku->host_desc. ' - 1 Header', function($excel) use ($tradedealscheme, $tradedeal, $activity, $host_sku,$scheme_uom_abv,$scheme_uom_abv2) {
@@ -132,7 +131,6 @@ class LeTemplateRepository  {
 	}
 
 	private static function generateIndividualMechanics($tradedealscheme, $tradedeal, $activity, $host_sku, $scheme_uom_abv, $scheme_uom_abv2){
-		// $folder_name = $tradedealscheme->dealType->tradedeal_type. ' - ' . $host_sku->host_desc .' '. $tradedealscheme->buy.' + '.$tradedealscheme->free.' '.$scheme_uom_abv2;
 		$folder_name = self::getdealId($activity, $tradedealscheme, $host_sku, $scheme_uom_abv);
 		Excel::create($tradedealscheme->dealType->tradedeal_type. ' - ' . $host_sku->host_desc. ' - 2 Mechanics', function($excel) use ($tradedealscheme, $tradedeal, $activity, $host_sku, $scheme_uom_abv, $scheme_uom_abv2) {
 		    $excel->sheet('Sheet1', function($sheet) use ($tradedealscheme, $tradedeal, $activity, $host_sku, $scheme_uom_abv, $scheme_uom_abv2) {
@@ -196,7 +194,6 @@ class LeTemplateRepository  {
 	}
 
 	private static function generateIndividualSiteAllocation($tradedealscheme, $tradedeal, $activity, $host_sku, $scheme_uom_abv, $scheme_uom_abv2){
-		// $folder_name = $tradedealscheme->dealType->tradedeal_type. ' - ' . $host_sku->host_desc .' '. $tradedealscheme->buy.' + '.$tradedealscheme->free.' '.$scheme_uom_abv2;
 		$folder_name = self::getdealId($activity, $tradedealscheme, $host_sku, $scheme_uom_abv);
 
 		Excel::create($tradedealscheme->dealType->tradedeal_type. ' - ' . $host_sku->host_desc. ' - 4 Site Allocation', function($excel) use ($tradedealscheme, $tradedeal, $activity, $host_sku,$scheme_uom_abv, $scheme_uom_abv2) {
@@ -234,9 +231,7 @@ class LeTemplateRepository  {
 
 	private static function generateCollective($tradedealscheme, $tradedeal, $activity, $host_skus, $scheme_uom_abv, $scheme_uom_abv2){
 		set_time_limit(0);
-		// $folder_name = $tradedealscheme->dealType->tradedeal_type. ' - ' . $tradedealscheme->buy.' + '.$tradedealscheme->free.' '.$scheme_uom_abv2;
-		$folder_name = self::getdealId($activity, $tradedealscheme, $host_sku, $scheme_uom_abv);
-		
+		$folder_name = $tradedealscheme->name . ' '. $tradedealscheme->pre_desc;
 		Excel::create($tradedealscheme->dealType->tradedeal_type. '  - 1 Header', function($excel) use ($tradedealscheme, $tradedeal, $activity, $host_skus,$scheme_uom_abv) {
 		    $excel->sheet('Sheet1', function($sheet) use ($tradedealscheme, $tradedeal, $activity, $host_skus,$scheme_uom_abv) {
 		    	$allocations = TradedealSchemeAllocation::getCollectiveAllocation($tradedealscheme);
@@ -313,5 +308,4 @@ class LeTemplateRepository  {
 		    });
 		})->store('csv', storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name));
 	}
-
 }

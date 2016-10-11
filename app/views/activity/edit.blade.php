@@ -723,12 +723,12 @@
 												<th>Host SKU</th>
 												<th>Cost / Pcs</th>
 												<th>Pcs / Case</th>
-												<th>Variant</th>
+												<th>Identifier/Shortcut</th>
 												<th>Reference SKU</th>
 												<th>Premium SKU</th>
 												<th>Cost / Pcs</th>
 												<th>Pcs / Case</th>
-												<th>Variant</th>
+												<th>Identifier/Shortcut</th>
 												<th></th>
 												<th></th>
 											</tr>
@@ -789,7 +789,7 @@
 															{{ $scheme->premium()}}
 														@else
 															@if($scheme->tradedeal_type_id == 1)
-																See participating variants
+																See participating identifier/shorcut
 															@else
 																{{ $scheme->premium()}}
 															@endif
@@ -1442,7 +1442,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td>Variant</td>
+							<td>Identifier/Shortcut</td>
 							<td colspan="3">
 								<input class="form-control" name="variant" type="text" value="" id="variant">
 							</td>
@@ -1483,7 +1483,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td>Variant</td>
+							<td>Identifier/Shortcut</td>
 							<td colspan="3">
 								<input class="form-control" name="pre_variant" type="text" value="" id="pre_variant">
 							</td>

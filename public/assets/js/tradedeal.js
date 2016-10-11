@@ -169,12 +169,13 @@ $(document).ready(function() {
 		$('#host_cost_pcs').val('');
 		$('#host_pcs_case').val('');
 		$('#addpartskus .error-msg').text('');
+		$('#variant').val('');
+		$('#pre_variant').val('');
 		if(non_premiun == '1'){
 
 		}else{
 			$('#pre_cost_pcs').val('');
 			$('#pre_pcs_case').val('');
-			
 		}
 		
 	});
