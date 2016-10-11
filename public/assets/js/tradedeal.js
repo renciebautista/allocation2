@@ -96,6 +96,9 @@ $(document).ready(function() {
 	// var non_ulp_premium = $('input[name="non_ulp_premium"]:checked').length > 0;
 	// var non_ulp_premium = $("input[name='non_ulp_premium']:checked").val();
 
+	
+
+
 	var non_premiun = $("input[name='non_ulp_premium']:checked").val();
 	if(non_premiun == '1'){
 		$('#non_ulp_premium_desc, #non_ulp_premium_code, #non_ulp_premium_cost, #non_ulp_pcs_case').removeAttr('disabled');
@@ -114,6 +117,8 @@ $(document).ready(function() {
 
 	// var non_ulp_premium = $('input[name="non_ulp_premium"]:checked').length > 0;
 	$('#addsku').on('shown.bs.modal', function(){
+		var non_premiun = $("input[name='non_ulp_premium']:checked").val();
+		console.log(non_premiun);
 		$("#host_sku").chosen({
 			search_contains: true,
 			allow_single_deselect: true
@@ -140,9 +145,11 @@ $(document).ready(function() {
 		});
 
 		if(non_premiun == '1'){
-			// $('.pre-sku').hide();
+			$('.non_ulppremium').show();
+			$('.ulppremium').show();
 		}else{
-			// $('.pre-sku').show();
+			$('.ulppremium').show();
+			$('.non_ulppremium').hide();
 			$("#pre_sku").chosen({
 				search_contains: true,
 				allow_single_deselect: true
@@ -171,6 +178,7 @@ $(document).ready(function() {
 		$('#addpartskus .error-msg').text('');
 		$('#variant').val('');
 		$('#pre_variant').val('');
+		$('.ulppremium, .non_ulppremium').hide();
 		if(non_premiun == '1'){
 
 		}else{

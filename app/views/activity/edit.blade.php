@@ -694,8 +694,7 @@
 					</div>
 				</div>
 				<br>
-
-				<button class="btn btn-primary disable-button">Update</button>
+								<button class="btn btn-primary disable-button">Update</button>
 
 		  	</div>
 		</div>
@@ -1370,7 +1369,7 @@
 		<br>
 	</div>
 
-		<!-- attachment details -->
+	<!-- attachment details -->
 	<div class="tab-pane fade" id="comments">
 		<br>
 		<div class="panel panel-default">
@@ -1461,18 +1460,18 @@
 						
 						
 						@if(!$tradedeal->non_ulp_premium)
-						<tr>
+						<tr class="ulppremium">
 							<td colspan="4">
 								<button id="copy_host" type="button" class="btn btn-success btn-sm">Same as Host SKU</button>
 							</td>
 						</tr>
-						<tr class="pre-sku">
+						<tr class="pre-sku ulppremium">
 							<td>Premiun SKU</td>
 							<td colspan="3">
 								{{ Form::select('pre_sku', array('0' => '') + $pre_skus, [], array('data-placeholder' => 'Select Premium SKU','id' => 'pre_sku', 'class' => 'form-control')) }}
 							</td>
 						</tr>
-						<tr class="pre-sku">
+						<tr class="pre-sku ulppremium">
 							<td>Cost / Pcs</td>
 							<td>
 								<input class="form-control" name="pre_cost_pcs" type="text" value="0" id="pre_cost_pcs" readonly =''>
