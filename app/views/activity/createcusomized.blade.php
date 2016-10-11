@@ -22,13 +22,19 @@
 </div>
 
 
+
 <ul class="nav nav-tabs">
+	<li class="disabled"><a>Timeline</a></li>
 	<li class="active"><a aria-expanded="true" href="#activty" data-toggle="tab">Activity Details</a></li>
 	<li class="disabled"><a>Customer Details</a></li>
 	<li class="disabled"><a>Schemes</a></li>
+	<li class="disabled"><a>Activity Members</a></li>
 	<li class="disabled"><a>Budget Details</a></li>
 	<li class="disabled"><a>Timings Details</a></li>
+	<li class="disabled"><a>Job Orders</a></li>
 	<li class="disabled"><a>Attachment</a></li>
+	<li class="disabled"><a>Comments</a></li>
+	
 </ul>
 <div id="myTabContent" class="tab-content">
   	<div class="tab-pane fade active in" id="activty">

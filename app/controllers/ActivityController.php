@@ -331,10 +331,14 @@ class ActivityController extends BaseController {
 							File::makeDirectory($path2);
 						}
 
+						ActivityTimeline::addTimeline($activity, Auth::user(), "created the activity", '');
+
 						return $activity->id;
 
 						
 					});
+
+					
 
 					return Redirect::route('activity.edit',$id)
 						->with('class', 'alert-success')
@@ -1130,43 +1134,43 @@ class ActivityController extends BaseController {
 				if(Activity::myActivity($activity)){
 					return json_encode($this->updateActivityStatus($activity));
 				}else{
-					$member = ActivityMember::where('user_id',Auth::id())
-						->where('activity_id', $activity->id)
-						->first();
-					if(empty($member)){
-						$arr['success'] = 0;
-						$arr['err_msg'] = 'Member not found';
-					}else{
-						// dd(Input::get('submitstatus'));
-						$member->activity_member_status_id = Input::get('submitstatus');
-						$member->save();
+					// $member = ActivityMember::where('user_id',Auth::id())
+					// 	->where('activity_id', $activity->id)
+					// 	->first();
+					// if(empty($member)){
+					// 	$arr['success'] = 0;
+					// 	$arr['err_msg'] = 'Member not found';
+					// }else{
+					// 	// dd(Input::get('submitstatus'));
+					// 	$member->activity_member_status_id = Input::get('submitstatus');
+					// 	$member->save();
 
-						if(Input::get('submitstatus') == 3){
-							ActivityTimeline::addTimeline($activity, Auth::user(), "approved the activity", Input::get('submitremarks'));
-						}
+					// 	if(Input::get('submitstatus') == 3){
+					// 		ActivityTimeline::addTimeline($activity, Auth::user(), "approved the activity", Input::get('submitremarks'));
+					// 	}
 
-						if(Input::get('submitstatus') == 2){
-							ActivityTimeline::addTimeline($activity, Auth::user(), "denied the activity", Input::get('submitremarks'));
-						}
-
-
+					// 	if(Input::get('submitstatus') == 2){
+					// 		ActivityTimeline::addTimeline($activity, Auth::user(), "denied the activity", Input::get('submitremarks'));
+					// 	}
 
 
-						if(!$activity->channel_approved){
-							$ch_members = ActivityMember::getByDepartmentId(['2']);
-							$approve = 1;
-							foreach ($ch_members as $member) {
-								if($member->activity_member_status_id < 3){
-									$approve = 0;
-								}
-							}
-							$activity->channel_approved = $approve;
-							$activity->save();
-						}
 
-						$arr['success'] = 1;
-					}
-					return json_encode($arr, 200);
+
+					// 	// if(!$activity->channel_approved){
+					// 	// 	$ch_members = ActivityMember::getByDepartmentId(['2']);
+					// 	// 	$approve = 1;
+					// 	// 	foreach ($ch_members as $member) {
+					// 	// 		if($member->activity_member_status_id < 3){
+					// 	// 			$approve = 0;
+					// 	// 		}
+					// 	// 	}
+					// 	// 	$activity->channel_approved = $approve;
+					// 	// 	$activity->save();
+					// 	// }
+
+					// 	$arr['success'] = 1;
+					// }
+					// return json_encode($arr, 200);
 				}
 				
 			}
@@ -3061,16 +3065,24 @@ class ActivityController extends BaseController {
 			}else{
 				$user = User::find(Input::get('activity-member'));
 				if(!empty($user)){
+					$fullname = $user->first_name . ' ' . $user->last_name;
+
 					$new_user = new ActivityMember;
 					$new_user->activity_id = $activity->id;
 					$new_user->user_id = $user->id;
 					$new_user->user_desc = $user->first_name . ' ' . $user->last_name;
 					$new_user->department = $user->department->department;
 
+					$remarks = $fullname .' is added as an activity pre-approver.';
+
 					if(!in_array($user->department_id, $approvers)){
 						$new_user->activity_member_status_id = 3;
+						$remarks = $fullname .' is added as an expectator.';
 					}
 					$new_user->save();
+
+					ActivityTimeline::addTimeline($activity, Auth::user(), "add a member", $remarks);
+
 				}else{
 					$err[] = 'User not found.';
 				}
@@ -3265,7 +3277,7 @@ class ActivityController extends BaseController {
 
 	public function preapproveedit($id){
 		$activity = Activity::findOrFail($id);
-		if((!Auth::user()->isChannelApprover()) || (!ActivityMember::myActivity($activity->id))){
+		if(!ActivityMember::myApproval($activity->id)){
 			return View::make('shared.404');
 		}else{
 
@@ -3376,18 +3388,19 @@ class ActivityController extends BaseController {
 		}else{
 			$member = ActivityMember::myActivity($activity->id);
 			if(!empty($member)){
-				if(Input::get('action') == 'approve'){
+				if(Input::get('update_status') == '1'){
 					$member->activity_member_status_id = 3;
 					$member->update();
-					ActivityTimeline::addTimeline($activity, Auth::user(), "approved the activity",'');
+					ActivityTimeline::addTimeline($activity, Auth::user(), "approved the activity",Input::get('submitremarks'));
 				}else{
 					$member->activity_member_status_id = 2;
 					$member->update();
-					ActivityTimeline::addTimeline($activity, Auth::user(), "denied the activity",'');
+					ActivityTimeline::addTimeline($activity, Auth::user(), "denied the activity",Input::get('submitremarks'));
 				}
 			}
 
 			$activityIdList = Activity::getCustomIdList();	
+
 			if(!empty($activityIdList)){
 				return Redirect::route('activity.preapproveedit',$activityIdList[0])
 					->with('class', 'alert-success')

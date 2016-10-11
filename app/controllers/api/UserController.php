@@ -7,6 +7,7 @@ use Activity;
 use Input;
 use Auth;
 use Setting;
+use ActivityMember;
 class UserController extends \BaseController {
 
 
@@ -15,10 +16,10 @@ class UserController extends \BaseController {
 		if(\Request::ajax()){
 			$activity = Activity::find(Input::get('id'));
 			if(!empty($activity)){
-				if($activity->created_by == Auth::id()){
+				if($activity->created_by == Auth::user()->id){
 					$settings = Setting::find(1);
 					$approvers = explode(",", $settings->customized_preapprover);
-					if(!$activity->channel_approved){
+					if(!ActivityMember::allowToSubmit($activity)){
 						$departments = $approvers;
 					}else{
 						$departments = [];
@@ -26,7 +27,7 @@ class UserController extends \BaseController {
 					$data['user'] = User::getUsers($activity,$departments);
 				}else{
 
-					$data['user'] = User::getUsers($activity);
+					$data['user'] = User::getUsers($activity);	
 				}
 
 				

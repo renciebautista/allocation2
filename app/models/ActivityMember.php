@@ -9,6 +9,14 @@ class ActivityMember extends \Eloquent {
     		->first();
     }
 
+    public static function myApproval($activity_id){
+        return self::where('activity_id', $activity_id)
+            ->where('user_id',Auth::user()->id)
+            ->where('pre_approve', 1)
+            ->where('activity_member_status_id', 1)
+            ->first();
+    }
+
 
     public static function getByDepartmentId($departments){
         return self::join('users', 'users.id', '=', 'activity_members.user_id')
@@ -17,13 +25,11 @@ class ActivityMember extends \Eloquent {
             ->get();
     }
 
-    public static function allowToSubmit($activity){
-        $settings = Setting::find(1);
-        $approvers = explode(",", $settings->customized_preapprover);
 
+
+    public static function allowToSubmit($activity){
         $members = self::where('activity_id', $activity->id)
-            ->join('users', 'users.id', '=', 'activity_members.user_id')
-            ->whereIn('users.department_id',$approvers)
+            ->where('pre_approve',1)
             ->get();
         if(count($members) > 0){
             $allow = false;

@@ -80,9 +80,10 @@
 	<li class=""><a id="tab-member" aria-expanded="true" href="#member">Activity Members</a></li>
 	<li class=""><a id="tab-budget" aria-expanded="false" href="#budget">Budget Details</a></li>
 	<li class=""><a id="tab-timings" aria-expanded="false" href="#timings">Timings Details</a></li>
+	<li class=""><a id="tab-jo" aria-expanded="false" href="#jo">Job Orders</a></li>
 	<li class=""><a id="tab-attachments" aria-expanded="false" href="#attachment">Attachments</a></li>
 	<li class=""><a id="tab-comments" aria-expanded="false" href="#comments">Comments</a></li>
-	<li class=""><a id="tab-jo" aria-expanded="false" href="#jo">Job Orders</a></li>
+	
 </ul>
 
 <div id="myTabContent" class="tab-content">

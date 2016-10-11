@@ -290,6 +290,8 @@ class Activity extends \Eloquent {
 			->orderBy('activities.id')
 			->get();
 
+		
+
 
 		$customized = self::select('activities.id','activities.circular_name','activities.edownload_date',
 			'activities.eimplementation_date','activities.end_date','activities.billing_date',

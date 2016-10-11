@@ -15,19 +15,49 @@
 @include('partials.notification')
 
 
-{{ Form::open(array('action' => array('ActivityController@updatecustom', $activity->id), 'class' => 'bs-component','id' => 'updateactivity')) }}
+<!-- Modal -->
+<div class="modal fade" id="myAction" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  	<div class="modal-dialog">
+  		<div class="modal-content">
+  			
+			{{ Form::open(array('action' => array('ActivityController@updatecustom', $activity->id), 'class' => 'bs-component','id' => 'updatecustom')) }}
+			<?php echo Form::hidden('update_status', null, array('id' => 'update_status')); ?>
+
+	      	<div class="modal-header">
+	        	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</button>
+	        	<h4 class="modal-title" id="myModalLabel">Activity Actions</h4>
+	      	</div>
+	      	<div class="modal-body">
+	      		<div id="error"></div>
+	          	<div class="form-group">
+	            	{{ Form::label('submitremarks', 'Comments:', array('class' => 'control-label')) }}
+	            	{{ Form::textarea('submitremarks','',array('class' => 'form-control', 'placeholder' => 'Comments', 'size' => '30x5')) }}
+	          	</div>
+	      	</div>
+	      	<div class="modal-footer">
+	        	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	        	<button class="btn btn-primary" onclick="return confirm('Are you sure?')">Submit</button>	    
+	     	</div>
+	     	{{ Form::close() }}
+	    </div>
+  	</div>
+</div>
+
 
 <div class="row">
 	<div class="col-lg-12">
 		<div class="form-group">
 			{{ HTML::linkRoute('activity.preapprove', 'Back To Activity List', array(), array('class' => 'btn btn-default')) }}
 
-			<button type="submit" class="btn btn-success" name="action" value="approve" onclick="return confirm('You are about to approve this activity. Do you want to proceed?')">
+			<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myAction" data-whatever="Approve">
 			  	Approve
 			</button>
-			<button type="submit" class="btn btn-danger" name="action" value="deny" onclick="return confirm('You are about to deny this activity. Do you want to proceed?')">
+
+			<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myAction" data-whatever="Deny">
 			  	Deny
 			</button>
+
+			
 
 			@if(count($activityIdList) > 1)
 				@if(!$id_index)
@@ -1000,12 +1030,54 @@
 
 	
 </div>
-{{ Form::close() }}
+
 
 @stop
 
 
 @section('page-script')
+
+$('#myAction').on('show.bs.modal', function (event) {
+  	var button = $(event.relatedTarget) // Button that triggered the modal
+  	var recipient = button.data('whatever') // Extract info from data-* attributes
+ 	// If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+  	// Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+  	var modal = $(this)
+  	modal.find('.modal-title').text(recipient + ' activity')
+  	if(recipient == 'Approve'){
+  		modal.find('#update_status').val(1);
+  	}else{
+  		modal.find('#update_status').val(0)
+  	}
+  	
+  	modal.find('.modal-body input').val(recipient)
+})
+
+$("form[id='updatecustom']").on("submit",function(e){
+	var form = $(this);
+	var url = form.prop('action');
+	if(form.valid()){
+		$.ajax({
+			url: url,
+			data: form.serialize(),
+			method: 'POST',
+			dataType: "json",
+			success: function(data){
+				if(data.success == "1"){
+					location.reload();
+				}else{
+				 	$("#error").text('');
+					var obj = data.error,  
+			        ul = $("<ul>");                    
+			        for (var i = 0, l = obj.length; i < l; ++i) {
+			            ul.append("<li>" + obj[i] + "</li>");
+			        }
+			        $("#error").append(ul);
+				}
+			}
+		});
+	}
+});
 
 $('textarea').each(function(){
     autosize(this);

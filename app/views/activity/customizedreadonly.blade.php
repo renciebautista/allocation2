@@ -70,6 +70,7 @@
 </div>
 @endif
 
+
 <ul class="nav nav-tabs">
 	<li class="active"><a id="tab-summary" aria-expanded="true" href="#timeline">Timeline</a></li>
 	<li class=""><a id="tab-activity" aria-expanded="true" href="#activity">Activity Details</a></li>
@@ -78,9 +79,10 @@
 	<li class=""><a id="tab-member" aria-expanded="true" href="#member">Activity Members</a></li>
 	<li class=""><a id="tab-budget" aria-expanded="false" href="#budget">Budget Details</a></li>
 	<li class=""><a id="tab-timings" aria-expanded="false" href="#timings">Timings Details</a></li>
+	<li class=""><a id="tab-jo" aria-expanded="false" href="#jo">Job Orders</a></li>
 	<li class=""><a id="tab-attachments" aria-expanded="false" href="#attachment">Attachments</a></li>
 	<li class=""><a id="tab-comments" aria-expanded="false" href="#comments">Comments</a></li>
-	<li class=""><a id="tab-jo" aria-expanded="false" href="#jo">Job Orders</a></li>
+	
 </ul>
 
 <div id="myTabContent" class="tab-content">
@@ -97,6 +99,13 @@
 				</div>
 			</div>
 		</div>
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="form-group">
+					<button class="btn btn-primary btn-style" type="submit">Next</button>
+				</div>
+			</div>
+		</div><br>
 	</div>
 
 	<!-- activity details -->
@@ -1009,7 +1018,6 @@
 			<div class="col-lg-12">
 				<div class="form-group">
 					<button class="btn btn-default btn-style" type="submit">Back</button>
-					<button class="btn btn-primary btn-style" type="submit">Next</button>
 				</div>
 			</div>
 		</div>
@@ -1067,13 +1075,14 @@
 		<div class="row">
 			<div class="col-lg-12">
 				<div class="form-group">
-					<button class="btn btn-default btn-style" type="submit">Back</button>
+										<button class="btn btn-default btn-style" type="submit">Back</button>
+
+					<button class="btn btn-primary btn-style" type="submit">Next</button>
 				</div>
 			</div>
 		</div>
 		<br>
 	</div>
-
 
 	<!-- Modal -->
 
