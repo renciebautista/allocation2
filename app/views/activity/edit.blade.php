@@ -635,12 +635,12 @@
 						<div class="form-group">
 							<div class="radio">
 							  	<label>
-							  		{{ Form::radio('non_ulp_premium', '1', $tradedeal->non_ulp_premium,['id' => 'non_ulp_premium']) }} non-ULP Premium
+							  		{{ Form::radio('non_ulp_premium', '1', (isset($tradedeal->non_ulp_premium)) ? $tradedeal->non_ulp_premium : 0,['id' => 'non_ulp_premium']) }} non-ULP Premium
 							  	</label>
 							</div>
 							<div class="radio">
 							  	<label>
-							    	{{ Form::radio('non_ulp_premium', '0', !$tradedeal->non_ulp_premium,['id' => 'non_ulp_premium']) }} ULP Premium
+							    	{{ Form::radio('non_ulp_premium', '0', (isset($tradedeal->non_ulp_premium)) ? !$tradedeal->non_ulp_premium : 0,['id' => 'non_ulp_premium']) }} ULP Premium
 							  	</label>
 							</div>
 						</div>
