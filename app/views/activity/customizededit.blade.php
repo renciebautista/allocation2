@@ -412,10 +412,39 @@
 										<th>Fullname</th>
 										<th>Department</th>
 										<th>Status</th>
-										<th>Action</th>
+										<th colspan="2">Action</th>
 									</tr>
 								</thead>
 							  	<tbody>
+							  		@if(count($activty_members) > 0)
+							  		@foreach($activty_members as $member)
+							  		<tr>
+							  			<td>{{ $member->user_desc }}</td>
+							  			<td>{{ $member->department }}</td>
+							  			<td>{{ $member->mem_status }}</td>
+							  			<td class="action">
+							  				{{ Form::open(array('method' => 'POST', 'action' => array('ActivityController@removemember', $member->id), 'class' => 'disable-button')) }}                       
+											{{ Form::submit('Remove', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to remove this record?')){return false;};")) }}
+											{{ Form::close() }}
+							  			</td>
+							  			<td class="action">
+							  				@if($member->pre_approve)
+							  				@if($member->activity_member_status_id == 2)
+							  				{{ Form::open(array('method' => 'POST', 'action' => array('ActivityController@reapprove', $member->id), 'class' => 'disable-button')) }}                       
+											{{ Form::submit('Re-approve', array('class'=> 'btn btn-success btn-xs','onclick' => "if(!confirm('Are you sure to re-approve this record?')){return false;};")) }}
+											{{ Form::close() }}
+											@else
+											<button class="btn btn-success btn-xs disabled">Re-approve</button>
+											@endif
+							  				@endif
+							  			</td>
+							  		</tr>
+							  		@endforeach
+							  		@else
+							  		<tr>
+							  			<td colspan="4">No record found.</td>
+							  		</tr>
+							  		@endif
 							  		
 							  	</tbody>
 							  	

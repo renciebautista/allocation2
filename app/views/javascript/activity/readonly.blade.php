@@ -3,19 +3,6 @@
 var hostname = 'http://' + $(location).attr('host');
 var activity_id = $('#act_id').val();
 
-var table = $("#activity-members").DataTable({
-	"processing": true, //Feature control the processing indicator.
-    "serverSide": true, //Feature control DataTables' server-side processing mode.
-	"scrollCollapse": true,
-	"searching": false,
-	"paging": false,
-	"bSort": true,
-	"ajax": hostname + '/activity/'+activity_id+'/members',
-	"columnDefs": [ { //this prevents errors if the data is null
-		"targets": "_all",
-		"defaultContent": ""
-	} ]
-});
 
 if(location.hash.length > 0){
 	var activeTab = $('[href=' + location.hash + ']');

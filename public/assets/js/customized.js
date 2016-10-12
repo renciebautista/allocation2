@@ -48,8 +48,9 @@ $(document).ready(function(){
 			dataType: "json",
 			success: function(data){
 				if(data.success == "1"){
-					addMember.modal('hide');
-					reload_table();
+					// addMember.modal('hide');
+					// reload_table();
+					location.reload();
 				}else{
 					bootbox.alert("An error occured while adding user.");
 				}
@@ -58,22 +59,22 @@ $(document).ready(function(){
 		e.preventDefault();
 	});
 
-	function reload_table(){
-	    table.ajax.reload(null,false); //reload datatable ajax 
-	}
+	// function reload_table(){
+	//     table.ajax.reload(null,false); //reload datatable ajax 
+	// }
 
 
-	var table = $("#activity-members").DataTable({
-		"processing": true, //Feature control the processing indicator.
-	    "serverSide": true, //Feature control DataTables' server-side processing mode.
-		"scrollCollapse": true,
-		"searching": false,
-		"paging": false,
-		"bSort": true,
-		"ajax": hostname + '/activity/'+activity_id+'/members',
-		"columnDefs": [ { //this prevents errors if the data is null
-			"targets": "_all",
-			"defaultContent": ""
-		} ]
-	});
+	// var table = $("#activity-members").DataTable({
+	// 	"processing": true, //Feature control the processing indicator.
+	//     "serverSide": true, //Feature control DataTables' server-side processing mode.
+	// 	"scrollCollapse": true,
+	// 	"searching": false,
+	// 	"paging": false,
+	// 	"bSort": true,
+	// 	"ajax": hostname + '/activity/'+activity_id+'/members',
+	// 	"columnDefs": [ { //this prevents errors if the data is null
+	// 		"targets": "_all",
+	// 		"defaultContent": ""
+	// 	} ]
+	// });
 });

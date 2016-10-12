@@ -306,8 +306,6 @@ class Activity extends \Eloquent {
 			->join('users', 'activity_members.user_id','=','users.id')
 			->join('users as propo', 'activities.created_by','=','propo.id')
 			->where('activity_members.user_id',$user_id)
-			// ->where('activities.id',587)
-
 			->where(function($query) use ($title){
 				$query->where('activities.circular_name', 'LIKE' ,"%$title%");
 			})
@@ -336,7 +334,11 @@ class Activity extends \Eloquent {
 			->orderBy('activities.id')
 			->get();
 
-		return $national->merge($customized);
+		$newColection = $customized->reject(function($element) {
+		    return !ActivityMember::allowToSubmit($element);
+		});
+
+		return $national->merge($newColection);
 	}
 
 	public static function search2($user_id = 0,$status,$cycle,$scope,$type,$pmog,$title){

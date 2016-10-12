@@ -401,6 +401,19 @@
 									</tr>
 								</thead>
 							  	<tbody>
+							  		@if(count($activty_members) > 0)
+							  		@foreach($activty_members as $member)
+							  		<tr>
+							  			<td>{{ $member->user_desc }}</td>
+							  			<td>{{ $member->department }}</td>
+							  			<td>{{ $member->mem_status }}</td>
+							  		</tr>
+							  		@endforeach
+							  		@else
+							  		<tr>
+							  			<td colspan="3">No record found.</td>
+							  		</tr>
+							  		@endif
 							  		
 							  	</tbody>
 							  	

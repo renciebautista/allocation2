@@ -95,12 +95,13 @@
 
 
 <ul class="nav nav-tabs">
-	<li class="active"><a aria-expanded="true" href="#activty">Activity Preview</a></li>
+	<li class="active"><a aria-expanded="false" href="#comments">Timeline</a></li>
+	<li class=""><a aria-expanded="true" href="#activty">Activity Preview</a></li>
 	<li class=""><a aria-expanded="false" href="#attachment">Attachments</a></li>
 	@if($activity->activitytype->with_sob)
 	<li class=""><a aria-expanded="false" href="#sob">SOB Details</a></li>
 	@endif
-	<li class=""><a aria-expanded="false" href="#comments">Comments</a></li>
+	
 	
 </ul>
 
@@ -1004,28 +1005,7 @@
 
 	<div class="tab-pane fade" id="comments">
 		<br>
-		<div class="panel panel-default">
-		  	<div class="panel-heading">Comments</div>
-		  	<div class="panel-body">
-				<ul class="comment">
-					@foreach($comments as $comment)
-	                <li class="left clearfix">
-	                    <div class="comment-body clearfix">
-	                        <div class="header">
-	                            <strong class="primary-font">{{ $comment->createdby->getFullname()}} 
-	                            	<p class="{{ $comment->class }}">({{ $comment->comment_status }})</p>
-	                            </strong> 
-	                            <small class="pull-right text-muted">
-	                                <i class="fa fa-clock-o fa-fw"></i> {{ date_format(date_create($comment->created_at),'m/d/Y H:m:s') }} 
-	                            </small>
-	                        </div>
-	                        <p>{{ $comment->comment }}</p>
-	                    </div>
-	                </li>
-	                @endforeach
-	            </ul>
-		  	</div>
-		</div>
+		@include('shared.timeline2')
 	</div>
 
 	
@@ -1053,31 +1033,6 @@ $('#myAction').on('show.bs.modal', function (event) {
   	modal.find('.modal-body input').val(recipient)
 })
 
-$("form[id='updatecustom']").on("submit",function(e){
-	var form = $(this);
-	var url = form.prop('action');
-	if(form.valid()){
-		$.ajax({
-			url: url,
-			data: form.serialize(),
-			method: 'POST',
-			dataType: "json",
-			success: function(data){
-				if(data.success == "1"){
-					location.reload();
-				}else{
-				 	$("#error").text('');
-					var obj = data.error,  
-			        ul = $("<ul>");                    
-			        for (var i = 0, l = obj.length; i < l; ++i) {
-			            ul.append("<li>" + obj[i] + "</li>");
-			        }
-			        $("#error").append(ul);
-				}
-			}
-		});
-	}
-});
 
 $('textarea').each(function(){
     autosize(this);

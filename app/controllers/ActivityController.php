@@ -563,6 +563,8 @@ class ActivityController extends BaseController {
 			$settings = Setting::find(1);
 			$ch_approvers = explode(",", $settings->customized_preapprover);
 
+			$activty_members = ActivityMember::memberList($activity);
+
 			if(Activity::myActivity($activity)){ // cmd / field
 				if($activity->status_id > 3){
 					$view = 'activity.customizedreadonly';
@@ -581,7 +583,7 @@ class ActivityController extends BaseController {
 			}else{ //others
 				$activity_member = ActivityMember::myActivity($activity->id);
 				if($activity_member){ // members
-					if(in_array(Auth::user()->department_id, $ch_approvers)){
+					if($activity_member->pre_approve){
 						if($activity->status_id > 3){
 							$view = 'activity.customizedreadonly';
 							$show_action = false;
@@ -591,9 +593,15 @@ class ActivityController extends BaseController {
 							$view = 'activity.customizedreadonly';
 						}
 					}else{
-						$show_action = false;
-						$view = 'activity.customizedreadonly';
+						if(ActivityMember::allowToSubmit($activity)){
+							$show_action = false;
+							$view = 'activity.customizedreadonly';
+						}else{
+							return Response::make(View::make('shared/404'), 404);
+						}
+						
 					}
+					
 				}else{ 
 					return Response::make(View::make('shared/404'), 404);
 				}
@@ -604,7 +612,7 @@ class ActivityController extends BaseController {
 					 'activity_types', 'divisions' ,'objectives',  'users', 'budgets', 'nobudgets', 
 					 'sel_objectives', 'sel_divisions',  'schemes', 'scheme_summary', 'networks', 'timings' ,
 					 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings',
-					 'comments' ,'submitstatus', 'allowAdd', 'joborders', 'show_action', 'allowJo', 'timelines'));
+					 'comments' ,'submitstatus', 'allowAdd', 'joborders', 'show_action', 'allowJo', 'timelines', 'activty_members'));
 		}
 		
 	}
@@ -985,7 +993,7 @@ class ActivityController extends BaseController {
 
 				// recall activity
 				if($status_id == 2){
-					$comment_status = "RECALLED ACTIVITY";
+					$comment_status = "RECALLED THE ACTIVITY";
 					$class = "text-warning";
 					ActivityApprover::resetAll($activity->id);
 					$allow_update = true;
@@ -1041,13 +1049,13 @@ class ActivityController extends BaseController {
 						$class = "text-success";
 						// check if there is a planner
 						if(count($planner_count) > 0){
-							$comment_status = "SUBMITTED TO PMOG PLANNER";
+							$comment_status = "SUBMITTED THE ACTIVITY TO PMOG PLANNER";
 							$activity_status = 4;
 						}else{
 							// check if there is GCOM Approver
 							$gcom_approvers = ActivityApprover::getApproverByRole($activity->id,'GCOM APPROVER');
 							if(count($gcom_approvers) > 0){
-								$comment_status = "SUBMITTED TO GCOM";
+								$comment_status = "SUBMITTED THE ACTIVITY TO GCOM";
 								$activity_status = 5;
 
 								foreach ($gcom_approvers as $gcom_approver) {
@@ -1060,7 +1068,7 @@ class ActivityController extends BaseController {
 								// check if there is CD OPS Approver
 								$cdops_approvers = ActivityApprover::getApproverByRole($activity->id,'CD OPS APPROVER');
 								if(count($cdops_approvers) > 0){
-									$comment_status = "SUBMITTED TO CD OPS";
+									$comment_status = "SUBMITTED THE ACTIVITY  TO CD OPS";
 									$activity_status = 6;
 
 									foreach ($cdops_approvers as $cdops_approver) {
@@ -1073,7 +1081,7 @@ class ActivityController extends BaseController {
 									// check if there is CMD DIRECTOR Approver
 									$cmd_approvers = ActivityApprover::getApproverByRole($activity->id,'CMD DIRECTOR');
 									if(count($cmd_approvers) > 0){
-										$comment_status = "SUBMITTED TO CMD";
+										$comment_status = "SUBMITTED THE ACTIVITY TO CMD";
 										$activity_status = 7;
 
 										foreach ($cmd_approvers as $cmd_approver) {
@@ -1106,6 +1114,9 @@ class ActivityController extends BaseController {
 					$comment->comment_status = $comment_status;
 					$comment->class = $class;
 					$comment->save();
+
+					ActivityTimeline::addTimeline($activity, Auth::user(), strtolower($comment_status), Input::get('submitremarks'));
+
 
 					$arr['success'] = 1;
 					Session::flash('class', 'alert-success');
@@ -1289,6 +1300,9 @@ class ActivityController extends BaseController {
 						$comment->comment_status = $comment_status;
 						$comment->class = $class;
 						$comment->save();
+
+						ActivityTimeline::addTimeline($activity, Auth::user(), strtolower($comment_status), Input::get('submitremarks'));
+
 
 						$arr['success'] = 1;
 						Session::flash('class', 'alert-success');
@@ -3072,7 +3086,10 @@ class ActivityController extends BaseController {
 					$new_user->user_id = $user->id;
 					$new_user->user_desc = $user->first_name . ' ' . $user->last_name;
 					$new_user->department = $user->department->department;
-
+					if(in_array($user->department_id, $approvers)){
+						$new_user->pre_approve = 1;
+					}
+					
 					$remarks = $fullname .' is added as an activity pre-approver.';
 
 					if(!in_array($user->department_id, $approvers)){
@@ -3096,33 +3113,48 @@ class ActivityController extends BaseController {
 		}
 	}
 
-	public function members($id){
-		$skus = ActivityMember::select(array('activity_member_statuses.id','user_desc', 'department', 'activity_member_statuses.mem_status', 'activity_members.activity_member_status_id'))
-			->join('activity_member_statuses', 'activity_member_statuses.id', '=', 'activity_members.activity_member_status_id')
-			->where('activity_id', $id);
-			
-		return Datatables::of($skus)
-			->remove_column('id')
-			->edit_column('mem_status', function($row) {
-                if($row->activity_member_status_id == 1){
-                	$class = 'text-primary';
-                }
+	public function removemember($id){
+		$member = ActivityMember::findOrFail($id);
+		$activity = Activity::findOrFail($member->activity_id);
+		if(!Activity::myActivity($activity)){
+			return View::make('shared.404');
+		}else{
+			if(empty($member)){
+				return Redirect::to(URL::action('ActivityController@edit', array('id' => $member->activity_id)) . "#member")
+					->with('class', 'alert-danger')
+					->with('message', 'Member not found');
+			}else{
+				$member->delete();
 
-                if($row->activity_member_status_id == 2){
-                	$class = 'text-danger';
-                }
+				ActivityTimeline::addTimeline($activity, Auth::user(), "removed a member", $member->user_desc .' is removed as activity member.');
+				return Redirect::to(URL::action('ActivityController@edit', array('id' => $member->activity_id)) . "#member")
+					->with('class', 'alert-success')
+					->with('message', 'Member successfuly removed.');
+			}
+		}
+	}
 
-                if($row->activity_member_status_id == 3){
-                	$class = 'text-success';
-                }
+	public function reapprove($id){
+		$member = ActivityMember::findOrFail($id);
+		$activity = Activity::findOrFail($member->activity_id);
+		if(!Activity::myActivity($activity)){
+			return View::make('shared.404');
+		}else{
+			if(empty($member)){
+				return Redirect::to(URL::action('ActivityController@edit', array('id' => $member->activity_id)) . "#member")
+					->with('class', 'alert-danger')
+					->with('message', 'Member not found');
+			}else{
+				$member->activity_member_status_id = 1;
+				$member->update();
 
-                if($row->activity_member_status_id == 4){
-                	$class = 'ext-warning';
-                }
-                
-                return '<p class="'.$class.'">'.$row->mem_status.'</p>';
-            })
-			->make();
+				ActivityTimeline::addTimeline($activity, Auth::user(), "update activity member",'activity is re applied for approval to '. $member->user_desc);
+				return Redirect::to(URL::action('ActivityController@edit', array('id' => $member->activity_id)) . "#member")
+					->with('class', 'alert-success')
+					->with('message', 'Member successfuly removed.');
+			}
+		}
+		
 	}
 
 	public function joborder($id){
@@ -3277,10 +3309,11 @@ class ActivityController extends BaseController {
 
 	public function preapproveedit($id){
 		$activity = Activity::findOrFail($id);
+		
 		if(!ActivityMember::myApproval($activity->id)){
 			return View::make('shared.404');
 		}else{
-
+			$timelines = ActivityTimeline::getTop($activity);
 			$activityIdList = Activity::getCustomIdList();		
 
 			$id_index = array_search($id, $activityIdList);
@@ -3376,7 +3409,7 @@ class ActivityController extends BaseController {
 			'activity' ,'approvers', 'planner','budgets','nobudgets','schemes','skuinvolves', 'sku_involves',
 			'materials','non_ulp','networks','artworks', 'pis' , 'areas','channels', 
 			'fdapermits','fis', 'backgrounds', 'bandings' ,'activity_roles',
-			'activityIdList','id_index','status', 'soballocation'));
+			'activityIdList','id_index','status', 'soballocation', 'timelines'));
 
 		}
 	}
@@ -3387,7 +3420,7 @@ class ActivityController extends BaseController {
 			return View::make('shared.404');
 		}else{
 			$member = ActivityMember::myActivity($activity->id);
-			if(!empty($member)){
+			if((!empty($member)) && ($member->activity_member_status_id = 1)){
 				if(Input::get('update_status') == '1'){
 					$member->activity_member_status_id = 3;
 					$member->update();

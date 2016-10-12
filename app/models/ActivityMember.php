@@ -61,4 +61,12 @@ class ActivityMember extends \Eloquent {
         }
         return $list;
     }
+
+    public static function memberList($activity){
+        return self::select(array('activity_member_statuses.id as status_id','user_desc', 'department', 'activity_member_statuses.mem_status',
+         'activity_members.activity_member_status_id', 'activity_members.id', 'activity_members.pre_approve'))
+            ->join('activity_member_statuses', 'activity_member_statuses.id', '=', 'activity_members.activity_member_status_id')
+            ->where('activity_id', $activity->id)
+            ->get();
+    }
 }
