@@ -1521,6 +1521,118 @@
 	</div>
 </div>
 
+
+<div class="modal fade" id="editsku" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		{{ Form::open(array('action' => array('ActivityController@updatepartskus'), 'method' => 'POST', 'class' => 'bs-component','id' => 'updatepartskus')) }}
+		{{ Form::hidden('sku_id', 0, ['id' => 'sku_id']) }}
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="myModalLabel">Edit Participating SKU</h4>
+			</div>
+			<div class="modal-body">
+				<div class="error-msg"></div>
+				<table class="table table-bordered">
+					<tbody>
+						<tr>
+							<td>Host SKU</td>
+							<td colspan="3">
+								{{ Form::select('ehost_sku', array('0' => '') + $host_skus, [], array('data-placeholder' => 'Select Host SKU','id' => 'ehost_sku', 'class' => 'form-control')) }}
+							</td>
+						</tr>
+						
+						<tr>
+							<td>Cost / Pcs</td>
+							<td>
+								<input class="form-control" name="ehost_cost_pcs" type="text" value="0" id="ehost_cost_pcs" readonly =''>
+							</td>
+							<td>Pcs / Case</td>
+							<td>
+								<input class="form-control" name="ehost_pcs_case" type="text" value="0" id="ehost_pcs_case" readonly =''>
+							</td>
+						</tr>
+						<tr>
+							<td>Identifier/Shortcut</td>
+							<td colspan="3">
+								<input class="form-control" name="evariant" type="text" value="" id="evariant">
+							</td>
+						</tr>
+						<tr>
+							<td>Reference SKU</td>
+							<td colspan="3">
+								{{ Form::select('eref_sku', array('0' => '') + $ref_skus, [], array('data-placeholder' => 'Select Reference SKU','id' => 'eref_sku', 'class' => 'form-control')) }}
+							</td>
+						</tr>
+					</tbody>
+				</table>
+
+				<table class="table table-bordered">
+					<tbody>
+						
+						
+						@if(!$tradedeal->non_ulp_premium)
+						<tr class="ulppremium">
+							<td colspan="4">
+								<button id="copy_host" type="button" class="btn btn-success btn-sm">Same as Host SKU</button>
+							</td>
+						</tr>
+						<tr class="pre-sku ulppremium">
+							<td>Premiun SKU</td>
+							<td colspan="3">
+								{{ Form::select('pre_sku', array('0' => '') + $pre_skus, [], array('data-placeholder' => 'Select Premium SKU','id' => 'pre_sku', 'class' => 'form-control')) }}
+							</td>
+						</tr>
+						<tr class="pre-sku ulppremium">
+							<td>Cost / Pcs</td>
+							<td>
+								<input class="form-control" name="pre_cost_pcs" type="text" value="0" id="pre_cost_pcs" readonly =''>
+							</td>
+							<td>Pcs / Case</td>
+							<td>
+								<input class="form-control" name="pre_pcs_case" type="text" value="0" id="pre_pcs_case" readonly =''>
+							</td>
+						</tr>
+						<tr>
+							<td>Identifier/Shortcut</td>
+							<td colspan="3">
+								<input class="form-control" name="pre_variant" type="text" value="" id="pre_variant">
+							</td>
+						</tr>
+						@else
+						<tr class="pre-sku">
+							<td>Premiun SKU</td>
+							<td colspan="3">
+								<input class="form-control" name="pre_sku" type="text" value="{{ $tradedeal->non_ulp_premium_desc}} - {{ $tradedeal->non_ulp_premium_code }}" id="pre_sku" readonly =''>
+							</td>
+						</tr>
+						<tr class="pre-sku">
+							<td>Cost / Pcs</td>
+							<td>
+								<input class="form-control" name="pre_cost_pcs" type="text" value="{{ $tradedeal->non_ulp_premium_cost}}" id="pre_cost_pcs" readonly =''>
+							</td>
+							<td>Pcs / Case</td>
+							<td>
+								<input class="form-control" name="pre_pcs_case" type="text" value="{{ $tradedeal->non_ulp_pcs_case}}" id="pre_pcs_case" readonly =''>
+							</td>
+						</tr>
+
+						@endif
+						
+						
+						
+					</tbody>
+				</table>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				<button id="submitsku" class="btn btn-primary">Submit</button>
+			</div>
+		</div>
+		{{ Form::close() }}
+	</div>
+</div>
+
 @endif
 @endif
 

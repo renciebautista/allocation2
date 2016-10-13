@@ -61,6 +61,7 @@ $(document).ready(function() {
 			$('#p_req').val('N/A').attr('disabled','disabled');
 			$('#premium_sku').val('').attr('disabled','disabled');
 			$('#non_premium_sku').val('N/A');
+			$('#premium_sku_ind').show();
 			$('#premium_sku_txt').show();
 			$('#premium_sku').hide();
 			$('#buy').removeAttr('readonly');
@@ -99,6 +100,7 @@ $(document).ready(function() {
 			$('#buy').attr('readonly','readonly');
 
 			$('#non_premium_sku').val($('#pre').val());
+			$('#premium_sku_ind').hide();
 
 			var total_cost = 0;
 			var total_buy = 0;
@@ -147,6 +149,7 @@ $(document).ready(function() {
 			buy = $('#buy').val() || 0;
 
 			$('#non_premium_sku').val($('#pre').val());
+			$('#premium_sku_ind').hide();
 
 			var total_cost = 0;
 			var total_buy = 1;

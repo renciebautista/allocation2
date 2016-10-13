@@ -136,10 +136,10 @@
                         <div class="row">
                             <div class="col-lg-6">
                                 {{ Form::label('premium_sku', 'Premium SKU (for Collective)', array('class' => 'control-label')) }}
-
                                 @if($tradedeal->non_ulp_premium)
                                 {{ Form::text('non_premium_sku', 'N/A', array('id' => 'non_premium_sku', 'class' => 'form-control', 'readonly' => '')) }}
                                 @else
+                                <input id="premium_sku_ind" class="form-control" readonly="" name="premium_sku_ind" type="text" value="N/A" aria-invalid="false">
                                 <select class="form-control" id="premium_sku" name="premium_sku" disabled="disabled">
                                 </select>
 

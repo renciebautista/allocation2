@@ -118,7 +118,7 @@ $(document).ready(function() {
 	// var non_ulp_premium = $('input[name="non_ulp_premium"]:checked').length > 0;
 	$('#addsku').on('shown.bs.modal', function(){
 		var non_premiun = $("input[name='non_ulp_premium']:checked").val();
-		console.log(non_premiun);
+		// console.log(non_premiun);
 		$("#host_sku").chosen({
 			search_contains: true,
 			allow_single_deselect: true
@@ -186,6 +186,86 @@ $(document).ready(function() {
 			$('#pre_pcs_case').val('');
 		}
 		
+	});
+
+	$('#editsku').on('shown.bs.modal', function(){
+		$("#ehost_sku").chosen({
+			search_contains: true,
+			allow_single_deselect: true
+		}).change(function() {
+		    $.ajax({
+		        async: false,
+		        type: "GET",
+		        url: hostname + '/api/pricelistsku/?code='+$(this).val(),
+		        contentType: "application/json; charset=utf-8",
+		        dataType: "json",
+		        success: function (data) { 
+		        	$('#ehost_cost_pcs').val('');
+		        	$('#ehost_cost_pcs').val(data.price);
+		        	$('#ehost_pcs_case').val('');
+		        	$('#ehost_pcs_case').val(data.pack_size);
+		        },
+		        error: function (msg) { roles = msg; }
+		    });
+		});
+
+	});
+
+	$("form[id='updatepartskus']").on("submit",function(e){
+		var form = $(this);
+		var method = form.find('input[name="_method"]').val() || 'POST';
+		var url = form.prop('action');
+		$.ajax({
+			url: url,
+			data: form.serialize(),
+			method: "POST",
+			dataType: "json",
+			success: function(data){
+				if(data.success == "1"){
+					$('#editsku').modal('hide');
+					reload_table();
+				}else{
+					var obj = data.err_msg,  
+			        ul = '<ul>';         
+			        var html = '<div class="alert alert-danger alert-dismissible fade in" role="alert"> <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>%s</div>'; 
+			        for (var i = 0, l = obj.length; i < l; ++i) {
+			        	ul = ul + "<li>" + obj[i] + "</li>";
+			            
+			        }
+			        ul = ul + '</ul>'; 
+					$('#addpartskus .error-msg').text('').append(html.replace(/%s/g, ul));;
+				}
+			}
+		});
+		e.preventDefault();
+	});
+
+	$(document).on("click",".editsku", function (e) {
+	    var id = $(this).attr('id');
+        // ajax delete data to database
+        $.ajax({
+            url : hostname + '/activity/'+ id+'/partsku',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            success: function(data)
+            {
+               	console.log(data);
+               	$('#editsku').modal('show');
+               	$("#ehost_sku").val(data.host_code).trigger("chosen:updated");
+		       	$('#ehost_cost_pcs').val(data.host_cost);
+		        $('#ehost_pcs_case').val(data.host_pcs_case);
+		        $('#evariant').val(data.variant);
+		        $("#eref_sku").val(data.ref_code).trigger("chosen:updated");
+		        $("#sku_id").val(data.id);
+            },
+            error: function (jqXHR, textStatus, errorThrown)
+            {
+                alert('Error deleting data');
+            }
+        });
+	 
+	    
 	});
 
 	

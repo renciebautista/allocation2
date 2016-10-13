@@ -2976,7 +2976,7 @@ class ActivityController extends BaseController {
 
 		return Datatables::of($skus)
 			->remove_column('id')
-			->add_column('edit', '<a href="javascript:void(0)" id="{{$id}}" class="deletesku" >Edit</a>', 10)
+			->add_column('edit', '<a href="javascript:void(0)" id="{{$id}}" class="editsku" >Edit</a>', 10)
 			->add_column('delete', '<a href="javascript:void(0)" id="{{$id}}" class="deletesku" >Delete</a>', 11)
 			->edit_column('host_cost', function($row) {
 			        return "<span class='pull-right'> {$row->host_cost} </span>";
@@ -3040,36 +3040,83 @@ class ActivityController extends BaseController {
 
 	public function updatepartskus(){
 		if(Request::ajax()){
-			$id = Input::get('sku_id');
-			$part_sku = TradedealPartSku::find($id);
-
-			// dd(Input::all());
-			$host_sku = Pricelist::getSku(Input::get('host_sku'));
-			$ref_sku = Sku::getSku(Input::get('ref_sku'));
-
-			$part_sku->host_code = $host_sku->sap_code;
-			$part_sku->host_desc = $host_sku->sap_desc;
-			$part_sku->host_cost = $host_sku->price;
-			$part_sku->host_pcs_case = $host_sku->pack_size;
-			$part_sku->ref_code = $ref_sku->sku_code;
-			$part_sku->ref_desc = $ref_sku->sku_desc;
-			if(Input::get('pre_sku') != 0){
-				$pre_sku = Pricelist::getSku(Input::get('pre_sku'));
-				$part_sku->pre_code = $pre_sku->sap_code;
-				$part_sku->pre_desc = $pre_sku->sap_desc;
-				$part_sku->pre_cost = $pre_sku->price;
-				$part_sku->pre_pcs_case = $pre_sku->pack_size;
+			$err = [];
+			$part_sku = TradedealPartSku::find(Input::get('sku_id'));
+			$tradedeal = Tradedeal::where('activity_id', $part_sku->activity_id)->first();
+			if(empty($part_sku)){
+				$err[] = 'Participating SKU not found';
 			}else{
-				$part_sku->pre_code = NULL;
-				$part_sku->pre_desc = NULL;
-				$part_sku->pre_cost = NULL;
-				$part_sku->pre_pcs_case = NULL;
+				$host_sku = Pricelist::getSku(Input::get('ehost_sku'));
+				$ref_sku = Sku::getSku(Input::get('eref_sku'));
+				$host_variant = Input::get('evariant');
+				$pre_variant = Input::get('epre_variant');
+
+				$ref_sku2 = Pricelist::getSku(Input::get('eref_sku'));
+
+				$pre_sku = Pricelist::getSku(Input::get('epre_sku'));
+				if(empty($host_sku)){
+					$err[] = 'No selected Host SKU.';
+				}
+
+				if(empty($ref_sku)){
+					$err[] = 'Reference SKU is required.';
+				}
+
+				if(empty($host_variant)){
+					$err[] = 'Host variant is required.';
+				}
+
+
+				if(!$tradedeal->non_ulp_premium){
+					if(empty($pre_sku)){
+						$err[] = 'No Premium SKU selected';
+					}
+
+					if(empty($pre_variant)){
+						$err[] = 'Premium variant is required.';
+					}
+				}
+
+
+
+				if(count($err) == 0){
+					$part_sku->host_code = $host_sku->sap_code;
+					$part_sku->host_desc = $host_sku->sap_desc;
+					$part_sku->variant = strtoupper(Input::get('evariant'));
+					$part_sku->brand_shortcut = $host_sku->brand_shortcut;
+					$part_sku->host_cost = $host_sku->price;
+					$part_sku->host_pcs_case = $host_sku->pack_size;
+					$part_sku->ref_code = $ref_sku->sku_code;
+					$part_sku->ref_desc = $ref_sku->sku_desc;
+					$part_sku->ref_pcs_case = $ref_sku2->pack_size;
+
+					if($tradedeal->non_ulp_premium == 1){
+						$part_sku->pre_code = $tradedeal->non_ulp_premium_code;
+						$part_sku->pre_desc = $tradedeal->non_ulp_premium_desc;
+						$part_sku->pre_cost = $tradedeal->non_ulp_premium_cost;
+						$part_sku->pre_pcs_case = $tradedeal->non_ulp_pcs_case;
+					}else{
+						if(Input::get('epre_sku') != 0){
+							$part_sku->pre_code = $pre_sku->sap_code;
+							$part_sku->pre_desc = $pre_sku->sap_desc;
+							$part_sku->pre_variant = strtoupper(Input::get('epre_variant'));
+							$part_sku->pre_brand_shortcut = $pre_sku->brand_shortcut;
+							$part_sku->pre_cost = $pre_sku->price;
+							$part_sku->pre_pcs_case = $pre_sku->pack_size;
+						}
+					}
+					
+					$part_sku->save();
+				}	
+
 			}
 			
-			$part_sku->save();
-
-			$arr['success'] = 1;
-
+			if(count($err) > 0){
+				$arr['success'] = 0;
+				$arr['err_msg'] = $err;
+			}else{
+				$arr['success'] = 1;
+			}
 			
 			return json_encode($arr);
 		}
