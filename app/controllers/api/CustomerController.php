@@ -142,7 +142,7 @@ class CustomerController extends \BaseController {
 									$ship_to_children[] = array(
 									'title' => $account->account_name,
 									'key' => $group->group_code.".".$area->area_code.".".$customer->customer_code.".".$ship_to->ship_to_code.".".$account->id,
-									'unselectable' => $unselectable
+									'unselectable' => true,
 									);
 								}
 

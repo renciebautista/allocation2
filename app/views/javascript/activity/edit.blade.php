@@ -20,8 +20,7 @@ function getCustomer(){
 		url: "../../api/customerselected?id={{$activity->id}}",
 		success: function(data){
 			$.each(data, function(i, node) {
-				 $("#tree3").fancytree("getTree").getNodeByKey(node).setSelected(true);
-				// console.log(node);
+				$("#tree3").fancytree("getTree").getNodeByKey(node).setSelected(true);
 				$("#tree3").fancytree("getTree").visit(function(node){
 					///if(node.key == node.text){
 						///console.log(node);

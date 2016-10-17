@@ -1289,7 +1289,7 @@ class ActivityController extends BaseController {
 					ActivityChannelList::addChannel($activity->id,$activity_channels);
 
 					DB::commit();
-
+					// dd(1);
 					// update all schemes
 					$schemes = Scheme::getList($activity->id);
 					if (!App::environment('local')){
