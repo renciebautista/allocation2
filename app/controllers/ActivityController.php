@@ -2889,8 +2889,8 @@ class ActivityController extends BaseController {
 				}else{
 					$host_sku = Pricelist::getSku(Input::get('host_sku'));
 					$ref_sku = Sku::getSku(Input::get('ref_sku'));
-					$host_variant = Input::get('variant');
-					$pre_variant = Input::get('pre_variant');
+					$host_variant = strtoupper(Input::get('variant'));
+					$pre_variant = strtoupper(Input::get('pre_variant'));
 
 					$ref_sku2 = Pricelist::getSku(Input::get('ref_sku'));
 
@@ -2919,6 +2919,10 @@ class ActivityController extends BaseController {
 						}
 					}
 
+					if(TradedealPartSku::alreadyExist($activity, $host_sku->sap_code, $host_variant)){
+						$err[] = 'Participating SKU / variant already exist';
+					}
+
 
 
 					if(count($err) == 0){
@@ -2926,7 +2930,7 @@ class ActivityController extends BaseController {
 						$part_sku->activity_id = $id;
 						$part_sku->host_code = $host_sku->sap_code;
 						$part_sku->host_desc = $host_sku->sap_desc;
-						$part_sku->variant = strtoupper(Input::get('variant'));
+						$part_sku->variant = $host_variant;
 						$part_sku->brand_shortcut = $host_sku->brand_shortcut;
 						$part_sku->host_sku_format = $host_sku->sku_format;
 						$part_sku->host_cost = $host_sku->price;
@@ -2944,7 +2948,7 @@ class ActivityController extends BaseController {
 							if(Input::get('pre_sku') != 0){
 								$part_sku->pre_code = $pre_sku->sap_code;
 								$part_sku->pre_desc = $pre_sku->sap_desc;
-								$part_sku->pre_variant = strtoupper(Input::get('pre_variant'));
+								$part_sku->pre_variant = $pre_variant;
 								$part_sku->pre_brand_shortcut = $pre_sku->brand_shortcut;
 								$part_sku->pre_sku_format = $pre_sku->sku_format;
 								$part_sku->pre_cost = $pre_sku->price;
@@ -3142,8 +3146,6 @@ class ActivityController extends BaseController {
 	}
 
 	public function storetradealscheme($id){	
-
-
 		$activity = Activity::findOrFail($id);
 		$tradedeal = Tradedeal::where('activity_id', $activity->id)->first();
 		$deal_type = TradedealType::find(Input::get('deal_type'));
@@ -3195,14 +3197,12 @@ class ActivityController extends BaseController {
 		    'invalid_collective' => 'Combination of participating SKU with different pcs/case value is not allowed',
 		);
 
-
-
 		Validator::extend('invalid_collective', function($attribute, $value, $parameters) {
 		    return $parameters[0];
 		});
 
 		$rules = array(
-			'scheme_name' => 'required',
+			'scheme_name' => 'required|unique:tradedeal_schemes,name,NULL,id,tradedeal_id,'.$tradedeal->id,
 		    'skus' => 'required|invalid_collective:'.$invalid_collective.'|invalid_premiums:'.$invalid_premiums,
 		    'buy' => 'required|numeric',
 		    'free' => 'required|numeric'
@@ -3379,8 +3379,8 @@ class ActivityController extends BaseController {
 					->with('message', 'Trade Deal scheme was successfuly created.');
 		}
 
-		// return Redirect::route('activity.createtradealscheme', $activity->id)
-		return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity->id)) . "#tradedeal")
+		return Redirect::route('activity.createtradealscheme', $activity->id)
+		// return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity->id)) . "#tradedeal")
 				->withInput()
 				->withErrors($validation)
 				->with('class', 'alert-danger')
@@ -3453,26 +3453,11 @@ class ActivityController extends BaseController {
 					$sheet->setCellValueByColumnAndRow($col,1, $sku->preDesc());
 					$col++;
 				}
+
+				
+
+
 		    });
-
-			// $excel->sheet('Sheet1', function($sheet)  use($id){
-				// $activity = Activity::findOrFail($id);
-				// $tradedeal_skus = TradedealPartSku::where('activity_id', $activity->id)->get();
-
-				// $sheet->row(1, array('AREA', 'Distributor Code', 'Distributor Name', 'Site Name', 'Scheme Code', 'PIECES PER DEAL', 'Collective'));
-
-				// // host
-				// $col = 7;
-				// foreach ($tradedeal_skus as $sku) {
-				// 	$sheet->setCellValueByColumnAndRow($col,1, $sku->hostDesc());
-				// 	$col++;
-				// }
-
-				// // premuim
-				// foreach ($tradedeal_skus as $sku) {
-				// 	$sheet->setCellValueByColumnAndRow($col,1, $sku->preDesc());
-				// 	$col++;
-				// }
 
 		})->download('xls');
 	}

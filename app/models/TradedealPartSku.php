@@ -20,4 +20,17 @@ class TradedealPartSku extends \Eloquent {
 		return self::where('activity_id', $activity->id)->get();
 	}
 
+
+	public static function alreadyExist($activity, $host_code, $variant){
+		$record = self::where('activity_id', $activity->id)
+			->where('host_code', $host_code)
+			->where('variant', $variant)
+			->first();
+
+		if(!empty($record)){
+			return true;
+		}else{
+			return false;
+		}
+	}
 }

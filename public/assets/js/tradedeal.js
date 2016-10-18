@@ -341,32 +341,41 @@ $(document).ready(function() {
 	    table.ajax.reload(null,false); //reload datatable ajax 
 	}
 
+	var submitted = false;
+
 	$("form[id='addpartskus']").on("submit",function(e){
-		var form = $(this);
-		var method = form.find('input[name="_method"]').val() || 'POST';
-		var url = form.prop('action');
-		$.ajax({
-			url: url,
-			data: form.serialize(),
-			method: "POST",
-			dataType: "json",
-			success: function(data){
-				if(data.success == "1"){
-					$('#addsku').modal('hide');
-					reload_table();
-				}else{
-					var obj = data.err_msg,  
-			        ul = '<ul>';         
-			        var html = '<div class="alert alert-danger alert-dismissible fade in" role="alert"> <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>%s</div>'; 
-			        for (var i = 0, l = obj.length; i < l; ++i) {
-			        	ul = ul + "<li>" + obj[i] + "</li>";
-			            
-			        }
-			        ul = ul + '</ul>'; 
-					$('#addpartskus .error-msg').text('').append(html.replace(/%s/g, ul));;
+		if(!submitted){
+			submitted = true;
+			var form = $(this);
+			var method = form.find('input[name="_method"]').val() || 'POST';
+			var url = form.prop('action');
+			$.ajax({
+				url: url,
+				data: form.serialize(),
+				method: "POST",
+				dataType: "json",
+				success: function(data){
+					submitted = false;
+					if(data.success == "1"){
+						$('#addsku').modal('hide');
+						reload_table();
+						
+					}else{
+						var obj = data.err_msg,  
+				        ul = '<ul>';         
+				        var html = '<div class="alert alert-danger alert-dismissible fade in" role="alert"> <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>%s</div>'; 
+				        for (var i = 0, l = obj.length; i < l; ++i) {
+				        	ul = ul + "<li>" + obj[i] + "</li>";
+				            
+				        }
+				        ul = ul + '</ul>'; 
+						$('#addpartskus .error-msg').text('').append(html.replace(/%s/g, ul));;
+					}
 				}
-			}
-		});
+			});
+
+		}
+		
 		e.preventDefault();
 	});
 

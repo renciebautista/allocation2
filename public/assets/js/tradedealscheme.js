@@ -271,7 +271,8 @@ $(document).ready(function() {
 
 	var table = $('#channels').DataTable({
 		'iDisplayLength': 100,
-      	// 'columnDefs': [
+		"paging": false
+		      	// 'columnDefs': [
        //   {
        //      'targets': 0,
        //      'checkboxes': {

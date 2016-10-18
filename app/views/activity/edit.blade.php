@@ -1514,7 +1514,7 @@
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				<button id="submitsku" class="btn btn-primary">Submit</button>
+				<button id="submitsku" class="btn btn-primary disable-button">Submit</button>
 			</div>
 		</div>
 		{{ Form::close() }}

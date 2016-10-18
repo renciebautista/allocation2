@@ -78,6 +78,8 @@ class TradealSchemeController extends \BaseController {
 	 */
 	public function update($id)
 	{
+		$scheme = TradedealScheme::findOrFail($id);
+		$tradedeal = Tradedeal::find($scheme->tradedeal_id);
 
 		$deal_type = TradedealType::find(Input::get('deal_type'));
 		$uom = TradedealUom::find(Input::get('uom'));
@@ -137,7 +139,7 @@ class TradealSchemeController extends \BaseController {
 
 
 		$rules = array(
-			'scheme_name' => 'required',
+			'scheme_name' => 'required|unique:tradedeal_schemes,name,'.$id.',id,tradedeal_id,'.$tradedeal->id,
 		    'skus' => 'required|invalid_collective:'.$invalid_collective.'|invalid_premiums:'.$invalid_premiums,
 		    'buy' => 'required|numeric',
 		    'free' => 'required|numeric'
@@ -145,8 +147,7 @@ class TradealSchemeController extends \BaseController {
 
 		$validation = Validator::make(Input::all(), $rules, $messages);
 
-		$scheme = TradedealScheme::findOrFail($id);
-		$tradedeal = Tradedeal::find($scheme->tradedeal_id);
+		
 		if($validation->passes()){
 			
 			
@@ -232,9 +233,9 @@ class TradealSchemeController extends \BaseController {
 				->with('message', 'Scheme successfuly updated');
 		}
 
-		// return Redirect::back()
-		return Redirect::to(URL::action('ActivityController@edit', array('id' => $tradedeal->activity_id)) . "#tradedeal")
-				// ->withInput()
+		return Redirect::back()
+		// return Redirect::to(URL::action('ActivityController@edit', array('id' => $tradedeal->activity_id)) . "#tradedeal")
+				->withInput()
 				->withErrors($validation)
 				->with('class', 'alert-danger')
 				->with('message', 'There were validation errors.');
