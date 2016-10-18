@@ -5,19 +5,19 @@
 <div class="page-header" id="banner">
     <div class="row">
         <div class="col-lg-12 col-md-7 col-sm-6">
-            <h1>Create Trade Deal Scheme</h1>
+            <h1>Create Bonus Buy Free Scheme</h1>
         </div>
     </div>
 </div>
 
 @include('partials.notification')
 
-
+{{ Form::open(array('action' => array('ActivityController@storetradealscheme', $activity->id), 'id' => 'createtradedealscheme', 'class' => 'bs-component')) }}
+            {{ Form::hidden('pre', $tradedeal->non_ulp_premium_desc. ' - ' .$tradedeal->non_ulp_premium_code, ['id' => 'pre']) }}
 <div class="panel panel-primary">
     <div class="panel-heading">Scheme Details</div>
         <div class="panel-body">
-            {{ Form::open(array('action' => array('ActivityController@storetradealscheme', $activity->id), 'id' => 'createtradedealscheme', 'class' => 'bs-component')) }}
-            {{ Form::hidden('pre', $tradedeal->non_ulp_premium_desc. ' - ' .$tradedeal->non_ulp_premium_code, ['id' => 'pre']) }}
+            
             <div class="row">
                 <div class="col-lg-12">
                     <div class="form-group">
@@ -141,11 +141,15 @@
                     </div>
                 </div>
             </div>
-            
+    </div>
+    
+</div>
+
+<div class="panel panel-primary">
+    <div class="panel-heading">Channels</div>
+        <div class="panel-body">
             <div class="row">
                 <div class="col-lg-12">
-                    {{ Form::label('channels', 'Channels', array('class' => 'control-label')) }}
-
                     <table id="channels" class="table table-striped table-hover ">
                     <thead>
                         <tr>
@@ -182,12 +186,13 @@
                 </table> 
                 </div>
             </div>
-            <a class="btn btn-default" href="{{action('ActivityController@edit', $activity->id);}}#tradedeal">Back</a>
-            <button type="submit" class="btn btn-primary">Save</button>  
-            {{ Form::close() }}
     </div>
     
 </div>
+
+            <a class="btn btn-default" href="{{action('ActivityController@edit', $activity->id);}}#tradedeal">Back</a>
+            <button type="submit" class="btn btn-primary">Save</button>  
+            {{ Form::close() }}
 @stop
 
 @section('add-script')
