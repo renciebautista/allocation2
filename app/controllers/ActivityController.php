@@ -3371,6 +3371,7 @@ class ActivityController extends BaseController {
 				}
 
 				TradedealAllocRepository::updateAllocation($scheme);
+				LeTemplateRepository::generateTemplate($scheme);
 			}
 
 			return Redirect::route('tradedealscheme.edit',$scheme->id)
