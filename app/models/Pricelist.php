@@ -290,7 +290,7 @@ class Pricelist extends \Eloquent {
 						}else{
 							$item->srp = $row->srp;
 						}
-						
+						$item->sku_format = $row->sku_format;
 						$item->active = $row->active;
 						$item->launch = $row->launch;
 						$item->save();
@@ -313,6 +313,7 @@ class Pricelist extends \Eloquent {
 						$item->price_case_tax = $row->price_case_tax;
 						$item->price = $row->price;
 						$item->srp = $row->srp;
+						$item->sku_format = $row->sku_format;
 						$item->active = $row->active;
 						$item->launch = $row->launch;
 						$item->update();

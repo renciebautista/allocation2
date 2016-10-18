@@ -78,7 +78,6 @@ class ActivityController extends BaseController {
 			$activity_types = ActivityType::getWithNetworks();
 			$cycles = Cycle::getLists();
 			$divisions = Pricelist::divisions();
-			
 			$objectives = Objective::getLists();
 			return View::make('activity.create', compact('scope_types', 'planners', 'approvers', 'cycles',
 			 'activity_types', 'divisions' , 'objectives',  'users'));
@@ -281,8 +280,10 @@ class ActivityController extends BaseController {
 			$acdivisions = \ActivityDivision::getList($activity->id);
 			$accategories = \ActivityCategory::selected_category($activity->id);
 			$acbrands = \ActivityBrand::selected_brand($activity->id);
+
 			$host_skus = Pricelist::involves($acbrands,$activity);
 			$ref_skus = Sku::items($acdivisions,$accategories,$acbrands);
+
 			$pre_skus = \Pricelist::items();
 			$dealtypes = TradedealType::getList();
 			$dealuoms = TradedealUom::get()->lists('tradedeal_uom', 'id');
@@ -2894,6 +2895,7 @@ class ActivityController extends BaseController {
 					$ref_sku2 = Pricelist::getSku(Input::get('ref_sku'));
 
 					$pre_sku = Pricelist::getSku(Input::get('pre_sku'));
+
 					if(empty($host_sku)){
 						$err[] = 'No selected Host SKU.';
 					}
@@ -2926,6 +2928,7 @@ class ActivityController extends BaseController {
 						$part_sku->host_desc = $host_sku->sap_desc;
 						$part_sku->variant = strtoupper(Input::get('variant'));
 						$part_sku->brand_shortcut = $host_sku->brand_shortcut;
+						$part_sku->host_sku_format = $host_sku->sku_format;
 						$part_sku->host_cost = $host_sku->price;
 						$part_sku->host_pcs_case = $host_sku->pack_size;
 						$part_sku->ref_code = $ref_sku->sku_code;
@@ -2943,6 +2946,7 @@ class ActivityController extends BaseController {
 								$part_sku->pre_desc = $pre_sku->sap_desc;
 								$part_sku->pre_variant = strtoupper(Input::get('pre_variant'));
 								$part_sku->pre_brand_shortcut = $pre_sku->brand_shortcut;
+								$part_sku->pre_sku_format = $pre_sku->sku_format;
 								$part_sku->pre_cost = $pre_sku->price;
 								$part_sku->pre_pcs_case = $pre_sku->pack_size;
 							}
@@ -3084,6 +3088,7 @@ class ActivityController extends BaseController {
 					$part_sku->host_desc = $host_sku->sap_desc;
 					$part_sku->variant = strtoupper(Input::get('evariant'));
 					$part_sku->brand_shortcut = $host_sku->brand_shortcut;
+					$part_sku->host_sku_format = $host_sku->sku_format;
 					$part_sku->host_cost = $host_sku->price;
 					$part_sku->host_pcs_case = $host_sku->pack_size;
 					$part_sku->ref_code = $ref_sku->sku_code;
@@ -3101,6 +3106,7 @@ class ActivityController extends BaseController {
 							$part_sku->pre_desc = $pre_sku->sap_desc;
 							$part_sku->pre_variant = strtoupper(Input::get('epre_variant'));
 							$part_sku->pre_brand_shortcut = $pre_sku->brand_shortcut;
+							$part_sku->pre_sku_format = $pre_sku->sku_format;
 							$part_sku->pre_cost = $pre_sku->price;
 							$part_sku->pre_pcs_case = $pre_sku->pack_size;
 						}

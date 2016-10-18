@@ -105,17 +105,19 @@ class LeTemplateRepository  {
 		    	$_uom = $scheme_uom_abv2;
 
 
-		    	$deal_desc = $_scheme.' '.$_uom.' '.$brand. ' '.$host_variant.'+'.$host_sku->pre_brand_shortcut.' '.$free;
 
 		    	$total_deals = TradedealSchemeAllocation::getTotalDeals($tradedealscheme,$host_sku);
 		    	$deal_amount =  number_format($total_deals * $host_sku->pre_cost, 2, '.', '');
 		    	foreach ($allocations as $value) {
 		    		if($value->computed_pcs > 0){
 		    			if($tradedeal->nonUlpPremium()){
+		    				$deal_desc = $_scheme.' '.$_uom.' '.$brand. ' '. $host_sku->host_sku_format. ' '.$host_sku->variant.'+'.' '.substr($host_sku->pre_desc, 0, 13);
+
 				    		$row_data = array($deal_id, 'BBFREE', $io_number,$start_date, $end_date, $deal_desc, 
 				    			$deal_amount, 'P001', $value->plant_code, 
 				    			number_format($value->computed_pcs * $host_sku->pre_cost, 2, '.', ''), 'X');	
 				    	}else{
+				    		$deal_desc = $_scheme.' '.$_uom.' '.$brand. ' '.$host_sku->host_sku_format. ' '.$host_sku->variant.'+'.$host_sku->pre_brand_shortcut. ' '. $host_sku->pre_sku_format . ' '. $host_sku->pre_variant;
 				    		$row_data = array($deal_id,$io_number,$start_date, $end_date, $deal_desc, 
 				    			$deal_amount, 'P001', $value->ship_to_code, 
 				    			number_format($value->computed_pcs * $host_sku->pre_cost, 2, '.', ''));
@@ -232,8 +234,8 @@ class LeTemplateRepository  {
 	private static function generateCollective($tradedealscheme, $tradedeal, $activity, $host_skus, $scheme_uom_abv, $scheme_uom_abv2){
 		set_time_limit(0);
 		$folder_name = $tradedealscheme->name . ' '. $tradedealscheme->pre_desc;
-		Excel::create($tradedealscheme->dealType->tradedeal_type. '  - 1 Header', function($excel) use ($tradedealscheme, $tradedeal, $activity, $host_skus,$scheme_uom_abv) {
-		    $excel->sheet('Sheet1', function($sheet) use ($tradedealscheme, $tradedeal, $activity, $host_skus,$scheme_uom_abv) {
+		Excel::create($tradedealscheme->dealType->tradedeal_type. '  - 1 Header', function($excel) use ($tradedealscheme, $tradedeal, $activity, $host_skus,$scheme_uom_abv, $scheme_uom_abv2) {
+		    $excel->sheet('Sheet1', function($sheet) use ($tradedealscheme, $tradedeal, $activity, $host_skus,$scheme_uom_abv, $scheme_uom_abv2) {
 		    	$allocations = TradedealSchemeAllocation::getCollectiveAllocation($tradedealscheme);
 		    	$sub_types = TradedealSchemeChannel::getSelectedDetails($tradedealscheme);
 		    	$materials = TradedealSchemeSku::getHostSku($tradedealscheme);
@@ -250,10 +252,16 @@ class LeTemplateRepository  {
 
 		    	$sheet->row(1, $header);
 		    	$brands =[];
+
+		    	$pro_desc = $tradedealscheme->buy. ' '. $scheme_uom_abv2. ' ';
+
+		    	$host_desc = [];
 		    	foreach ($host_skus as $host) {
-		    		$brands[] = $host->brand_shortcut;
+		    		$host_desc[] = $host->brand_shortcut.' '.$host->host_sku_format.' '.$host->variant;
 		    	}
- 	
+ 		
+ 				$pro_desc .= implode("/", $host_desc) .'+'.$tradedealscheme->free.' '.$tradedealscheme->pre_desc;
+
 		    	$brand = array_unique($brands);
 		    	$brand_short_cut = 'MTL';
 		    	if(count($brand) == 1){
@@ -263,7 +271,11 @@ class LeTemplateRepository  {
 		    	$series = TradeCollectiveSeries::getSeries($month_year, $tradedealscheme->id);
 
 		    	$deal_id = $month_year.$scheme_uom_abv.$brand_short_cut.sprintf("%02d", $series->series);
-		    	$pro_desc = $tradedealscheme->buy.' + '.$tradedealscheme->free;
+
+		    	
+
+
+
 
 		    	$budgets = ActivityBudget::getBudgets($activity->id);
 		    	$io_number = '';
@@ -291,7 +303,7 @@ class LeTemplateRepository  {
 
 		    	$row = 2;
 		    	foreach ($allocations as $value) {
-		    		if($value->computed_pcs > 0){
+		    		// if($value->computed_pcs > 0){
 		    			foreach ($sub_types as $sub_type) {
 		    				foreach ($materials as $mat) {
 		    					$row_data = array($deal_id, $pro_desc, $io_number, $start_date, $end_date, $total_deals, 'PC', $total_deals, 'PC', 'C',
@@ -303,7 +315,7 @@ class LeTemplateRepository  {
 		    				}
 			    			
 			    		}
-		    		}
+		    		// }
 		    	}
 		    });
 		})->store('csv', storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name));
