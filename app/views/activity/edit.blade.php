@@ -759,7 +759,7 @@
 				<div class="row">
 					<div class="col-lg-12">
 						<a class="btn btn-primary btn-sm" href="{{action('ActivityController@createtradealscheme', $activity->id);}}">Add Scheme</a>
-						<a class="btn btn-success btn-sm" href="{{action('ActivityController@exporttradedeal', $activity->id);}}">Export Schemes</a>
+						<a class="btn btn-success btn-sm" href="{{action('ActivityController@exporttradedeal', $activity->id);}}">Export Summary</a>
 						<a class="btn btn-success btn-sm" href="{{action('TradealSchemeController@exportle', $activity->id);}}">Export LE Templates</a>
 					</div>
 				</div>

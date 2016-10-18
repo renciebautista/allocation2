@@ -274,7 +274,7 @@ class ActivityController extends BaseController {
 			$timings = ActivityTiming::getList($activity->id);
 
 			// tradedeal
-			$tradedeal = Tradedeal::where('activity_id', $activity->id)->first();
+			$tradedeal = Tradedeal::getActivityTradeDeal($activity);
 			$tradedeal_skus = TradedealPartSku::where('activity_id', $activity->id)->get();
 
 			$acdivisions = \ActivityDivision::getList($activity->id);
@@ -3407,15 +3407,42 @@ class ActivityController extends BaseController {
 	}
 
 	public function exporttradedeal($id){
-		Excel::create("Iterim file", function($excel) use($id){
-			$excel->sheet('Sheet1', function($sheet)  use($id){
-				$activity = Activity::findOrFail($id);
+		$activity = Activity::findOrFail($id);
+		Excel::create($activity->circular_name, function($excel) use($activity){
+			$excel->sheet('SCHEME SUMMARY', function($sheet) use ($activity) {
+				$tradedeal_skus = TradedealPartSku::where('activity_id', $activity->id)->get();
+				$row = 1;
+				$sheet->row($row, array('SAP CODE / ARTICLE CODE', 'SAP DESCRIPTION', 'LEAD BASE PACK'));
+				
+				foreach ($tradedeal_skus as $host) {
+					$row++;
+					$sheet->row($row, array($host->host_code, $host->host_desc));
+				}
+
+				$row = $row + 2;;
+				$sheet->row($row, array('Scheme Code', 'Master Outlet Subtype Name', 'Master Outlet Subtype Code'));
+
+				$tradedeal = Tradedeal::getActivityTradeDeal($activity);
+				$tradedealschemes = TradedealScheme::getScheme($tradedeal->id);
+
+				foreach ($tradedealschemes as $scheme) {
+					$channels = TradedealSchemeChannel:: getSelectedDetails($scheme);
+					foreach ($channels as $channel) {
+						$row++;
+						$sheet->row($row, array($scheme->name, $channel->l5_desc, $channel->l5_code));
+					}
+					
+				}
+
+		    });
+
+		    $excel->sheet('ALLOCATIONS', function($sheet) use ($activity) {
+		    	$row = 1;
+				$sheet->row($row, array('AREA', 'Distributor Code', 'Distributor Name', 'Site Name', 'Site Code', 'Promo Type', 'Scheme Code', 'Unit of Measure'));
 				$tradedeal_skus = TradedealPartSku::where('activity_id', $activity->id)->get();
 
-				$sheet->row(1, array('AREA', 'Distributor Code', 'Distributor Name', 'Site Name', 'Scheme Code', 'PIECES PER DEAL', 'Collective'));
-
 				// host
-				$col = 7;
+				$col = 8;
 				foreach ($tradedeal_skus as $sku) {
 					$sheet->setCellValueByColumnAndRow($col,1, $sku->hostDesc());
 					$col++;
@@ -3426,10 +3453,28 @@ class ActivityController extends BaseController {
 					$sheet->setCellValueByColumnAndRow($col,1, $sku->preDesc());
 					$col++;
 				}
+		    });
 
-			})->download('xls');
+			// $excel->sheet('Sheet1', function($sheet)  use($id){
+				// $activity = Activity::findOrFail($id);
+				// $tradedeal_skus = TradedealPartSku::where('activity_id', $activity->id)->get();
 
-		});
+				// $sheet->row(1, array('AREA', 'Distributor Code', 'Distributor Name', 'Site Name', 'Scheme Code', 'PIECES PER DEAL', 'Collective'));
+
+				// // host
+				// $col = 7;
+				// foreach ($tradedeal_skus as $sku) {
+				// 	$sheet->setCellValueByColumnAndRow($col,1, $sku->hostDesc());
+				// 	$col++;
+				// }
+
+				// // premuim
+				// foreach ($tradedeal_skus as $sku) {
+				// 	$sheet->setCellValueByColumnAndRow($col,1, $sku->preDesc());
+				// 	$col++;
+				// }
+
+		})->download('xls');
 	}
 
 }
