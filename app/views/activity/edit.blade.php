@@ -71,10 +71,12 @@
 <ul class="nav nav-tabs">
 	<li class="active"><a id="tab-activity" aria-expanded="true" href="#activity">Activity Details</a></li>
 	<li class=""><a id="tab-customer" aria-expanded="false" href="#customer">Customer Details</a></li>
-	<li class=""><a id="tab-schemes" aria-expanded="false" href="#schemes">Schemes</a></li>
+	
 
-	@if($activity->activitytype->with_tradedeal)
-	<li class=""><a id="tab-tradedeal" aria-expanded="false" href="#tradedeal">Trade Deal</a></li>
+	@if(!$activity->activitytype->with_tradedeal)
+		<li class=""><a id="tab-schemes" aria-expanded="false" href="#schemes">Schemes</a></li>
+	@else
+		<li class=""><a id="tab-tradedeal" aria-expanded="false" href="#tradedeal">Bonus Buy Free</a></li>
 	@endif
 
 	<li class=""><a id="tab-budget" aria-expanded="false" href="#budget">Budget Details</a></li>
@@ -443,6 +445,10 @@
 		<br>
 	</div>
 
+	
+
+	@if(!$activity->activitytype->with_tradedeal)
+	
 	<!-- scheme details -->
 	<div class="tab-pane fade" id="schemes">
 		<br>
@@ -576,14 +582,13 @@
 		</div>
 		<br>
 	</div>
-
-	@if($activity->activitytype->with_tradedeal)
+	@else
 	<!-- trade details -->
 	<div class="tab-pane fade" id="tradedeal">
 		<br>
 		{{ Form::open(array('action' => array('ActivityController@updatetradedeal', $activity->id), 'method' => 'PUT', 'class' => 'bs-component','id' => 'updateTradedeal')) }}
 		<div class="panel panel-default">
-		  	<div class="panel-heading">Trade Deal Details</div>
+		  	<div class="panel-heading">Bonus Buy Free Details</div>
 
 		  	<div class="panel-body">
 				<div class="row">
@@ -771,7 +776,6 @@
 													<th>Scheme</th>
 													<th>Deal Type</th>
 													<th>UOM</th>
-													<th>% Allocation</th>
 													<th>Premium SKU</th>
 													<th>Action</th>
 												</tr>
@@ -782,7 +786,6 @@
 													<td>{{ $scheme->name }}</td>
 													<td>{{ $scheme->dealType->tradedeal_type }}</td>
 													<td>{{ $scheme->dealUom->tradedeal_uom }}</td>
-													<td>{{ $scheme->coverage }}</td>
 													<td>
 														@if($tradedeal->non_ulp_premium)
 															{{ $scheme->premium()}}
@@ -876,10 +879,7 @@
 			</div>
 		</div>
 		{{ Form::close() }}
-
-
 	</div>
-
 	@endif
 
 	<!-- budget details -->
@@ -1466,7 +1466,7 @@
 							</td>
 						</tr>
 						<tr class="pre-sku ulppremium">
-							<td>Premiun SKU</td>
+							<td>Premium SKU</td>
 							<td colspan="3">
 								{{ Form::select('pre_sku', array('0' => '') + $pre_skus, [], array('data-placeholder' => 'Select Premium SKU','id' => 'pre_sku', 'class' => 'form-control')) }}
 							</td>
@@ -1489,7 +1489,7 @@
 						</tr>
 						@else
 						<tr class="pre-sku">
-							<td>Premiun SKU</td>
+							<td>Premium SKU</td>
 							<td colspan="3">
 								<input class="form-control" name="pre_sku" type="text" value="{{ $tradedeal->non_ulp_premium_desc}} - {{ $tradedeal->non_ulp_premium_code }}" id="pre_sku" readonly =''>
 							</td>
@@ -1578,7 +1578,7 @@
 							</td>
 						</tr>
 						<tr class="pre-sku ulppremium">
-							<td>Premiun SKU</td>
+							<td>Premium SKU</td>
 							<td colspan="3">
 								{{ Form::select('pre_sku', array('0' => '') + $pre_skus, [], array('data-placeholder' => 'Select Premium SKU','id' => 'pre_sku', 'class' => 'form-control')) }}
 							</td>
@@ -1601,7 +1601,7 @@
 						</tr>
 						@else
 						<tr class="pre-sku">
-							<td>Premiun SKU</td>
+							<td>Premium SKU</td>
 							<td colspan="3">
 								<input class="form-control" name="pre_sku" type="text" value="{{ $tradedeal->non_ulp_premium_desc}} - {{ $tradedeal->non_ulp_premium_code }}" id="pre_sku" readonly =''>
 							</td>

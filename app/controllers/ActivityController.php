@@ -284,7 +284,7 @@ class ActivityController extends BaseController {
 			$host_skus = Pricelist::involves($acbrands,$activity);
 			$ref_skus = Sku::items($acdivisions,$accategories,$acbrands);
 			$pre_skus = \Pricelist::items();
-			$dealtypes = TradedealType::get()->lists('tradedeal_type', 'id');
+			$dealtypes = TradedealType::getList();
 			$dealuoms = TradedealUom::get()->lists('tradedeal_uom', 'id');
 
 			$tradedealschemes = [];
@@ -3126,7 +3126,7 @@ class ActivityController extends BaseController {
 		$activity = Activity::findOrFail($id);
 		$tradedeal = Tradedeal::getActivityTradeDeal($activity);
 		$activity = Activity::findOrFail($activity->id);
-		$dealtypes = TradedealType::get()->lists('tradedeal_type', 'id');
+		$dealtypes = TradedealType::getList();
 		$dealuoms = TradedealUom::get()->lists('tradedeal_uom', 'id');
 		$tradedeal_skus = TradedealPartSku::where('activity_id', $activity->id)->get();
 		$channels = TradedealChannel::getSchemeChannels($activity);
@@ -3196,6 +3196,7 @@ class ActivityController extends BaseController {
 		});
 
 		$rules = array(
+			'scheme_name' => 'required',
 		    'skus' => 'required|invalid_collective:'.$invalid_collective.'|invalid_premiums:'.$invalid_premiums,
 		    'buy' => 'required|numeric',
 		    'free' => 'required|numeric'
@@ -3211,7 +3212,8 @@ class ActivityController extends BaseController {
 					$free = str_replace(",", '', Input::get('free'));
 					$scheme = new TradedealScheme;
 					$scheme->tradedeal_id = $tradedeal->id;
-					$scheme->name = $deal_type->tradedeal_type.": ".$buy."+".$free." ".$uom->tradedeal_uom;
+					// $scheme->name = $deal_type->tradedeal_type.": ".$buy."+".$free." ".$uom->tradedeal_uom;
+					$scheme->name = strtoupper(Input::get('scheme_name'));
 					$scheme->tradedeal_type_id = $deal_type->id;
 					$scheme->buy = $buy;
 					$scheme->free = $free;
@@ -3260,7 +3262,8 @@ class ActivityController extends BaseController {
 					$scheme = new TradedealScheme;
 					$scheme->tradedeal_id = $tradedeal->id;
 					$scheme->tradedeal_type_id = $deal_type->id;
-					$scheme->name = $deal_type->tradedeal_type.": ".$buy."+".$free." ".$uom->tradedeal_uom;
+					// $scheme->name = $deal_type->tradedeal_type.": ".$buy."+".$free." ".$uom->tradedeal_uom;
+					$scheme->name = strtoupper(Input::get('scheme_name'));
 					$scheme->buy = $buy;
 					$scheme->free = $free;
 					$scheme->coverage = str_replace(",", '', Input::get('coverage'));
@@ -3307,7 +3310,8 @@ class ActivityController extends BaseController {
 					$scheme = new TradedealScheme;
 					$scheme->tradedeal_id = $tradedeal->id;
 					$scheme->tradedeal_type_id = $deal_type->id;
-					$scheme->name = $deal_type->tradedeal_type.": ".$buy."+".$free." ".$uom->tradedeal_uom;
+					// $scheme->name = $deal_type->tradedeal_type.": ".$buy."+".$free." ".$uom->tradedeal_uom;
+					$scheme->name = strtoupper(Input::get('scheme_name'));
 					$scheme->buy = $buy;
 					$scheme->free = $free;
 					$scheme->coverage = str_replace(",", '', Input::get('coverage'));
@@ -3368,7 +3372,8 @@ class ActivityController extends BaseController {
 					->with('message', 'Trade Deal scheme was successfuly created.');
 		}
 
-		return Redirect::route('activity.createtradealscheme', $activity->id)
+		// return Redirect::route('activity.createtradealscheme', $activity->id)
+		return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity->id)) . "#tradedeal")
 				->withInput()
 				->withErrors($validation)
 				->with('class', 'alert-danger')

@@ -53,7 +53,7 @@ $(document).ready(function() {
 		var buy = $('#buy').val();
 		var free = $('#free').val();
 		var uom = $("#uom option:selected").text();
-		$('#scheme_name').val(type + " : " + buy +"+"+free+" "+uom);
+		// $('#scheme_name').val(type + " : " + buy +"+"+free+" "+uom);
 		var individual = $("#deal_type option:selected").val();
 		if(individual == 1){
 			$('.collective').hide();
@@ -239,7 +239,7 @@ $(document).ready(function() {
 		errorElement: "span", 
 		errorClass : "has-error",
 		rules: {
-			coverage: {
+			scheme_name: {
 				required: true,
 			},
 			buy: {
@@ -287,22 +287,22 @@ $(document).ready(function() {
 
 	// Handle form submission event
    	$('#createtradedealscheme').on('submit', function(e){
-
       	var form = this;
-      
-	      var rows_selected = table.column(0).checkboxes.selected();
-
-	      // Iterate over all selected checkboxes
-	      $.each(rows_selected, function(index, rowId){
-	         // Create a hidden element 
-	         // console.log();
-	         $(form).append(
-	             $('<input>')
-	                .attr('type', 'hidden')
-	                .attr('name', 'ch[]')
-	                .val($(rowId).val())
-	         );
-	      });
+	    var rows_selected = table.column(0).checkboxes.selected();
+     //  	// Iterate over all selected checkboxes
+     	if(rows_selected != null){
+     		$.each(rows_selected, function(index, rowId){
+		        // Create a hidden element 
+		        // console.log();
+		        $(form).append(
+		             $('<input>')
+		                .attr('type', 'hidden')
+		                .attr('name', 'ch[]')
+		                .val($(rowId).val())
+		        );
+	      	});
+     	}
+      	
       // e.preventDefault(); // prevents button from submitting
    });
 

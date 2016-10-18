@@ -59,7 +59,7 @@ class TradealSchemeController extends \BaseController {
 		$scheme = TradedealScheme::findOrFail($id);
 		$tradedeal = Tradedeal::findOrFail($scheme->tradedeal_id);
 		$activity = Activity::findOrFail($tradedeal->activity_id);
-		$dealtypes = TradedealType::get()->lists('tradedeal_type', 'id');
+		$dealtypes = TradedealType::getList();
 		$dealuoms = TradedealUom::get()->lists('tradedeal_uom', 'id');
 		$tradedeal_skus = TradedealPartSku::where('activity_id', $activity->id)->get();
 		$channels = TradedealChannel::getSchemeChannels($activity, $scheme);
@@ -137,6 +137,7 @@ class TradealSchemeController extends \BaseController {
 
 
 		$rules = array(
+			'scheme_name' => 'required',
 		    'skus' => 'required|invalid_collective:'.$invalid_collective.'|invalid_premiums:'.$invalid_premiums,
 		    'buy' => 'required|numeric',
 		    'free' => 'required|numeric'
@@ -144,16 +145,19 @@ class TradealSchemeController extends \BaseController {
 
 		$validation = Validator::make(Input::all(), $rules, $messages);
 
+		$scheme = TradedealScheme::findOrFail($id);
+		$tradedeal = Tradedeal::find($scheme->tradedeal_id);
 		if($validation->passes()){
-			$scheme = TradedealScheme::findOrFail($id);
-			$tradedeal = Tradedeal::find($scheme->tradedeal_id);
+			
+			
 			$selected = Input::get('ch');
 
 			$buy = str_replace(",", '', Input::get('buy'));
 			$free = str_replace(",", '', Input::get('free'));
 
 			$scheme->tradedeal_id = $tradedeal->id;
-			$scheme->name = $deal_type->tradedeal_type.": ".$buy."+".$free." ".$uom->tradedeal_uom;
+			// $scheme->name = $deal_type->tradedeal_type.": ".$buy."+".$free." ".$uom->tradedeal_uom;
+			$scheme->name = strtoupper(Input::get('scheme_name'));
 			$scheme->tradedeal_type_id = $deal_type->id;
 			$scheme->buy = $buy;
 			$scheme->free = $free;
@@ -222,13 +226,15 @@ class TradealSchemeController extends \BaseController {
 			TradedealAllocRepository::updateAllocation($scheme);
 			LeTemplateRepository::generateTemplate($scheme);
 			
-			return Redirect::back()
+			// return Redirect::back()
+			return Redirect::to(URL::action('ActivityController@edit', array('id' => $tradedeal->activity_id)) . "#tradedeal")
 				->with('class', 'alert-success')
 				->with('message', 'Scheme successfuly updated');
 		}
 
-		return Redirect::back()
-				->withInput()
+		// return Redirect::back()
+		return Redirect::to(URL::action('ActivityController@edit', array('id' => $tradedeal->activity_id)) . "#tradedeal")
+				// ->withInput()
 				->withErrors($validation)
 				->with('class', 'alert-danger')
 				->with('message', 'There were validation errors.');

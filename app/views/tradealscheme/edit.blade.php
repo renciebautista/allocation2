@@ -12,22 +12,22 @@
 
 @include('partials.notification')
 
+ {{ Form::open(array('action' => array('TradealSchemeController@update', $scheme->id), 'files'=>true, 'method' => 'PUT', 'id' => 'updatescheme', 'class' => 'bs-component')) }}
 
+            {{ Form::hidden('pre_id', $scheme->pre_id, ['id' => 'pre_id']) }}
+            {{ Form::hidden('pre', $scheme->pre_desc. ' - ' .$scheme->pre_code, ['id' => 'pre']) }}
 <div class="panel panel-primary">
     <div class="panel-heading">Scheme Details</div>
         <div class="panel-body">
 
-            {{ Form::open(array('action' => array('TradealSchemeController@update', $scheme->id), 'files'=>true, 'method' => 'PUT', 'id' => 'updatescheme', 'class' => 'bs-component')) }}
-
-            {{ Form::hidden('pre_id', $scheme->pre_id, ['id' => 'pre_id']) }}
-            {{ Form::hidden('pre', $scheme->pre_desc. ' - ' .$scheme->pre_code, ['id' => 'pre']) }}
+           
             <div class="row">
                 <div class="col-lg-12">
                     <div class="form-group">
                         <div class="row">
                             <div class="col-lg-12">
                                 {{ Form::label('scheme_name', 'Scheme Name', array('class' => 'control-label')) }}
-                                {{ Form::text('scheme_name', $scheme->name, array('id' => 'scheme_name', 'class' => 'form-control', 'readonly' => '', 'id' => 'scheme_name')) }}
+                                {{ Form::text('scheme_name', $scheme->name, array('id' => 'scheme_name', 'class' => 'form-control', 'id' => 'scheme_name')) }}
                             </div>
                         </div>
                     </div>
@@ -45,10 +45,6 @@
                             <div class="col-lg-3">
                                 {{ Form::label('uom', 'Deal UOM', array('class' => 'control-label')) }}
                                 {{ Form::select('uom', $dealuoms, $scheme->tradedeal_uom_id, array('class' => 'form-control', 'id' => 'uom')) }}
-                            </div>
-                            <div class="col-lg-3">
-                                {{ Form::label('coverage', 'Coverage', array('class' => 'control-label')) }}
-                                {{ Form::text('coverage', $scheme->coverage, array('id' => 'coverage', 'class' => 'form-control', 'placeholder' => 'Coverage')) }}
                             </div>
                         </div>
                     </div>
@@ -150,18 +146,21 @@
                     </div>
                 </div>
             </div>
-            
+    </div>
+</div>
+
+<div class="panel panel-primary">
+    <div class="panel-heading">Channels</div>
+        <div class="panel-body">
             <div class="row">
                 <div class="col-lg-12">
-                    {{ Form::label('channels', 'Channels', array('class' => 'control-label')) }}
-
                     <table id="channels" class="table table-striped table-hover ">
                     <thead>
                         <tr>
                             <th><input id="select-all" type="checkbox"></th>
                             <th>Channel Code</th>
                             <th>Channel</th>
-                            <th>RTM Tag</th>
+                            <th>Channel Group</th>
                             <th>Scheme</th>
                         </tr>
                     </thead>
@@ -191,12 +190,14 @@
                 </table> 
                 </div>
             </div>
-            <a class="btn btn-default" href="{{action('ActivityController@edit', $activity->id);}}#tradedeal">Back</a>
+            
+    </div>
+</div>
+
+<a class="btn btn-default" href="{{action('ActivityController@edit', $activity->id);}}#tradedeal">Back</a>
             <button  class="btn btn-primary">Update</button>
 
             {{ Form::close() }}
-    </div>
-</div>
 @stop
 
 @section('add-script')
