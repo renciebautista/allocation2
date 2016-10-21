@@ -298,6 +298,7 @@ class LeTemplateRepository  {
 		    	}
 
 		    	if($tradedealscheme->tradedeal_uom_id == 3){
+		    		// problem with multiple host in level 3 collective
 		    		$header_qty = $tradedealscheme->buy * $host_sku->host_pcs_case;
 		    	}
 

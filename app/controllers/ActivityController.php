@@ -291,12 +291,12 @@ class ActivityController extends BaseController {
 			$tradedealschemes = [];
 			$total_deals = Tradedeal::total_deals($activity);
 			$total_premium_cost = Tradedeal::total_premium_cost($activity);
-			$td_shiptos = [];
-			$td_premiums = [];
+			// $td_shiptos = [];
+			// $td_premiums = [];
 			if($tradedeal != null){
 				$tradedealschemes = TradedealScheme::getScheme($tradedeal->id);
-				$td_shiptos = TradedealSchemeAllocation::getShiptoBy($activity);
-				$td_premiums = TradedealSchemeAllocation::getPremiumsBy($activity);
+				// $td_shiptos = TradedealSchemeAllocation::getShiptoBy($activity);
+				// $td_premiums = TradedealSchemeAllocation::getPremiumsBy($activity);
 			}
 
 			// end tradedeal
@@ -2933,7 +2933,8 @@ class ActivityController extends BaseController {
 						$part_sku->variant = $host_variant;
 						$part_sku->brand_shortcut = $host_sku->brand_shortcut;
 						$part_sku->host_sku_format = $host_sku->sku_format;
-						$part_sku->host_cost = $host_sku->price;
+						// $part_sku->host_cost = $host_sku->price;
+						$part_sku->host_cost = str_replace(",", '', Input::get('host_cost_pcs'));
 						$part_sku->host_pcs_case = $host_sku->pack_size;
 						$part_sku->ref_code = $ref_sku->sku_code;
 						$part_sku->ref_desc = $ref_sku->sku_desc;
@@ -2951,7 +2952,8 @@ class ActivityController extends BaseController {
 								$part_sku->pre_variant = $pre_variant;
 								$part_sku->pre_brand_shortcut = $pre_sku->brand_shortcut;
 								$part_sku->pre_sku_format = $pre_sku->sku_format;
-								$part_sku->pre_cost = $pre_sku->price;
+								// $part_sku->pre_cost = $pre_sku->price;
+								$part_sku->pre_cost = str_replace(",", '', Input::get('pre_cost_pcs'));
 								$part_sku->pre_pcs_case = $pre_sku->pack_size;
 							}
 						}
@@ -3153,6 +3155,7 @@ class ActivityController extends BaseController {
 
 		$selected = [];
 		$free_pcs_case = [];
+
 		$invalid_premiums = true;
 		if(Input::has('skus')){
 			foreach (Input::get('skus') as $value) {
@@ -3162,11 +3165,12 @@ class ActivityController extends BaseController {
 			}
 			$result = array_unique($free_pcs_case);
 
-			if($uom->id == 3){
-				if(count($result) > 1){
-					$invalid_premiums = false;
-				}
-			}
+			// validation on cases quantitiy
+			// if($uom->id == 3){
+			// 	if(count($result) > 1){
+			// 		$invalid_premiums = false;
+			// 	}
+			// }
 			
 		}
 
@@ -3195,6 +3199,7 @@ class ActivityController extends BaseController {
 		$messages = array(
 		    'invalid_premiums' => 'Combination of Premium SKU with different pcs/case value is not allowed',
 		    'invalid_collective' => 'Combination of participating SKU with different pcs/case value is not allowed',
+		    'ch.required' => 'Channels Involved is required'
 		);
 
 		Validator::extend('invalid_collective', function($attribute, $value, $parameters) {
@@ -3205,7 +3210,8 @@ class ActivityController extends BaseController {
 			'scheme_name' => 'required|unique:tradedeal_schemes,name,NULL,id,tradedeal_id,'.$tradedeal->id,
 		    'skus' => 'required|invalid_collective:'.$invalid_collective.'|invalid_premiums:'.$invalid_premiums,
 		    'buy' => 'required|numeric',
-		    'free' => 'required|numeric'
+		    'free' => 'required|numeric',
+		    'ch' => 'required'
 		);
 
 		$validation = Validator::make(Input::all(), $rules, $messages);
@@ -3374,7 +3380,8 @@ class ActivityController extends BaseController {
 				LeTemplateRepository::generateTemplate($scheme);
 			}
 
-			return Redirect::route('tradedealscheme.edit',$scheme->id)
+			// return Redirect::route('tradedealscheme.edit',$scheme->id)
+			return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity->id)) . "#tradedeal")
 					->with('class', 'alert-success')
 					->with('message', 'Trade Deal scheme was successfuly created.');
 		}

@@ -14,6 +14,12 @@
 
 {{ Form::open(array('action' => array('ActivityController@storetradealscheme', $activity->id), 'id' => 'createtradedealscheme', 'class' => 'bs-component')) }}
             {{ Form::hidden('pre', $tradedeal->non_ulp_premium_desc. ' - ' .$tradedeal->non_ulp_premium_code, ['id' => 'pre']) }}
+            <div>
+                <a class="btn btn-default" href="{{action('ActivityController@edit', $activity->id);}}#tradedeal">Cancel</a>
+            <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+            <br>
+                        
 <div class="panel panel-primary">
     <div class="panel-heading">Scheme Details</div>
         <div class="panel-body">
@@ -24,7 +30,7 @@
                         <div class="row">
                             <div class="col-lg-12">
                                 {{ Form::label('scheme_name', 'Scheme Name', array('class' => 'control-label')) }}
-                                {{ Form::text('scheme_name','', array('id' => 'scheme_name', 'class' => 'form-control', 'id' => 'scheme_name')) }}
+                                {{ Form::text('scheme_name','', array('id' => 'scheme_name', 'class' => 'form-control', 'id' => 'scheme_name', 'readonly' => '')) }}
                             </div>
                         </div>
                     </div>
@@ -59,12 +65,12 @@
                             <th><input id="select-all-host" type="checkbox"></th>
                             <th>Qty</th>
                             <th>Host SKU</th>
-                            <th>Variant</th>
-                            <th class="right">Cost / Pcs</th>
-                            <th class="right">Pcs / Case</th>
+                            <th>Variant Shortcut</th>
+                            <th class="right">Unit Cost / Piece</th>
+                            <th class="right">Piece / Case</th>
                             <th>Premium SKU</th>
-                            <th>Variant</th>
-                            <th class="right" style="max-width:100px;">Pcs / Case</th>
+                            <th>Variant Shortcut</th>
+                            <th class="right" style="max-width:100px;">Piece / Case</th>
                             <th class="right" style="max-width:150px;">Purchase Requirement</th>
                         </tr>
                     </thead>
@@ -106,12 +112,21 @@
                         <div class="row">
                             <div class="col-lg-3">
                                 {{ Form::label('buy', 'Buy', array('class' => 'control-label')) }}
-                                {{ Form::text('buy', '', array('id' => 'buy', 'class' => 'form-control', 'placeholder' => 'Buy', 'id' => 'buy')) }}
+                                <div class="input-group"> 
+                                    {{ Form::text('buy', '', array('id' => 'buy', 'class' => 'form-control', 'placeholder' => 'Buy', 'id' => 'buy')) }}
+                                    <span class="input-group-addon">PIECES</span> 
+                                </div>
+
+                                
                             </div>
 
                             <div class="col-lg-3">
                                 {{ Form::label('free', 'Free', array('class' => 'control-label')) }}
+
+                                <div class="input-group"> 
                                 {{ Form::text('free', '', array('id' => 'free', 'class' => 'form-control', 'placeholder' => 'Free', 'id' => 'free')) }}
+                                    <span class="input-group-addon">PIECES</span> 
+                                </div>
                             </div>
 
                             
@@ -151,14 +166,14 @@
 </div>
 
 <div class="panel panel-primary">
-    <div class="panel-heading">Channels</div>
+    <div class="panel-heading">Channels Involved</div>
         <div class="panel-body">
             <div class="row">
                 <div class="col-lg-12">
                     <table id="channels" class="table table-striped table-hover ">
                     <thead>
                         <tr>
-                            <th><input type="checkbox" name="select_all" value="1" id="example-select-all"></th>
+                            <th><input id="select-all" type="checkbox"></th>
                             <th>Channel Code</th>
                             <th>Channel</th>
                             <th>Channel Group</th>
@@ -195,7 +210,7 @@
     
 </div>
 
-            <a class="btn btn-default" href="{{action('ActivityController@edit', $activity->id);}}#tradedeal">Back</a>
+            <a class="btn btn-default" href="{{action('ActivityController@edit', $activity->id);}}#tradedeal">Cancel</a>
             <button type="submit" class="btn btn-primary">Save</button>  
             {{ Form::close() }}
 @stop

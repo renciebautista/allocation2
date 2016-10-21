@@ -78,6 +78,7 @@ class TradealSchemeController extends \BaseController {
 	 */
 	public function update($id)
 	{
+		// dd(Input::all());
 		$scheme = TradedealScheme::findOrFail($id);
 		$tradedeal = Tradedeal::find($scheme->tradedeal_id);
 
@@ -135,6 +136,7 @@ class TradealSchemeController extends \BaseController {
 		$messages = array(
 		    'invalid_premiums' => 'Combination of Premium SKU with different pcs/case value is not allowed',
 		    'invalid_collective' => 'Combination of participating SKU with different pcs/case value is not allowed',
+		    'ch.required' => 'Channels Involved is required',
 		);
 
 
@@ -142,7 +144,8 @@ class TradealSchemeController extends \BaseController {
 			'scheme_name' => 'required|unique:tradedeal_schemes,name,'.$id.',id,tradedeal_id,'.$tradedeal->id,
 		    'skus' => 'required|invalid_collective:'.$invalid_collective.'|invalid_premiums:'.$invalid_premiums,
 		    'buy' => 'required|numeric',
-		    'free' => 'required|numeric'
+		    'free' => 'required|numeric',
+		    'ch' => 'required'
 		);
 
 		$validation = Validator::make(Input::all(), $rules, $messages);
@@ -185,8 +188,15 @@ class TradealSchemeController extends \BaseController {
 			$scheme->pcs_deal = $pcs_deal;
 
 			if(Input::has('premium_sku')){
-				$scheme->pre_id = Input::get('premium_sku');
+				$premuim_sku = TradedealPartSku::find(Input::get('premium_sku'));
+				$scheme->pre_id = $premuim_sku->id;
+				$scheme->pre_code = $premuim_sku->pre_code;
+				$scheme->pre_desc = $premuim_sku->pre_desc;
+				$scheme->pre_cost = $premuim_sku->pre_cost;
+				$scheme->pre_pcs_case = $premuim_sku->pre_pcs_case;
 			}
+
+
 			$scheme->save();
 
 

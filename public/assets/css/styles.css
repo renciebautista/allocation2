@@ -987,3 +987,7 @@ table .v-align{
     background-color: #eeeeee;
     opacity: 1;
 }
+
+.tooltip.top .tooltip-inner {
+    background-color:red;
+}

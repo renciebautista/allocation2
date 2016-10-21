@@ -53,7 +53,8 @@ $(document).ready(function() {
 		var buy = $('#buy').val();
 		var free = $('#free').val();
 		var uom = $("#uom option:selected").text();
-		// $('#scheme_name').val(type + " : " + buy +"+"+free+" "+uom);
+		$('.input-group-addon').text(uom);
+		$('#scheme_name').val(buy +"+"+free+" "+uom);
 		var individual = $("#deal_type option:selected").val();
 		if(individual == 1){
 			$('.collective').hide();

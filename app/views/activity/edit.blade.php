@@ -640,12 +640,7 @@
 						<div class="form-group">
 							<div class="radio">
 							  	<label>
-							  		{{ Form::radio('non_ulp_premium', '1', (isset($tradedeal->non_ulp_premium)) ? $tradedeal->non_ulp_premium : 0,['id' => 'non_ulp_premium']) }} non-ULP Premium
-							  	</label>
-							</div>
-							<div class="radio">
-							  	<label>
-							    	{{ Form::radio('non_ulp_premium', '0', (isset($tradedeal->non_ulp_premium)) ? !$tradedeal->non_ulp_premium : 0,['id' => 'non_ulp_premium']) }} ULP Premium
+							  		{{ Form::radio('non_ulp_premium', '1', (isset($tradedeal->non_ulp_premium)) ? $tradedeal->non_ulp_premium : 0,['id' => 'non_ulp_premium']) }} Non-ULP Premium
 							  	</label>
 							</div>
 						</div>
@@ -658,7 +653,7 @@
 						<div class="form-group">
 							<div class="row">
 								<div class="col-lg-12">
-									{{ Form::label('non_ulp_premium_desc', 'Description', array('class' => 'control-label')) }}
+									{{ Form::label('non_ulp_premium_desc', 'Non-ULP Premium Dec', array('class' => 'control-label')) }}
 									{{ Form::text('non_ulp_premium_desc',($tradedeal) ?  $tradedeal->non_ulp_premium_desc : '', array('class' => 'form-control', 'id' => 'non_ulp_premium_desc')) }}
 								</div>
 							</div>
@@ -669,7 +664,7 @@
 						<div class="form-group">
 							<div class="row">
 								<div class="col-lg-12">
-									{{ Form::label('non_ulp_premium_code', 'Code', array('class' => 'control-label')) }}
+									{{ Form::label('non_ulp_premium_code', 'PIMS Code', array('class' => 'control-label')) }}
 									{{ Form::text('non_ulp_premium_code',($tradedeal) ?  $tradedeal->non_ulp_premium_code : '', array('class' => 'form-control', 'id' => 'non_ulp_premium_code')) }}
 								</div>
 							</div>
@@ -680,7 +675,7 @@
 						<div class="form-group">
 							<div class="row">
 								<div class="col-lg-12">
-									{{ Form::label('non_ulp_premium_cost', 'Unit Cost / Pcs', array('class' => 'control-label')) }}
+									{{ Form::label('non_ulp_premium_cost', 'Unit Cost / Piece', array('class' => 'control-label')) }}
 									{{ Form::text('non_ulp_premium_cost',($tradedeal) ?  $tradedeal->non_ulp_premium_cost : '', array('class' => 'form-control', 'id' => 'non_ulp_premium_cost')) }}
 								</div>
 							</div>
@@ -691,9 +686,21 @@
 						<div class="form-group">
 							<div class="row">
 								<div class="col-lg-12">
-									{{ Form::label('non_ulp_pcs_case', 'Pcs / Case', array('class' => 'control-label')) }}
+									{{ Form::label('non_ulp_pcs_case', 'Piece / Case', array('class' => 'control-label')) }}
 									{{ Form::text('non_ulp_pcs_case',($tradedeal) ?  $tradedeal->non_ulp_pcs_case : '', array('class' => 'form-control', 'id' => 'non_ulp_pcs_case')) }}
 								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-lg-3">
+						<div class="form-group">
+							<div class="radio">
+							  	<label>
+							    	{{ Form::radio('non_ulp_premium', '0', (isset($tradedeal->non_ulp_premium)) ? !$tradedeal->non_ulp_premium : 0,['id' => 'non_ulp_premium']) }} ULP Premium
+							  	</label>
 							</div>
 						</div>
 					</div>
@@ -706,12 +713,12 @@
 
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				<h3 class="panel-title">Participating SKU</h3>
+				<h3 class="panel-title">Participating SKU's</h3>
 			</div>
 			<div class="panel-body">
 				<div class="row">
 					<div class="col-lg-12">
-						<button type="button" class="btn btn-primary btn-sm " id="add_sku">Add Participating SKU</button>
+						<button type="button" class="btn btn-primary btn-sm " id="add_sku">Add Participating SKU's</button>
 					</div>
 				</div>
 				<br>
@@ -725,14 +732,14 @@
 										<thead>
 											<tr>
 												<th>Host SKU</th>
-												<th>Cost / Pcs</th>
-												<th>Pcs / Case</th>
-												<th>Identifier/Shortcut</th>
+												<th>Unit Cost / Piece</th>
+												<th>Piece / Case</th>
+												<th>Variant Shortcut</th>
 												<th>Reference SKU</th>
 												<th>Premium SKU</th>
-												<th>Cost / Pcs</th>
-												<th>Pcs / Case</th>
-												<th>Identifier/Shortcut</th>
+												<th>Unit Cost / Piece</th>
+												<th>Piece / Case</th>
+												<th>Variant Shortcut</th>
 												<th></th>
 												<th></th>
 											</tr>
@@ -759,8 +766,6 @@
 				<div class="row">
 					<div class="col-lg-12">
 						<a class="btn btn-primary btn-sm" href="{{action('ActivityController@createtradealscheme', $activity->id);}}">Add Scheme</a>
-						<a class="btn btn-success btn-sm" href="{{action('ActivityController@exporttradedeal', $activity->id);}}">Export Summary</a>
-						<a class="btn btn-success btn-sm" href="{{action('TradealSchemeController@exportle', $activity->id);}}">Export LE Templates</a>
 					</div>
 				</div>
 				<br>
@@ -820,51 +825,13 @@
 				<h3 class="panel-title">Allocation Summary</h3>
 			</div>
 			<div class="panel-body">
-				
-				<div >
-					<div class="row">
-						<div class="col-lg-12">
-							<div class="form-group">
-								<div class="row">
-									<div class="col-lg-12">
-										<table id="scheme-table" class="table">
-											<thead>
-												<tr>
-													<th>Area</th>
-													<th>Distributor</th>
-													<th>Scheme</th>
-													<th class="right">Pcs / Deal</th>
-													@foreach($td_premiums as $premium)
-													<th class="right">{{ $premium->pre_desc }}</th>
-													@endforeach
-												</tr>
-											</thead>
-											<tbody>
-											@foreach($td_shiptos as $shipto)
-												<tr>
-													<td>{{ $shipto->area }}</td>
-													<td>{{ $shipto->ship_to_name }}</td>
-													<td>{{ $shipto->scheme_name }}</td>
-													<td class="right">{{ number_format($shipto->pcs_deal,2) }}</td>
-													@foreach($td_premiums as $premium)
-													<td class="right">
-														@foreach($shipto->allocs as $key => $alloc)
-															@if($key == $premium->pre_code)
-																{{ $alloc }}
-															@endif
-														@endforeach
-													</td>
-													@endforeach
-												</tr>
-											@endforeach
-											</tbody>
-										</table>
-									</div>
-								</div>
-							</div>
-						</div>
+				<div class="row">
+					<div class="col-lg-12">
+						<a class="btn btn-success btn-sm" href="{{action('ActivityController@exporttradedeal', $activity->id);}}">Export Summary</a>
+						<a class="btn btn-success btn-sm" href="{{action('TradealSchemeController@exportle', $activity->id);}}">Export LE Templates</a>
 					</div>
 				</div>
+				
 			</div>
 		</div>
 
@@ -1417,7 +1384,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<h4 class="modal-title" id="myModalLabel">Add Participating SKU</h4>
+				<h4 class="modal-title" id="myModalLabel">Add Participating SKU's</h4>
 			</div>
 			<div class="modal-body">
 				<div class="error-msg"></div>
@@ -1431,17 +1398,28 @@
 						</tr>
 						
 						<tr>
-							<td>Cost / Pcs</td>
+							<td>Unit Cost / Piece</td>
 							<td>
-								<input class="form-control" name="host_cost_pcs" type="text" value="0" id="host_cost_pcs" readonly =''>
+								<div class="row">
+								  <div class="col-lg-12">
+								    <div class="input-group">
+								      	<input class="form-control" name="host_cost_pcs" type="text" value="0" id="host_cost_pcs" readonly =''>
+
+								      <span class="input-group-btn">
+								      	<button type="button" data-toggle="tooltip" data-placement="top" title="Only for Price Increase" class="btn btn-success cost-edit">Edit</button>
+								      </span>
+								    </div><!-- /input-group -->
+								  </div><!-- /.col-lg-6 -->
+								</div><!-- /.row -->
+								
 							</td>
-							<td>Pcs / Case</td>
+							<td>Piece / Case</td>
 							<td>
 								<input class="form-control" name="host_pcs_case" type="text" value="0" id="host_pcs_case" readonly =''>
 							</td>
 						</tr>
 						<tr>
-							<td>Identifier/Shortcut</td>
+							<td>Variant Shortcut</td>
 							<td colspan="3">
 								<input class="form-control" name="variant" type="text" value="" id="variant">
 							</td>
@@ -1472,17 +1450,17 @@
 							</td>
 						</tr>
 						<tr class="pre-sku ulppremium">
-							<td>Cost / Pcs</td>
+							<td>Unit Cost / Piece</td>
 							<td>
 								<input class="form-control" name="pre_cost_pcs" type="text" value="0" id="pre_cost_pcs" readonly =''>
 							</td>
-							<td>Pcs / Case</td>
+							<td>Piece / Case</td>
 							<td>
 								<input class="form-control" name="pre_pcs_case" type="text" value="0" id="pre_pcs_case" readonly =''>
 							</td>
 						</tr>
 						<tr>
-							<td>Identifier/Shortcut</td>
+							<td>Variant Shortcut</td>
 							<td colspan="3">
 								<input class="form-control" name="pre_variant" type="text" value="" id="pre_variant">
 							</td>
@@ -1495,11 +1473,11 @@
 							</td>
 						</tr>
 						<tr class="pre-sku">
-							<td>Cost / Pcs</td>
+							<td>Unit Cost / Piece</td>
 							<td>
 								<input class="form-control" name="pre_cost_pcs" type="text" value="{{ $tradedeal->non_ulp_premium_cost}}" id="pre_cost_pcs" readonly =''>
 							</td>
-							<td>Pcs / Case</td>
+							<td>Piece / Case</td>
 							<td>
 								<input class="form-control" name="pre_pcs_case" type="text" value="{{ $tradedeal->non_ulp_pcs_case}}" id="pre_pcs_case" readonly =''>
 							</td>
@@ -1543,17 +1521,18 @@
 						</tr>
 						
 						<tr>
-							<td>Cost / Pcs</td>
+							<td>Unit Cost / Piece</td>
 							<td>
 								<input class="form-control" name="ehost_cost_pcs" type="text" value="0" id="ehost_cost_pcs" readonly =''>
+								<button id="copy_host" type="button" class="btn btn-success btn-sm">Edit</button>
 							</td>
-							<td>Pcs / Case</td>
+							<td>Piece / Case</td>
 							<td>
 								<input class="form-control" name="ehost_pcs_case" type="text" value="0" id="ehost_pcs_case" readonly =''>
 							</td>
 						</tr>
 						<tr>
-							<td>Identifier/Shortcut</td>
+							<td>Variant Shortcut</td>
 							<td colspan="3">
 								<input class="form-control" name="evariant" type="text" value="" id="evariant">
 							</td>
@@ -1584,17 +1563,17 @@
 							</td>
 						</tr>
 						<tr class="pre-sku ulppremium">
-							<td>Cost / Pcs</td>
+							<td>Unit Cost / Piece</td>
 							<td>
 								<input class="form-control" name="pre_cost_pcs" type="text" value="0" id="pre_cost_pcs" readonly =''>
 							</td>
-							<td>Pcs / Case</td>
+							<td>Piece / Case</td>
 							<td>
 								<input class="form-control" name="pre_pcs_case" type="text" value="0" id="pre_pcs_case" readonly =''>
 							</td>
 						</tr>
 						<tr>
-							<td>Identifier/Shortcut</td>
+							<td>Variant Shortcut</td>
 							<td colspan="3">
 								<input class="form-control" name="pre_variant" type="text" value="" id="pre_variant">
 							</td>
@@ -1607,11 +1586,11 @@
 							</td>
 						</tr>
 						<tr class="pre-sku">
-							<td>Cost / Pcs</td>
+							<td>Unit Cost / Piece</td>
 							<td>
 								<input class="form-control" name="pre_cost_pcs" type="text" value="{{ $tradedeal->non_ulp_premium_cost}}" id="pre_cost_pcs" readonly =''>
 							</td>
-							<td>Pcs / Case</td>
+							<td>Piece / Case</td>
 							<td>
 								<input class="form-control" name="pre_pcs_case" type="text" value="{{ $tradedeal->non_ulp_pcs_case}}" id="pre_pcs_case" readonly =''>
 							</td>

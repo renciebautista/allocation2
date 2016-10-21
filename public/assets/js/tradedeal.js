@@ -9,6 +9,11 @@ $(document).ready(function() {
 		$('#pre_variant').val($('#variant').val());
 	});
 
+	$('#host_cost_pcs').inputNumber();
+	$('.cost-edit').click(function(){
+		$('#host_cost_pcs').removeAttr('readonly').focus();
+	})
+
 	$("#updateTradedeal").validate({
 		errorElement: "span", 
 		errorClass : "has-error",
@@ -117,8 +122,9 @@ $(document).ready(function() {
 
 	// var non_ulp_premium = $('input[name="non_ulp_premium"]:checked').length > 0;
 	$('#addsku').on('shown.bs.modal', function(){
+
 		var non_premiun = $("input[name='non_ulp_premium']:checked").val();
-		// console.log(non_premiun);
+		$('#host_cost_pcs').attr('readonly', '');
 		$("#host_sku").chosen({
 			search_contains: true,
 			allow_single_deselect: true

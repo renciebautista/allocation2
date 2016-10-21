@@ -337,7 +337,8 @@
 
 	<script type="text/javascript">
 		$(document).ready(function() {
-
+			$('[data-toggle="tooltip"]').tooltip();
+			
 			$('#changepasswordmodal').modal({
 			    backdrop: 'static',   // This disable for click outside event
 			    keyboard: true        // This for keyboard event
