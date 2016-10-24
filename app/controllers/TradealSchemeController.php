@@ -189,6 +189,8 @@ class TradealSchemeController extends \BaseController {
 
 			if(Input::has('premium_sku')){
 				$premuim_sku = TradedealPartSku::find(Input::get('premium_sku'));
+
+				// Helper::debug($premuim_sku);
 				$scheme->pre_id = $premuim_sku->id;
 				$scheme->pre_code = $premuim_sku->pre_code;
 				$scheme->pre_desc = $premuim_sku->pre_desc;

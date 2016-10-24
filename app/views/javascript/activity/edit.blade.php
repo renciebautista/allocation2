@@ -21,12 +21,12 @@ function getCustomer(){
 		success: function(data){
 			$.each(data, function(i, node) {
 				$("#tree3").fancytree("getTree").getNodeByKey(node).setSelected(true);
-				$("#tree3").fancytree("getTree").visit(function(node){
+				//$("#tree3").fancytree("getTree").visit(function(node){
 					///if(node.key == node.text){
 						///console.log(node);
 						//node.setSelected(true);
 					//}        
-				});
+				//});
 			});
 		}
 	});

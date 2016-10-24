@@ -89,6 +89,7 @@ class CustomerController extends \BaseController {
 		}
 		return \Response::json($data,200);
 	}
+
 	public function index(){
 		$id = \Input::get('id');
 		$status = \Input::get('status');
@@ -339,7 +340,6 @@ class CustomerController extends \BaseController {
 		return \Response::json($data,200);
 	}
 
-
 	public function getpostedcustomers(){
 		$id = \Input::get('id');
 		
@@ -421,6 +421,81 @@ class CustomerController extends \BaseController {
 				'children' => $group_children
 				);
 		}
+		return \Response::json($data,200);
+	}
+
+	public function getChannelCustomer(){
+		$data = [];
+		$channels = \DB::table('channels')->get();
+
+		foreach ($channels as $channel) {
+			$channel_children = [];
+			$groups = \DB::table('level5')
+				->select('groups.group_code', 'groups.group_name')
+				->join('level4', 'level4.l4_code', '=', 'level5.l4_code')
+				->join('sub_channels', 'sub_channels.coc_03_code', '=', 'level4.coc_03_code')
+				->join('accounts', 'accounts.channel_code', '=', 'sub_channels.channel_code')
+				->join('ship_tos', 'ship_tos.ship_to_code', '=', 'accounts.ship_to_code')
+				->join('customers', 'customers.customer_code', '=', 'ship_tos.customer_code')
+				->join('areas', 'areas.area_code', '=', 'customers.area_code')
+				->join('groups', 'areas.group_code', '=', 'groups.group_code')
+				->where('accounts.active',1)
+				->where('ship_tos.active',1)
+				->where('accounts.channel_code',$channel->channel_code)
+				->groupBy('groups.group_code')
+				->orderBy('groups.id')
+				->get();
+
+			foreach ($groups as $group) {
+				$group_children = [];
+				$areas = \DB::table('level5')
+					->select('customers.area_code as area_code','area_name')
+					->join('level4', 'level4.l4_code', '=', 'level5.l4_code')
+					->join('sub_channels', 'sub_channels.coc_03_code', '=', 'level4.coc_03_code')
+					->join('accounts', 'accounts.channel_code', '=', 'sub_channels.channel_code')
+					->join('ship_tos', 'ship_tos.ship_to_code', '=', 'accounts.ship_to_code')
+					->join('customers', 'customers.customer_code', '=', 'ship_tos.customer_code')
+					->join('areas', 'areas.area_code', '=', 'customers.area_code')
+					->join('groups', 'areas.group_code', '=', 'groups.group_code')
+					->where('accounts.active',1)
+					->where('ship_tos.active',1)
+					->where('accounts.channel_code',$channel->channel_code)
+					->where('areas.group_code',$group->group_code)
+					->groupBy('customers.area_code')
+					->orderBy('areas.id')
+					->get();
+				foreach ($areas as $area) {
+					$group_children[] = array(
+						'select' => true,
+						'title' => $area->area_name,
+						'isFolder' => true,
+						'key' =>  $channel->channel_code.".".$group->group_code.".".$area->area_code,
+						// 'unselectable' => $unselectable,
+						// 'children' => $area_children,
+						);
+				}
+
+				// group
+				$channel_children[] = array(
+					'select' => true,
+					'title' => $group->group_name,
+					'isFolder' => true,
+					'key' => $channel->channel_code.".".$group->group_code,
+					// 'unselectable' => $unselectable,
+					'children' => $group_children,
+					);
+			}
+
+			// channels
+			$data[] = array(
+				'title' => $channel->channel_name,
+				'isFolder' => true,
+				'key' => $channel->channel_code,
+				// 'unselectable' => $unselectable,
+				'children' => $channel_children,
+				);
+		}
+
 		return \Response::json($data,200);
 	}
 

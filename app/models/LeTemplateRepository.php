@@ -13,7 +13,6 @@ class LeTemplateRepository  {
 		$tradedeal = Tradedeal::findorFail($tradedealscheme->tradedeal_id);
 		$activity = Activity::findorFail($tradedeal->activity_id);
 
-
 		$scheme_uom_abv;
     	$scheme_uom_abv2;
     	if($tradedealscheme->tradedeal_uom_id == 1){
@@ -253,14 +252,26 @@ class LeTemplateRepository  {
 		    	$sheet->row(1, $header);
 		    	$brands =[];
 
-		    	$pro_desc = $tradedealscheme->buy. ' '. $scheme_uom_abv2. ' ';
+		    	$pro_desc = $tradedealscheme->buy.'+'.$tradedealscheme->free.' '. $scheme_uom_abv2. ' ';
 
 		    	$host_desc = [];
 		    	foreach ($host_skus as $host) {
 		    		$host_desc[] = $host->brand_shortcut.' '.$host->host_sku_format.' '.$host->variant;
 		    	}
- 		
- 				$pro_desc .= implode("/", $host_desc) .'+'.$tradedealscheme->free.' '.$tradedealscheme->pre_desc;
+ 				if(count($host_desc)>3){
+ 					$pro_desc .= 'MULTIPLESKU';
+ 				}else{
+ 					$pro_desc .= implode("/", $host_desc);
+ 				}
+
+ 				if($tradedeal->nonUlpPremium()){
+ 					$pro_desc .= '+'. substr($tradedealscheme->pre_desc, 0,13);
+ 				}else{
+ 					$premium = TradedealPartSku::find($tradedealscheme->pre_id);
+ 					$pro_desc .= '+'.$premium->pre_brand_shortcut.' '.$premium->pre_sku_format.' '.$premium->pre_variant;
+ 				}
+ 				
+ 				
 
 		    	$brand = array_unique($brands);
 		    	$brand_short_cut = 'MTL';
@@ -299,6 +310,7 @@ class LeTemplateRepository  {
 
 		    	if($tradedealscheme->tradedeal_uom_id == 3){
 		    		// problem with multiple host in level 3 collective
+		    		// use lowest pr host sku
 		    		$header_qty = $tradedealscheme->buy * $host_sku->host_pcs_case;
 		    	}
 
