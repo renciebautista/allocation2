@@ -34,5 +34,72 @@ class TradedealSchemeSku extends \Eloquent {
 			->where('tradedeal_scheme_id', $scheme->id)->get();
 	}
 
+
+	public static function addHostSku($host_skus, $scheme){
+		foreach ($host_skus as $value) {
+			$host = TradedealPartSku::find($value);
+			if($scheme->tradedeal_type_id == 1){
+				
+				if($scheme->tradedeal_uom_id == 1){
+					$pur_req = $scheme->buy * $host->host_cost;
+					$pre_cost = $scheme->free * $host->pre_cost;
+				}else if($scheme->tradedeal_uom_id == 2){
+					$pur_req = $scheme->buy * $host->host_cost * 12;
+					$pre_cost = $scheme->free * $host->pre_cost * 12;
+				}else{
+					$pur_req = $scheme->buy * $host->host_cost * $host->host_pcs_case;
+					$pre_cost = $scheme->free * $host->pre_cost * $host->pre_pcs_case;
+				}
+				TradedealSchemeSku::create(['tradedeal_scheme_id' => $scheme->id,
+				'tradedeal_part_sku_id' => $value,
+				'qty' => 1,
+				'pur_req' => $pur_req,
+				'free_cost' => $pre_cost,
+				'cost_to_sale' =>  ($pre_cost/$pur_req) * 100]);
+			}else if($scheme->tradedeal_type_id == 2){
+				TradedealSchemeSku::create(['tradedeal_scheme_id' => $scheme->id,
+				'tradedeal_part_sku_id' => $value,
+				'qty' => $host_skus[$value]]);
+			}else{
+				TradedealSchemeSku::create(['tradedeal_scheme_id' => $scheme->id,
+				'tradedeal_part_sku_id' => $value,
+				'qty' => 1]);
+
+				$lowest_cost = 0;
+				$skus = [];
+				foreach ($host_skus as $sku){
+					if($lowest_cost == 0){
+			        	$lowest_cost = $host->host_cost;
+			        	$skus[0] = $host;
+			        }else{
+			        	if($lowest_cost > $host->host_cost){
+				        	$lowest_cost = $host->host_cost;
+				        	$skus[0] = $host;
+				        }
+			        }
+				}
+					
+				$pur_req = 0;
+				$pre_cost = 0;
+
+
+				if($scheme->tradedeal_uom_id == 1){
+					$pur_req = $scheme->buy * $host->host_cost;
+					$pre_cost = $scheme->free * $host->pre_cost;
+				}else if($scheme->tradedeal_uom_id == 2){
+					$pur_req = $scheme->buy * $host->host_cost * 12;
+					$pre_cost = $scheme->free * $host->pre_cost * 12;
+				}else{
+					$pur_req = $scheme->buy * $host->host_cost * $host->host_pcs_case;
+					$pre_cost = $scheme->free * $host->pre_cost * $host->pre_pcs_case;
+				}
+				
+				$scheme->pur_req = $pur_req;
+				$scheme->free_cost = $pre_cost;
+				$scheme->cost_to_sale = ($pre_cost/$pur_req) * 100;
+				$scheme->save();
+			}	
+		}
+	}
 	
 }

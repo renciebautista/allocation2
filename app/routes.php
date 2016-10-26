@@ -143,6 +143,7 @@ Route::group(array('before' => 'auth'), function()
 	// Route::get('activity/{id}/tdchannels', 'ActivityController@tdchannels');
 	Route::put('activity/{id}/updatetradedeal', 'ActivityController@updatetradedeal');
 	Route::get('activity/{id}/exporttradedeal', 'ActivityController@exporttradedeal');
+	Route::get('activity/{id}/exporttddetails', 'ActivityController@exporttddetails');
 	Route::post('activity/deletetradedealscheme', 'ActivityController@deletetradedealscheme');
 
 	Route::get('activity/{id}/createtradealscheme',['as' => 'activity.createtradealscheme', 'uses' => 'ActivityController@createtradealscheme']);

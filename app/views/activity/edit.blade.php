@@ -522,7 +522,7 @@
 
 									  	<td class="action">
 									  		{{ Form::open(array('method' => 'DELETE', 'action' => array('SchemeController@destroy', $scheme->id),'class' => 'disable-button')) }}                       
-												{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs disable-button','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}
+											{{ Form::submit('Delete', array('class'=> 'btn btn-danger btn-xs disable-button','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}
 											{{ Form::close() }}
 									  	</td>
 									  	@endif
@@ -800,14 +800,14 @@
 													<?php $y = false; ?>
 													@foreach($scheme->channels as $channel)
 													@if(!$x)
-													<tr id="{{$scheme->id}}">
+													<tr id="{{$scheme->id}}" class="cl_{{$scheme->id}}">
 														<td>{{ HTML::linkAction('TradealSchemeController@edit' , 'Edit', $scheme->id) }} |
 															<a href="javascript:void(0)" id="{{$scheme->id}}" class="deletescheme">Delete</a></td>
 															<?php $x = true; ?>
 														<td>{{ $scheme->name }}</td>
 														<td>{{ $scheme->dealUom->tradedeal_uom }}</td>
 													@else
-													<tr>
+													<tr class="cl_{{$scheme->id}}">
 														<td></td>
 														<td></td>
 														<td></td>
@@ -849,6 +849,7 @@
 			<div class="panel-body">
 				<div class="row">
 					<div class="col-lg-12">
+						<a class="btn btn-success btn-sm" href="{{action('ActivityController@exporttddetails', $activity->id);}}">Export Detailed Summary</a>
 						<a class="btn btn-success btn-sm" href="{{action('ActivityController@exporttradedeal', $activity->id);}}">Export Summary</a>
 						<a class="btn btn-success btn-sm" href="{{action('TradealSchemeController@exportle', $activity->id);}}">Export LE Templates</a>
 					</div>

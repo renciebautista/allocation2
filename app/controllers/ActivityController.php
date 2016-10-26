@@ -3263,11 +3263,8 @@ class ActivityController extends BaseController {
 					$scheme->pcs_deal = $pcs_deal;
 					
 					$scheme->save();
-					foreach ($selected as $value) {
-						TradedealSchemeSku::create(['qty' => 1, 
-							'tradedeal_scheme_id' => $scheme->id,
-							'tradedeal_part_sku_id' => $value]);
-					}
+
+					TradedealSchemeSku::addHostSku(Input::get('skus'), $scheme);
 				}else if($deal_type->id == 2){
 					$buy = str_replace(",", '', Input::get('buy'));
 					$free = str_replace(",", '', Input::get('free'));
@@ -3360,11 +3357,8 @@ class ActivityController extends BaseController {
 						$scheme->pre_pcs_case = $premuim_sku->pre_pcs_case;
 					}
 					$scheme->save();
-					foreach ($selected as $value) {
-						TradedealSchemeSku::create(['qty' => 1, 
-							'tradedeal_scheme_id' => $scheme->id,
-							'tradedeal_part_sku_id' => $value]);
-					}
+
+					TradedealSchemeSku::addHostSku(Input::get('skus'), $scheme);
 				}
 
 				if(Input::has('ch')){
@@ -3398,6 +3392,7 @@ class ActivityController extends BaseController {
 		if(Request::ajax()){
 			$id = Input::get('d_id');
 			$tradedealscheme = TradedealScheme::find($id);
+			$tradedeal = Tradedeal::find($tradedealscheme->tradedeal_id);
 			if(empty($tradedealscheme)){
 				$arr['success'] = 0;
 			}else{
@@ -3405,8 +3400,10 @@ class ActivityController extends BaseController {
 				TradedealSchemeSku::where('tradedeal_scheme_id', $tradedealscheme->id)->delete();
 				TradedealSchemeChannel::where('tradedeal_scheme_id', $tradedealscheme->id)->delete();
 				$tradedealscheme->delete();
-				$arr['success'] = 1;
-				
+
+				File::deleteDirectory(storage_path('le/'.$tradedeal->activity_id.'/'.$tradedealscheme->id));
+
+				$arr['success'] = 1;				
 			}
 			$arr['id'] = $id;
 			return json_encode($arr);
@@ -3460,12 +3457,18 @@ class ActivityController extends BaseController {
 					$sheet->setCellValueByColumnAndRow($col,1, $sku->preDesc());
 					$col++;
 				}
-
-				
-
-
 		    });
 
+		})->download('xls');
+	}
+
+	public function exporttddetails($id){
+		$activity = Activity::findOrFail($id);
+		Excel::create($activity->circular_name.' Bunus Buy Free', function($excel) use($activity){
+			$excel->sheet($activity->circular_name.' Bunus Buy Free', function($sheet) use ($activity) {
+				$allocations = TradedealSchemeAllocation::getAll($activity);
+				$sheet->fromArray($allocations,null, 'A1', true);
+		    });
 		})->download('xls');
 	}
 

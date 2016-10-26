@@ -97,5 +97,16 @@ class TradedealSchemeAllocation extends \Eloquent {
 			->sum('computed_pcs');
 	}
 
+
+	public static function getAll($activity){
+		return self::select('tradedeal_schemes.id as scheme_id', 'tradedeal_schemes.name', 'tradedeal_types.id as tradedeal_type_id', 'tradedeal_types.tradedeal_type',
+			'area_code', 'area', 'sold_to_code', 'sold_to', 'ship_to_code', 'plant_code', 'ship_to_name', 'sold_to_gsv', 'weekly_run_rates', 'tradedeal_scheme_allocations.pur_req', 'computed_pcs',
+			'computed_cost')
+			->join('tradedeal_schemes', 'tradedeal_schemes.id', '=', 'tradedeal_scheme_allocations.tradedeal_scheme_id')
+			->join('tradedeal_types', 'tradedeal_types.id', '=', 'tradedeal_schemes.tradedeal_type_id')
+			->join('tradedeals', 'tradedeals.id', '=', 'tradedeal_schemes.tradedeal_id')
+			->where('tradedeals.activity_id', $activity->id)
+			->get();
+	}
 	
 }

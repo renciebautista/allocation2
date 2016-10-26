@@ -317,7 +317,7 @@ $(document).ready(function() {
 	            dataType: "JSON",
 	            success: function(data)
 	            {
-	               	del.closest('tr').remove();
+	               	$('#scheme-table tr.cl_'+id).remove();
 	            },
 	            error: function (jqXHR, textStatus, errorThrown)
 	            {

@@ -29,6 +29,7 @@ class TradedealScheme extends \Eloquent {
 
 		foreach ($data as $key => $value) {
 			$channels = TradedealSchemeChannel::getSelectedDetails($value);
+			$tradeal = Tradedeal::find($value->tradedeal_id);
 			if($value->tradedeal_type_id == 1){
 				$host_skus = TradedealSchemeSku::getHostSku($value);
 				foreach ($host_skus as $x => $value) {
@@ -48,15 +49,21 @@ class TradedealScheme extends \Eloquent {
 				foreach ($host_skus as $host_sku) {
 					$_host_sku[] = $host_sku->host_desc.' '.$host_sku->variant;
 				}
-
-				$part_sku = TradedealPartSku::find($value->pre_id);
 				$o = new stdClass();
 				$o->desc_variant = implode(" / ", $_host_sku);
-				$o->pre_variant = $part_sku->preDesc();
-				$o->pur_req = $value->pur_req;
-				$o->cost_to_sale = $value->cost_to_sale;
+				if($tradeal->nonUlpPremium()){
+					$o->pre_variant = $value->pre_desc .' '.$value->pre_variant;
+					$o->pur_req = $value->pur_req;
+					$o->cost_to_sale = $value->cost_to_sale;
+				}else{
+					$part_sku = TradedealPartSku::find($value->pre_id);
+					$o->pre_variant = $part_sku->preDesc();
+					$o->pur_req = $value->pur_req;
+					$o->cost_to_sale = $value->cost_to_sale;
+				}
+				
 				$_host[] = $o;
-				$data[$key]->host_skus = $_host;
+					$data[$key]->host_skus = $_host;
 			}
 			$data[$key]->channels = $channels;
 		}

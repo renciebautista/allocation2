@@ -207,77 +207,7 @@ class TradealSchemeController extends \BaseController {
 			TradedealSchemeSku::where('tradedeal_scheme_id', $scheme->id)->delete();
 			$selectedskus = [];
 			if(Input::has('skus')){
-				foreach (Input::get('skus') as $value) {
-					if($deal_type->id == 1){
-						$host = TradedealPartSku::find($value);
-						if($scheme->tradedeal_uom_id == 1){
-							$pur_req = $buy * $host->host_cost;
-							$pre_cost = $free * $host->pre_cost;
-						}else if($scheme->tradedeal_uom_id == 2){
-							$pur_req = $buy * $host->host_cost * 12;
-							$pre_cost = $free * $host->pre_cost * 12;
-						}else{
-							$pur_req = $buy * $host->host_cost * $host_pcs_case;
-							$pre_cost = $free * $host->pre_cost * $pre_pcs_case;
-						}
-						TradedealSchemeSku::create(['tradedeal_scheme_id' => $scheme->id,
-						'tradedeal_part_sku_id' => $value,
-						'qty' => 1,
-						'pur_req' => $pur_req,
-						'free_cost' => $pre_cost,
-						'cost_to_sale' =>  ($pre_cost/$pur_req) * 100]);
-					}else if($deal_type->id == 2){
-						TradedealSchemeSku::create(['tradedeal_scheme_id' => $scheme->id,
-						'tradedeal_part_sku_id' => $value,
-						'qty' => Input::get('qty')[$value]]);
-					}else{
-						TradedealSchemeSku::create(['tradedeal_scheme_id' => $scheme->id,
-						'tradedeal_part_sku_id' => $value,
-						'qty' => 1]);
-					}	
-				}
-
-				if($deal_type->id == 3){
-					$lowest_cost = 0;
-					$skus = [];
-					foreach (Input::get('skus') as $sku){
-						$host = TradedealPartSku::find($value);
-						if($lowest_cost == 0){
-				        	$lowest_cost = $host->host_cost;
-				        	$skus[0] = $host;
-				        }else{
-				        	if($lowest_cost > $host->host_cost){
-					        	$lowest_cost = $host->host_cost;
-					        	$skus[0] = $host;
-					        }
-				        }
-					}
-						
-					$_scheme = TradedealScheme::findOrFail($id);
-					// Helper::debug($_scheme);
-					$pur_req = 0;
-					$pre_cost = 0;
-
-					// Helper::debug($_scheme);
-
-					if($_scheme->tradedeal_uom_id == 1){
-						$pur_req = $buy * $host->host_cost;
-						$pre_cost = $free * $host->pre_cost;
-					}else if($_scheme->tradedeal_uom_id == 2){
-						$pur_req = $buy * $host->host_cost * 12;
-						$pre_cost = $free * $host->pre_cost * 12;
-					}else{
-						$pur_req = $buy * $host->host_cost * $host_pcs_case;
-						$pre_cost = $free * $host->pre_cost * $pre_pcs_case;
-					}
-					
-					
-					$_scheme->pur_req = $pur_req;
-					$_scheme->free_cost = $pre_cost;
-					$_scheme->cost_to_sale = ($pre_cost/$pur_req) * 100;
-					$_scheme->save();
-				}
-
+				TradedealSchemeSku::addHostSku(Input::get('skus'),$scheme);
 			}
 
 
