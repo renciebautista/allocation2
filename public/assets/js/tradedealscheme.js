@@ -54,7 +54,7 @@ $(document).ready(function() {
 		var free = $('#free').val();
 		var uom = $("#uom option:selected").text();
 		$('.input-group-addon').text(uom);
-		$('#scheme_name').val(buy +"+"+free+" "+uom);
+		$('#scheme_name').val(type+" "+buy +"+"+free+" "+uom);
 		var individual = $("#deal_type option:selected").val();
 		if(individual == 1){
 			$('.collective').hide();

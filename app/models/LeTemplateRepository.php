@@ -58,7 +58,8 @@ class LeTemplateRepository  {
 
 	private static function generateIndividualHeader($tradedealscheme, $tradedeal, $activity, $host_sku, $scheme_uom_abv, $scheme_uom_abv2 ){
 
-		$folder_name = self::getdealId($activity, $tradedealscheme, $host_sku, $scheme_uom_abv);
+		// $folder_name = self::getdealId($activity, $tradedealscheme, $host_sku, $scheme_uom_abv);
+		$folder_name = $tradedealscheme->name .' '.$host_sku->host_desc . ' '. $host_sku->variant . ' + '.$host_sku->pre_desc.' '.$host_sku->pre_variant;
 
 		Excel::create($tradedealscheme->dealType->tradedeal_type. ' - ' . $host_sku->host_desc. ' - 1 Header', function($excel) use ($tradedealscheme, $tradedeal, $activity, $host_sku,$scheme_uom_abv,$scheme_uom_abv2) {
 		    $excel->sheet('Sheet1', function($sheet) use ($tradedealscheme, $tradedeal, $activity, $host_sku,$scheme_uom_abv,$scheme_uom_abv2) {
@@ -132,7 +133,8 @@ class LeTemplateRepository  {
 	}
 
 	private static function generateIndividualMechanics($tradedealscheme, $tradedeal, $activity, $host_sku, $scheme_uom_abv, $scheme_uom_abv2){
-		$folder_name = self::getdealId($activity, $tradedealscheme, $host_sku, $scheme_uom_abv);
+		// $folder_name = self::getdealId($activity, $tradedealscheme, $host_sku, $scheme_uom_abv);
+		$folder_name = $tradedealscheme->name .' '.$host_sku->host_desc . ' '. $host_sku->variant . ' + '.$host_sku->pre_desc.' '.$host_sku->pre_variant;
 		Excel::create($tradedealscheme->dealType->tradedeal_type. ' - ' . $host_sku->host_desc. ' - 2 Mechanics', function($excel) use ($tradedealscheme, $tradedeal, $activity, $host_sku, $scheme_uom_abv, $scheme_uom_abv2) {
 		    $excel->sheet('Sheet1', function($sheet) use ($tradedealscheme, $tradedeal, $activity, $host_sku, $scheme_uom_abv, $scheme_uom_abv2) {
 		    	
@@ -195,7 +197,8 @@ class LeTemplateRepository  {
 	}
 
 	private static function generateIndividualSiteAllocation($tradedealscheme, $tradedeal, $activity, $host_sku, $scheme_uom_abv, $scheme_uom_abv2){
-		$folder_name = self::getdealId($activity, $tradedealscheme, $host_sku, $scheme_uom_abv);
+		// $folder_name = self::getdealId($activity, $tradedealscheme, $host_sku, $scheme_uom_abv);
+		$folder_name = $tradedealscheme->name .' '.$host_sku->host_desc . ' '. $host_sku->variant . ' + '.$host_sku->pre_desc.' '.$host_sku->pre_variant;
 
 		Excel::create($tradedealscheme->dealType->tradedeal_type. ' - ' . $host_sku->host_desc. ' - 4 Site Allocation', function($excel) use ($tradedealscheme, $tradedeal, $activity, $host_sku,$scheme_uom_abv, $scheme_uom_abv2) {
 		    $excel->sheet('Sheet1', function($sheet) use ($tradedealscheme, $tradedeal, $activity, $host_sku, $scheme_uom_abv, $scheme_uom_abv2) {

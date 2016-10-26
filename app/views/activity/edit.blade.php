@@ -781,37 +781,56 @@
 										<table id="scheme-table" class="table">
 											<thead>
 												<tr>
-													<th>Scheme</th>
-													<th>Deal Type</th>
-													<th>UOM</th>
-													<th>Premium SKU</th>
 													<th>Action</th>
+													<th>Scheme</th>
+													<th>UOM</th>
+													<th>Host SKU(s)</th>
+													<th>Premium SKU</th>
+													<th>Puchase Requirement</th>
+													<th>Cost To Sales</th>
+													<th>Channels Involved</th>
 												</tr>
 											</thead>
 											<tbody>
-											@foreach($tradedealschemes as $scheme)
-												<tr id="{{$scheme->id}}">
-													<td>{{ $scheme->name }}</td>
-													<td>{{ $scheme->dealType->tradedeal_type }}</td>
-													<td>{{ $scheme->dealUom->tradedeal_uom }}</td>
-													<td>
-														@if($tradedeal->non_ulp_premium)
-															{{ $scheme->premium()}}
+										
+										@foreach($tradedealschemes as $scheme)
+												<?php $x = false; ?>
+												@if(!empty($scheme->host_skus))
+													@foreach($scheme->host_skus as $host_sku)
+													<?php $y = false; ?>
+													@foreach($scheme->channels as $channel)
+													@if(!$x)
+													<tr id="{{$scheme->id}}">
+														<td>{{ HTML::linkAction('TradealSchemeController@edit' , 'Edit', $scheme->id) }} |
+															<a href="javascript:void(0)" id="{{$scheme->id}}" class="deletescheme">Delete</a></td>
+															<?php $x = true; ?>
+														<td>{{ $scheme->name }}</td>
+														<td>{{ $scheme->dealUom->tradedeal_uom }}</td>
+													@else
+													<tr>
+														<td></td>
+														<td></td>
+														<td></td>
+													@endif
+														@if(!$y)
+														<td>{{ $host_sku->desc_variant }} </td>
+														<td>{{ $host_sku->pre_variant }} </td>
+														<td>{{ number_format($host_sku->pur_req,2) }}</td>
+														<td>{{ number_format($host_sku->cost_to_sale,2) }} %</td>
+														<?php $y = true; ?>
 														@else
-															@if($scheme->tradedeal_type_id == 1)
-																See participating identifier/shorcut
-															@else
-																{{ $scheme->premium()}}
-															@endif
+														<td></td>
+														<td></td>
+														<td></td>
+														<td></td>
 														@endif
-														
-													</td>
-													<td>
-														{{ HTML::linkAction('TradealSchemeController@edit' , 'Edit', $scheme->id) }} |
-														<a href="javascript:void(0)" id="{{$scheme->id}}" class="deletescheme">Delete</a>
-													</td>
-												</tr>
-											@endforeach
+														<td>{{ $channel->l5_desc }}</td>
+													</tr>
+													@endforeach
+													@endforeach
+												@endif
+											
+										@endforeach
 											</tbody>
 										</table>
 									</div>
