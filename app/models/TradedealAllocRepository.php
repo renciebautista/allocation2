@@ -87,7 +87,7 @@ class TradedealAllocRepository  {
 		}
 		
 		$gsvsales = $allocationRepo->customers($skus, $_channels, $customers,$forced_areas, true, $trade_channels, $td_customers);
-
+		// Helper::debug($gsvsales);
 		
 
 		if(!is_null($collective_premium)){
@@ -126,9 +126,6 @@ class TradedealAllocRepository  {
 				
 			}
 			
-			$cov_multiplier = $tradealscheme->coverage/100;
-			$sold_to_gsv = $sold_to_gsv * $cov_multiplier;
-
 			$uom_multiplpier  = 1;
 			if($uom == 1){
 				$uom_multiplpier  = 1;
