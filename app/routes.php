@@ -313,8 +313,8 @@ Route::group(array('before' => 'auth'), function()
 		Route::get('getcustomers', 'api\CustomerController@getselectedcustomer');
 
 		Route::get('getpostedcustomers', 'api\CustomerController@getpostedcustomers');
-		// Route::get('customers', 'api\CustomerController@index');
-		Route::get('customers', 'api\CustomerController@getChannelCustomer');
+		Route::get('customers', 'api\CustomerController@index');
+		// Route::get('customers', 'api\CustomerController@getChannelCustomer');
 
 		Route::get('cycles', 'CycleController@availableCycle');
 
