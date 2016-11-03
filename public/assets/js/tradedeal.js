@@ -9,9 +9,20 @@ $(document).ready(function() {
 		$('#pre_variant').val($('#variant').val());
 	});
 
-	$('#host_cost_pcs').inputNumber();
+	$('#ecopy_host').click(function(){
+		$('#epre_sku').val($("#ehost_sku").chosen().val()).trigger('chosen:updated');
+		$('#epre_cost_pcs').val($('#ehost_cost_pcs').val());
+		$('#epre_pcs_case').val($('#ehost_pcs_case').val());
+		$('#epre_variant').val($('#evariant').val());
+	});
+
+	$('#host_cost_pcs, #ehost_cost_pcs').inputNumber();
 	$('.cost-edit').click(function(){
 		$('#host_cost_pcs').removeAttr('readonly').focus();
+	})
+
+	$('.ecost-edit').click(function(){
+		$('#ehost_cost_pcs').removeAttr('readonly').focus();
 	})
 
 	$("#updateTradedeal").validate({
@@ -178,7 +189,7 @@ $(document).ready(function() {
 		}
 
 	}).on('hide.bs.modal', function(){
-		$("#host_sku, #ref_sku ").val('').trigger("chosen:updated");
+		$("#host_sku, #ref_sku, #pre_sku").val('').trigger("chosen:updated");
 		$('#host_cost_pcs').val('');
 		$('#host_pcs_case').val('');
 		$('#addpartskus .error-msg').text('');
@@ -186,12 +197,10 @@ $(document).ready(function() {
 		$('#pre_variant').val('');
 		$('.ulppremium, .non_ulppremium').hide();
 		if(non_premiun == '1'){
-
 		}else{
 			$('#pre_cost_pcs').val('');
 			$('#pre_pcs_case').val('');
 		}
-		
 	});
 
 	$('#editsku').on('shown.bs.modal', function(){
@@ -215,7 +224,44 @@ $(document).ready(function() {
 		    });
 		});
 
+		$("#eref_sku").chosen({
+			search_contains: true,
+			allow_single_deselect: true
+		});
+
+		if(non_premiun == '1'){
+			$('.non_ulppremium').show();
+			$('.ulppremium').show();
+		}else{
+			$('.ulppremium').show();
+			$('.non_ulppremium').hide();
+			$("#epre_sku").chosen({
+				search_contains: true,
+				allow_single_deselect: true
+			}).change(function() {
+			    $.ajax({
+			        async: false,
+			        type: "GET",
+			        url: hostname + '/api/pricelistsku/?code='+$(this).val(),
+			        contentType: "application/json; charset=utf-8",
+			        dataType: "json",
+			        success: function (data) { 
+			        	$('#epre_cost_pcs').val('');
+			        	$('#epre_cost_pcs').val(data.price);
+			        	$('#epre_pcs_case').val('');
+			        	$('#epre_pcs_case').val(data.pack_size);
+			        },
+			        error: function (msg) { roles = msg; }
+			    });
+			});
+		}
+
+
+
+	}).on('hide.bs.modal', function(){
+		$('#ehost_cost_pcs').attr('readonly', '');
 	});
+
 
 	$("form[id='updatepartskus']").on("submit",function(e){
 		var form = $(this);
@@ -256,7 +302,6 @@ $(document).ready(function() {
             async: false,
             success: function(data)
             {
-               	console.log(data);
                	$('#editsku').modal('show');
                	$("#ehost_sku").val(data.host_code).trigger("chosen:updated");
 		       	$('#ehost_cost_pcs').val(data.host_cost);
@@ -264,10 +309,16 @@ $(document).ready(function() {
 		        $('#evariant').val(data.variant);
 		        $("#eref_sku").val(data.ref_code).trigger("chosen:updated");
 		        $("#sku_id").val(data.id);
+
+		        $("#epre_sku").val(data.pre_code).trigger("chosen:updated");
+		       	$('#epre_cost_pcs').val(data.pre_cost);
+		        $('#epre_pcs_case').val(data.pre_pcs_case);
+		        $('#epre_variant').val(data.pre_variant);
+
             },
             error: function (jqXHR, textStatus, errorThrown)
             {
-                alert('Error deleting data');
+                alert('Error retrieving data');
             }
         });
 	 
@@ -289,10 +340,36 @@ $(document).ready(function() {
 	            dataType: "JSON",
 	            success: function(data)
 	            {
-	                //if success reload ajax table
-	                // $('#modal_form').modal('hide');
-	                // reload_table();
-	                location.reload();
+	            	if(data.success == 1){
+	            		reload_table();
+	            	}else{
+	            		alert('Cannot delete sku, it is used in a scheme.');
+	            	}	                
+	            },
+	            error: function (jqXHR, textStatus, errorThrown)
+	            {
+	                alert('Error deleting data');
+	            }
+	        });
+	 
+	    }
+	});
+
+	$(document).on("click",".deletescheme", function (e) {
+		var del = $(this);
+	    var id = $(this).attr('id');
+	    if(confirm('Are you sure delete this data?'))
+	    {
+	        $.ajax({
+	            url : hostname + '/activity/deletetradedealscheme',
+	            type: "POST",
+	            data: { 
+			        'd_id': id
+			    },
+	            dataType: "JSON",
+	            success: function(data)
+	            {
+	               	$('#scheme-table tr.cl_'+id).remove();
 	            },
 	            error: function (jqXHR, textStatus, errorThrown)
 	            {

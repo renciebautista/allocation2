@@ -713,7 +713,7 @@
 
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				<h3 class="panel-title">Participating SKU's</h3>
+				<h3 class="panel-title">Select Participating SKU</h3>
 			</div>
 			<div class="panel-body">
 				<div class="row">
@@ -794,7 +794,7 @@
 											<tbody>
 										@if(count($tradedealschemes) == 0)
 										<tr>
-											<td colspan="8">No record found.</td>
+											<td colspan="9">No record found.</td>
 										</tr>
 										@endif
 										
@@ -1557,9 +1557,21 @@
 						<tr>
 							<td>Unit Cost / Piece</td>
 							<td>
-								<input class="form-control" name="ehost_cost_pcs" type="text" value="0" id="ehost_cost_pcs" readonly =''>
-								<button id="copy_host" type="button" class="btn btn-success btn-sm">Edit</button>
+								<div class="row">
+								  <div class="col-lg-12">
+								    <div class="input-group">
+								    	<input class="form-control" name="ehost_cost_pcs" type="text" value="0" id="ehost_cost_pcs" readonly =''>
+
+								      	<span class="input-group-btn">
+								      	<button type="button" data-toggle="tooltip" data-placement="top" title="Only for Price Increase" class="btn btn-success ecost-edit">Edit</button>
+								      </span>
+								    </div><!-- /input-group -->
+								  </div><!-- /.col-lg-6 -->
+								</div><!-- /.row -->
+								
 							</td>
+
+							
 							<td>Piece / Case</td>
 							<td>
 								<input class="form-control" name="ehost_pcs_case" type="text" value="0" id="ehost_pcs_case" readonly =''>
@@ -1582,51 +1594,49 @@
 
 				<table class="table table-bordered">
 					<tbody>
-						
-						
 						@if(!$tradedeal->non_ulp_premium)
 						<tr class="ulppremium">
 							<td colspan="4">
-								<button id="copy_host" type="button" class="btn btn-success btn-sm">Same as Host SKU</button>
+								<button id="ecopy_host" type="button" class="btn btn-success btn-sm">Same as Host SKU</button>
 							</td>
 						</tr>
 						<tr class="pre-sku ulppremium">
 							<td>Premium SKU</td>
 							<td colspan="3">
-								{{ Form::select('pre_sku', array('0' => '') + $pre_skus, [], array('data-placeholder' => 'Select Premium SKU','id' => 'pre_sku', 'class' => 'form-control')) }}
+								{{ Form::select('epre_sku', array('0' => '') + $pre_skus, [], array('data-placeholder' => 'Select Premium SKU','id' => 'epre_sku', 'class' => 'form-control')) }}
 							</td>
 						</tr>
 						<tr class="pre-sku ulppremium">
 							<td>Unit Cost / Piece</td>
 							<td>
-								<input class="form-control" name="pre_cost_pcs" type="text" value="0" id="pre_cost_pcs" readonly =''>
+								<input class="form-control" name="epre_cost_pcs" type="text" value="0" id="epre_cost_pcs" readonly =''>
 							</td>
 							<td>Piece / Case</td>
 							<td>
-								<input class="form-control" name="pre_pcs_case" type="text" value="0" id="pre_pcs_case" readonly =''>
+								<input class="form-control" name="epre_pcs_case" type="text" value="0" id="epre_pcs_case" readonly =''>
 							</td>
 						</tr>
 						<tr>
 							<td>Variant Shortcut</td>
 							<td colspan="3">
-								<input class="form-control" name="pre_variant" type="text" value="" id="pre_variant">
+								<input class="form-control" name="epre_variant" type="text" value="" id="epre_variant">
 							</td>
 						</tr>
 						@else
 						<tr class="pre-sku">
 							<td>Premium SKU</td>
 							<td colspan="3">
-								<input class="form-control" name="pre_sku" type="text" value="{{ $tradedeal->non_ulp_premium_desc}} - {{ $tradedeal->non_ulp_premium_code }}" id="pre_sku" readonly =''>
+								<input class="form-control" name="epre_sku" type="text" value="{{ $tradedeal->non_ulp_premium_desc}} - {{ $tradedeal->non_ulp_premium_code }}" id="epre_sku" readonly =''>
 							</td>
 						</tr>
 						<tr class="pre-sku">
 							<td>Unit Cost / Piece</td>
 							<td>
-								<input class="form-control" name="pre_cost_pcs" type="text" value="{{ $tradedeal->non_ulp_premium_cost}}" id="pre_cost_pcs" readonly =''>
+								<input class="form-control" name="epre_cost_pcs" type="text" value="{{ $tradedeal->non_ulp_premium_cost}}" id="epre_cost_pcs" readonly =''>
 							</td>
 							<td>Piece / Case</td>
 							<td>
-								<input class="form-control" name="pre_pcs_case" type="text" value="{{ $tradedeal->non_ulp_pcs_case}}" id="pre_pcs_case" readonly =''>
+								<input class="form-control" name="epre_pcs_case" type="text" value="{{ $tradedeal->non_ulp_pcs_case}}" id="epre_pcs_case" readonly =''>
 							</td>
 						</tr>
 

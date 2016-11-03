@@ -144,7 +144,7 @@ Route::group(array('before' => 'auth'), function()
 	Route::put('activity/{id}/updatetradedeal', 'ActivityController@updatetradedeal');
 	Route::get('activity/{id}/exporttradedeal', 'ActivityController@exporttradedeal');
 	Route::get('activity/{id}/exporttddetails', 'ActivityController@exporttddetails');
-	Route::delete('activity/{id}/deletetradedealscheme', 'ActivityController@deletetradedealscheme');
+	Route::post('activity/deletetradedealscheme', 'ActivityController@deletetradedealscheme');
 
 	Route::get('activity/{id}/createtradealscheme',['as' => 'activity.createtradealscheme', 'uses' => 'ActivityController@createtradealscheme']);
 	Route::post('activity/{id}/storetradealscheme', ['as' => 'activity.storetradealscheme', 'uses' => 'ActivityController@storetradealscheme']);

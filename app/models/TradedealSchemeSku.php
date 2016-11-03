@@ -7,6 +7,14 @@ class TradedealSchemeSku extends \Eloquent {
 		return $this->belongsTo('TradedealPartSku', 'tradedeal_part_sku_id', 'id');
 	}
 
+	public static function idExist($id){
+		$rows = self::where('tradedeal_part_sku_id', $id)->get();
+		if(count($rows) >0){
+			return true;
+		}else{
+			return false;
+		}
+	}
 
 	public static function getSelected($scheme){
 		// $records = self::select('tradedeal_part_skus.id')

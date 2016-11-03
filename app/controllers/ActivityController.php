@@ -3027,22 +3027,13 @@ class ActivityController extends BaseController {
 		if(Request::ajax()){
 			$id = Input::get('d_id');
 			$part_sku = TradedealPartSku::find($id);
-			
-			if(empty($part_sku)){
-				$arr['success'] = 0;
-			}else{
-				$activity = Activity::find($part_sku->activity_id);
-				$tradedeal = Tradedeal::getActivityTradeDeal($activity);
-				$tradedealschemes = TradedealScheme::where('tradedeal_id', $tradedeal->id)->get();
-				foreach ($tradedealschemes as $row) {
-					TradedealSchemeAllocation::where('tradedeal_scheme_id', $row->id)->delete();
-					TradedealSchemeSku::where('tradedeal_scheme_id', $row->id)->delete();
-					TradedealSchemeChannel::where('tradedeal_scheme_id', $row->id)->delete();
-					$row->delete();
-					File::deleteDirectory(storage_path('le/'.$tradedeal->activity_id.'/'.$row->id));
+			$arr['success'] = 0;
+
+			if(!empty($part_sku)){
+				if(!TradedealSchemeSku::idExist($id)){
+					$part_sku->delete();
+					$arr['success'] = 1;
 				}
-				$part_sku->delete();
-				$arr['success'] = 1;
 				
 			}
 			$arr['id'] = $id;
@@ -3104,11 +3095,12 @@ class ActivityController extends BaseController {
 					$part_sku->variant = strtoupper(Input::get('evariant'));
 					$part_sku->brand_shortcut = $host_sku->brand_shortcut;
 					$part_sku->host_sku_format = $host_sku->sku_format;
-					$part_sku->host_cost = $host_sku->price;
+					$part_sku->host_cost = str_replace(",", '', Input::get('ehost_cost_pcs'));
 					$part_sku->host_pcs_case = $host_sku->pack_size;
 					$part_sku->ref_code = $ref_sku->sku_code;
 					$part_sku->ref_desc = $ref_sku->sku_desc;
 					$part_sku->ref_pcs_case = $ref_sku2->pack_size;
+
 
 					if($tradedeal->non_ulp_premium == 1){
 						$part_sku->pre_code = $tradedeal->non_ulp_premium_code;
@@ -3122,7 +3114,7 @@ class ActivityController extends BaseController {
 							$part_sku->pre_variant = strtoupper(Input::get('epre_variant'));
 							$part_sku->pre_brand_shortcut = $pre_sku->brand_shortcut;
 							$part_sku->pre_sku_format = $pre_sku->sku_format;
-							$part_sku->pre_cost = $pre_sku->price;
+							$part_sku->pre_cost =str_replace(",", '', Input::get('epre_cost_pcs'));
 							$part_sku->pre_pcs_case = $pre_sku->pack_size;
 						}
 					}
@@ -3397,26 +3389,30 @@ class ActivityController extends BaseController {
 				->with('message', 'There were validation errors.');
 	}
 
-	public function deletetradedealscheme($id){
-		$tradedealscheme = TradedealScheme::find($id);
-		$tradedeal = Tradedeal::find($tradedealscheme->tradedeal_id);
-		if(empty($tradedealscheme)){
-			$arr['success'] = 0;
-		}else{
-			TradedealSchemeAllocation::where('tradedeal_scheme_id', $tradedealscheme->id)->delete();
-			TradedealSchemeSku::where('tradedeal_scheme_id', $tradedealscheme->id)->delete();
-			TradedealSchemeChannel::where('tradedeal_scheme_id', $tradedealscheme->id)->delete();
-			$tradedealscheme->delete();
+	public function deletetradedealscheme(){
+		if(Request::ajax()){
+			$id = Input::get('d_id');
+			$tradedealscheme = TradedealScheme::find($id);
+			$tradedeal = Tradedeal::find($tradedealscheme->tradedeal_id);
+			if(empty($tradedealscheme)){
+				$arr['success'] = 0;
+				Session::flash('class', 'alert-danger');
+				Session::flash('message', 'An error occured while deleting the record.');
+			}else{
+				TradedealSchemeAllocation::where('tradedeal_scheme_id', $tradedealscheme->id)->delete();
+				TradedealSchemeSku::where('tradedeal_scheme_id', $tradedealscheme->id)->delete();
+				TradedealSchemeChannel::where('tradedeal_scheme_id', $tradedealscheme->id)->delete();
+				$tradedealscheme->delete();
 
-			File::deleteDirectory(storage_path('le/'.$tradedeal->activity_id.'/'.$tradedealscheme->id));
+				File::deleteDirectory(storage_path('le/'.$tradedeal->activity_id.'/'.$tradedealscheme->id));
 
-			return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity->id)) . "#tradedeal")
-				->with('class', 'alert-success')
-				->with('message', 'Trade Deal scheme was successfuly deleted.');
+				$arr['success'] = 1;	
+				Session::flash('class', 'alert-success');
+				Session::flash('message', 'Tradedeal Scheme successfully deleted.');			
+			}
+			$arr['id'] = $id;
+			return json_encode($arr);
 		}
-		return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity->id)) . "#tradedeal")
-				->with('class', 'alert-danger')
-				->with('message', 'An error occured while deleting a scheme.');
 	}
 
 	public function exporttradedeal($id){
