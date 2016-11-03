@@ -2815,14 +2815,11 @@ class ActivityController extends BaseController {
 	}
 
 	public function updatetradedeal($id){
-
-		// dd(Input::all());
 		$activity = Activity::findOrFail($id);
 
 		$rules = array(
 		    'non_ulp_premium_desc' => 'max:13'
 		);
-
 
 		$validation = Validator::make(Input::all(), $rules);
 
@@ -2867,6 +2864,16 @@ class ActivityController extends BaseController {
 					$sku->update();
 				}
 			}
+
+			// update all scheme
+			$schemes = TradedealScheme::where('tradedeal_id', $tradedeal->id)->get();
+			if(!empty($schemes)){
+				foreach ($schemes as $scheme) {
+					TradedealAllocRepository::updateAllocation($scheme);
+					LeTemplateRepository::generateTemplate($scheme);
+				}
+			}
+
 			$data['success'] = 1;
 
 		}else{
@@ -3028,9 +3035,11 @@ class ActivityController extends BaseController {
 				$tradedeal = Tradedeal::getActivityTradeDeal($activity);
 				$tradedealschemes = TradedealScheme::where('tradedeal_id', $tradedeal->id)->get();
 				foreach ($tradedealschemes as $row) {
+					TradedealSchemeAllocation::where('tradedeal_scheme_id', $row->id)->delete();
 					TradedealSchemeSku::where('tradedeal_scheme_id', $row->id)->delete();
 					TradedealSchemeChannel::where('tradedeal_scheme_id', $row->id)->delete();
 					$row->delete();
+					File::deleteDirectory(storage_path('le/'.$tradedeal->activity_id.'/'.$row->id));
 				}
 				$part_sku->delete();
 				$arr['success'] = 1;
@@ -3388,26 +3397,26 @@ class ActivityController extends BaseController {
 				->with('message', 'There were validation errors.');
 	}
 
-	public function deletetradedealscheme(){
-		if(Request::ajax()){
-			$id = Input::get('d_id');
-			$tradedealscheme = TradedealScheme::find($id);
-			$tradedeal = Tradedeal::find($tradedealscheme->tradedeal_id);
-			if(empty($tradedealscheme)){
-				$arr['success'] = 0;
-			}else{
-				TradedealSchemeAllocation::where('tradedeal_scheme_id', $tradedealscheme->id)->delete();
-				TradedealSchemeSku::where('tradedeal_scheme_id', $tradedealscheme->id)->delete();
-				TradedealSchemeChannel::where('tradedeal_scheme_id', $tradedealscheme->id)->delete();
-				$tradedealscheme->delete();
+	public function deletetradedealscheme($id){
+		$tradedealscheme = TradedealScheme::find($id);
+		$tradedeal = Tradedeal::find($tradedealscheme->tradedeal_id);
+		if(empty($tradedealscheme)){
+			$arr['success'] = 0;
+		}else{
+			TradedealSchemeAllocation::where('tradedeal_scheme_id', $tradedealscheme->id)->delete();
+			TradedealSchemeSku::where('tradedeal_scheme_id', $tradedealscheme->id)->delete();
+			TradedealSchemeChannel::where('tradedeal_scheme_id', $tradedealscheme->id)->delete();
+			$tradedealscheme->delete();
 
-				File::deleteDirectory(storage_path('le/'.$tradedeal->activity_id.'/'.$tradedealscheme->id));
+			File::deleteDirectory(storage_path('le/'.$tradedeal->activity_id.'/'.$tradedealscheme->id));
 
-				$arr['success'] = 1;				
-			}
-			$arr['id'] = $id;
-			return json_encode($arr);
+			return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity->id)) . "#tradedeal")
+				->with('class', 'alert-success')
+				->with('message', 'Trade Deal scheme was successfuly deleted.');
 		}
+		return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity->id)) . "#tradedeal")
+				->with('class', 'alert-danger')
+				->with('message', 'An error occured while deleting a scheme.');
 	}
 
 	public function exporttradedeal($id){

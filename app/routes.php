@@ -144,7 +144,7 @@ Route::group(array('before' => 'auth'), function()
 	Route::put('activity/{id}/updatetradedeal', 'ActivityController@updatetradedeal');
 	Route::get('activity/{id}/exporttradedeal', 'ActivityController@exporttradedeal');
 	Route::get('activity/{id}/exporttddetails', 'ActivityController@exporttddetails');
-	Route::post('activity/deletetradedealscheme', 'ActivityController@deletetradedealscheme');
+	Route::delete('activity/{id}/deletetradedealscheme', 'ActivityController@deletetradedealscheme');
 
 	Route::get('activity/{id}/createtradealscheme',['as' => 'activity.createtradealscheme', 'uses' => 'ActivityController@createtradealscheme']);
 	Route::post('activity/{id}/storetradealscheme', ['as' => 'activity.storetradealscheme', 'uses' => 'ActivityController@storetradealscheme']);
@@ -313,8 +313,8 @@ Route::group(array('before' => 'auth'), function()
 		Route::get('getcustomers', 'api\CustomerController@getselectedcustomer');
 
 		Route::get('getpostedcustomers', 'api\CustomerController@getpostedcustomers');
-		Route::get('customers', 'api\CustomerController@index');
-		// Route::get('customers', 'api\CustomerController@getChannelCustomer');
+		Route::get('customers_old', 'api\CustomerController@index');
+		Route::get('customers', 'api\CustomerController@getChannelCustomer');
 
 		Route::get('cycles', 'CycleController@availableCycle');
 

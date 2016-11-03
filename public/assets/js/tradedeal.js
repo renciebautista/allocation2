@@ -290,8 +290,9 @@ $(document).ready(function() {
 	            success: function(data)
 	            {
 	                //if success reload ajax table
-	                $('#modal_form').modal('hide');
-	                reload_table();
+	                // $('#modal_form').modal('hide');
+	                // reload_table();
+	                location.reload();
 	            },
 	            error: function (jqXHR, textStatus, errorThrown)
 	            {
@@ -302,31 +303,6 @@ $(document).ready(function() {
 	    }
 	});
 
-	$(document).on("click",".deletescheme", function (e) {
-		var del = $(this);
-	    var id = $(this).attr('id');
-	    if(confirm('Are you sure delete this data?'))
-	    {
-	        // ajax delete data to database
-	        $.ajax({
-	            url : hostname + '/activity/deletetradedealscheme',
-	            type: "POST",
-	            data: { 
-			        'd_id': id
-			    },
-	            dataType: "JSON",
-	            success: function(data)
-	            {
-	               	$('#scheme-table tr.cl_'+id).remove();
-	            },
-	            error: function (jqXHR, textStatus, errorThrown)
-	            {
-	                alert('Error deleting data');
-	            }
-	        });
-	 
-	    }
-	});
 
 
 	var table = $("#participating_sku").DataTable({

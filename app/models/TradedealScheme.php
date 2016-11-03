@@ -11,6 +11,8 @@ class TradedealScheme extends \Eloquent {
 		return $this->belongsTo('TradedealUom','tradedeal_uom_id','id');
 	}
 
+	
+
 	public static function getScheme($id){
 		$data = self::where('tradedeal_id', $id)
 			->with('dealType')
@@ -74,9 +76,5 @@ class TradedealScheme extends \Eloquent {
 		return $this->pre_desc .' - '.$this->pre_code;
 	}
 
-
-	public static function total_deals($activity){
-		return self::join('');
-	}
 	
 }

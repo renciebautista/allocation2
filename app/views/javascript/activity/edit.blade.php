@@ -131,7 +131,7 @@ $('#updateActivity,#updateCustomer,#updateBilling,#updatetimings, #updateTradede
 
 
 $("a[href='#customer']").on('shown.bs.tab', function(e) {
-	$("#tree4").fancytree("disable");
+	$("#tree5").fancytree("disable");
     getCustomer();
 });
 
@@ -563,7 +563,7 @@ $("#tree4").fancytree({
 	checkbox: true,
 	selectMode: 3,
 	source: {
-		url: "../../api/channels?id={{$activity->id}}"
+		url: "../../api/customers_old?id={{$activity->id}}"
 	},
 	select: function(event, data) {
 		// Get a list of all selected TOP nodes

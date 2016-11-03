@@ -706,7 +706,7 @@
 					</div>
 				</div>
 				<br>
-								<button class="btn btn-primary disable-button">Update</button>
+				<button class="btn btn-primary disable-button">Update</button>
 
 		  	</div>
 		</div>
@@ -778,10 +778,10 @@
 
 								<div class="row">
 									<div class="col-lg-12">
-										<table id="scheme-table" class="table">
+										<table id="scheme-table" class="table table-bordered">
 											<thead>
 												<tr>
-													<th>Action</th>
+													<th colspan="2">Action</th>
 													<th>Scheme</th>
 													<th>UOM</th>
 													<th>Host SKU(s)</th>
@@ -792,25 +792,30 @@
 												</tr>
 											</thead>
 											<tbody>
+										@if(count($tradedealschemes) == 0)
+										<tr>
+											<td colspan="8">No record found.</td>
+										</tr>
+										@endif
 										
 										@foreach($tradedealschemes as $scheme)
 												<?php $x = false; ?>
+												<?php $host_cnt = 1; ?>
 												@if(!empty($scheme->host_skus))
+												<?php $host_cnt = count($scheme->host_skus); ?>
 													@foreach($scheme->host_skus as $host_sku)
 													<?php $y = false; ?>
-													@foreach($scheme->channels as $channel)
 													@if(!$x)
 													<tr id="{{$scheme->id}}" class="cl_{{$scheme->id}}">
-														<td>{{ HTML::linkAction('TradealSchemeController@edit' , 'Edit', $scheme->id) }} |
-															<a href="javascript:void(0)" id="{{$scheme->id}}" class="deletescheme">Delete</a></td>
-															<?php $x = true; ?>
-														<td>{{ $scheme->name }}</td>
-														<td>{{ $scheme->dealUom->tradedeal_uom }}</td>
-													@else
-													<tr class="cl_{{$scheme->id}}">
-														<td></td>
-														<td></td>
-														<td></td>
+														<td rowspan="{{$host_cnt}}">
+															{{ HTML::linkAction('TradealSchemeController@edit','Edit', $scheme->id, array('class' => 'btn btn-success btn-xs')) }}
+															
+														</td>
+														<td rowspan="{{$host_cnt}}">
+															<a href="javascript:void(0)" id="{{$scheme->id}}" class="deletescheme btn btn-danger btn-xs">Delete</a>
+														</td>
+														<td rowspan="{{$host_cnt}}">{{ $scheme->name }}</td>
+														<td rowspan="{{$host_cnt}}">{{ $scheme->dealUom->tradedeal_uom }}</td>
 													@endif
 														@if(!$y)
 														<td>{{ $host_sku->desc_variant }} </td>
@@ -824,9 +829,15 @@
 														<td></td>
 														<td></td>
 														@endif
-														<td>{{ $channel->l5_desc }}</td>
+														@if(!$x)
+														<?php $x = true; ?>
+														<td rowspan="{{$host_cnt}}" >
+															@foreach($scheme->channels as $channel)
+															{{ $channel->l5_desc }} </br>
+															@endforeach
+														</td>
+														@endif
 													</tr>
-													@endforeach
 													@endforeach
 												@endif
 											
