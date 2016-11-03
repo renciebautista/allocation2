@@ -3446,22 +3446,105 @@ class ActivityController extends BaseController {
 		    });
 
 		    $excel->sheet('ALLOCATIONS', function($sheet) use ($activity) {
-		    	$row = 1;
-				$sheet->row($row, array('AREA', 'Distributor Code', 'Distributor Name', 'Site Name', 'Site Code', 'Promo Type', 'Scheme Code', 'Unit of Measure'));
-				$tradedeal_skus = TradedealPartSku::where('activity_id', $activity->id)->get();
+		    	
 
-				// host
-				$col = 8;
-				foreach ($tradedeal_skus as $sku) {
-					$sheet->setCellValueByColumnAndRow($col,1, $sku->hostDesc());
-					$col++;
-				}
+				$tradedeal_skus = TradedealPartSku::where('activity_id', $activity->id)->get();
+				$tradedeal = Tradedeal::getActivityTradeDeal($activity);
+				$allocations = TradedealSchemeAllocation::exportAlloc($tradedeal);
+
+				$row = 1;
+				$sheet->row($row, array('AREA', 'Distributor Code', 'Distributor Name', 'Site Code', 'Site Name', 'Scheme Code', 'Scheme Description', 'PREMIUM PIECES PER DEAL'));
 
 				// premuim
+				$premiums = [];
 				foreach ($tradedeal_skus as $sku) {
-					$sheet->setCellValueByColumnAndRow($col,1, $sku->preDesc());
+					$premiums[] = $sku->pre_desc. ' '. $sku->pre_variant;
+				}
+
+				$col = 8;
+				$col_pre = [];
+				foreach ($premiums as $premuim) {
+					$sheet->setCellValueByColumnAndRow($col,1, $premuim);
+					$col_pre[$premuim] = $col;
 					$col++;
 				}
+
+				$last_area = '';
+				$last_distributor = '';
+				$last_site = '';
+				$first_row = 2;
+				foreach ($allocations as $alloc) {
+					$row++;
+					if($alloc->tradedeal_uom_id == 1){
+						$pcs_deal = 1;
+					}
+					if($alloc->tradedeal_uom_id == 2){
+						$pcs_deal = 12;
+					}
+					if($alloc->tradedeal_uom_id == 3){
+						$pcs_deal = $alloc->pcs_case;
+					}
+					
+					if($last_area == $alloc->area){
+						if($last_distributor == $alloc->sold_to_code){
+							if($last_site == $alloc->plant_code){
+								$sheet->row($row, ['', '', '', '', '', $alloc->scheme_code, $alloc->scheme_description, $pcs_deal]);
+							}else{
+								$sheet->row($row, ['', '', '', $last_site.' Total']);
+								foreach ($col_pre as $col) {
+									$last_row = $row - 1;
+									$sum = "=SUM(".\PHPExcel_Cell::stringFromColumnIndex($col).$first_row.":".\PHPExcel_Cell::stringFromColumnIndex($col).$last_row.")";
+									$sheet->setCellValueByColumnAndRow($col,$row,$sum);
+								}
+								$row++;
+								$first_row = $row;
+								$sheet->row($row, ['', '', '', $alloc->plant_code, $alloc->ship_to_name, $alloc->scheme_code, $alloc->scheme_description, $pcs_deal]);
+							}
+							$sheet->setCellValueByColumnAndRow($col_pre[$alloc->pre_desc_variant],$row, $alloc->computed_pcs);
+						}else{
+							if($last_site != $alloc->plant_code){
+								$sheet->row($row, ['', '', '', $last_site.' Total1']);
+								foreach ($col_pre as $col) {
+									$last_row = $row - 1;
+									$sum = "=SUM(".\PHPExcel_Cell::stringFromColumnIndex($col).$first_row.":".\PHPExcel_Cell::stringFromColumnIndex($col).$last_row.")";
+									$sheet->setCellValueByColumnAndRow($col,$row,$sum);
+								}
+								$row++;
+								$first_row = $row;
+							}
+							$sheet->row($row, ['', $alloc->sold_to_code, $alloc->sold_to, $alloc->plant_code, $alloc->ship_to_name, $alloc->scheme_code, $alloc->scheme_description, $pcs_deal]);
+							$sheet->setCellValueByColumnAndRow($col_pre[$alloc->pre_desc_variant],$row, $alloc->computed_pcs);
+						}
+					}else{
+						if(($last_site != $alloc->plant_code) && ($last_site != '')){
+							$sheet->row($row, ['', '', '', $last_site.' Total']);
+							foreach ($col_pre as $col) {
+								$last_row = $row - 1;
+								$sum = "=SUM(".\PHPExcel_Cell::stringFromColumnIndex($col).$first_row.":".\PHPExcel_Cell::stringFromColumnIndex($col).$last_row.")";
+								$sheet->setCellValueByColumnAndRow($col,$row,$sum);
+							}
+							$row++;
+							$first_row = $row;
+						}
+						$sheet->row($row, [$alloc->area, $alloc->sold_to_code, $alloc->sold_to, $alloc->plant_code, $alloc->ship_to_name, $alloc->scheme_code, $alloc->scheme_description, $pcs_deal]);
+						$sheet->setCellValueByColumnAndRow($col_pre[$alloc->pre_desc_variant],$row, $alloc->computed_pcs);
+					}
+
+					$last_area = $alloc->area;
+					$last_distributor = $alloc->sold_to_code;
+					$last_site = $alloc->plant_code;
+
+                    
+                    
+
+				}
+				$row++;
+				$sheet->row($row, ['', '', '', $last_site.' Total']);	
+				foreach ($col_pre as $col) {
+					$last_row = $row - 1;
+					$sum = "=SUM(".\PHPExcel_Cell::stringFromColumnIndex($col).$first_row.":".\PHPExcel_Cell::stringFromColumnIndex($col).$last_row.")";
+					$sheet->setCellValueByColumnAndRow($col,$row,$sum);
+				}		
 		    });
 
 		})->download('xls');

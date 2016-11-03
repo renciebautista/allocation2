@@ -16,6 +16,10 @@ class TradeIndividualSeries extends \Eloquent {
 				$series = $last->series + 1;
 			}
 
+			if($series == 100){
+				$series = 1;
+			}
+
 			$data = self::create(['month_year' => $month_year,
 				'tradedeal_scheme_id' => $scheme_id,
 				'tradedeal_part_sku_id' => $host_id,

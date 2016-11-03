@@ -20,7 +20,7 @@ class TradedealAllocRepository  {
 		$_channels = ActivityChannel2::channels($tradedeal->activity_id);
 
 		$scheme_skus = TradedealSchemeSku::select('tradedeal_scheme_skus.id', 'tradedeal_part_skus.ref_code', 'qty', 'host_cost', 'host_pcs_case', 'ref_pcs_case',
-			'pre_code', 'pre_desc', 'pre_cost', 'pre_pcs_case')
+			'pre_code', 'pre_desc', 'pre_cost', 'pre_pcs_case', 'brand_shortcut', 'variant', 'tradedeal_part_skus.id as host_id', 'pre_variant')
 			->join('tradedeal_part_skus', 'tradedeal_scheme_skus.tradedeal_part_sku_id', '=', 'tradedeal_part_skus.id')
 			->where('tradedeal_scheme_id', $tradealscheme->id)
 			->orderBy('tradedeal_part_skus.id')
@@ -32,11 +32,33 @@ class TradedealAllocRepository  {
 
 		$skus = [];
 
+		if($tradealscheme->tradedeal_uom_id == 1){
+    		$scheme_uom_abv = 'P';
+    		$scheme_uom_abv2 = 'PC';
+    	}
+    	if($tradealscheme->tradedeal_uom_id == 2){
+    		$scheme_uom_abv = 'D';
+    		$scheme_uom_abv2 = 'DZ';
+    	}
+    	if($tradealscheme->tradedeal_uom_id == 3){
+    		$scheme_uom_abv = 'C';
+    		$scheme_uom_abv2 = 'CS';
+    	}
+
+	
 		if($tradealscheme->tradedeal_type_id == 1){
 			foreach ($scheme_skus as $row) {
 				unset($skus);
 				$skus[] = $row;
-				self::generate_allocation($_channels, $customers,$forced_areas,$trade_channels, $td_customers, $tradealscheme, $tradedeal, $skus);
+
+				// generate scheme code
+				$brand = $row->brand_shortcut;
+		    	$month_year = date('ym',strtotime($activity->eimplementation_date));
+		    	$host_variant = substr(strtoupper($row->variant),0,1);
+		    	$series = TradeIndividualSeries::getSeries($month_year, $tradealscheme->id, $row->host_id);
+		    	$deal_id = 'B'.$month_year.$scheme_uom_abv.$brand.$host_variant .sprintf("%02d", $series->series);
+
+				self::generate_allocation($_channels, $customers,$forced_areas,$trade_channels, $td_customers, $tradealscheme, $tradedeal, $skus, null, $deal_id);
 			}
 		}else if($tradealscheme->tradedeal_type_id == 2){
 			foreach ($scheme_skus as $row) {
@@ -49,20 +71,22 @@ class TradedealAllocRepository  {
 			}
 			
 
-			self::generate_allocation($_channels, $customers,$forced_areas,$trade_channels, $td_customers, $tradealscheme, $tradedeal, $skus, $collective_premium);
+			self::generate_allocation($_channels, $customers,$forced_areas,$trade_channels, $td_customers, $tradealscheme, $tradedeal, $skus, $collective_premium, $deal_id);
 		}else{
 			$lowest_cost = 0;
 			$skus = [];
+			$brands =[];
 			foreach ($scheme_skus as $row) {
 				if($lowest_cost == 0){
+		        	$lowest_cost = $row->host_cost;
+		        	$skus[0] = $row;
+		        }else{
+		        	if($lowest_cost > $row->host_cost){
 			        	$lowest_cost = $row->host_cost;
 			        	$skus[0] = $row;
-			        }else{
-			        	if($lowest_cost > $row->host_cost){
-				        	$lowest_cost = $row->host_cost;
-				        	$skus[0] = $row;
-				        }
 			        }
+		        }
+		        $brands[] = $row->brand_shortcut;
 			}
 
 			
@@ -73,12 +97,24 @@ class TradedealAllocRepository  {
 				$collective_premium = $tradedeal;
 			}
 
-			self::generate_allocation($_channels, $customers,$forced_areas,$trade_channels, $td_customers, $tradealscheme, $tradedeal, $skus, $collective_premium);
+			// generate scheme code
+
+	    	$brand = array_unique($brands);
+	    	$brand_short_cut = 'MTL';
+	    	if(count($brand) == 1){
+	    		$brand_short_cut = $brand[0];
+	    	}
+	    	$month_year = date('ym',strtotime($activity->eimplementation_date));
+	    	$series = TradeCollectiveSeries::getSeries($month_year, $tradealscheme->id);
+
+	    	$deal_id = $month_year.$scheme_uom_abv.$brand_short_cut.sprintf("%02d", $series->series);
+
+			self::generate_allocation($_channels, $customers,$forced_areas,$trade_channels, $td_customers, $tradealscheme, $tradedeal, $skus, $collective_premium, $deal_id);
 		}
 		
 	}
 
-	private static function generate_allocation($_channels, $customers,$forced_areas,$trade_channels, $td_customers, $tradealscheme, $tradedeal, $host_sku, $collective_premium = null){
+	private static function generate_allocation($_channels, $customers,$forced_areas,$trade_channels, $td_customers, $tradealscheme, $tradedeal, $host_sku, $collective_premium = null, $scheme_code){
 		$allocationRepo = new AllocationRepository2;
 		$skus = [];
 
@@ -95,17 +131,20 @@ class TradedealAllocRepository  {
 				$premium['pre_code'] = $collective_premium->pre_code;
 				$premium['pre_desc'] = $collective_premium->pre_desc;
 				$premium['cost'] = $collective_premium->pre_cost;
+				$premium['variant'] = $collective_premium->pre_variant;
 			}else{
 				$premium['pre_code'] = $collective_premium->non_ulp_premium_code;
 				$premium['pre_desc'] = $collective_premium->non_ulp_premium_desc;
 				$premium['cost'] = $collective_premium->non_ulp_premium_cost;
+				$premium['variant'] = '';
 			}
 			$sku = $host_sku[0];
 		}else{
 			$sku = $host_sku[0];
-			$premium['pre_code'] = $host_sku[0]->pre_code;
-			$premium['pre_desc'] = $host_sku[0]->pre_desc;
-			$premium['cost'] = $host_sku[0]->pre_cost;
+			$premium['pre_code'] = $sku->pre_code;
+			$premium['pre_desc'] = $sku->pre_desc;
+			$premium['cost'] = $sku->pre_cost;
+			$premium['variant'] = $sku->pre_variant;
 		}
 		
 		// Helper::debug($sku);
@@ -166,7 +205,7 @@ class TradedealAllocRepository  {
 					$shipto_alloc->tradedeal_scheme_sku_id = $sku->id;
 				}
 				
-
+				$shipto_alloc->scheme_code = $scheme_code;
 				$shipto_alloc->area_code = $customer->area_code;
 				$shipto_alloc->area = $customer->area_name;
 				$shipto_alloc->sold_to_code = $customer->customer_code;
@@ -182,6 +221,7 @@ class TradedealAllocRepository  {
 
 				$shipto_alloc->pre_code = $premium['pre_code'];
 				$shipto_alloc->pre_desc = $premium['pre_desc'];
+				$shipto_alloc->pre_desc_variant = $premium['pre_desc'].' '.$premium['variant'];
 
 				$shipto_alloc->save();
 			}

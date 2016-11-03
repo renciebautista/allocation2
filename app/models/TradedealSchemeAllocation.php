@@ -3,7 +3,24 @@
 class TradedealSchemeAllocation extends \Eloquent {
 	protected $fillable = [];
 
+	public static function exportAlloc($tradedeal){
+		$query = sprintf("select area, sold_to_code, sold_to, plant_code,ship_to_name, scheme_code, tradedeal_schemes.name as scheme_description,
+			tradedeal_schemes.tradedeal_uom_id, 
+			COALESCE(tradedeal_part_skus.pre_pcs_case,tradedeal_schemes.pre_pcs_case) as pcs_case, pre_desc_variant, computed_pcs
+			from tradedeal_scheme_allocations 
+			right join tradedeal_schemes on tradedeal_schemes.id = tradedeal_scheme_allocations.tradedeal_scheme_id
+			left join tradedeal_scheme_skus on tradedeal_scheme_skus.id = tradedeal_scheme_allocations.tradedeal_scheme_sku_id
+			left join tradedeal_part_skus on tradedeal_part_skus.id = tradedeal_scheme_skus.tradedeal_part_sku_id
+			where tradedeal_schemes.tradedeal_id = '%d' and  computed_pcs > 0 order by area, sold_to, ship_to_name, scheme_description",$tradedeal->id);
 
+		return DB::select(DB::raw($query));
+	}
+
+	public static function getSchemeCode($tradedealscheme, $host_sku){
+		return self::where('tradedeal_scheme_id', $tradedealscheme->id)
+			->where('tradedeal_scheme_sku_id', $host_sku->id)
+			->first();
+	}
 
 	public static function getShiptoBy($activity){
 		$shiptos = self::select('area', 'plant_code', 'ship_to_name', DB::raw('tradedeal_schemes.name as scheme_name'), 
