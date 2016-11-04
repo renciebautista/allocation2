@@ -2817,102 +2817,109 @@ class ActivityController extends BaseController {
 	public function updatetradedeal($id){
 		$activity = Activity::findOrFail($id);
 
-		$rules = array(
-		    'non_ulp_premium_desc' => 'max:13'
-		);
+
+		$budgets = ActivityBudget::getBudgets($activity->id);
+		if(count($budgets) > 0){
+			$rules = array(
+			    'non_ulp_premium_desc' => 'max:13',
+			);
+			
+
+			$validation = Validator::make(Input::all(), $rules);
+
+			// Helper::debug($validation)
+
+			if($validation->passes()){
+				$tradedeal = Tradedeal::where('activity_id', $id)->first();
+				if(empty($tradedeal)){
+					$tradedeal = new Tradedeal;
+					$tradedeal->activity_id = $id;
+				}
+				$tradedeal->alloc_in_weeks = str_replace(",", "", Input::get('alloc_in_weeks'));
+				$tradedeal->non_ulp_premium = Input::get('non_ulp_premium');
+
+				$tradedeal->non_ulp_premium_desc = Input::get('non_ulp_premium_desc');
+				$tradedeal->non_ulp_premium_code = Input::get('non_ulp_premium_code');
+				$tradedeal->non_ulp_premium_cost = str_replace(",", "", Input::get('non_ulp_premium_cost'));
+				$tradedeal->non_ulp_pcs_case = Input::get('non_ulp_pcs_case');
+				$tradedeal->save();
+
+				// copy tradedeal channel
+				$channels = TradedealChannel::where('activity_id', $id)->get();
+				if(count($channels) == 0){
+					$chTemp = Level5::getForTradeDeal();
+
+					foreach ($chTemp as $ch) {
+						$tc = new TradedealChannel;
+						$tc->activity_id = $id;
+						$tc->l5_code = $ch->l5_code;
+						$tc->l5_desc = $ch->l5_desc;
+						$tc->rtm_tag = $ch->rtm_tag;
+						$tc->save();
+					}
+				}
+
+				// update non ulp premium
+				if($tradedeal->non_ulp_premium){
+					$partskus = TradedealPartSku::getPartSkus($activity);
+					foreach ($partskus as $sku) {
+						$sku->pre_code = $tradedeal->non_ulp_premium_code;
+						$sku->pre_desc = $tradedeal->non_ulp_premium_desc;
+						$sku->pre_cost = $tradedeal->non_ulp_premium_cost;
+						$sku->pre_pcs_case = $tradedeal->non_ulp_pcs_case;
+						$sku->update();
+					}
+				}
+
+				// update all scheme
+				$schemes = TradedealScheme::where('tradedeal_id', $tradedeal->id)->get();
+				if(!empty($schemes)){
+					foreach ($schemes as $scheme) {
+						TradedealAllocRepository::updateAllocation($scheme);
+						LeTemplateRepository::generateTemplate($scheme);
+					}
+				}
+
+				if(Input::hasFile('tdupload')){
+					$token = md5(uniqid(mt_rand(), true));
+					$file_path = Input::file('tdupload')->move(storage_path().'/uploads/temp/',$token.".xls");
+					$isError = false;
+					Excel::selectSheets('allocations')->load($file_path, function($reader) use (&$isError,$activity){
+						$firstrow = $reader->skip(1)->first()->toArray();
+						
+				       	if (isset($firstrow['activity_id'])) {
+				            $rows = $reader->all();
+				            // dd($rows);
+				            if($rows[0]->activity_id != $activity->id){
+				            	$isError = true;
+				            }
+				        }
+
+				    });
+					// dd($isError);
+				    if (!$isError) {
+						Excel::selectSheets('allocations')->load($file_path, function($reader) use ($activity) {
+							TradedealAllocRepository::manualUpload($reader->get(),$activity);
+						});
+				        
+				    }
+				}
+
+				return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity->id)) . "#tradedeal")
+					->with('class', 'alert-success')
+					->with('message', 'Tradedeal successfuly updated');
+			}
+			return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity->id)) . "#tradedeal")
+					->with('class', 'alert-danger')
+					->with('message', 'Error on updating trade');
+		}else{
+			Session::flash('class', 'alert-danger');
+			Session::flash('message', 'Budget IO is required.');
+			return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity->id)) . "#tradedeal");
+		}
+
 
 		
-
-		$validation = Validator::make(Input::all(), $rules);
-
-		if($validation->passes()){
-			$tradedeal = Tradedeal::where('activity_id', $id)->first();
-			if(empty($tradedeal)){
-				$tradedeal = new Tradedeal;
-				$tradedeal->activity_id = $id;
-			}
-			$tradedeal->alloc_in_weeks = str_replace(",", "", Input::get('alloc_in_weeks'));
-			$tradedeal->non_ulp_premium = Input::get('non_ulp_premium');
-
-			$tradedeal->non_ulp_premium_desc = Input::get('non_ulp_premium_desc');
-			$tradedeal->non_ulp_premium_code = Input::get('non_ulp_premium_code');
-			$tradedeal->non_ulp_premium_cost = str_replace(",", "", Input::get('non_ulp_premium_cost'));
-			$tradedeal->non_ulp_pcs_case = Input::get('non_ulp_pcs_case');
-			$tradedeal->save();
-
-			// copy tradedeal channel
-			$channels = TradedealChannel::where('activity_id', $id)->get();
-			if(count($channels) == 0){
-				$chTemp = Level5::getForTradeDeal();
-
-				foreach ($chTemp as $ch) {
-					$tc = new TradedealChannel;
-					$tc->activity_id = $id;
-					$tc->l5_code = $ch->l5_code;
-					$tc->l5_desc = $ch->l5_desc;
-					$tc->rtm_tag = $ch->rtm_tag;
-					$tc->save();
-				}
-			}
-
-			// update non ulp premium
-			if($tradedeal->non_ulp_premium){
-				$partskus = TradedealPartSku::getPartSkus($activity);
-				foreach ($partskus as $sku) {
-					$sku->pre_code = $tradedeal->non_ulp_premium_code;
-					$sku->pre_desc = $tradedeal->non_ulp_premium_desc;
-					$sku->pre_cost = $tradedeal->non_ulp_premium_cost;
-					$sku->pre_pcs_case = $tradedeal->non_ulp_pcs_case;
-					$sku->update();
-				}
-			}
-
-			// update all scheme
-			$schemes = TradedealScheme::where('tradedeal_id', $tradedeal->id)->get();
-			if(!empty($schemes)){
-				foreach ($schemes as $scheme) {
-					TradedealAllocRepository::updateAllocation($scheme);
-					LeTemplateRepository::generateTemplate($scheme);
-				}
-			}
-
-			if(Input::hasFile('tdupload')){
-				$token = md5(uniqid(mt_rand(), true));
-				$file_path = Input::file('tdupload')->move(storage_path().'/uploads/temp/',$token.".xls");
-				$isError = false;
-				Excel::selectSheets('allocations')->load($file_path, function($reader) use (&$isError,$activity){
-					$firstrow = $reader->skip(1)->first()->toArray();
-					
-			       	if (isset($firstrow['activity_id'])) {
-			            $rows = $reader->all();
-			            // dd($rows);
-			            if($rows[0]->activity_id != $activity->id){
-			            	$isError = true;
-			            }
-			        }
-
-			    });
-				// dd($isError);
-			    if (!$isError) {
-					Excel::selectSheets('allocations')->load($file_path, function($reader) use ($activity) {
-						TradedealAllocRepository::manualUpload($reader->get(),$activity);
-					});
-			        
-			    }
-			}
-
-			return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity->id)) . "#tradedeal")
-				->with('class', 'alert-success')
-				->with('message', 'Tradeal successfuly updated');
-		}
-		return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity->id)) . "#tradedeal")
-				->with('class', 'alert-danger')
-				->with('message', 'Error on updating trade');
-		// }else{
-		// 	// $data['success'] = 0;
-
-		// }
-		// return Response::json($data,200);
 
 	}
 

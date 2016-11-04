@@ -1674,6 +1674,12 @@
 
 @section('page-script')
 
+$("#updateTradedeal").on("submit", function () {
+    $(this).find(":submit").prop("disabled", true);
+    $("#page").hide();
+	$("#pageloading").show();
+});
+
 $("#variant, #pre_variant").attr('maxlength','6');
 $("#non_ulp_premium_desc").attr('maxlength','13');
 
