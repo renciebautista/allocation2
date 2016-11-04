@@ -611,25 +611,25 @@ $(document).ready(function() {
 	});
 
 
-	$("form[id='updateTradedeal']").on("submit",function(e){
-		var form = $(this);
-		var url = form.prop('action');
-		if(form.valid()){
-			$.ajax({
-				url: url,
-				data: form.serialize(),
-				method: 'POST',
-				dataType: "json",
-				success: function(data){
-					if(data.success == "1"){
-						location.reload();
-					}else{
-						bootbox.alert("An error occured while updating."); 
-					}
-				}
-			});
-		}
+	// $("form[id='updateTradedeal']").on("submit",function(e){
+	// 	var form = $(this);
+	// 	var url = form.prop('action');
+	// 	if(form.valid()){
+	// 		$.ajax({
+	// 			url: url,
+	// 			data: form.serialize(),
+	// 			method: 'POST',
+	// 			dataType: "json",
+	// 			success: function(data){
+	// 				if(data.success == "1"){
+	// 					location.reload();
+	// 				}else{
+	// 					bootbox.alert("An error occured while updating."); 
+	// 				}
+	// 			}
+	// 		});
+	// 	}
 		
-		e.preventDefault();
-	});
+	// 	e.preventDefault();
+	// });
 });

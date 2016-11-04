@@ -89,10 +89,6 @@ class LeTemplateRepository  {
 		    	
 
 		    	$brand = $host_sku->brand_shortcut;
-		    	// $month_year = date('ym',strtotime($activity->eimplementation_date));
-		    	// $host_variant = substr(strtoupper($host_sku->variant),0,1);
-		    	// $series = TradeIndividualSeries::getSeries($month_year, $tradedealscheme->id, $host_sku->host_id);
-		    	// $deal_id = 'B'.$month_year.$scheme_uom_abv.$brand.$host_variant .sprintf("%02d", $series->series);
 
 		    	$budgets = ActivityBudget::getBudgets($activity->id);
 		    	$io_number = '';
@@ -114,18 +110,18 @@ class LeTemplateRepository  {
 		    	$total_deals = TradedealSchemeAllocation::getTotalDeals($tradedealscheme,$host_sku);
 		    	$deal_amount =  number_format($total_deals * $host_sku->pre_cost, 2, '.', '');
 		    	foreach ($allocations as $value) {
-		    		if($value->computed_pcs > 0){
+		    		if($value->final_pcs > 0){
 		    			if($tradedeal->nonUlpPremium()){
 		    				$deal_desc = $_scheme.' '.$_uom.' '.$brand. ' '. $host_sku->host_sku_format. ' '.$host_sku->variant.'+'.' '.substr($host_sku->pre_desc, 0, 13);
 
 				    		$row_data = array($value->scheme_code, 'BBFREE', $io_number,$start_date, $end_date, $deal_desc, 
 				    			$deal_amount, 'P001', $value->plant_code, 
-				    			number_format($value->computed_pcs * $host_sku->pre_cost, 2, '.', ''), 'X');	
+				    			number_format($value->final_pcs * $host_sku->pre_cost, 2, '.', ''), 'X');	
 				    	}else{
 				    		$deal_desc = $_scheme.' '.$_uom.' '.$brand. ' '.$host_sku->host_sku_format. ' '.$host_sku->variant.'+'.$host_sku->pre_brand_shortcut. ' '. $host_sku->pre_sku_format . ' '. $host_sku->pre_variant;
 				    		$row_data = array($value->scheme_code,$io_number,$start_date, $end_date, $deal_desc, 
 				    			$deal_amount, 'P001', $value->ship_to_code, 
-				    			number_format($value->computed_pcs * $host_sku->pre_cost, 2, '.', ''));
+				    			number_format($value->final_pcs * $host_sku->pre_cost, 2, '.', ''));
 				    	}
 
 			    		$sheet->row($row, $row_data);
@@ -210,13 +206,13 @@ class LeTemplateRepository  {
 
 		    	$row = 2;
 		    	foreach ($allocations as $value) {
-		    		if($value->computed_pcs > 0){
+		    		if($value->final_pcs > 0){
 		    			if($tradedeal->nonUlpPremium()){
 			    			$site_id = $value->plant_code;
 			    		}else{
 			    			$site_id = $value->ship_to_code;
 			    		}
-			    		$row_data = array($value->scheme_code, $site_id, '', '', $value->computed_pcs, 'SET');
+			    		$row_data = array($value->scheme_code, $site_id, '', '', $value->final_pcs, 'SET');
 			    		$sheet->row($row, $row_data);
 						$row++;
 		    		}
@@ -291,7 +287,7 @@ class LeTemplateRepository  {
 		    	$start_date = date('d/m/Y', strtotime($activity->eimplementation_date));
 		    	$end_date = date('d/m/Y', strtotime($activity->end_date));
 
-		    	$total_deals = TradedealSchemeAllocation::where('tradedeal_scheme_id', $tradedealscheme->id)->sum('computed_pcs');
+		    	$total_deals = TradedealSchemeAllocation::where('tradedeal_scheme_id', $tradedealscheme->id)->sum('final_pcs');
 
 				$header_qty = $tradedealscheme->buy;
 
@@ -307,11 +303,11 @@ class LeTemplateRepository  {
 
 		    	$row = 2;
 		    	foreach ($allocations as $value) {
-		    		// if($value->computed_pcs > 0){
+		    		// if($value->final_pcs > 0){
 		    			foreach ($sub_types as $sub_type) {
 		    				foreach ($materials as $mat) {
 		    					$row_data = array($value->scheme_code, $pro_desc, $io_number, "'".$start_date, "'".$end_date, $total_deals, 'PC', $total_deals, 'PC', 'C',
-					    			$header_qty, $value->plant_code, $value->computed_pcs, $value->computed_pcs, 'A920- Country/Site/Outlet Sub Type',
+					    			$header_qty, $value->plant_code, $value->final_pcs, $value->final_pcs, 'A920- Country/Site/Outlet Sub Type',
 					    			'', '', $sub_type->l5_code,'', $mat->host_code);
 					    		$sheet->row($row, $row_data);
 					    		$sheet->setCellValueByColumnAndRow(39,$row, $tradedealscheme->pre_code);

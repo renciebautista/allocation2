@@ -2874,13 +2874,44 @@ class ActivityController extends BaseController {
 				}
 			}
 
-			$data['success'] = 1;
+			if(Input::hasFile('tdupload')){
+				$token = md5(uniqid(mt_rand(), true));
+				$file_path = Input::file('tdupload')->move(storage_path().'/uploads/temp/',$token.".xls");
+				$isError = false;
+				Excel::selectSheets('allocations')->load($file_path, function($reader) use (&$isError,$activity){
+					$firstrow = $reader->skip(1)->first()->toArray();
+					
+			       	if (isset($firstrow['activity_id'])) {
+			            $rows = $reader->all();
+			            // dd($rows);
+			            if($rows[0]->activity_id != $activity->id){
+			            	$isError = true;
+			            }
+			        }
 
-		}else{
-			$data['success'] = 0;
+			    });
+				// dd($isError);
+			    if (!$isError) {
+					Excel::selectSheets('allocations')->load($file_path, function($reader) use ($activity) {
+						TradedealAllocRepository::manualUpload($reader->get(),$activity);
+					});
+			        
+			    }
+			}
 
+			return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity->id)) . "#tradedeal")
+				->with('class', 'alert-success')
+				->with('message', 'Tradeal successfuly updated');
 		}
-		return Response::json($data,200);
+		return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity->id)) . "#tradedeal")
+				->with('class', 'alert-danger')
+				->with('message', 'Error on updating trade');
+		// }else{
+		// 	// $data['success'] = 0;
+
+		// }
+		// return Response::json($data,200);
+
 	}
 
 	public function addpartskus($id){
@@ -3500,7 +3531,7 @@ class ActivityController extends BaseController {
 								$first_row = $row;
 								$sheet->row($row, ['', '', '', $alloc->plant_code, $alloc->ship_to_name, $alloc->scheme_code, $alloc->scheme_description, $pcs_deal]);
 							}
-							$sheet->setCellValueByColumnAndRow($col_pre[$alloc->pre_desc_variant],$row, $alloc->computed_pcs);
+							$sheet->setCellValueByColumnAndRow($col_pre[$alloc->pre_desc_variant],$row, $alloc->final_pcs);
 						}else{
 							if($last_site != $alloc->plant_code){
 								$sheet->row($row, ['', '', '', $last_site.' Total1']);
@@ -3513,7 +3544,7 @@ class ActivityController extends BaseController {
 								$first_row = $row;
 							}
 							$sheet->row($row, ['', $alloc->sold_to_code, $alloc->sold_to, $alloc->plant_code, $alloc->ship_to_name, $alloc->scheme_code, $alloc->scheme_description, $pcs_deal]);
-							$sheet->setCellValueByColumnAndRow($col_pre[$alloc->pre_desc_variant],$row, $alloc->computed_pcs);
+							$sheet->setCellValueByColumnAndRow($col_pre[$alloc->pre_desc_variant],$row, $alloc->final_pcs);
 						}
 					}else{
 						if(($last_site != $alloc->plant_code) && ($last_site != '')){
@@ -3527,7 +3558,7 @@ class ActivityController extends BaseController {
 							$first_row = $row;
 						}
 						$sheet->row($row, [$alloc->area, $alloc->sold_to_code, $alloc->sold_to, $alloc->plant_code, $alloc->ship_to_name, $alloc->scheme_code, $alloc->scheme_description, $pcs_deal]);
-						$sheet->setCellValueByColumnAndRow($col_pre[$alloc->pre_desc_variant],$row, $alloc->computed_pcs);
+						$sheet->setCellValueByColumnAndRow($col_pre[$alloc->pre_desc_variant],$row, $alloc->final_pcs);
 					}
 
 					$last_area = $alloc->area;
@@ -3553,9 +3584,14 @@ class ActivityController extends BaseController {
 	public function exporttddetails($id){
 		$activity = Activity::findOrFail($id);
 		Excel::create($activity->circular_name.' Bunus Buy Free', function($excel) use($activity){
-			$excel->sheet($activity->circular_name.' Bunus Buy Free', function($sheet) use ($activity) {
+			$excel->sheet('allocations', function($sheet) use ($activity) {
 				$allocations = TradedealSchemeAllocation::getAll($activity);
+				$cnt = count($allocations) + 1;
 				$sheet->fromArray($allocations,null, 'A1', true);
+
+				$sheet->getProtection()->setPassword('tradedeal');
+				$sheet->getProtection()->setSheet(true);
+				$sheet->getStyle('W2:W'.$cnt)->getProtection()->setLocked(PHPExcel_Style_Protection::PROTECTION_UNPROTECTED);
 		    });
 		})->download('xls');
 	}

@@ -217,6 +217,9 @@ class TradedealAllocRepository  {
 				$shipto_alloc->weekly_run_rates = $weekly_run_rates;
 				$shipto_alloc->pur_req = $pur_req;
 				$shipto_alloc->computed_pcs = $computed_pcs;
+				$shipto_alloc->manual_pcs = 0;
+				$shipto_alloc->final_pcs = $computed_pcs;
+				$shipto_alloc->prem_cost = $premium['cost'];
 				$shipto_alloc->computed_cost = $computed_pcs * $premium['cost'];
 
 				$shipto_alloc->pre_code = $premium['pre_code'];
@@ -227,6 +230,28 @@ class TradedealAllocRepository  {
 			}
 			
 			
+		}
+	}
+
+
+	public static function manualUpload($records,$activity){
+		DB::beginTransaction();
+			try {
+			foreach ($records as $row) {
+				$alloc = TradedealSchemeAllocation::find($row->id);
+				if(!empty($alloc)){
+					$alloc->manual_pcs = $row->manual_pcs;
+					$alloc->final_pcs = $row->manual_pcs;
+					$alloc->computed_cost = $alloc->prem_cost * $row->manual_pcs;
+					$alloc->update();
+				}
+			}
+			// dd($idList);
+			
+			DB::commit();
+		} catch (\Exception $e) {
+			dd($e);
+			DB::rollback();
 		}
 	}
 

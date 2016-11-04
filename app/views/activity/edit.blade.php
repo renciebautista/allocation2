@@ -586,7 +586,7 @@
 	<!-- trade details -->
 	<div class="tab-pane fade" id="tradedeal">
 		<br>
-		{{ Form::open(array('action' => array('ActivityController@updatetradedeal', $activity->id), 'method' => 'PUT', 'class' => 'bs-component','id' => 'updateTradedeal')) }}
+		{{ Form::open(array('action' => array('ActivityController@updatetradedeal', $activity->id), 'method' => 'PUT', 'files'=>true, 'class' => 'bs-component','id' => 'updateTradedeal')) }}
 		<div class="panel panel-default">
 		  	<div class="panel-heading">Bonus Buy Free Details</div>
 
@@ -865,6 +865,15 @@
 						<a class="btn btn-success btn-sm" href="{{action('TradealSchemeController@exportle', $activity->id);}}">Export LE Templates</a>
 					</div>
 				</div>
+				<br>
+				<div class="row">
+						<div class="col-lg-6">
+						  	<div class="form-group">
+						  		{{ Form::label('remarks', 'Manual Uplaod', array('class' => 'control-label')) }}
+						    	{{ Form::file('tdupload',array('id'=>'tdupload')) }}
+						  	</div>
+					  	</div>
+				  	</div>
 				
 			</div>
 		</div>
@@ -1131,7 +1140,7 @@
 								{{ Form::text('permitno','',array('class' => 'form-control', 'placeholder' => 'FDA Permit No.')) }}
 						 	</div>
 						  	<div class="form-group">
-						    	{{ Form::file('file','',array('id'=>'','class'=>'')) }}
+						    	{{ Form::file('file',array('id'=>'fdafile')) }}
 						  	</div>
 						  	<p class="text-success">Uploadable file version/s: .jpg,.jpeg,.png,.gif,.pdf,.xps</p>
 						  	{{ Form::submit('Upload', array('class' => 'btn btn-primary')) }}
@@ -1688,7 +1697,8 @@ $("#bandingupload").uploadifyTable({
 	'fileTypeExts' : '*.*'
 });
 
-$('INPUT[type="file"]').change(function () {
+//$('INPUT[type="file"]').change(function () {
+$('#fdafile').change(function () {
     var ext = this.value.match(/\.(.+)$/)[1];
     switch (ext.toLowerCase()) {
         case 'jpg':
