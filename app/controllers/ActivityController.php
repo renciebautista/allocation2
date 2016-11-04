@@ -2821,6 +2821,8 @@ class ActivityController extends BaseController {
 		    'non_ulp_premium_desc' => 'max:13'
 		);
 
+		
+
 		$validation = Validator::make(Input::all(), $rules);
 
 		if($validation->passes()){

@@ -130,7 +130,7 @@ class LeTemplateRepository  {
 		    		
 		    	}
 		    });
-		})->store('csv', storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name));
+		})->store('txt', storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name));
 	}
 
 	private static function generateIndividualMechanics($tradedealscheme, $tradedeal, $activity, $host_sku, $scheme_uom_abv, $scheme_uom_abv2){
@@ -188,7 +188,7 @@ class LeTemplateRepository  {
 					$row++;
 		    	}
 		    });
-		})->store('csv', storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name));
+		})->store('txt', storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name));
 	}
 
 	private static function generateIndividualSiteAllocation($tradedealscheme, $tradedeal, $activity, $host_sku, $scheme_uom_abv, $scheme_uom_abv2){
@@ -219,7 +219,7 @@ class LeTemplateRepository  {
 		    		
 		    	}
 		    });
-		})->store('csv', storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name));
+		})->store('txt', storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name));
 	}
 
 	private static function generateCollective($tradedealscheme, $tradedeal, $activity, $host_skus, $scheme_uom_abv, $scheme_uom_abv2){
@@ -318,6 +318,6 @@ class LeTemplateRepository  {
 		    		// }
 		    	}
 		    });
-		})->store('csv', storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name));
+		})->store('txt', storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name));
 	}
 }
