@@ -303,7 +303,7 @@ class LeTemplateRepository  {
 
 		    	$row = 2;
 		    	foreach ($allocations as $value) {
-		    		// if($value->final_pcs > 0){
+		    		if($value->final_pcs > 0){
 		    			foreach ($sub_types as $sub_type) {
 		    				foreach ($materials as $mat) {
 		    					$row_data = array($value->scheme_code, $pro_desc, $io_number, "'".$start_date, "'".$end_date, $total_deals, 'PC', $total_deals, 'PC', 'C',
@@ -313,9 +313,8 @@ class LeTemplateRepository  {
 					    		$sheet->setCellValueByColumnAndRow(39,$row, $tradedealscheme->pre_code);
 								$row++;
 		    				}
-			    			
 			    		}
-		    		// }
+		    		}
 		    	}
 		    });
 		})->store('txt', storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name));
