@@ -148,7 +148,8 @@ class LeTemplateRepository  {
 
 		    	$sheet->row(1, $header);
 
-		    	$deal_id = TradedealSchemeAllocation::getSchemeCode($tradedealscheme, $host_sku);	
+		    	$deal_id = TradedealSchemeAllocation::getSchemeCode($tradedealscheme, $host_sku);
+
 		    	$min_buy = $tradedealscheme->buy;
 		    	if($tradedealscheme->tradedeal_type_id == 2){
 		    		$min_buy = $tradedealscheme->buy * 12;
@@ -174,6 +175,7 @@ class LeTemplateRepository  {
 		    	$row = 2;
 		    	foreach ($sub_types as $value) {
 		    		if($first_row){
+		    			dd($host_sku);
 		    			$row_data = array($deal_id->scheme_code, '1', $host_sku->host_code,'Volume', $min_buy, 'PC',
 				    		'O - AND', $host_sku->pre_code, $free, 'PC', '', $value->l5_code, '', '' );
 				    	$first_row = false;
