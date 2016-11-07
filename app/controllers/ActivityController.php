@@ -2966,8 +2966,8 @@ class ActivityController extends BaseController {
 						}
 					}
 
-					if(TradedealPartSku::alreadyExist($activity, $host_sku->sap_code, $host_variant)){
-						$err[] = 'Participating SKU / variant already exist';
+					if(TradedealPartSku::alreadyExist($activity, $host_sku->sap_code, $host_variant, $pre_sku->sap_code, $pre_variant )){
+						$err[] = 'Host SKU / variant and Premium SKU / variant already exist.';
 					}
 
 
@@ -3543,7 +3543,7 @@ class ActivityController extends BaseController {
 							$sheet->setCellValueByColumnAndRow($col_pre[$alloc->pre_desc_variant],$row, $alloc->final_pcs);
 						}else{
 							if($last_site != $alloc->plant_code){
-								$sheet->row($row, ['', '', '', $last_site.' Total1']);
+								$sheet->row($row, ['', '', '', $last_site.' Total']);
 								foreach ($col_pre as $col) {
 									$last_row = $row - 1;
 									$sum = "=SUM(".\PHPExcel_Cell::stringFromColumnIndex($col).$first_row.":".\PHPExcel_Cell::stringFromColumnIndex($col).$last_row.")";
@@ -3595,12 +3595,18 @@ class ActivityController extends BaseController {
 		Excel::create($activity->circular_name.' Bunus Buy Free', function($excel) use($activity){
 			$excel->sheet('allocations', function($sheet) use ($activity) {
 				$allocations = TradedealSchemeAllocation::getAll($activity);
+				$sheet->row(1, array('ID', 'Scheme Name', 'Scheme Description', 'Premium SKU', 'Area Code', 
+					'Area', 'Sold To Code', 'Sold To', 'U2K2 Code', 'Ship To Code', 'Ship To Name', 'Total Allocation', 'New Allocation'));
+
+				$sheet->setAutoFilter();
+
+
 				$cnt = count($allocations) + 1;
-				$sheet->fromArray($allocations,null, 'A1', true);
+				$sheet->fromArray($allocations,null, 'A2', false, false);
 
 				$sheet->getProtection()->setPassword('tradedeal');
 				$sheet->getProtection()->setSheet(true);
-				$sheet->getStyle('W2:W'.$cnt)->getProtection()->setLocked(PHPExcel_Style_Protection::PROTECTION_UNPROTECTED);
+				$sheet->getStyle('M2:M'.$cnt)->getProtection()->setLocked(PHPExcel_Style_Protection::PROTECTION_UNPROTECTED);
 		    });
 		})->download('xls');
 	}

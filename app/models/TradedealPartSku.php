@@ -21,10 +21,12 @@ class TradedealPartSku extends \Eloquent {
 	}
 
 
-	public static function alreadyExist($activity, $host_code, $variant){
+	public static function alreadyExist($activity, $host_code, $variant, $pre_code, $pre_variant){
 		$record = self::where('activity_id', $activity->id)
 			->where('host_code', $host_code)
 			->where('variant', $variant)
+			->where('pre_code', $pre_code)
+			->where('pre_variant', $pre_variant)
 			->first();
 
 		if(!empty($record)){
@@ -33,4 +35,6 @@ class TradedealPartSku extends \Eloquent {
 			return false;
 		}
 	}
+
+
 }

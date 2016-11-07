@@ -766,10 +766,6 @@
 				<div class="row">
 					<div class="col-lg-12">
 						<a class="btn btn-primary btn-sm" href="{{action('ActivityController@createtradealscheme', $activity->id);}}">Add Scheme</a>
-						<a class="btn btn-success btn-sm" href="{{action('ActivityController@exporttddetails', $activity->id);}}">Export Detailed Summary</a>
-						<a class="btn btn-success btn-sm" href="{{action('ActivityController@exporttradedeal', $activity->id);}}">Export Summary</a>
-						<a class="btn btn-success btn-sm" href="{{action('TradealSchemeController@exportle', $activity->id);}}">Export LE Templates</a>
-
 					</div>
 				</div>
 				<br>
@@ -857,22 +853,47 @@
 			</div>
 		</div>
 
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<h3 class="panel-title">Manual Allocation Override</h3>
-			</div>
-			<div class="panel-body">
-				<div class="row">
-						<div class="col-lg-6">
-						  	<div class="form-group">
-						  		{{ Form::label('remarks', 'Attach Excel File', array('class' => 'control-label')) }}
-						    	{{ Form::file('tdupload',array('id'=>'tdupload')) }}
+		<div class="row">
+			<div class="col-lg-6">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">Allocations</h3>
+					</div>
+					<div class="panel-body">
+						<div class="row">
+								<div class="col-lg-6">
+								  	<div class="form-group">
+								  		<a class="btn btn-success btn-sm" href="{{action('ActivityController@exporttddetails', $activity->id);}}">Export Detailed Summary</a>
+										<a class="btn btn-success btn-sm" href="{{action('ActivityController@exporttradedeal', $activity->id);}}">Export Summary</a>
+										<a class="btn btn-success btn-sm" href="{{action('TradealSchemeController@exportle', $activity->id);}}">Export LE Templates</a>
+								  	</div>
+							  	</div>
 						  	</div>
-					  	</div>
-				  	</div>
-				
+						
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-6">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">Upload Force Allocation</h3>
+					</div>
+					<div class="panel-body">
+						<div class="row">
+								<div class="col-lg-6">
+								  	<div class="form-group">
+								  		{{ Form::label('remarks', 'Attach Excel File', array('class' => 'control-label')) }}
+								    	{{ Form::file('tdupload',array('id'=>'tdupload')) }}
+								  	</div>
+							  	</div>
+						  	</div>
+						
+					</div>
+				</div>
 			</div>
 		</div>
+
+		
 
 		
 		<div class="row">

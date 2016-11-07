@@ -130,7 +130,7 @@ class LeTemplateRepository  {
 		    		
 		    	}
 		    });
-		})->store('txt', storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name));
+		})->store('csv', storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name));
 	}
 
 	private static function generateIndividualMechanics($tradedealscheme, $tradedeal, $activity, $host_sku, $scheme_uom_abv, $scheme_uom_abv2){
@@ -190,7 +190,7 @@ class LeTemplateRepository  {
 					$row++;
 		    	}
 		    });
-		})->store('txt', storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name));
+		})->store('csv', storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name));
 	}
 
 	private static function generateIndividualSiteAllocation($tradedealscheme, $tradedeal, $activity, $host_sku, $scheme_uom_abv, $scheme_uom_abv2){
@@ -221,7 +221,7 @@ class LeTemplateRepository  {
 		    		
 		    	}
 		    });
-		})->store('txt', storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name));
+		})->store('csv', storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name));
 	}
 
 	private static function generateCollective($tradedealscheme, $tradedeal, $activity, $host_skus, $scheme_uom_abv, $scheme_uom_abv2){
@@ -308,7 +308,7 @@ class LeTemplateRepository  {
 		    		if($value->final_pcs > 0){
 		    			foreach ($sub_types as $sub_type) {
 		    				foreach ($materials as $mat) {
-		    					$row_data = array($value->scheme_code, $pro_desc, $io_number, "'".$start_date, "'".$end_date, $total_deals, 'PC', $total_deals, 'PC', 'C',
+		    					$row_data = array($value->scheme_code, $pro_desc, $io_number, $start_date, $end_date, $total_deals, 'PC', $total_deals, 'PC', 'C',
 					    			$header_qty, $value->plant_code, $value->final_pcs, $value->final_pcs, 'A920- Country/Site/Outlet Sub Type',
 					    			'', '', $sub_type->l5_code,'', $mat->host_code);
 					    		$sheet->row($row, $row_data);
@@ -319,6 +319,6 @@ class LeTemplateRepository  {
 		    		}
 		    	}
 		    });
-		})->store('txt', storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name));
+		})->store('csv', storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name));
 	}
 }

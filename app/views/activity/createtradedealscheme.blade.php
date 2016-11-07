@@ -165,6 +165,8 @@
     
 </div>
 
+
+
 <div class="panel panel-primary">
     <div class="panel-heading">Channels Involved</div>
         <div class="panel-body">
@@ -221,6 +223,60 @@
 
 
 @section('page-script')
+    $("#tree3").fancytree({
+        extensions: [],
+        checkbox: true,
+        selectMode: 3,
+        source: {
+            url: "../../api/customers?id={{$activity->id}}"
+        },
+        select: function(event, data) {
+            // Get a list of all selected nodes, and convert to a key array:
+            var selKeys = $.map(data.tree.getSelectedNodes(), function(node){
+                 return node.key;
+            });
+            selectedkeys = selKeys;
+            //console.log(selKeys);
+            // $("#echoSelection3").text(selKeys.join(", "));
+
+
+            // Get a list of all selected TOP nodes
+            var selRootNodes = data.tree.getSelectedNodes(true);
+            // ... and convert to a key array:
+            var selRootKeys = $.map(selRootNodes, function(node){
+              return node.key;
+            });
+            // $("#echoSelectionRootKeys3").text(selRootKeys.join("."));
+            // $("#echoSelectionRootKeys3").text(selRootKeys.join(", "));
+
+            var keys = selRootKeys.join(".").split(".");
+            // console.log(keys);
+            if($.inArray('E1397', keys) != -1){
+                $("#tree4").fancytree("enable");
+                getChannel();
+            }else{
+                $("#tree4").fancytree("getTree").visit(function(node){
+                    node.setSelected(false);
+                });
+                $("#tree4").fancytree("disable");
+            }
+            $("#customers").val(selRootKeys.join(", "));
+            show_alloc();
+        },
+        click: function(event, data) {
+            $("#updateCustomer").addClass("dirty");
+            if(data.targetType == "checkbox"){
+                //console.log(data.node.tree);
+                var keys = data.node.key.split(".");
+                if($.inArray('E1397', keys) != -1){
+                    $("#tree4").fancytree("getTree").visit(function(node){
+                        node.setSelected(true);
+                    });
+                }
+            }
+           
+        }
+    });
 
 @stop
 
