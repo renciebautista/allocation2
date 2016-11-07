@@ -13,6 +13,12 @@ class ActivitySku extends \Eloquent {
 		return $skus;
 	}
 
+	public static function tradedealSkus($activity){
+		return self::select('sap_code', 'sap_desc AS full_desc')
+			->where('activity_id',$activity->id)
+			->lists('full_desc', 'sap_code');
+	}
+
 	public static function getInvolves($id){
 		return self::where('activity_id',$id)
 			->join('pricelists', 'activity_skus.sap_code', '=', 'pricelists.sap_code')

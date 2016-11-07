@@ -239,10 +239,11 @@ class TradedealAllocRepository  {
 			try {
 			foreach ($records as $row) {
 				$alloc = TradedealSchemeAllocation::find($row->id);
+				// dd($alloc);
 				if(!empty($alloc)){
-					$alloc->manual_pcs = $row->manual_pcs;
-					$alloc->final_pcs = $row->manual_pcs;
-					$alloc->computed_cost = $alloc->prem_cost * $row->manual_pcs;
+					$alloc->manual_pcs = $row->new_allocation;
+					$alloc->final_pcs = $row->new_allocation;
+					$alloc->computed_cost = $alloc->prem_cost * $row->new_allocation;
 					$alloc->update();
 				}
 			}

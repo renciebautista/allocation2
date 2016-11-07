@@ -58,7 +58,9 @@ class LeTemplateRepository  {
 
 	private static function getIndFileName($tradedealscheme, $scheme_uom_abv2, $host_sku){
 		// return $tradedealscheme->name .' '.$host_sku->host_desc . ' '. $host_sku->variant . ' + '.$host_sku->pre_desc.' '.$host_sku->pre_variant;;
-		return $tradedealscheme->buy.'+'.$tradedealscheme->free.' '.$scheme_uom_abv2.' '.$host_sku->brand_shortcut.' '.$host_sku->host_sku_format.' '.$host_sku->variant;
+
+		$deal_id = TradedealSchemeAllocation::getSchemeCode($tradedealscheme, $host_sku);
+		return $deal_id->scheme_code.' - ' .$tradedealscheme->buy.'+'.$tradedealscheme->free.' '.$scheme_uom_abv2.' '.$host_sku->brand_shortcut.' '.$host_sku->host_sku_format.' '.$host_sku->variant;
 	}
 
 	private static function generateIndividualHeader($tradedealscheme, $tradedeal, $activity, $host_sku, $scheme_uom_abv, $scheme_uom_abv2 ){
@@ -226,7 +228,9 @@ class LeTemplateRepository  {
 
 	private static function generateCollective($tradedealscheme, $tradedeal, $activity, $host_skus, $scheme_uom_abv, $scheme_uom_abv2){
 		set_time_limit(0);
-		$folder_name = $tradedealscheme->buy.'+'.$tradedealscheme->free.' '.$scheme_uom_abv2.' ';
+		$deal_id = TradedealSchemeAllocation::getCollecttiveSchemeCode($tradedealscheme);
+
+		$folder_name = $deal_id->scheme_code.' - '.$tradedealscheme->buy.'+'.$tradedealscheme->free.' '.$scheme_uom_abv2.' ';
 		$h_brands = [];
 		foreach ($host_skus as $host) {
 			$h_brands[] = $host->brand_shortcut;

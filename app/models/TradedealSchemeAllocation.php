@@ -22,6 +22,11 @@ class TradedealSchemeAllocation extends \Eloquent {
 			->first();
 	}
 
+	public static function getCollecttiveSchemeCode($tradedealscheme){
+		return self::where('tradedeal_scheme_id', $tradedealscheme->id)
+			->first();
+	}
+
 	public static function getShiptoBy($activity){
 		$shiptos = self::select('area', 'plant_code', 'ship_to_name', DB::raw('tradedeal_schemes.name as scheme_name'), 
 			'pcs_deal', DB::raw('null as alloc'), 'tradedeal_scheme_allocations.tradedeal_scheme_id', 'tradedeal_schemes.tradedeal_uom_id',
@@ -129,7 +134,7 @@ class TradedealSchemeAllocation extends \Eloquent {
 		// 	->get();
 
 
-		return self::select('tradedeal_scheme_allocations.id', 'scheme_code',
+		return self::select('tradedeals.activity_id','tradedeal_scheme_allocations.id', 'scheme_code',
 		 	'tradedeal_schemes.name', 'pre_desc_variant',
 			'area_code', 'area', 'sold_to_code', 'sold_to', 'ship_to_code', 'plant_code', 
 			'ship_to_name', 'final_pcs', 'final_pcs as total_alloc')

@@ -281,7 +281,8 @@ class ActivityController extends BaseController {
 			$accategories = \ActivityCategory::selected_category($activity->id);
 			$acbrands = \ActivityBrand::selected_brand($activity->id);
 
-			$host_skus = Pricelist::involves($acbrands,$activity);
+			// $host_skus = Pricelist::involves($acbrands,$activity);
+			$host_skus = ActivitySku::tradedealSkus($activity);
 			$ref_skus = Sku::items($acdivisions,$accategories,$acbrands);
 
 			$pre_skus = \Pricelist::items();
@@ -2818,8 +2819,8 @@ class ActivityController extends BaseController {
 		$activity = Activity::findOrFail($id);
 
 
-		$budgets = ActivityBudget::getBudgets($activity->id);
-		if(count($budgets) > 0){
+		// $budgets = ActivityBudget::getBudgets($activity->id);
+		// if(count($budgets) > 0){
 			$rules = array(
 			    'non_ulp_premium_desc' => 'max:13',
 			);
@@ -2871,14 +2872,7 @@ class ActivityController extends BaseController {
 					}
 				}
 
-				// update all scheme
 				$schemes = TradedealScheme::where('tradedeal_id', $tradedeal->id)->get();
-				if(!empty($schemes)){
-					foreach ($schemes as $scheme) {
-						TradedealAllocRepository::updateAllocation($scheme);
-						LeTemplateRepository::generateTemplate($scheme);
-					}
-				}
 
 				if(Input::hasFile('tdupload')){
 					$token = md5(uniqid(mt_rand(), true));
@@ -2886,7 +2880,7 @@ class ActivityController extends BaseController {
 					$isError = false;
 					Excel::selectSheets('allocations')->load($file_path, function($reader) use (&$isError,$activity){
 						$firstrow = $reader->skip(1)->first()->toArray();
-						
+						// dd($firstrow);
 				       	if (isset($firstrow['activity_id'])) {
 				            $rows = $reader->all();
 				            // dd($rows);
@@ -2896,13 +2890,27 @@ class ActivityController extends BaseController {
 				        }
 
 				    });
-					// dd($isError);
+					
 				    if (!$isError) {
 						Excel::selectSheets('allocations')->load($file_path, function($reader) use ($activity) {
 							TradedealAllocRepository::manualUpload($reader->get(),$activity);
 						});
 				        
 				    }
+				}else{
+					// update all scheme
+					if(!empty($schemes)){
+						foreach ($schemes as $scheme) {
+							TradedealAllocRepository::updateAllocation($scheme);
+						}
+					}
+				}
+				
+				File::deleteDirectory(storage_path('le/'.$activity->id));
+				if(!empty($schemes)){
+					foreach ($schemes as $scheme) {
+						LeTemplateRepository::generateTemplate($scheme);
+					}
 				}
 
 				return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity->id)) . "#tradedeal")
@@ -2912,11 +2920,11 @@ class ActivityController extends BaseController {
 			return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity->id)) . "#tradedeal")
 					->with('class', 'alert-danger')
 					->with('message', 'Error on updating trade');
-		}else{
-			Session::flash('class', 'alert-danger');
-			Session::flash('message', 'Budget IO is required.');
-			return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity->id)) . "#tradedeal");
-		}
+		// }else{
+		// 	Session::flash('class', 'alert-danger');
+		// 	Session::flash('message', 'Budget IO is required.');
+		// 	return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity->id)) . "#tradedeal");
+		// }
 
 
 		
@@ -3595,7 +3603,7 @@ class ActivityController extends BaseController {
 		Excel::create($activity->circular_name.' Bunus Buy Free', function($excel) use($activity){
 			$excel->sheet('allocations', function($sheet) use ($activity) {
 				$allocations = TradedealSchemeAllocation::getAll($activity);
-				$sheet->row(1, array('ID', 'Scheme Name', 'Scheme Description', 'Premium SKU', 'Area Code', 
+				$sheet->row(1, array('Activity ID', 'ID', 'Scheme Name', 'Scheme Description', 'Premium SKU', 'Area Code', 
 					'Area', 'Sold To Code', 'Sold To', 'U2K2 Code', 'Ship To Code', 'Ship To Name', 'Total Allocation', 'New Allocation'));
 
 				$sheet->setAutoFilter();
@@ -3606,7 +3614,7 @@ class ActivityController extends BaseController {
 
 				$sheet->getProtection()->setPassword('tradedeal');
 				$sheet->getProtection()->setSheet(true);
-				$sheet->getStyle('M2:M'.$cnt)->getProtection()->setLocked(PHPExcel_Style_Protection::PROTECTION_UNPROTECTED);
+				$sheet->getStyle('N2:N'.$cnt)->getProtection()->setLocked(PHPExcel_Style_Protection::PROTECTION_UNPROTECTED);
 		    });
 		})->download('xls');
 	}

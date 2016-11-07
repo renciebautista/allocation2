@@ -325,6 +325,7 @@
 							@endif
 						</td>
 					</tr>
+					@if(!$activity->activitytype->with_tradedeal)
 					<tr>
 						<td>Schemes</td>
 						<td>
@@ -353,6 +354,23 @@
 							@endif
 						</td>
 					</tr>
+					@else
+					<tr>
+						<td>Bonus Buy Free</td>
+						<td>
+							<table class="sub-table">
+								<tr>
+									<th style="width:3%"></th>
+									<th>Scheme</th>
+									<th style="width:16%">UOM</th>
+									<th style="width:16%">Host SKU(s)</th>
+									<th style="width:16%">Premium SKU</th>
+								</tr>
+								
+							</table>
+						</td>
+					</tr>
+					@endif
 					<tr>
 						<td>SKU/s Involved Per Scheme</td>
 						<td>
