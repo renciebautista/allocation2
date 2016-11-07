@@ -563,7 +563,7 @@ $("#tree4").fancytree({
 	checkbox: true,
 	selectMode: 3,
 	source: {
-		url: "../../api/customers_old?id={{$activity->id}}"
+		url: "../../api/channels?id={{$activity->id}}"
 	},
 	select: function(event, data) {
 		// Get a list of all selected TOP nodes
