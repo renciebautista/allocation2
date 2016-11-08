@@ -165,56 +165,27 @@
     
 </div>
 
-
-
 <div class="panel panel-primary">
     <div class="panel-heading">Channels Involved</div>
         <div class="panel-body">
             <div class="row">
-                <div class="col-lg-12">
-                    <table id="channels" class="table table-striped table-hover ">
-                    <thead>
-                        <tr>
-                            <th><input id="select-all" type="checkbox"></th>
-                            <th>Channel Code</th>
-                            <th>Channel</th>
-                            <th>Channel Group</th>
-                            <th>Scheme</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($channels as $channel)
-                            <tr>
-                                <td>
-                                    @if(empty($channel->name))
-                                        {{ Form::checkbox('ch[]', $channel->id) }}
-                                    @else
-                                        <i class="fa fa-check"></i>
-                                    @endif
-                                    
-                                </td>
-                                <td>{{ $channel->l5_code }}</td>
-                                <td>{{ $channel->l5_desc }}</td>
-                                <td>{{ $channel->rtm_tag }}</td>
-                                <td>
-                                    @if(!empty($channel->name))
-                                    {{ HTML::linkAction('TradealSchemeController@edit' , $channel->name,array('id' => $channel->scheme_id)) }}
-                                    @endif
-                                </td>
-                            </tr>
-                        @endforeach
-                        
-                    </tbody>
-                </table> 
+                <div class="col-lg-6">
+                    <a href="#" id="btnCSelectAll">Select all</a> |
+                    <a href="#" id="btnCDeselectAll">Deselect all</a>
+                    <div id="tree3"></div>
+                    {{ Form::hidden('customers', null, array('id' => 'customers')) }}
                 </div>
-            </div>
+            </div> 
+        </div>
     </div>
-    
 </div>
 
-            <a class="btn btn-default" href="{{action('ActivityController@edit', $activity->id);}}#tradedeal">Cancel</a>
-            <button type="submit" class="btn btn-primary">Save</button>  
-            {{ Form::close() }}
+
+
+
+<a class="btn btn-default" href="{{action('ActivityController@edit', $activity->id);}}#tradedeal">Cancel</a>
+<button type="submit" class="btn btn-primary">Save</button>  
+{{ Form::close() }}
 @stop
 
 @section('add-script')

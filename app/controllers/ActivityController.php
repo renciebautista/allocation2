@@ -2846,19 +2846,21 @@ class ActivityController extends BaseController {
 				$tradedeal->save();
 
 				// copy tradedeal channel
-				$channels = TradedealChannel::where('activity_id', $id)->get();
-				if(count($channels) == 0){
-					$chTemp = Level5::getForTradeDeal();
+				$channels = TradedealChannel::where('activity_id', $id)->delete();
 
-					foreach ($chTemp as $ch) {
-						$tc = new TradedealChannel;
-						$tc->activity_id = $id;
-						$tc->l5_code = $ch->l5_code;
-						$tc->l5_desc = $ch->l5_desc;
-						$tc->rtm_tag = $ch->rtm_tag;
-						$tc->save();
-					}
+				$chTemp = Level5::getForTradeDeal();
+				foreach ($chTemp as $ch) {
+					$tc = new TradedealChannel;
+					$tc->activity_id = $id;
+					$tc->l5_code = $ch->l5_code;
+					$tc->l5_desc = $ch->l5_desc;
+					$tc->rtm_tag = $ch->rtm_tag;
+					$tc->save();
 				}
+
+				// if(count($channels) == 0){
+					
+				// }
 
 				// update non ulp premium
 				if($tradedeal->non_ulp_premium){
@@ -2909,7 +2911,7 @@ class ActivityController extends BaseController {
 				File::deleteDirectory(storage_path('le/'.$activity->id));
 				if(!empty($schemes)){
 					foreach ($schemes as $scheme) {
-						LeTemplateRepository::generateTemplate($scheme);
+						// LeTemplateRepository::generateTemplate($scheme);
 					}
 				}
 

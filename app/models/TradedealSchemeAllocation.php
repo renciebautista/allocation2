@@ -121,19 +121,6 @@ class TradedealSchemeAllocation extends \Eloquent {
 
 
 	public static function getAll($activity){
-		// return self::select('tradedeal_scheme_allocations.id', 'tradedeals.activity_id', 'tradedeal_schemes.id as scheme_id', 'scheme_code',
-		//  	'tradedeal_schemes.name', 'pre_desc_variant','tradedeal_schemes.buy', 'tradedeal_schemes.free',
-		//  	'tradedeal_types.id as tradedeal_type_id', 'tradedeal_types.tradedeal_type',
-		// 	'area_code', 'area', 'sold_to_code', 'sold_to', 'ship_to_code', 'plant_code', 
-		// 	'ship_to_name', 'sold_to_gsv',  'weekly_run_rates', 'tradedeals.alloc_in_weeks','tradedeal_scheme_allocations.pur_req', 
-		// 	'computed_pcs','manual_pcs', 'final_pcs', 'prem_cost', 'computed_cost' )
-		// 	->join('tradedeal_schemes', 'tradedeal_schemes.id', '=', 'tradedeal_scheme_allocations.tradedeal_scheme_id')
-		// 	->join('tradedeal_types', 'tradedeal_types.id', '=', 'tradedeal_schemes.tradedeal_type_id')
-		// 	->join('tradedeals', 'tradedeals.id', '=', 'tradedeal_schemes.tradedeal_id')
-		// 	->where('tradedeals.activity_id', $activity->id)
-		// 	->get();
-
-
 		return self::select('tradedeals.activity_id','tradedeal_scheme_allocations.id', 'scheme_code',
 		 	'tradedeal_schemes.name', 'pre_desc_variant',
 			'area_code', 'area', 'sold_to_code', 'sold_to', 'ship_to_code', 'plant_code', 
