@@ -309,12 +309,13 @@ Route::group(array('before' => 'auth'), function()
 
 	Route::group(array('prefix' => 'api'), function()
 	{
+
 		Route::get('customerselected', 'api\CustomerController@customerselected');
 		Route::get('getcustomers', 'api\CustomerController@getselectedcustomer');
 
 		Route::get('getpostedcustomers', 'api\CustomerController@getpostedcustomers');
 		Route::get('customers_old', 'api\CustomerController@index');
-		Route::get('customers', 'api\CustomerController@getselectedcustomer');
+		Route::get('customers', 'api\CustomerController@index');
 		// Route::get('customers', 'api\CustomerController@getChannelCustomer');
 
 		Route::get('cycles', 'CycleController@availableCycle');
