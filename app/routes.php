@@ -314,7 +314,8 @@ Route::group(array('before' => 'auth'), function()
 
 		Route::get('getpostedcustomers', 'api\CustomerController@getpostedcustomers');
 		Route::get('customers_old', 'api\CustomerController@index');
-		Route::get('customers', 'api\CustomerController@getChannelCustomer');
+		Route::get('customers', 'api\CustomerController@getselectedcustomer');
+		// Route::get('customers', 'api\CustomerController@getChannelCustomer');
 
 		Route::get('cycles', 'CycleController@availableCycle');
 

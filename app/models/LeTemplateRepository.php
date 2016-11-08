@@ -211,11 +211,12 @@ class LeTemplateRepository  {
 		    	$row = 2;
 		    	foreach ($allocations as $value) {
 		    		if($value->final_pcs > 0){
-		    			if($tradedeal->nonUlpPremium()){
-			    			$site_id = $value->plant_code;
-			    		}else{
-			    			$site_id = $value->ship_to_code;
-			    		}
+		    			$site_id = $value->plant_code;
+		    			// if($tradedeal->nonUlpPremium()){
+			    		// 	$site_id = $value->plant_code;
+			    		// }else{
+			    		// 	$site_id = $value->ship_to_code;
+			    		// }
 			    		$row_data = array($value->scheme_code, $site_id, '', '', $value->final_pcs, 'SET');
 			    		$sheet->row($row, $row_data);
 						$row++;

@@ -59,7 +59,6 @@ class TradedealScheme extends \Eloquent {
 					$_host_sku[] = $host_sku->host_desc.' '.$host_sku->variant;
 					$_host_code[] = $host_sku->host_code;
 				}
-
 				$o = new stdClass();
 				$o->host_code = implode(" / ", $_host_code);
 				$o->desc_variant = implode(" / ", $_host_sku);

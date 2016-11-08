@@ -20,7 +20,7 @@ class TradedealAllocRepository  {
 		$_channels = ActivityChannel2::channels($tradedeal->activity_id);
 
 		$scheme_skus = TradedealSchemeSku::select('tradedeal_scheme_skus.id', 'tradedeal_part_skus.ref_code', 'qty', 'host_cost', 'host_pcs_case', 'ref_pcs_case',
-			'pre_code', 'pre_desc', 'pre_cost', 'pre_pcs_case', 'brand_shortcut', 'variant', 'tradedeal_part_skus.id as host_id', 'pre_variant')
+			'pre_code', 'pre_desc', 'pre_cost', 'pre_pcs_case', 'brand_shortcut', 'variant', 'tradedeal_part_skus.id as host_id', 'pre_variant', 'host_sku_format')
 			->join('tradedeal_part_skus', 'tradedeal_scheme_skus.tradedeal_part_sku_id', '=', 'tradedeal_part_skus.id')
 			->where('tradedeal_scheme_id', $tradealscheme->id)
 			->orderBy('tradedeal_part_skus.id')
@@ -250,10 +250,7 @@ class TradedealAllocRepository  {
     		$scheme_uom_abv2 = 'CS';
     	}
 
-
-    	$brand = $host_sku->brand_shortcut;
-
-		return $tradealscheme->buy.'+'.$tradealscheme->free.' '.$scheme_uom_abv2.' '.$brand. ' '. $host_sku->host_sku_format. ' '.$host_sku->variant.'+'.' '.substr($host_sku->pre_desc, 0, 13);
+		return $tradealscheme->buy.'+'.$tradealscheme->free.' '.$scheme_uom_abv2.' '.$host_sku->brand_shortcut. ' '. $host_sku->host_sku_format. ' '.$host_sku->variant.'+'.' '.substr($host_sku->pre_desc, 0, 13);
 	}
 
 

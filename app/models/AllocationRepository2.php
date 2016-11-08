@@ -142,16 +142,16 @@ class AllocationRepository2  {
 					->join('sub_channels', 'mt_dt_sales.coc_03_code', '=', 'sub_channels.coc_03_code')
 					->join(DB::raw("(SELECT DISTINCT(customer_code) FROM customers) customers"), 'mt_dt_sales.customer_code', '=', 'customers.customer_code')
 					->whereIn('child_sku_code', $child_skus)
-					// ->where(function($query) use ($channels) {
-					// 	if(!empty($channels)){
-					// 		$query->whereIn('sub_channels.channel_code', $channels);
-					// 	}		
-					// })
-					// ->where(function($query) use ($_areas) {
-					// 	if(!empty($_areas['E1398'])){
-					// 		$query->whereIn('mt_dt_sales.area_code', $_areas['E1398']);
-					// 	}		
-					// })
+					->where(function($query) use ($channels) {
+						if(!empty($channels)){
+							$query->whereIn('sub_channels.channel_code', $channels);
+						}		
+					})
+					->where(function($query) use ($_areas) {
+						if(!empty($_areas['E1398'])){
+							$query->whereIn('mt_dt_sales.area_code', $_areas['E1398']);
+						}		
+					})
 					->groupBy(array('mt_dt_sales.area_code','mt_dt_sales.customer_code'))
 					->get();
 		}
@@ -165,16 +165,16 @@ class AllocationRepository2  {
 					->join('sub_channels', 'mt_dt_sales.coc_03_code', '=', 'sub_channels.coc_03_code')
 					->join(DB::raw("(SELECT DISTINCT(customer_code) FROM customers) customers"), 'mt_dt_sales.customer_code', '=', 'customers.customer_code')
 					->whereIn('child_sku_code', $child_skus)
-					// ->where(function($query) use ($channels) {
-					// 	if(!empty($channels)){
-					// 		$query->whereIn('channel_code', $channels);
-					// 	}		
-					// })
-					// ->where(function($query) use ($_areas) {
-					// 	if(!empty($_areas['E1397'])){
-					// 		$query->whereIn('mt_dt_sales.area_code', $_areas['E1397']);
-					// 	}		
-					// })
+					->where(function($query) use ($channels) {
+						if(!empty($channels)){
+							$query->whereIn('channel_code', $channels);
+						}		
+					})
+					->where(function($query) use ($_areas) {
+						if(!empty($_areas['E1397'])){
+							$query->whereIn('mt_dt_sales.area_code', $_areas['E1397']);
+						}		
+					})
 					->groupBy(array('mt_dt_sales.area_code','mt_dt_sales.customer_code'))
 					->get();
 		}
@@ -185,16 +185,16 @@ class AllocationRepository2  {
 					->select(DB::raw("distributor_code as ship_to_code, plant_code, SUM(gsv) as gsv"))
 					->join('sub_channels', 'mt_dt_sales.coc_03_code', '=', 'sub_channels.coc_03_code')
 					->whereIn('child_sku_code', $child_skus)
-					// ->where(function($query) use ($channels) {
-					// 	if(!empty($channels)){
-					// 		$query->whereIn('channel_code', $channels);
-					// 	}		
-					// })
-					// ->where(function($query) use ($tradedeal, $trade_channels) {
-					// 	if($tradedeal){
-					// 		$query->whereIn('mt_dt_sales.coc_05_code', $trade_channels);
-					// 	}		
-					// })
+					->where(function($query) use ($channels) {
+						if(!empty($channels)){
+							$query->whereIn('channel_code', $channels);
+						}		
+					})
+					->where(function($query) use ($tradedeal, $trade_channels) {
+						if($tradedeal){
+							$query->whereIn('mt_dt_sales.coc_05_code', $trade_channels);
+						}		
+					})
 					->groupBy('plant_code')
 					->get();	
 
@@ -204,11 +204,11 @@ class AllocationRepository2  {
 					->select(DB::raw("area_code, customer_code,  account_name, plant_code, SUM(gsv) as gsv"))
 					->join('sub_channels', 'mt_dt_sales.coc_03_code', '=', 'sub_channels.coc_03_code')
 					->whereIn('child_sku_code', $child_skus)
-					// ->where(function($query) use ($channels) {
-					// 	if(!empty($channels)){
-					// 		$query->whereIn('channel_code', $channels);
-					// 	}		
-					// })
+					->where(function($query) use ($channels) {
+						if(!empty($channels)){
+							$query->whereIn('channel_code', $channels);
+						}		
+					})
 					->groupBy(array('area_code','customer_code','plant_code', 'account_name'))
 					->get();	
 
