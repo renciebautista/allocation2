@@ -204,7 +204,9 @@ class TradedealAllocRepository  {
 				}else{
 					$shipto_alloc->tradedeal_scheme_sku_id = $sku->id;
 				}
-				
+
+				$shipto_alloc->scheme_desc = self::generateSchemeDesc($tradealscheme, $sku);
+
 				$shipto_alloc->scheme_code = $scheme_code;
 				$shipto_alloc->area_code = $customer->area_code;
 				$shipto_alloc->area = $customer->area_name;
@@ -231,6 +233,27 @@ class TradedealAllocRepository  {
 			
 			
 		}
+	}
+
+	private static function generateSchemeDesc($tradealscheme, $host_sku){
+		$scheme_uom_abv2;
+    	if($tradealscheme->tradedeal_uom_id == 1){
+    		$scheme_uom_abv = 'P';
+    		$scheme_uom_abv2 = 'PC';
+    	}
+    	if($tradealscheme->tradedeal_uom_id == 2){
+    		$scheme_uom_abv = 'D';
+    		$scheme_uom_abv2 = 'DZ';
+    	}
+    	if($tradealscheme->tradedeal_uom_id == 3){
+    		$scheme_uom_abv = 'C';
+    		$scheme_uom_abv2 = 'CS';
+    	}
+
+
+    	$brand = $host_sku->brand_shortcut;
+
+		return $tradealscheme->buy.'+'.$tradealscheme->free.' '.$scheme_uom_abv2.' '.$brand. ' '. $host_sku->host_sku_format. ' '.$host_sku->variant.'+'.' '.substr($host_sku->pre_desc, 0, 13);
 	}
 
 

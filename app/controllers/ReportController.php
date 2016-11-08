@@ -103,12 +103,19 @@ class ReportController extends \BaseController {
 				$pis = array();
 			}
 
+			$tradedeal = Tradedeal::getActivityTradeDeal($activity);
+			if($tradedeal != null){
+				$tradedealschemes = TradedealScheme::getScheme($tradedeal->id);
+				// $td_shiptos = TradedealSchemeAllocation::getShiptoBy($activity);
+				// $td_premiums = TradedealSchemeAllocation::getPremiumsBy($activity);
+			}
+
 			$required_budget_type = ActivityTypeBudgetRequired::required($activity->activity_type_id);
 			// dd($required_budget_type);
 			// Helper::print_r($skuinvolves);
 			return View::make('shared.preview', compact('activity' ,'planner', 'objectives', 'budgets','nobudgets',
 				'schemes','skuinvolves', 'activity_roles','materials','fdapermits', 'networks','artworks', 
-				'pis' , 'areas','channels', 'approvers' , 'sku_involves', 'required_budget_type'));
+				'pis' , 'areas','channels', 'approvers' , 'sku_involves', 'required_budget_type', 'tradedealschemes'));
 		}
 	}
 

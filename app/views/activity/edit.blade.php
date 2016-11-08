@@ -381,16 +381,7 @@
 									{{ Form::hidden('customers', null, array('id' => 'customers')) }}
 								</div>
 
-								<div class="col-lg-6">
-									{{ Form::label('tree4', 'Select DT Channels Involved', array('class' => 'control-label' )) }}<br>
-									<div id="chSel">
-										<a href="#" id="btnChSelectAll">Select all</a> |
-										<a href="#" id="btnChDeselectAll">Deselect all</a>
-									</div>
-									
-									<div id="tree4"></div>
-									{{ Form::hidden('channels_involved', null, array('id' => 'channels_involved')) }}
-								</div>
+								
 							</div>	
 							<div class="row">
 								<div class="col-lg-6">
@@ -863,8 +854,8 @@
 						<div class="row">
 								<div class="col-lg-6">
 								  	<div class="form-group">
-								  		<a class="btn btn-success btn-sm" href="{{action('ActivityController@exporttddetails', $activity->id);}}">Export Detailed Summary</a>
-										<a class="btn btn-success btn-sm" href="{{action('ActivityController@exporttradedeal', $activity->id);}}">Export Summary</a>
+								  		<a class="btn btn-success btn-sm" href="{{action('ActivityController@exporttddetails', $activity->id);}}">Download Allocations</a>
+										<a class="btn btn-success btn-sm" href="{{action('ActivityController@exporttradedeal', $activity->id);}}">Field Allocations</a>
 										<a class="btn btn-success btn-sm" href="{{action('TradealSchemeController@exportle', $activity->id);}}">Export LE Templates</a>
 								  	</div>
 							  	</div>
