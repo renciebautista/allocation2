@@ -365,11 +365,7 @@
 									<th>Scheme Description</th>
 									<th>Host Code</th>
 									<th>Host Description</th>
-									@if($tradedeal->non_ulp_premium)
-									<th>PIMS Code</th>
-									@else
-									<th>Premium Code</th>
-									@endif
+									<th>Premium Code / PIMS Code</th>
 									<th>Premium Description</th>
 								</tr>
 

@@ -3467,30 +3467,96 @@ class ActivityController extends BaseController {
 		$activity = Activity::findOrFail($id);
 		Excel::create($activity->circular_name, function($excel) use($activity){
 			$excel->sheet('SCHEME SUMMARY', function($sheet) use ($activity) {
-				$tradedeal_skus = TradedealPartSku::where('activity_id', $activity->id)->get();
-				$row = 1;
-				$sheet->row($row, array('SAP CODE / ARTICLE CODE', 'SAP DESCRIPTION', 'LEAD BASE PACK'));
-				
-				foreach ($tradedeal_skus as $host) {
-					$row++;
-					$sheet->row($row, array($host->host_code, $host->host_desc));
-				}
+				$sheet->setCellValueByColumnAndRow(0,1, 'Activity Title:');
+				$sheet->setCellValueByColumnAndRow(1,1, $activity->circular_name);
+				$sheet->setCellValueByColumnAndRow(0,2, 'Start Date:');
+				$sheet->setCellValueByColumnAndRow(1,2, date('d/m/Y', strtotime($activity->eimplementation_date)));
+				$sheet->setCellValueByColumnAndRow(0,3, 'End Date:');
+				$sheet->setCellValueByColumnAndRow(1,3, date('d/m/Y', strtotime($activity->end_date)));
 
-				$row = $row + 2;;
-				$sheet->row($row, array('Scheme Code', 'Master Outlet Subtype Name', 'Master Outlet Subtype Code'));
+				$sheet->row(5, array('ACTIVITY', 'Scheme Code', 'Scheme Description', 'HOST CODE', 'HOST DESCRIPTION', 'PREMIUM CODE / PIMS CODE', 'Premium SKU', 'Master Outlet Subtype Name', 'Master Outlet Subtype Code'));
+				$row = 6;
+
 
 				$tradedeal = Tradedeal::getActivityTradeDeal($activity);
-				$tradedealschemes = TradedealScheme::getScheme($tradedeal->id);
-
+				$tradedealschemes = TradedealScheme::where('tradedeal_id',$tradedeal->id)
+					->orderBy('tradedeal_type_id')
+					->orderBy('tradedeal_uom_id')
+					->get();
 				foreach ($tradedealschemes as $scheme) {
-					$channels = TradedealSchemeChannel:: getSelectedDetails($scheme);
-					foreach ($channels as $channel) {
-						$row++;
-						$sheet->row($row, array($scheme->name, $channel->l5_desc, $channel->l5_code));
-					}
+						$sheet->setCellValueByColumnAndRow(0,$row, $scheme->name);
+						if($scheme->tradedeal_type_id == 1){
+							$host_skus = TradedealSchemeSku::getHostSku($scheme);
+							$sku_cnt = count($host_skus);
+							foreach ($host_skus as $key => $host_sku) {
+								$deal_id = TradedealSchemeAllocation::getSchemeCode($scheme, $host_sku);
+								$sheet->setCellValueByColumnAndRow(1,$row, $deal_id->scheme_code);
+								$sheet->setCellValueByColumnAndRow(2,$row, $deal_id->scheme_desc);
+								$sheet->setCellValueByColumnAndRow(3,$row, $host_sku->host_code);
+								$sheet->setCellValueByColumnAndRow(4,$row, $host_sku->host_desc. ' '.$host_sku->variant);
+								$sheet->setCellValueByColumnAndRow(5,$row, $host_sku->pre_code);
+								$sheet->setCellValueByColumnAndRow(6,$row, $host_sku->pre_desc. ' '.$host_sku->pre_variant);	
+								$row++;	
+							}
+							$row = $row - $sku_cnt;
+							$channels = TradedealSchemeChannel::getSelectedDetails($scheme);
+							$ch_cnt = count($channels);
+							foreach ($channels as $channel) {
+								$sheet->setCellValueByColumnAndRow(7,$row, $channel->l5_desc);
+								$sheet->setCellValueByColumnAndRow(8,$row, $channel->l5_code);
+								$row++;
+							}
+
+							if($ch_cnt < $sku_cnt){
+								$x = $sku_cnt - $ch_cnt;
+								$row = $row + $x;
+							}
+						}
+						if($scheme->tradedeal_type_id == 2){
+							
+						}
+
+						if($scheme->tradedeal_type_id == 3){
+							$host_skus = TradedealSchemeSku::getHostSku($scheme);
+							$deal_id = TradedealSchemeAllocation::getCollecttiveSchemeCode($scheme);
+							$sheet->setCellValueByColumnAndRow(1,$row, $deal_id->scheme_code);
+							$sheet->setCellValueByColumnAndRow(2,$row, $deal_id->scheme_desc);
+							$host_skus = TradedealSchemeSku::getHostSku($scheme);
+							$sku_cnt = count($host_skus);
+							foreach ($host_skus as $key => $host_sku) {
+								$sheet->setCellValueByColumnAndRow(3,$row, $host_sku->host_code);
+								$sheet->setCellValueByColumnAndRow(4,$row, $host_sku->host_desc. ' '.$host_sku->variant);	
+								$row++;	
+							}
+							$row = $row - $sku_cnt;
+
+							if($tradedeal->non_ulp_premium){
+								$sheet->setCellValueByColumnAndRow(5,$row, $scheme->pre_code);
+								$sheet->setCellValueByColumnAndRow(6,$row, $scheme->pre_desc .' '.$scheme->pre_variant);
+							}else{
+								$part_sku = TradedealPartSku::find($scheme->pre_id);
+								$sheet->setCellValueByColumnAndRow(5,$row, $part_sku->pre_code);
+								$sheet->setCellValueByColumnAndRow(6,$row, $part_sku->pre_desc .' '.$part_sku->pre_variant);
+							}
+
+							$channels = TradedealSchemeChannel::getSelectedDetails($scheme);
+							$ch_cnt = count($channels);
+							foreach ($channels as $channel) {
+								$sheet->setCellValueByColumnAndRow(7,$row, $channel->l5_desc);
+								$sheet->setCellValueByColumnAndRow(8,$row, $channel->l5_code);
+								$row++;
+							}
+
+							if($ch_cnt < $sku_cnt){
+								$x = $sku_cnt - $ch_cnt;
+								$row = $row + $x;
+							}
+							
+						}
+						
+					// }
 					
 				}
-
 		    });
 
 		    $excel->sheet('ALLOCATIONS', function($sheet) use ($activity) {
@@ -3500,8 +3566,17 @@ class ActivityController extends BaseController {
 				$tradedeal = Tradedeal::getActivityTradeDeal($activity);
 				$allocations = TradedealSchemeAllocation::exportAlloc($tradedeal);
 
-				$row = 1;
-				$sheet->row($row, array('AREA', 'Distributor Code', 'Distributor Name', 'Site Code', 'Site Name', 'Scheme Code', 'Scheme Description', 'PREMIUM PIECES PER DEAL'));
+				$sheet->setWidth('A', 16);
+				$sheet->setWidth('B', 13);
+				$sheet->setWidth('C', 20);
+				$sheet->setWidth('D', 10);
+				$sheet->setWidth('E', 30);
+				$sheet->setWidth('F', 15);
+				$sheet->setWidth('G', 20);
+				$sheet->setWidth('H', 5);
+
+				$row = 2;
+				$sheet->row($row, array('AREA', 'Distributor Code', 'Distributor Name', 'Site Code', 'Site Name', 'Scheme Code', 'Scheme Description', 'UOM'));
 
 				// premuim
 				$premiums = [];
@@ -3511,16 +3586,47 @@ class ActivityController extends BaseController {
 
 				$col = 8;
 				$col_pre = [];
+				$col_pre_x = [];
+				$sheet->setCellValueByColumnAndRow($col,1, 'DEALS');
 				foreach ($premiums as $premuim) {
-					$sheet->setCellValueByColumnAndRow($col,1, $premuim);
+					$sheet->setCellValueByColumnAndRow($col,2, $premuim. ' DEALS');
+					$sheet->setWidth(PHPExcel_Cell::stringFromColumnIndex($col), 10);
 					$col_pre[$premuim] = $col;
 					$col++;
 				}
+				$style = array(
+			        'alignment' => array(
+			            'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+			        )
+			    );
+
+				$d_col = $col -1;
+				$sheet->mergeCells(\PHPExcel_Cell::stringFromColumnIndex(8).'1:'.\PHPExcel_Cell::stringFromColumnIndex($d_col).'1');
+				$sheet->getStyle(\PHPExcel_Cell::stringFromColumnIndex(8).'1:'.\PHPExcel_Cell::stringFromColumnIndex($d_col).'1')->applyFromArray($style);
+
+
+				$sheet->setCellValueByColumnAndRow($col,1, 'PREMIUMS');
+				foreach ($premiums as $premuim) {
+					$sheet->setCellValueByColumnAndRow($col,2, $premuim. ' PREMIUMS');
+					$col_pre_x[$premuim] = $col;
+					$col++;
+				}
+				$d_col++;
+				$p_col = $col - 1;
+				$sheet->mergeCells(\PHPExcel_Cell::stringFromColumnIndex($d_col).'1:'.\PHPExcel_Cell::stringFromColumnIndex($p_col).'1');
+				$sheet->getStyle(\PHPExcel_Cell::stringFromColumnIndex($d_col).'1:'.\PHPExcel_Cell::stringFromColumnIndex($p_col).'1')->applyFromArray($style);
+
+				$sheet->getStyle('I2:R2')->getAlignment()
+					->applyFromArray(array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER))
+					->setWrapText(true);
+
+				$sheet->setWidth(\PHPExcel_Cell::stringFromColumnIndex($col), 10);
+
 
 				$last_area = '';
 				$last_distributor = '';
 				$last_site = '';
-				$first_row = 2;
+				$first_row = 3;
 				foreach ($allocations as $alloc) {
 					$row++;
 					if($alloc->tradedeal_uom_id == 1){
@@ -3548,7 +3654,8 @@ class ActivityController extends BaseController {
 								$first_row = $row;
 								$sheet->row($row, ['', '', '', $alloc->plant_code, $alloc->ship_to_name, $alloc->scheme_code, $alloc->scheme_description, $pcs_deal]);
 							}
-							$sheet->setCellValueByColumnAndRow($col_pre[$alloc->pre_desc_variant],$row, $alloc->final_pcs);
+							$sheet->setCellValueByColumnAndRow($col_pre[$alloc->pre_desc_variant],$row, $alloc->final_pcs / $pcs_deal);
+							$sheet->setCellValueByColumnAndRow($col_pre_x[$alloc->pre_desc_variant],$row, $alloc->final_pcs);
 						}else{
 							if($last_site != $alloc->plant_code){
 								$sheet->row($row, ['', '', '', $last_site.' Total']);
@@ -3561,7 +3668,8 @@ class ActivityController extends BaseController {
 								$first_row = $row;
 							}
 							$sheet->row($row, ['', $alloc->sold_to_code, $alloc->sold_to, $alloc->plant_code, $alloc->ship_to_name, $alloc->scheme_code, $alloc->scheme_description, $pcs_deal]);
-							$sheet->setCellValueByColumnAndRow($col_pre[$alloc->pre_desc_variant],$row, $alloc->final_pcs);
+							$sheet->setCellValueByColumnAndRow($col_pre[$alloc->pre_desc_variant],$row, $alloc->final_pcs / $pcs_deal);
+							$sheet->setCellValueByColumnAndRow($col_pre_x[$alloc->pre_desc_variant],$row, $alloc->final_pcs);
 						}
 					}else{
 						if(($last_site != $alloc->plant_code) && ($last_site != '')){
@@ -3575,16 +3683,13 @@ class ActivityController extends BaseController {
 							$first_row = $row;
 						}
 						$sheet->row($row, [$alloc->area, $alloc->sold_to_code, $alloc->sold_to, $alloc->plant_code, $alloc->ship_to_name, $alloc->scheme_code, $alloc->scheme_description, $pcs_deal]);
-						$sheet->setCellValueByColumnAndRow($col_pre[$alloc->pre_desc_variant],$row, $alloc->final_pcs);
+						$sheet->setCellValueByColumnAndRow($col_pre[$alloc->pre_desc_variant],$row, $alloc->final_pcs / $pcs_deal);
+						$sheet->setCellValueByColumnAndRow($col_pre_x[$alloc->pre_desc_variant],$row, $alloc->final_pcs);
 					}
 
 					$last_area = $alloc->area;
 					$last_distributor = $alloc->sold_to_code;
 					$last_site = $alloc->plant_code;
-
-                    
-                    
-
 				}
 				$row++;
 				$sheet->row($row, ['', '', '', $last_site.' Total']);	
