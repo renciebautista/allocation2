@@ -315,9 +315,10 @@ class LeTemplateRepository  {
 		    				foreach ($materials as $mat) {
 		    					$row_data = array($value->scheme_code, $pro_desc, $io_number, $start_date, $end_date, $total_deals, 'PC', $total_deals, 'PC', 'C',
 					    			$header_qty, $value->plant_code, $value->final_pcs, $value->final_pcs, 'A920- Country/Site/Outlet Sub Type',
-					    			'', '', $sub_type->l5_code,'', $mat->host_code);
+					    			'', '', $sub_type->l5_code,'', $mat->host_code, );
 					    		$sheet->row($row, $row_data);
 					    		$sheet->setCellValueByColumnAndRow(39,$row, $tradedealscheme->pre_code);
+					    		$sheet->setCellValueByColumnAndRow(40,$row, $value->final_pcs);
 								$row++;
 		    				}
 			    		}

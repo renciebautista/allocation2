@@ -3600,7 +3600,7 @@ class ActivityController extends BaseController {
 
 	public function exporttddetails($id){
 		$activity = Activity::findOrFail($id);
-		Excel::create($activity->circular_name.' Bunus Buy Free', function($excel) use($activity){
+		Excel::create($activity->circular_name.' Bonus Buy Free', function($excel) use($activity){
 			$excel->sheet('allocations', function($sheet) use ($activity) {
 				$allocations = TradedealSchemeAllocation::getAll($activity);
 				$sheet->row(1, array('Activity ID', 'ID', 'Scheme Name', 'Scheme Description', 'Premium SKU', 'Area Code', 
