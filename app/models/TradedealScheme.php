@@ -71,7 +71,7 @@ class TradedealScheme extends \Eloquent {
 					$o->cost_to_sale = $value->cost_to_sale;
 				}else{
 					$part_sku = TradedealPartSku::find($value->pre_id);
-					$o->pre_variant = $part_sku->preDesc();
+					$o->pre_variant = $part_sku->pre_desc. ' '.$part_sku->pre_variant;
 					$o->pur_req = $value->pur_req;
 					$o->cost_to_sale = $value->cost_to_sale;
 				}

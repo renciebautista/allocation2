@@ -20,7 +20,8 @@ class TradedealAllocRepository  {
 		$_channels = ActivityChannel2::channels($tradedeal->activity_id);
 
 		$scheme_skus = TradedealSchemeSku::select('tradedeal_scheme_skus.id', 'tradedeal_part_skus.ref_code', 'qty', 'host_cost', 'host_pcs_case', 'ref_pcs_case',
-			'pre_code', 'pre_desc', 'pre_cost', 'pre_pcs_case', 'brand_shortcut', 'variant', 'tradedeal_part_skus.id as host_id', 'pre_variant', 'host_sku_format')
+			'pre_code', 'pre_desc', 'pre_cost', 'pre_pcs_case', 'brand_shortcut', 'variant', 'tradedeal_part_skus.id as host_id', 'pre_variant', 'host_sku_format',
+			'pre_brand_shortcut', 'pre_sku_format', 'pre_variant')
 			->join('tradedeal_part_skus', 'tradedeal_scheme_skus.tradedeal_part_sku_id', '=', 'tradedeal_part_skus.id')
 			->where('tradedeal_scheme_id', $tradealscheme->id)
 			->orderBy('tradedeal_part_skus.id')
@@ -149,6 +150,8 @@ class TradedealAllocRepository  {
 		
 		// Helper::debug($sku);
 
+		$scheme_desc = self::generateSchemeDesc($tradedeal, $tradealscheme, $sku);
+
 		$uom = $tradealscheme->tradedeal_uom_id;
 
 		foreach ($td_customers as $customer) {
@@ -205,7 +208,7 @@ class TradedealAllocRepository  {
 					$shipto_alloc->tradedeal_scheme_sku_id = $sku->id;
 				}
 
-				$shipto_alloc->scheme_desc = self::generateSchemeDesc($tradealscheme, $sku);
+				$shipto_alloc->scheme_desc = $scheme_desc;
 
 				$shipto_alloc->scheme_code = $scheme_code;
 				$shipto_alloc->area_code = $customer->area_code;
@@ -235,22 +238,70 @@ class TradedealAllocRepository  {
 		}
 	}
 
-	private static function generateSchemeDesc($tradealscheme, $host_sku){
+	private static function generateSchemeDesc($tradedeal, $tradealscheme, $host_sku){
+		$scheme_desc = '';
 		$scheme_uom_abv2;
     	if($tradealscheme->tradedeal_uom_id == 1){
-    		$scheme_uom_abv = 'P';
     		$scheme_uom_abv2 = 'PC';
     	}
     	if($tradealscheme->tradedeal_uom_id == 2){
-    		$scheme_uom_abv = 'D';
     		$scheme_uom_abv2 = 'DZ';
     	}
     	if($tradealscheme->tradedeal_uom_id == 3){
-    		$scheme_uom_abv = 'C';
     		$scheme_uom_abv2 = 'CS';
     	}
 
-		return $tradealscheme->buy.'+'.$tradealscheme->free.' '.$scheme_uom_abv2.' '.$host_sku->brand_shortcut. ' '. $host_sku->host_sku_format. ' '.$host_sku->variant.'+'.' '.substr($host_sku->pre_desc, 0, 13);
+    	if($tradealscheme->tradedeal_type_id == 1){
+	    	if($tradedeal->non_ulp_premium){
+	    		$scheme_desc = $tradealscheme->buy.'+'.$tradealscheme->free.' '.$scheme_uom_abv2.' '.$host_sku->brand_shortcut. ' '. $host_sku->host_sku_format. ' '.$host_sku->variant.'+'.' '.substr($host_sku->pre_desc, 0, 13);
+	    	}else{
+	    		$scheme_desc = $tradealscheme->buy.'+'.$tradealscheme->free.' '.$scheme_uom_abv2.' '.$host_sku->brand_shortcut. ' '.$host_sku->variant.'+'.$host_sku->pre_brand_shortcut. ' '. $host_sku->pre_sku_format . ' '. $host_sku->pre_variant;
+	    	}
+	    }
+	    if($tradealscheme->tradedeal_type_id == 2){
+	    	
+	    }
+	    if($tradealscheme->tradedeal_type_id == 3){
+	    	$scheme_desc = $tradealscheme->buy.'+'.$tradealscheme->free.' '. $scheme_uom_abv2. ' ';
+	    	$host_skus = TradedealSchemeSku::getHostSku($tradealscheme);
+
+	    	$host_brand = [];
+	    	foreach ($host_skus as $host) {
+	    		$host_brand[] = $host->brand_shortcut;
+	    	}
+
+	    	$x_brands = array_unique($host_brand);
+	    	$variant = '';
+	    	if(count($x_brands) == 1){
+	    		$host_variants = [];
+	    		foreach ($host_skus as $host) {
+		    		$host_variants[] = $host->pre_variant;
+		    	}
+		    	$x_variants = array_unique($host_variants);
+		    	$x_brand = $x_brands[0];
+		    	$variant = implode("/", $x_variants);
+		    	$brand = $x_brand. ' '.substr($variant, 0,9);
+	    	}else{
+	    		if(count($x_brands) > 3){
+		    		$brand = 'MULTIPLEBRAND';
+		    	}else{
+		    		$brand = implode("/", $x_brands);
+		    	}
+	    	}
+	    	
+	    	$scheme_desc .= $brand;
+
+			if($tradedeal->non_ulp_premium){
+				$scheme_desc .= '+'. substr($tradealscheme->pre_desc, 0,13);
+			}else{
+				$premium = TradedealPartSku::find($tradealscheme->pre_id);
+				$scheme_desc .= '+'.$premium->pre_brand_shortcut.' '.$premium->pre_sku_format.' '.$premium->pre_variant;
+			}
+
+			
+	    }
+
+	    return $scheme_desc;
 	}
 
 

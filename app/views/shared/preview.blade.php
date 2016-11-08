@@ -365,7 +365,11 @@
 									<th>Scheme Description</th>
 									<th>Host Code</th>
 									<th>Host Description</th>
+									@if($tradedeal->non_ulp_premium)
+									<th>PIMS Code</th>
+									@else
 									<th>Premium Code</th>
+									@endif
 									<th>Premium Description</th>
 								</tr>
 
@@ -402,6 +406,7 @@
 						</td>
 					</tr>
 					@endif
+					@if(is_null($tradedeal))
 					<tr>
 						<td>SKU/s Involved Per Scheme</td>
 						<td>
@@ -440,6 +445,8 @@
 							
 						</td>
 					</tr>
+					@endif
+
 					<tr>
 						<td>Timings</td>
 						<td>

@@ -2974,9 +2974,9 @@ class ActivityController extends BaseController {
 						}
 					}
 
-					if(TradedealPartSku::alreadyExist($activity, $host_sku->sap_code, $host_variant, $pre_sku->sap_code, $pre_variant )){
-						$err[] = 'Host SKU / variant and Premium SKU / variant already exist.';
-					}
+					// if(TradedealPartSku::alreadyExist($activity, $host_sku->sap_code, $host_variant, $pre_sku->sap_code, $pre_variant)){
+					// 	$err[] = 'Host SKU / variant and Premium SKU / variant already exist.';
+					// }
 
 
 

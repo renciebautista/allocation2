@@ -114,14 +114,16 @@ class LeTemplateRepository  {
 		    	foreach ($allocations as $value) {
 		    		if($value->final_pcs > 0){
 		    			if($tradedeal->nonUlpPremium()){
-		    				$deal_desc = $_scheme.' '.$_uom.' '.$brand. ' '. $host_sku->host_sku_format. ' '.$host_sku->variant.'+'.' '.substr($host_sku->pre_desc, 0, 13);
 
-				    		$row_data = array($value->scheme_code, 'BBFREE', $io_number,$start_date, $end_date, $deal_desc, 
+		    				// $deal_desc = $_scheme.' '.$_uom.' '.$brand. ' '. $host_sku->host_sku_format. ' '.$host_sku->variant.'+'.' '.substr($host_sku->pre_desc, 0, 13);
+
+				    		$row_data = array($value->scheme_code, 'BBFREE', $io_number,$start_date, $end_date, $value->scheme_desc, 
 				    			$deal_amount, 'P001', $value->plant_code, 
 				    			number_format($value->final_pcs * $host_sku->pre_cost, 2, '.', ''), 'X');	
 				    	}else{
-				    		$deal_desc = $_scheme.' '.$_uom.' '.$brand. ' '.$host_sku->host_sku_format. ' '.$host_sku->variant.'+'.$host_sku->pre_brand_shortcut. ' '. $host_sku->pre_sku_format . ' '. $host_sku->pre_variant;
-				    		$row_data = array($value->scheme_code,$io_number,$start_date, $end_date, $deal_desc, 
+				    		// $deal_desc = $_scheme.' '.$_uom.' '.$brand. ' '.$host_sku->host_sku_format. ' '.$host_sku->variant.'+'.$host_sku->pre_brand_shortcut. ' '. $host_sku->pre_sku_format . ' '. $host_sku->pre_variant;
+
+				    		$row_data = array($value->scheme_code,$io_number,$start_date, $end_date, $value->scheme_desc, 
 				    			$deal_amount, 'P001', $value->ship_to_code, 
 				    			number_format($value->final_pcs * $host_sku->pre_cost, 2, '.', ''));
 				    	}
@@ -261,27 +263,6 @@ class LeTemplateRepository  {
 		    	$sheet->row(1, $header);
 		    	$brands =[];
 
-		    	$pro_desc = $tradedealscheme->buy.'+'.$tradedealscheme->free.' '. $scheme_uom_abv2. ' ';
-
-		    	$host_desc = [];
-		    	foreach ($host_skus as $host) {
-		    		$host_desc[] = $host->brand_shortcut.' '.$host->host_sku_format.' '.$host->variant;
-		    	}
- 				if(count($host_desc)>3){
- 					$pro_desc .= 'MULTIPLESKU';
- 				}else{
- 					$pro_desc .= implode("/", $host_desc);
- 				}
-
- 				if($tradedeal->nonUlpPremium()){
- 					$pro_desc .= '+'. substr($tradedealscheme->pre_desc, 0,13);
- 				}else{
- 					$premium = TradedealPartSku::find($tradedealscheme->pre_id);
- 					$pro_desc .= '+'.$premium->pre_brand_shortcut.' '.$premium->pre_sku_format.' '.$premium->pre_variant;
- 				}
-
-
-		    	
 		    	$budgets = ActivityBudget::getBudgets($activity->id);
 		    	$io_number = '';
 		    	if(!empty($budgets)){
@@ -313,7 +294,7 @@ class LeTemplateRepository  {
 		    		if($value->final_pcs > 0){
 		    			foreach ($sub_types as $sub_type) {
 		    				foreach ($materials as $mat) {
-		    					$row_data = array($value->scheme_code, $pro_desc, $io_number, $start_date, $end_date, $total_deals, 'PC', $total_deals, 'PC', 'C',
+		    					$row_data = array($value->scheme_code, $value->scheme_desc, $io_number, $start_date, $end_date, $total_deals, 'PC', $total_deals, 'PC', 'C',
 					    			$header_qty, $value->plant_code, $value->final_pcs, $value->final_pcs, 'A920- Country/Site/Outlet Sub Type',
 					    			'', '', $sub_type->l5_code,'', $mat->host_code, );
 					    		$sheet->row($row, $row_data);
