@@ -644,7 +644,7 @@
 						<div class="form-group">
 							<div class="row">
 								<div class="col-lg-12">
-									{{ Form::label('non_ulp_premium_desc', 'Non-ULP Premium Dec', array('class' => 'control-label')) }}
+									{{ Form::label('non_ulp_premium_desc', 'Non-ULP Premium Description', array('class' => 'control-label')) }}
 									{{ Form::text('non_ulp_premium_desc',($tradedeal) ?  $tradedeal->non_ulp_premium_desc : '', array('class' => 'form-control', 'id' => 'non_ulp_premium_desc')) }}
 								</div>
 							</div>
@@ -884,9 +884,6 @@
 			</div>
 		</div>
 
-		
-
-		
 		<div class="row">
 			<div class="col-lg-12">
 				<div class="form-group">
@@ -1687,9 +1684,14 @@
 @section('page-script')
 
 $("#updateTradedeal").on("submit", function () {
-    $(this).find(":submit").prop("disabled", true);
-    $("#page").hide();
-	$("#pageloading").show();
+	var form = $(this);
+	var url = form.prop('action');
+	if(form.valid()){
+		$(this).find(":submit").prop("disabled", true);
+    	$("#page").hide();
+		$("#pageloading").show();
+	}
+    
 });
 
 $("#variant, #pre_variant").attr('maxlength','6');

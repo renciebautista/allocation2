@@ -16,6 +16,7 @@ class TradedealAllocRepository  {
 		$tradedeal = Tradedeal::find($tradealscheme->tradedeal_id);
 		$activity = Activity::find($tradedeal->activity_id);
 		$forced_areas = ForceAllocation::getForcedAreas($tradedeal->activity_id);
+
 		$customers = ActivityCustomer::customers($tradedeal->activity_id);
 		$_channels = ActivityChannel2::channels($tradedeal->activity_id);
 
@@ -27,10 +28,10 @@ class TradedealAllocRepository  {
 			->orderBy('tradedeal_part_skus.id')
 			->get();
 
-		$trade_channels = TradedealSchemeChannel::getChannels($tradealscheme);
-		
-		$td_customers = Level5::getCustomers($trade_channels);
+		$trade_channels = TradedealSchemeChannel::getLevel5($tradealscheme);
+		$td_customers = MtDtHieracry::getDistributors($trade_channels);
 
+		// Helper::debug($trade_channels);
 		$skus = [];
 
 		if($tradealscheme->tradedeal_uom_id == 1){
@@ -126,7 +127,6 @@ class TradedealAllocRepository  {
 		$gsvsales = $allocationRepo->customers($skus, $_channels, $customers,$forced_areas, true, $trade_channels, $td_customers);
 		// Helper::debug($gsvsales);
 		
-
 		if(!is_null($collective_premium)){
 			if(isset($collective_premium->pre_code)){
 				$premium['pre_code'] = $collective_premium->pre_code;
@@ -148,12 +148,9 @@ class TradedealAllocRepository  {
 			$premium['variant'] = $sku->pre_variant;
 		}
 		
-		// Helper::debug($sku);
-
 		$scheme_desc = self::generateSchemeDesc($tradedeal, $tradealscheme, $sku);
 
 		$uom = $tradealscheme->tradedeal_uom_id;
-
 		foreach ($td_customers as $customer) {
 			$sold_to_gsv = 0;
 			$computed_deals = 0;

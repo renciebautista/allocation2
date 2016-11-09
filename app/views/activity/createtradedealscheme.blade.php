@@ -169,11 +169,11 @@
     <div class="panel-heading">Channels Involved</div>
         <div class="panel-body">
             <div class="row">
-                <div class="col-lg-6">
+                <div class="col-lg-12">
                     <a href="#" id="btnCSelectAll">Select all</a> |
                     <a href="#" id="btnCDeselectAll">Deselect all</a>
-                    <div id="tree3"></div>
-                    {{ Form::hidden('customers', null, array('id' => 'customers')) }}
+                    <div id="tdtree"></div>
+                    {{ Form::hidden('channels', null, array('id' => 'channels')) }}
                 </div>
             </div> 
         </div>
@@ -194,12 +194,12 @@
 
 
 @section('page-script')
-    $("#tree3").fancytree({
+    $("#tdtree").fancytree({
         extensions: [],
         checkbox: true,
         selectMode: 3,
         source: {
-            url: "../../api/customers?id={{$activity->id}}"
+            url: "../../api/tdchannels?id={{$activity->id}}"
         },
         select: function(event, data) {
             // Get a list of all selected nodes, and convert to a key array:
@@ -207,45 +207,13 @@
                  return node.key;
             });
             selectedkeys = selKeys;
-            //console.log(selKeys);
-            // $("#echoSelection3").text(selKeys.join(", "));
-
-
             // Get a list of all selected TOP nodes
             var selRootNodes = data.tree.getSelectedNodes(true);
             // ... and convert to a key array:
             var selRootKeys = $.map(selRootNodes, function(node){
               return node.key;
             });
-            // $("#echoSelectionRootKeys3").text(selRootKeys.join("."));
-            // $("#echoSelectionRootKeys3").text(selRootKeys.join(", "));
-
-            var keys = selRootKeys.join(".").split(".");
-            // console.log(keys);
-            if($.inArray('E1397', keys) != -1){
-                $("#tree4").fancytree("enable");
-                getChannel();
-            }else{
-                $("#tree4").fancytree("getTree").visit(function(node){
-                    node.setSelected(false);
-                });
-                $("#tree4").fancytree("disable");
-            }
-            $("#customers").val(selRootKeys.join(", "));
-            show_alloc();
-        },
-        click: function(event, data) {
-            $("#updateCustomer").addClass("dirty");
-            if(data.targetType == "checkbox"){
-                //console.log(data.node.tree);
-                var keys = data.node.key.split(".");
-                if($.inArray('E1397', keys) != -1){
-                    $("#tree4").fancytree("getTree").visit(function(node){
-                        node.setSelected(true);
-                    });
-                }
-            }
-           
+            $("#channels").val(selRootKeys.join(", "));
         }
     });
 

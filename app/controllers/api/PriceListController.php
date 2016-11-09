@@ -10,6 +10,40 @@ class PriceListController extends \BaseController {
 		}
 	}
 
+	public function tdpricelistsku(){
+		if(\Request::ajax()){
+			$code = \Input::get('code');
+			$activity_id = \Input::get('ac_id');
+			$new_sku = \Pricelist::where('sap_code', $code)->first();
+			$data['sku'] = $new_sku;
+			$data['variant'] = '';
+
+			$sku =  \TradedealPartSku::where('host_code', $code)->where('activity_id', $activity_id)->first();
+			if(!empty($sku)){
+				$data['variant']  = $sku->variant;
+			}
+
+			return \Response::json($data,200);
+		}
+	}
+
+	public function tdrefpricelistsku(){
+		if(\Request::ajax()){
+			$code = \Input::get('code');
+			$activity_id = \Input::get('ac_id');
+			$new_sku = \Pricelist::where('sap_code', $code)->first();
+			$data['sku'] = $new_sku;
+			$data['variant'] = '';
+
+			$sku =  \TradedealPartSku::where('pre_code', $code)->where('activity_id', $activity_id)->first();
+			if(!empty($sku)){
+				$data['variant']  = $sku->variant;
+			}
+
+			return \Response::json($data,200);
+		}
+	}
+
 	public function involve()
 	{
 		if(\Request::ajax()){

@@ -1,4 +1,24 @@
 $(document).ready(function() {
+
+	$("#btnCDeselectAll").click(function(){
+
+	  	$("#tdtree").fancytree("getTree").visit(function(node){
+	    	node.setSelected(false);
+	  	});
+
+	  	$("#updateCustomer").addClass("dirty");
+
+  		return false;
+	});
+	$("#btnCSelectAll").click(function(){
+	  	$("#tdtree").fancytree("getTree").visit(function(node){
+	    	node.setSelected(true);
+	  	});
+	  	$("#updateCustomer").addClass("dirty");
+	  	return false;
+	});
+
+
 	var hostname = 'http://' + $(location).attr('host');
 	var activity_id = $('#activity_id').val();
 
@@ -269,45 +289,6 @@ $(document).ready(function() {
 	        }
 	    }
 	});
-
-	var table = $('#channels').DataTable({
-		'iDisplayLength': 100,
-		"paging": false
-		      	// 'columnDefs': [
-       //   {
-       //      'targets': 0,
-       //      'checkboxes': {
-       //         'selectRow': true
-       //      }
-       //   }
-      	// ],
-      	// 'select': {
-       //   'style': 'multi'
-      	// },
-      	// 'order': [[0, 'asc']]
-   	});
-
-	// Handle form submission event
-   	$('#createtradedealscheme').on('submit', function(e){
-      	var form = this;
-	    var rows_selected = table.column(0).checkboxes.selected();
-     //  	// Iterate over all selected checkboxes
-     	if(rows_selected != null){
-     		$.each(rows_selected, function(index, rowId){
-		        // Create a hidden element 
-		        // console.log();
-		        $(form).append(
-		             $('<input>')
-		                .attr('type', 'hidden')
-		                .attr('name', 'ch[]')
-		                .val($(rowId).val())
-		        );
-	      	});
-     	}
-      	
-      // e.preventDefault(); // prevents button from submitting
-   });
-
 
 	changeName();
 

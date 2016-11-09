@@ -7,6 +7,11 @@ $(document).ready(function() {
 		$('#pre_cost_pcs').val($('#host_cost_pcs').val());
 		$('#pre_pcs_case').val($('#host_pcs_case').val());
 		$('#pre_variant').val($('#variant').val());
+		$('#pre_variant').removeAttr('readonly');
+		if ($('#variant').is('[readonly]')) 
+		{
+			$('#pre_variant').attr('readonly', '');
+		}
 	});
 
 	$('#ecopy_host').click(function(){
@@ -143,14 +148,19 @@ $(document).ready(function() {
 		    $.ajax({
 		        async: false,
 		        type: "GET",
-		        url: hostname + '/api/pricelistsku/?code='+$(this).val(),
+		        url: hostname + '/api/tdpricelistsku/?code='+$(this).val()+'&ac_id='+activity_id,
 		        contentType: "application/json; charset=utf-8",
 		        dataType: "json",
-		        success: function (data) { 
+		        success: function (data) {
 		        	$('#host_cost_pcs').val('');
-		        	$('#host_cost_pcs').val(data.price);
+		        	$('#host_cost_pcs').val(data.sku.price);
 		        	$('#host_pcs_case').val('');
-		        	$('#host_pcs_case').val(data.pack_size);
+		        	$('#host_pcs_case').val(data.sku.pack_size);
+		        	if(data.variant != ''){
+		        		$('#variant').val(data.variant).attr('readonly', '');
+		        	}else{
+		        		$('#variant').val('').removeAttr('readonly');
+		        	}
 		        },
 		        error: function (msg) { roles = msg; }
 		    });
@@ -174,14 +184,19 @@ $(document).ready(function() {
 			    $.ajax({
 			        async: false,
 			        type: "GET",
-			        url: hostname + '/api/pricelistsku/?code='+$(this).val(),
+			        url: hostname + '/api/tdrefpricelistsku/?code='+$(this).val()+'&ac_id='+activity_id,
 			        contentType: "application/json; charset=utf-8",
 			        dataType: "json",
 			        success: function (data) { 
 			        	$('#pre_cost_pcs').val('');
-			        	$('#pre_cost_pcs').val(data.price);
+			        	$('#pre_cost_pcs').val(data.sku.price);
 			        	$('#pre_pcs_case').val('');
-			        	$('#pre_pcs_case').val(data.pack_size);
+			        	$('#pre_pcs_case').val(data.sku.pack_size);
+			        	if(data.variant != ''){
+			        		$('#pre_variant').val(data.variant).attr('readonly', '');
+			        	}else{
+			        		$('#pre_variant').val('').removeAttr('readonly');
+			        	}
 			        },
 			        error: function (msg) { roles = msg; }
 			    });
@@ -196,6 +211,7 @@ $(document).ready(function() {
 		$('#variant').val('');
 		$('#pre_variant').val('');
 		$('.ulppremium, .non_ulppremium').hide();
+		$('#variant').val('').removeAttr('readonly');
 		if(non_premiun == '1'){
 		}else{
 			$('#pre_cost_pcs').val('');

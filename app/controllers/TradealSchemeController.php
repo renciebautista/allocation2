@@ -1,59 +1,7 @@
 <?php
 use Alchemy\Zippy\Zippy;
 class TradealSchemeController extends \BaseController {
-
-	/**
-	 * Display a listing of the resource.
-	 * GET /tradealscheme
-	 *
-	 * @return Response
-	 */
-	public function index()
-	{
-		//
-	}
-
-	/**
-	 * Show the form for creating a new resource.
-	 * GET /tradealscheme/create
-	 *
-	 * @return Response
-	 */
-	public function create()
-	{
-		//
-	}
-
-	/**
-	 * Store a newly created resource in storage.
-	 * POST /tradealscheme
-	 *
-	 * @return Response
-	 */
-	public function store()
-	{
-		//
-	}
-
-	/**
-	 * Display the specified resource.
-	 * GET /tradealscheme/{id}
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function show($id)
-	{
-		//
-	}
-
-	/**
-	 * Show the form for editing the specified resource.
-	 * GET /tradealscheme/{id}/edit
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
+	
 	public function edit($id)
 	{
 		$scheme = TradedealScheme::findOrFail($id);
@@ -62,8 +10,7 @@ class TradealSchemeController extends \BaseController {
 		$dealtypes = TradedealType::getList();
 		$dealuoms = TradedealUom::get()->lists('tradedeal_uom', 'id');
 		$tradedeal_skus = TradedealPartSku::where('activity_id', $activity->id)->get();
-		$channels = TradedealChannel::getSchemeChannels($activity, $scheme);
-		$sel_channels = TradedealSchemeChannel::getSelected($scheme);
+
 		$sel_hosts = TradedealSchemeSku::getSelected($scheme);
 		return View::make('tradealscheme.edit', compact('activity', 'tradedeal', 'scheme', 'dealtypes', 
 			'dealuoms', 'tradedeal_skus', 'channels', 'sel_channels', 'sel_hosts'));
@@ -82,6 +29,7 @@ class TradealSchemeController extends \BaseController {
 		$scheme = TradedealScheme::findOrFail($id);
 		// Helper::debug($scheme);
 		$tradedeal = Tradedeal::find($scheme->tradedeal_id);
+		$activity = Activity::findOrFail($tradedeal->activity_id);
 
 		$deal_type = TradedealType::find(Input::get('deal_type'));
 		// Helper::debug($deal_type);
@@ -91,6 +39,7 @@ class TradealSchemeController extends \BaseController {
 		$free_pcs_case = [];
 
 		$invalid_premiums = true;
+
 		if(Input::has('skus')){
 			foreach (Input::get('skus') as $value) {
 			 	$selected_skus[] = $value;
@@ -138,7 +87,7 @@ class TradealSchemeController extends \BaseController {
 		$messages = array(
 		    'invalid_premiums' => 'Combination of Premium SKU with different pcs/case value is not allowed',
 		    'invalid_collective' => 'Combination of participating SKU with different pcs/case value is not allowed',
-		    'ch.required' => 'Channels Involved is required',
+		    'channels.required' => 'Channels Involved is required',
 		);
 
 
@@ -147,7 +96,7 @@ class TradealSchemeController extends \BaseController {
 		    'skus' => 'required|invalid_collective:'.$invalid_collective.'|invalid_premiums:'.$invalid_premiums,
 		    'buy' => 'required|numeric',
 		    'free' => 'required|numeric',
-		    'ch' => 'required'
+		    'channels' => 'required'
 		);
 
 		$validation = Validator::make(Input::all(), $rules, $messages);
@@ -156,8 +105,6 @@ class TradealSchemeController extends \BaseController {
 		if($validation->passes()){
 			
 			
-			$selected = Input::get('ch');
-
 			$buy = str_replace(",", '', Input::get('buy'));
 			$free = str_replace(",", '', Input::get('free'));
 
@@ -202,38 +149,25 @@ class TradealSchemeController extends \BaseController {
 
 			$scheme->save();
 			
-
-
 			TradedealSchemeSku::where('tradedeal_scheme_id', $scheme->id)->delete();
 			$selectedskus = [];
 			if(Input::has('skus')){
 				TradedealSchemeSku::addHostSku(Input::get('skus'),$scheme);
 			}
-
-
-			TradedealSchemeChannel::where('tradedeal_scheme_id', $scheme->id)->delete();
-			if(Input::has('ch')){
-				foreach ($selected as $value) {
-					$ch = new TradedealSchemeChannel;
-					$ch->tradedeal_scheme_id = $scheme->id;
-					$ch->tradedeal_channel_id = $value;
-					$ch->save();
-				}
-			}
+				
+			TradedealSchemeChannel::createChannelSelection($scheme, $activity, Input::get('channels'));		
 
 			// update trade deal scheme allocations
 
 			TradedealAllocRepository::updateAllocation($scheme);
 			LeTemplateRepository::generateTemplate($scheme);
 			
-			// return Redirect::back()
 			return Redirect::to(URL::action('ActivityController@edit', array('id' => $tradedeal->activity_id)) . "#tradedeal")
 				->with('class', 'alert-success')
 				->with('message', 'Scheme successfuly updated');
 		}
 
 		return Redirect::back()
-		// return Redirect::to(URL::action('ActivityController@edit', array('id' => $tradedeal->activity_id)) . "#tradedeal")
 				->withInput()
 				->withErrors($validation)
 				->with('class', 'alert-danger')

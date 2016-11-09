@@ -116,7 +116,7 @@ class TradedealSchemeAllocation extends \Eloquent {
 	public static function getTotalDeals($scheme,$host_sku){
 		return self::where('tradedeal_scheme_id', $scheme->id)
 			->where('tradedeal_scheme_sku_id', $host_sku->id)
-			->sum('computed_pcs');
+			->sum('final_pcs');
 	}
 
 

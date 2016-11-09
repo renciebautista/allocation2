@@ -28,9 +28,17 @@ class Level5 extends \Eloquent {
 	}
 
 	public static function getForTradeDeal(){
-		return self::where('trade_deal',1)
-			->orderBy('l5_desc')
-			->get();;
+
+		return self::select('channels.channel_code', 'channels.channel_name',
+			'level5.l5_code', 'level5.l5_desc')
+			->join('mt_dt_hieracry', 'mt_dt_hieracry.coc_05_code', '=', 'level5.l5_code')
+			->join('sub_channels', 'sub_channels.coc_03_code', '=', 'mt_dt_hieracry.coc_03_code')
+			->join('channels', 'channels.channel_code', '=', 'sub_channels.channel_code')
+			->where('trade_deal',1)
+			->orderBy('channels.channel_name')
+			->orderBy('level5.l5_desc')
+			->groupBy('mt_dt_hieracry.coc_05_code')
+			->get();
 	}
 
 	public static function getL4ByL5($l5_code){

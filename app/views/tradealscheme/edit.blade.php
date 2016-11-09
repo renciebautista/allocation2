@@ -166,44 +166,16 @@
         <div class="panel-body">
             <div class="row">
                 <div class="col-lg-12">
-                    <table id="channels" class="table table-striped table-hover ">
-                    <thead>
-                        <tr>
-                            <th><input id="select-all" type="checkbox"></th>
-                            <th>Channel Code</th>
-                            <th>Channel</th>
-                            <th>Channel Group</th>
-                            <th>Scheme</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($channels as $channel)
-                            <tr>
-                                <td>
-                                    @if((!empty($channel->name)) && ($channel->scheme_id != $scheme->id))
-                                        <i class="fa fa-check"></i>
-                                    @else
-                                         {{ Form::checkbox('ch[]', $channel->id, ((in_array($channel->id,$sel_channels)) ? true : false)) }}
-                                    @endif
-                                    
-                                </td>
-                                <td>{{ $channel->l5_code }}</td>
-                                <td>{{ $channel->l5_desc }}</td>
-                                <td>{{ $channel->rtm_tag }}</td>
-                                <td>
-                                    @if(!empty($channel->name))
-                                    {{ HTML::linkAction('TradealSchemeController@edit' , $channel->name,array('id' => $channel->scheme_id)) }}
-                                    @endif
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table> 
+                    <a href="#" id="btnCSelectAll">Select all</a> |
+                    <a href="#" id="btnCDeselectAll">Deselect all</a>
+                    <div id="tdtree"></div>
+                    {{ Form::hidden('channels', null, array('id' => 'channels')) }}
                 </div>
-            </div>
-            
+            </div> 
+        </div>
     </div>
 </div>
+
 
 <a class="btn btn-default" href="{{action('ActivityController@edit', $activity->id);}}#tradedeal">Back</a>
             <button  class="btn btn-primary">Update</button>
@@ -217,7 +189,45 @@
 
 
 @section('page-script')
+    
 
+    $("#tdtree").fancytree({
+        extensions: [],
+        checkbox: true,
+        selectMode: 3,
+        source: {
+            url: "../../api/tdchannels?id={{$activity->id}}&sc={{$scheme->id}}"
+        },
+        select: function(event, data) {
+            // Get a list of all selected nodes, and convert to a key array:
+            var selKeys = $.map(data.tree.getSelectedNodes(), function(node){
+                 return node.key;
+            });
+            selectedkeys = selKeys;
+            // Get a list of all selected TOP nodes
+            var selRootNodes = data.tree.getSelectedNodes(true);
+            // ... and convert to a key array:
+            var selRootKeys = $.map(selRootNodes, function(node){
+              return node.key;
+            });
+            $("#channels").val(selRootKeys.join(", "));
+        }
+    });
+
+
+    function getselectedChannels(){
+        $.ajax({
+            type: "GET",
+            url: "../../api/selectedtdchannels?id={{$scheme->id}}",
+            success: function(data){
+                $.each(data, function(i, node) {
+                    $("#tdtree").fancytree("getTree").getNodeByKey(node).setSelected(true);
+                });
+            }
+        });
+    }
+
+     getselectedChannels();
 @stop
 
 

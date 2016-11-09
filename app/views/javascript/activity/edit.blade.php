@@ -491,6 +491,7 @@ $("#tree3").fancytree({
 	extensions: [],
 	checkbox: true,
 	selectMode: 3,
+	autoScroll: true,
 	source: {
 		url: "../../api/customers?id={{$activity->id}}"
 	},
@@ -515,7 +516,7 @@ $("#tree3").fancytree({
 
 		var keys = selRootKeys.join(".").split(".");
 		// console.log(keys);
-		if($.inArray('E1397', keys) != -1){
+		/**if($.inArray('E1397', keys) != -1){
 			$("#tree4").fancytree("enable");
 			getChannel();
 		}else{
@@ -523,20 +524,20 @@ $("#tree3").fancytree({
 		        node.setSelected(false);
 		    });
 			$("#tree4").fancytree("disable");
-		}
+		}**/
 		$("#customers").val(selRootKeys.join(", "));
-		show_alloc();
+		//show_alloc();
 	},
 	click: function(event, data) {
         $("#updateCustomer").addClass("dirty");
         if(data.targetType == "checkbox"){
         	//console.log(data.node.tree);
 	        var keys = data.node.key.split(".");
-	        if($.inArray('E1397', keys) != -1){
+	        /**if($.inArray('E1397', keys) != -1){
 				$("#tree4").fancytree("getTree").visit(function(node){
 			        node.setSelected(true);
 			    });
-			}
+			}**/
     	}
        
     }

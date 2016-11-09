@@ -149,8 +149,6 @@ class AllocationRepository  {
 					->get();
 		}
 		
-		
-		
 		if(in_array("E1397", $_grps)){	
 		// get all DT Secondary Sales
 		// dd($channels);

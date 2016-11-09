@@ -281,7 +281,6 @@ class ActivityController extends BaseController {
 			$accategories = \ActivityCategory::selected_category($activity->id);
 			$acbrands = \ActivityBrand::selected_brand($activity->id);
 
-			// $host_skus = Pricelist::involves($acbrands,$activity);
 			$host_skus = ActivitySku::tradedealSkus($activity);
 			$ref_skus = Sku::items($acdivisions,$accategories,$acbrands);
 
@@ -292,14 +291,10 @@ class ActivityController extends BaseController {
 			$tradedealschemes = [];
 			$total_deals = Tradedeal::total_deals($activity);
 			$total_premium_cost = Tradedeal::total_premium_cost($activity);
-			// $td_shiptos = [];
-			// $td_premiums = [];
+
 			if($tradedeal != null){
 				$tradedealschemes = TradedealScheme::getScheme($tradedeal->id);
-				// $td_shiptos = TradedealSchemeAllocation::getShiptoBy($activity);
-				// $td_premiums = TradedealSchemeAllocation::getPremiumsBy($activity);
 			}
-
 			// end tradedeal
 
 			$force_allocs = ForceAllocation::getlist($activity->id);
@@ -320,10 +315,8 @@ class ActivityController extends BaseController {
 				$planners = User::getApprovers(['PMOG PLANNER']);
 				$activity_types = ActivityType::getWithNetworks();
 				$cycles = Cycle::getLists();
-				// $divisions = Sku::getDivisionLists();
 				$divisions = Pricelist::divisions();
 				
-
 				return View::make('activity.edit', compact('activity', 'scope_types', 'planners', 'approvers', 'cycles',
 				 'activity_types', 'divisions' , 'sel_divisions','objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
 				 'sel_objectives',  'schemes', 'scheme_summary', 'networks', 'areas', 'timings' ,'sel_involves',
@@ -2854,7 +2847,8 @@ class ActivityController extends BaseController {
 					$tc->activity_id = $id;
 					$tc->l5_code = $ch->l5_code;
 					$tc->l5_desc = $ch->l5_desc;
-					$tc->rtm_tag = $ch->rtm_tag;
+					$tc->channel_code = $ch->channel_code;
+					$tc->channel_desc = $ch->channel_name;
 					$tc->save();
 				}
 
@@ -2911,7 +2905,7 @@ class ActivityController extends BaseController {
 				File::deleteDirectory(storage_path('le/'.$activity->id));
 				if(!empty($schemes)){
 					foreach ($schemes as $scheme) {
-						// LeTemplateRepository::generateTemplate($scheme);
+						LeTemplateRepository::generateTemplate($scheme);
 					}
 				}
 
@@ -2927,9 +2921,6 @@ class ActivityController extends BaseController {
 		// 	Session::flash('message', 'Budget IO is required.');
 		// 	return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity->id)) . "#tradedeal");
 		// }
-
-
-		
 
 	}
 
@@ -2976,21 +2967,34 @@ class ActivityController extends BaseController {
 						}
 					}
 
-					// if(TradedealPartSku::alreadyExist($activity, $host_sku->sap_code, $host_variant, $pre_sku->sap_code, $pre_variant)){
-					// 	$err[] = 'Host SKU / variant and Premium SKU / variant already exist.';
-					// }
-
-
+					if($tradedeal->non_ulp_premium){
+						if(TradedealPartSku::nonUlpHostExist($activity, $host_sku->sap_code, $host_variant)){
+							$err[] = 'Host SKU and variant already exist.';
+						}
+					}else{
+						if(!empty($pre_sku)){
+							if(TradedealPartSku::ulpHostExist($activity, $host_sku->sap_code, $host_variant, $pre_sku->sap_code, $pre_variant)){
+								$err[] = 'Host / Premium SKU combination exist.';
+							}
+						}
+						
+					}
 
 					if(count($err) == 0){
 						$part_sku = new TradedealPartSku;
 						$part_sku->activity_id = $id;
 						$part_sku->host_code = $host_sku->sap_code;
 						$part_sku->host_desc = $host_sku->sap_desc;
-						$part_sku->variant = $host_variant;
+
+						$hostsku =  TradedealPartSku::where('host_code', $host_sku->sap_code)->where('activity_id', $activity->id)->first();
+						if(!empty($hostsku)){
+							$part_sku->variant = $hostsku->variant;
+						}else{
+							$part_sku->variant = $host_variant;
+						}
+
 						$part_sku->brand_shortcut = $host_sku->brand_shortcut;
 						$part_sku->host_sku_format = $host_sku->sku_format;
-						// $part_sku->host_cost = $host_sku->price;
 						$part_sku->host_cost = str_replace(",", '', Input::get('host_cost_pcs'));
 						$part_sku->host_pcs_case = $host_sku->pack_size;
 						$part_sku->ref_code = $ref_sku->sku_code;
@@ -3006,10 +3010,15 @@ class ActivityController extends BaseController {
 							if(Input::get('pre_sku') != 0){
 								$part_sku->pre_code = $pre_sku->sap_code;
 								$part_sku->pre_desc = $pre_sku->sap_desc;
-								$part_sku->pre_variant = $pre_variant;
+								$presku =  TradedealPartSku::where('host_code', $host_sku->sap_code)->where('activity_id', $activity->id)->first();
+								if(!empty($presku)){
+									$part_sku->pre_variant = $presku->pre_variant;
+								}else{
+									$part_sku->pre_variant = $pre_variant;
+								}
+
 								$part_sku->pre_brand_shortcut = $pre_sku->brand_shortcut;
 								$part_sku->pre_sku_format = $pre_sku->sku_format;
-								// $part_sku->pre_cost = $pre_sku->price;
 								$part_sku->pre_cost = str_replace(",", '', Input::get('pre_cost_pcs'));
 								$part_sku->pre_pcs_case = $pre_sku->pack_size;
 							}
@@ -3192,13 +3201,14 @@ class ActivityController extends BaseController {
 		$dealtypes = TradedealType::getList();
 		$dealuoms = TradedealUom::get()->lists('tradedeal_uom', 'id');
 		$tradedeal_skus = TradedealPartSku::where('activity_id', $activity->id)->get();
-		$channels = TradedealChannel::getSchemeChannels($activity);
 		return View::make('activity.createtradedealscheme',compact('dealtypes', 'dealuoms', 'tradedeal_skus', 
-			'activity', 'tradedeal', 'channels'));
+			'activity', 'tradedeal'));
 
 	}
 
 	public function storetradealscheme($id){	
+		// dd(Input::all());
+
 		$activity = Activity::findOrFail($id);
 		$tradedeal = Tradedeal::where('activity_id', $activity->id)->first();
 		$deal_type = TradedealType::find(Input::get('deal_type'));
@@ -3250,7 +3260,7 @@ class ActivityController extends BaseController {
 		$messages = array(
 		    'invalid_premiums' => 'Combination of Premium SKU with different pcs/case value is not allowed',
 		    'invalid_collective' => 'Combination of participating SKU with different pcs/case value is not allowed',
-		    'ch.required' => 'Channels Involved is required'
+		    'channels.required' => 'Channels Involved is required'
 		);
 
 		Validator::extend('invalid_collective', function($attribute, $value, $parameters) {
@@ -3262,7 +3272,7 @@ class ActivityController extends BaseController {
 		    'skus' => 'required|invalid_collective:'.$invalid_collective.'|invalid_premiums:'.$invalid_premiums,
 		    'buy' => 'required|numeric',
 		    'free' => 'required|numeric',
-		    'ch' => 'required'
+		    'channels' => 'required'
 		);
 
 		$validation = Validator::make(Input::all(), $rules, $messages);
@@ -3412,27 +3422,19 @@ class ActivityController extends BaseController {
 					TradedealSchemeSku::addHostSku(Input::get('skus'), $scheme);
 				}
 
-				if(Input::has('ch')){
-					foreach (Input::get('ch') as $value) {
-						$ch = new TradedealSchemeChannel;
-						$ch->tradedeal_scheme_id = $scheme->id;
-						$ch->tradedeal_channel_id = $value;
-						$ch->save();
-					}
-				}
+
+				TradedealSchemeChannel::createChannelSelection($scheme, $activity, Input::get('channels'));
 
 				TradedealAllocRepository::updateAllocation($scheme);
 				LeTemplateRepository::generateTemplate($scheme);
 			}
 
-			// return Redirect::route('tradedealscheme.edit',$scheme->id)
 			return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity->id)) . "#tradedeal")
 					->with('class', 'alert-success')
 					->with('message', 'Trade Deal scheme was successfuly created.');
 		}
 
 		return Redirect::route('activity.createtradealscheme', $activity->id)
-		// return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity->id)) . "#tradedeal")
 				->withInput()
 				->withErrors($validation)
 				->with('class', 'alert-danger')
@@ -3477,8 +3479,8 @@ class ActivityController extends BaseController {
 				$sheet->setCellValueByColumnAndRow(1,3, date('d/m/Y', strtotime($activity->end_date)));
 
 				$sheet->row(5, array('ACTIVITY', 'Scheme Code', 'Scheme Description', 'HOST CODE', 'HOST DESCRIPTION', 'PREMIUM CODE / PIMS CODE', 'Premium SKU', 'Master Outlet Subtype Name', 'Master Outlet Subtype Code'));
+				$sheet->getStyle("A5:I5")->getFont()->setBold(true);
 				$row = 6;
-
 
 				$tradedeal = Tradedeal::getActivityTradeDeal($activity);
 				$tradedealschemes = TradedealScheme::where('tradedeal_id',$tradedeal->id)
@@ -3564,7 +3566,7 @@ class ActivityController extends BaseController {
 		    $excel->sheet('ALLOCATIONS', function($sheet) use ($activity) {
 		    	
 
-				$tradedeal_skus = TradedealPartSku::where('activity_id', $activity->id)->get();
+				$tradedeal_skus = TradedealPartSku::where('activity_id', $activity->id)->groupBy('pre_code')->get();
 				$tradedeal = Tradedeal::getActivityTradeDeal($activity);
 				$allocations = TradedealSchemeAllocation::exportAlloc($tradedeal);
 
@@ -3652,6 +3654,13 @@ class ActivityController extends BaseController {
 									$sum = "=SUM(".\PHPExcel_Cell::stringFromColumnIndex($col).$first_row.":".\PHPExcel_Cell::stringFromColumnIndex($col).$last_row.")";
 									$sheet->setCellValueByColumnAndRow($col,$row,$sum);
 								}
+
+								foreach ($col_pre_x as $col) {
+									$last_row = $row - 1;
+									$sum = "=SUM(".\PHPExcel_Cell::stringFromColumnIndex($col).$first_row.":".\PHPExcel_Cell::stringFromColumnIndex($col).$last_row.")";
+									$sheet->setCellValueByColumnAndRow($col,$row,$sum);
+								}
+
 								$row++;
 								$first_row = $row;
 								$sheet->row($row, ['', '', '', $alloc->plant_code, $alloc->ship_to_name, $alloc->scheme_code, $alloc->scheme_description, $pcs_deal]);
@@ -3662,6 +3671,12 @@ class ActivityController extends BaseController {
 							if($last_site != $alloc->plant_code){
 								$sheet->row($row, ['', '', '', $last_site.' Total']);
 								foreach ($col_pre as $col) {
+									$last_row = $row - 1;
+									$sum = "=SUM(".\PHPExcel_Cell::stringFromColumnIndex($col).$first_row.":".\PHPExcel_Cell::stringFromColumnIndex($col).$last_row.")";
+									$sheet->setCellValueByColumnAndRow($col,$row,$sum);
+								}
+
+								foreach ($col_pre_x as $col) {
 									$last_row = $row - 1;
 									$sum = "=SUM(".\PHPExcel_Cell::stringFromColumnIndex($col).$first_row.":".\PHPExcel_Cell::stringFromColumnIndex($col).$last_row.")";
 									$sheet->setCellValueByColumnAndRow($col,$row,$sum);
@@ -3681,6 +3696,13 @@ class ActivityController extends BaseController {
 								$sum = "=SUM(".\PHPExcel_Cell::stringFromColumnIndex($col).$first_row.":".\PHPExcel_Cell::stringFromColumnIndex($col).$last_row.")";
 								$sheet->setCellValueByColumnAndRow($col,$row,$sum);
 							}
+
+							foreach ($col_pre_x as $col) {
+								$last_row = $row - 1;
+								$sum = "=SUM(".\PHPExcel_Cell::stringFromColumnIndex($col).$first_row.":".\PHPExcel_Cell::stringFromColumnIndex($col).$last_row.")";
+								$sheet->setCellValueByColumnAndRow($col,$row,$sum);
+							}
+
 							$row++;
 							$first_row = $row;
 						}
@@ -3699,8 +3721,87 @@ class ActivityController extends BaseController {
 					$last_row = $row - 1;
 					$sum = "=SUM(".\PHPExcel_Cell::stringFromColumnIndex($col).$first_row.":".\PHPExcel_Cell::stringFromColumnIndex($col).$last_row.")";
 					$sheet->setCellValueByColumnAndRow($col,$row,$sum);
+				}	
+
+				foreach ($col_pre_x as $col) {
+					$last_row = $row - 1;
+					$sum = "=SUM(".\PHPExcel_Cell::stringFromColumnIndex($col).$first_row.":".\PHPExcel_Cell::stringFromColumnIndex($col).$last_row.")";
+					$sheet->setCellValueByColumnAndRow($col,$row,$sum);
 				}		
 		    });
+	
+			$excel->sheet('OUTPUT FILE', function($sheet) use ($activity) {
+		    	$sheet->row(1, array('Promotion ID', 'BB Free Scheme', 'Promo Type',
+		    		'SKU Codes Involved', 'SKUs Involved', 'Premium Code', 'Premium',
+		    		'Outlet Sub Types Involved', 'Outlet Codes', 'Allocs', 'UOM', 'Source of Premium', 
+		    		'Arrival Date', 'PBP Code', 'PBP Description', 'Start Date', 'End Date', 
+		    		'UOM Quantity', '', 'TOP Allocs', 'ISR Allocs'));
+
+			    $datas = TradedealSchemeAllocation::select('scheme_code', 'scheme_desc', 'tradedeal_types.tradedeal_type', 
+			    	'tradedeal_scheme_sku_id', 'tradedeal_scheme_id', 'tradedeal_scheme_allocations.pre_code', 
+			    	'tradedeal_scheme_allocations.pre_desc', 'non_ulp_premium', DB::raw('sum(final_pcs) as total_alloc'),
+			    	'eimplementation_date', 'end_date')
+			    	->join('tradedeal_schemes', 'tradedeal_schemes.id', '=', 'tradedeal_scheme_allocations.tradedeal_scheme_id')
+			    	->join('tradedeals', 'tradedeals.id', '=', 'tradedeal_schemes.tradedeal_id')
+			    	->join('tradedeal_types', 'tradedeal_types.id', '=', 'tradedeal_schemes.tradedeal_type_id')
+			    	->join('activities', 'activities.id', '=', 'tradedeals.activity_id')
+					->where('tradedeals.activity_id', $activity->id)
+					->groupBy('scheme_code')
+					->orderBy('tradedeal_type_id')
+					->orderBy('tradedeal_uom_id')
+					->get();
+
+				$cnt = 2;
+			    foreach ($datas as $row) {
+			    	$host_code = '';
+			    	$host_desc = '';
+			    	$scheme = TradedealScheme::find($row->tradedeal_scheme_id);
+			    	if($row->tradedeal_scheme_sku_id != 0){
+			    		$host_sku = TradedealSchemeSku::getHost($row->tradedeal_scheme_sku_id);
+			    		$host_code = $host_sku->host_code;
+			    		$host_desc = $host_sku->host_desc;
+			    	}else{
+			    		
+			    		$host_skus = TradedealSchemeSku::getHostSku($scheme);
+			    		$code = [];
+			    		$desc = [];
+			    		foreach ($host_skus as $key => $value) {
+
+			    			$code[] = $value->host_code;
+			    			$desc[] = $value->host_desc;
+			    		}
+
+			    		$host_code = implode(";", $code);
+			    		$host_desc = implode(";", $desc);
+
+			    	}
+
+			    	$pre_code = '';
+			    	$pre_desc = '';
+			    	$source = 'Ex-DT';
+			    	if(!$row->non_ulp_premium){
+			    		$pre_code = $row->pre_code;
+			    		$pre_desc = $row_pre_desc;
+			    		$source = 'Ex-ULP';
+			    	}
+
+			    	$channels = TradedealSchemeChannel::getSelectedDetails($scheme);
+			    	$ch_code = [];
+			    	$ch_desc = [];
+			    	foreach ($channels as $channel) {
+		    			$ch_code[] = $channel->l5_code;
+		    			$ch_desc[] = $channel->l5_desc;
+		    		}
+
+		    		$start_date = date('d/m/Y', strtotime($row->eimplementation_date));
+		    		$end_date = date('d/m/Y', strtotime($row->end_date));
+			    	
+			    	$sheet->row($cnt, array($row->scheme_code, $row->scheme_desc, $row->tradedeal_type, $host_code, $host_desc, $pre_code, $pre_desc,
+			    	implode(';', $ch_code),implode(';', $ch_desc), $row->total_alloc, '', $source, '', '', '', $start_date, $end_date));
+			    	$cnt++;
+			    }
+		    });
+			
 
 		})->download('xls');
 	}

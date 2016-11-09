@@ -109,5 +109,11 @@ class TradedealSchemeSku extends \Eloquent {
 			}	
 		}
 	}
+
+	public static function getHost($id){
+		return self::join('tradedeal_part_skus', 'tradedeal_part_skus.id', '=', 'tradedeal_scheme_skus.tradedeal_part_sku_id')
+			->where('tradedeal_scheme_skus.id', $id)
+			->first();
+	}
 	
 }

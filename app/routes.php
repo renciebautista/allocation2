@@ -315,8 +315,7 @@ Route::group(array('before' => 'auth'), function()
 
 		Route::get('getpostedcustomers', 'api\CustomerController@getpostedcustomers');
 		Route::get('customers_old', 'api\CustomerController@index');
-		Route::get('customers', 'api\CustomerController@index');
-		// Route::get('customers', 'api\CustomerController@getChannelCustomer');
+		Route::get('customers', 'api\CustomerController@getChannelCustomer');
 
 		Route::get('cycles', 'CycleController@availableCycle');
 
@@ -350,6 +349,11 @@ Route::group(array('before' => 'auth'), function()
 		Route::post('weekbrand', 'api\SobController@weekbrand');
 
 		Route::get('pricelistsku', 'api\PriceListController@getSku');
+		Route::get('tdpricelistsku', 'api\PriceListController@tdpricelistsku');
+		Route::get('tdrefpricelistsku', 'api\PriceListController@tdrefpricelistsku');
+
+		Route::get('tdchannels','api\TradeChannelController@index');
+		Route::get('selectedtdchannels','api\TradeChannelController@selectedtdchannels');
 	});//
 
 

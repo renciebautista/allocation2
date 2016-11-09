@@ -114,15 +114,10 @@ class LeTemplateRepository  {
 		    	foreach ($allocations as $value) {
 		    		if($value->final_pcs > 0){
 		    			if($tradedeal->nonUlpPremium()){
-
-		    				// $deal_desc = $_scheme.' '.$_uom.' '.$brand. ' '. $host_sku->host_sku_format. ' '.$host_sku->variant.'+'.' '.substr($host_sku->pre_desc, 0, 13);
-
 				    		$row_data = array($value->scheme_code, 'BBFREE', $io_number,$start_date, $end_date, $value->scheme_desc, 
 				    			$deal_amount, 'P001', $value->plant_code, 
 				    			number_format($value->final_pcs * $host_sku->pre_cost, 2, '.', ''), 'X');	
 				    	}else{
-				    		// $deal_desc = $_scheme.' '.$_uom.' '.$brand. ' '.$host_sku->host_sku_format. ' '.$host_sku->variant.'+'.$host_sku->pre_brand_shortcut. ' '. $host_sku->pre_sku_format . ' '. $host_sku->pre_variant;
-
 				    		$row_data = array($value->scheme_code,$io_number,$start_date, $end_date, $value->scheme_desc, 
 				    			$deal_amount, 'P001', $value->ship_to_code, 
 				    			number_format($value->final_pcs * $host_sku->pre_cost, 2, '.', ''));
@@ -138,7 +133,6 @@ class LeTemplateRepository  {
 	}
 
 	private static function generateIndividualMechanics($tradedealscheme, $tradedeal, $activity, $host_sku, $scheme_uom_abv, $scheme_uom_abv2){
-		// $folder_name = self::getdealId($activity, $tradedealscheme, $host_sku, $scheme_uom_abv);
 		$folder_name = self::getIndFileName($tradedealscheme, $scheme_uom_abv2, $host_sku);
 		Excel::create($folder_name. ' - 2 Mechanics', function($excel) use ($tradedealscheme, $tradedeal, $activity, $host_sku, $scheme_uom_abv, $scheme_uom_abv2) {
 		    $excel->sheet('Sheet1', function($sheet) use ($tradedealscheme, $tradedeal, $activity, $host_sku, $scheme_uom_abv, $scheme_uom_abv2) {
@@ -179,7 +173,6 @@ class LeTemplateRepository  {
 		    	$row = 2;
 		    	foreach ($sub_types as $value) {
 		    		if($first_row){
-		    			// dd($deal_id);
 		    			$row_data = array($deal_id->scheme_code, '1', $host_sku->host_code,'Volume', $min_buy, 'PC',
 				    		'O - AND', $host_sku->pre_code, $free, 'PC', '', $value->l5_code, '', '' );
 				    	$first_row = false;

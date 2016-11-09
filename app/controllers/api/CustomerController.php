@@ -424,166 +424,81 @@ class CustomerController extends \BaseController {
 		return \Response::json($data,200);
 	}
 
+
 	public function getChannelCustomer(){
 		$data = [];
-		$channels = \DB::table('channels')->get();
-
+		$channels = \DB::table('mt_dt_hieracry')
+				->select('channels.channel_code', 'channels.channel_name')
+				->join('sub_channels', 'sub_channels.coc_03_code', '=', 'mt_dt_hieracry.coc_03_code')
+				->join('channels', 'channels.channel_code', '=', 'sub_channels.channel_code')
+				->groupBy('channels.channel_code')
+				->orderBy('channels.channel_code')
+				->get();
 		foreach ($channels as $channel) {
-			$channel_children = [];
-			$groups = \DB::table('level5')
+			$groups = \DB::table('mt_dt_hieracry')
 				->select('groups.group_code', 'groups.group_name')
-				->join('level4', 'level4.l4_code', '=', 'level5.l4_code')
-				->join('sub_channels', 'sub_channels.coc_03_code', '=', 'level4.coc_03_code')
-				->join('accounts', 'accounts.channel_code', '=', 'sub_channels.channel_code')
-				->join('ship_tos', 'ship_tos.ship_to_code', '=', 'accounts.ship_to_code')
-				->join('customers', 'customers.customer_code', '=', 'ship_tos.customer_code')
-				->join('areas', 'areas.area_code', '=', 'customers.area_code')
-				->join('groups', 'areas.group_code', '=', 'groups.group_code')
-				->where('accounts.active',1)
-				->where('ship_tos.active',1)
-				->where('accounts.channel_code',$channel->channel_code)
+				->join('sub_channels', 'sub_channels.coc_03_code', '=', 'mt_dt_hieracry.coc_03_code')
+				->join('areas', 'areas.area_code', '=', 'mt_dt_hieracry.area_code')
+				->join('groups', 'groups.group_code', '=', 'areas.group_code')
+				->where('sub_channels.channel_code', $channel->channel_code)
 				->groupBy('groups.group_code')
 				->orderBy('groups.id')
 				->get();
 
+			$channel_children = [];
 			foreach ($groups as $group) {
-				$group_children = [];
-				$areas = \DB::table('level5')
-					->select('customers.area_code as area_code','area_name')
-					->join('level4', 'level4.l4_code', '=', 'level5.l4_code')
-					->join('sub_channels', 'sub_channels.coc_03_code', '=', 'level4.coc_03_code')
-					->join('accounts', 'accounts.channel_code', '=', 'sub_channels.channel_code')
-					->join('ship_tos', 'ship_tos.ship_to_code', '=', 'accounts.ship_to_code')
-					->join('customers', 'customers.customer_code', '=', 'ship_tos.customer_code')
-					->join('areas', 'areas.area_code', '=', 'customers.area_code')
-					->join('groups', 'areas.group_code', '=', 'groups.group_code')
-					->where('accounts.active',1)
-					->where('ship_tos.active',1)
-					->where('accounts.channel_code',$channel->channel_code)
-					->where('areas.group_code',$group->group_code)
-					->groupBy('customers.area_code')
-					->orderBy('areas.id')
+				$areas = \DB::table('mt_dt_hieracry')
+					->select('areas.area_code', 'areas.area_name')
+					->join('sub_channels', 'sub_channels.coc_03_code', '=', 'mt_dt_hieracry.coc_03_code')
+					->join('areas', 'areas.area_code', '=', 'mt_dt_hieracry.area_code')
+					->join('groups', 'groups.group_code', '=', 'areas.group_code')
+					->where('sub_channels.channel_code', $channel->channel_code)
+					->where('groups.group_code', $group->group_code)
+					->groupBy('areas.area_code')
+					->orderBy('areas.area_name')
 					->get();
+				$group_children = [];
 				foreach ($areas as $area) {
-					$area_children = [];
-					$customers = \DB::table('level5')
-						->select('customers.customer_code','customer_name', 'ship_tos.ship_to_code')
-						->join('level4', 'level4.l4_code', '=', 'level5.l4_code')
-						->join('sub_channels', 'sub_channels.coc_03_code', '=', 'level4.coc_03_code')
-						->join('accounts', 'accounts.channel_code', '=', 'sub_channels.channel_code')
-						->join('ship_tos', 'ship_tos.ship_to_code', '=', 'accounts.ship_to_code')
-						->join('customers', 'customers.customer_code', '=', 'ship_tos.customer_code')
-						->join('areas', 'areas.area_code', '=', 'customers.area_code')
-						->join('groups', 'areas.group_code', '=', 'groups.group_code')
-						->where('accounts.active',1)
-						->where('ship_tos.active',1)
-						->where('accounts.channel_code',$channel->channel_code)
-						->where('areas.group_code',$group->group_code)
-						->where('customers.area_code',$area->area_code)
+					$distributors = \DB::table('mt_dt_hieracry')
+						->select('customers.customer_code', 'customers.customer_name')
+						->join('sub_channels', 'sub_channels.coc_03_code', '=', 'mt_dt_hieracry.coc_03_code')
+						->join('areas', 'areas.area_code', '=', 'mt_dt_hieracry.area_code')
+						->join('groups', 'groups.group_code', '=', 'areas.group_code')
+						->join('customers', 'customers.customer_code', '=', 'mt_dt_hieracry.customer_code')
+						->where('sub_channels.channel_code', $channel->channel_code)
+						->where('groups.group_code', $group->group_code)
+						->where('areas.area_code', $area->area_code)
 						->groupBy('customers.customer_code')
-						->orderBy('customers.id')
+						->orderBy('customers.customer_name')
 						->get();
-					foreach ($customers as $key => $customer) {
-						$customer_children =[];
-						$ship_tos = \DB::table('level5')
-							->select('ship_tos.ship_to_code','ship_tos.ship_to_name')
-							->join('level4', 'level4.l4_code', '=', 'level5.l4_code')
-							->join('sub_channels', 'sub_channels.coc_03_code', '=', 'level4.coc_03_code')
-							->join('accounts', 'accounts.channel_code', '=', 'sub_channels.channel_code')
-							->join('ship_tos', 'ship_tos.ship_to_code', '=', 'accounts.ship_to_code')
-							->join('customers', 'customers.customer_code', '=', 'ship_tos.customer_code')
-							->join('areas', 'areas.area_code', '=', 'customers.area_code')
-							->join('groups', 'areas.group_code', '=', 'groups.group_code')
-							->where('accounts.active',1)
-							->where('ship_tos.active',1)
-							->where('accounts.channel_code',$channel->channel_code)
-							->where('areas.group_code',$group->group_code)
-							->where('customers.area_code',$area->area_code)
-							->where('ship_tos.customer_code',$customer->customer_code)
-							->groupBy('ship_tos.ship_to_code')
-							->orderBy('ship_tos.id')
-							->get();
-						foreach ($ship_tos as $key => $ship_to) {
-							$ship_to_children = [];
-							$accounts = \DB::table('level5')
-								->select('ship_tos.ship_to_code','accounts.account_name', 'accounts.id')
-								->join('level4', 'level4.l4_code', '=', 'level5.l4_code')
-								->join('sub_channels', 'sub_channels.coc_03_code', '=', 'level4.coc_03_code')
-								->join('accounts', 'accounts.channel_code', '=', 'sub_channels.channel_code')
-								->join('ship_tos', 'ship_tos.ship_to_code', '=', 'accounts.ship_to_code')
-								->join('customers', 'customers.customer_code', '=', 'ship_tos.customer_code')
-								->join('areas', 'areas.area_code', '=', 'customers.area_code')
-								->join('groups', 'areas.group_code', '=', 'groups.group_code')
-								->where('accounts.active',1)
-								->where('ship_tos.active',1)
-								->where('accounts.channel_code',$channel->channel_code)
-								->where('areas.group_code',$group->group_code)
-								->where('customers.area_code',$area->area_code)
-								->where('ship_tos.customer_code',$customer->customer_code)
-								->where('accounts.ship_to_code',$ship_to->ship_to_code)
-								->groupBy('accounts.account_name')
-								->get();
-							
-								foreach ($accounts as $account) {
-									if($account->account_name != ''){
-										$ship_to_children[] = array(
-											'select' => true,
-											'title' => $account->account_name,
-											// 'isFolder' => true,
-											'key' =>  $channel->channel_code.".".$group->group_code.".".$area->area_code.".".$customer->customer_code.".".$ship_to->ship_to_code.".".$account->id,
-											// 'unselectable' => $unselectable,
-											// 'children' => $ship_to_children,
-											);
-									}
-								}
-							
-							$customer_children[] = array(
-								'select' => true,
-								'title' => $ship_to->ship_to_name,
-								'isFolder' => true,
-								'key' =>  $channel->channel_code.".".$group->group_code.".".$area->area_code.".".$customer->customer_code.".".$ship_to->ship_to_code,
-								// 'unselectable' => $unselectable,
-								'children' => $ship_to_children,
-								);
-						}
-
+					$area_children = [];
+					foreach ($distributors as $distributor) {
 						$area_children[] = array(
-							'select' => true,
-							'title' => $customer->customer_name,
+							'title' => $distributor->customer_name,
 							'isFolder' => true,
-							'key' =>  $channel->channel_code.".".$group->group_code.".".$area->area_code.".".$customer->customer_code,
-							// 'unselectable' => $unselectable,
-							'children' => $customer_children,
+							'key' => $channel->channel_code.'.'.$group->group_code.'.'.$area->area_code.'.'.$distributor->customer_code,
+							// 'children' => $channel_children,
 							);
 					}
-
 					$group_children[] = array(
-						'select' => true,
 						'title' => $area->area_name,
 						'isFolder' => true,
-						'key' =>  $channel->channel_code.".".$group->group_code.".".$area->area_code,
-						// 'unselectable' => $unselectable,
+						'key' => $channel->channel_code.'.'.$group->group_code.'.'.$area->area_code,
 						'children' => $area_children,
 						);
 				}
-
-				// group
 				$channel_children[] = array(
-					'select' => true,
 					'title' => $group->group_name,
 					'isFolder' => true,
-					'key' => $channel->channel_code.".".$group->group_code,
-					// 'unselectable' => $unselectable,
+					'key' => $channel->channel_code.'.'.$group->group_code,
 					'children' => $group_children,
 					);
 			}
 
-			// channels
 			$data[] = array(
 				'title' => $channel->channel_name,
 				'isFolder' => true,
 				'key' => $channel->channel_code,
-				// 'unselectable' => $unselectable,
 				'children' => $channel_children,
 				);
 		}
