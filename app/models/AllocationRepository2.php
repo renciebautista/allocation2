@@ -15,8 +15,7 @@ class AllocationRepository2  {
 	public function __construct()  {
       	
     }
-
-
+    
 	public function customers($skus, $selected_channels, $selected_customers,$forced_areas, $tradedeal = false, $trade_channels = false){
 
 		$this->_customers = $selected_customers;

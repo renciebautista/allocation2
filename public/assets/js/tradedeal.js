@@ -486,8 +486,8 @@ $(document).ready(function() {
 	} );
 
 	function reload_table(){
-	    table.ajax.reload(null,false); //reload datatable ajax 
-	    
+		location.reload();
+	    // table.ajax.reload(null,false); //reload datatable ajax 
 	}
 
 	var submitted = false;

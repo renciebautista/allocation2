@@ -376,6 +376,7 @@ Route::group(array('before' => 'auth'), function()
 
 		Route::get('customermaster', ['as' => 'customermaster.index', 'uses' => 'CustomerMasterController@index']);
 		Route::post('customermaster', ['as' => 'customermaster.export', 'uses' => 'CustomerMasterController@export']);
+		Route::get('customermaster/exportall', ['as' => 'customermaster.exportall', 'uses' => 'CustomerMasterController@exportall']);
 		Route::get('customermaster/{id}/download', ['as' => 'customermaster.download', 'uses' => 'CustomerMasterController@download']);
 
 		Route::get('sobfilter/export', 'SobfilterController@export');

@@ -1240,8 +1240,6 @@ class ActivityController extends BaseController {
 							}
 							ActivityCustomer::insert($activity_customers);
 
-
-							// dd($activity_customers);
 							ActivityCutomerList::addCustomer($activity->id,$activity_customers);
 
 							ForceAllocation::where('activity_id',$id)->delete();
@@ -1277,7 +1275,6 @@ class ActivityController extends BaseController {
 								$activity_channels[] = array('activity_id' => $id, 'channel_node' => trim($channel_node));
 							}
 							ActivityChannel2::insert($activity_channels);
-
 						}
 					}
 
@@ -3226,7 +3223,6 @@ class ActivityController extends BaseController {
 
 					if($update_pre_variant){
 						$host_skus = TradedealPartSku::where('pre_code', $pre_sku->sap_code)->where('activity_id', $activity->id)->get();
-						// dd($host_skus);
 						foreach ($host_skus as $sku) {
 							$sku->pre_variant = $pre_variant;
 							$sku->update();
@@ -3786,9 +3782,8 @@ class ActivityController extends BaseController {
 			$excel->sheet('OUTPUT FILE', function($sheet) use ($activity) {
 		    	$sheet->row(1, array('Promotion ID', 'BB Free Scheme', 'Promo Type',
 		    		'SKU Codes Involved', 'SKUs Involved', 'Premium Code', 'Premium',
-		    		'Outlet Sub Types Involved', 'Outlet Codes', 'Allocs', 'UOM', 'Source of Premium', 
-		    		'Arrival Date', 'PBP Code', 'PBP Description', 'Start Date', 'End Date', 
-		    		'UOM Quantity', '', 'TOP Allocs', 'ISR Allocs'));
+		    		'Outlet Sub Types Involved', 'Outlet Codes', 'Allocs (Pieces)', 'UOM', 'Source of Premium', 
+		    		'Start Date', 'End Date'));
 
 			    $datas = TradedealSchemeAllocation::select('scheme_code', 'scheme_desc', 'tradedeal_types.tradedeal_type', 
 			    	'tradedeal_scheme_sku_id', 'tradedeal_scheme_id', 'tradedeal_scheme_allocations.pre_code', 
@@ -3824,8 +3819,8 @@ class ActivityController extends BaseController {
 			    			$desc[] = $value->host_desc;
 			    		}
 
-			    		$host_code = implode(";", $code);
-			    		$host_desc = implode(";", $desc);
+			    		$host_code = implode("; ", $code);
+			    		$host_desc = implode("; ", $desc);
 
 			    	}
 
@@ -3836,6 +3831,9 @@ class ActivityController extends BaseController {
 			    		$pre_code = $row->pre_code;
 			    		$pre_desc = $row->pre_desc;
 			    		$source = 'Ex-ULP';
+			    	}else{
+			    		$pre_code = $scheme->pre_code;
+			    		$pre_desc = $scheme->pre_desc;
 			    	}
 
 			    	$channels = TradedealSchemeChannel::getSelectedDetails($scheme);
@@ -3850,7 +3848,7 @@ class ActivityController extends BaseController {
 		    		$end_date = date('d/m/Y', strtotime($row->end_date));
 			    	
 			    	$sheet->row($cnt, array($row->scheme_code, $row->scheme_desc, $row->tradedeal_type, $host_code, $host_desc, $pre_code, $pre_desc,
-			    	implode(';', $ch_code),implode(';', $ch_desc), $row->total_alloc, '', $source, '', '', '', $start_date, $end_date));
+			    	implode('; ', $ch_code),implode('; ', $ch_desc), $row->total_alloc, '', $source,  $start_date, $end_date));
 			    	$cnt++;
 			    }
 		    });

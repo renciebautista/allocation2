@@ -7,6 +7,7 @@
 /app/storage/exports/*
 /app/storage/le/*
 /public/barcode/*
+/public/*.csv
 composer.phar
 composer.lock
 .env.*.php

@@ -358,6 +358,7 @@
 					<tr>
 						<td>Schemes</td>
 						<td>
+							@if(count($schemes)> 0)
 							<table class="sub-table">
 								<tr>
 									<th>Activity</th>
@@ -368,7 +369,7 @@
 									<th>Premium Code / PIMS Code</th>
 									<th>Premium Description</th>
 								</tr>
-
+								
 								@foreach($tradedealschemes as $scheme)
 												<?php $x = false; ?>
 												<?php $host_cnt = 1; ?>
@@ -399,6 +400,7 @@
 										@endforeach
 								
 							</table>
+							@endif
 						</td>
 					</tr>
 					@endif
