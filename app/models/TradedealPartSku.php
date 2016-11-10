@@ -27,7 +27,7 @@ class TradedealPartSku extends \Eloquent {
 			->where('variant', $variant)
 			->where(function($query) use ($part_sku){
 				if(!is_null($part_sku)){
-					$query->where('id','!=',$part_sku->id)
+					$query->where('id','!=',$part_sku->id);
 				}
 			})
 			->first();
@@ -46,7 +46,7 @@ class TradedealPartSku extends \Eloquent {
 			->where('pre_code', $pre_code)
 			->where(function($query) use ($part_sku){
 				if(!is_null($part_sku)){
-					$query->where('id','!=',$part_sku->id)
+					$query->where('id','!=',$part_sku->id);
 				}
 			})
 			->first();
