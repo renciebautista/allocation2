@@ -25,7 +25,11 @@ class TradedealPartSku extends \Eloquent {
 		$record = self::where('activity_id', $activity->id)
 			->where('host_code', $host_code)
 			->where('variant', $variant)
-			->where('id','!=',$part_sku->id)
+			->where(function($query) use ($part_sku){
+				if(!is_null($part_sku)){
+					$query->where('id','!=',$part_sku->id)
+				}
+			})
 			->first();
 
 		if(!empty($record)){
@@ -40,7 +44,11 @@ class TradedealPartSku extends \Eloquent {
 			->where('host_code', $host_code)
 			->where('variant', $variant)
 			->where('pre_code', $pre_code)
-			->where('id','!=',$part_sku->id)
+			->where(function($query) use ($part_sku){
+				if(!is_null($part_sku)){
+					$query->where('id','!=',$part_sku->id)
+				}
+			})
 			->first();
 
 		if(!empty($record)){
