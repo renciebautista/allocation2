@@ -3010,7 +3010,7 @@ class ActivityController extends BaseController {
 							if(Input::get('pre_sku') != 0){
 								$part_sku->pre_code = $pre_sku->sap_code;
 								$part_sku->pre_desc = $pre_sku->sap_desc;
-								$presku =  TradedealPartSku::where('host_code', $host_sku->sap_code)->where('activity_id', $activity->id)->first();
+								$presku =  TradedealPartSku::where('host_code', $pre_sku->sap_code)->where('activity_id', $activity->id)->first();
 								if(!empty($presku)){
 									$part_sku->pre_variant = $presku->pre_variant;
 								}else{
@@ -3781,7 +3781,7 @@ class ActivityController extends BaseController {
 			    	$source = 'Ex-DT';
 			    	if(!$row->non_ulp_premium){
 			    		$pre_code = $row->pre_code;
-			    		$pre_desc = $row_pre_desc;
+			    		$pre_desc = $row->pre_desc;
 			    		$source = 'Ex-ULP';
 			    	}
 
