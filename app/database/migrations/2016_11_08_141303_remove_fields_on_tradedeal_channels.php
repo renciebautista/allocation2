@@ -17,7 +17,7 @@ class RemoveFieldsOnTradedealChannels extends Migration {
 			$table->dropColumn(['tradedeal_type_id', 'tradedeal_uom_id',
 				'pre_code', 'pre_desc', 'pre_cost', 'pre_pcs_case', 
 				'free', 'coverage', 'pur_req', 
-				'buy_pcs', 'pcs_deal', 'scheme_code', 'buy', 'rtm_tag']);
+				'buy_pcs', 'pcs_deal', 'scheme_code', 'rtm_tag']);
 
 			// $table->string('channel_code')->after('l5_desc')->nullable();
 			// $table->string('channel_desc')->after('channel_code')->nullable();
@@ -43,7 +43,7 @@ class RemoveFieldsOnTradedealChannels extends Migration {
 			// $table->string('scheme');
 			$table->string('rtm_tag');
 
-			$table->integer('buy')->unsigned()->nullable();
+			// $table->integer('buy')->unsigned()->nullable();
 			$table->integer('free')->unsigned()->nullable();
 			$table->decimal('pur_req', 10, 2);
 			$table->integer('buy_pcs');
