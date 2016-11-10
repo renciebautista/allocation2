@@ -350,7 +350,7 @@ Route::group(array('before' => 'auth'), function()
 
 		Route::get('pricelistsku', 'api\PriceListController@getSku');
 		Route::get('tdpricelistsku', 'api\PriceListController@tdpricelistsku');
-		Route::get('tdrefpricelistsku', 'api\PriceListController@tdrefpricelistsku');
+		Route::get('tdprepricelistsku', 'api\PriceListController@tdprepricelistsku');
 
 		Route::get('tdchannels','api\TradeChannelController@index');
 		Route::get('selectedtdchannels','api\TradeChannelController@selectedtdchannels');

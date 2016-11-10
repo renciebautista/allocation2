@@ -27,7 +27,7 @@ class PriceListController extends \BaseController {
 		}
 	}
 
-	public function tdrefpricelistsku(){
+	public function tdprepricelistsku(){
 		if(\Request::ajax()){
 			$code = \Input::get('code');
 			$activity_id = \Input::get('ac_id');
@@ -37,7 +37,7 @@ class PriceListController extends \BaseController {
 
 			$sku =  \TradedealPartSku::where('pre_code', $code)->where('activity_id', $activity_id)->first();
 			if(!empty($sku)){
-				$data['variant']  = $sku->variant;
+				$data['variant']  = $sku->pre_variant;
 			}
 
 			return \Response::json($data,200);

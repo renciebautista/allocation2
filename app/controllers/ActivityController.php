@@ -2830,7 +2830,7 @@ class ActivityController extends BaseController {
 					$tradedeal->activity_id = $id;
 				}
 				$tradedeal->alloc_in_weeks = str_replace(",", "", Input::get('alloc_in_weeks'));
-				$tradedeal->non_ulp_premium = Input::get('non_ulp_premium');
+				$tradedeal->non_ulp_premium = (Input::has('non_ulp_premium')) ? 1 : 0; 
 
 				$tradedeal->non_ulp_premium_desc = Input::get('non_ulp_premium_desc');
 				$tradedeal->non_ulp_premium_code = Input::get('non_ulp_premium_code');
@@ -3111,18 +3111,20 @@ class ActivityController extends BaseController {
 		if(Request::ajax()){
 			$err = [];
 			$part_sku = TradedealPartSku::find(Input::get('sku_id'));
+			$activity = Activity::find($part_sku->activity_id);
 			$tradedeal = Tradedeal::where('activity_id', $part_sku->activity_id)->first();
 			if(empty($part_sku)){
 				$err[] = 'Participating SKU not found';
 			}else{
 				$host_sku = Pricelist::getSku(Input::get('ehost_sku'));
 				$ref_sku = Sku::getSku(Input::get('eref_sku'));
-				$host_variant = Input::get('evariant');
-				$pre_variant = Input::get('epre_variant');
+				$host_variant = strtoupper(Input::get('evariant'));
+				$pre_variant = strtoupper(Input::get('epre_variant'));
 
 				$ref_sku2 = Pricelist::getSku(Input::get('eref_sku'));
 
 				$pre_sku = Pricelist::getSku(Input::get('epre_sku'));
+
 				if(empty($host_sku)){
 					$err[] = 'No selected Host SKU.';
 				}
@@ -3146,15 +3148,40 @@ class ActivityController extends BaseController {
 					}
 				}
 
+				if($tradedeal->non_ulp_premium){
+					if(TradedealPartSku::nonUlpHostExist($activity, $host_sku->sap_code, $host_variant, $part_sku)){
+						$err[] = 'Host SKU and variant already exist.';
+					}
+				}else{
+					if(!empty($pre_sku)){
+						if(TradedealPartSku::ulpHostExist($activity, $host_sku->sap_code, $host_variant, $pre_sku->sap_code, $pre_variant, $part_sku)){
+							$err[] = 'Host / Premium SKU combination exist.';
+						}
+					}
+					
+				}
+
 
 
 				if(count($err) == 0){
+					$update_host_variant = false;
+					$update_pre_variant = true;
 					$part_sku->host_code = $host_sku->sap_code;
 					$part_sku->host_desc = $host_sku->sap_desc;
-					$part_sku->variant = strtoupper(Input::get('evariant'));
+					$hostsku =  TradedealPartSku::where('host_code', $host_sku->sap_code)->where('activity_id', $activity->id)->first();
+					$host_cost = str_replace(",", '', Input::get('ehost_cost_pcs'));
+					if(!empty($hostsku)){
+						$part_sku->variant = $hostsku->variant;
+						if(($hostsku->variant != $host_variant) || ($hostsku->host_cost != $host_cost)){
+							$update_host_variant =  true;
+						}
+					}else{
+						$part_sku->variant = $host_variant;
+					}
+
 					$part_sku->brand_shortcut = $host_sku->brand_shortcut;
 					$part_sku->host_sku_format = $host_sku->sku_format;
-					$part_sku->host_cost = str_replace(",", '', Input::get('ehost_cost_pcs'));
+					$part_sku->host_cost = $host_cost;
 					$part_sku->host_pcs_case = $host_sku->pack_size;
 					$part_sku->ref_code = $ref_sku->sku_code;
 					$part_sku->ref_desc = $ref_sku->sku_desc;
@@ -3170,15 +3197,41 @@ class ActivityController extends BaseController {
 						if(Input::get('epre_sku') != 0){
 							$part_sku->pre_code = $pre_sku->sap_code;
 							$part_sku->pre_desc = $pre_sku->sap_desc;
-							$part_sku->pre_variant = strtoupper(Input::get('epre_variant'));
+							$presku =  TradedealPartSku::where('host_code', $pre_sku->sap_code)->where('activity_id', $activity->id)->first();
+
+							if(!empty($presku)){
+								$part_sku->pre_variant = $presku->pre_variant;
+								if($part_sku->pre_variant != $pre_variant){
+									$update_pre_variant = true;
+								}
+							}else{
+								$part_sku->pre_variant = $pre_variant;
+							}
 							$part_sku->pre_brand_shortcut = $pre_sku->brand_shortcut;
 							$part_sku->pre_sku_format = $pre_sku->sku_format;
 							$part_sku->pre_cost =str_replace(",", '', Input::get('epre_cost_pcs'));
 							$part_sku->pre_pcs_case = $pre_sku->pack_size;
 						}
 					}
-					
 					$part_sku->save();
+
+					if($update_host_variant){
+						$host_skus = TradedealPartSku::where('host_code', $host_sku->sap_code)->where('activity_id', $activity->id)->get();
+						foreach ($host_skus as $sku) {
+							$sku->variant = $host_variant;
+							$sku->host_cost = $host_cost;
+							$sku->update();
+						}
+					}
+
+					if($update_pre_variant){
+						$host_skus = TradedealPartSku::where('pre_code', $pre_sku->sap_code)->where('activity_id', $activity->id)->get();
+						// dd($host_skus);
+						foreach ($host_skus as $sku) {
+							$sku->pre_variant = $pre_variant;
+							$sku->update();
+						}
+					}
 				}	
 
 			}

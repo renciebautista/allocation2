@@ -2,6 +2,19 @@ $(document).ready(function() {
 	var hostname = 'http://' + $(location).attr('host');
 	var activity_id = $('#activity_id').val();
 
+	// $('#add_scheme').hide();
+	
+	// showAddScheme();
+
+	function showAddScheme(){
+		var rowCount = $('#participating_sku >tbody >tr >td.sorting_1').length;
+		if(rowCount > 0){
+			$('#add_scheme').show();
+		}else{
+			$('#add_scheme').hide();
+		}
+	}
+
 	$('#copy_host').click(function(){
 		$('#pre_sku').val($("#host_sku").chosen().val()).trigger('chosen:updated');
 		$('#pre_cost_pcs').val($('#host_cost_pcs').val());
@@ -22,12 +35,21 @@ $(document).ready(function() {
 	});
 
 	$('#host_cost_pcs, #ehost_cost_pcs').inputNumber();
+
 	$('.cost-edit').click(function(){
 		$('#host_cost_pcs').removeAttr('readonly').focus();
 	})
 
 	$('.ecost-edit').click(function(){
 		$('#ehost_cost_pcs').removeAttr('readonly').focus();
+	})
+
+	$('.var-edit').click(function(){
+		$('#evariant').removeAttr('readonly').focus();
+	})
+
+	$('.prevar-edit').click(function(){
+		$('#epre_variant').removeAttr('readonly').focus();
 	})
 
 	$("#updateTradedeal").validate({
@@ -132,8 +154,14 @@ $(document).ready(function() {
 	$('#coverage').inputNumber({ allowDecimals: false});
 
 	$('#add_sku').on('click', function(e){
-		e.preventDefault(); // prevents button from submitting
-		$('#addsku').modal('show');
+		e.preventDefault(); 
+		var count = $("#skus :selected").length;
+		if(count > 0){
+			$('#addsku').modal('show');
+		}else{
+			alert('No SKU Involved selected on Activity Details.');
+		}
+		
 	})
 
 	// var non_ulp_premium = $('input[name="non_ulp_premium"]:checked').length > 0;
@@ -153,13 +181,17 @@ $(document).ready(function() {
 		        dataType: "json",
 		        success: function (data) {
 		        	$('#host_cost_pcs').val('');
-		        	$('#host_cost_pcs').val(data.sku.price);
 		        	$('#host_pcs_case').val('');
-		        	$('#host_pcs_case').val(data.sku.pack_size);
-		        	if(data.variant != ''){
-		        		$('#variant').val(data.variant).attr('readonly', '');
+		        	
+		        	if(data.sku !== null){
+		        		$('#host_cost_pcs').val(data.sku.price);
+		        		$('#host_pcs_case').val(data.sku.pack_size);
 		        	}else{
 		        		$('#variant').val('').removeAttr('readonly');
+		        	}
+		        	
+		        	if(data.variant != ''){
+		        		$('#variant').val(data.variant).attr('readonly', '');
 		        	}
 		        },
 		        error: function (msg) { roles = msg; }
@@ -184,18 +216,22 @@ $(document).ready(function() {
 			    $.ajax({
 			        async: false,
 			        type: "GET",
-			        url: hostname + '/api/tdrefpricelistsku/?code='+$(this).val()+'&ac_id='+activity_id,
+			        url: hostname + '/api/tdprepricelistsku/?code='+$(this).val()+'&ac_id='+activity_id,
 			        contentType: "application/json; charset=utf-8",
 			        dataType: "json",
 			        success: function (data) { 
-			        	$('#pre_cost_pcs').val('');
-			        	$('#pre_cost_pcs').val(data.sku.price);
-			        	$('#pre_pcs_case').val('');
-			        	$('#pre_pcs_case').val(data.sku.pack_size);
-			        	if(data.variant != ''){
-			        		$('#pre_variant').val(data.variant).attr('readonly', '');
+			        	$('#epre_cost_pcs').val('');
+			        	$('#epre_pcs_case').val('');
+			        	
+			        	if(data.sku !== null){
+			        		$('#pre_cost_pcs').val(data.sku.price);
+			        		$('#pre_pcs_case').val(data.sku.pack_size);
 			        	}else{
 			        		$('#pre_variant').val('').removeAttr('readonly');
+			        	}
+			        	
+			        	if(data.variant != ''){
+			        		$('#pre_variant').val(data.variant).attr('readonly', '');
 			        	}
 			        },
 			        error: function (msg) { roles = msg; }
@@ -227,14 +263,24 @@ $(document).ready(function() {
 		    $.ajax({
 		        async: false,
 		        type: "GET",
-		        url: hostname + '/api/pricelistsku/?code='+$(this).val(),
+		        url: hostname + '/api/tdpricelistsku/?code='+$(this).val()+'&ac_id='+activity_id,
 		        contentType: "application/json; charset=utf-8",
 		        dataType: "json",
 		        success: function (data) { 
 		        	$('#ehost_cost_pcs').val('');
-		        	$('#ehost_cost_pcs').val(data.price);
 		        	$('#ehost_pcs_case').val('');
-		        	$('#ehost_pcs_case').val(data.pack_size);
+		        	
+		        	if(data.sku !== null){
+		        		$('#ehost_cost_pcs').val(data.sku.price);
+		        		$('#ehost_pcs_case').val(data.sku.pack_size);
+		        	}else{
+		        		$('#evariant').val('').removeAttr('readonly');
+		        	}
+		        	if(data.variant != ''){
+		        		$('#evariant').val(data.variant).attr('readonly', '');
+		        	}else{
+		        		$('#evariant').val('').removeAttr('readonly');
+		        	}
 		        },
 		        error: function (msg) { roles = msg; }
 		    });
@@ -258,14 +304,24 @@ $(document).ready(function() {
 			    $.ajax({
 			        async: false,
 			        type: "GET",
-			        url: hostname + '/api/pricelistsku/?code='+$(this).val(),
+			        url: hostname + '/api/tdprepricelistsku/?code='+$(this).val()+'&ac_id='+activity_id,
 			        contentType: "application/json; charset=utf-8",
 			        dataType: "json",
 			        success: function (data) { 
 			        	$('#epre_cost_pcs').val('');
-			        	$('#epre_cost_pcs').val(data.price);
 			        	$('#epre_pcs_case').val('');
-			        	$('#epre_pcs_case').val(data.pack_size);
+			        	if(data.sku !== null){
+			        		$('#epre_cost_pcs').val(data.sku.price);
+			        		$('#epre_pcs_case').val(data.sku.pack_size);
+			        	}else{
+			        		$('#epre_variant').val('').removeAttr('readonly');
+			        	}
+			        	
+			        	if(data.variant != ''){
+			        		$('#epre_variant').val(data.variant).attr('readonly', '');
+			        	}else{
+			        		$('#epre_variant').val('').removeAttr('readonly');
+			        	}
 			        },
 			        error: function (msg) { roles = msg; }
 			    });
@@ -275,7 +331,22 @@ $(document).ready(function() {
 
 
 	}).on('hide.bs.modal', function(){
-		$('#ehost_cost_pcs').attr('readonly', '');
+		$("#ehost_sku, #eref_sku, #epre_sku").val('').trigger("chosen:updated");
+		$('#ehost_cost_pcs').val('');
+		$('#ehost_pcs_case').val('');
+		$('#updatepartskus .error-msg').text('');
+		$('#evariant').val('');
+		$('#epre_variant').val('');
+		$('.ulppremium, .non_ulppremium').hide();
+		$('#epre_variant').val('').attr('readonly', '');
+		$('#evariant').val('').attr('readonly', '');
+		$('#epre_variant').val('').attr('readonly', '');
+		$('#ehost_cost_pcs').val('').attr('readonly', '');
+		if(non_premiun == '1'){
+		}else{
+			$('#epre_cost_pcs').val('');
+			$('#epre_pcs_case').val('');
+		}
 	});
 
 
@@ -301,7 +372,7 @@ $(document).ready(function() {
 			            
 			        }
 			        ul = ul + '</ul>'; 
-					$('#addpartskus .error-msg').text('').append(html.replace(/%s/g, ul));;
+					$('#updatepartskus .error-msg').text('').append(html.replace(/%s/g, ul));;
 				}
 			}
 		});
@@ -410,10 +481,13 @@ $(document).ready(function() {
 			"targets": "_all",
 			"defaultContent": ""
 		} ]
-	});
+	}).on( 'draw.dt', function () {
+	    showAddScheme();
+	} );
 
 	function reload_table(){
 	    table.ajax.reload(null,false); //reload datatable ajax 
+	    
 	}
 
 	var submitted = false;

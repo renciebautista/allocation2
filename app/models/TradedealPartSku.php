@@ -21,10 +21,11 @@ class TradedealPartSku extends \Eloquent {
 	}
 
 
-	public static function nonUlpHostExist($activity, $host_code, $variant){
+	public static function nonUlpHostExist($activity, $host_code, $variant,  $part_sku = null){
 		$record = self::where('activity_id', $activity->id)
 			->where('host_code', $host_code)
 			->where('variant', $variant)
+			->where('id','!=',$part_sku->id)
 			->first();
 
 		if(!empty($record)){
@@ -34,12 +35,12 @@ class TradedealPartSku extends \Eloquent {
 		}
 	}
 
-	public static function ulpHostExist($activity, $host_code, $variant, $pre_code, $pre_variant){
+	public static function ulpHostExist($activity, $host_code, $variant, $pre_code, $pre_variant, $part_sku = null){
 		$record = self::where('activity_id', $activity->id)
 			->where('host_code', $host_code)
 			->where('variant', $variant)
 			->where('pre_code', $pre_code)
-			// ->where('pre_variant', $pre_variant)
+			->where('id','!=',$part_sku->id)
 			->first();
 
 		if(!empty($record)){

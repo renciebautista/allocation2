@@ -756,7 +756,7 @@
 			<div class="panel-body">
 				<div class="row">
 					<div class="col-lg-12">
-						<a class="btn btn-primary btn-sm" href="{{action('ActivityController@createtradealscheme', $activity->id);}}">Add Scheme</a>
+						<a id="add_scheme" class="btn btn-primary btn-sm" href="{{action('ActivityController@createtradealscheme', $activity->id);}}">Add Scheme</a>
 					</div>
 				</div>
 				<br>
@@ -1594,7 +1594,18 @@
 						<tr>
 							<td>Variant Shortcut</td>
 							<td colspan="3">
-								<input class="form-control" name="evariant" type="text" value="" id="evariant">
+								<div class="row">
+								  <div class="col-lg-12">
+								    <div class="input-group">
+								      	<input class="form-control" name="evariant" type="text" value="" id="evariant" readonly ='' >
+
+								      <span class="input-group-btn">
+								      	<button type="button" data-toggle="tooltip" data-placement="top" title="Will update Host SKU varaint" class="btn btn-success var-edit">Edit</button>
+								      </span>
+								    </div><!-- /input-group -->
+								  </div><!-- /.col-lg-6 -->
+								</div><!-- /.row -->
+								
 							</td>
 						</tr>
 						<tr>
@@ -1633,7 +1644,18 @@
 						<tr>
 							<td>Variant Shortcut</td>
 							<td colspan="3">
-								<input class="form-control" name="epre_variant" type="text" value="" id="epre_variant">
+								<div class="row">
+								  <div class="col-lg-12">
+								    <div class="input-group">
+										<input class="form-control" name="epre_variant" type="text" value="" id="epre_variant" readonly =''>
+
+								      <span class="input-group-btn">
+								      	<button type="button" data-toggle="tooltip" data-placement="top" title="Will update Premium SKU varaint" class="btn btn-success prevar-edit">Edit</button>
+								      </span>
+								    </div><!-- /input-group -->
+								  </div><!-- /.col-lg-6 -->
+								</div><!-- /.row -->
+
 							</td>
 						</tr>
 						@else
@@ -1663,7 +1685,7 @@
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				<button id="submitsku" class="btn btn-primary">Submit</button>
+				<button id="submitsku" class="btn btn-primary">Update</button>
 			</div>
 		</div>
 		{{ Form::close() }}
