@@ -18,7 +18,10 @@ class TradedealSchemeChannel extends \Eloquent {
 					$sel_ch_arr = [];
 					foreach ($selected_channels as $sel_ch) {
 						$sel_node = explode(".", $sel_ch->channel_node);
-						$sel_ch_arr[] = $sel_node[1];
+						if(isset($sel_node[1])){
+							$sel_ch_arr[] = $sel_node[1];
+						}
+						
 					}
 					$l5s = TradedealChannel::getChannels($activity, $node[0]);
 
