@@ -19,8 +19,8 @@ class RemoveFieldsOnTradedealChannels extends Migration {
 				'free', 'coverage', 'pur_req', 
 				'buy_pcs', 'pcs_deal', 'scheme_code', 'buy', 'rtm_tag']);
 
-			$table->string('channel_code')->after('l5_desc')->nullable();
-			$table->string('channel_desc')->after('channel_code')->nullable();
+			// $table->string('channel_code')->after('l5_desc')->nullable();
+			// $table->string('channel_desc')->after('channel_code')->nullable();
 		});
 	}
 
