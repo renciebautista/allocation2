@@ -62,24 +62,21 @@ class Channel extends \Eloquent {
 			try {
 			DB::table('channels')->truncate();
 			DB::table('sub_channels')->truncate();
-			DB::table('level4')->truncate();
-			DB::table('level5')->truncate();
+
 			$records->each(function($row)  {
-				if(!is_null($row->channel_code)){
 					Channel::firstOrCreate(['channel_code' => $row->channel_code, 'channel_name' => $row->channel_name]);
-					SubChannel::firstOrCreate(['coc_03_code' => $row->coc_03_code, 'channel_code' => $row->channel_code, 'l3_desc' => $row->l3_desc]);
-					if(!empty($row->l4_code)){
-						Level4::firstOrCreate(['coc_03_code' => $row->coc_03_code, 'l4_code' => $row->l4_code, 'l4_desc' => $row->l4_desc]);
-					}
-					if(!empty($row->l5_code)){
-						Level5::firstOrCreate(['l4_code' => $row->l4_code, 'l5_code' => $row->l5_code, 'l5_desc' => $row->l5_desc, 'rtm_tag' => $row->rtm_tag, 'trade_deal' => $row->trade_deal]);
-					}
-				}
-				
+					SubChannel::firstOrCreate(['channel_code' => $row->channel_code, 
+						'coc_03_code' => $row->coc_03_code, 
+						'l3_desc' => $row->l3_desc,
+						'l4_code' => $row->l4_code,
+						'l4_desc' => $row->l4_desc,
+						'l5_code' => $row->l5_code,
+						'l5_desc' => $row->l5_desc,
+						'rtm_tag' => $row->rtm_tag,
+						'trade_deal' => $row->trade_deal]);
 			});
 			DB::commit();
 		} catch (\Exception $e) {
-			// dd($e);
 			DB::rollback();
 		}
 	}

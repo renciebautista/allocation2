@@ -1,7 +1,7 @@
 <?php
 
 class SubChannel extends \Eloquent {
-	protected $fillable = ['coc_03_code', 'channel_code', 'l3_desc'];
+	protected $fillable = ['coc_03_code', 'channel_code', 'l3_desc', 'l4_code', 'l4_desc', 'l5_code', 'l5_desc', 'rtm_tag', 'trade_deal'];
 	public $timestamps = false;
 
 	public static function batchInsert($records){

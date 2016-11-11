@@ -33,4 +33,17 @@ class ActivityCustomer extends \Eloquent {
 		}
 		return $areas;
 	}
+
+
+	public static function getSelectedChannels($activity){
+		$channels = [];
+		$channel_nodes = self::where('activity_id', $activity->id)->get();
+		foreach ($channel_nodes as $channel_node) {
+		 	$node = explode('.', $channel_node->customer_node);
+
+		 	$channels[] = $node[0];
+		}
+
+		return array_unique($channels); 
+	}
 }

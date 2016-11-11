@@ -18,36 +18,6 @@ Queue::getIron()->ssl_verifypeer = false;
 |
 */
 
-Route::get('testmtdt', function(){
-	// $sales = MtDtSales::all();
-	// $cnt = 1;
-	// foreach ($sales as $sale) {
-	// 	$sale->plant_code = $cnt;
-	// 	$sale->save();
-	// 	$cnt++;
-	// 	if($cnt == 119){
-	// 		$cnt = 1;
-	// 	}
-	// }
-
-	$data = DB::table('level5')
-			->select('groups.group_code', 'groups.group_name')
-			->join('level4', 'level4.l4_code', '=', 'level5.l4_code')
-			->join('sub_channels', 'sub_channels.coc_03_code', '=', 'level4.coc_03_code')
-			->join('accounts', 'accounts.channel_code', '=', 'sub_channels.channel_code')
-			->join('ship_tos', 'ship_tos.ship_to_code', '=', 'accounts.ship_to_code')
-			->join('customers', 'customers.customer_code', '=', 'ship_tos.customer_code')
-			->join('areas', 'areas.area_code', '=', 'customers.area_code')
-			->join('groups', 'areas.group_code', '=', 'groups.group_code')
-			->where('accounts.active',1)
-			->where('ship_tos.active',1)
-			->groupBy('groups.group_code')
-			// ->orderBy('customers.customer_name')
-			// ->orderBy('ship_tos.ship_to_name')
-			->get();
-
-	Helper::debug($data);
-});
 
 
 
@@ -475,17 +445,6 @@ Route::group(array('before' => 'auth'), function()
 		Route::post('settings', ['as' => 'settings.update', 'uses' => 'SettingsController@update']);
 
 		Route::resource('sobholiday', 'SobholidaysController');
-		
-		// Route::get('level4/export', 'Level4Controller@export');
-		// Route::get('level4/import', 'Level4Controller@import');
-		// Route::post('level4/upload', 'Level4Controller@upload');
-		// Route::resource('level4', 'Level4Controller');
-
-		// Route::get('level5/export', 'Level5Controller@export');
-		// Route::get('level5/import', 'Level5Controller@import');
-		// Route::post('level5/upload', 'Level5Controller@upload');
-		// Route::resource('level5', 'Level5Controller');
-
 
 		Route::get('reports/{id}/review', ['as' => 'reports.review', 'uses' => 'ReportController@review']);
 		Route::get('reports/{id}/scheme/', ['as' => 'reports.scheme', 'uses' => 'ReportController@scheme']);
