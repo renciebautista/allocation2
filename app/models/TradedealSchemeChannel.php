@@ -4,9 +4,9 @@ class TradedealSchemeChannel extends \Eloquent {
 	protected $fillable = [];
 	public $timestamps = false;
 
-	public static function createChannelSelection($scheme, $activity, $inpu_channels){
+	public static function createChannelSelection($scheme, $activity, $input_channels){
 		self::where('tradedeal_scheme_id', $scheme->id)->delete();
-		$channels = explode(",", $inpu_channels);
+		$channels = explode(",", $input_channels);
 		if(!empty($channels)){
 			$td_channels = array();
 			foreach ($channels as $channel){
@@ -21,13 +21,13 @@ class TradedealSchemeChannel extends \Eloquent {
 						if(isset($sel_node[1])){
 							$sel_ch_arr[] = $sel_node[1];
 						}
-						
 					}
-					$l5s = TradedealChannel::getChannels($activity, $node[0]);
 
-					foreach ($l5s as $av_ch) {
-						if(!in_array($av_ch->l5_code, $sel_ch_arr)){
-							$td_channels[] = array('tradedeal_scheme_id' => $scheme->id, 'channel_node' => $node[0].'.'.$av_ch->l5_code);
+					$sub_channels = TradedealChannel::getChannels($activity, $node[0]);
+
+					foreach ($sub_channels as $av_ch) {
+						if(!in_array($av_ch->sub_channel_desc, $sel_ch_arr)){
+							$td_channels[] = array('tradedeal_scheme_id' => $scheme->id, 'channel_node' => $node[0].'.'.$av_ch->sub_channel_desc);
 						}
 					}
 				}
@@ -41,6 +41,7 @@ class TradedealSchemeChannel extends \Eloquent {
 	public static function getallselected($activity){
 		return self::join('tradedeal_schemes', 'tradedeal_schemes.id', '=', 'tradedeal_scheme_channels.tradedeal_scheme_id')
 			->join('tradedeals', 'tradedeals.id', '=', 'tradedeal_schemes.tradedeal_id')
+			->where('activity_id', $activity->id)
 			->get();
 	}
 
@@ -56,26 +57,27 @@ class TradedealSchemeChannel extends \Eloquent {
 			->get();
 	}
 
-	public static function getLevel5($scheme){
-		$tradedeal = Tradedeal::findOrFail($scheme->tradedeal_id);
-		$activity = Activity::findOrFail($tradedeal->activity_id);
-		$nodes = self::where('tradedeal_scheme_id', $scheme->id)->get();
-		$l5 = [];
-		foreach ($nodes as $node) {
-			$_selected_node = explode(".", $node->channel_node);
+	public static function getSelectedChannels($scheme){
+		return self::where('tradedeal_scheme_id', $scheme->id)->get();
+		// $tradedeal = Tradedeal::findOrFail($scheme->tradedeal_id);
+		// $activity = Activity::findOrFail($tradedeal->activity_id);
+		// $nodes = self::where('tradedeal_scheme_id', $scheme->id)->get();
+		// $l5 = [];
+		// foreach ($nodes as $node) {
+		// 	$_selected_node = explode(".", $node->channel_node);
 
-			$ch[] = $_selected_node[0];
-			if(!empty($_selected_node[1])){
-				$l5[] = $_selected_node[1];
-			}else{
-				$level5s = TradedealChannel::getChannel($activity, $ch);
-				foreach ($level5s as $value) {
-					$l5[] = $value->l5_code;
-				}
-			}
-		}
+		// 	$ch[] = $_selected_node[0];
+		// 	if(!empty($_selected_node[1])){
+		// 		$l5[] = $_selected_node[1];
+		// 	}else{
+		// 		$level5s = TradedealChannel::getChannel($activity, $ch);
+		// 		foreach ($level5s as $value) {
+		// 			$l5[] = $value->l5_code;
+		// 		}
+		// 	}
+		// }
 		
-		return array_unique($l5);
+		// return array_unique($l5);
 		
 	}
 }

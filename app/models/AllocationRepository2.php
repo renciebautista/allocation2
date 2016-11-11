@@ -158,7 +158,6 @@ class AllocationRepository2  {
 		
 		
 		if(in_array("E1397", $_grps)){	
-
 			$this->_dt_secondary_sales = DB::table('mt_dt_sales')
 					->select(DB::raw("mt_dt_sales.area_code,mt_dt_sales.customer_code, SUM(gsv) as gsv"))
 					->join('sub_channels', 'mt_dt_sales.coc_03_code', '=', 'sub_channels.coc_03_code')

@@ -4,6 +4,13 @@ class Customer extends \Eloquent {
 	protected $fillable = ['area_code', 'area_code_two','customer_code', 'customer_name', 'active', 'multiplier','from_dt'];
 	public $timestamps = false;
 
+	public static function getForTradedeal(){
+		return self::join('areas', 'areas.area_code' , '=', 'customers.area_code')
+			->where('active',1)
+			->where('trade_deal',1)
+			->get();
+	}
+
 	public static function getAll(){
 		return self::select('customers.id', 'customers.area_code',
 			'areas.area_name',

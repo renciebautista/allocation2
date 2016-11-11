@@ -432,7 +432,7 @@ class CustomerController extends \BaseController {
 				->join('sub_channels', 'sub_channels.coc_03_code', '=', 'mt_dt_hieracry.coc_03_code')
 				->join('channels', 'channels.channel_code', '=', 'sub_channels.channel_code')
 				->groupBy('channels.channel_code')
-				->orderBy('channels.channel_code')
+				->orderBy('channels.channel_name')
 				->get();
 		foreach ($channels as $channel) {
 			$groups = \DB::table('mt_dt_hieracry')
@@ -473,11 +473,72 @@ class CustomerController extends \BaseController {
 						->get();
 					$area_children = [];
 					foreach ($distributors as $distributor) {
+						$shiptos = \DB::table('mt_dt_hieracry')
+							->select('ship_tos.plant_code', 'ship_tos.ship_to_name', 'ship_tos.ship_to_code')
+							->join('sub_channels', 'sub_channels.coc_03_code', '=', 'mt_dt_hieracry.coc_03_code')
+							->join('areas', 'areas.area_code', '=', 'mt_dt_hieracry.area_code')
+							->join('groups', 'groups.group_code', '=', 'areas.group_code')
+							->join('customers', 'customers.customer_code', '=', 'mt_dt_hieracry.customer_code')
+							->join('ship_tos', 'ship_tos.plant_code', '=', 'mt_dt_hieracry.plant_code')
+							->where('sub_channels.channel_code', $channel->channel_code)
+							->where('groups.group_code', $group->group_code)
+							->where('areas.area_code', $area->area_code)
+							->where('ship_tos.customer_code', $distributor->customer_code)
+							->groupBy('ship_tos.plant_code')
+							->orderBy('ship_tos.ship_to_name')
+							->get();
+						$distributor_children = [];
+						foreach ($shiptos as $shipto) {
+							if($shipto->ship_to_code != '') {
+								$shipto_children = array();
+
+								$accounts = \DB::table('accounts')
+									->where('ship_to_code',$shipto->ship_to_code )
+									->where('area_code',$area->area_code)
+									->where('channel_code',$channel->channel_code)
+									->where('accounts.active',1)
+									->get();
+									
+								if(count($accounts)>0){
+									$shipto_children = array();
+									
+									foreach ($accounts as $account) {
+										$shipto_children[] = array(
+										'title' => $account->account_name,
+										'key' => $channel->channel_code.'.'.$group->group_code.'.'.$area->area_code.'.'.$distributor->customer_code.'.'.$shipto->plant_code.".".$account->id,
+										);
+									}
+
+								}
+
+								if(count($shipto_children) > 0){
+									$customer_children[] = array(
+									'title' => $shipto->ship_to_name,
+									'key' => $channel->channel_code.'.'.$group->group_code.'.'.$area->area_code.'.'.$distributor->customer_code.'.'.$shipto->plant_code,
+									'children' => $shipto_children,
+										
+									);
+								}else{
+									$customer_children[] = array(
+									'title' => $shipto->ship_to_name,
+									'key' => $channel->channel_code.'.'.$group->group_code.'.'.$area->area_code.'.'.$distributor->customer_code.'.'.$shipto->plant_code,
+									);
+								}
+							}
+
+							$distributor_children[] = array(
+								'title' => $shipto->ship_to_name,
+								'isFolder' => true,
+								'key' => $channel->channel_code.'.'.$group->group_code.'.'.$area->area_code.'.'.$distributor->customer_code.'.'.$shipto->plant_code,
+								'children' => $shipto_children,
+								);
+						}
+
 						$area_children[] = array(
 							'title' => $distributor->customer_name,
 							'isFolder' => true,
 							'key' => $channel->channel_code.'.'.$group->group_code.'.'.$area->area_code.'.'.$distributor->customer_code,
-							// 'children' => $channel_children,
+							'children' => $distributor_children,
 							);
 					}
 					$group_children[] = array(

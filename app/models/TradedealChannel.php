@@ -12,6 +12,7 @@ class TradedealChannel extends \Eloquent {
 	public static function getChannels($activity, $channel_code){
 		return self::where('activity_id', $activity->id)
 			->where('channel_code', $channel_code)
+			->groupBy('sub_channel_desc')
 			->get();
 	}
 

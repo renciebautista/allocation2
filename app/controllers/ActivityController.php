@@ -2827,7 +2827,7 @@ class ActivityController extends BaseController {
 					$tradedeal->activity_id = $id;
 				}
 				$tradedeal->alloc_in_weeks = str_replace(",", "", Input::get('alloc_in_weeks'));
-				$tradedeal->non_ulp_premium = (Input::has('non_ulp_premium')) ? 1 : 0; 
+				$tradedeal->non_ulp_premium = (Input::has('non_ulp_premium')) ? Input::get('non_ulp_premium') : 0; 
 
 				$tradedeal->non_ulp_premium_desc = Input::get('non_ulp_premium_desc');
 				$tradedeal->non_ulp_premium_code = Input::get('non_ulp_premium_code');
@@ -2838,14 +2838,16 @@ class ActivityController extends BaseController {
 				// copy tradedeal channel
 				$channels = TradedealChannel::where('activity_id', $id)->delete();
 
-				$chTemp = Level5::getForTradeDeal();
+				$chTemp = TradedealChannelMapping::getChannels();
 				foreach ($chTemp as $ch) {
 					$tc = new TradedealChannel;
 					$tc->activity_id = $id;
-					$tc->l5_code = $ch->l5_code;
-					$tc->l5_desc = $ch->l5_desc;
+					$tc->coc_03_code = $ch->coc_03_code;
+					$tc->coc_04_code = $ch->coc_04_code;
+					$tc->coc_05_code = $ch->coc_05_code;
 					$tc->channel_code = $ch->channel_code;
 					$tc->channel_desc = $ch->channel_name;
+					$tc->sub_channel_desc = $ch->sub_channel_desc;
 					$tc->save();
 				}
 

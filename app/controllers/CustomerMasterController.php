@@ -55,11 +55,11 @@ class CustomerMasterController extends \BaseController {
         $query = sprintf("
         	SELECT 'id', 'area_code', 'customer_code', 'customer_code', 'plant_code', 'account_name', 'coc_03_code', 'coc_04_code', 'coc_05_code',
         	'id', 'group_code', 'area_code', 'area_name', 'id', 'group_code', 'group_name', 'id', 'area_code', 'area_code_two', 'customer_code',
-        	'sob_customer_code', 'customer_name', 'active', 'multiplier', 'from_dt', 'id', 'customer_code', 'sold_to_code', 'ship_to_code', 'plant_code',
+        	'sob_customer_code', 'customer_name', 'active', 'multiplier', 'from_dt', 'trade_deal', 'id', 'customer_code', 'sold_to_code', 'ship_to_code', 'plant_code',
         	'ship_to_name', 'split', 'leadtime', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun', 'active', 'id', 'group_code', 'group', 'area_code',
         	'area', 'customer_code', 'customer', 'distributor_code', 'distributor_name', 'plant_code', 'ship_to_name', 'id', 'area_code', 'ship_to_code',
         	'account_group_code', 'channel_code', 'account_name', 'active', 'id', 'coc_03_code', 'channel_code', 'l3_desc', 'id', 'channel_code',
-        	'channel_name', 'id', 'coc_03_code', 'l4_code', 'l4_desc', 'id', 'l4_code', 'l5_code', 'l5_desc', 'rtm_tag', 'trade_deal'
+        	'channel_name', 'id', 'coc_03_code', 'l4_code', 'l4_desc', 'id', 'l4_code', 'l5_code', 'l5_desc', 'rtm_tag'
 			UNION ALL
         	select * from mt_dt_hieracry
 			left join areas on areas.area_code = mt_dt_hieracry.area_code
