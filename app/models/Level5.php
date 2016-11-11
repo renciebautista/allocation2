@@ -52,7 +52,7 @@ class Level5 extends \Eloquent {
 		return self::select('channels.channel_code', 'channels.channel_name',
 			'sub_channels.coc_03_code', 'sub_channels.l3_desc',
 			'level4.l4_code', 'level4.l4_desc',
-			'level5.l5_code', 'level5.l5_desc', 'rtm_tag')
+			'level5.l5_code', 'level5.l5_desc', 'rtm_tag', 'trade_deal')
 			->join('level4', 'level4.l4_code', '=', 'level5.l4_code','right')
 			->join('sub_channels', 'sub_channels.coc_03_code', '=', 'level4.coc_03_code', 'right')
 			->join('channels', 'channels.channel_code', '=', 'sub_channels.channel_code', 'right')

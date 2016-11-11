@@ -55,19 +55,27 @@ class TradeChannelController extends \BaseController {
 		// $final_l5 = array_diff($_l5,$sc_l5);
 
 		
-		$channels = \DB::table('tradedeal_channels')
-			->groupBy('channel_code')
-			->where('activity_id', $activity->id)
+		$channels = \DB::table('tradedeal_channel_mappings')
+			->join('sub_channels', 'sub_channels.coc_03_code', '=', 'tradedeal_channel_mappings.coc_03_code')
+			->join('channels', 'channels.channel_code', '=', 'sub_channels.channel_code')
+			->join('level5', 'level5.l5_code', '=', 'tradedeal_channel_mappings.coc_05_code')
+			->groupBy('channels.channel_code')
+			->where('level5.trade_deal', 1)
+			->orderBy('channel_name')
 			->get();
 
 		$data = array();
 		foreach ($channels as $channel) {
-			$sub_channels = \DB::table('tradedeal_channels')
-				->where('activity_id', $activity->id)
-				->where('channel_code', $channel->channel_code)
+			$sub_channels = \DB::table('tradedeal_channel_mappings')
+				->join('sub_channels', 'sub_channels.coc_03_code', '=', 'tradedeal_channel_mappings.coc_03_code')
+				->join('channels', 'channels.channel_code', '=', 'sub_channels.channel_code')
+				->join('level5', 'level5.l5_code', '=', 'tradedeal_channel_mappings.coc_05_code')
+				->groupBy('channels.channel_code')
+				->where('level5.trade_deal', 1)
+				->where('channels.channel_code', $channel->channel_code)
 				->groupBy('sub_channel_desc')
 				->get();
-
+			
 			$channel_children = array();
 			foreach ($sub_channels as $sub_channel) {
 				// if(!in_array($level5->l5_code, $final_l5)){
@@ -82,7 +90,7 @@ class TradeChannelController extends \BaseController {
 			if(count($channel_children) >0){
 				// if(!in_array($channel->channel_code, $final_ch)){
 					$data[] = array(
-						'title' => $channel->channel_desc,
+						'title' => $channel->channel_name,
 						'isFolder' => true,
 						'key' => $channel->channel_code,
 						'children' => $channel_children,

@@ -47,6 +47,7 @@ class UpdateLatestSalesTableSeeder extends Seeder {
 		$tables =  DB::table('mt_dt_hieracry')
 			->join('sub_channels', 'sub_channels.coc_03_code', '=', 'mt_dt_hieracry.coc_03_code')
 			->join('level5', 'level5.l5_code', '=', 'mt_dt_hieracry.coc_05_code')
+			->where('level5.trade_deal', 1)
 			->groupBy('mt_dt_hieracry.coc_05_code')
 			->groupBy('mt_dt_hieracry.coc_04_code')
 			->groupBy('mt_dt_hieracry.coc_03_code')
@@ -61,7 +62,7 @@ class UpdateLatestSalesTableSeeder extends Seeder {
 				->where('coc_05_code', $value->coc_05_code)
 				->first();
 			if($exist){
-				dd($exist);
+				// dd($exist);
 				$exist->update(['active' => 1]);
 			}else{
 				$map =  new TradedealChannelMapping;

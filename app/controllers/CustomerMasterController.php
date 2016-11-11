@@ -59,7 +59,7 @@ class CustomerMasterController extends \BaseController {
         	'ship_to_name', 'split', 'leadtime', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun', 'active', 'id', 'group_code', 'group', 'area_code',
         	'area', 'customer_code', 'customer', 'distributor_code', 'distributor_name', 'plant_code', 'ship_to_name', 'id', 'area_code', 'ship_to_code',
         	'account_group_code', 'channel_code', 'account_name', 'active', 'id', 'coc_03_code', 'channel_code', 'l3_desc', 'id', 'channel_code',
-        	'channel_name', 'id', 'coc_03_code', 'l4_code', 'l4_desc', 'id', 'l4_code', 'l5_code', 'l5_desc', 'rtm_tag'
+        	'channel_name', 'id', 'coc_03_code', 'l4_code', 'l4_desc', 'id', 'l4_code', 'l5_code', 'l5_desc', 'rtm_tag', 'trade_deal'
 			UNION ALL
         	select * from mt_dt_hieracry
 			left join areas on areas.area_code = mt_dt_hieracry.area_code

@@ -72,7 +72,7 @@ class Channel extends \Eloquent {
 						Level4::firstOrCreate(['coc_03_code' => $row->coc_03_code, 'l4_code' => $row->l4_code, 'l4_desc' => $row->l4_desc]);
 					}
 					if(!empty($row->l5_code)){
-						Level5::firstOrCreate(['l4_code' => $row->l4_code, 'l5_code' => $row->l5_code, 'l5_desc' => $row->l5_desc, 'rtm_tag' => $row->rtm_tag]);
+						Level5::firstOrCreate(['l4_code' => $row->l4_code, 'l5_code' => $row->l5_code, 'l5_desc' => $row->l5_desc, 'rtm_tag' => $row->rtm_tag, 'trade_deal' => $row->trade_deal]);
 					}
 				}
 				

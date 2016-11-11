@@ -2896,7 +2896,7 @@ class ActivityController extends BaseController {
 					// update all scheme
 					if(!empty($schemes)){
 						foreach ($schemes as $scheme) {
-							TradedealAllocRepository::updateAllocation($scheme);
+							// TradedealAllocRepository::updateAllocation($scheme);
 						}
 					}
 				}
@@ -2904,7 +2904,7 @@ class ActivityController extends BaseController {
 				File::deleteDirectory(storage_path('le/'.$activity->id));
 				if(!empty($schemes)){
 					foreach ($schemes as $scheme) {
-						LeTemplateRepository::generateTemplate($scheme);
+						// LeTemplateRepository::generateTemplate($scheme);
 					}
 				}
 
