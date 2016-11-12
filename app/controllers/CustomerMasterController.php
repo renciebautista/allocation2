@@ -72,7 +72,8 @@ class CustomerMasterController extends \BaseController {
 			left join sub_channels on (mt_dt_hieracry.coc_03_code = sub_channels.coc_03_code AND mt_dt_hieracry.coc_04_code = sub_channels.l4_code AND mt_dt_hieracry.coc_05_code = sub_channels.l5_code)
 			left join channels on channels.channel_code = sub_channels.channel_code INTO OUTFILE '%s' FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n'",$file);
 
-        \DB::getpdo()->exec($query);
+        // \DB::getpdo()->exec($query);
+		DB::statement($query);
 
         return Response::download($file, $file_name);
 
