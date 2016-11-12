@@ -18,13 +18,15 @@ class SplitOldCustomer extends \Eloquent {
 
 	public static function getAll(){
 		return self::select('c1.customer_code as from_customer_code', 'c1.customer_name as from_customer_name',
-			'c2.customer_code as to_customer_code', 'c2.customer_name as to_customer_name', 
-			'c2.active',
-			'split_old_customers.split')
-			->join('customers as c1', 'c1.customer_code' , '=', 'split_old_customers.inactive_customer_code')
-			->join('customers as c2', 'c2.customer_code' , '=', 'split_old_customers.active_customer_code')
-			// ->where('c2.active',1)
+			'c2.customer_code as to_customer_code', 'c2.customer_name as to_customer_name', 'sh1.ship_to_name as from_ship_to_name',
+			'sh2.ship_to_name as to_ship_to_name','split_old_customers.split')
+			->join('customers as c1', 'c1.customer_code' , '=', 'split_old_customers.from_customer_code')
+			->join('customers as c2', 'c2.customer_code' , '=', 'split_old_customers.to_customer_code')
+			->join('ship_tos as sh1', 'sh1.plant_code' , '=', 'split_old_customers.from_plant_code')
+			->join('ship_tos as sh2', 'sh2.plant_code' , '=', 'split_old_customers.to_plant_code')
 			->get();
+
+		return self::all();
 	}
 
 	public static function import($records){

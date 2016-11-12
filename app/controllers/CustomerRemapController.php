@@ -88,7 +88,8 @@ class CustomerRemapController extends \BaseController {
 		$customers = SplitOldCustomer::all();
 		Excel::create("Customer Inactive - Active Mapping", function($excel) use($customers){
 			$excel->sheet('Sheet1', function($sheet) use($customers) {
-				$sheet->fromModel($customers,null, 'A1', true);
+				$sheet->row(1,['id', 'from_customer_code', 'from_plant_code', 'to_customer_code', 'to_plant_code', 'split']);
+				$sheet->fromModel($customers,null, 'A1', false);
 			})->download('xls');
 
 		});

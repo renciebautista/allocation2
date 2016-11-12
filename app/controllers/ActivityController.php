@@ -1264,15 +1264,16 @@ class ActivityController extends BaseController {
 						$activity->update();
 					}
 
-					$_channels = Input::get('channels_involved');
+					// $_channels = Input::get('channels_involved');
 					ActivityChannel2::where('activity_id',$id)->delete();
 					$activity_channels = array();
-					if(!empty($_channels)){
-						$channels = explode(",", $_channels);
+					if(!empty($_customers)){
+						$channels = explode(",", $_customers);
 						if(!empty($channels)){
 							$channel_group = array();
 							foreach ($channels as $channel_node){
-								$activity_channels[] = array('activity_id' => $id, 'channel_node' => trim($channel_node));
+								$channels = explode(".", trim($channel_node)); 
+								$activity_channels[] = array('activity_id' => $id, 'channel_node' => $channels[0]);
 							}
 							ActivityChannel2::insert($activity_channels);
 						}
@@ -1299,7 +1300,6 @@ class ActivityController extends BaseController {
 								$scheme->updating = 0;
 								$scheme->update();
 							}
-							
 						}
 					}
 					
