@@ -44,36 +44,6 @@ class UpdateLatestSalesTableSeeder extends Seeder {
 			$sum->save();
 		}
 
-		$tables =  DB::table('mt_dt_hieracry')
-			->join('sub_channels', 'sub_channels.coc_03_code', '=', 'mt_dt_hieracry.coc_03_code')
-			->join('level5', 'level5.l5_code', '=', 'mt_dt_hieracry.coc_05_code')
-			->where('level5.trade_deal', 1)
-			->groupBy('mt_dt_hieracry.coc_05_code')
-			->groupBy('mt_dt_hieracry.coc_04_code')
-			->groupBy('mt_dt_hieracry.coc_03_code')
-			->get();
-
-		TradedealChannelMapping::where('active', 1)
-			->update(['active' => 0]);
-
-		foreach ($tables as $value) {
-			$exist = TradedealChannelMapping::where('coc_03_code', $value->coc_03_code)
-				->where('coc_04_code', $value->coc_04_code)
-				->where('coc_05_code', $value->coc_05_code)
-				->first();
-			if($exist){
-				// dd($exist);
-				$exist->update(['active' => 1]);
-			}else{
-				$map =  new TradedealChannelMapping;
-				$map->coc_03_code = $value->coc_03_code;
-				$map->coc_04_code = $value->coc_04_code;
-				$map->coc_05_code = $value->coc_05_code;
-				$map->sub_channel_desc = $value->rtm_tag;
-				$map->save();
-			}
-		}
-
 		$timeSecond = strtotime(date('Y-m-d H:i:s'));
 		$differenceInSeconds = $timeSecond - $timeFirst;
 		echo  'Time used ' . $differenceInSeconds . " sec";
