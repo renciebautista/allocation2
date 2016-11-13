@@ -1,0 +1,107 @@
+Searching 10051 files for "area_sales"
+
+/Users/renciebautista/code/laravel/allocation/code/app/models/AllocationRepository.php:
+   11  	private $_customers = array();
+   12  	private $_customers_list = array();
+   13: 	private $area_sales = array();
+   14  	
+   15  	public function __construct()  {
+   ..
+  391  					$this->total_gsv += $customer->gsv;
+  392  
+  393: 					if(!isset($this->area_sales[$customer->area_code])){
+  394: 						$this->area_sales[$customer->area_code] = 0;
+  395  					}
+  396  
+  397: 					$this->area_sales[$customer->area_code] += $customer->gsv;
+  398  
+  399  				}else{
+  ...
+  431  							// end check if selected
+  432  						}
+  433: 						if(!isset($this->area_sales[$customer->area_code])){
+  434: 							$this->area_sales[$customer->area_code] = 0;
+  435  						}
+  436: 						$this->area_sales[$customer->area_code] += $customer->gsv;
+  437  					}else{
+  438  						$customer->gsv = $total_account_gsv;
+  ...
+  691  	}
+  692  
+  693: 	public function area_sales(){
+  694: 		return $this->area_sales;
+  695  	}
+  696  	
+
+/Users/renciebautista/code/laravel/allocation/code/app/models/AllocationRepository2.php:
+   13  	private $_customers = array();
+   14  	private $_customers_list = array();
+   15: 	private $area_sales = array();
+   16  	
+   17  	public function __construct()  {
+   ..
+  548  	}
+  549  
+  550: 	public function area_sales(){
+  551: 		return $this->area_sales;
+  552  	}
+  553  	
+
+/Users/renciebautista/code/laravel/allocation/code/app/models/SchemeAllocRepository.php:
+   26  		// Helper::debug($allocations);
+   27  		
+   28: 		// $_areasales =  $_allocation->area_sales();
+   29  	   		   	
+   30  		$total_sales = $_allocation->total_gsv();
+
+/Users/renciebautista/code/laravel/allocation/code/app/models/untitled.html:
+   10  	private $_dt_secondary_sales = array();
+   11  
+   12: 	private $_area_sales = [];
+   13  
+   14  	private $_customers = array();
+   15  	private $_customers_list = array();
+   16: 	private $area_sales = array();
+   17  	
+   18  	public function __construct()  {
+   ..
+  152  		
+  153  
+  154: 		$this->_area_sales = DB::table('mt_dt_sales')
+  155  			->select(DB::raw("mt_dt_sales.area_code,mt_dt_sales.customer_code, SUM(gsv) as gsv"))
+  156  			->join('sub_channels', function($join)
+  ...
+  198  			->get();
+  199  
+  200: 		// Helper::debug($this->_area_sales);
+  201  
+  202  		// get Ship To Sales
+  ...
+  455  					$this->total_gsv += $customer->gsv;
+  456  
+  457: 					if(!isset($this->area_sales[$customer->area_code])){
+  458: 						$this->area_sales[$customer->area_code] = 0;
+  459  					}
+  460  
+  461: 					$this->area_sales[$customer->area_code] += $customer->gsv;
+  462  				}else{
+  463  					$abort = false;
+  ...
+  494  							// end check if selected
+  495  						}
+  496: 						if(!isset($this->area_sales[$customer->area_code])){
+  497: 							$this->area_sales[$customer->area_code] = 0;
+  498  						}
+  499: 						$this->area_sales[$customer->area_code] += $customer->gsv;
+  500  					}else{
+  501  						$customer->gsv = $total_account_gsv;
+  ...
+  751  	}
+  752  
+  753: 	public function area_sales(){
+  754: 		return $this->area_sales;
+  755  	}
+  756  	
+
+Unable to open /Users/renciebautista/code/laravel/allocation/code/app/storage/sessions/37247fc3468e0c7958f3d9dd47c71761a47b5eda
+25 matches across 4 files
