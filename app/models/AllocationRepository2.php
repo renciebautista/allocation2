@@ -41,10 +41,12 @@ class AllocationRepository2  {
 	}
 
 
+
 	public function customers($skus, $selected_channels, $selected_customers,$forced_areas){
 
 		$this->_customers = $selected_customers;
-		$salescources = DB::table('split_old_customers')->get();
+		$additionalsales = DB::table('split_old_customers')->get();
+		// Helper::debug($additionalsales);
 
 		$customers_list =  DB::table('customers')
 			->select('areas.group_code as group_code','group_name','area_name',
@@ -98,78 +100,151 @@ class AllocationRepository2  {
 
 		// get all child skus
 		$child_skus = self::getSkus($skus);
-		// Helper::debug($child_skus);
-
-		$_grps = array();
-		$_areas = array();
-		$_cust = array();
-		$_shp = array();
-		$_otlts = array();
-		if(!empty($selected_customers)){
-			foreach ($selected_customers as $selected_customer) {
-				$_selected_customer = explode(".", $selected_customer);
-				$_grps[] = $_selected_customer[0];
-				if(!empty($_selected_customer[1])){
-					$_areas[$_selected_customer[0]][] = $_selected_customer[1];
-				}
-
-				if(!empty($_selected_customer[2])){
-					$_cust[$_selected_customer[1]][] = $_selected_customer[2];
-				}
-
-				if(!empty($_selected_customer[3])){
-					$_shp[$_selected_customer[2]][] = $_selected_customer[3];
-				}
-
-				if(!empty($_selected_customer[4])){
-					$_otlts[$_selected_customer[3]][] = $_selected_customer[4];
-				}
-			}
-		}
+		
 
 		$channels = array();
-		$_chgrp = array();
 		if(!empty($selected_channels)){
 			foreach ($selected_channels as $channel_node) {
 				$_selected_node = explode(".", $channel_node);
 				$channels[] = $_selected_node[0];
-				if(!empty($_selected_node[1])){
-					$_chgrp[$_selected_node[0]][] = $_selected_node[1];
-				}
 			}
 		}
 
 
-		$_mt_dt_sales = DB::table('mt_dt_sales')
-			->select(DB::raw('area_code, customer_code, sum(gsv) as gsv '))
-			->join('sub_channels', function($join)
-			{
-				$join->on('sub_channels.coc_03_code', '=', 'mt_dt_sales.coc_03_code');
-				$join->on('sub_channels.l4_code','=','mt_dt_sales.coc_04_code');
-				$join->on('sub_channels.l5_code','=','mt_dt_sales.coc_05_code');
-			})
-			->whereIn('child_sku_code', $child_skus)
-			->whereIn('channel_code', $channels)
-			->groupBy('area_code', 'customer_code')
-			->get();
 
-		// get Ship To Sales
-		$_ship_to_sales = DB::table('mt_dt_sales')
-			->select(DB::raw('area_code, customer_code, plant_code, sum(gsv) as gsv '))
-			->join('sub_channels', function($join)
-			{
-				$join->on('sub_channels.coc_03_code', '=', 'mt_dt_sales.coc_03_code');
-				$join->on('sub_channels.l4_code','=','mt_dt_sales.coc_04_code');
-				$join->on('sub_channels.l5_code','=','mt_dt_sales.coc_05_code');
-			})
-			->whereIn('child_sku_code', $child_skus)
-			->whereIn('channel_code', $channels)
-			->groupBy('area_code', 'customer_code', 'plant_code')
-			->get();	
-	
+		$acc_nodes = [];
+		$ship_nodes = [];
+		$cust_nodes = [];
+
+
+		if(!empty($selected_customers)){
+			foreach ($selected_customers as $selected_customer) {
+				$n = explode('.', $selected_customer);
+				if(count($n) == 1){
+					$n_nodes = CustomerTree::where('channel_code', $n[0])->get();
+					foreach ($n_nodes as $n_node) {
+						if($n_node->account_id != ''){
+							$acc = Account::find($n_node->account_id);
+							$acc_nodes[$n_node->channel_code][$n_node->group_code][$n_node->area_code][$n_node->customer_code][$n_node->plant_code][] = $acc->account_name;
+						}
+						if($n_node->plant_code != ''){
+							$ship_nodes[$n_node->channel_code][$n_node->group_code][$n_node->area_code][$n_node->customer_code][] = $n_node->plant_code;
+						}
+
+						$cust_nodes[$n_node->channel_code][$n_node->group_code][$n_node->area_code][] = $n_node->customer_code;
+
+					}
+					
+				}
+
+				if(count($n) == 2){
+					$n_nodes = CustomerTree::where('channel_code', $n[0])
+						->where('group_code', $n[1])
+						->get();
+					foreach ($n_nodes as $n_node) {
+						if($n_node->account_id != ''){
+							$acc = Account::find($n_node->account_id);
+							$acc_nodes[$n_node->channel_code][$n_node->group_code][$n_node->area_code][$n_node->customer_code][$n_node->plant_code][] = $acc->account_name;
+						}
+						if($n_node->plant_code != ''){
+							$ship_nodes[$n_node->channel_code][$n_node->group_code][$n_node->area_code][$n_node->customer_code][] = $n_node->plant_code;
+						}
+
+						$cust_nodes[$n_node->channel_code][$n_node->group_code][$n_node->area_code][] = $n_node->customer_code;
+					}
+					
+				}
+
+				if(count($n) == 3){
+					$n_nodes = CustomerTree::where('channel_code', $n[0])
+						->where('group_code', $n[1])
+						->where('area_code', $n[2])
+						->get();
+					foreach ($n_nodes as $n_node) {
+						if($n_node->account_id != ''){
+							$acc = Account::find($n_node->account_id);
+							$acc_nodes[$n_node->channel_code][$n_node->group_code][$n_node->area_code][$n_node->customer_code][$n_node->plant_code][] = $acc->account_name;
+						}
+						if($n_node->plant_code != ''){
+							$ship_nodes[$n_node->channel_code][$n_node->group_code][$n_node->area_code][$n_node->customer_code][] = $n_node->plant_code;
+						}
+
+						$cust_nodes[$n_node->channel_code][$n_node->group_code][$n_node->area_code][] = $n_node->customer_code;
+					}
+					
+				}
+
+				if(count($n) == 4){
+					$n_nodes = CustomerTree::where('channel_code', $n[0])
+						->where('group_code', $n[1])
+						->where('area_code', $n[2])
+						->where('customer_code', $n[3])
+						->get();
+					foreach ($n_nodes as $n_node) {
+						if($n_node->account_id != ''){
+							$acc = Account::find($n_node->account_id);
+							$acc_nodes[$n_node->channel_code][$n_node->group_code][$n_node->area_code][$n_node->customer_code][$n_node->plant_code][] = $acc->account_name;
+						}
+						if($n_node->plant_code != ''){
+							$ship_nodes[$n_node->channel_code][$n_node->group_code][$n_node->area_code][$n_node->customer_code][] = $n_node->plant_code;
+						}
+
+						$cust_nodes[$n_node->channel_code][$n_node->group_code][$n_node->area_code][] = $n_node->customer_code;
+					}
+					
+				}
+
+				if(count($n) == 5){
+					$n_nodes = CustomerTree::where('channel_code', $n[0])
+						->where('group_code', $n[1])
+						->where('area_code', $n[2])
+						->where('customer_code', $n[3])
+						->where('plant_code', $n[4])
+						->get();
+					foreach ($n_nodes as $n_node) {
+						if($n_node->account_id != ''){
+							$acc = Account::find($n_node->account_id);
+							$acc_nodes[$n_node->channel_code][$n_node->group_code][$n_node->area_code][$n_node->customer_code][$n_node->plant_code][] = $acc->account_name;
+						}
+						if($n_node->plant_code != ''){
+							$ship_nodes[$n_node->channel_code][$n_node->group_code][$n_node->area_code][$n_node->customer_code][] = $n_node->plant_code;
+						}
+
+						$cust_nodes[$n_node->channel_code][$n_node->group_code][$n_node->area_code][] = $n_node->customer_code;
+					}
+					
+				}
+
+				if(count($n) == 6){
+					$n_nodes = CustomerTree::where('channel_code', $n[0])
+						->where('group_code', $n[1])
+						->where('area_code', $n[2])
+						->where('customer_code', $n[3])
+						->where('plant_code', $n[4])
+						->where('account_id', $n[5])
+						->get();
+					foreach ($n_nodes as $n_node) {
+						if($n_node->account_id != ''){
+							$acc = Account::find($n_node->account_id);
+							$acc_nodes[$n_node->channel_code][$n_node->group_code][$n_node->area_code][$n_node->customer_code][$n_node->plant_code][] = $acc->account_name;
+						}
+						if($n_node->plant_code != ''){
+							$ship_nodes[$n_node->channel_code][$n_node->group_code][$n_node->area_code][$n_node->customer_code][] = $n_node->plant_code;
+						}
+
+						$cust_nodes[$n_node->channel_code][$n_node->group_code][$n_node->area_code][] = $n_node->customer_code;
+					}
+					
+				}
+			}
+		}
+
+		// Helper::debug($ship_nodes);
+
+		// Helper::debug($cust_nodes);
 
 		$this->account_sales = DB::table('mt_dt_sales')
-			->select(DB::raw('area_code, customer_code, plant_code, account_name, sum(gsv) as gsv '))
+			->select(DB::raw('area_code, customer_code, plant_code, account_name, channel_code, sum(gsv) as gsv '))
 			->join('sub_channels', function($join)
 			{
 				$join->on('sub_channels.coc_03_code', '=', 'mt_dt_sales.coc_03_code');
@@ -178,14 +253,18 @@ class AllocationRepository2  {
 			})
 			->whereIn('child_sku_code', $child_skus)
 			->whereIn('channel_code', $channels)
-			->groupBy('area_code', 'customer_code', 'plant_code', 'account_name')
+			->groupBy('area_code', 'customer_code', 'plant_code', 'account_name', 'channel_code')
 			->get();
 
-		$data = array();
+
+
+		$_base_sales = $this->account_sales;
+
 		foreach ($customers as $customer) {
 			if($customer->active == 1){
 				$ado_total = 0;
 				$forced_ado_total = 0;
+				$customer_gsv = 0;
 				foreach ($_shiptos as $_shipto) {
 					if($customer->customer_code == $_shipto->customer_code){
 						if(!is_null($_shipto->ship_to_code)){
@@ -194,19 +273,18 @@ class AllocationRepository2  {
 							foreach ($_accounts as $_account) {
 								if(($_account->area_code == $customer->area_code) && ($_account->ship_to_code == $_shipto->ship_to_code)){
 									$_account->gsv = 0;
-
-									$abort_= false;
-									foreach ($this->account_sales as $account_sale) {
-										if(($account_sale->area_code == $_account->area_code) &&
-											($account_sale->customer_code == $_shipto->customer_code) &&
-											($account_sale->plant_code == $_shipto->plant_code) &&
-											($account_sale->account_name == $_account->account_name)){
-
-											$_account->gsv = $account_sale->gsv;
-											$abort_ = true;
+									if(isset($acc_nodes[$_account->channel_code][$customer->group_code][$customer->area_code][$customer->customer_code][$_shipto->plant_code])){
+										if(in_array($_account->account_name, $acc_nodes[$_account->channel_code][$customer->group_code][$customer->area_code][$customer->customer_code][$_shipto->plant_code])){
+											foreach ($this->account_sales as $account_sale) {
+												if(($account_sale->area_code == $_account->area_code) && ($account_sale->customer_code == $_shipto->customer_code) && ($account_sale->plant_code == $_shipto->plant_code) && ($account_sale->account_name == $_account->account_name)){
+													$_account->gsv = $account_sale->gsv;
+												}
+											}
+											$_account->gsv += self::getAdditionalGsv($additionalsales, $_base_sales, $customer->customer_code, $_account->channel_code, $_shipto->plant_code, $_account->account_name);
 										}
-										if ($abort_ === true) break;
 									}
+
+									$_account->gsv = ($_account->gsv * $customer->multiplier ) / 100;
 									$total_account_gsv += $_account->gsv;
 									$_shipto->accounts[] = (array) $_account;
 								}
@@ -215,196 +293,121 @@ class AllocationRepository2  {
 						$_shipto->area_code = $customer->area_code;
 
 						// start ship to sales
-						$abort_shipto = false;
 						$_shipto->gsv = 0;
-						foreach ($_ship_to_sales as $_ship_to_sale) {
-							if($_shipto->plant_code == $_ship_to_sale->plant_code){
-								$_shipto->gsv = $_ship_to_sale->gsv;
-								
-								$ado_total += $_shipto->gsv;
-								$abort_shipto = true;
-							}
-							
-							if ($abort_shipto === true) break;
+						foreach ($channels as $ch) {
+							if(isset($ship_nodes[$ch][$customer->group_code][$customer->area_code][$customer->customer_code])){
+								if(in_array($_shipto->plant_code, $ship_nodes[$ch][$customer->group_code][$customer->area_code][$customer->customer_code])){
+									foreach ($this->account_sales as $account_sale) {
+										if(($customer->customer_code == $account_sale->customer_code) && ($_shipto->plant_code == $account_sale->plant_code) && ($account_sale->channel_code == $ch)){
+											$_shipto->gsv += $account_sale->gsv;
+										}							
+									}
+								}
+								$_shipto->gsv += self::getAdditionalGsv($additionalsales, $_base_sales, $customer->customer_code,  $ch, $_shipto->plant_code);
+							}	
 						}
+						
+
+						$_shipto->gsv = ($_shipto->gsv * $customer->multiplier ) / 100;
 						// end ship to sales
 
-						if(!empty($customer->area_code_two)){
-							$_shipto->gsv = $total_account_gsv;
-						}
-					
+						$customer_gsv += $_shipto->gsv;
+						$ado_total += $_shipto->gsv;
 						$customer->shiptos[] = (array)	$_shipto;
 
-						$customer->ado_total = $ado_total;
+						if(array_key_exists($customer->area_code, $forced_areas)){
+							$forced_ado_total += $_shipto->gsv * $forced_areas[$customer->area_code];
+						}
 						
 						$customer->forced_ado_total = $forced_ado_total;
 
-						// if(array_key_exists($customer->area_code, $forced_areas)){
-						// 	 $customer->forced_ado_total = $forced_ado_total * $forced_areas[$customer->area_code];
-						// }
-
-					}else{
-
 					}
 
 				}
 
-				foreach ($_mt_dt_sales as $_mt_dt_sale) {
-					if(($customer->area_code == $_mt_dt_sale->area_code) && 
-						($customer->customer_code == $_mt_dt_sale->customer_code)){
-
-						$customer->gsv = $_mt_dt_sale->gsv;
+				$no_shipto = ShipTo::where('customer_code', $customer->customer_code)->get();
+				if(count($no_shipto) == 0){
+					// dd($customer);
+					foreach ($channels as $ch) {
+						if(isset($cust_nodes[$ch][$customer->group_code][$customer->area_code])){
+							if(in_array($customer->customer_code, $cust_nodes[$ch][$customer->group_code][$customer->area_code])){
+								foreach ($this->account_sales as $account_sale) {
+									if(($customer->customer_code == $account_sale->customer_code) && ($account_sale->channel_code == $ch)){
+										$customer_gsv += $account_sale->gsv;
+									}							
+								}
+							}
+						}	
 					}
 				}
 
-				
-				$data[] = (array)$customer;
+				foreach ($channels as $ch) {
+					if(isset($cust_nodes[$ch][$customer->group_code][$customer->area_code])){
+						if(in_array($customer->customer_code, $cust_nodes[$ch][$customer->group_code][$customer->area_code])){
+							foreach ($this->account_sales as $account_sale) {
+								if(($customer->customer_code == $account_sale->customer_code) && ($account_sale->channel_code == $ch)){
+									$customer_gsv += $account_sale->gsv;
+								}							
+							}
+						}
+						$customer_gsv += self::getAdditionalGsv($additionalsales, $_base_sales, $customer->customer_code, $ch);
+					}	
+				}
+
+
+				$customer->ado_total = $customer_gsv;
+
+				$customer->gsv = ($customer_gsv * $customer->multiplier ) / 100;
+
+				if(array_key_exists($customer->area_code, $forced_areas)){
+					$this->force_total_gsv += $customer->gsv * $forced_areas[$customer->area_code];
+				}
+
+				$this->total_gsv += $customer->gsv;
 			}
-			
 		}
-
-
 		return $customers;
 	}
 
-	public function get_additional_gsv(&$additional_gsv,$customer,$_grps,$_areas,$_cust,$_shp,$_shipto,$_otlts,$_account,$salescources,$customers_list,$_shiptos_list,$_accounts_list,$_outlets,$_outlet_sales){
-		if(in_array($customer->group_code, $_grps)){
-			if(!empty($_areas[$customer->group_code])){
-				if(in_array($customer->area_code, $_areas[$customer->group_code])){
-					if(!empty($_cust[$customer->area_code])){
-						if(in_array($customer->customer_code, $_cust[$customer->area_code])){
-							if(!empty($_shp[$customer->customer_code])){
-								if(in_array($_shipto->ship_to_code, $_shp[$customer->customer_code])){
-									if(!empty($_otlts[$_shipto->ship_to_code])){
-										if(in_array($_account->id, $_otlts[$_shipto->ship_to_code])){
-											$additional_gsv = self::additonal_outlet_sales($salescources,$customers_list,$customer->customer_code,$_shiptos_list,$_accounts_list,$_outlets,$_outlet_sales,$_account->account_name);
-											
-										}
-									}else{
-										$additional_gsv = self::additonal_outlet_sales($salescources,$customers_list,$customer->customer_code,$_shiptos_list,$_accounts_list,$_outlets,$_outlet_sales,$_account->account_name);
-										
-									}
-								}
-							}else{
-								$additional_gsv = self::additonal_outlet_sales($salescources,$customers_list,$customer->customer_code,$_shiptos_list,$_accounts_list,$_outlets,$_outlet_sales,$_account->account_name);
-								
-							}
+	private function getAdditionalGsv($split, $source, $to_customer, $channel_code, $to_plant = null, $account_name = null){
+		$gsv = 0;
+		foreach ($split as $row) {
+			if(($row->to_customer == $to_customer) && ($row->to_plant == $to_plant)){
+				foreach ($source as $sale) {
+					if(!is_null($account_name)){
+						if(($sale->customer_code == $row->from_customer) && 
+							($sale->plant_code == $row->from_plant) && 
+							($sale->account_name == $account_name) && 
+							($sale->channel_code == $channel_code)){
+							$gsv += $sale->gsv;
 						}
 					}else{
-						$additional_gsv = self::additonal_outlet_sales($salescources,$customers_list,$customer->customer_code,$_shiptos_list,$_accounts_list,$_outlets,$_outlet_sales,$_account->account_name);
-						
-					}
-				}
-			}else{
-				$additional_gsv = self::additonal_outlet_sales($salescources,$customers_list,$customer->customer_code,$_shiptos_list,$_accounts_list,$_outlets,$_outlet_sales,$_account->account_name);
-			}
-		}
-	}
-
-	public function get_gsv(&$gsv,$customer,$_grps,$_areas,$_cust,$_shp,$_shipto,$_otlts,$_account,$_outlet_sale){
-		if(in_array($customer->group_code, $_grps)){
-			if(!empty($_areas[$customer->group_code])){
-				if(in_array($customer->area_code, $_areas[$customer->group_code])){
-					if(!empty($_cust[$customer->area_code])){
-						if(in_array($customer->customer_code, $_cust[$customer->area_code])){
-							if(!empty($_shp[$customer->customer_code])){
-								if(in_array($_shipto->ship_to_code, $_shp[$customer->customer_code])){
-									if(!empty($_otlts[$_shipto->ship_to_code])){
-										if(in_array($_account->id, $_otlts[$_shipto->ship_to_code])){
-											$gsv +=  $_outlet_sale->gsv;
-										}
-									}else{
-										$gsv +=  $_outlet_sale->gsv;
-									}
-								}
-							}else{
-								$gsv +=  $_outlet_sale->gsv;
+						if(!is_null($to_plant)){
+							if(($sale->customer_code == $row->from_customer) && 
+								($sale->plant_code == $row->from_plant) && 
+								($sale->channel_code == $channel_code)){
+								$gsv += $sale->gsv;
 							}
-						}
-					}else{
-						$gsv +=  $_outlet_sale->gsv;
-					}
-				}
-			}else{
-				$gsv +=  $_outlet_sale->gsv;
-			}
-		}
-
-	}
-
-
-	public function additonal_outlet_sales($salescources,$customers,$customer_code,$_shiptos,$_accounts,$_outlets,$_outlet_sales,$account_name){
-		$additonal_sales = 0;
-		foreach ($salescources as $salescource) {
-			if($salescource->active_customer_code == $customer_code){
-				$old_customer = self::get_old_customer($customers,$salescource->inactive_customer_code);
-				// Helper::print_r($old_customer);
-				if(!empty($old_customer)){
-					foreach ($_shiptos as $_shipto) {
-						if($old_customer->customer_code == $_shipto->customer_code){
-							
-							if(!is_null($_shipto->ship_to_code)){
-								unset($_shipto->accounts);
-								foreach ($_accounts as $_account) {
-
-									if(($_account->area_code == $old_customer->area_code) 
-										&& ($_account->ship_to_code == $_shipto->ship_to_code) &&
-										($_account->account_name == $account_name)){
-										$outlets = array();
-										$gsv = 0;
-										// Helper::print_r($_account);
-										foreach ($_outlets as $_outlet) {
-											$account_area_code = $_account->area_code;
-											if(!empty($old_customer->area_code_two)){
-												$account_area_code = $old_customer->area_code_two;		
-											}
-
-											if(($_outlet->area_code == $account_area_code) &&
-												($_outlet->ship_to_code == $_account->ship_to_code) &&
-												($_outlet->account_name == $account_name)){
-												
-												foreach ($_outlet_sales as $key => $_outlet_sale) {
-													if(($_outlet_sale->outlet_code == $_outlet->outlet_code) &&
-														($_outlet_sale->area_code == $_outlet->area_code) &&
-														($_outlet_sale->account_name == $_outlet->account_name) &&
-														($_outlet_sale->customer_code == $_outlet->customer_code)){
-														$additonal_sales += ($_outlet_sale->gsv * $salescource->split) / 100;
-													}
-												}
-											}
-										}
-									}
-								}
+						}else{
+							if(($sale->customer_code == $row->from_customer) && 
+								($sale->channel_code == $channel_code)){
+								$gsv += $sale->gsv;
 							}
 						}
 					}
+					
 				}
 			}
-		}
-		return $additonal_sales;
-		
-	}
+			if(($row->to_customer == $to_customer) && ($row->to_plant == '')){
+				if(($sale->customer_code == $row->from_customer) && 
+					($sale->channel_code == $channel_code)){
+					$gsv += $sale->gsv;
+				}
 
-	public function get_old_customer($customers,$customer_code){
-		foreach ($customers as $customer) {
-			if($customer->customer_code == $customer_code){
-				return $customer;
 			}
-			
+			$gsv = ($gsv * $row->split) / 100;
 		}
-	}
-
-	public function customer_gsv($abort, $customer, $sale, $salescources,$fromsales){
-		$customer_gsv = 0;
-		if(($customer->customer_code == $sale->customer_code) && ($customer->area_code == $sale->area_code)){
-			$customer_gsv = $sale->gsv;
-			$abort = true;
-		}
-
-		$customer_gsv += self::additonal_sales($salescources,$customer->customer_code,$fromsales);
-
-		$data = array('customer_gsv' => $customer_gsv, 'abort' => $abort);
-		return $data;
+		return $gsv;
 	}
 
 	public function total_sales(){
@@ -418,23 +421,6 @@ class AllocationRepository2  {
 	public function force_total_gsv(){
 		return $this->force_total_gsv;
 	}
-
-
-	public function additonal_sales($salescources,$customer_code,$sales){
-		$additonal_sales = 0;
-		foreach ($salescources as $salescource) {
-			if($salescource->active_customer_code == $customer_code){
-				foreach ($sales as $sale) {
-					if($sale->customer_code == $salescource->inactive_customer_code){
-						$additonal_sales += ($sale->gsv * $salescource->split) / 100;
-					}
-				}
-			}
-		}
-
-		return $additonal_sales;
-	}
-
 
 	public function allocation_summary(){
 		$groups = \DB::table('groups')->get();

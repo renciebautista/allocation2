@@ -44,6 +44,7 @@ class UpdateLatestSalesTableSeeder extends Seeder {
 			$sum->save();
 		}
 
+
 		$timeSecond = strtotime(date('Y-m-d H:i:s'));
 		$differenceInSeconds = $timeSecond - $timeFirst;
 		echo  'Time used ' . $differenceInSeconds . " sec";

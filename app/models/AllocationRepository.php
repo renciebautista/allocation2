@@ -319,7 +319,7 @@ class AllocationRepository  {
 								}
 								
 								if(array_key_exists($customer->area_code, $forced_areas)){
-									 $forced_ado_total += $_shipto->gsv * $forced_areas[$customer->area_code];
+									$forced_ado_total += $_shipto->gsv * $forced_areas[$customer->area_code];
 								}
 								
 								$ado_total += $_shipto->gsv;
@@ -516,7 +516,6 @@ class AllocationRepository  {
 		}
 
 	}
-
 
 	public function additonal_outlet_sales($salescources,$customers,$customer_code,$_shiptos,$_accounts,$_outlets,$_outlet_sales,$account_name){
 		$additonal_sales = 0;

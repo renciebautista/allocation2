@@ -448,8 +448,8 @@ class SchemeController extends \BaseController {
 	 */
 	public function update($id)
 	{
-		$scheme = Scheme::find($id);
-		SchemeAllocRepository::updateAllocation(Input::get('skus'),$scheme);
+		// $scheme = Scheme::find($id);
+		// SchemeAllocRepository::updateAllocation(Input::get('skus'),$scheme);
 		// dd(Input::all());
 		$validation = Validator::make(Input::all(), Scheme::$rules);
 
