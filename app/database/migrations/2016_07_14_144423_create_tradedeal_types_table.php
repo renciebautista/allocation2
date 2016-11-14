@@ -18,10 +18,10 @@ class CreateTradedealTypesTable extends Migration {
 			$table->string('tradedeal_type');
 		});
 
-		DB::statement("INSERT INTO tradedeal_types (id, tradedeal_type) VALUES
-			(1, 'INDIVIDUAL'),
-			(2, 'COLLECTIVE DEFINED'),
-			(3, 'COLLECTIVE UNDEFINED');");
+		DB::statement("INSERT INTO tradedeal_types (id, tradedeal_type, active) VALUES
+			(1, 'INDIVIDUAL', '1'),
+			(2, 'COLLECTIVE BASKET', '0'),
+			(3, 'COLLECTIVE', '1');");
 	}
 
 

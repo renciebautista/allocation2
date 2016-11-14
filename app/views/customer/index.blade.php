@@ -51,7 +51,8 @@
             <!-- <th>SOB Sold to Code</th> -->
             <th>Customer Name</th>
             <th>Sales Multiplier</th>
-            <th>Active</th>
+            <th class="center">Trade Deal</th>
+            <th class="center">Active</th>
             <th colspan="2" style="text-align:center;">Action</th>
           </tr>
         </thead>
@@ -68,7 +69,8 @@
             <!-- <td>{{ $customer->sob_customer_code }}</td> -->
             <td>{{ $customer->customer_name }}</td>
             <td>{{ $customer->multiplier }}</td>
-            <td>{{ (($customer->active == 1) ? 'Active':'Inactive') }}</td>
+            <td class="center">{{ ($customer->trade_deal) ? '<i class="fa fa-check"></i>' : '' }}</td>
+            <td class="center">{{ ($customer->active) ? '<i class="fa fa-check"></i>' : '' }}</td>
             <td class="action">
               {{ HTML::linkAction('CustomerController@edit','Edit', $customer->id, array('class' => 'btn btn-info btn-xs')) }}
             </td>

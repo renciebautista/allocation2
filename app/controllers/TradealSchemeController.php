@@ -159,7 +159,7 @@ class TradealSchemeController extends \BaseController {
 
 			// update trade deal scheme allocations
 
-			// TradedealAllocRepository::updateAllocation($scheme);
+			TradedealAllocRepository::updateAllocation($scheme);
 			// LeTemplateRepository::generateTemplate($scheme);
 			
 			return Redirect::to(URL::action('ActivityController@edit', array('id' => $tradedeal->activity_id)) . "#tradedeal")

@@ -1,7 +1,7 @@
 <?php
 
 class Customer extends \Eloquent {
-	protected $fillable = ['area_code', 'area_code_two','customer_code', 'customer_name', 'active', 'multiplier','from_dt'];
+	protected $fillable = ['area_code', 'customer_code', 'customer_name', 'active', 'multiplier','trade_deal'];
 	public $timestamps = false;
 
 	public static function getForTradedeal(){
@@ -13,9 +13,8 @@ class Customer extends \Eloquent {
 
 	public static function getAll(){
 		return self::select('customers.id', 'customers.area_code',
-			'areas.area_name',
-			'customers.area_code_two', 'customers.customer_code', 'customers.sob_customer_code','customers.customer_name',
-			'customers.multiplier', 'customers.from_dt', 'customers.active')
+			'areas.area_name', 'customers.customer_code', 'customers.sob_customer_code','customers.customer_name',
+			'customers.multiplier', 'customers.trade_deal', 'customers.active')
 			->join('areas', 'areas.area_code' , '=', 'customers.area_code')
 			->get();
 	}
@@ -31,9 +30,8 @@ class Customer extends \Eloquent {
 			$status = $inputs['status'];
 		}
 		return self::select('customers.id', 'customers.area_code',
-			'areas.area_name',
-			'customers.area_code_two', 'customers.customer_code', 'customers.sob_customer_code','customers.customer_name',
-			'customers.multiplier', 'customers.from_dt', 'customers.active')
+			'areas.area_name', 'customers.customer_code', 'customers.sob_customer_code','customers.customer_name',
+			'customers.multiplier', 'customers.trade_deal', 'customers.active')
 			->join('areas', 'areas.area_code' , '=', 'customers.area_code')
 			->where('customer_name', 'LIKE' ,"%$filter%")
 			->where(function($query) use ($status){
@@ -163,20 +161,18 @@ class Customer extends \Eloquent {
 					if(!is_null($row->customer_code)){
 					$customer = new Customer;
 					$customer->area_code = $row->area_code;
-					$customer->area_code_two = $row->area_code_two;
 					$customer->customer_code = $row->customer_code;
-					// $customer->sob_customer_code = $row->sob_customer_code;
 					$customer->customer_name = $row->customer_name;
-					$customer->active = $row->active;
+					$customer->trade_deal = $row->trade_deal;
 					$customer->multiplier = $row->multiplier;
-					$customer->from_dt = $row->from_dt;
+					$customer->active = $row->active;
 					$customer->save();
 					}
 				
 				});
 			DB::commit();
 		} catch (\Exception $e) {
-			// dd($e);
+			Helper::debug($e);
 			DB::rollback();
 		}
 	}

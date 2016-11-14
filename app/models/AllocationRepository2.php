@@ -46,12 +46,11 @@ class AllocationRepository2  {
 
 		$this->_customers = $selected_customers;
 		$additionalsales = DB::table('split_old_customers')->get();
-		// Helper::debug($additionalsales);
 
 		$customers_list =  DB::table('customers')
 			->select('areas.group_code as group_code','group_name','area_name',
 				'customer_name','customer_code','customers.area_code as area_code',
-				'customers.area_code_two as area_code_two','multiplier','active','from_dt','sob_customer_code')
+				'customers.area_code_two as area_code_two','multiplier','active','from_dt','sob_customer_code', 'trade_deal')
 			->join('areas', 'customers.area_code', '=', 'areas.area_code')
 			->join('groups', 'areas.group_code', '=', 'groups.group_code')
 			->orderBy('groups.id')
@@ -62,7 +61,7 @@ class AllocationRepository2  {
 		$customers =  DB::table('customers')
 			->select('areas.group_code as group_code','group_name','area_name',
 				'customer_name','customer_code','customers.area_code as area_code',
-				'customers.area_code_two as area_code_two','multiplier','active', 'from_dt', 'sob_customer_code')
+				'customers.area_code_two as area_code_two','multiplier','active', 'from_dt', 'sob_customer_code', 'trade_deal')
 			->join('areas', 'customers.area_code', '=', 'areas.area_code')
 			->join('groups', 'areas.group_code', '=', 'groups.group_code')
 			->where('customers.active', 1)
@@ -110,12 +109,9 @@ class AllocationRepository2  {
 			}
 		}
 
-
-
 		$acc_nodes = [];
 		$ship_nodes = [];
 		$cust_nodes = [];
-
 
 		if(!empty($selected_customers)){
 			foreach ($selected_customers as $selected_customer) {
@@ -238,10 +234,6 @@ class AllocationRepository2  {
 				}
 			}
 		}
-
-		// Helper::debug($ship_nodes);
-
-		// Helper::debug($cust_nodes);
 
 		$this->account_sales = DB::table('mt_dt_sales')
 			->select(DB::raw('area_code, customer_code, plant_code, account_name, channel_code, sum(gsv) as gsv '))
