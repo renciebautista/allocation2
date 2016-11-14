@@ -273,6 +273,7 @@ class AllocationRepository2  {
 							foreach ($_accounts as $_account) {
 								if(($_account->area_code == $customer->area_code) && ($_account->ship_to_code == $_shipto->ship_to_code)){
 									$_account->gsv = 0;
+									$_account->added_gsv = 0;
 									if(isset($acc_nodes[$_account->channel_code][$customer->group_code][$customer->area_code][$customer->customer_code][$_shipto->plant_code])){
 										if(in_array($_account->account_name, $acc_nodes[$_account->channel_code][$customer->group_code][$customer->area_code][$customer->customer_code][$_shipto->plant_code])){
 											foreach ($this->account_sales as $account_sale) {
@@ -280,11 +281,14 @@ class AllocationRepository2  {
 													$_account->gsv = $account_sale->gsv;
 												}
 											}
-											$_account->gsv += self::getAdditionalGsv($additionalsales, $_base_sales, $customer->customer_code, $_account->channel_code, $_shipto->plant_code, $_account->account_name);
+											$added_gsv = self::getAdditionalAccountGsv($additionalsales, $_base_sales, $customer->customer_code, $_account->channel_code, $_shipto->plant_code, $_account->account_name);
+											$_account->added_gsv += $added_gsv;
+											$_account->gsv +=  $added_gsv;
 										}
 									}
 
 									$_account->gsv = ($_account->gsv * $customer->multiplier ) / 100;
+
 									$total_account_gsv += $_account->gsv;
 									$_shipto->accounts[] = (array) $_account;
 								}
@@ -294,18 +298,20 @@ class AllocationRepository2  {
 
 						// start ship to sales
 						$_shipto->gsv = 0;
-						foreach ($channels as $ch) {
-							if(isset($ship_nodes[$ch][$customer->group_code][$customer->area_code][$customer->customer_code])){
-								if(in_array($_shipto->plant_code, $ship_nodes[$ch][$customer->group_code][$customer->area_code][$customer->customer_code])){
-									foreach ($this->account_sales as $account_sale) {
-										if(($customer->customer_code == $account_sale->customer_code) && ($_shipto->plant_code == $account_sale->plant_code) && ($account_sale->channel_code == $ch)){
-											$_shipto->gsv += $account_sale->gsv;
-										}							
+						$_shipto->addgsv = 0;
+						foreach ($this->account_sales as $account_sale) {
+							if(isset($ship_nodes[$account_sale->channel_code][$customer->group_code][$customer->area_code][$customer->customer_code])){
+								if(in_array($_shipto->plant_code, $ship_nodes[$account_sale->channel_code][$customer->group_code][$customer->area_code][$customer->customer_code])){
+									if(($customer->customer_code == $account_sale->customer_code) && ($_shipto->plant_code == $account_sale->plant_code)){
+										$_shipto->gsv += $account_sale->gsv;
 									}
 								}
-								$_shipto->gsv += self::getAdditionalGsv($additionalsales, $_base_sales, $customer->customer_code,  $ch, $_shipto->plant_code);
-							}	
+							}
 						}
+
+						$add_gsv = self::getAdditionalShipGsv($additionalsales, $_base_sales, $channels, $ship_nodes, $customer->customer_code, $_shipto->plant_code);
+						$_shipto->gsv += $add_gsv;
+						$_shipto->addgsv = $add_gsv;
 						
 
 						$_shipto->gsv = ($_shipto->gsv * $customer->multiplier ) / 100;
@@ -325,9 +331,9 @@ class AllocationRepository2  {
 
 				}
 
+				$customer->adde_gsv = 0; 
 				$no_shipto = ShipTo::where('customer_code', $customer->customer_code)->get();
 				if(count($no_shipto) == 0){
-					// dd($customer);
 					foreach ($channels as $ch) {
 						if(isset($cust_nodes[$ch][$customer->group_code][$customer->area_code])){
 							if(in_array($customer->customer_code, $cust_nodes[$ch][$customer->group_code][$customer->area_code])){
@@ -339,19 +345,9 @@ class AllocationRepository2  {
 							}
 						}	
 					}
-				}
 
-				foreach ($channels as $ch) {
-					if(isset($cust_nodes[$ch][$customer->group_code][$customer->area_code])){
-						if(in_array($customer->customer_code, $cust_nodes[$ch][$customer->group_code][$customer->area_code])){
-							foreach ($this->account_sales as $account_sale) {
-								if(($customer->customer_code == $account_sale->customer_code) && ($account_sale->channel_code == $ch)){
-									$customer_gsv += $account_sale->gsv;
-								}							
-							}
-						}
-						$customer_gsv += self::getAdditionalGsv($additionalsales, $_base_sales, $customer->customer_code, $ch);
-					}	
+					$customer_gsv += self::getAdditionalCustomerGsv($additionalsales, $_base_sales, $channels, $cust_nodes, $customer->customer_code);
+
 				}
 
 
@@ -369,7 +365,73 @@ class AllocationRepository2  {
 		return $customers;
 	}
 
-	private function getAdditionalGsv($split, $source, $to_customer, $channel_code, $to_plant = null, $account_name = null){
+	private function getAdditionalCustomerGsv($additionalsales, $_base_sales, $channels, $cust_nodes, $to_customer){
+		$gsv = 0;
+		foreach ($additionalsales as $row) {
+			if(($row->to_customer == $to_customer) && ($row->to_plant == '')){
+				$customer = DB::table('customers')
+					->select('areas.group_code as group_code','group_name','area_name',
+						'customer_name','customer_code','customers.area_code as area_code',
+						'customers.area_code_two as area_code_two','multiplier','active','from_dt','sob_customer_code')
+					->join('areas', 'customers.area_code', '=', 'areas.area_code')
+					->join('groups', 'areas.group_code', '=', 'groups.group_code')
+					->where('customer_code', $row->from_customer)
+					->first();
+
+				// Helper::debug($customer);
+
+				foreach ($channels as $ch) {
+					if(isset($cust_nodes[$ch][$customer->group_code][$customer->area_code])){
+
+						if(in_array($row->from_customer, $cust_nodes[$ch][$customer->group_code][$customer->area_code])){
+							foreach ($this->account_sales as $account_sale) {
+								if(($customer->customer_code == $account_sale->customer_code)  && ($account_sale->channel_code == $ch)){
+									$gsv += $account_sale->gsv;
+								}							
+							}
+						}
+					}	
+				}
+			}
+			// Helper::debug($gsv);
+			$gsv = ($gsv * $row->split) / 100;
+		}
+		return $gsv;
+	}
+
+	private function getAdditionalShipGsv($additionalsales, $_base_sales, $channels, $ship_nodes, $to_customer, $to_plant){
+		$gsv = 0;
+		foreach ($additionalsales as $row) {
+			if(($row->to_customer == $to_customer) && ($row->to_plant == $to_plant)){
+				$customer = DB::table('customers')
+					->select('areas.group_code as group_code','group_name','area_name',
+						'customer_name','customer_code','customers.area_code as area_code',
+						'customers.area_code_two as area_code_two','multiplier','active','from_dt','sob_customer_code')
+					->join('areas', 'customers.area_code', '=', 'areas.area_code')
+					->join('groups', 'areas.group_code', '=', 'groups.group_code')
+					->where('customer_code', $row->from_customer)
+					->first();
+
+				foreach ($channels as $ch) {
+					if(isset($ship_nodes[$ch][$customer->group_code][$customer->area_code][$customer->customer_code])){
+						if(in_array($row->from_plant, $ship_nodes[$ch][$customer->group_code][$customer->area_code][$customer->customer_code])){
+							foreach ($this->account_sales as $account_sale) {
+								if(($customer->customer_code == $account_sale->customer_code) && ($row->from_plant == $account_sale->plant_code) && ($account_sale->channel_code == $ch)){
+									$gsv += $account_sale->gsv;
+								}							
+							}
+						}
+					}	
+				}
+
+			}
+			
+			$gsv = ($gsv * $row->split) / 100;
+		}
+		return $gsv;
+	}
+
+	private function getAdditionalAccountGsv($split, $source, $to_customer, $channel_code, $to_plant, $account_name){
 		$gsv = 0;
 		foreach ($split as $row) {
 			if(($row->to_customer == $to_customer) && ($row->to_plant == $to_plant)){
@@ -381,30 +443,10 @@ class AllocationRepository2  {
 							($sale->channel_code == $channel_code)){
 							$gsv += $sale->gsv;
 						}
-					}else{
-						if(!is_null($to_plant)){
-							if(($sale->customer_code == $row->from_customer) && 
-								($sale->plant_code == $row->from_plant) && 
-								($sale->channel_code == $channel_code)){
-								$gsv += $sale->gsv;
-							}
-						}else{
-							if(($sale->customer_code == $row->from_customer) && 
-								($sale->channel_code == $channel_code)){
-								$gsv += $sale->gsv;
-							}
-						}
 					}
-					
 				}
 			}
-			if(($row->to_customer == $to_customer) && ($row->to_plant == '')){
-				if(($sale->customer_code == $row->from_customer) && 
-					($sale->channel_code == $channel_code)){
-					$gsv += $sale->gsv;
-				}
-
-			}
+			
 			$gsv = ($gsv * $row->split) / 100;
 		}
 		return $gsv;
