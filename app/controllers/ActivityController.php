@@ -78,7 +78,6 @@ class ActivityController extends BaseController {
 			$activity_types = ActivityType::getWithNetworks();
 			$cycles = Cycle::getLists();
 			$divisions = Pricelist::divisions();
-			
 			$objectives = Objective::getLists();
 			return View::make('activity.create', compact('scope_types', 'planners', 'approvers', 'cycles',
 			 'activity_types', 'divisions' , 'objectives',  'users'));
@@ -274,7 +273,29 @@ class ActivityController extends BaseController {
 
 			$timings = ActivityTiming::getList($activity->id);
 
-			// $activity_roles = ActivityRole::getList($activity->id);
+			// tradedeal
+			$tradedeal = Tradedeal::getActivityTradeDeal($activity);
+			$tradedeal_skus = TradedealPartSku::where('activity_id', $activity->id)->get();
+
+			$acdivisions = \ActivityDivision::getList($activity->id);
+			$accategories = \ActivityCategory::selected_category($activity->id);
+			$acbrands = \ActivityBrand::selected_brand($activity->id);
+
+			$host_skus = ActivitySku::tradedealSkus($activity);
+			$ref_skus = Sku::items($acdivisions,$accategories,$acbrands);
+
+			$pre_skus = \Pricelist::items();
+			$dealtypes = TradedealType::getList();
+			$dealuoms = TradedealUom::get()->lists('tradedeal_uom', 'id');
+
+			$tradedealschemes = [];
+			$total_deals = Tradedeal::total_deals($activity);
+			$total_premium_cost = Tradedeal::total_premium_cost($activity);
+
+			if($tradedeal != null){
+				$tradedealschemes = TradedealScheme::getScheme($tradedeal->id);
+			}
+			// end tradedeal
 
 			$force_allocs = ForceAllocation::getlist($activity->id);
 			$areas = Area::getAreaWithGroup();
@@ -287,22 +308,21 @@ class ActivityController extends BaseController {
 					}
 				}
 			}
-			// Helper::print_r($areas);
+
 			if($activity->status_id < 4){
 				$submitstatus = array('1' => 'SUBMIT ACTIVITY','4' => 'SAVE AS DRAFT');
 				$scope_types = ScopeType::getLists($activity->id);
 				$planners = User::getApprovers(['PMOG PLANNER']);
 				$activity_types = ActivityType::getWithNetworks();
 				$cycles = Cycle::getLists();
-				// $divisions = Sku::getDivisionLists();
 				$divisions = Pricelist::divisions();
 				
-
 				return View::make('activity.edit', compact('activity', 'scope_types', 'planners', 'approvers', 'cycles',
 				 'activity_types', 'divisions' , 'sel_divisions','objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
 				 'sel_objectives',  'schemes', 'scheme_summary', 'networks', 'areas', 'timings' ,'sel_involves',
 				 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings',
-				 'force_allocs', 'comments' ,'submitstatus'));
+				 'force_allocs', 'comments' ,'submitstatus', 'tradedeal', 'tradedeal_skus', 'dealtypes', 'dealuoms', 'host_skus', 'ref_skus',
+				 'pre_skus', 'tradedealschemes', 'td_shiptos', 'td_premiums', 'total_deals', 'total_premium_cost'));
 			}
 
 			if($activity->status_id > 3){
@@ -352,6 +372,10 @@ class ActivityController extends BaseController {
 
 			$timings = ActivityTiming::getList($activity->id);
 
+			$tradedeal = Tradedeal::where('activity_id', $activity->id)->first();
+			$tradedeal_skus = TradedealPartSku::where('activity_id', $activity->id)->get();
+
+
 			// $activity_roles = ActivityRole::getList($activity->id);
 
 			$force_allocs = ForceAllocation::getlist($activity->id);
@@ -378,7 +402,7 @@ class ActivityController extends BaseController {
 				 'activity_types', 'divisions' , 'sel_divisions','objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
 				 'sel_objectives',  'schemes', 'scheme_summary', 'networks', 'areas', 'timings' ,'sel_involves',
 				 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings',
-				 'force_allocs', 'comments' ,'submitstatus'));
+				 'force_allocs', 'comments' ,'submitstatus', 'tradedeal', 'tradedeal_skus'));
 			}else{
 				$submitstatus = array('3' => 'RECALL ACTIVITY');
 				$divisions = Sku::getDivisionLists();
@@ -389,7 +413,7 @@ class ActivityController extends BaseController {
 				 'objectives',  'users', 'budgets', 'nobudgets','sel_approver',
 				 'sel_objectives',  'schemes', 'scheme_summary', 'networks', 'areas',
 				 'scheme_customers', 'scheme_allcations', 'materials', 'force_allocs', 'timings' ,'sel_involves',
-				 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings', 'comments' ,'submitstatus', 'route', 'recall', 'submit_action'));
+				 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings', 'comments' ,'submitstatus', 'route', 'recall', 'submit_action', 'tradedeal', 'tradedeal_skus'));
 			}
 		}
 	}
@@ -1216,8 +1240,6 @@ class ActivityController extends BaseController {
 							}
 							ActivityCustomer::insert($activity_customers);
 
-
-							// dd($activity_customers);
 							ActivityCutomerList::addCustomer($activity->id,$activity_customers);
 
 							ForceAllocation::where('activity_id',$id)->delete();
@@ -1242,43 +1264,45 @@ class ActivityController extends BaseController {
 						$activity->update();
 					}
 
-					$_channels = Input::get('channels_involved');
+					// $_channels = Input::get('channels_involved');
 					ActivityChannel2::where('activity_id',$id)->delete();
 					$activity_channels = array();
-					if(!empty($_channels)){
-						$channels = explode(",", $_channels);
+					if(!empty($_customers)){
+						$channels = explode(",", $_customers);
 						if(!empty($channels)){
 							$channel_group = array();
 							foreach ($channels as $channel_node){
-								$activity_channels[] = array('activity_id' => $id, 'channel_node' => trim($channel_node));
+								$channels = explode(".", trim($channel_node)); 
+								$activity_channels[] = array('activity_id' => $id, 'channel_node' => $channels[0]);
 							}
 							ActivityChannel2::insert($activity_channels);
-
 						}
 					}
 
 					ActivityChannelList::addChannel($activity->id,$activity_channels);
 
 					DB::commit();
-
+					// dd(1);
 					// update all schemes
 					$schemes = Scheme::getList($activity->id);
+					if (!App::environment('local')){
+						foreach ($schemes as $scheme) {
+							if($scheme->compute == 1){
+								$scheme->updating = 1;
+								$scheme->update();
 
-					foreach ($schemes as $scheme) {
-						if($scheme->compute == 1){
-							$scheme->updating = 1;
-							$scheme->update();
-							if($_ENV['MAIL_TEST']){
-								Queue::push('SchemeScheduler', array('id' => $scheme->id),'scheme');
+								if($_ENV['MAIL_TEST']){
+									Queue::push('SchemeScheduler', array('id' => $scheme->id),'scheme');
+								}else{
+									Queue::push('SchemeScheduler', array('id' => $scheme->id),'p_scheme');
+								}
 							}else{
-								Queue::push('SchemeScheduler', array('id' => $scheme->id),'p_scheme');
+								$scheme->updating = 0;
+								$scheme->update();
 							}
-						}else{
-							$scheme->updating = 0;
-							$scheme->update();
 						}
-						
 					}
+					
 					// end update
 					$arr['success'] = 1;
 					Session::flash('class', 'alert-success');
@@ -2779,6 +2803,1081 @@ class ActivityController extends BaseController {
 		else{
 			return Redirect::to('/dashboard');
 		}
+	}
+
+	public function updatetradedeal($id){
+		$activity = Activity::findOrFail($id);
+
+
+		// $budgets = ActivityBudget::getBudgets($activity->id);
+		// if(count($budgets) > 0){
+			$rules = array(
+			    'non_ulp_premium_desc' => 'max:13',
+			);
+			
+
+			$validation = Validator::make(Input::all(), $rules);
+
+			// Helper::debug($validation)
+
+			if($validation->passes()){
+				$tradedeal = Tradedeal::where('activity_id', $id)->first();
+				if(empty($tradedeal)){
+					$tradedeal = new Tradedeal;
+					$tradedeal->activity_id = $id;
+				}
+				$tradedeal->alloc_in_weeks = str_replace(",", "", Input::get('alloc_in_weeks'));
+				$tradedeal->non_ulp_premium = (Input::has('non_ulp_premium')) ? Input::get('non_ulp_premium') : 0; 
+
+				$tradedeal->non_ulp_premium_desc = Input::get('non_ulp_premium_desc');
+				$tradedeal->non_ulp_premium_code = Input::get('non_ulp_premium_code');
+				$tradedeal->non_ulp_premium_cost = str_replace(",", "", Input::get('non_ulp_premium_cost'));
+				$tradedeal->non_ulp_pcs_case = Input::get('non_ulp_pcs_case');
+				$tradedeal->save();
+
+				// copy tradedeal channel
+				$channels = TradedealChannel::where('activity_id', $id)->delete();
+
+				$chTemp = TradedealChannelMapping::getChannels();
+				foreach ($chTemp as $ch) {
+					$tc = new TradedealChannel;
+					$tc->activity_id = $id;
+					$tc->coc_03_code = $ch->coc_03_code;
+					$tc->coc_04_code = $ch->coc_04_code;
+					$tc->coc_05_code = $ch->coc_05_code;
+					$tc->channel_code = $ch->channel_code;
+					$tc->channel_desc = $ch->channel_name;
+					$tc->sub_channel_desc = $ch->sub_channel_desc;
+					$tc->save();
+				}
+
+				// if(count($channels) == 0){
+					
+				// }
+
+				// update non ulp premium
+				if($tradedeal->non_ulp_premium){
+					$partskus = TradedealPartSku::getPartSkus($activity);
+					foreach ($partskus as $sku) {
+						$sku->pre_code = $tradedeal->non_ulp_premium_code;
+						$sku->pre_desc = $tradedeal->non_ulp_premium_desc;
+						$sku->pre_cost = $tradedeal->non_ulp_premium_cost;
+						$sku->pre_pcs_case = $tradedeal->non_ulp_pcs_case;
+						$sku->update();
+					}
+				}
+
+				$schemes = TradedealScheme::where('tradedeal_id', $tradedeal->id)->get();
+
+				if(Input::hasFile('tdupload')){
+					$token = md5(uniqid(mt_rand(), true));
+					$file_path = Input::file('tdupload')->move(storage_path().'/uploads/temp/',$token.".xls");
+					$isError = false;
+					Excel::selectSheets('allocations')->load($file_path, function($reader) use (&$isError,$activity){
+						$firstrow = $reader->skip(1)->first()->toArray();
+						// dd($firstrow);
+				       	if (isset($firstrow['activity_id'])) {
+				            $rows = $reader->all();
+				            // dd($rows);
+				            if($rows[0]->activity_id != $activity->id){
+				            	$isError = true;
+				            }
+				        }
+
+				    });
+					
+				    if (!$isError) {
+						Excel::selectSheets('allocations')->load($file_path, function($reader) use ($activity) {
+							TradedealAllocRepository::manualUpload($reader->get(),$activity);
+						});
+				        
+				    }
+				}else{
+					// update all scheme
+					if(!empty($schemes)){
+						foreach ($schemes as $scheme) {
+							// TradedealAllocRepository::updateAllocation($scheme);
+						}
+					}
+				}
+				
+				File::deleteDirectory(storage_path('le/'.$activity->id));
+				if(!empty($schemes)){
+					foreach ($schemes as $scheme) {
+						// LeTemplateRepository::generateTemplate($scheme);
+					}
+				}
+
+				return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity->id)) . "#tradedeal")
+					->with('class', 'alert-success')
+					->with('message', 'Tradedeal successfuly updated');
+			}
+			return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity->id)) . "#tradedeal")
+					->with('class', 'alert-danger')
+					->with('message', 'Error on updating trade');
+		// }else{
+		// 	Session::flash('class', 'alert-danger');
+		// 	Session::flash('message', 'Budget IO is required.');
+		// 	return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity->id)) . "#tradedeal");
+		// }
+
+	}
+
+	public function addpartskus($id){
+		if(Request::ajax()){
+			$err = [];
+			$activity = Activity::find($id);
+			$tradedeal = Tradedeal::where('activity_id', $activity->id)->first();
+			if(empty($tradedeal)){
+				$err[] = 'No Trade Deal details';
+			}else{
+				if(empty($activity)){
+					$err[] = 'Activity not found.';
+				}else{
+					$host_sku = Pricelist::getSku(Input::get('host_sku'));
+					$ref_sku = Sku::getSku(Input::get('ref_sku'));
+					$host_variant = strtoupper(Input::get('variant'));
+					$pre_variant = strtoupper(Input::get('pre_variant'));
+
+					$ref_sku2 = Pricelist::getSku(Input::get('ref_sku'));
+
+					$pre_sku = Pricelist::getSku(Input::get('pre_sku'));
+
+					if(empty($host_sku)){
+						$err[] = 'No selected Host SKU.';
+					}
+
+					if(empty($ref_sku)){
+						$err[] = 'Reference SKU is required.';
+					}
+
+					if(empty($host_variant)){
+						$err[] = 'Host variant is required.';
+					}
+
+
+					if(!$tradedeal->non_ulp_premium){
+						if(empty($pre_sku)){
+							$err[] = 'No Premium SKU selected';
+						}
+
+						if(empty($pre_variant)){
+							$err[] = 'Premium variant is required.';
+						}
+					}
+
+					if($tradedeal->non_ulp_premium){
+						if(TradedealPartSku::nonUlpHostExist($activity, $host_sku->sap_code, $host_variant)){
+							$err[] = 'Host SKU and variant already exist.';
+						}
+					}else{
+						if(!empty($pre_sku)){
+							if(TradedealPartSku::ulpHostExist($activity, $host_sku->sap_code, $host_variant, $pre_sku->sap_code, $pre_variant)){
+								$err[] = 'Host / Premium SKU combination exist.';
+							}
+						}
+						
+					}
+
+					if(count($err) == 0){
+						$part_sku = new TradedealPartSku;
+						$part_sku->activity_id = $id;
+						$part_sku->host_code = $host_sku->sap_code;
+						$part_sku->host_desc = $host_sku->sap_desc;
+
+						$hostsku =  TradedealPartSku::where('host_code', $host_sku->sap_code)->where('activity_id', $activity->id)->first();
+						if(!empty($hostsku)){
+							$part_sku->variant = $hostsku->variant;
+						}else{
+							$part_sku->variant = $host_variant;
+						}
+
+						$part_sku->brand_shortcut = $host_sku->brand_shortcut;
+						$part_sku->host_sku_format = $host_sku->sku_format;
+						$part_sku->host_cost = str_replace(",", '', Input::get('host_cost_pcs'));
+						$part_sku->host_pcs_case = $host_sku->pack_size;
+						$part_sku->ref_code = $ref_sku->sku_code;
+						$part_sku->ref_desc = $ref_sku->sku_desc;
+						$part_sku->ref_pcs_case = $ref_sku2->pack_size;
+
+						if($tradedeal->non_ulp_premium == 1){
+							$part_sku->pre_code = $tradedeal->non_ulp_premium_code;
+							$part_sku->pre_desc = $tradedeal->non_ulp_premium_desc;
+							$part_sku->pre_cost = $tradedeal->non_ulp_premium_cost;
+							$part_sku->pre_pcs_case = $tradedeal->non_ulp_pcs_case;
+						}else{
+							if(Input::get('pre_sku') != 0){
+								$part_sku->pre_code = $pre_sku->sap_code;
+								$part_sku->pre_desc = $pre_sku->sap_desc;
+								$presku =  TradedealPartSku::where('host_code', $pre_sku->sap_code)->where('activity_id', $activity->id)->first();
+								if(!empty($presku)){
+									$part_sku->pre_variant = $presku->pre_variant;
+								}else{
+									$part_sku->pre_variant = $pre_variant;
+								}
+
+								$part_sku->pre_brand_shortcut = $pre_sku->brand_shortcut;
+								$part_sku->pre_sku_format = $pre_sku->sku_format;
+								$part_sku->pre_cost = str_replace(",", '', Input::get('pre_cost_pcs'));
+								$part_sku->pre_pcs_case = $pre_sku->pack_size;
+							}
+						}
+						
+						$part_sku->save();
+					}	
+				}
+
+			}
+			
+			if(count($err) > 0){
+				$arr['success'] = 0;
+				$arr['err_msg'] = $err;
+			}else{
+				$arr['success'] = 1;
+			}
+			
+			return json_encode($arr);
+		}
+	}
+
+	public function getpartskustable($id){
+
+		$skus = TradedealPartSku::select(array('id',
+			DB::raw('CONCAT(host_desc," - ",host_code) as host_sku'), 'host_cost', 'host_pcs_case', 'variant', 
+			DB::raw('CONCAT(ref_desc," - ",ref_code) as ref_sku'),
+			DB::raw('CONCAT(pre_desc," - ",pre_code) as pre_sku'), 'pre_cost', 'pre_pcs_case', 'pre_variant'))
+			->where('activity_id', $id)
+			->orderBy('id');
+
+		return Datatables::of($skus)
+			->remove_column('id')
+			->add_column('edit', '<a href="javascript:void(0)" id="{{$id}}" class="editsku" >Edit</a>', 10)
+			->add_column('delete', '<a href="javascript:void(0)" id="{{$id}}" class="deletesku" >Delete</a>', 11)
+			->edit_column('host_cost', function($row) {
+			        return "<span class='pull-right'> {$row->host_cost} </span>";
+			    })	
+			->edit_column('host_pcs_case', function($row) {
+			        return "<span class='pull-right'> {$row->host_pcs_case} </span>";
+			    })	
+			->edit_column('pre_cost', function($row) {
+			        return "<span class='pull-right'> {$row->pre_cost} </span>";
+			    })	
+			->edit_column('pre_pcs_case', function($row) {
+			        return "<span class='pull-right'> {$row->pre_pcs_case} </span>";
+			    })			
+			->make();
+	}
+
+	public function getpartskus($id){
+		$tradedeal = Tradedeal::where('activity_id',$id)->first();
+		$skus = TradedealPartSku::select(array('id',
+			DB::raw('CONCAT(host_desc," - ",host_code) as host_sku'), 'host_cost', 'host_pcs_case',
+			DB::raw('CONCAT(ref_desc," - ",ref_code) as ref_sku'),
+			DB::raw('CONCAT(pre_desc," - ",pre_code) as pre_sku'), 'pre_cost', 'pre_pcs_case'))
+			->where('activity_id', $id)->orderBy('id')->get();
+		$data['skus'] = $skus;
+		$data['uom'] = TradedealUom::get()->lists('tradedeal_uom', 'id');
+		return json_encode($data);
+
+	}
+
+	public function deletepartskus(){
+		if(Request::ajax()){
+			$id = Input::get('d_id');
+			$part_sku = TradedealPartSku::find($id);
+			$arr['success'] = 0;
+
+			if(!empty($part_sku)){
+				if(!TradedealSchemeSku::idExist($id)){
+					$part_sku->delete();
+					$arr['success'] = 1;
+				}
+				
+			}
+			$arr['id'] = $id;
+			return json_encode($arr);
+		}
+	}
+
+	public function partsku($id){
+		if(Request::ajax()){
+			$part_sku = TradedealPartSku::find($id);
+			return json_encode($part_sku);
+		}
+	}
+
+	public function updatepartskus(){
+		if(Request::ajax()){
+			$err = [];
+			$part_sku = TradedealPartSku::find(Input::get('sku_id'));
+			$activity = Activity::find($part_sku->activity_id);
+			$tradedeal = Tradedeal::where('activity_id', $part_sku->activity_id)->first();
+			if(empty($part_sku)){
+				$err[] = 'Participating SKU not found';
+			}else{
+				$host_sku = Pricelist::getSku(Input::get('ehost_sku'));
+				$ref_sku = Sku::getSku(Input::get('eref_sku'));
+				$host_variant = strtoupper(Input::get('evariant'));
+				$pre_variant = strtoupper(Input::get('epre_variant'));
+
+				$ref_sku2 = Pricelist::getSku(Input::get('eref_sku'));
+
+				$pre_sku = Pricelist::getSku(Input::get('epre_sku'));
+
+				if(empty($host_sku)){
+					$err[] = 'No selected Host SKU.';
+				}
+
+				if(empty($ref_sku)){
+					$err[] = 'Reference SKU is required.';
+				}
+
+				if(empty($host_variant)){
+					$err[] = 'Host variant is required.';
+				}
+
+
+				if(!$tradedeal->non_ulp_premium){
+					if(empty($pre_sku)){
+						$err[] = 'No Premium SKU selected';
+					}
+
+					if(empty($pre_variant)){
+						$err[] = 'Premium variant is required.';
+					}
+				}
+
+				if($tradedeal->non_ulp_premium){
+					if(TradedealPartSku::nonUlpHostExist($activity, $host_sku->sap_code, $host_variant, $part_sku)){
+						$err[] = 'Host SKU and variant already exist.';
+					}
+				}else{
+					if(!empty($pre_sku)){
+						if(TradedealPartSku::ulpHostExist($activity, $host_sku->sap_code, $host_variant, $pre_sku->sap_code, $pre_variant, $part_sku)){
+							$err[] = 'Host / Premium SKU combination exist.';
+						}
+					}
+					
+				}
+
+
+
+				if(count($err) == 0){
+					$update_host_variant = false;
+					$update_pre_variant = true;
+					$part_sku->host_code = $host_sku->sap_code;
+					$part_sku->host_desc = $host_sku->sap_desc;
+					$hostsku =  TradedealPartSku::where('host_code', $host_sku->sap_code)->where('activity_id', $activity->id)->first();
+					$host_cost = str_replace(",", '', Input::get('ehost_cost_pcs'));
+					if(!empty($hostsku)){
+						$part_sku->variant = $hostsku->variant;
+						if(($hostsku->variant != $host_variant) || ($hostsku->host_cost != $host_cost)){
+							$update_host_variant =  true;
+						}
+					}else{
+						$part_sku->variant = $host_variant;
+					}
+
+					$part_sku->brand_shortcut = $host_sku->brand_shortcut;
+					$part_sku->host_sku_format = $host_sku->sku_format;
+					$part_sku->host_cost = $host_cost;
+					$part_sku->host_pcs_case = $host_sku->pack_size;
+					$part_sku->ref_code = $ref_sku->sku_code;
+					$part_sku->ref_desc = $ref_sku->sku_desc;
+					$part_sku->ref_pcs_case = $ref_sku2->pack_size;
+
+
+					if($tradedeal->non_ulp_premium == 1){
+						$part_sku->pre_code = $tradedeal->non_ulp_premium_code;
+						$part_sku->pre_desc = $tradedeal->non_ulp_premium_desc;
+						$part_sku->pre_cost = $tradedeal->non_ulp_premium_cost;
+						$part_sku->pre_pcs_case = $tradedeal->non_ulp_pcs_case;
+					}else{
+						if(Input::get('epre_sku') != 0){
+							$part_sku->pre_code = $pre_sku->sap_code;
+							$part_sku->pre_desc = $pre_sku->sap_desc;
+							$presku =  TradedealPartSku::where('host_code', $pre_sku->sap_code)->where('activity_id', $activity->id)->first();
+
+							if(!empty($presku)){
+								$part_sku->pre_variant = $presku->pre_variant;
+								if($part_sku->pre_variant != $pre_variant){
+									$update_pre_variant = true;
+								}
+							}else{
+								$part_sku->pre_variant = $pre_variant;
+							}
+							$part_sku->pre_brand_shortcut = $pre_sku->brand_shortcut;
+							$part_sku->pre_sku_format = $pre_sku->sku_format;
+							$part_sku->pre_cost =str_replace(",", '', Input::get('epre_cost_pcs'));
+							$part_sku->pre_pcs_case = $pre_sku->pack_size;
+						}
+					}
+					$part_sku->save();
+
+					if($update_host_variant){
+						$host_skus = TradedealPartSku::where('host_code', $host_sku->sap_code)->where('activity_id', $activity->id)->get();
+						foreach ($host_skus as $sku) {
+							$sku->variant = $host_variant;
+							$sku->host_cost = $host_cost;
+							$sku->update();
+						}
+					}
+
+					if($update_pre_variant){
+						$host_skus = TradedealPartSku::where('pre_code', $pre_sku->sap_code)->where('activity_id', $activity->id)->get();
+						foreach ($host_skus as $sku) {
+							$sku->pre_variant = $pre_variant;
+							$sku->update();
+						}
+					}
+				}	
+
+			}
+			
+			if(count($err) > 0){
+				$arr['success'] = 0;
+				$arr['err_msg'] = $err;
+			}else{
+				$arr['success'] = 1;
+			}
+			
+			return json_encode($arr);
+		}
+	}
+
+	public function createtradealscheme($id){
+		$activity = Activity::findOrFail($id);
+		$tradedeal = Tradedeal::getActivityTradeDeal($activity);
+		$activity = Activity::findOrFail($activity->id);
+		$dealtypes = TradedealType::getList();
+		$dealuoms = TradedealUom::get()->lists('tradedeal_uom', 'id');
+		$tradedeal_skus = TradedealPartSku::where('activity_id', $activity->id)->get();
+		return View::make('activity.createtradedealscheme',compact('dealtypes', 'dealuoms', 'tradedeal_skus', 
+			'activity', 'tradedeal'));
+
+	}
+
+	public function storetradealscheme($id){	
+		// dd(Input::all());
+
+		$activity = Activity::findOrFail($id);
+		$tradedeal = Tradedeal::where('activity_id', $activity->id)->first();
+		$deal_type = TradedealType::find(Input::get('deal_type'));
+		$uom = TradedealUom::find(Input::get('uom'));
+
+		$selected = [];
+		$free_pcs_case = [];
+
+		$invalid_premiums = true;
+		if(Input::has('skus')){
+			foreach (Input::get('skus') as $value) {
+			 	$selected[] = $value;
+			 	$free_sku = TradedealPartSku::find($value);
+				$free_pcs_case[] = $free_sku->pre_pcs_case;
+			}
+			$result = array_unique($free_pcs_case);
+
+			// validation on cases quantitiy
+			// if($uom->id == 3){
+			// 	if(count($result) > 1){
+			// 		$invalid_premiums = false;
+			// 	}
+			// }
+			
+		}
+
+
+		$invalid_collective = true;
+		
+		if(($deal_type->id == 2) && ($uom->id == 3)){
+			$host_pcs_case = [];
+			foreach ($selected as $value) {
+				$part_sku = TradedealPartSku::find($value);
+				$host_pcs_case[] = $part_sku->host_pcs_case;
+			}
+			$result = array_unique($host_pcs_case);
+
+			if(count($result) > 1){
+				$invalid_collective = false;
+			}
+
+		}
+
+
+		Validator::extend('invalid_premiums', function($attribute, $value, $parameters) {
+		    return $parameters[0];
+		});
+
+		$messages = array(
+		    'invalid_premiums' => 'Combination of Premium SKU with different pcs/case value is not allowed',
+		    'invalid_collective' => 'Combination of participating SKU with different pcs/case value is not allowed',
+		    'channels.required' => 'Channels Involved is required'
+		);
+
+		Validator::extend('invalid_collective', function($attribute, $value, $parameters) {
+		    return $parameters[0];
+		});
+
+		$rules = array(
+			'scheme_name' => 'required|unique:tradedeal_schemes,name,NULL,id,tradedeal_id,'.$tradedeal->id,
+		    'skus' => 'required|invalid_collective:'.$invalid_collective.'|invalid_premiums:'.$invalid_premiums,
+		    'buy' => 'required|numeric',
+		    'free' => 'required|numeric',
+		    'channels' => 'required'
+		);
+
+		$validation = Validator::make(Input::all(), $rules, $messages);
+
+		if($validation->passes()){
+
+			if(count($selected) > 0){
+				if($deal_type->id == 1){
+					$buy = str_replace(",", '', Input::get('buy'));
+					$free = str_replace(",", '', Input::get('free'));
+					$scheme = new TradedealScheme;
+					$scheme->tradedeal_id = $tradedeal->id;
+					// $scheme->name = $deal_type->tradedeal_type.": ".$buy."+".$free." ".$uom->tradedeal_uom;
+					$scheme->name = strtoupper(Input::get('scheme_name'));
+					$scheme->tradedeal_type_id = $deal_type->id;
+					$scheme->buy = $buy;
+					$scheme->free = $free;
+					$scheme->coverage = str_replace(",", '', Input::get('coverage'));
+					$scheme->tradedeal_uom_id = $uom->id;
+					$pcs_deal = 0;
+					if($scheme->tradedeal_uom_id == 1){
+						$pcs_deal = 1;
+					}else if($scheme->tradedeal_uom_id == 2){
+						$pcs_deal = 12;
+					}else{
+						if($tradedeal->non_ulp_premium){
+							$pcs_deal = $tradedeal->non_ulp_pcs_case;
+						}else{
+							if(Input::has('skus')){
+								$premium = TradedealPartSku::where('id', Input::get('skus')[0])->first();
+							}
+							$pcs_deal = $premium->pre_pcs_case;
+						}
+						
+					}
+					if($tradedeal->non_ulp_premium){
+						$scheme->pre_code = $tradedeal->non_ulp_premium_code;
+						$scheme->pre_desc = $tradedeal->non_ulp_premium_desc;
+						$scheme->pre_cost = $tradedeal->non_ulp_premium_cost;
+						$scheme->pre_pcs_case = $tradedeal->non_ulp_pcs_case;
+						$scheme->pcs_deal = $pcs_deal;
+					}else{
+						// $premuim_sku = TradedealPartSku::find(Input::get('premium_sku'));
+						// $scheme->pre_code = $premuim_sku->pre_code;
+						// $scheme->pre_desc = $premuim_sku->pre_desc;
+						// $scheme->pre_cost = $premuim_sku->pre_cost;
+						// $scheme->pre_pcs_case = $premuim_sku->pre_pcs_case;
+					}
+					$scheme->pcs_deal = $pcs_deal;
+					
+					$scheme->save();
+
+					TradedealSchemeSku::addHostSku(Input::get('skus'), $scheme);
+				}else if($deal_type->id == 2){
+					$buy = str_replace(",", '', Input::get('buy'));
+					$free = str_replace(",", '', Input::get('free'));
+					$scheme = new TradedealScheme;
+					$scheme->tradedeal_id = $tradedeal->id;
+					$scheme->tradedeal_type_id = $deal_type->id;
+					// $scheme->name = $deal_type->tradedeal_type.": ".$buy."+".$free." ".$uom->tradedeal_uom;
+					$scheme->name = strtoupper(Input::get('scheme_name'));
+					$scheme->buy = $buy;
+					$scheme->free = $free;
+					$scheme->coverage = str_replace(",", '', Input::get('coverage'));
+					$scheme->tradedeal_uom_id = $uom->id;
+
+					$pcs_deal = 0;
+					if($scheme->tradedeal_uom_id == 1){
+						$pcs_deal = 1;
+					}else if($scheme->tradedeal_uom_id == 2){
+						$pcs_deal = 12;
+					}else{
+						if($tradedeal->non_ulp_premium){
+							$pcs_deal = $tradedeal->non_ulp_pcs_case;
+						}else{
+							$premuim_sku = TradedealPartSku::find(Input::get('premium_sku'));
+							$pcs_deal = $premuim_sku->pre_pcs_case;
+						}
+						
+					}
+					$scheme->pcs_deal = $pcs_deal;
+
+					if($tradedeal->non_ulp_premium){
+						$scheme->pre_code = $tradedeal->non_ulp_premium_code;
+						$scheme->pre_desc = $tradedeal->non_ulp_premium_desc;
+						$scheme->pre_cost = $tradedeal->non_ulp_premium_cost;
+						$scheme->pre_pcs_case = $tradedeal->non_ulp_pcs_case;
+					}else{
+						$premuim_sku = TradedealPartSku::find(Input::get('premium_sku'));
+						$scheme->pre_id = $premuim_sku->id;
+						$scheme->pre_code = $premuim_sku->pre_code;
+						$scheme->pre_desc = $premuim_sku->pre_desc;
+						$scheme->pre_cost = $premuim_sku->pre_cost;
+						$scheme->pre_pcs_case = $premuim_sku->pre_pcs_case;
+					}
+					$scheme->save();
+					foreach ($selected as $value) {
+						TradedealSchemeSku::create(['qty' => Input::get('qty')[$value], 
+							'tradedeal_scheme_id' => $scheme->id,
+							'tradedeal_part_sku_id' => $value]);
+					}
+				}else{
+					$buy = str_replace(",", '', Input::get('buy'));
+					$free = str_replace(",", '', Input::get('free'));
+					$scheme = new TradedealScheme;
+					$scheme->tradedeal_id = $tradedeal->id;
+					$scheme->tradedeal_type_id = $deal_type->id;
+					// $scheme->name = $deal_type->tradedeal_type.": ".$buy."+".$free." ".$uom->tradedeal_uom;
+					$scheme->name = strtoupper(Input::get('scheme_name'));
+					$scheme->buy = $buy;
+					$scheme->free = $free;
+					$scheme->coverage = str_replace(",", '', Input::get('coverage'));
+					$scheme->tradedeal_uom_id = $uom->id;
+
+
+					$pcs_deal = 0;
+					if($scheme->tradedeal_uom_id == 1){
+						$pcs_deal = 1;
+					}else if($scheme->tradedeal_uom_id == 2){
+						$pcs_deal = 12;
+					}else{
+						if($tradedeal->non_ulp_premium){
+							$pcs_deal = $tradedeal->non_ulp_pcs_case;
+						}else{
+							$premuim_sku = TradedealPartSku::find(Input::get('premium_sku'));
+							$pcs_deal = $premuim_sku->pre_pcs_case;
+						}
+						
+					}
+					$scheme->pcs_deal = $pcs_deal;
+					
+					if($tradedeal->non_ulp_premium){
+						$scheme->pre_code = $tradedeal->non_ulp_premium_code;
+						$scheme->pre_desc = $tradedeal->non_ulp_premium_desc;
+						$scheme->pre_cost = $tradedeal->non_ulp_premium_cost;
+						$scheme->pre_pcs_case = $tradedeal->non_ulp_pcs_case;
+					}else{
+						$premuim_sku = TradedealPartSku::find(Input::get('premium_sku'));
+						$scheme->pre_id = $premuim_sku->id;
+						$scheme->pre_code = $premuim_sku->pre_code;
+						$scheme->pre_desc = $premuim_sku->pre_desc;
+						$scheme->pre_cost = $premuim_sku->pre_cost;
+						$scheme->pre_pcs_case = $premuim_sku->pre_pcs_case;
+					}
+					$scheme->save();
+
+					TradedealSchemeSku::addHostSku(Input::get('skus'), $scheme);
+				}
+
+
+				TradedealSchemeChannel::createChannelSelection($scheme, $activity, Input::get('channels'));
+
+				TradedealAllocRepository::updateAllocation($scheme);
+				LeTemplateRepository::generateTemplate($scheme);
+			}
+
+			return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity->id)) . "#tradedeal")
+					->with('class', 'alert-success')
+					->with('message', 'Trade Deal scheme was successfuly created.');
+		}
+
+		return Redirect::route('activity.createtradealscheme', $activity->id)
+				->withInput()
+				->withErrors($validation)
+				->with('class', 'alert-danger')
+				->with('message', 'There were validation errors.');
+	}
+
+	public function deletetradedealscheme(){
+		if(Request::ajax()){
+			$id = Input::get('d_id');
+			$tradedealscheme = TradedealScheme::find($id);
+			$tradedeal = Tradedeal::find($tradedealscheme->tradedeal_id);
+			if(empty($tradedealscheme)){
+				$arr['success'] = 0;
+				Session::flash('class', 'alert-danger');
+				Session::flash('message', 'An error occured while deleting the record.');
+			}else{
+				TradedealSchemeAllocation::where('tradedeal_scheme_id', $tradedealscheme->id)->delete();
+				TradedealSchemeSku::where('tradedeal_scheme_id', $tradedealscheme->id)->delete();
+				TradedealSchemeChannel::where('tradedeal_scheme_id', $tradedealscheme->id)->delete();
+				$tradedealscheme->delete();
+
+				File::deleteDirectory(storage_path('le/'.$tradedeal->activity_id.'/'.$tradedealscheme->id));
+
+				$arr['success'] = 1;	
+				Session::flash('class', 'alert-success');
+				Session::flash('message', 'Tradedeal Scheme successfully deleted.');			
+			}
+			$arr['id'] = $id;
+			return json_encode($arr);
+		}
+	}
+
+	public function exporttradedeal($id){
+		$activity = Activity::findOrFail($id);
+		Excel::create($activity->circular_name, function($excel) use($activity){
+			$excel->sheet('SCHEME SUMMARY', function($sheet) use ($activity) {
+				$sheet->setCellValueByColumnAndRow(0,1, 'Activity Title:');
+				$sheet->setCellValueByColumnAndRow(1,1, $activity->circular_name);
+				$sheet->setCellValueByColumnAndRow(0,2, 'Start Date:');
+				$sheet->setCellValueByColumnAndRow(1,2, date('d/m/Y', strtotime($activity->eimplementation_date)));
+				$sheet->setCellValueByColumnAndRow(0,3, 'End Date:');
+				$sheet->setCellValueByColumnAndRow(1,3, date('d/m/Y', strtotime($activity->end_date)));
+
+				$sheet->row(5, array('ACTIVITY', 'Scheme Code', 'Scheme Description', 'HOST CODE', 'HOST DESCRIPTION', 'PREMIUM CODE / PIMS CODE', 'Premium SKU', 'Master Outlet Subtype Name', 'Master Outlet Subtype Code'));
+				$sheet->getStyle("A5:I5")->getFont()->setBold(true);
+				$row = 6;
+
+				$tradedeal = Tradedeal::getActivityTradeDeal($activity);
+				$tradedealschemes = TradedealScheme::where('tradedeal_id',$tradedeal->id)
+					->orderBy('tradedeal_type_id')
+					->orderBy('tradedeal_uom_id')
+					->get();
+				foreach ($tradedealschemes as $scheme) {
+						$sheet->setCellValueByColumnAndRow(0,$row, $scheme->name);
+						if($scheme->tradedeal_type_id == 1){
+							$host_skus = TradedealSchemeSku::getHostSku($scheme);
+							$sku_cnt = count($host_skus);
+							foreach ($host_skus as $key => $host_sku) {
+								$deal_id = TradedealSchemeAllocation::getSchemeCode($scheme, $host_sku);
+								$sheet->setCellValueByColumnAndRow(1,$row, $deal_id->scheme_code);
+								$sheet->setCellValueByColumnAndRow(2,$row, $deal_id->scheme_desc);
+								$sheet->setCellValueByColumnAndRow(3,$row, $host_sku->host_code);
+								$sheet->setCellValueByColumnAndRow(4,$row, $host_sku->host_desc. ' '.$host_sku->variant);
+								$sheet->setCellValueByColumnAndRow(5,$row, $host_sku->pre_code);
+								$sheet->setCellValueByColumnAndRow(6,$row, $host_sku->pre_desc. ' '.$host_sku->pre_variant);	
+								$row++;	
+							}
+							$row = $row - $sku_cnt;
+							$channels = TradedealSchemeChannel::getSelectedDetails($scheme);
+							$ch_cnt = count($channels);
+							foreach ($channels as $channel) {
+								$sheet->setCellValueByColumnAndRow(7,$row, $channel->l5_desc);
+								$sheet->setCellValueByColumnAndRow(8,$row, $channel->l5_code);
+								$row++;
+							}
+
+							if($ch_cnt < $sku_cnt){
+								$x = $sku_cnt - $ch_cnt;
+								$row = $row + $x;
+							}
+						}
+						if($scheme->tradedeal_type_id == 2){
+							
+						}
+
+						if($scheme->tradedeal_type_id == 3){
+							$host_skus = TradedealSchemeSku::getHostSku($scheme);
+							$deal_id = TradedealSchemeAllocation::getCollecttiveSchemeCode($scheme);
+							$sheet->setCellValueByColumnAndRow(1,$row, $deal_id->scheme_code);
+							$sheet->setCellValueByColumnAndRow(2,$row, $deal_id->scheme_desc);
+							$host_skus = TradedealSchemeSku::getHostSku($scheme);
+							$sku_cnt = count($host_skus);
+							foreach ($host_skus as $key => $host_sku) {
+								$sheet->setCellValueByColumnAndRow(3,$row, $host_sku->host_code);
+								$sheet->setCellValueByColumnAndRow(4,$row, $host_sku->host_desc. ' '.$host_sku->variant);	
+								$row++;	
+							}
+							$row = $row - $sku_cnt;
+
+							if($tradedeal->non_ulp_premium){
+								$sheet->setCellValueByColumnAndRow(5,$row, $scheme->pre_code);
+								$sheet->setCellValueByColumnAndRow(6,$row, $scheme->pre_desc .' '.$scheme->pre_variant);
+							}else{
+								$part_sku = TradedealPartSku::find($scheme->pre_id);
+								$sheet->setCellValueByColumnAndRow(5,$row, $part_sku->pre_code);
+								$sheet->setCellValueByColumnAndRow(6,$row, $part_sku->pre_desc .' '.$part_sku->pre_variant);
+							}
+
+							$channels = TradedealSchemeChannel::getSelectedDetails($scheme);
+							$ch_cnt = count($channels);
+							foreach ($channels as $channel) {
+								$sheet->setCellValueByColumnAndRow(7,$row, $channel->l5_desc);
+								$sheet->setCellValueByColumnAndRow(8,$row, $channel->l5_code);
+								$row++;
+							}
+
+							if($ch_cnt < $sku_cnt){
+								$x = $sku_cnt - $ch_cnt;
+								$row = $row + $x;
+							}
+							
+						}
+						
+					// }
+					
+				}
+		    });
+
+		    $excel->sheet('ALLOCATIONS', function($sheet) use ($activity) {
+		    	
+
+				$tradedeal_skus = TradedealPartSku::where('activity_id', $activity->id)->groupBy('pre_code')->get();
+				$tradedeal = Tradedeal::getActivityTradeDeal($activity);
+				$allocations = TradedealSchemeAllocation::exportAlloc($tradedeal);
+
+				$sheet->setWidth('A', 16);
+				$sheet->setWidth('B', 13);
+				$sheet->setWidth('C', 20);
+				$sheet->setWidth('D', 10);
+				$sheet->setWidth('E', 30);
+				$sheet->setWidth('F', 15);
+				$sheet->setWidth('G', 20);
+				$sheet->setWidth('H', 5);
+
+				$row = 2;
+				$sheet->row($row, array('AREA', 'Distributor Code', 'Distributor Name', 'Site Code', 'Site Name', 'Scheme Code', 'Scheme Description', 'UOM'));
+
+				// premuim
+				$premiums = [];
+				foreach ($tradedeal_skus as $sku) {
+					$premiums[] = $sku->pre_desc. ' '. $sku->pre_variant;
+				}
+
+				$col = 8;
+				$col_pre = [];
+				$col_pre_x = [];
+				$sheet->setCellValueByColumnAndRow($col,1, 'DEALS');
+				foreach ($premiums as $premuim) {
+					$sheet->setCellValueByColumnAndRow($col,2, $premuim. ' DEALS');
+					$sheet->setWidth(PHPExcel_Cell::stringFromColumnIndex($col), 10);
+					$col_pre[$premuim] = $col;
+					$col++;
+				}
+				$style = array(
+			        'alignment' => array(
+			            'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+			        )
+			    );
+
+				$d_col = $col -1;
+				$sheet->mergeCells(\PHPExcel_Cell::stringFromColumnIndex(8).'1:'.\PHPExcel_Cell::stringFromColumnIndex($d_col).'1');
+				$sheet->getStyle(\PHPExcel_Cell::stringFromColumnIndex(8).'1:'.\PHPExcel_Cell::stringFromColumnIndex($d_col).'1')->applyFromArray($style);
+
+
+				$sheet->setCellValueByColumnAndRow($col,1, 'PREMIUMS');
+				foreach ($premiums as $premuim) {
+					$sheet->setCellValueByColumnAndRow($col,2, $premuim. ' PREMIUMS');
+					$col_pre_x[$premuim] = $col;
+					$col++;
+				}
+				$d_col++;
+				$p_col = $col - 1;
+				$sheet->mergeCells(\PHPExcel_Cell::stringFromColumnIndex($d_col).'1:'.\PHPExcel_Cell::stringFromColumnIndex($p_col).'1');
+				$sheet->getStyle(\PHPExcel_Cell::stringFromColumnIndex($d_col).'1:'.\PHPExcel_Cell::stringFromColumnIndex($p_col).'1')->applyFromArray($style);
+
+				$sheet->getStyle('I2:R2')->getAlignment()
+					->applyFromArray(array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER))
+					->setWrapText(true);
+
+				$sheet->setWidth(\PHPExcel_Cell::stringFromColumnIndex($col), 10);
+
+
+				$last_area = '';
+				$last_distributor = '';
+				$last_site = '';
+				$first_row = 3;
+				foreach ($allocations as $alloc) {
+					$row++;
+					if($alloc->tradedeal_uom_id == 1){
+						$pcs_deal = 1;
+					}
+					if($alloc->tradedeal_uom_id == 2){
+						$pcs_deal = 12;
+					}
+					if($alloc->tradedeal_uom_id == 3){
+						$pcs_deal = $alloc->pcs_case;
+					}
+					
+					if($last_area == $alloc->area){
+						if($last_distributor == $alloc->sold_to_code){
+							if($last_site == $alloc->plant_code){
+								$sheet->row($row, ['', '', '', '', '', $alloc->scheme_code, $alloc->scheme_description, $pcs_deal]);
+							}else{
+								$sheet->row($row, ['', '', '', $last_site.' Total']);
+								foreach ($col_pre as $col) {
+									$last_row = $row - 1;
+									$sum = "=SUM(".\PHPExcel_Cell::stringFromColumnIndex($col).$first_row.":".\PHPExcel_Cell::stringFromColumnIndex($col).$last_row.")";
+									$sheet->setCellValueByColumnAndRow($col,$row,$sum);
+								}
+
+								foreach ($col_pre_x as $col) {
+									$last_row = $row - 1;
+									$sum = "=SUM(".\PHPExcel_Cell::stringFromColumnIndex($col).$first_row.":".\PHPExcel_Cell::stringFromColumnIndex($col).$last_row.")";
+									$sheet->setCellValueByColumnAndRow($col,$row,$sum);
+								}
+
+								$row++;
+								$first_row = $row;
+								$sheet->row($row, ['', '', '', $alloc->plant_code, $alloc->ship_to_name, $alloc->scheme_code, $alloc->scheme_description, $pcs_deal]);
+							}
+							$sheet->setCellValueByColumnAndRow($col_pre[$alloc->pre_desc_variant],$row, $alloc->final_pcs / $pcs_deal);
+							$sheet->setCellValueByColumnAndRow($col_pre_x[$alloc->pre_desc_variant],$row, $alloc->final_pcs);
+						}else{
+							if($last_site != $alloc->plant_code){
+								$sheet->row($row, ['', '', '', $last_site.' Total']);
+								foreach ($col_pre as $col) {
+									$last_row = $row - 1;
+									$sum = "=SUM(".\PHPExcel_Cell::stringFromColumnIndex($col).$first_row.":".\PHPExcel_Cell::stringFromColumnIndex($col).$last_row.")";
+									$sheet->setCellValueByColumnAndRow($col,$row,$sum);
+								}
+
+								foreach ($col_pre_x as $col) {
+									$last_row = $row - 1;
+									$sum = "=SUM(".\PHPExcel_Cell::stringFromColumnIndex($col).$first_row.":".\PHPExcel_Cell::stringFromColumnIndex($col).$last_row.")";
+									$sheet->setCellValueByColumnAndRow($col,$row,$sum);
+								}
+								$row++;
+								$first_row = $row;
+							}
+							$sheet->row($row, ['', $alloc->sold_to_code, $alloc->sold_to, $alloc->plant_code, $alloc->ship_to_name, $alloc->scheme_code, $alloc->scheme_description, $pcs_deal]);
+							$sheet->setCellValueByColumnAndRow($col_pre[$alloc->pre_desc_variant],$row, $alloc->final_pcs / $pcs_deal);
+							$sheet->setCellValueByColumnAndRow($col_pre_x[$alloc->pre_desc_variant],$row, $alloc->final_pcs);
+						}
+					}else{
+						if(($last_site != $alloc->plant_code) && ($last_site != '')){
+							$sheet->row($row, ['', '', '', $last_site.' Total']);
+							foreach ($col_pre as $col) {
+								$last_row = $row - 1;
+								$sum = "=SUM(".\PHPExcel_Cell::stringFromColumnIndex($col).$first_row.":".\PHPExcel_Cell::stringFromColumnIndex($col).$last_row.")";
+								$sheet->setCellValueByColumnAndRow($col,$row,$sum);
+							}
+
+							foreach ($col_pre_x as $col) {
+								$last_row = $row - 1;
+								$sum = "=SUM(".\PHPExcel_Cell::stringFromColumnIndex($col).$first_row.":".\PHPExcel_Cell::stringFromColumnIndex($col).$last_row.")";
+								$sheet->setCellValueByColumnAndRow($col,$row,$sum);
+							}
+
+							$row++;
+							$first_row = $row;
+						}
+						$sheet->row($row, [$alloc->area, $alloc->sold_to_code, $alloc->sold_to, $alloc->plant_code, $alloc->ship_to_name, $alloc->scheme_code, $alloc->scheme_description, $pcs_deal]);
+						$sheet->setCellValueByColumnAndRow($col_pre[$alloc->pre_desc_variant],$row, $alloc->final_pcs / $pcs_deal);
+						$sheet->setCellValueByColumnAndRow($col_pre_x[$alloc->pre_desc_variant],$row, $alloc->final_pcs);
+					}
+
+					$last_area = $alloc->area;
+					$last_distributor = $alloc->sold_to_code;
+					$last_site = $alloc->plant_code;
+				}
+				$row++;
+				$sheet->row($row, ['', '', '', $last_site.' Total']);	
+				foreach ($col_pre as $col) {
+					$last_row = $row - 1;
+					$sum = "=SUM(".\PHPExcel_Cell::stringFromColumnIndex($col).$first_row.":".\PHPExcel_Cell::stringFromColumnIndex($col).$last_row.")";
+					$sheet->setCellValueByColumnAndRow($col,$row,$sum);
+				}	
+
+				foreach ($col_pre_x as $col) {
+					$last_row = $row - 1;
+					$sum = "=SUM(".\PHPExcel_Cell::stringFromColumnIndex($col).$first_row.":".\PHPExcel_Cell::stringFromColumnIndex($col).$last_row.")";
+					$sheet->setCellValueByColumnAndRow($col,$row,$sum);
+				}		
+		    });
+	
+			$excel->sheet('OUTPUT FILE', function($sheet) use ($activity) {
+		    	$sheet->row(1, array('Promotion ID', 'BB Free Scheme', 'Promo Type',
+		    		'SKU Codes Involved', 'SKUs Involved', 'Premium Code', 'Premium',
+		    		'Outlet Sub Types Involved', 'Outlet Codes', 'Allocs (Pieces)', 'UOM', 'Source of Premium', 
+		    		'Start Date', 'End Date'));
+
+			    $datas = TradedealSchemeAllocation::select('scheme_code', 'scheme_desc', 'tradedeal_types.tradedeal_type', 
+			    	'tradedeal_scheme_sku_id', 'tradedeal_scheme_id', 'tradedeal_scheme_allocations.pre_code', 
+			    	'tradedeal_scheme_allocations.pre_desc', 'non_ulp_premium', DB::raw('sum(final_pcs) as total_alloc'),
+			    	'eimplementation_date', 'end_date')
+			    	->join('tradedeal_schemes', 'tradedeal_schemes.id', '=', 'tradedeal_scheme_allocations.tradedeal_scheme_id')
+			    	->join('tradedeals', 'tradedeals.id', '=', 'tradedeal_schemes.tradedeal_id')
+			    	->join('tradedeal_types', 'tradedeal_types.id', '=', 'tradedeal_schemes.tradedeal_type_id')
+			    	->join('activities', 'activities.id', '=', 'tradedeals.activity_id')
+					->where('tradedeals.activity_id', $activity->id)
+					->groupBy('scheme_code')
+					->orderBy('tradedeal_type_id')
+					->orderBy('tradedeal_uom_id')
+					->get();
+
+				$cnt = 2;
+			    foreach ($datas as $row) {
+			    	$host_code = '';
+			    	$host_desc = '';
+			    	$scheme = TradedealScheme::find($row->tradedeal_scheme_id);
+			    	if($row->tradedeal_scheme_sku_id != 0){
+			    		$host_sku = TradedealSchemeSku::getHost($row->tradedeal_scheme_sku_id);
+			    		$host_code = $host_sku->host_code;
+			    		$host_desc = $host_sku->host_desc;
+			    	}else{
+			    		
+			    		$host_skus = TradedealSchemeSku::getHostSku($scheme);
+			    		$code = [];
+			    		$desc = [];
+			    		foreach ($host_skus as $key => $value) {
+
+			    			$code[] = $value->host_code;
+			    			$desc[] = $value->host_desc;
+			    		}
+
+			    		$host_code = implode("; ", $code);
+			    		$host_desc = implode("; ", $desc);
+
+			    	}
+
+			    	$pre_code = '';
+			    	$pre_desc = '';
+			    	$source = 'Ex-DT';
+			    	if(!$row->non_ulp_premium){
+			    		$pre_code = $row->pre_code;
+			    		$pre_desc = $row->pre_desc;
+			    		$source = 'Ex-ULP';
+			    	}else{
+			    		$pre_code = $scheme->pre_code;
+			    		$pre_desc = $scheme->pre_desc;
+			    	}
+
+			    	$channels = TradedealSchemeChannel::getSelectedDetails($scheme);
+			    	$ch_code = [];
+			    	$ch_desc = [];
+			    	foreach ($channels as $channel) {
+		    			$ch_code[] = $channel->l5_code;
+		    			$ch_desc[] = $channel->l5_desc;
+		    		}
+
+		    		$start_date = date('d/m/Y', strtotime($row->eimplementation_date));
+		    		$end_date = date('d/m/Y', strtotime($row->end_date));
+			    	
+			    	$sheet->row($cnt, array($row->scheme_code, $row->scheme_desc, $row->tradedeal_type, $host_code, $host_desc, $pre_code, $pre_desc,
+			    	implode('; ', $ch_code),implode('; ', $ch_desc), $row->total_alloc, '', $source,  $start_date, $end_date));
+			    	$cnt++;
+			    }
+		    });
+			
+
+		})->download('xls');
+	}
+
+	public function exporttddetails($id){
+		$activity = Activity::findOrFail($id);
+		Excel::create($activity->circular_name.' Bonus Buy Free', function($excel) use($activity){
+			$excel->sheet('allocations', function($sheet) use ($activity) {
+				$allocations = TradedealSchemeAllocation::getAll($activity);
+				$sheet->row(1, array('Activity ID', 'ID', 'Scheme Name', 'Scheme Description', 'Premium SKU', 'Area Code', 
+					'Area', 'Sold To Code', 'Sold To', 'U2K2 Code', 'Ship To Code', 'Ship To Name', 'Total Allocation', 'New Allocation'));
+
+				$sheet->setAutoFilter();
+
+
+				$cnt = count($allocations) + 1;
+				$sheet->fromArray($allocations,null, 'A2', false, false);
+
+				$sheet->getProtection()->setPassword('tradedeal');
+				$sheet->getProtection()->setSheet(true);
+				$sheet->getStyle('N2:N'.$cnt)->getProtection()->setLocked(PHPExcel_Style_Protection::PROTECTION_UNPROTECTED);
+		    });
+		})->download('xls');
 	}
 
 }

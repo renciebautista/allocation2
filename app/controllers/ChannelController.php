@@ -10,7 +10,7 @@ class ChannelController extends \BaseController {
 	 */
 	public function index()
 	{
-		$channels = Channel::all();
+		$channels = SubChannel::getAll();
 		return View::make('channel.index',compact('channels'));
 	}
 
@@ -85,8 +85,8 @@ class ChannelController extends \BaseController {
 	}
 
 	public function export(){
-		$channels = Channel::all();
-
+		// $channels = Channel::all();
+		$channels = SubChannel::getAll();
 		Excel::create("Channels", function($excel) use($channels){
 			$excel->sheet('Sheet1', function($sheet) use($channels) {
 				$sheet->fromModel($channels,null, 'A1', true);

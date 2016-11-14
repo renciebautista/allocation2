@@ -20,14 +20,13 @@ function getCustomer(){
 		url: "../../api/customerselected?id={{$activity->id}}",
 		success: function(data){
 			$.each(data, function(i, node) {
-				 $("#tree3").fancytree("getTree").getNodeByKey(node).setSelected(true);
-				// console.log(node);
-				$("#tree3").fancytree("getTree").visit(function(node){
+				$("#tree3").fancytree("getTree").getNodeByKey(node).setSelected(true);
+				//$("#tree3").fancytree("getTree").visit(function(node){
 					///if(node.key == node.text){
 						///console.log(node);
 						//node.setSelected(true);
 					//}        
-				});
+				//});
 			});
 		}
 	});
@@ -128,11 +127,11 @@ function checkDirty(target_id,callback) {
 };
 
 
-$('#updateActivity,#updateCustomer,#updateBilling,#updatetimings').areYouSure();
+$('#updateActivity,#updateCustomer,#updateBilling,#updatetimings, #updateTradedeal').areYouSure();
 
 
 $("a[href='#customer']").on('shown.bs.tab', function(e) {
-	$("#tree4").fancytree("disable");
+	$("#tree5").fancytree("disable");
     getCustomer();
 });
 
@@ -492,6 +491,7 @@ $("#tree3").fancytree({
 	extensions: [],
 	checkbox: true,
 	selectMode: 3,
+	autoScroll: true,
 	source: {
 		url: "../../api/customers?id={{$activity->id}}"
 	},
@@ -516,7 +516,7 @@ $("#tree3").fancytree({
 
 		var keys = selRootKeys.join(".").split(".");
 		// console.log(keys);
-		if($.inArray('E1397', keys) != -1){
+		/**if($.inArray('E1397', keys) != -1){
 			$("#tree4").fancytree("enable");
 			getChannel();
 		}else{
@@ -524,20 +524,20 @@ $("#tree3").fancytree({
 		        node.setSelected(false);
 		    });
 			$("#tree4").fancytree("disable");
-		}
+		}**/
 		$("#customers").val(selRootKeys.join(", "));
-		show_alloc();
+		//show_alloc();
 	},
 	click: function(event, data) {
         $("#updateCustomer").addClass("dirty");
         if(data.targetType == "checkbox"){
         	//console.log(data.node.tree);
 	        var keys = data.node.key.split(".");
-	        if($.inArray('E1397', keys) != -1){
+	        /**if($.inArray('E1397', keys) != -1){
 				$("#tree4").fancytree("getTree").visit(function(node){
 			        node.setSelected(true);
 			    });
-			}
+			}**/
     	}
        
     }
@@ -691,9 +691,12 @@ function show_force_alloc(){
 		}else{
 			$(this).attr('disabled','disabled');
 		}
-	});
+	});console.log($this);
 }
 <!-- schemes -->
+
+<!-- trade deal -->
+
 
 
 

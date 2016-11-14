@@ -1,7 +1,7 @@
 <?php
 
 class SubChannel extends \Eloquent {
-	protected $fillable = ['coc_03_code', 'channel_code'];
+	protected $fillable = ['coc_03_code', 'channel_code', 'l3_desc', 'l4_code', 'l4_desc', 'l5_code', 'l5_desc', 'rtm_tag', 'trade_deal'];
 	public $timestamps = false;
 
 	public static function batchInsert($records){
@@ -31,9 +31,9 @@ class SubChannel extends \Eloquent {
 					$subchannel = new Subchannel;
 					$subchannel->coc_03_code = $row->coc_03_code;
 					$subchannel->channel_code = $row->channel_code;
+					$subchannel->l3_desc = $row->l3_desc;
 					$subchannel->save();
-				}
-				
+				}				
 			});
 			DB::commit();
 		} catch (\Exception $e) {

@@ -181,12 +181,38 @@ $(document).ready(function(){
 		//alert(str);
 		var input = '';
 		if(obj[i].type == "text"){
-			input = '<input class="form-control" type="'+obj[i].type+'" name="'+obj[i].id+'" id='+obj[i].id+' placeholder="'+obj[i].placeholder+'" value="'+str+'">';
+			var read_only = '';
+			if(obj[i].readonly){
+				read_only = 'readonly=""';
+			}
+			input = '<input class="form-control" type="'+obj[i].type+'" name="'+obj[i].id+'" id='+obj[i].id+' placeholder="'+obj[i].placeholder+'" value="'+str+'"'+read_only+'>';
 			// console.log(input);
 		}else if(obj[i].type == "textarea"){
 			input = '<textarea name="'+obj[i].id+'" id="'+obj[i].id+'" placeholder="'+obj[i].placeholder+'">'+str+'</textarea>';
 		}
 		else if(obj[i].type == "select"){
+			input = '<select class="form-control" name="'+obj[i].id+'" id="'+obj[i].id+'">';
+			selected = "";
+			if (obj[i].ajax_url !== undefined) {
+				$.ajax({
+					type: "GET",
+					async: false,
+					url: obj[i].ajax_url,
+					success: function(data){
+						$.each(data, function(i, text) {
+							selected = "";
+							if(str == text){
+								selected = "selected";
+							}
+					
+							input += '<option value="'+i+'" '+selected+'>'+text+'</option>';
+						});
+						
+				   }
+				});
+			}
+			input += '</select>';
+		}else if(obj[i].type == "multi-select"){
 			input = '<select class="form-control" name="'+obj[i].id+'" id="'+obj[i].id+'">';
 			selected = "";
 			if (obj[i].ajax_url !== undefined) {

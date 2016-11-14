@@ -5,7 +5,7 @@
 <div class="page-header" id="banner">
   <div class="row">
       <div class="col-lg-8 col-md-7 col-sm-6">
-      <h1>Channel List</h1>
+      <h1>Channel / Sub Channel List</h1>
       </div>
   </div>
 </div>
@@ -27,6 +27,7 @@
   </div>
 </div>
 
+<p class="pull-right"><b>{{ count($channels)}} record/s found.</b></p>
 <div class="row">
   <div class="col-lg-12">
     <div class="table-responsive">
@@ -35,19 +36,35 @@
           <tr>
             <th>Channel Code</th>
             <th>Channel Name</th>
+            <th>Sub Channel Code</th>
+            <th>Level 3 Description</th>
+            <th>Level 4 Code</th>
+            <th>Level 4 Description</th>
+            <th>Level 5 Code</th>
+            <th>Level 5 Description</th>
+            <th>RTM Tag</th>
+            <th>Trade Deal</th>
             <th colspan="2" style="text-align:center;">Action</th>
           </tr>
         </thead>
         <tbody>
           @if(count($channels) == 0)
           <tr>
-            <td colspan="9">No record found!</td>
+            <td colspan="11">No record found!</td>
           </tr>
           @else
           @foreach($channels as $channel)
           <tr>
             <td>{{ $channel->channel_code }}</td>
             <td>{{ $channel->channel_name }}</td>
+            <td>{{ $channel->coc_03_code }}</td>
+            <td>{{ $channel->l3_desc }}</td>
+            <td>{{ $channel->l4_code }}</td>
+            <td>{{ $channel->l4_desc }}</td>
+            <td>{{ $channel->l5_code }}</td>
+            <td>{{ $channel->l5_desc }}</td>
+            <td>{{ $channel->rtm_tag }}</td>
+            <td class="center">{{ ($channel->trade_deal) ? '<i class="fa fa-check"></i>' : '' }}</td>
             <td class="action">
               {{ HTML::linkAction('CustomerController@edit','Edit', $channel->id, array('class' => 'btn btn-info btn-xs')) }}
             </td>

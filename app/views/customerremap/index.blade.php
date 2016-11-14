@@ -34,10 +34,10 @@
         <thead>
           <tr>
             <th>From Customer </th>
+            <th>From Ship To </th>
             <th>To Customer</th>
-            <th>Status</th>
+            <th>To Ship To</th>
             <th>Percentage Share</th>
-            <th colspan="2" style="text-align:center;">Action</th>
           </tr>
         </thead>
         <tbody>
@@ -47,16 +47,13 @@
           </tr>
           @else
           @foreach($customers as $customer)
-          <tr>
-            <td>{{ $customer->from_customer_code }} - {{ $customer->from_customer_name }}</td>
-            <td>{{ $customer->to_customer_code }} - {{ $customer->to_customer_name }}</td>
-            <td>{{ (($customer->active == 1) ? 'Active':'Inactive') }}</td>
-            <td>{{ $customer->split }}</td>
-            <td class="action">
-            </td>
-            <td class="action">
-            </td>
-          </tr>
+            <tr>
+              <td>{{ $customer->from_customer_name }}</td>
+              <td>{{ $customer->from_ship_to_name }}</td>
+              <td>{{ $customer->to_customer_name }}</td>
+              <td>{{ $customer->to_ship_to_name }}</td>
+              <td>{{ $customer->split }} %</td>
+            </tr>
           @endforeach
           @endif
         </tbody>

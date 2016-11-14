@@ -33,7 +33,7 @@
       <table class="table table-striped table-hover datatable">
         <thead>
           <tr>
-            <th colspan="5"></th>
+            <th colspan="6"></th>
             <th class="center" colspan="7">Loading Day</th>
             <th></th>
             <th></th>
@@ -43,6 +43,7 @@
             <th>Customer Code</th>
             <th>SOB Sold to Code</th>
             <th>Ship To Code</th>
+            <th>Plant Code</th>
             <th>Ship To Name</th>
             <th>Split %</th>
             <th>Lead Time (days)</th>
@@ -69,6 +70,7 @@
             <td>{{ $shipto->customer_code }}</td>
             <td>{{ $shipto->sold_to_code }}</td>
             <td>{{ $shipto->ship_to_code }}</td>
+            <td>{{ $shipto->plant_code }}</td>
             <td>{{ $shipto->ship_to_name }}</td>
             <td class="center">{{ $shipto->split }}</td>
             <td class="center">{{ $shipto->leadtime }}</td>

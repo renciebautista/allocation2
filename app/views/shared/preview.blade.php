@@ -325,6 +325,7 @@
 							@endif
 						</td>
 					</tr>
+					@if(!$activity->activitytype->with_tradedeal)
 					<tr>
 						<td>Schemes</td>
 						<td>
@@ -353,6 +354,57 @@
 							@endif
 						</td>
 					</tr>
+					@else
+					<tr>
+						<td>Schemes</td>
+						<td>
+							@if(count($schemes)> 0)
+							<table class="sub-table">
+								<tr>
+									<th>Activity</th>
+									<th>Scheme Code</th>
+									<th>Scheme Description</th>
+									<th>Host Code</th>
+									<th>Host Description</th>
+									<th>Premium Code / PIMS Code</th>
+									<th>Premium Description</th>
+								</tr>
+								
+								@foreach($tradedealschemes as $scheme)
+												<?php $x = false; ?>
+												<?php $host_cnt = 1; ?>
+												@if(!empty($scheme->host_skus))
+												<?php $host_cnt = count($scheme->host_skus); ?>
+													@foreach($scheme->host_skus as $host_sku)
+													<?php $y = false; ?>
+													@if(!$x)
+													<tr>
+														<td rowspan="{{$host_cnt}}">{{ $scheme->name }}</td>
+													@endif
+														@if(!$y)
+														<td>{{ $host_sku->scheme_code }} </td>
+														<td>{{ $host_sku->scheme_desc }}</td>
+														<td>{{ $host_sku->host_code }}</td>
+														<td>{{ $host_sku->desc_variant }}</td>
+														<td>{{ $host_sku->pre_code }}</td>
+														<td>{{ $host_sku->pre_variant }}</td>
+														<?php $y = true; ?>
+														@endif
+														@if(!$x)
+														<?php $x = true; ?>
+														@endif
+													</tr>
+													@endforeach
+												@endif
+											
+										@endforeach
+								
+							</table>
+							@endif
+						</td>
+					</tr>
+					@endif
+					@if(is_null($tradedeal))
 					<tr>
 						<td>SKU/s Involved Per Scheme</td>
 						<td>
@@ -391,6 +443,8 @@
 							
 						</td>
 					</tr>
+					@endif
+
 					<tr>
 						<td>Timings</td>
 						<td>

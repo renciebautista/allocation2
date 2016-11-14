@@ -42,6 +42,14 @@
 				</label>
 			</div>
 		</div>
+
+		<div class="form-group">
+			<div class="checkbox">
+				<label>
+					{{ Form::checkbox('with_tradedeal', 1,false) }} With Trade Deal
+				</label>
+			</div>
+		</div>
 		
 		<div class="form-group">
 			{{ Form::label('activity_type', 'Activity Type', array('class' => 'control-label')) }}

@@ -36,7 +36,7 @@
             <th>Sub Channel Code</th>
             <th>Channel Code</th>
             <th>Channel Name</th>
-            
+            <th>Level 3 Description</th>
             <th colspan="2" style="text-align:center;">Action</th>
           </tr>
         </thead>
@@ -51,7 +51,7 @@
             <td>{{ $subchannel->coc_03_code }}</td>
             <td>{{ $subchannel->channel_code }}</td>
             <td>{{ $subchannel->channel_name }}</td>
-            
+            <td>{{ $subchannel->l3_desc }}</td>
             <td class="action">
               {{ HTML::linkAction('SubchannelController@edit','Edit', $subchannel->id, array('class' => 'btn btn-info btn-xs')) }}
             </td>

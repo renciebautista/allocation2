@@ -18,6 +18,57 @@ Queue::getIron()->ssl_verifypeer = false;
 |
 */
 
+<<<<<<< HEAD
+=======
+Route::get('test', function(){
+	$channels = ['C1'];
+	$groups = ['E1398'];
+	$areas = ['E1398'];
+	$table = DB::table('mt_dt_sales')
+		->select(DB::raw("mt_dt_sales.area_code,mt_dt_sales.customer_code, SUM(gsv) as gsv"))
+		->join('sub_channels', function($join)
+        {
+            $join->on('sub_channels.coc_03_code', '=', 'mt_dt_sales.coc_03_code');
+            $join->on('sub_channels.l4_code','=','mt_dt_sales.coc_04_code');
+            $join->on('sub_channels.l5_code','=','mt_dt_sales.coc_05_code');
+        })
+        ->join('areas', 'areas.area_code', '=', 'mt_dt_sales.area_code')
+        ->join('groups', 'groups.group_code', '=',  'areas.group_code')
+        ->where(function($query) use ($channels) {
+			if(!empty($channels)){
+				$query->whereIn('channel_code', $channels);
+			}		
+		})
+		->where(function($query) use ($groups) {
+			if(!empty($groups)){
+				$query->whereIn('groups.group_code', $groups);
+			}		
+		})
+		->where(function($query) use ($areas) {
+			if(!empty($areas)){
+				$query->whereIn('mt_dt_sales.area_code', $areas);
+			}		
+		})
+		->where(function($query) use ($distrubutors) {
+			if(!empty($distrubutors)){
+				$query->whereIn('mt_dt_sales.area_code', $distrubutors);
+			}		
+		})
+		->where(function($query) use ($shiptos) {
+			if(!empty($shiptos)){
+				$query->whereIn('mt_dt_sales.area_code', $shiptos);
+			}		
+		})
+		->groupBy(array('mt_dt_sales.customer_code', 'mt_dt_sales.area_code'))
+		->orderBy('mt_dt_sales.area_code')
+		->orderBy('mt_dt_sales.customer_code')
+		->get();
+	Helper::debug($table);
+
+});
+
+>>>>>>> tradedeal
+
 
 
 //---------------------------------------------------
@@ -108,8 +159,19 @@ Route::group(array('before' => 'auth'), function()
 	Route::post('activity/updatepartskus', 'ActivityController@updatepartskus');
 
 
-	Route::get('activity/{id}/tdchannels', 'ActivityController@tdchannels');
-	Route::post('activity/{id}/addtradealscheme', 'ActivityController@addtradealscheme');
+	// Route::get('activity/{id}/tdchannels', 'ActivityController@tdchannels');
+	Route::put('activity/{id}/updatetradedeal', 'ActivityController@updatetradedeal');
+	Route::get('activity/{id}/exporttradedeal', 'ActivityController@exporttradedeal');
+	Route::get('activity/{id}/exporttddetails', 'ActivityController@exporttddetails');
+	Route::post('activity/deletetradedealscheme', 'ActivityController@deletetradedealscheme');
+
+	Route::get('activity/{id}/createtradealscheme',['as' => 'activity.createtradealscheme', 'uses' => 'ActivityController@createtradealscheme']);
+	Route::post('activity/{id}/storetradealscheme', ['as' => 'activity.storetradealscheme', 'uses' => 'ActivityController@storetradealscheme']);
+
+
+	Route::get('tradedealscheme/{id}/exportle',['as' => 'tradedealscheme.exportle', 'uses' => 'TradealSchemeController@exportle']);
+	Route::get('tradedealscheme/{id}',['as' => 'tradedealscheme.edit', 'uses' => 'TradealSchemeController@edit']);
+	Route::put('tradedealscheme/{id}', ['as' => 'tradedealscheme.update', 'uses' => 'TradealSchemeController@update']);
 
 	Route::post('activity/{id}/addnobudget', 'ActivityController@addnobudget');
 	Route::delete('activity/deletenobudget', 'ActivityController@deletenobudget');
@@ -156,10 +218,6 @@ Route::group(array('before' => 'auth'), function()
 
 	Route::post('activity/{id}/duplicate','ActivityController@duplicate');
 	Route::get('activity/{id}/summary','ActivityController@summary');
-
-
-	Route::put('activity/{id}/updatetradedeal', 'ActivityController@updatetradedeal');
-	Route::get('tradedealscheme/{id}','ActivityController@tradedealscheme');
 	
 	Route::resource('activity', 'ActivityController');
 	
@@ -270,11 +328,14 @@ Route::group(array('before' => 'auth'), function()
 
 	Route::group(array('prefix' => 'api'), function()
 	{
+
 		Route::get('customerselected', 'api\CustomerController@customerselected');
 		Route::get('getcustomers', 'api\CustomerController@getselectedcustomer');
 
 		Route::get('getpostedcustomers', 'api\CustomerController@getpostedcustomers');
-		Route::get('customers', 'api\CustomerController@index');
+		Route::get('customers_old', 'api\CustomerController@index');
+		Route::get('customers', 'api\CustomerController@getChannelCustomer');
+
 		Route::get('cycles', 'CycleController@availableCycle');
 
 		Route::get('getpostedchannels', 'api\ChannelController@getpostedchannels');
@@ -307,6 +368,11 @@ Route::group(array('before' => 'auth'), function()
 		Route::post('weekbrand', 'api\SobController@weekbrand');
 
 		Route::get('pricelistsku', 'api\PriceListController@getSku');
+		Route::get('tdpricelistsku', 'api\PriceListController@tdpricelistsku');
+		Route::get('tdprepricelistsku', 'api\PriceListController@tdprepricelistsku');
+
+		Route::get('tdchannels','api\TradeChannelController@index');
+		Route::get('selectedtdchannels','api\TradeChannelController@selectedtdchannels');
 	});//
 
 
@@ -329,6 +395,7 @@ Route::group(array('before' => 'auth'), function()
 
 		Route::get('customermaster', ['as' => 'customermaster.index', 'uses' => 'CustomerMasterController@index']);
 		Route::post('customermaster', ['as' => 'customermaster.export', 'uses' => 'CustomerMasterController@export']);
+		Route::get('customermaster/exportall', ['as' => 'customermaster.exportall', 'uses' => 'CustomerMasterController@exportall']);
 		Route::get('customermaster/{id}/download', ['as' => 'customermaster.download', 'uses' => 'CustomerMasterController@download']);
 
 		Route::get('sobfilter/export', 'SobfilterController@export');
@@ -343,6 +410,11 @@ Route::group(array('before' => 'auth'), function()
 		Route::get('shipto/import', 'ShiptoController@import');
 		Route::post('shipto/upload', 'ShiptoController@upload');
 		Route::resource('shipto', 'ShiptoController');
+
+		Route::get('shiptoplantcode/export', 'ShiptoPlantCodeController@export');
+		Route::get('shiptoplantcode/import', 'ShiptoPlantCodeController@import');
+		Route::post('shiptoplantcode/upload', 'ShiptoPlantCodeController@upload');
+		Route::resource('shiptoplantcode', 'ShiptoPlantCodeController');
 
 		Route::get('customer/export', 'CustomerController@export');
 		Route::get('customer/import', 'CustomerController@import');
@@ -384,10 +456,10 @@ Route::group(array('before' => 'auth'), function()
 		Route::post('channel/upload', 'ChannelController@upload');
 		Route::resource('channel', 'ChannelController');
 
-		Route::get('subchannel/export', 'SubchannelController@export');
-		Route::get('subchannel/import', 'SubchannelController@import');
-		Route::post('subchannel/upload', 'SubchannelController@upload');
-		Route::resource('subchannel', 'SubchannelController');
+		// Route::get('subchannel/export', 'SubchannelController@export');
+		// Route::get('subchannel/import', 'SubchannelController@import');
+		// Route::post('subchannel/upload', 'SubchannelController@upload');
+		// Route::resource('subchannel', 'SubchannelController');
 
 		Route::get('holidays/getlist', 'HolidaysController@getlist');
 		Route::resource('holidays', 'HolidaysController');
@@ -422,16 +494,6 @@ Route::group(array('before' => 'auth'), function()
 		Route::post('settings', ['as' => 'settings.update', 'uses' => 'SettingsController@update']);
 
 		Route::resource('sobholiday', 'SobholidaysController');
-		
-		Route::get('level4/export', 'Level4Controller@export');
-		Route::get('level4/import', 'Level4Controller@import');
-		Route::post('level4/upload', 'Level4Controller@upload');
-		Route::resource('level4', 'Level4Controller');
-
-		Route::get('level5/export', 'Level5Controller@export');
-		Route::get('level5/import', 'Level5Controller@import');
-		Route::post('level5/upload', 'Level5Controller@upload');
-		Route::resource('level5', 'Level5Controller');
 
 		Route::get('reports/{id}/review', ['as' => 'reports.review', 'uses' => 'ReportController@review']);
 		Route::get('reports/{id}/scheme/', ['as' => 'reports.scheme', 'uses' => 'ReportController@scheme']);

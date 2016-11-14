@@ -41,14 +41,15 @@ class Account extends \Eloquent {
 
 			$records->each(function($row)  {
 				if(!is_null($row->account_name)){
-					// $account = self::where('area_code',$row->area_code)
-					// 	->where('ship_to_code',$row->ship_to_code)
-					// 	->where('account_group_code',$row->account_group_code)
-					// 	->where('channel_code',$row->channel_code)
-					// 	->where('account_name',$row->account_name)
-					// 	->first();
+					$account = self::where('area_code',$row->area_code)
+						->where('ship_to_code',$row->ship_to_code)
+						->where('account_group_code',$row->account_group_code)
+						->where('channel_code',$row->channel_code)
+						->where('account_name',$row->account_name)
+						->first();
 
-					// if(empty($account)){
+					if(empty($account)){
+
 						$account = new Account;
 						$account->area_code = $row->area_code;
 						$account->ship_to_code = $row->ship_to_code;
@@ -57,7 +58,8 @@ class Account extends \Eloquent {
 						$account->account_name = $row->account_name;
 						$account->active = $row->active;
 						$account->save();
-					// }else{
+					}
+						// else{
 					// 	$account->area_code = $row->area_code;
 					// 	$account->ship_to_code = $row->ship_to_code;
 					// 	$account->account_group_code = $row->account_group_code;

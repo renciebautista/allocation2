@@ -11,6 +11,7 @@
 		{{ HTML::style('assets/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css') }}
 		{{ HTML::style('assets/plugins/chosen_v1.4.1/bootstrap-chosen.css') }}
 		{{ HTML::style('assets/plugins/DataTables-1.10.9/css/jquery.dataTables.min.css') }}
+		{{ HTML::style('assets/plugins/jquery-datatables-checkboxes-master/css/dataTables.checkboxes.css') }}
 		{{ HTML::style('assets/plugins/FixedColumns-3.0.4/css/dataTables.fixedColumns.min.css') }}
 		{{ HTML::style('assets/plugins/ColVis-1.1.1/css/dataTables.colVis.min.css') }}
 		{{ HTML::style('assets/plugins/fancytree-2.10.2/skin-xp/ui.fancytree.min.css') }}
@@ -136,10 +137,12 @@
 										<li>{{ HTML::linkRoute('customer.index', 'Customer') }}</li> 
 										<li>{{ HTML::linkRoute('customerremap.index', 'Customer Inactive / Active Mapping') }}</li>  
 										<li>{{ HTML::linkRoute('shipto.index', 'Ship To') }}</li>  
+										<li>{{ HTML::linkRoute('shiptoplantcode.index', 'Ship To / Plant Code Mapping') }}</li>  
 										<li>{{ HTML::linkRoute('account.index', 'Account') }}</li> 
-										<li>{{ HTML::linkRoute('channel.index', 'Channel') }}</li> 
-										<li>{{ HTML::linkRoute('subchannel.index', 'Sub Channel') }}</li> 
+										<li>{{ HTML::linkRoute('channel.index', 'Channel / Sub Channel') }}</li> 
+										
 										<li>{{ HTML::linkRoute('customermaster.index', 'Customer & Sales Masterfile') }}</li> 
+										<li>{{ HTML::linkRoute('customermaster.exportall', 'MT DT Hierarchy') }}</li> 
 								    </ul>
 								</li>
 							</ul>
@@ -274,6 +277,7 @@
 	
 
 	{{ HTML::script('assets/plugins/DataTables-1.10.9/js/jquery.dataTables.min.js') }}
+	{{ HTML::script('assets/plugins/jquery-datatables-checkboxes-master/js/dataTables.checkboxes.min.js') }}
 	{{ HTML::script('assets/plugins/FixedColumns-3.0.4/js/dataTables.fixedColumns.min.js') }}
 	{{ HTML::script('assets/plugins/ColVis-1.1.1/js/dataTables.colVis.min.js') }}
 
@@ -328,12 +332,14 @@
 	
 	{{ HTML::script('assets/js/function.js') }}
 
+	@yield('add-script')
 
 
 
 	<script type="text/javascript">
 		$(document).ready(function() {
-
+			$('[data-toggle="tooltip"]').tooltip();
+			
 			$('#changepasswordmodal').modal({
 			    backdrop: 'static',   // This disable for click outside event
 			    keyboard: true        // This for keyboard event

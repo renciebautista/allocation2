@@ -60,19 +60,23 @@ class Channel extends \Eloquent {
 	public static function import($records){
 		DB::beginTransaction();
 			try {
-				DB::table('channels')->truncate();
+			DB::table('channels')->truncate();
+			DB::table('sub_channels')->truncate();
+
 			$records->each(function($row)  {
-				if(!is_null($row->channel_code)){
-					$channel = new Channel;
-					$channel->channel_code = $row->channel_code;
-					$channel->channel_name = $row->channel_name;
-					$channel->save();
-				}
-				
+					Channel::firstOrCreate(['channel_code' => $row->channel_code, 'channel_name' => $row->channel_name]);
+					SubChannel::firstOrCreate(['channel_code' => $row->channel_code, 
+						'coc_03_code' => $row->coc_03_code, 
+						'l3_desc' => $row->l3_desc,
+						'l4_code' => $row->l4_code,
+						'l4_desc' => $row->l4_desc,
+						'l5_code' => $row->l5_code,
+						'l5_desc' => $row->l5_desc,
+						'rtm_tag' => $row->rtm_tag,
+						'trade_deal' => $row->trade_deal]);
 			});
 			DB::commit();
 		} catch (\Exception $e) {
-			// dd($e);
 			DB::rollback();
 		}
 	}

@@ -4,6 +4,12 @@ class ShipTo extends \Eloquent {
 	protected $fillable = ['customer_code', 'ship_to_code', 'ship_to_name', 'dayofweek', 'leadtime', 'split', 'active'];
 	public $timestamps = false;
 
+	public static function getShipToByCustomers($customer){
+		return self::where('customer_code', $customer->customer_code)
+			->where('active',1)
+			->get();
+	}
+
 	public static function batchInsert($records){
 		$records->each(function($row) {
 			if(!is_null($row->customer_code)){
@@ -31,6 +37,7 @@ class ShipTo extends \Eloquent {
 					$shipto->customer_code = $row->customer_code;
 					$shipto->sold_to_code = $row->sold_to_code;
 					$shipto->ship_to_code = $row->ship_to_code;
+					$shipto->plant_code = $row->plant_code;
 					$shipto->ship_to_name = $row->ship_to_name;
 					$shipto->split = $row->split;
 					$shipto->leadtime = $row->leadtime;

@@ -38,6 +38,7 @@
 						<th class="center">Scheme</th>
 						<th class="center">Material Sourcing</th>
 						<th class="center">SOB</th>
+						<th class="center">Trade Deal</th>
 						<th class="center">UOM</th>
 						<th class="center">Default Loading</th>
 						<th class="center">Active</th>
@@ -60,6 +61,7 @@
 						<td class="center">{{ ($type->with_scheme) ? '<i class="fa fa-check"></i>' : '' }}</td>
 						<td class="center">{{ ($type->with_msource) ? '<i class="fa fa-check"></i>' : '' }}</td>
 						<td class="center">{{ ($type->with_sob) ? '<i class="fa fa-check"></i>' : '' }}</td>
+						<td class="center">{{ ($type->with_tradedeal) ? '<i class="fa fa-check"></i>' : '' }}</td>
 						<td class="center">{{ $type->uom }}</td>
 						<td class="center">{{ $type->get_default_loading() }}</td>
 						<td class="center">{{ ($type->active) ? '<i class="fa fa-check"></i>' : '' }}</td>

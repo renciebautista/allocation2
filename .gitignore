@@ -2,11 +2,14 @@
 /vendor
 /app/storage/uploads/*
 /app/storage/zipped/*
+/app/storage/joborder_files/*
 /app/database/seeds/seed_files/*
 /app/storage/exports/*
 /app/storage/joborder_files/*
 /public/barcode/*
-
+/app/storage/le/*
+/public/barcode/*
+/public/*.csv
 composer.phar
 composer.lock
 .env.*.php

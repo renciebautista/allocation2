@@ -244,6 +244,50 @@ class ExportSales extends Command {
 		$writer->addRow($header);
 		$writer->addRows($export_data); // add multiple rows at a time
 
+		// export groups
+		$newSheet = $writer->addNewSheetAndMakeItCurrent();
+		$sheet = $writer->getCurrentSheet();
+		$sheet->setName('Groups');
+		$groups = DB::table('groups')->get();
+		foreach($groups as $key => $value)
+		{
+			$groups[$key] = (array) $value;
+		}
+		$export_data = $groups;
+		$header = array('id', 'group_code', 'group');
+		$writer->addRow($header);
+		$writer->addRows($export_data); // add multiple rows at a time
+
+		// areas
+		$newSheet = $writer->addNewSheetAndMakeItCurrent();
+		$sheet = $writer->getCurrentSheet();
+		$sheet->setName('Areas');
+		$areas = DB::table('areas')->get();
+		foreach($areas as $key => $value)
+		{
+			$areas[$key] = (array) $value;
+		}
+		$export_data = $areas;
+		$header = array('id', 'group_code', 'area_code', 'area_name');
+		$writer->addRow($header);
+		$writer->addRows($export_data); // add multiple rows at a time
+
+		// customers
+		$newSheet = $writer->addNewSheetAndMakeItCurrent();
+		$sheet = $writer->getCurrentSheet();
+		$sheet->setName('Customers');
+		$customers = DB::table('customers')->get();
+		foreach($customers as $key => $value)
+		{
+			$customers[$key] = (array) $value;
+		}
+		$export_data = $customers;
+		$header = array('id', 'area_code', 'area_code_two', 'customer_code', 'sob_customer_code', 'customer_name', 'active', 'multiplier', 'from_dt');
+		$writer->addRow($header);
+		$writer->addRows($export_data); // add multiple rows at a time
+
+
+
 		$file = CustomerMasterfile::where('filename',$filename)->first();
 		if(empty($file)){
 			$newfile = new CustomerMasterfile;
@@ -254,7 +298,10 @@ class ExportSales extends Command {
 		$writer->close();
 		$timeSecond = strtotime(date('Y-m-d H:i:s'));
 		$differenceInSeconds = $timeSecond - $timeFirst;
+		$this->line($filePath);
 		$this->line( 'Time used ' . $differenceInSeconds . " sec");
+
+
 	}
 
 	// /**

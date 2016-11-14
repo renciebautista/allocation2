@@ -20,7 +20,6 @@
         {{ Form::text('s',Input::old('s'),array('class' => 'form-control', 'placeholder' => 'Search')) }}
         </div>
         <button type="submit" class="btn btn-success"><i class="fa fa-search"></i> Search</button>
-        <a href="{{ URL::action('PricelistController@create') }}" class="btn btn-primary"><i class="fa fa-plus"></i> Price List</a>
         <a href="{{ URL::action('PricelistController@export') }}" class="btn btn-info"><i class="fa fa-download"></i> Export Price List</a>
         <a href="{{ URL::action('PricelistController@import') }}" class="btn btn-info"><i class="fa fa-upload"></i> Import Price List</a>
     {{ Form::close() }}
@@ -41,6 +40,7 @@
             <th>LPBT</th>
             <th>LPAT</th>
             <th>SRP</th>
+            <th>SKU Format</th>
             <th>Active</th>
             <th colspan="2" style="text-align:center;">Action</th>
           </tr>
@@ -61,6 +61,7 @@
             <td>{{ $item->price_case }}</td>
             <td>{{ $item->price_case_tax }}</td>
             <td>{{ $item->srp }}</td>
+            <td>{{ $item->sku_format }}</td>
             <td>{{ (($item->active == 1) ? 'Active':'Inactive') }}</td>
             <td class="action">
               {{ HTML::linkAction('PricelistController@edit','Edit', $item->id, array('class' => 'btn btn-info btn-xs')) }}

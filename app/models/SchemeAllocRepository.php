@@ -16,18 +16,22 @@ class SchemeAllocRepository
 		$activity = Activity::find($scheme->activity_id);
 		$forced_areas = ForceAllocation::getForcedAreas($scheme->activity_id);
 		$customers = ActivityCustomer::customers($scheme->activity_id);
+
 		$_channels = ActivityChannel2::channels($scheme->activity_id);
 
 
-		$_allocation = new AllocationRepository;
+		$_allocation = new AllocationRepository2;
 		$allocations = $_allocation->customers($skus, $_channels, $customers,$forced_areas);
-		// dd($allocations);
-		$_areasales =  $_allocation->area_sales();
-	   	// Helper::print_r($allocations);
-	   	// dd($allocations);
+
+		// Helper::debug($allocations);
+		
+		// $_areasales =  $_allocation->area_sales();
+	   		   	
 		$total_sales = $_allocation->total_gsv();
+
 		$force_total_sales = $_allocation->force_total_gsv();
 		$force_alloc = $activity->allow_force;
+
 		foreach ($allocations as $customer) {
 			//blue
 			// Total sales / per customer salse * total allocation
@@ -41,7 +45,6 @@ class SchemeAllocRepository
 			$scheme_alloc->area = $customer->area_name;
 
 			$scheme_alloc->sold_to_code = $customer->customer_code;
-			// $scheme_alloc->sob_customer_code = $customer->sob_customer_code;
 			$scheme_alloc->sold_to = $customer->customer_name;
 
 
@@ -152,7 +155,7 @@ class SchemeAllocRepository
 					$shipto_alloc->area = $customer->area_name;
 
 					$shipto_alloc->sold_to_code = $customer->customer_code;
-					// $shipto_alloc->sob_customer_code = $customer->sob_customer_code;
+
 					if(!empty($shipto['sold_to_code'])){
 						$shipto_alloc->sob_customer_code = $shipto['sold_to_code'];
 					}
@@ -179,8 +182,6 @@ class SchemeAllocRepository
 						}
 					}
 
-
-					
 					$_shipto_alloc = 0;
 					$s_multi = 0;
 					if(!is_null($shipto['split'])){
@@ -189,11 +190,12 @@ class SchemeAllocRepository
 						}
 					}else{
 						if($shipto['gsv'] >0){
-							if(empty($customer->area_code_two)){
-								$s_multi = $shipto['gsv'] / $customer->ado_total;
-							}else{
-								$s_multi = 1;
-							}
+							$s_multi = $shipto['gsv'] / $customer->ado_total;
+							// if(empty($customer->area_code_two)){
+							// 	$s_multi = $shipto['gsv'] / $customer->ado_total;
+							// }else{
+							// 	$s_multi = 1;
+							// }
 						}
 					}
 
@@ -287,7 +289,6 @@ class SchemeAllocRepository
 							$account_alloc->area = $customer->area_name;
 
 							$account_alloc->sold_to_code = $customer->customer_code;
-							// $account_alloc->sob_customer_code = $customer->sob_customer_code;
 							if(!empty($shipto['sold_to_code'])){
 								$account_alloc->sob_customer_code = $shipto['sold_to_code'];
 							}
@@ -319,8 +320,6 @@ class SchemeAllocRepository
 									}   
 								}
 							}
-
-
 						   
 							$p = 0;
 							$f_p = 0;
@@ -403,12 +402,10 @@ class SchemeAllocRepository
 							$others_alloc->area = $customer->area_name;
 
 							$others_alloc->sold_to_code = $customer->customer_code;
-							// $others_alloc->sob_customer_code = $customer->sob_customer_code;
 							if(!empty($shipto['sold_to_code'])){
 								$others_alloc->sob_customer_code = $shipto['sold_to_code'];
 							}
 							
-
 							$others_alloc->sold_to = $customer->customer_name;
 
 							$others_alloc->ship_to_code = $shipto['ship_to_code'];
@@ -418,7 +415,6 @@ class SchemeAllocRepository
 							$others_alloc->channel = 'OTHERS';				
 							
 							$others_alloc->outlet = 'OTHERS';
-							// $others_alloc->outlet_to_gsv = $account['gsv'];
 							$others_alloc->outlet_to_gsv = 0;
 							if($others > 0){
 								$_others_alloc = $others;
@@ -429,7 +425,6 @@ class SchemeAllocRepository
 								$others_alloc->outlet_to_alloc = $_others_alloc;
 							}
 							
-
 							if(($_others_alloc > 0) && ($account_alloc->final_alloc > 0)){
 								$others_alloc->multi = $_others_alloc/$account_alloc->final_alloc;
 							}else{
