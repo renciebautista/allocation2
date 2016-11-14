@@ -36,7 +36,7 @@
             <th>From Customer </th>
             <th>From Ship To </th>
             <th>To Customer</th>
-            <th>To Customer</th>
+            <th>To Ship To</th>
             <th>Percentage Share</th>
           </tr>
         </thead>
