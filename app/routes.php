@@ -18,9 +18,6 @@ Queue::getIron()->ssl_verifypeer = false;
 |
 */
 
-
-
-
 //---------------------------------------------------
 Route::post('queue/massmail', function()
 {
