@@ -18,56 +18,6 @@ Queue::getIron()->ssl_verifypeer = false;
 |
 */
 
-<<<<<<< HEAD
-=======
-Route::get('test', function(){
-	$channels = ['C1'];
-	$groups = ['E1398'];
-	$areas = ['E1398'];
-	$table = DB::table('mt_dt_sales')
-		->select(DB::raw("mt_dt_sales.area_code,mt_dt_sales.customer_code, SUM(gsv) as gsv"))
-		->join('sub_channels', function($join)
-        {
-            $join->on('sub_channels.coc_03_code', '=', 'mt_dt_sales.coc_03_code');
-            $join->on('sub_channels.l4_code','=','mt_dt_sales.coc_04_code');
-            $join->on('sub_channels.l5_code','=','mt_dt_sales.coc_05_code');
-        })
-        ->join('areas', 'areas.area_code', '=', 'mt_dt_sales.area_code')
-        ->join('groups', 'groups.group_code', '=',  'areas.group_code')
-        ->where(function($query) use ($channels) {
-			if(!empty($channels)){
-				$query->whereIn('channel_code', $channels);
-			}		
-		})
-		->where(function($query) use ($groups) {
-			if(!empty($groups)){
-				$query->whereIn('groups.group_code', $groups);
-			}		
-		})
-		->where(function($query) use ($areas) {
-			if(!empty($areas)){
-				$query->whereIn('mt_dt_sales.area_code', $areas);
-			}		
-		})
-		->where(function($query) use ($distrubutors) {
-			if(!empty($distrubutors)){
-				$query->whereIn('mt_dt_sales.area_code', $distrubutors);
-			}		
-		})
-		->where(function($query) use ($shiptos) {
-			if(!empty($shiptos)){
-				$query->whereIn('mt_dt_sales.area_code', $shiptos);
-			}		
-		})
-		->groupBy(array('mt_dt_sales.customer_code', 'mt_dt_sales.area_code'))
-		->orderBy('mt_dt_sales.area_code')
-		->orderBy('mt_dt_sales.customer_code')
-		->get();
-	Helper::debug($table);
-
-});
-
->>>>>>> tradedeal
 
 
 
