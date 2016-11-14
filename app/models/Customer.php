@@ -15,7 +15,7 @@ class Customer extends \Eloquent {
 		return self::select('customers.id', 'customers.area_code',
 			'areas.area_name', 'customers.customer_code', 'customers.sob_customer_code','customers.customer_name',
 			'customers.multiplier', 'customers.trade_deal', 'customers.active')
-			->join('areas', 'areas.area_code' , '=', 'customers.area_code')
+			->join('areas', 'areas.area_code' , '=', 'customers.area_code', 'left')
 			->get();
 	}
 
@@ -32,7 +32,7 @@ class Customer extends \Eloquent {
 		return self::select('customers.id', 'customers.area_code',
 			'areas.area_name', 'customers.customer_code', 'customers.sob_customer_code','customers.customer_name',
 			'customers.multiplier', 'customers.trade_deal', 'customers.active')
-			->join('areas', 'areas.area_code' , '=', 'customers.area_code')
+			->join('areas', 'areas.area_code' , '=', 'customers.area_code', 'left')
 			->where('customer_name', 'LIKE' ,"%$filter%")
 			->where(function($query) use ($status){
 				if($status < 2){
