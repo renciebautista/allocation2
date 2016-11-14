@@ -44,6 +44,7 @@ class UpdateLatestSalesTableSeeder extends Seeder {
 			$sum->save();
 		}
 
+		$this->call('UpdateCustomerTreeTableSeeder');
 
 		$timeSecond = strtotime(date('Y-m-d H:i:s'));
 		$differenceInSeconds = $timeSecond - $timeFirst;
