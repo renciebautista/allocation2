@@ -53,7 +53,6 @@ class TradeChannelController extends \BaseController {
 
 		$selected_channels = \ActivityCustomer::getSelectedChannels($activity);
 
-		
 		$channels = \DB::table('sub_channels')
 			->join('channels', 'channels.channel_code', '=', 'sub_channels.channel_code')
 			->where('trade_deal', 1)
@@ -69,7 +68,7 @@ class TradeChannelController extends \BaseController {
 				->groupBy('rtm_tag')
 				->orderBy('rtm_tag')
 				->get();
-			
+				
 			$channel_children = array();
 			foreach ($sub_channels as $sub_channel) {
 				// if(!in_array($level5->l5_code, $final_l5)){

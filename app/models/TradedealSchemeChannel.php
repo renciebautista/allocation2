@@ -12,27 +12,31 @@ class TradedealSchemeChannel extends \Eloquent {
 			foreach ($channels as $channel){
 				$node = explode(".", trim($channel));
 				if(isset($node[1])){
-					$td_channels[] = array('tradedeal_scheme_id' => $scheme->id, 'channel_node' => trim($channel));
+					self::insert(array('tradedeal_scheme_id' => $scheme->id, 'channel_node' => trim($channel)));
 				}else{
-					$selected_channels = self::getallselected($activity);
-					$sel_ch_arr = [];
-					foreach ($selected_channels as $sel_ch) {
-						$sel_node = explode(".", $sel_ch->channel_node);
-						if(isset($sel_node[1])){
-							$sel_ch_arr[] = $sel_node[1];
-						}
-					}
+					// $selected_channels = self::getallselected($activity);
+					// $sel_ch_arr = [];
+					// foreach ($selected_channels as $sel_ch) {
+					// 	$sel_node = explode(".", $sel_ch->channel_node);
+					// 	if(isset($sel_node[1])){
+					// 		$sel_ch_arr[] = $sel_node[1];
+					// 	}
+					// }
 
-					$sub_channels = TradedealChannel::getChannels($activity, $node[0]);
+					$sub_channels = \DB::table('sub_channels')
+						->where('channel_code', $node[0])
+						->where('trade_deal', 1)
+						->groupBy('rtm_tag')
+						->orderBy('rtm_tag')
+						->get();
 
 					foreach ($sub_channels as $av_ch) {
-						if(!in_array($av_ch->sub_channel_desc, $sel_ch_arr)){
-							$td_channels[] = array('tradedeal_scheme_id' => $scheme->id, 'channel_node' => $node[0].'.'.$av_ch->sub_channel_desc);
-						}
+						// if(!in_array($av_ch->sub_channel_desc, $sel_ch_arr)){
+							self::insert(array('tradedeal_scheme_id' => $scheme->id, 'channel_node' => $node[0].'.'.$av_ch->rtm_tag));
+						// }
 					}
 				}
 			}
-			self::insert($td_channels);	
 		}
 	}
 
@@ -57,27 +61,26 @@ class TradedealSchemeChannel extends \Eloquent {
 			->get();
 	}
 
-	public static function getSelectedChannels($scheme){
-		return self::where('tradedeal_scheme_id', $scheme->id)->get();
-		// $tradedeal = Tradedeal::findOrFail($scheme->tradedeal_id);
-		// $activity = Activity::findOrFail($tradedeal->activity_id);
-		// $nodes = self::where('tradedeal_scheme_id', $scheme->id)->get();
-		// $l5 = [];
-		// foreach ($nodes as $node) {
-		// 	$_selected_node = explode(".", $node->channel_node);
+	public static function getCustomers($tradealscheme){
+		$customer_codes = [];
+		
+		$selections = self::where('tradedeal_scheme_id', $tradealscheme->id)->get();
 
-		// 	$ch[] = $_selected_node[0];
-		// 	if(!empty($_selected_node[1])){
-		// 		$l5[] = $_selected_node[1];
-		// 	}else{
-		// 		$level5s = TradedealChannel::getChannel($activity, $ch);
-		// 		foreach ($level5s as $value) {
-		// 			$l5[] = $value->l5_code;
-		// 		}
-		// 	}
-		// }
-		
-		// return array_unique($l5);
-		
+		foreach ($selections as $selection) {
+			$nodes =  explode(".", $selection->channel_node);
+			$sub_chns = \DB::table('sub_channels')->where('channel_code', $nodes[0])->where('rtm_tag', $nodes[1])->get();
+			foreach ($sub_chns as $sub_chn) {
+				$areas = MtDtHieracry::where('coc_03_code', $sub_chn->coc_03_code)
+					->where('coc_04_code', $sub_chn->l4_code)
+					->where('coc_05_code', $sub_chn->l5_code)
+					->get();
+				foreach ($areas as $area) {
+					$customer_codes[] = $area->customer_code;
+				}
+			}
+
+		}
+
+		return array_unique($customer_codes);
 	}
 }

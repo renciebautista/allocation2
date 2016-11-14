@@ -25,16 +25,12 @@ class TradealSchemeController extends \BaseController {
 	 */
 	public function update($id)
 	{
-		// dd(Input::all());
 		$scheme = TradedealScheme::findOrFail($id);
-		// Helper::debug($scheme);
 		$tradedeal = Tradedeal::find($scheme->tradedeal_id);
 		$activity = Activity::findOrFail($tradedeal->activity_id);
 
 		$deal_type = TradedealType::find(Input::get('deal_type'));
-		// Helper::debug($deal_type);
 		$uom = TradedealUom::find(Input::get('uom'));
-		// Helper::debug($uom);
 		$selected_skus = [];
 		$free_pcs_case = [];
 
@@ -109,7 +105,6 @@ class TradealSchemeController extends \BaseController {
 			$free = str_replace(",", '', Input::get('free'));
 
 			$scheme->tradedeal_id = $tradedeal->id;
-			// $scheme->name = $deal_type->tradedeal_type.": ".$buy."+".$free." ".$uom->tradedeal_uom;
 			$scheme->name = strtoupper(Input::get('scheme_name'));
 			$scheme->tradedeal_type_id = $deal_type->id;
 			$scheme->buy = $buy;
@@ -139,7 +134,6 @@ class TradealSchemeController extends \BaseController {
 			if(Input::has('premium_sku')){
 				$premuim_sku = TradedealPartSku::find(Input::get('premium_sku'));
 
-				// Helper::debug($premuim_sku);
 				$scheme->pre_id = $premuim_sku->id;
 				$scheme->pre_code = $premuim_sku->pre_code;
 				$scheme->pre_desc = $premuim_sku->pre_desc;
