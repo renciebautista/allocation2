@@ -62,15 +62,15 @@ class CustomerMasterController extends \BaseController {
   //       	'id', 'channel_code', 'coc_03_code', 'l3_desc', 'l4_code', 'l4_desc', 'l5_code', 'l5_desc', 'rtm_tag', 'trade_deal',
   //       	'id' ,'channel_code', 'channel_name'
 		// 	UNION ALL
-  //       	select * from mt_dt_hieracry
-		// 	left join areas on areas.area_code = mt_dt_hieracry.area_code
-		// 	left join groups on groups.group_code = areas.group_code
-		// 	left join customers on customers.customer_code = mt_dt_hieracry.customer_code
-		// 	left join ship_tos on ship_tos.plant_code = mt_dt_hieracry.plant_code
-		// 	left join ship_to_plant_codes on ship_to_plant_codes.distributor_code = mt_dt_hieracry.distributor_code
-		// 	left join accounts on (mt_dt_hieracry.account_name = accounts.account_name AND ship_tos.ship_to_code = accounts.ship_to_code)
-		// 	left join sub_channels on (mt_dt_hieracry.coc_03_code = sub_channels.coc_03_code AND mt_dt_hieracry.coc_04_code = sub_channels.l4_code AND mt_dt_hieracry.coc_05_code = sub_channels.l5_code)
-		// 	left join channels on channels.channel_code = sub_channels.channel_code INTO OUTFILE '%s' FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n'",$file);
+	  //       	select * from mt_dt_hieracry
+			// 	left join areas on areas.area_code = mt_dt_hieracry.area_code
+			// 	left join groups on groups.group_code = areas.group_code
+			// 	left join customers on customers.customer_code = mt_dt_hieracry.customer_code
+			// 	left join ship_tos on ship_tos.plant_code = mt_dt_hieracry.plant_code
+			// 	left join ship_to_plant_codes on ship_to_plant_codes.distributor_code = mt_dt_hieracry.distributor_code
+			// 	left join accounts on (mt_dt_hieracry.account_name = accounts.account_name AND ship_tos.ship_to_code = accounts.ship_to_code)
+			// 	left join sub_channels on (mt_dt_hieracry.coc_03_code = sub_channels.coc_03_code AND mt_dt_hieracry.coc_04_code = sub_channels.l4_code AND mt_dt_hieracry.coc_05_code = sub_channels.l5_code)
+			// 	left join channels on channels.channel_code = sub_channels.channel_code INTO OUTFILE '%s' FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n'",$file);
 
   //       // \DB::getpdo()->exec($query);
 		// DB::statement($query);

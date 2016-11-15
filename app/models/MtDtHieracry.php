@@ -42,5 +42,17 @@ class MtDtHieracry extends \Eloquent {
 		return DB::select(DB::raw($query));
 	}
 
-	
+	public static function getSubTypes($channel_code, $sub_type){
+		$query = sprintf("select l5_code, rtm_tag from mt_dt_hieracry
+				left join customers on customers.customer_code = mt_dt_hieracry.customer_code
+				left join ship_tos on ship_tos.plant_code = mt_dt_hieracry.plant_code
+				left join sub_channels on (mt_dt_hieracry.coc_03_code = sub_channels.coc_03_code AND mt_dt_hieracry.coc_04_code = sub_channels.l4_code AND mt_dt_hieracry.coc_05_code = sub_channels.l5_code)
+				left join channels on channels.channel_code = sub_channels.channel_code
+				where customers.trade_deal = 1
+				and sub_channels.channel_code = '%s'
+				and sub_channels.rtm_tag = '%s'
+				and ship_tos.ship_to_code IS NOT NULL
+				group by l5_code, rtm_tag", $channel_code, $sub_type);
+		return DB::select(DB::raw($query));
+	}
 }

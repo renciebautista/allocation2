@@ -38,6 +38,25 @@ class TradedealSchemeChannel extends \Eloquent {
 				}
 			}
 		}
+
+
+		// create subtypes
+		TradedealSchemeSubType::where('tradedeal_scheme_id',  $scheme->id)->delete();
+
+		$selections = self::where('tradedeal_scheme_id', $scheme->id)->get();
+		foreach ($selections as $selection) {
+			$nodes =  explode(".", $selection->channel_node);
+			$sub_chns =  MtDtHieracry::getSubTypes($nodes[0], $nodes[1]);
+			$data = [];
+			foreach ($sub_chns as $sub_chn) {
+				$data[] = ['tradedeal_scheme_id' => $scheme->id, 'sub_type' => $sub_chn->l5_code, 'sub_type_desc' => $sub_chn->rtm_tag];
+			}
+
+			if(!empty($data)){
+				TradedealSchemeSubType::insert($data);
+			}
+		}
+
 	}
 
 
@@ -46,18 +65,6 @@ class TradedealSchemeChannel extends \Eloquent {
 		return self::join('tradedeal_schemes', 'tradedeal_schemes.id', '=', 'tradedeal_scheme_channels.tradedeal_scheme_id')
 			->join('tradedeals', 'tradedeals.id', '=', 'tradedeal_schemes.tradedeal_id')
 			->where('activity_id', $activity->id)
-			->get();
-	}
-
-	public static function getSelectedDetails($scheme){
-		$tradedeal = Tradedeal::findOrFail($scheme->tradedeal_id);
-		$activity = Activity::findOrFail($tradedeal->activity_id);
-
-		$channels = self::getLevel5($scheme);
-
-		return TradedealChannel::where('activity_id', $activity->id)
-			->whereIn('l5_code', $channels)
-			->orderBy('l5_desc')
 			->get();
 	}
 

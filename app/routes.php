@@ -18,6 +18,16 @@ Queue::getIron()->ssl_verifypeer = false;
 |
 */
 
+
+Route::get('testfiel', function(){
+	$file = storage_path('le').'- 1 Header.csv';
+	// dd($file);
+	$contents = "DEAL ID,PROMO TYPE,IONUMBER,START DATE,END DATE,DEAL DESCRIPTION,DEAL AMOUNT,SALES ORG,DISTRIBUTOR ID,ALLOCATED BUDGET,Non Unilever Flag".PHP_EOL;
+	File::put($file, $contents);
+	for ($i=0; $i < 10; $i++) { 
+		File::append($file, $contents);
+	}
+});
 //---------------------------------------------------
 Route::post('queue/massmail', function()
 {
