@@ -58,6 +58,16 @@ class TradedealPartSku extends \Eloquent {
 		}
 	}
 
+	public static function getParticipatingSku($activity){
+		return self::select(array('id',
+			DB::raw('CONCAT(host_desc," - ",host_code) as host_sku'), 'host_cost', 'host_pcs_case', 'variant', 
+			DB::raw('CONCAT(ref_desc," - ",ref_code) as ref_sku'),
+			DB::raw('CONCAT(pre_desc," - ",pre_code) as pre_sku'), 'pre_cost', 'pre_pcs_case', 'pre_variant'))
+			->where('activity_id', $activity->id)
+			->orderBy('id')
+			->get();
+	}
+
 
 
 }

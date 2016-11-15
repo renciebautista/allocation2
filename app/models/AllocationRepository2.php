@@ -236,7 +236,7 @@ class AllocationRepository2  {
 		}
 
 		$this->account_sales = DB::table('mt_dt_sales')
-			->select(DB::raw('area_code, customer_code, plant_code, account_name, channel_code, sum(gsv) as gsv '))
+			->select(DB::raw('area_code, customer_code, plant_code, account_name, channel_code, sum(gsv) as gsv'))
 			->join('sub_channels', function($join)
 			{
 				$join->on('sub_channels.coc_03_code', '=', 'mt_dt_sales.coc_03_code');
@@ -361,31 +361,48 @@ class AllocationRepository2  {
 		$gsv = 0;
 		foreach ($additionalsales as $row) {
 			if(($row->to_customer == $to_customer) && ($row->to_plant == '')){
+				// $customer = DB::table('customers')
+				// 	->select('areas.group_code as group_code','group_name','area_name',
+				// 		'customer_name','customer_code','customers.area_code as area_code',
+				// 		'customers.area_code_two as area_code_two','multiplier','active','from_dt','sob_customer_code')
+				// 	->join('areas', 'customers.area_code', '=', 'areas.area_code')
+				// 	->join('groups', 'areas.group_code', '=', 'groups.group_code')
+				// 	->where('customer_code', $to_customer)
+				// 	->first();
+
+				// foreach ($channels as $ch) {
+				// 	if(isset($cust_nodes[$ch][$customer->group_code][$customer->area_code])){
+
+				// 		if(in_array($row->from_customer, $cust_nodes[$ch][$customer->group_code][$customer->area_code])){
+				// 			foreach ($this->account_sales as $account_sale) {
+				// 				if(($customer->customer_code == $account_sale->customer_code)  && ($account_sale->channel_code == $ch)){
+				// 					$gsv += $account_sale->gsv;
+				// 				}							
+				// 			}
+				// 		}
+				// 	}	
+				// }
+
 				$customer = DB::table('customers')
 					->select('areas.group_code as group_code','group_name','area_name',
 						'customer_name','customer_code','customers.area_code as area_code',
 						'customers.area_code_two as area_code_two','multiplier','active','from_dt','sob_customer_code')
 					->join('areas', 'customers.area_code', '=', 'areas.area_code')
 					->join('groups', 'areas.group_code', '=', 'groups.group_code')
-					->where('customer_code', $row->from_customer)
+					->where('customer_code',  $to_customer)
 					->first();
 
-				// Helper::debug($customer);
-
-				foreach ($channels as $ch) {
-					if(isset($cust_nodes[$ch][$customer->group_code][$customer->area_code])){
-
-						if(in_array($row->from_customer, $cust_nodes[$ch][$customer->group_code][$customer->area_code])){
-							foreach ($this->account_sales as $account_sale) {
-								if(($customer->customer_code == $account_sale->customer_code)  && ($account_sale->channel_code == $ch)){
-									$gsv += $account_sale->gsv;
-								}							
+				foreach ($this->account_sales as $account_sale) {
+					if(isset($cust_nodes[$account_sale->channel_code][$customer->group_code][$customer->area_code][$customer->customer_code])){
+						if(in_array($to_plant, $cust_nodes[$account_sale->channel_code][$customer->group_code][$customer->area_code][$customer->customer_code])){
+							if(($account_sale->customer_code == $row->from_customer)){
+								$gsv += $account_sale->gsv;
 							}
 						}
-					}	
+					}
 				}
+				$gsv = ($gsv * $row->split) / 100;
 			}
-			// Helper::debug($gsv);
 			$gsv = ($gsv * $row->split) / 100;
 		}
 		return $gsv;
@@ -395,30 +412,28 @@ class AllocationRepository2  {
 		$gsv = 0;
 		foreach ($additionalsales as $row) {
 			if(($row->to_customer == $to_customer) && ($row->to_plant == $to_plant)){
+				
 				$customer = DB::table('customers')
 					->select('areas.group_code as group_code','group_name','area_name',
 						'customer_name','customer_code','customers.area_code as area_code',
 						'customers.area_code_two as area_code_two','multiplier','active','from_dt','sob_customer_code')
 					->join('areas', 'customers.area_code', '=', 'areas.area_code')
 					->join('groups', 'areas.group_code', '=', 'groups.group_code')
-					->where('customer_code', $row->from_customer)
+					->where('customer_code',  $to_customer)
 					->first();
 
-				foreach ($channels as $ch) {
-					if(isset($ship_nodes[$ch][$customer->group_code][$customer->area_code][$customer->customer_code])){
-						if(in_array($row->from_plant, $ship_nodes[$ch][$customer->group_code][$customer->area_code][$customer->customer_code])){
-							foreach ($this->account_sales as $account_sale) {
-								if(($customer->customer_code == $account_sale->customer_code) && ($row->from_plant == $account_sale->plant_code) && ($account_sale->channel_code == $ch)){
-									$gsv += $account_sale->gsv;
-								}							
+				foreach ($this->account_sales as $account_sale) {
+					if(isset($ship_nodes[$account_sale->channel_code][$customer->group_code][$customer->area_code][$customer->customer_code])){
+						if(in_array($to_plant, $ship_nodes[$account_sale->channel_code][$customer->group_code][$customer->area_code][$customer->customer_code])){
+							if(($account_sale->customer_code == $row->from_customer) && 
+								($account_sale->plant_code == $row->from_plant)){
+								$gsv += $account_sale->gsv;
 							}
 						}
-					}	
+					}
 				}
-
+				$gsv = ($gsv * $row->split) / 100;
 			}
-			
-			$gsv = ($gsv * $row->split) / 100;
 		}
 		return $gsv;
 	}

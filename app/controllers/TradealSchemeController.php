@@ -1,6 +1,19 @@
 <?php
 use Alchemy\Zippy\Zippy;
 class TradealSchemeController extends \BaseController {
+
+	public function show($id){
+		$scheme = TradedealScheme::findOrFail($id);
+		$tradedeal = Tradedeal::findOrFail($scheme->tradedeal_id);
+		$activity = Activity::findOrFail($tradedeal->activity_id);
+		$dealtypes = TradedealType::getList();
+		$dealuoms = TradedealUom::get()->lists('tradedeal_uom', 'id');
+		$tradedeal_skus = TradedealPartSku::where('activity_id', $activity->id)->get();
+
+		$sel_hosts = TradedealSchemeSku::getSelected($scheme);
+		return View::make('tradealscheme.show', compact('activity', 'tradedeal', 'scheme', 'dealtypes', 
+			'dealuoms', 'tradedeal_skus', 'channels', 'sel_channels', 'sel_hosts'));
+	}
 	
 	public function edit($id)
 	{

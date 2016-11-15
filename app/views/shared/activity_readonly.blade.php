@@ -425,6 +425,8 @@
 		<br>
 	</div>
 
+	@if(!$activity->activitytype->with_tradedeal)
+
 	<!-- scheme details -->
 	<div class="tab-pane fade" id="schemes">
 		<br>
@@ -545,6 +547,324 @@
 		</div>
 		<br>
 	</div>
+
+	@else
+	<!-- trade details -->
+	<div class="tab-pane fade" id="tradedeal">
+		<br>
+		<div class="panel panel-default">
+		  	<div class="panel-heading">Bonus Buy Free Details</div>
+
+		  	<div class="panel-body">
+				<div class="row">
+					<div class="col-lg-3">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('alloc_in_weeks', 'Allocation Worth (in weeks)', array('class' => 'control-label')) }}
+									{{ Form::text('alloc_in_weeks',($tradedeal) ? $tradedeal->alloc_in_weeks : '', array('class' => 'form-control', 'readonly' => '')) }}
+								</div>
+							</div>
+						</div>
+					</div>	
+
+					<div class="col-lg-3">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('total_allocation_pcs', 'Total Allocation (Pcs)', array('class' => 'control-label')) }}
+									{{ Form::text('total_allocation_pcs',number_format($total_deals), array('class' => 'form-control', 'readonly' => '')) }}
+								</div>
+							</div>
+						</div>
+					</div>	
+
+					<div class="col-lg-3">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('total_premium_php', 'Total Premium (Php)', array('class' => 'control-label')) }}
+									{{ Form::text('total_premium_php',number_format($total_premium_cost,2), array('class' => 'form-control', 'readonly' => '')) }}								
+								</div>
+							</div>
+						</div>
+					</div>					
+				</div>
+
+
+		  	</div>
+		</div>
+
+		<div class="panel panel-default">
+		  	<div class="panel-heading">Premium Type</div>
+
+		  	<div class="panel-body">
+				
+				<div class="row">
+					<div class="col-lg-3">
+						<div class="form-group">
+							<div class="radio">
+							  	<label>
+							  		{{ Form::radio('non_ulp_premium', '1', (isset($tradedeal->non_ulp_premium)) ? $tradedeal->non_ulp_premium : 0,['id' => 'non_ulp_premium', 'disabled' => 'disabled']) }} Non-ULP Premium
+							  	</label>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+
+					<div class="col-lg-3">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('non_ulp_premium_desc', 'Non-ULP Premium Description', array('class' => 'control-label')) }}
+									{{ Form::text('non_ulp_premium_desc',($tradedeal) ?  $tradedeal->non_ulp_premium_desc : '', array('class' => 'form-control', 'id' => 'non_ulp_premium_desc', 'readonly' => '')) }}
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-lg-3">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('non_ulp_premium_code', 'PIMS Code', array('class' => 'control-label')) }}
+									{{ Form::text('non_ulp_premium_code',($tradedeal) ?  $tradedeal->non_ulp_premium_code : '', array('class' => 'form-control', 'id' => 'non_ulp_premium_code', 'readonly' => '')) }}
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-lg-3">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('non_ulp_premium_cost', 'Unit Cost / Piece', array('class' => 'control-label')) }}
+									{{ Form::text('non_ulp_premium_cost',($tradedeal) ?  $tradedeal->non_ulp_premium_cost : '', array('class' => 'form-control', 'id' => 'non_ulp_premium_cost', 'readonly' => '')) }}
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-lg-3">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('non_ulp_pcs_case', 'Piece / Case', array('class' => 'control-label')) }}
+									{{ Form::text('non_ulp_pcs_case',($tradedeal) ?  $tradedeal->non_ulp_pcs_case : '', array('class' => 'form-control', 'id' => 'non_ulp_pcs_case', 'readonly' => '')) }}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-lg-3">
+						<div class="form-group">
+							<div class="radio">
+							  	<label>
+							    	{{ Form::radio('non_ulp_premium', '0', (isset($tradedeal->non_ulp_premium)) ? !$tradedeal->non_ulp_premium : 0,['id' => 'non_ulp_premium', 'disabled' => 'disabled']) }} ULP Premium
+							  	</label>
+							</div>
+						</div>
+					</div>
+				</div>
+				<br>
+		  	</div>
+		</div>
+
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Select Participating SKU</h3>
+			</div>
+			<div class="panel-body">
+				<br>
+				<div >
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="form-group">
+								<div class="row">
+									<div class="col-lg-12">
+										<table id="participating_sku" class="table table-striped table-hover ">
+										<thead>
+											<tr>
+												<th>Host SKU</th>
+												<th>Unit Cost / Piece</th>
+												<th>Piece / Case</th>
+												<th>Variant Shortcut</th>
+												<th>Reference SKU</th>
+												<th>Premium SKU</th>
+												<th>Unit Cost / Piece</th>
+												<th>Piece / Case</th>
+												<th>Variant Shortcut</th>
+											</tr>
+										</thead>
+										<tbody>
+											@if(count($participating_skus) > 0)
+											@foreach($participating_skus as $host_sku)
+											<tr>
+												<td>{{ $host_sku->host_sku }}</td>
+												<td class="text-center">{{ $host_sku->host_cost }}</td>
+												<td class="text-center">{{ $host_sku->host_pcs_case }}</td>
+												<td>{{ $host_sku->variant }}</td>
+												<td>{{ $host_sku->ref_sku }}</td>
+												<td>{{ $host_sku->pre_sku }}</td>
+												<td class="text-center">{{ $host_sku->pre_cost }}</td>
+												<td class="text-center">{{ $host_sku->pre_pcs_case }}</td>
+												<td class="text-center">{{ $host_sku->pre_pcs_case }}</td>
+											</tr>
+											@endforeach
+											@else
+											<tr>
+												<td colspan="9">No Participating SKU selected.</td>
+											</tr>
+											@endif
+										</tbody>
+									</table> 
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Schemes</h3>
+			</div>
+			<div class="panel-body">
+				<br>
+				<div >
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="form-group">
+
+								
+
+								<div class="row">
+									<div class="col-lg-12">
+										<table id="scheme-table" class="table table-bordered">
+											<thead>
+												<tr>
+													<th colspan="2">Action</th>
+													<th>Scheme</th>
+													<th>UOM</th>
+													<th>Host SKU(s)</th>
+													<th>Premium SKU</th>
+													<th>Puchase Requirement</th>
+													<th>Cost To Sales</th>
+													<th style="width:20%">Channels Involved</th>
+												</tr>
+											</thead>
+											<tbody>
+										@if(count($tradedealschemes) == 0)
+										<tr>
+											<td colspan="9">No record found.</td>
+										</tr>
+										@endif
+										
+										@foreach($tradedealschemes as $scheme)
+												<?php $x = false; ?>
+												<?php $host_cnt = 1; ?>
+												@if(!empty($scheme->host_skus))
+												<?php $host_cnt = count($scheme->host_skus); ?>
+													@foreach($scheme->host_skus as $host_sku)
+													<?php $y = false; ?>
+													@if(!$x)
+													<tr id="{{$scheme->id}}" class="cl_{{$scheme->id}}">
+														<td rowspan="{{$host_cnt}}">
+															{{ HTML::linkAction('TradealSchemeController@show','View', $scheme->id, array('class' => 'btn btn-success btn-xs')) }}
+															
+														</td>
+														<td rowspan="{{$host_cnt}}">
+															<a href="javascript:void(0)" id="{{$scheme->id}}" class="deletescheme btn btn-danger btn-xs" disabled = 'disabled'>Delete</a>
+														</td>
+														<td rowspan="{{$host_cnt}}">{{ $scheme->name }}</td>
+														<td rowspan="{{$host_cnt}}">{{ $scheme->dealUom->tradedeal_uom }}</td>
+													@endif
+														@if(!$y)
+														<td>{{ $host_sku->desc_variant }} </td>
+														<td>{{ $host_sku->pre_variant }} </td>
+														<td>{{ number_format($host_sku->pur_req,2) }}</td>
+														<td>{{ number_format($host_sku->cost_to_sale,2) }} %</td>
+														<?php $y = true; ?>
+														@else
+														<td></td>
+														<td></td>
+														<td></td>
+														<td></td>
+														@endif
+														@if(!$x)
+														<?php $x = true; ?>
+														<td rowspan="{{$host_cnt}}" >
+															@foreach($scheme->channels as $channel)
+															{{ $channel->sub_type_desc }} </br>
+															@endforeach
+														</td>
+														@endif
+													</tr>
+													@endforeach
+												@endif
+											
+										@endforeach
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-6">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">Allocations</h3>
+					</div>
+					<div class="panel-body">
+						<div class="row">
+								<div class="col-lg-6">
+								  	<div class="form-group">
+								  		<a class="btn btn-success btn-sm" href="{{action('ActivityController@exporttddetails', $activity->id);}}">Download Allocations</a>
+										<a class="btn btn-success btn-sm" href="{{action('ActivityController@exporttradedeal', $activity->id);}}">Field Allocations</a>
+										<a class="btn btn-success btn-sm" href="{{action('TradealSchemeController@exportle', $activity->id);}}">Export LE Templates</a>
+								  	</div>
+							  	</div>
+						  	</div>
+						
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-6">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">Upload Force Allocation</h3>
+					</div>
+					<div class="panel-body">
+						<div class="row">
+								
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="form-group">
+					<button class="btn btn-default btn-style" type="submit">Back</button>
+					<button class="btn btn-primary btn-style" type="submit">Next</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	@endif
 	
 	<!-- budget details -->
 	<div class="tab-pane fade" id="budget">

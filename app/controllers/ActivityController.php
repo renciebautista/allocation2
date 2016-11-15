@@ -331,12 +331,16 @@ class ActivityController extends BaseController {
 				$route = 'activity.index';
 				$recall = $activity->pro_recall;
 				$submit_action = 'ActivityController@updateactivity';
+
+				$participating_skus = TradedealPartSku::getParticipatingSku($activity);
+
 				return View::make('shared.activity_readonly', compact('activity', 'sel_planner', 'approvers', 
 				 'sel_divisions','divisions', 'timings',
 				 'objectives',  'users', 'budgets', 'nobudgets','sel_approver',
 				 'sel_objectives',  'schemes', 'scheme_summary', 'networks','areas',
 				 'scheme_customers', 'scheme_allcations', 'materials', 'force_allocs','sel_involves',
-				 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings', 'comments' ,'submitstatus', 'route', 'recall', 'submit_action'));
+				 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings', 'comments' ,'submitstatus', 'route', 'recall', 'submit_action',
+				 'tradedeal', 'total_deals', 'total_premium_cost', 'tradedealschemes', 'participating_skus'));
 			}
 		}
 
@@ -3055,9 +3059,9 @@ class ActivityController extends BaseController {
 	public function getpartskus($id){
 		$tradedeal = Tradedeal::where('activity_id',$id)->first();
 		$skus = TradedealPartSku::select(array('id',
-			DB::raw('CONCAT(host_desc," - ",host_code) as host_sku'), 'host_cost', 'host_pcs_case',
+			DB::raw('CONCAT(host_desc," - ",host_code) as host_sku'), 'host_cost', 'host_pcs_case','variant',
 			DB::raw('CONCAT(ref_desc," - ",ref_code) as ref_sku'),
-			DB::raw('CONCAT(pre_desc," - ",pre_code) as pre_sku'), 'pre_cost', 'pre_pcs_case'))
+			DB::raw('CONCAT(pre_desc," - ",pre_code) as pre_sku'), 'pre_cost', 'pre_pcs_case','pre_variant'))
 			->where('activity_id', $id)->orderBy('id')->get();
 		$data['skus'] = $skus;
 		$data['uom'] = TradedealUom::get()->lists('tradedeal_uom', 'id');
