@@ -223,106 +223,107 @@ class LeTemplateRepository  {
     	$contents = implode(',', $header);
     	File::append($file, $contents.PHP_EOL);
 
-
+    	$allocations = TradedealSchemeAllocation::getCollectiveAllocation($tradedealscheme);
+    	
     	$brands =[];
 
-    			$sub_types = TradedealSchemeSubType::getSchemeSubtypes($tradedealscheme);
+		$sub_types = TradedealSchemeSubType::getSchemeSubtypes($tradedealscheme);
 
-		    	$budgets = ActivityBudget::getBudgets($activity->id);
-		    	$io_number = '';
-		    	if(!empty($budgets)){
-		    		if(isset($budgets[0])){
-		    			$io_number = $budgets[0]->io_number;
-		    		}
-		    		
-		    	}
+    	$budgets = ActivityBudget::getBudgets($activity->id);
+    	$io_number = '';
+    	if(!empty($budgets)){
+    		if(isset($budgets[0])){
+    			$io_number = $budgets[0]->io_number;
+    		}
+    		
+    	}
 
-		    	$start_date = date('d/m/Y', strtotime($activity->eimplementation_date));
-		    	$end_date = date('d/m/Y', strtotime($activity->end_date));
+    	$start_date = date('d/m/Y', strtotime($activity->eimplementation_date));
+    	$end_date = date('d/m/Y', strtotime($activity->end_date));
 
-		    	$total_deals = TradedealSchemeAllocation::where('tradedeal_scheme_id', $tradedealscheme->id)->sum('final_pcs');
+    	$total_deals = TradedealSchemeAllocation::where('tradedeal_scheme_id', $tradedealscheme->id)->sum('final_pcs');
 
-				$header_qty = $tradedealscheme->buy;
+		$header_qty = $tradedealscheme->buy;
 
-				if($tradedealscheme->tradedeal_uom_id == 2){
-		    		$header_qty = $tradedealscheme->buy * 12;
-		    	}
+		if($tradedealscheme->tradedeal_uom_id == 2){
+    		$header_qty = $tradedealscheme->buy * 12;
+    	}
 
-		    	if($tradedealscheme->tradedeal_uom_id == 3){
-		    		// problem with multiple host in level 3 collective
-		    		// use lowest pr host sku
-		    		$header_qty = $tradedealscheme->buy * $host_skus[0]->host_pcs_case;
-		    	}
+    	if($tradedealscheme->tradedeal_uom_id == 3){
+    		// problem with multiple host in level 3 collective
+    		// use lowest pr host sku
+    		$header_qty = $tradedealscheme->buy * $host_skus[0]->host_pcs_case;
+    	}
 
-		    	foreach ($allocations as $value) {
-		    		if($value->final_pcs > 0){
-		    			foreach ($sub_types as $sub_type) {
-		    				foreach ($materials as $mat) {
-		    					$row_data = array($value->scheme_code,
-		    					 	$value->scheme_desc, 
-		    					 	$io_number, 
-		    					 	$start_date, 
-		    					 	$end_date, 
-		    					 	$total_deals, 
-		    					 	'PC', 
-		    					 	$total_deals, 
-		    					 	'PC', 
-		    					 	'C',
-					    			$header_qty, 
-					    			$value->plant_code, 
-					    			$value->final_pcs, 
-					    			$value->final_pcs, 
-					    			'A920- Country/Site/Outlet Sub Type',
-					    			'', 
-					    			'', 
-					    			$sub_type->l5_code,
-					    			'', 
-					    			$mat->host_code, 
-					    			'',
-					    			'',
-					    			'',
-					    			'',
-					    			'',
-					    			'',
-					    			'',
-					    			'',
-					    			'',
-					    			'',
-					    			'',
-					    			'',
-					    			'',
-					    			'',
-					    			'',
-					    			'',
-					    			'',
-					    			'',
-					    			$tradedealscheme->pre_code,
-					    			$value->final_pcs,
-					    			'',
-					    			'',
-					    			'',
-					    			'',
-					    			'',
-					    			'',
-					    			'',
-					    			'',
-					    			'',
-					    			'',
-					    			'',
-					    			'',
-					    			'',
-					    			'',
-					    			'',
-					    			'',
-					    			'',
-					    			);
+    	foreach ($allocations as $value) {
+    		if($value->final_pcs > 0){
+    			foreach ($sub_types as $sub_type) {
+    				foreach ($materials as $mat) {
+    					$row_data = array($value->scheme_code,
+    					 	$value->scheme_desc, 
+    					 	$io_number, 
+    					 	$start_date, 
+    					 	$end_date, 
+    					 	$total_deals, 
+    					 	'PC', 
+    					 	$total_deals, 
+    					 	'PC', 
+    					 	'C',
+			    			$header_qty, 
+			    			$value->plant_code, 
+			    			$value->final_pcs, 
+			    			$value->final_pcs, 
+			    			'A920- Country/Site/Outlet Sub Type',
+			    			'', 
+			    			'', 
+			    			$sub_type->l5_code,
+			    			'', 
+			    			$mat->host_code, 
+			    			'',
+			    			'',
+			    			'',
+			    			'',
+			    			'',
+			    			'',
+			    			'',
+			    			'',
+			    			'',
+			    			'',
+			    			'',
+			    			'',
+			    			'',
+			    			'',
+			    			'',
+			    			'',
+			    			'',
+			    			'',
+			    			$tradedealscheme->pre_code,
+			    			$value->final_pcs,
+			    			'',
+			    			'',
+			    			'',
+			    			'',
+			    			'',
+			    			'',
+			    			'',
+			    			'',
+			    			'',
+			    			'',
+			    			'',
+			    			'',
+			    			'',
+			    			'',
+			    			'',
+			    			'',
+			    			'',
+			    			);
 
-		    					$contents = implode(',', $row_data);
-    							File::append($file, $contents.PHP_EOL);
-		    				}
-			    		}
-		    		}
-		    	}
+    					$contents = implode(',', $row_data);
+						File::append($file, $contents.PHP_EOL);
+    				}
+	    		}
+    		}
+    	}
 
 
 
