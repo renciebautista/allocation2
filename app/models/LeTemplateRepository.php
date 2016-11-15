@@ -223,8 +223,8 @@ class LeTemplateRepository  {
     	$contents = implode(',', $header);
     	File::append($file, $contents.PHP_EOL);
 
-    	$allocations = TradedealSchemeAllocation::getCollectiveAllocation($tradedealscheme);
     	
+
     	$brands =[];
 
 		$sub_types = TradedealSchemeSubType::getSchemeSubtypes($tradedealscheme);
@@ -255,6 +255,10 @@ class LeTemplateRepository  {
     		$header_qty = $tradedealscheme->buy * $host_skus[0]->host_pcs_case;
     	}
 
+    	$allocations = TradedealSchemeAllocation::getCollectiveAllocation($tradedealscheme);
+    	$materials = TradedealSchemeSku::getHostSku($tradedealscheme);
+    	$sub_types = TradedealSchemeSubType::getSchemeSubtypes($tradedealscheme);
+    	
     	foreach ($allocations as $value) {
     		if($value->final_pcs > 0){
     			foreach ($sub_types as $sub_type) {
