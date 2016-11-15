@@ -14,15 +14,13 @@ class TradedealSchemeChannel extends \Eloquent {
 				if(isset($node[1])){
 					self::insert(array('tradedeal_scheme_id' => $scheme->id, 'channel_node' => trim($channel)));
 				}else{
-					// $selected_channels = self::getallselected($activity);
-					// $sel_ch_arr = [];
-					// foreach ($selected_channels as $sel_ch) {
-					// 	$sel_node = explode(".", $sel_ch->channel_node);
-					// 	if(isset($sel_node[1])){
-					// 		$sel_ch_arr[] = $sel_node[1];
-					// 	}
-					// }
-
+					$all_selected_nodes = \TradedealSchemeChannel::getallselected($activity);
+					$all_nodes = [];
+					if(!empty($all_selected_nodes)){
+						foreach ($all_selected_nodes as $sel) {
+							$all_nodes[] = $sel->channel_node;
+						}
+					}
 					$sub_channels = \DB::table('sub_channels')
 						->where('channel_code', $node[0])
 						->where('trade_deal', 1)
@@ -31,9 +29,10 @@ class TradedealSchemeChannel extends \Eloquent {
 						->get();
 
 					foreach ($sub_channels as $av_ch) {
-						// if(!in_array($av_ch->sub_channel_desc, $sel_ch_arr)){
-							self::insert(array('tradedeal_scheme_id' => $scheme->id, 'channel_node' => $node[0].'.'.$av_ch->rtm_tag));
-						// }
+						$key = $node[0].'.'.$av_ch->rtm_tag;
+						if(!in_array($key, $all_nodes)){
+							self::insert(array('tradedeal_scheme_id' => $scheme->id, 'channel_node' => $key));
+						}
 					}
 				}
 			}

@@ -991,3 +991,9 @@ table .v-align{
 .tooltip.top .tooltip-inner {
     background-color:red;
 }
+
+.disabled-readonly {
+	cursor: not-allowed;
+    background-color: #eeeeee;
+    opacity: 1;
+}

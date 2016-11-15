@@ -152,6 +152,142 @@ class Customer extends \Eloquent {
 		return $data;
 	}
 
+	public static function getChannelCustomerList(){
+		$data = [];
+		$channels = \DB::table('customer_trees')
+				->select('channels.channel_code', 'channels.channel_name')
+				->join('channels', 'channels.channel_code', '=', 'customer_trees.channel_code')
+				->groupBy('channels.channel_code')
+				->orderBy('channels.channel_name')
+				->get();
+		foreach ($channels as $channel) {
+			$groups = \DB::table('customer_trees')
+				->select('groups.group_code', 'groups.group_name')
+				->join('groups', 'groups.group_code', '=', 'customer_trees.group_code')
+				->where('customer_trees.channel_code', $channel->channel_code)
+				->groupBy('groups.group_code')
+				->orderBy('groups.id')
+				->get();
+
+			$channel_children = [];
+			foreach ($groups as $group) {
+				$areas = \DB::table('customer_trees')
+					->select('areas.area_code', 'areas.area_name')
+					->join('areas', 'areas.area_code', '=', 'customer_trees.area_code')
+					->where('customer_trees.channel_code', $channel->channel_code)
+					->where('customer_trees.group_code', $group->group_code)
+					->groupBy('areas.area_code')
+					->orderBy('areas.area_name')
+					->get();
+				$group_children = [];
+				foreach ($areas as $area) {
+					$distributors = \DB::table('customer_trees')
+						->select('customers.customer_code', 'customers.customer_name')
+						->join('customers', 'customers.customer_code', '=', 'customer_trees.customer_code')
+						->where('customer_trees.channel_code', $channel->channel_code)
+						->where('customer_trees.group_code', $group->group_code)
+						->where('customer_trees.area_code', $area->area_code)
+						->groupBy('customers.customer_code')
+						->orderBy('customers.customer_name')
+						->get();
+					$area_children = [];
+					foreach ($distributors as $distributor) {
+						$shiptos = \DB::table('customer_trees')
+							->select('ship_tos.plant_code', 'ship_tos.ship_to_name', 'ship_tos.ship_to_code', 'ship_tos.plant_code')
+							->join('ship_tos', 'ship_tos.plant_code', '=', 'customer_trees.plant_code')
+							->where('customer_trees.channel_code', $channel->channel_code)
+							->where('customer_trees.group_code', $group->group_code)
+							->where('customer_trees.area_code', $area->area_code)
+							->where('customer_trees.customer_code', $distributor->customer_code)
+							->groupBy('ship_tos.plant_code')
+							->orderBy('ship_tos.ship_to_name')
+							->get();
+						$distributor_children = [];
+						foreach ($shiptos as $shipto) {
+							if($shipto->ship_to_code != '') {
+								$shipto_children = array();
+
+								$accounts =  \DB::table('customer_trees')
+									->select('accounts.id', 'account_name')
+									->join('accounts', 'accounts.id', '=', 'customer_trees.account_id')
+									->where('customer_trees.channel_code', $channel->channel_code)
+									->where('customer_trees.group_code', $group->group_code)
+									->where('customer_trees.area_code', $area->area_code)
+									->where('customer_trees.customer_code', $distributor->customer_code)
+									->where('customer_trees.plant_code', $shipto->plant_code)
+									->orderBy('accounts.account_name')
+									->get();
+									
+								if(count($accounts)>0){
+									$shipto_children = array();
+									
+									foreach ($accounts as $account) {
+										$shipto_children[] = array(
+										'title' => $account->account_name,
+										'isfolder' => false,
+										'key' => $channel->channel_code.'.'.$group->group_code.'.'.$area->area_code.'.'.$distributor->customer_code.'.'.$shipto->plant_code.".".$account->id,
+										);
+									}
+
+								}
+
+								if(count($shipto_children) > 0){
+									$customer_children[] = array(
+									'title' => $shipto->ship_to_name,
+									'isfolder' => false,
+									'key' => $channel->channel_code.'.'.$group->group_code.'.'.$area->area_code.'.'.$distributor->customer_code.'.'.$shipto->plant_code,
+									'children' => $shipto_children,
+										
+									);
+								}else{
+									$customer_children[] = array(
+									'title' => $shipto->ship_to_name,
+									'isfolder' => false,
+									'key' => $channel->channel_code.'.'.$group->group_code.'.'.$area->area_code.'.'.$distributor->customer_code.'.'.$shipto->plant_code,
+									);
+								}
+							}
+
+							$distributor_children[] = array(
+								'title' => $shipto->ship_to_name,
+								'isfolder' => true,
+								'key' => $channel->channel_code.'.'.$group->group_code.'.'.$area->area_code.'.'.$distributor->customer_code.'.'.$shipto->plant_code,
+								'children' => $shipto_children,
+								);
+						}
+
+						$area_children[] = array(
+							'title' => $distributor->customer_name,
+							'isfolder' => true,
+							'key' => $channel->channel_code.'.'.$group->group_code.'.'.$area->area_code.'.'.$distributor->customer_code,
+							'children' => $distributor_children,
+							);
+					}
+					$group_children[] = array(
+						'title' => $area->area_name,
+						'isfolder' => true,
+						'key' => $channel->channel_code.'.'.$group->group_code.'.'.$area->area_code,
+						'children' => $area_children,
+						);
+				}
+				$channel_children[] = array(
+					'title' => $group->group_name,
+					'isfolder' => true,
+					'key' => $channel->channel_code.'.'.$group->group_code,
+					'children' => $group_children,
+					);
+			}
+
+			$data[] = array(
+				'title' => $channel->channel_name,
+				'isfolder' => true,
+				'key' => $channel->channel_code,
+				'children' => $channel_children,
+				);
+		}
+		return $data;
+	}
+
 
 	public static function import($records){
 		DB::beginTransaction();

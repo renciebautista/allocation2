@@ -71,7 +71,11 @@
 <ul class="nav nav-tabs">
 	<li class="active"><a id="tab-activity" aria-expanded="true" href="#activity">Activity Details</a></li>
 	<li class=""><a id="tab-customer" aria-expanded="false" href="#customer">Customer Details</a></li>
-	<li class=""><a id="tab-schemes" aria-expanded="false" href="#schemes">Schemes</a></li>
+	@if(!$activity->activitytype->with_tradedeal)
+		<li class=""><a id="tab-schemes" aria-expanded="false" href="#schemes">Schemes</a></li>
+	@else
+		<li class=""><a id="tab-tradedeal" aria-expanded="false" href="#tradedeal">Bonus Buy Free</a></li>
+	@endif
 	<li class=""><a id="tab-budget" aria-expanded="false" href="#budget">Budget Details</a></li>
 	<li class=""><a id="tab-timings" aria-expanded="false" href="#timings">Timings Details</a></li>
 	<li class=""><a id="tab-attachments" aria-expanded="false" href="#attachment">Attachments</a></li>
@@ -368,11 +372,7 @@
 									<div id="tree3"></div>
 									{{ Form::hidden('customers', null, array('id' => 'customers')) }}
 								</div>
-								<div class="col-lg-6">
-									{{ Form::label('tree4', 'Select DT Channels Involved', array('class' => 'control-label' )) }}
-									<div id="tree4"></div>
-									{{ Form::hidden('channels_involved', null, array('id' => 'channels_involved')) }}
-								</div>
+								
 							</div>	
 							<div class="row">
 								<div class="col-lg-6">
@@ -401,7 +401,7 @@
 									  		<tr>
 									  			<td>{{ $area->group_name }}</td>
 									  			<td>{{ $area->area_name }}</td>
-								  				<td><input class="input-number" disabled="" id="{{ $area->area_code }}"  name="force_alloc[{{ $area->area_code }}]" value="{{ $area->multi }}" type="text"></td>
+								  				<td><input class="input-number disabled-readonly" disabled="" id="{{ $area->area_code }}"  name="force_alloc[{{ $area->area_code }}]" value="{{ $area->multi }}" type="text"></td>
 									  		</tr>
 									  		@endforeach
 									  	</tbody>
