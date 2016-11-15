@@ -28,9 +28,9 @@ class LeTemplateRepository  {
     		$scheme_uom_abv2 = 'CS';
     	}
 
+    	$host_skus = TradedealSchemeSku::getHostSku($tradedealscheme);
 		if($tradedealscheme->tradedeal_type_id == 1){
-			$host_skus = TradedealSchemeSku::getHostSku($tradedealscheme);
-			// Helper::debug($host_skus);
+			
 			foreach ($host_skus as $host_sku) {
 				self::generateIndividualHeader($tradedealscheme, $tradedeal, $activity, $host_sku, $scheme_uom_abv, $scheme_uom_abv2);
 				self::generateIndividualMechanics($tradedealscheme, $tradedeal, $activity, $host_sku, $scheme_uom_abv, $scheme_uom_abv2);
@@ -43,10 +43,9 @@ class LeTemplateRepository  {
 		// 	self::generateCollective($tradedealscheme, $tradedeal, $activity, $host_skus, $scheme_uom_abv, $scheme_uom_abv2);
 		// }
 
-		// if($tradedealscheme->tradedeal_type_id == 3){
-		// 	$host_skus = TradedealSchemeSku::getHostSku($tradedealscheme);
-		// 	self::generateCollective($tradedealscheme, $tradedeal, $activity, $host_skus, $scheme_uom_abv, $scheme_uom_abv2);
-		// }
+		if($tradedealscheme->tradedeal_type_id == 3){
+			self::generateCollective($tradedealscheme, $tradedeal, $activity, $host_skus, $scheme_uom_abv, $scheme_uom_abv2);
+		}
 	}
 
 	private static function getdealId($activity, $tradedealscheme, $host_sku, $scheme_uom_abv){
@@ -174,7 +173,7 @@ class LeTemplateRepository  {
 
     	$header = array('Promotion ID', 'Site ID', 'Budget', 'Currency', 'Quota', 'UoM');
     	$contents = implode(',', $header);
-    	File::append($file, $contents.PHP_EOL);
+    	File::put($file, $contents.PHP_EOL);
 
     	$allocations = TradedealSchemeAllocation::getAllocation($tradedealscheme, $host_sku);
     	foreach ($allocations as $value) {
@@ -195,7 +194,6 @@ class LeTemplateRepository  {
 	private static function generateCollective($tradedealscheme, $tradedeal, $activity, $host_skus, $scheme_uom_abv, $scheme_uom_abv2){
 		set_time_limit(0);
 		$deal_id = TradedealSchemeAllocation::getCollecttiveSchemeCode($tradedealscheme);
-
 		$folder_name = $deal_id->scheme_code.' - '.$tradedealscheme->buy.'+'.$tradedealscheme->free.' '.$scheme_uom_abv2.' ';
 		$h_brands = [];
 		foreach ($host_skus as $host) {
@@ -204,16 +202,16 @@ class LeTemplateRepository  {
 
 		$x_brand = array_unique($h_brands);
 
-		$folder_name .= implode("_", $x_brand);
+		$folder_name .= implode("_", $x_brand);	
 
+		$file = storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name).'/'.$folder_name. ' - 1 Header.csv';
 
-		Excel::create($folder_name. '  - 1 Header', function($excel) use ($tradedealscheme, $tradedeal, $activity, $host_skus,$scheme_uom_abv, $scheme_uom_abv2) {
-		    $excel->sheet('Sheet1', function($sheet) use ($tradedealscheme, $tradedeal, $activity, $host_skus,$scheme_uom_abv, $scheme_uom_abv2) {
-		    	$allocations = TradedealSchemeAllocation::getCollectiveAllocation($tradedealscheme);
-		    	$sub_types = TradedealSchemeChannel::getSelectedDetails($tradedealscheme);
-		    	$materials = TradedealSchemeSku::getHostSku($tradedealscheme);
+		if(!file_exists(dirname($file)))
+    		mkdir(dirname($file), 0777, true);
 
-		    	$header = array('Promotion Number', 'Promotion Description', 'U2K2 I/O No', 'Start Date', 'End Date',
+    	File::delete($file);
+
+    	$header = array('Promotion Number', 'Promotion Description', 'U2K2 I/O No', 'Start Date', 'End Date',
 		    		'BUY Quota', 'Quota UOM', 'GET Quota', 'Quota UOM', 'Quantity Type', 'Header Qty', 'Site', 'Site BUY Quota',
 		    		'Site GET Quota', 'Level', 'Cluster', 'outlet type', 'Outlet sub typ', 'Perf store',
 		    		'Buy Mat 1', 'Buy Qty 1','Buy Mat 2', 'Buy Qty 2','Buy Mat 3', 'Buy Qty 3','Buy Mat 4', 'Buy Qty 4',
@@ -222,9 +220,13 @@ class LeTemplateRepository  {
 		    		'Get Mat 1', 'Get Qty 1','Get Mat 2', 'Get Qty 2','Get Mat 3', 'Get Qty 3','Get Mat 4', 'Get Qty 4',
 		    		'Get Mat 5', 'Get Qty 5','Get Mat 6', 'Get Qty 6','Get Mat 7', 'Get Qty 7','Get Mat 8', 'Get Qty 8',
 		    		'Get Mat 9', 'Get Qty 9','Get Mat 10', 'Get Qty 10');
+    	$contents = implode(',', $header);
+    	File::append($file, $contents.PHP_EOL);
 
-		    	$sheet->row(1, $header);
-		    	$brands =[];
+
+    	$brands =[];
+
+    			$sub_types = TradedealSchemeSubType::getSchemeSubtypes($tradedealscheme);
 
 		    	$budgets = ActivityBudget::getBudgets($activity->id);
 		    	$io_number = '';
@@ -249,26 +251,138 @@ class LeTemplateRepository  {
 		    	if($tradedealscheme->tradedeal_uom_id == 3){
 		    		// problem with multiple host in level 3 collective
 		    		// use lowest pr host sku
-		    		$header_qty = $tradedealscheme->buy * $host_sku->host_pcs_case;
+		    		$header_qty = $tradedealscheme->buy * $host_skus[0]->host_pcs_case;
 		    	}
 
-		    	$row = 2;
 		    	foreach ($allocations as $value) {
 		    		if($value->final_pcs > 0){
 		    			foreach ($sub_types as $sub_type) {
 		    				foreach ($materials as $mat) {
-		    					$row_data = array($value->scheme_code, $value->scheme_desc, $io_number, $start_date, $end_date, $total_deals, 'PC', $total_deals, 'PC', 'C',
-					    			$header_qty, $value->plant_code, $value->final_pcs, $value->final_pcs, 'A920- Country/Site/Outlet Sub Type',
-					    			'', '', $sub_type->l5_code,'', $mat->host_code, );
-					    		$sheet->row($row, $row_data);
-					    		$sheet->setCellValueByColumnAndRow(39,$row, $tradedealscheme->pre_code);
-					    		$sheet->setCellValueByColumnAndRow(40,$row, $value->final_pcs);
-								$row++;
+		    					$row_data = array($value->scheme_code,
+		    					 	$value->scheme_desc, 
+		    					 	$io_number, 
+		    					 	$start_date, 
+		    					 	$end_date, 
+		    					 	$total_deals, 
+		    					 	'PC', 
+		    					 	$total_deals, 
+		    					 	'PC', 
+		    					 	'C',
+					    			$header_qty, 
+					    			$value->plant_code, 
+					    			$value->final_pcs, 
+					    			$value->final_pcs, 
+					    			'A920- Country/Site/Outlet Sub Type',
+					    			'', 
+					    			'', 
+					    			$sub_type->l5_code,
+					    			'', 
+					    			$mat->host_code, 
+					    			'',
+					    			'',
+					    			'',
+					    			'',
+					    			'',
+					    			'',
+					    			'',
+					    			'',
+					    			'',
+					    			'',
+					    			'',
+					    			'',
+					    			'',
+					    			'',
+					    			'',
+					    			'',
+					    			'',
+					    			'',
+					    			$tradedealscheme->pre_code,
+					    			$value->final_pcs,
+					    			'',
+					    			'',
+					    			'',
+					    			'',
+					    			'',
+					    			'',
+					    			'',
+					    			'',
+					    			'',
+					    			'',
+					    			'',
+					    			'',
+					    			'',
+					    			'',
+					    			'',
+					    			'',
+					    			'',
+					    			);
+
+		    					$contents = implode(',', $row_data);
+    							File::append($file, $contents.PHP_EOL);
 		    				}
 			    		}
 		    		}
 		    	}
-		    });
-		})->store('csv', storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name));
+
+
+
+
+		// Excel::create($folder_name. '  - 1 Header', function($excel) use ($tradedealscheme, $tradedeal, $activity, $host_skus,$scheme_uom_abv, $scheme_uom_abv2) {
+		//     $excel->sheet('Sheet1', function($sheet) use ($tradedealscheme, $tradedeal, $activity, $host_skus,$scheme_uom_abv, $scheme_uom_abv2) {
+		//     	$allocations = TradedealSchemeAllocation::getCollectiveAllocation($tradedealscheme);
+		//     	$sub_types = TradedealSchemeChannel::getSelectedDetails($tradedealscheme);
+		//     	$materials = TradedealSchemeSku::getHostSku($tradedealscheme);
+
+		//     	$header = array('Promotion Number', 'Promotion Description', 'U2K2 I/O No', 'Start Date', 'End Date',
+		//     		'BUY Quota', 'Quota UOM', 'GET Quota', 'Quota UOM', 'Quantity Type', 'Header Qty', 'Site', 'Site BUY Quota',
+		//     		'Site GET Quota', 'Level', 'Cluster', 'outlet type', 'Outlet sub typ', 'Perf store',
+		//     		'Buy Mat 1', 'Buy Qty 1','Buy Mat 2', 'Buy Qty 2','Buy Mat 3', 'Buy Qty 3','Buy Mat 4', 'Buy Qty 4',
+		//     		'Buy Mat 5', 'Buy Qty 5','Buy Mat 6', 'Buy Qty 6','Buy Mat 7', 'Buy Qty 7','Buy Mat 8', 'Buy Qty 8',
+		//     		'Buy Mat 9', 'Buy Qty 9','Buy Mat 10', 'Buy Qty 10',
+		//     		'Get Mat 1', 'Get Qty 1','Get Mat 2', 'Get Qty 2','Get Mat 3', 'Get Qty 3','Get Mat 4', 'Get Qty 4',
+		//     		'Get Mat 5', 'Get Qty 5','Get Mat 6', 'Get Qty 6','Get Mat 7', 'Get Qty 7','Get Mat 8', 'Get Qty 8',
+		//     		'Get Mat 9', 'Get Qty 9','Get Mat 10', 'Get Qty 10');
+
+		//     	$sheet->row(1, $header);
+		//     	$brands =[];
+
+		//     	$budgets = ActivityBudget::getBudgets($activity->id);
+		//     	$io_number = '';
+		//     	if(!empty($budgets)){
+		//     		if(isset($budgets[0])){
+		//     			$io_number = $budgets[0]->io_number;
+		//     		}
+		    		
+		//     	}
+
+		//     	$start_date = date('d/m/Y', strtotime($activity->eimplementation_date));
+		//     	$end_date = date('d/m/Y', strtotime($activity->end_date));
+
+		//     	$total_deals = TradedealSchemeAllocation::where('tradedeal_scheme_id', $tradedealscheme->id)->sum('final_pcs');
+
+		// 		$header_qty = $tradedealscheme->buy;
+
+		// 		if($tradedealscheme->tradedeal_uom_id == 2){
+		//     		$header_qty = $tradedealscheme->buy * 12;
+		//     	}
+
+		//     	if($tradedealscheme->tradedeal_uom_id == 3){
+		//     		// problem with multiple host in level 3 collective
+		//     		// use lowest pr host sku
+		//     		$header_qty = $tradedealscheme->buy * $host_sku->host_pcs_case;
+		//     	}
+
+		//     	$row = 2;
+		//     	foreach ($allocations as $value) {
+		//     		if($value->final_pcs > 0){
+		//     			foreach ($sub_types as $sub_type) {
+		//     				foreach ($materials as $mat) {
+		    					
+		//     				}
+		// 	    		}
+		//     		}
+		//     	}
+		//     });
+		// })->store('csv', storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name));
 	}
 }

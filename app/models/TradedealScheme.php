@@ -50,35 +50,35 @@ class TradedealScheme extends \Eloquent {
 				
 			// }
 
-			// if($value->tradedeal_type_id == 3){
-			// 	$c_deal_id = TradedealSchemeAllocation::getCollecttiveSchemeCode($value);
-			// 	$host_skus = TradedealSchemeSku::getHostSku($value);
-			// 	$_host_sku = [];
-			// 	$_host_code = [];
-			// 	foreach ($host_skus as $host_sku) {
-			// 		$_host_sku[] = $host_sku->host_desc.' '.$host_sku->variant;
-			// 		$_host_code[] = $host_sku->host_code;
-			// 	}
-			// 	$o = new stdClass();
-			// 	$o->host_code = implode(" / ", $_host_code);
-			// 	$o->desc_variant = implode(" / ", $_host_sku);
-			// 	$o->scheme_desc = $c_deal_id->scheme_desc;
-			// 	$o->scheme_code = $c_deal_id->scheme_code;
-			// 	$o->pre_code = $value->pre_code;
-			// 	if($tradeal->nonUlpPremium()){
-			// 		$o->pre_variant = $value->pre_desc .' '.$value->pre_variant;
-			// 		$o->pur_req = $value->pur_req;
-			// 		$o->cost_to_sale = $value->cost_to_sale;
-			// 	}else{
-			// 		$part_sku = TradedealPartSku::find($value->pre_id);
-			// 		$o->pre_variant = $part_sku->pre_desc. ' '.$part_sku->pre_variant;
-			// 		$o->pur_req = $value->pur_req;
-			// 		$o->cost_to_sale = $value->cost_to_sale;
-			// 	}
+			if($value->tradedeal_type_id == 3){
+				$c_deal_id = TradedealSchemeAllocation::getCollecttiveSchemeCode($value);
+				$host_skus = TradedealSchemeSku::getHostSku($value);
+				$_host_sku = [];
+				$_host_code = [];
+				foreach ($host_skus as $host_sku) {
+					$_host_sku[] = $host_sku->host_desc.' '.$host_sku->variant;
+					$_host_code[] = $host_sku->host_code;
+				}
+				$o = new stdClass();
+				$o->host_code = implode(" / ", $_host_code);
+				$o->desc_variant = implode(" / ", $_host_sku);
+				$o->scheme_desc = $c_deal_id->scheme_desc;
+				$o->scheme_code = $c_deal_id->scheme_code;
+				$o->pre_code = $value->pre_code;
+				if($tradeal->nonUlpPremium()){
+					$o->pre_variant = $value->pre_desc .' '.$value->pre_variant;
+					$o->pur_req = $value->pur_req;
+					$o->cost_to_sale = $value->cost_to_sale;
+				}else{
+					$part_sku = TradedealPartSku::find($value->pre_id);
+					$o->pre_variant = $part_sku->pre_desc. ' '.$part_sku->pre_variant;
+					$o->pur_req = $value->pur_req;
+					$o->cost_to_sale = $value->cost_to_sale;
+				}
 				
-			// 	$_host[] = $o;
-			// 	$data[$key]->host_skus = $_host;
-			// }
+				$_host[] = $o;
+				$data[$key]->host_skus = $_host;
+			}
 			$data[$key]->channels = $channels;
 		}
 		return $data;

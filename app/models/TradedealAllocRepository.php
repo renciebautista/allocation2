@@ -50,7 +50,6 @@ class TradedealAllocRepository  {
 			foreach ($scheme_skus as $row) {
 				unset($hostskus);
 				$hostskus[] = $row;
-				// Helper::debug($hostskus);
 				$brand = $row->brand_shortcut;
 				$month_year = date('ym',strtotime($activity->eimplementation_date));
 				$host_variant = substr(strtoupper($row->variant),0,1);
@@ -72,42 +71,41 @@ class TradedealAllocRepository  {
 
 			// self::generate_allocation($_channels, $customers,$forced_areas,$trade_channels, $td_customers, $tradealscheme, $tradedeal, $skus, $collective_premium, $deal_id);
 		}else{
-			// $lowest_cost = 0;
-			// $lowest_skus = [];
-			// $brands =[];
-			// foreach ($scheme_skus as $row) {
-			// 	if($lowest_cost == 0){
-			// 		$lowest_cost = $row->host_cost;
-			// 		$lowest_skus[0] = $row;
-			// 	}else{
-			// 		if($lowest_cost > $row->host_cost){
-			// 			$lowest_cost = $row->host_cost;
-			// 			$lowest_skus[0] = $row;
-			// 		}
-			// 	}
-			// 	$brands[] = $row->brand_shortcut;
-			// }
+			$lowest_cost = 0;
+			$lowest_skus = [];
+			$brands =[];
+			foreach ($scheme_skus as $row) {
+				if($lowest_cost == 0){
+					$lowest_cost = $row->host_cost;
+					$lowest_skus[0] = $row;
+				}else{
+					if($lowest_cost > $row->host_cost){
+						$lowest_cost = $row->host_cost;
+						$lowest_skus[0] = $row;
+					}
+				}
+				$brands[] = $row->brand_shortcut;
+			}
 
 			
 
-			// if(!$tradedeal->non_ulp_premium){
-			// 	$collective_premium = TradedealPartSku::findOrFail($tradealscheme->pre_id);
-			// }else{
-			// 	$collective_premium = $tradedeal;
-			// }
+			if(!$tradedeal->non_ulp_premium){
+				$collective_premium = TradedealPartSku::findOrFail($tradealscheme->pre_id);
+			}else{
+				$collective_premium = $tradedeal;
+			}
 
-			// // generate scheme code
-			// $brand = array_unique($brands);
-			// $brand_short_cut = 'MTL';
-			// if(count($brand) == 1){
-			// 	$brand_short_cut = $brand[0];
-			// }
-			// $month_year = date('ym',strtotime($activity->eimplementation_date));
-			// $series = TradeCollectiveSeries::getSeries($month_year, $tradealscheme->id);
-			// $deal_id = $month_year.$scheme_uom_abv.$brand_short_cut.sprintf("%02d", $series->series);
+			// generate scheme code
+			$brand = array_unique($brands);
+			$brand_short_cut = 'MTL';
+			if(count($brand) == 1){
+				$brand_short_cut = $brand[0];
+			}
+			$month_year = date('ym',strtotime($activity->eimplementation_date));
+			$series = TradeCollectiveSeries::getSeries($month_year, $tradealscheme->id);
+			$deal_id = $month_year.$scheme_uom_abv.$brand_short_cut.sprintf("%02d", $series->series);
 
-			// // self::generate_allocation($_channels, $customers,$forced_areas,$trade_channels, $td_customers, $tradealscheme, $tradedeal, $skus, $collective_premium, $deal_id);
-			// self::generate_allocation($lowest_skus, $_channels, $customers,$forced_areas, $tradealscheme, $tradedeal, $deal_id, $trade_customers, $collective_premium);
+			self::generate_allocation($lowest_skus, $_channels, $customers,$forced_areas, $tradealscheme, $tradedeal, $deal_id, $trade_customers, $collective_premium);
 		}
 		
 	}
