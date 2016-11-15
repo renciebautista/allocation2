@@ -5,6 +5,8 @@ class TradedealSchemeSubType extends \Eloquent {
 	public $timestamps = false;
 
 	public static function getSchemeSubtypes($scheme){
-		return self::where('tradedeal_scheme_id', $scheme->id)->get();
+		return self::where('tradedeal_scheme_id', $scheme->id)
+			->orderBy('sub_type_desc')
+			->get();
 	}
 }

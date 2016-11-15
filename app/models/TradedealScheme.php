@@ -29,7 +29,7 @@ class TradedealScheme extends \Eloquent {
 		}
 
 		foreach ($data as $key => $value) {
-			// $channels = TradedealSchemeChannel::getSelectedDetails($value);
+			$channels = TradedealSchemeSubType::getSchemeSubtypes($value);
 			
 			$tradeal = Tradedeal::find($value->tradedeal_id);
 			if($value->tradedeal_type_id == 1){
@@ -79,7 +79,7 @@ class TradedealScheme extends \Eloquent {
 			// 	$_host[] = $o;
 			// 	$data[$key]->host_skus = $_host;
 			// }
-			// $data[$key]->channels = $channels;
+			$data[$key]->channels = $channels;
 		}
 		return $data;
 	}

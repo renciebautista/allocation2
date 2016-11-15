@@ -101,7 +101,7 @@ class LeTemplateRepository  {
     	foreach ($allocations as $value) {
     		if(($value->final_pcs > 0) && ( $value->ship_to_code != '')){
     			if($tradedeal->nonUlpPremium()){
-		    		$contents = $value->scheme_code.','.'BBFREE'.','.$io_number.','.$start_date.','.$end_date.','.$value->scheme_desc.','.$deal_amount.','.'P001'.$value->plant_code.number_format($value->final_pcs * $host_sku->pre_cost, 2, '.', '').','.'X';	
+		    		$contents = $value->scheme_code.','.'BBFREE'.','.$io_number.','.$start_date.','.$end_date.','.$value->scheme_desc.','.$deal_amount.','.'P001'.','.$value->plant_code.','.number_format($value->final_pcs * $host_sku->pre_cost, 2, '.', '').','.'X';	
 		    	}else{
 		    		$contents = $value->scheme_code.','.$io_number.','.$start_date.','.$end_date.','.$value->scheme_desc.','.$deal_amount.','.'P001'.','.$value->ship_to_code.','.number_format($value->final_pcs * $host_sku->pre_cost, 2, '.', '');
 		    	}

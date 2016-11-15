@@ -776,7 +776,7 @@
 													<th>Premium SKU</th>
 													<th>Puchase Requirement</th>
 													<th>Cost To Sales</th>
-													<th>Channels Involved</th>
+													<th style="width:20%">Channels Involved</th>
 												</tr>
 											</thead>
 											<tbody>
@@ -821,7 +821,7 @@
 														<?php $x = true; ?>
 														<td rowspan="{{$host_cnt}}" >
 															@foreach($scheme->channels as $channel)
-															{{ $channel->l5_desc }} </br>
+															{{ $channel->sub_type_desc }} </br>
 															@endforeach
 														</td>
 														@endif

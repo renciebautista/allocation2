@@ -204,7 +204,7 @@ class TradedealAllocRepository  {
 			$uom_multiplpier  = 12;
 		}
 		if($uom == 3){
-			$uom_multiplpier = $host_sku[0]->host_pcs_case;
+			$uom_multiplpier = $host_skus[0]->host_pcs_case;
 		}
 		
 		$tradedeal_scheme_sku_id = 0;

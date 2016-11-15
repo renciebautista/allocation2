@@ -2835,22 +2835,6 @@ class ActivityController extends BaseController {
 				$tradedeal->non_ulp_pcs_case = Input::get('non_ulp_pcs_case');
 				$tradedeal->save();
 
-				// copy tradedeal channel
-				$channels = TradedealChannel::where('activity_id', $id)->delete();
-
-				$chTemp = TradedealChannelMapping::getChannels();
-				foreach ($chTemp as $ch) {
-					$tc = new TradedealChannel;
-					$tc->activity_id = $id;
-					$tc->coc_03_code = $ch->coc_03_code;
-					$tc->coc_04_code = $ch->coc_04_code;
-					$tc->coc_05_code = $ch->coc_05_code;
-					$tc->channel_code = $ch->channel_code;
-					$tc->channel_desc = $ch->channel_name;
-					$tc->sub_channel_desc = $ch->sub_channel_desc;
-					$tc->save();
-				}
-
 				// if(count($channels) == 0){
 					
 				// }
@@ -2896,7 +2880,7 @@ class ActivityController extends BaseController {
 					// update all scheme
 					if(!empty($schemes)){
 						foreach ($schemes as $scheme) {
-							// TradedealAllocRepository::updateAllocation($scheme);
+							TradedealAllocRepository::updateAllocation($scheme);
 						}
 					}
 				}
@@ -2904,7 +2888,7 @@ class ActivityController extends BaseController {
 				File::deleteDirectory(storage_path('le/'.$activity->id));
 				if(!empty($schemes)){
 					foreach ($schemes as $scheme) {
-						// LeTemplateRepository::generateTemplate($scheme);
+						LeTemplateRepository::generateTemplate($scheme);
 					}
 				}
 
