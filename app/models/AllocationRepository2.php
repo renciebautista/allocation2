@@ -400,13 +400,26 @@ class AllocationRepository2  {
 					->join('groups', 'areas.group_code', '=', 'groups.group_code')
 					->where('customer_code',  $to_customer)
 					->first();
-
+				$channel_lists= MtDtHieracry::getAvailableChannel($to_customer, $to_plant);
+				$avl_channel = [];
+				foreach ($channel_lists as $list) {
+					$avl_channel[] = $list->channel_code;
+				}
+				$no_channel = array_diff($avl_channel, $channels);
 				foreach ($this->account_sales as $account_sale) {
 					if(isset($ship_nodes[$account_sale->channel_code][$customer->group_code][$customer->area_code][$customer->customer_code])){
 						if(in_array($to_plant, $ship_nodes[$account_sale->channel_code][$customer->group_code][$customer->area_code][$customer->customer_code])){
 							if(($account_sale->customer_code == $row->from_customer) && 
 								($account_sale->plant_code == $row->from_plant)){
 								$gsv += $account_sale->gsv;
+							}
+						}
+						else{
+							if(!in_array($account_sale->channel_code, $no_channel)){
+								if(($account_sale->customer_code == $row->from_customer) && 
+									($account_sale->plant_code == $row->from_plant)){
+									$gsv += $account_sale->gsv;
+								}
 							}
 						}
 					}

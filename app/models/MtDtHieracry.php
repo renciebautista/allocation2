@@ -55,4 +55,19 @@ class MtDtHieracry extends \Eloquent {
 				group by l5_code, rtm_tag", $channel_code, $sub_type);
 		return DB::select(DB::raw($query));
 	}
+
+	public static function getAvailableChannel($customer_code, $plant_code){
+		$query = sprintf("select channel_code
+			from mt_dt_hieracry
+			left join sub_channels on sub_channels.coc_03_code = mt_dt_hieracry.coc_03_code
+			right join areas on areas.area_code = mt_dt_hieracry.area_code
+			right join groups on groups.group_code = areas.group_code
+			right join customers on customers.customer_code = mt_dt_hieracry.customer_code
+			right join ship_tos on ship_tos.plant_code = mt_dt_hieracry.plant_code 
+			where customers.customer_code ='%s'
+			and mt_dt_hieracry.plant_code = '%s'
+			group by  channel_code
+			", $customer_code, $plant_code);
+		return DB::select(DB::raw($query));
+	}
 }
