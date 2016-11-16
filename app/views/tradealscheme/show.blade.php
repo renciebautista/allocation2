@@ -27,7 +27,7 @@
                         <div class="row">
                             <div class="col-lg-12">
                                 {{ Form::label('scheme_name', 'Scheme Name', array('class' => 'control-label')) }}
-                                {{ Form::text('scheme_name', $scheme->name, array('id' => 'scheme_name', 'class' => 'form-control', 'id' => 'scheme_name', 'readonly' => '')) }}
+                                {{ Form::text('scheme_name1', $scheme->name, array('class' => 'form-control', 'readonly' => '')) }}
                             </div>
                         </div>
                     </div>
@@ -71,6 +71,7 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <?php $lowest_pre = 0; ?>
                         @foreach($tradedeal_skus as $sku)
                             <tr>
                                 <td>
@@ -83,25 +84,49 @@
                                 <td>{{ $sku->variant }}</td>
                                 <td class="right">{{ $sku->host_cost }}</td>
                                 <td class="right">{{ $sku->host_pcs_case }}</td>
-                                @if($scheme->tradedeal_type_id = 1)
+                                @if($scheme->tradedeal_type_id == 1)
                                 <td class="individual">{{ $sku->preDesc() }}</td>
                                 <td class="individual" >{{ $sku->pre_variant }}</td>
                                 <td class="individual right">{{ $sku->pre_pcs_case }}</td>
                                 <td class="individual right"> 
-                                    @if($scheme->tradedeal_uom_id == 1)
-                                        {{ number_format($sku->host_cost,2) *  $scheme->buy}}
-                                    @elseif($scheme->tradedeal_uom_id == 2)
-                                        {{ number_format($sku->host_cost,2) *  $scheme->buy * 12 }}
+                                    @if(in_array($sku->id,$sel_hosts['selection']))
+                                        @if($scheme->tradedeal_uom_id == 1)
+                                            {{ number_format($sku->host_cost * $scheme->buy,2)}}
+                                        @elseif($scheme->tradedeal_uom_id == 2)
+                                            {{ number_format($sku->host_cost *  $scheme->buy * 12,2)}}
+                                        @else
+                                            {{ number_format($sku->host_cost *  $scheme->buy * $sku->host_pcs_case,2)  }}
+                                        @endif
                                     @else
-                                        {{ number_format($sku->host_cost,2) *  $scheme->buy * $sku->host_pcs_case }}
+                                    0.00
                                     @endif
                                 </td>
                                 @else
                                 <td class="collective">N/A</td>
                                 <td class="collective">N/A</td>
                                 <td class="collective right">N/A</td>
-                                <td class="collective right"></td>
-                                <td class="collective right"></td>
+                                <td class="collective right">
+                                    @if(in_array($sku->id,$sel_hosts['selection']))
+                                        <?php 
+                                        if($lowest_pre == 0 ){
+                                            $lowest_pre = $sku->host_cost;
+                                        }else{
+                                            if($sku->host_cost < $lowest_pre){
+                                                $lowest_pre = $sku->host_cost;
+                                            }
+                                        }
+                                        ?>
+                                        @if($scheme->tradedeal_uom_id == 1)
+                                            {{ number_format($sku->host_cost * $scheme->buy,2)  }}
+                                        @elseif($scheme->tradedeal_uom_id == 2)
+                                            {{ number_format($sku->host_cost * $scheme->buy * 12,2) }}
+                                        @else
+                                            {{ number_format($sku->host_cost *  $scheme->buy * $sku->host_pcs_case,2) }}
+                                        @endif
+                                    @else
+                                    0.00
+                                    @endif
+                                </td>
                                 @endif
                             </tr>
                         @endforeach
@@ -118,25 +143,41 @@
                             <div class="col-lg-3">
                                 {{ Form::label('buy', 'Buy', array('class' => 'control-label')) }}
                                 <div class="input-group"> 
-                                    {{ Form::text('buy', $scheme->buy, array('id' => 'buy', 'class' => 'form-control', 'placeholder' => 'Buy', 'id' => 'buy')) }}
-                                    <span class="input-group-addon">PIECES</span> 
+                                    {{ Form::text('buy', $scheme->buy, array('id' => 'buy', 'class' => 'form-control', 'placeholder' => 'Buy', 'id' => 'buy', 'disabled' => 'disabled')) }}
+                                    <span class="input-group-addon">{{ $scheme->dealUom->tradedeal_uom }}</span> 
                                 </div>
                             </div>
 
                             <div class="col-lg-3">
                                 {{ Form::label('free', 'Free', array('class' => 'control-label')) }}
                                 <div class="input-group"> 
-                                    {{ Form::text('free', $scheme->free, array('id' => 'free', 'class' => 'form-control', 'placeholder' => 'Free', 'id' => 'free')) }}
-                                    <span class="input-group-addon">PIECES</span> 
+                                    {{ Form::text('free', $scheme->free, array('id' => 'free', 'class' => 'form-control', 'placeholder' => 'Free', 'id' => 'free', 'disabled' => 'disabled')) }}
+                                    <span class="input-group-addon">{{ $scheme->dealUom->tradedeal_uom }}</span> 
                                 </div>
                             </div>
 
                             
-
+                            @if($scheme->tradedeal_type_id == 1)
                             <div class="col-lg-3">
                                 {{ Form::label('p_req', 'Total Purchase Requirement (for Collective)', array('class' => 'control-label')) }}
-                                {{ Form::text('p_req', null, array('id' => 'p_req', 'class' => 'form-control', 'placeholder' => 'Purchase Requirement (for Collective)', 'id' => 'p_req', 'disabled' =>'disabled')) }}
+                                {{ Form::text('p_req', 'N/A', array('id' => 'p_req', 'class' => 'form-control', 'placeholder' => 'Purchase Requirement (for Collective)', 'id' => 'p_req', 'disabled' =>'disabled')) }}
                             </div>
+                            @else
+                            <div class="col-lg-3">
+                                <?php 
+                                if($scheme->tradedeal_uom_id == 1){
+                                    $lowest_pre = $lowest_pre * $scheme->buy;
+                                }elseif($scheme->tradedeal_uom_id == 2){
+                                     $lowest_pre = $lowest_pre * $scheme->buy * 12;
+                                 }else{
+                                    $lowest_pre = $lowest_pre * $scheme->buy * $sku->host_pcs_case;
+                                 }
+                                ?>
+                                {{ Form::label('p_req', 'Total Purchase Requirement (for Collective)', array('class' => 'control-label')) }}
+                                {{ Form::text('p_req',number_format($lowest_pre,2) , array('id' => 'p_req', 'class' => 'form-control', 'placeholder' => 'Purchase Requirement (for Collective)', 'id' => 'p_req', 'disabled' =>'disabled')) }}
+                            </div>
+                            @endif
+                            
                         </div>
                     </div>
                 </div>
@@ -148,15 +189,11 @@
                         <div class="row">
                             <div class="col-lg-6">
                                 {{ Form::label('premium_sku', 'Premium SKU (for Collective)', array('class' => 'control-label')) }}
-                                @if($tradedeal->non_ulp_premium)
-                                {{ Form::text('non_premium_sku', 'N/A', array('id' => 'non_premium_sku', 'class' => 'form-control', 'readonly' => '')) }}
+                                @if($scheme->tradedeal_type_id == 1)
+                                    <input id="premium_sku_ind" class="form-control" readonly="" name="premium_sku_ind" type="text" value="N/A" aria-invalid="false">
                                 @else
-                                <input id="premium_sku_ind" class="form-control" readonly="" name="premium_sku_ind" type="text" value="N/A" aria-invalid="false">
-                                <select class="form-control" id="premium_sku" name="premium_sku" disabled="disabled">
-                                </select>
-
+                                    <input id="premium_sku_ind" class="form-control" readonly="" name="premium_sku_ind" type="text" value="{{ $scheme->pre_desc }} - {{ $scheme->pre_code }}" aria-invalid="false">
                                 @endif
-                                
                             </div>
                         </div>
                     </div>

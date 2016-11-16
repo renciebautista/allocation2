@@ -114,7 +114,7 @@
                                 {{ Form::label('buy', 'Buy', array('class' => 'control-label')) }}
                                 <div class="input-group"> 
                                     {{ Form::text('buy', $scheme->buy, array('id' => 'buy', 'class' => 'form-control', 'placeholder' => 'Buy', 'id' => 'buy')) }}
-                                    <span class="input-group-addon">PIECES</span> 
+                                    <span class="input-group-addon input-pcs">PIECES</span> 
                                 </div>
                             </div>
 
@@ -122,7 +122,7 @@
                                 {{ Form::label('free', 'Free', array('class' => 'control-label')) }}
                                 <div class="input-group"> 
                                     {{ Form::text('free', $scheme->free, array('id' => 'free', 'class' => 'form-control', 'placeholder' => 'Free', 'id' => 'free')) }}
-                                    <span class="input-group-addon">PIECES</span> 
+                                    <span class="input-group-addon input-pcs">PIECES</span> 
                                 </div>
                             </div>
 
