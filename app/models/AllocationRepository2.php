@@ -361,27 +361,6 @@ class AllocationRepository2  {
 		$gsv = 0;
 		foreach ($additionalsales as $row) {
 			if(($row->to_customer == $to_customer) && ($row->to_plant == '')){
-				// $customer = DB::table('customers')
-				// 	->select('areas.group_code as group_code','group_name','area_name',
-				// 		'customer_name','customer_code','customers.area_code as area_code',
-				// 		'customers.area_code_two as area_code_two','multiplier','active','from_dt','sob_customer_code')
-				// 	->join('areas', 'customers.area_code', '=', 'areas.area_code')
-				// 	->join('groups', 'areas.group_code', '=', 'groups.group_code')
-				// 	->where('customer_code', $to_customer)
-				// 	->first();
-
-				// foreach ($channels as $ch) {
-				// 	if(isset($cust_nodes[$ch][$customer->group_code][$customer->area_code])){
-
-				// 		if(in_array($row->from_customer, $cust_nodes[$ch][$customer->group_code][$customer->area_code])){
-				// 			foreach ($this->account_sales as $account_sale) {
-				// 				if(($customer->customer_code == $account_sale->customer_code)  && ($account_sale->channel_code == $ch)){
-				// 					$gsv += $account_sale->gsv;
-				// 				}							
-				// 			}
-				// 		}
-				// 	}	
-				// }
 
 				$customer = DB::table('customers')
 					->select('areas.group_code as group_code','group_name','area_name',

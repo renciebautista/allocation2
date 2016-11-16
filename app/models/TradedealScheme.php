@@ -36,12 +36,15 @@ class TradedealScheme extends \Eloquent {
 				$host_skus = TradedealSchemeSku::getHostSku($value);
 				foreach ($host_skus as $x => $row) {
 				$deal_id = TradedealSchemeAllocation::getSchemeCode($value, $row);
-					$host_skus[$x]->scheme_code = $deal_id->scheme_code;
-					$host_skus[$x]->host_code = $row->host_code;
-					$host_skus[$x]->desc_variant = $row->host_desc. ' '.$row->variant;
-					$host_skus[$x]->scheme_desc = $deal_id->scheme_desc;
-					$host_skus[$x]->pre_variant = $row->pre_desc. ' '.$row->pre_variant;
-					$host_skus[$x]->pre_code = $row->pre_code;
+					if(!empty($deal_id)){
+						$host_skus[$x]->scheme_code = $deal_id->scheme_code;
+						$host_skus[$x]->host_code = $row->host_code;
+						$host_skus[$x]->desc_variant = $row->host_desc. ' '.$row->variant;
+						$host_skus[$x]->scheme_desc = $deal_id->scheme_desc;
+						$host_skus[$x]->pre_variant = $row->pre_desc. ' '.$row->pre_variant;
+						$host_skus[$x]->pre_code = $row->pre_code;
+					}
+					
 				}
 				$data[$key]->host_skus = $host_skus;
 			}

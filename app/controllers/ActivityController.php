@@ -3257,32 +3257,33 @@ class ActivityController extends BaseController {
 		$free_pcs_case = [];
 
 		$invalid_premiums = true;
+
 		if(Input::has('skus')){
 			foreach (Input::get('skus') as $value) {
-			 	$selected[] = $value;
+			 	$selected_skus[] = $value;
 			 	$free_sku = TradedealPartSku::find($value);
 				$free_pcs_case[] = $free_sku->pre_pcs_case;
 			}
-			$result = array_unique($free_pcs_case);
-
-			// validation on cases quantitiy
-			// if($uom->id == 3){
-			// 	if(count($result) > 1){
-			// 		$invalid_premiums = false;
-			// 	}
-			// }
+			if($uom->id == 3){
+				$result = array_unique($free_pcs_case);
+				if(count($result) > 1){
+					$invalid_premiums = false;
+				}
+			}
 			
 		}
 
 
 		$invalid_collective = true;
-		
 		if(($deal_type->id == 2) && ($uom->id == 3)){
 			$host_pcs_case = [];
-			foreach ($selected as $value) {
-				$part_sku = TradedealPartSku::find($value);
-				$host_pcs_case[] = $part_sku->host_pcs_case;
+			if(count($selected_skus) > 0){
+				foreach ($selected_skus as $value) {
+					$part_sku = TradedealPartSku::find($value);
+					$host_pcs_case[] = $part_sku->host_pcs_case;
+				}
 			}
+			
 			$result = array_unique($host_pcs_case);
 
 			if(count($result) > 1){
@@ -3290,6 +3291,10 @@ class ActivityController extends BaseController {
 			}
 
 		}
+
+		Validator::extend('invalid_collective', function($attribute, $value, $parameters) {
+		    return $parameters[0];
+		});
 
 
 		Validator::extend('invalid_premiums', function($attribute, $value, $parameters) {
@@ -3301,10 +3306,6 @@ class ActivityController extends BaseController {
 		    'invalid_collective' => 'Combination of participating SKU with different pcs/case value is not allowed',
 		    'channels.required' => 'Channels Involved is required'
 		);
-
-		Validator::extend('invalid_collective', function($attribute, $value, $parameters) {
-		    return $parameters[0];
-		});
 
 		$rules = array(
 			'scheme_name' => 'required|unique:tradedeal_schemes,name,NULL,id,tradedeal_id,'.$tradedeal->id,
@@ -3601,7 +3602,6 @@ class ActivityController extends BaseController {
 
 		    $excel->sheet('ALLOCATIONS', function($sheet) use ($activity) {
 		    	
-
 				$tradedeal_skus = TradedealPartSku::where('activity_id', $activity->id)->groupBy('pre_code')->get();
 				$tradedeal = Tradedeal::getActivityTradeDeal($activity);
 				$allocations = TradedealSchemeAllocation::exportAlloc($tradedeal);
@@ -3617,7 +3617,7 @@ class ActivityController extends BaseController {
 
 				$row = 2;
 				$sheet->row($row, array('AREA', 'Distributor Code', 'Distributor Name', 'Site Code', 'Site Name', 'Scheme Code', 'Scheme Description', 'UOM'));
-
+				$sheet->getStyle("A2:N2")->getFont()->setBold(true);
 				// premuim
 				$premiums = [];
 				foreach ($tradedeal_skus as $sku) {
@@ -3629,7 +3629,7 @@ class ActivityController extends BaseController {
 				$col_pre_x = [];
 				$sheet->setCellValueByColumnAndRow($col,1, 'DEALS');
 				foreach ($premiums as $premuim) {
-					$sheet->setCellValueByColumnAndRow($col,2, $premuim. ' DEALS');
+					$sheet->setCellValueByColumnAndRow($col,2, $premuim);
 					$sheet->setWidth(PHPExcel_Cell::stringFromColumnIndex($col), 10);
 					$col_pre[$premuim] = $col;
 					$col++;
@@ -3647,7 +3647,7 @@ class ActivityController extends BaseController {
 
 				$sheet->setCellValueByColumnAndRow($col,1, 'PREMIUMS');
 				foreach ($premiums as $premuim) {
-					$sheet->setCellValueByColumnAndRow($col,2, $premuim. ' PREMIUMS');
+					$sheet->setCellValueByColumnAndRow($col,2, $premuim);
 					$col_pre_x[$premuim] = $col;
 					$col++;
 				}
@@ -3767,10 +3767,12 @@ class ActivityController extends BaseController {
 		    });
 	
 			$excel->sheet('OUTPUT FILE', function($sheet) use ($activity) {
-		    	$sheet->row(1, array('Promotion ID', 'BB Free Scheme', 'Promo Type',
+		    	$sheet->row(1, array('Promotion ID', 'Promo Description', 'Promo Type',
 		    		'SKU Codes Involved', 'SKUs Involved', 'Premium Code', 'Premium',
 		    		'Outlet Sub Types Involved', 'Outlet Codes', 'Allocs (Pieces)', 'UOM', 'Source of Premium', 
 		    		'Start Date', 'End Date'));
+
+		    	$sheet->getStyle("A2:N2")->getFont()->setBold(true);
 
 			    $datas = TradedealSchemeAllocation::select('scheme_code', 'scheme_desc', 'tradedeal_types.tradedeal_type', 
 			    	'tradedeal_scheme_sku_id', 'tradedeal_scheme_id', 'tradedeal_scheme_allocations.pre_code', 
@@ -3857,7 +3859,7 @@ class ActivityController extends BaseController {
 	public function exporttddetails($id){
 		$activity = Activity::findOrFail($id);
 		Excel::create($activity->circular_name.' Bonus Buy Free', function($excel) use($activity){
-			$excel->sheet('allocations', function($sheet) use ($activity) {
+			$excel->sheet('Allocations', function($sheet) use ($activity) {
 				$allocations = TradedealSchemeAllocation::getAll($activity);
 				$sheet->row(1, array('Activity ID', 'ID', 'Scheme Name', 'Scheme Description', 'Premium SKU', 'Area Code', 
 					'Area', 'Sold To Code', 'Sold To', 'U2K2 Code', 'Ship To Code', 'Ship To Name', 'Total Allocation', 'New Allocation'));

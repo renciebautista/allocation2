@@ -82,9 +82,6 @@ class TradealSchemeController extends \BaseController {
 
 		}
 
-		Validator::extend('invalid_collective', function($attribute, $value, $parameters) {
-		    return $parameters[0];
-		});
 
 		Validator::extend('invalid_premiums', function($attribute, $value, $parameters) {
 		    return $parameters[0];
