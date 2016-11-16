@@ -11,8 +11,8 @@ class UpdateCustomerTreeTableSeeder extends Seeder {
 
 		$channels = \DB::table('mt_dt_hieracry')
 				->select('channels.channel_code', 'channels.channel_name')
-				->join('sub_channels', 'sub_channels.coc_03_code', '=', 'mt_dt_hieracry.coc_03_code', 'left')
-				->join('channels', 'channels.channel_code', '=', 'sub_channels.channel_code','left')
+				->join('sub_channels', 'sub_channels.coc_03_code', '=', 'mt_dt_hieracry.coc_03_code')
+				->join('channels', 'channels.channel_code', '=', 'sub_channels.channel_code')
 				->groupBy('channels.channel_code')
 				->orderBy('channels.channel_name')
 				->get();
@@ -24,22 +24,21 @@ class UpdateCustomerTreeTableSeeder extends Seeder {
 
 			$groups = \DB::table('mt_dt_hieracry')
 				->select('groups.group_code', 'groups.group_name')
-				->join('sub_channels', 'sub_channels.coc_03_code', '=', 'mt_dt_hieracry.coc_03_code','left')
-				->join('areas', 'areas.area_code', '=', 'mt_dt_hieracry.area_code','left')
-				->join('groups', 'groups.group_code', '=', 'areas.group_code','left')
+				->join('sub_channels', 'sub_channels.coc_03_code', '=', 'mt_dt_hieracry.coc_03_code')
+				->join('areas', 'areas.area_code', '=', 'mt_dt_hieracry.area_code')
+				->join('groups', 'groups.group_code', '=', 'areas.group_code')
 				->where('sub_channels.channel_code', $channel->channel_code)
 				->groupBy('groups.group_code')
 				->orderBy('groups.id')
 				->get();
 
-
 			foreach ($groups as $group) {
 
 				$areas = \DB::table('mt_dt_hieracry')
 					->select('areas.area_code', 'areas.area_name')
-					->join('sub_channels', 'sub_channels.coc_03_code', '=', 'mt_dt_hieracry.coc_03_code','left')
-					->join('areas', 'areas.area_code', '=', 'mt_dt_hieracry.area_code','left')
-					->join('groups', 'groups.group_code', '=', 'areas.group_code','left')
+					->join('sub_channels', 'sub_channels.coc_03_code', '=', 'mt_dt_hieracry.coc_03_code')
+					->join('areas', 'areas.area_code', '=', 'mt_dt_hieracry.area_code')
+					->join('groups', 'groups.group_code', '=', 'areas.group_code')
 					->where('sub_channels.channel_code', $channel->channel_code)
 					->where('groups.group_code', $group->group_code)
 					->groupBy('areas.area_code')
@@ -50,10 +49,10 @@ class UpdateCustomerTreeTableSeeder extends Seeder {
 
 					$distributors = \DB::table('mt_dt_hieracry')
 						->select('customers.customer_code', 'customers.customer_name')
-						->join('sub_channels', 'sub_channels.coc_03_code', '=', 'mt_dt_hieracry.coc_03_code','left')
-						->join('areas', 'areas.area_code', '=', 'mt_dt_hieracry.area_code','left')
-						->join('groups', 'groups.group_code', '=', 'areas.group_code','left')
-						->join('customers', 'customers.customer_code', '=', 'mt_dt_hieracry.customer_code','left')
+						->join('sub_channels', 'sub_channels.coc_03_code', '=', 'mt_dt_hieracry.coc_03_code')
+						->join('areas', 'areas.area_code', '=', 'mt_dt_hieracry.area_code')
+						->join('groups', 'groups.group_code', '=', 'areas.group_code')
+						->join('customers', 'customers.customer_code', '=', 'mt_dt_hieracry.customer_code')
 						->where('sub_channels.channel_code', $channel->channel_code)
 						->where('groups.group_code', $group->group_code)
 						->where('areas.area_code', $area->area_code)
@@ -68,11 +67,11 @@ class UpdateCustomerTreeTableSeeder extends Seeder {
 
 						$shiptos = \DB::table('mt_dt_hieracry')
 							->select('ship_tos.plant_code', 'ship_tos.ship_to_name', 'ship_tos.ship_to_code')
-							->join('sub_channels', 'sub_channels.coc_03_code', '=', 'mt_dt_hieracry.coc_03_code','left')
-							->join('areas', 'areas.area_code', '=', 'mt_dt_hieracry.area_code','left')
-							->join('groups', 'groups.group_code', '=', 'areas.group_code','left')
-							->join('customers', 'customers.customer_code', '=', 'mt_dt_hieracry.customer_code','left')
-							->join('ship_tos', 'ship_tos.plant_code', '=', 'mt_dt_hieracry.plant_code','left')
+							->join('sub_channels', 'sub_channels.coc_03_code', '=', 'mt_dt_hieracry.coc_03_code')
+							->join('areas', 'areas.area_code', '=', 'mt_dt_hieracry.area_code')
+							->join('groups', 'groups.group_code', '=', 'areas.group_code')
+							->join('customers', 'customers.customer_code', '=', 'mt_dt_hieracry.customer_code')
+							->join('ship_tos', 'ship_tos.plant_code', '=', 'mt_dt_hieracry.plant_code')
 							->where('sub_channels.channel_code', $channel->channel_code)
 							->where('groups.group_code', $group->group_code)
 							->where('areas.area_code', $area->area_code)
@@ -84,6 +83,7 @@ class UpdateCustomerTreeTableSeeder extends Seeder {
 
 						foreach ($shiptos as $shipto) {
 							if($shipto->ship_to_code != '') {
+								
 								$accounts = \DB::table('accounts')
 									->where('ship_to_code',$shipto->ship_to_code )
 									->where('area_code',$area->area_code)
