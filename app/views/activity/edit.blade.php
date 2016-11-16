@@ -872,6 +872,8 @@
 								  	<div class="form-group">
 								  		{{ Form::label('remarks', 'Attach Excel File', array('class' => 'control-label')) }}
 								    	{{ Form::file('tdupload',array('id'=>'tdupload')) }}
+								    	<br>
+								    	<button class="btn btn-primary disable-button">Upload</button>
 								  	</div>
 							  	</div>
 						  	</div>

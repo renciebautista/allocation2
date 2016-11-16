@@ -30,7 +30,8 @@ class TradedealScheme extends \Eloquent {
 
 		foreach ($data as $key => $value) {
 			$channels = TradedealSchemeSubType::getSchemeSubtypes($value);
-			
+			// Helper::debug($channels);
+
 			$tradeal = Tradedeal::find($value->tradedeal_id);
 			if($value->tradedeal_type_id == 1){
 				$host_skus = TradedealSchemeSku::getHostSku($value);
@@ -82,7 +83,21 @@ class TradedealScheme extends \Eloquent {
 				$_host[] = $o;
 				$data[$key]->host_skus = $_host;
 			}
-			$data[$key]->channels = $channels;
+
+			if(count($channels) == 0){
+				$rtms = TradedealSchemeChannel::getSchemeSelected($value);
+				$list = [];
+				foreach ($rtms as $row) {
+					$x = explode('.', $row->channel_node);
+					$mt = new stdClass();
+					$mt->sub_type_desc = $x[1];
+					$list[] = $mt;
+				}
+				$data[$key]->channels = $list;
+			}else{
+				$data[$key]->channels = $channels;
+			}
+			
 		}
 		return $data;
 	}

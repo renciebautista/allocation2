@@ -2811,14 +2811,12 @@ class ActivityController extends BaseController {
 	public function updatetradedeal($id){
 		$activity = Activity::findOrFail($id);
 
-
 		// $budgets = ActivityBudget::getBudgets($activity->id);
 		// if(count($budgets) > 0){
 			$rules = array(
 			    'non_ulp_premium_desc' => 'max:13',
 			);
 			
-
 			$validation = Validator::make(Input::all(), $rules);
 
 			// Helper::debug($validation)
@@ -2860,18 +2858,21 @@ class ActivityController extends BaseController {
 					$token = md5(uniqid(mt_rand(), true));
 					$file_path = Input::file('tdupload')->move(storage_path().'/uploads/temp/',$token.".xls");
 					$isError = false;
-					Excel::selectSheets('allocations')->load($file_path, function($reader) use (&$isError,$activity){
-						$firstrow = $reader->skip(1)->first()->toArray();
-						// dd($firstrow);
-				       	if (isset($firstrow['activity_id'])) {
-				            $rows = $reader->all();
-				            // dd($rows);
-				            if($rows[0]->activity_id != $activity->id){
-				            	$isError = true;
-				            }
-				        }
+					try {
+						Excel::selectSheets('Allocations')->load($file_path, function($reader) use (&$isError,$activity){
+							$firstrow = $reader->skip(1)->first()->toArray();
+					       	if (isset($firstrow['activity_id'])) {
+					            $rows = $reader->all();
+					            if($rows[0]->activity_id != $activity->id){
+					            	$isError = true;
+					            }
+					        }
 
-				    });
+					    });
+					} catch (Exception $e) {
+						$isError = true;
+					}
+					
 					
 				    if (!$isError) {
 						Excel::selectSheets('allocations')->load($file_path, function($reader) use ($activity) {
@@ -3839,7 +3840,21 @@ class ActivityController extends BaseController {
 			    }
 		    });
 			
-
+			$excel->sheet('ALLOCATION FILE', function($sheet) use ($activity) {
+		    	$sheet->row(1, array('Scheme ID', 'Scheme Description', 'Computed Alloaction', 'New Alloaction'));
+	    		$allocations = TradedealSchemeAllocation::getAll($activity);
+	    		$row = 2;
+	    		foreach ($allocations as $alloc) {				
+					$sheet->row($row, array(
+						$alloc->scheme_code, 
+						$alloc->scheme_desc, 
+						$alloc->computed_pcs, 
+						$alloc->final_pcs));
+					$row++;
+				}
+			    
+		    });
+			
 		})->download('xls');
 	}
 
@@ -3848,18 +3863,64 @@ class ActivityController extends BaseController {
 		Excel::create($activity->circular_name.' Bonus Buy Free', function($excel) use($activity){
 			$excel->sheet('Allocations', function($sheet) use ($activity) {
 				$allocations = TradedealSchemeAllocation::getAll($activity);
-				$sheet->row(1, array('Activity ID', 'ID', 'Scheme Name', 'Scheme Description', 'Premium SKU', 'Area Code', 
-					'Area', 'Sold To Code', 'Sold To', 'U2K2 Code', 'Ship To Code', 'Ship To Name', 'Total Allocation', 'New Allocation'));
+				$sheet->row(1, array( 'ID', 'Activity ID', 'Activity Description', 'Scheme Code', 'Scheme Description', 'Host SKU', 'Premium SKU', 'Area Code', 
+					'Area', 'Sold To Code', 'Sold To', 'U2K2 Code', 'Ship To Code', 'Ship To Name', 'Computed Allocation', 'Final Allocation', 'New Allocation'));
 
 				$sheet->setAutoFilter();
+				$row = 2;
+				$indhostsku =[];
+				$colhostsku =[];
+				$hostsku = '';
+				foreach ($allocations as $alloc) {
+					if($alloc->tradedeal_scheme_sku_id > 0){
+						if(!isset($indhostsku[$alloc->tradedeal_scheme_sku_id])){
+							$hs = TradedealSchemeSku::getHost($alloc->tradedeal_scheme_sku_id);
+							$indhostsku[$alloc->tradedeal_scheme_sku_id] = $hs->host_desc;
+							$hostsku = $indhostsku[$alloc->tradedeal_scheme_sku_id];
+						}else{
+							$hostsku = $indhostsku[$alloc->tradedeal_scheme_sku_id];
+						}
+					}else{
 
-
+						if(!isset($colhostsku[$alloc->tradedeal_scheme_id])){
+							$scheme = TradedealScheme::find($alloc->tradedeal_scheme_id);
+							$hs = TradedealSchemeSku::getHostSku($scheme);
+							$x = [];
+							foreach ($hs as $value) {
+								$x[] = $value->host_desc;
+							}
+							$colhostsku[$alloc->tradedeal_scheme_id] = implode("; ", $x);
+							$hostsku = $colhostsku[$alloc->tradedeal_scheme_id];
+						}else{
+							$hostsku = $colhostsku[$alloc->tradedeal_scheme_id];
+						}
+					}
+					
+					$sheet->row($row, array(
+						$alloc->alloc_id, 
+						$alloc->activity_id, 
+						$alloc->name, 
+						$alloc->scheme_code, 
+						$alloc->scheme_desc, 
+						$hostsku, 
+						$alloc->pre_desc_variant, 
+						$alloc->area_code, 
+						$alloc->area, 
+						$alloc->sold_to_code, 
+						$alloc->sold_to, 
+						$alloc->ship_to_code, 
+						$alloc->plant_code, 
+						$alloc->ship_to_name, 
+						$alloc->computed_pcs, 
+						$alloc->final_pcs, 
+						$alloc->total_alloc));
+					$row++;
+				}
 				$cnt = count($allocations) + 1;
-				$sheet->fromArray($allocations,null, 'A2', false, false);
 
 				$sheet->getProtection()->setPassword('tradedeal');
 				$sheet->getProtection()->setSheet(true);
-				$sheet->getStyle('N2:N'.$cnt)->getProtection()->setLocked(PHPExcel_Style_Protection::PROTECTION_UNPROTECTED);
+				$sheet->getStyle('Q2:Q'.$cnt)->getProtection()->setLocked(PHPExcel_Style_Protection::PROTECTION_UNPROTECTED);
 		    });
 		})->download('xls');
 	}

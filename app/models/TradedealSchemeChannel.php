@@ -67,6 +67,11 @@ class TradedealSchemeChannel extends \Eloquent {
 			->get();
 	}
 
+	public static function getSchemeSelected($scheme){
+		return self::where('tradedeal_scheme_id', $scheme->id)
+			->get();
+	}
+
 	public static function getCustomers($tradealscheme){
 		$customer_codes = [];
 		

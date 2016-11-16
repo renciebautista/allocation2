@@ -344,7 +344,6 @@ class TradedealAllocRepository  {
 			try {
 			foreach ($records as $row) {
 				$alloc = TradedealSchemeAllocation::find($row->id);
-				// dd($alloc);
 				if(!empty($alloc)){
 					$alloc->manual_pcs = $row->new_allocation;
 					$alloc->final_pcs = $row->new_allocation;
@@ -352,7 +351,6 @@ class TradedealAllocRepository  {
 					$alloc->update();
 				}
 			}
-			// dd($idList);
 			
 			DB::commit();
 		} catch (\Exception $e) {

@@ -121,10 +121,10 @@ class TradedealSchemeAllocation extends \Eloquent {
 
 
 	public static function getAll($activity){
-		return self::select('tradedeals.activity_id','tradedeal_scheme_allocations.id', 'scheme_code',
+		return self::select('tradedeals.activity_id','tradedeal_scheme_allocations.id as alloc_id', 'scheme_code', 'scheme_desc',
 		 	'tradedeal_schemes.name', 'pre_desc_variant',
-			'area_code', 'area', 'sold_to_code', 'sold_to', 'ship_to_code', 'plant_code', 
-			'ship_to_name', 'final_pcs', 'final_pcs as total_alloc')
+			'area_code', 'area', 'sold_to_code', 'sold_to', 'ship_to_code', 'plant_code', 'tradedeal_scheme_sku_id', 
+			'ship_to_name', 'computed_pcs', 'final_pcs', 'final_pcs as total_alloc', 'tradedeal_scheme_allocations.tradedeal_scheme_id')
 			->join('tradedeal_schemes', 'tradedeal_schemes.id', '=', 'tradedeal_scheme_allocations.tradedeal_scheme_id')
 			->join('tradedeal_types', 'tradedeal_types.id', '=', 'tradedeal_schemes.tradedeal_type_id')
 			->join('tradedeals', 'tradedeals.id', '=', 'tradedeal_schemes.tradedeal_id')
