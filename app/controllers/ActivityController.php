@@ -3264,12 +3264,12 @@ class ActivityController extends BaseController {
 			 	$free_sku = TradedealPartSku::find($value);
 				$free_pcs_case[] = $free_sku->pre_pcs_case;
 			}
-			if($uom->id == 3){
-				$result = array_unique($free_pcs_case);
-				if(count($result) > 1){
-					$invalid_premiums = false;
-				}
-			}
+			// if($uom->id == 3){
+			// 	$result = array_unique($free_pcs_case);
+			// 	if(count($result) > 1){
+			// 		$invalid_premiums = false;
+			// 	}
+			// }
 			
 		}
 
