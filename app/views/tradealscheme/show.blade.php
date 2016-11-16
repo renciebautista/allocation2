@@ -58,7 +58,7 @@
                     <table id="participating_sku" class="table table-striped table-hover ">
                     <thead>
                         <tr>
-                            <th><input id="select-all-host" type="checkbox"></th>
+                            <th></th>
                             <th>Qty</th>
                             <th>Host SKU</th>
                             <th>Variant Shortcut</th>
@@ -74,25 +74,35 @@
                         @foreach($tradedeal_skus as $sku)
                             <tr>
                                 <td>
-                                    {{ Form::checkbox('skus[]', $sku->id, ((in_array($sku->id,$sel_hosts['selection'])) ? true : false), ['class' => 'sku-checkbox']) }}
+                                    {{ Form::checkbox('skus[]', $sku->id, ((in_array($sku->id,$sel_hosts['selection'])) ? true : false), ['class' => 'sku-checkbox' , 'disabled' => 'disabled']) }}
                                 </td>
-                                <td>
-                                    {{ Form::text('qty['.$sku->id.']',(isset($sel_hosts['values'][$sku->id])) ? $sel_hosts['values'][$sku->id] : 1, array('class' => 'qty', 'disabled' => 'disabled')) }}
+                                <td class="right">
+                                    1
                                 </td>
                                 <td>{{ $sku->hostDesc() }}</td>
                                 <td>{{ $sku->variant }}</td>
                                 <td class="right">{{ $sku->host_cost }}</td>
                                 <td class="right">{{ $sku->host_pcs_case }}</td>
-                                
+                                @if($scheme->tradedeal_type_id = 1)
                                 <td class="individual">{{ $sku->preDesc() }}</td>
                                 <td class="individual" >{{ $sku->pre_variant }}</td>
                                 <td class="individual right">{{ $sku->pre_pcs_case }}</td>
-                                <td class="individual right"></td>
+                                <td class="individual right"> 
+                                    @if($scheme->tradedeal_uom_id == 1)
+                                        {{ number_format($sku->host_cost,2) *  $scheme->buy}}
+                                    @elseif($scheme->tradedeal_uom_id == 2)
+                                        {{ number_format($sku->host_cost,2) *  $scheme->buy * 12 }}
+                                    @else
+                                        {{ number_format($sku->host_cost,2) *  $scheme->buy * $sku->host_pcs_case }}
+                                    @endif
+                                </td>
+                                @else
                                 <td class="collective">N/A</td>
                                 <td class="collective">N/A</td>
                                 <td class="collective right">N/A</td>
                                 <td class="collective right"></td>
                                 <td class="collective right"></td>
+                                @endif
                             </tr>
                         @endforeach
                         

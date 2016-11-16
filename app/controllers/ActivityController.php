@@ -15,7 +15,6 @@ class ActivityController extends BaseController {
 	 */
 	public function index()
 	{
-
 		if(Auth::user()->hasRole("FIELD SALES")){
 			Input::flash();
 			$cycles = Cycle::getLists();
@@ -3246,61 +3245,49 @@ class ActivityController extends BaseController {
 	}
 
 	public function storetradealscheme($id){	
-		// dd(Input::all());
-
 		$activity = Activity::findOrFail($id);
 		$tradedeal = Tradedeal::where('activity_id', $activity->id)->first();
 		$deal_type = TradedealType::find(Input::get('deal_type'));
 		$uom = TradedealUom::find(Input::get('uom'));
-
 		$selected = [];
 		$free_pcs_case = [];
-
 		$invalid_premiums = true;
-
 		if(Input::has('skus')){
 			foreach (Input::get('skus') as $value) {
-			 	$selected_skus[] = $value;
+			 	$selected[] = $value;
 			 	$free_sku = TradedealPartSku::find($value);
 				$free_pcs_case[] = $free_sku->pre_pcs_case;
 			}
+			$result = array_unique($free_pcs_case);
+			// validation on cases quantitiy
 			// if($uom->id == 3){
-			// 	$result = array_unique($free_pcs_case);
 			// 	if(count($result) > 1){
 			// 		$invalid_premiums = false;
 			// 	}
 			// }
 			
 		}
-
-
 		$invalid_collective = true;
+		
 		if(($deal_type->id == 2) && ($uom->id == 3)){
 			$host_pcs_case = [];
-			if(count($selected_skus) > 0){
-				foreach ($selected_skus as $value) {
-					$part_sku = TradedealPartSku::find($value);
-					$host_pcs_case[] = $part_sku->host_pcs_case;
-				}
+			foreach ($selected as $value) {
+				$part_sku = TradedealPartSku::find($value);
+				$host_pcs_case[] = $part_sku->host_pcs_case;
 			}
-			
 			$result = array_unique($host_pcs_case);
-
 			if(count($result) > 1){
 				$invalid_collective = false;
 			}
-
 		}
-
-		Validator::extend('invalid_collective', function($attribute, $value, $parameters) {
-		    return $parameters[0];
-		});
-
-
 		Validator::extend('invalid_premiums', function($attribute, $value, $parameters) {
 		    return $parameters[0];
 		});
 
+		Validator::extend('invalid_collective', function($attribute, $value, $parameters) {
+		    return $parameters[0];
+		});
+		
 		$messages = array(
 		    'invalid_premiums' => 'Combination of Premium SKU with different pcs/case value is not allowed',
 		    'invalid_collective' => 'Combination of participating SKU with different pcs/case value is not allowed',
@@ -3772,7 +3759,7 @@ class ActivityController extends BaseController {
 		    		'Outlet Sub Types Involved', 'Outlet Codes', 'Allocs (Pieces)', 'UOM', 'Source of Premium', 
 		    		'Start Date', 'End Date'));
 
-		    	$sheet->getStyle("A2:N2")->getFont()->setBold(true);
+		    	$sheet->getStyle("A1:N1")->getFont()->setBold(true);
 
 			    $datas = TradedealSchemeAllocation::select('scheme_code', 'scheme_desc', 'tradedeal_types.tradedeal_type', 
 			    	'tradedeal_scheme_sku_id', 'tradedeal_scheme_id', 'tradedeal_scheme_allocations.pre_code', 

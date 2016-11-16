@@ -47,56 +47,107 @@ class TradealSchemeController extends \BaseController {
 		$selected_skus = [];
 		$free_pcs_case = [];
 
-		$invalid_premiums = true;
+		// $invalid_premiums = true;
 
+		// if(Input::has('skus')){
+		// 	foreach (Input::get('skus') as $value) {
+		// 	 	$selected_skus[] = $value;
+		// 	 	$free_sku = TradedealPartSku::find($value);
+		// 		$free_pcs_case[] = $free_sku->pre_pcs_case;
+		// 	}
+		// 	// if($uom->id == 3){
+		// 	// 	$result = array_unique($free_pcs_case);
+		// 	// 	if(count($result) > 1){
+		// 	// 		$invalid_premiums = false;
+		// 	// 	}
+		// 	// }
+			
+		// }
+
+
+		// $invalid_collective = true;
+		// if(($deal_type->id == 2) && ($uom->id == 3)){
+		// 	$host_pcs_case = [];
+		// 	if(count($selected_skus) > 0){
+		// 		foreach ($selected_skus as $value) {
+		// 			$part_sku = TradedealPartSku::find($value);
+		// 			$host_pcs_case[] = $part_sku->host_pcs_case;
+		// 		}
+		// 	}
+			
+		// 	$result = array_unique($host_pcs_case);
+
+		// 	if(count($result) > 1){
+		// 		$invalid_collective = false;
+		// 	}
+
+		// }
+
+
+		// Validator::extend('invalid_premiums', function($attribute, $value, $parameters) {
+		//     return $parameters[0];
+		// });
+		// Validator::extend('invalid_collective', function($attribute, $value, $parameters) {
+		//     return $parameters[0];
+		// });
+
+		// $messages = array(
+		//     'invalid_premiums' => 'Combination of Premium SKU with different pcs/case value is not allowed',
+		//     'invalid_collective' => 'Combination of participating SKU with different pcs/case value is not allowed',
+		//     'channels.required' => 'Channels Involved is required',
+		// );
+
+
+		// $rules = array(
+		// 	'scheme_name' => 'required|unique:tradedeal_schemes,name,'.$id.',id,tradedeal_id,'.$tradedeal->id,
+		//     'skus' => 'required|invalid_collective:'.$invalid_collective.'|invalid_premiums:'.$invalid_premiums,
+		//     'buy' => 'required|numeric',
+		//     'free' => 'required|numeric',
+		//     'channels' => 'required'
+		// );
+
+		$invalid_premiums = true;
 		if(Input::has('skus')){
 			foreach (Input::get('skus') as $value) {
-			 	$selected_skus[] = $value;
+			 	$selected[] = $value;
 			 	$free_sku = TradedealPartSku::find($value);
 				$free_pcs_case[] = $free_sku->pre_pcs_case;
 			}
+			$result = array_unique($free_pcs_case);
+			// validation on cases quantitiy
 			// if($uom->id == 3){
-			// 	$result = array_unique($free_pcs_case);
 			// 	if(count($result) > 1){
 			// 		$invalid_premiums = false;
 			// 	}
 			// }
 			
 		}
-
-
 		$invalid_collective = true;
+		
 		if(($deal_type->id == 2) && ($uom->id == 3)){
 			$host_pcs_case = [];
-			if(count($selected_skus) > 0){
-				foreach ($selected_skus as $value) {
-					$part_sku = TradedealPartSku::find($value);
-					$host_pcs_case[] = $part_sku->host_pcs_case;
-				}
+			foreach ($selected as $value) {
+				$part_sku = TradedealPartSku::find($value);
+				$host_pcs_case[] = $part_sku->host_pcs_case;
 			}
-			
 			$result = array_unique($host_pcs_case);
-
 			if(count($result) > 1){
 				$invalid_collective = false;
 			}
-
 		}
-
-
 		Validator::extend('invalid_premiums', function($attribute, $value, $parameters) {
 		    return $parameters[0];
 		});
+
 		Validator::extend('invalid_collective', function($attribute, $value, $parameters) {
 		    return $parameters[0];
 		});
-
+		
 		$messages = array(
 		    'invalid_premiums' => 'Combination of Premium SKU with different pcs/case value is not allowed',
 		    'invalid_collective' => 'Combination of participating SKU with different pcs/case value is not allowed',
-		    'channels.required' => 'Channels Involved is required',
+		    'channels.required' => 'Channels Involved is required'
 		);
-
 
 		$rules = array(
 			'scheme_name' => 'required|unique:tradedeal_schemes,name,'.$id.',id,tradedeal_id,'.$tradedeal->id,
@@ -105,6 +156,8 @@ class TradealSchemeController extends \BaseController {
 		    'free' => 'required|numeric',
 		    'channels' => 'required'
 		);
+
+
 
 		$validation = Validator::make(Input::all(), $rules, $messages);
 

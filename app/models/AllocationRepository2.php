@@ -372,8 +372,8 @@ class AllocationRepository2  {
 					->first();
 
 				foreach ($this->account_sales as $account_sale) {
-					if(isset($cust_nodes[$account_sale->channel_code][$customer->group_code][$customer->area_code][$customer->customer_code])){
-						if(in_array($to_plant, $cust_nodes[$account_sale->channel_code][$customer->group_code][$customer->area_code][$customer->customer_code])){
+					if(isset($cust_nodes[$account_sale->channel_code][$customer->group_code][$customer->area_code])){
+						if(in_array($to_customer, $cust_nodes[$account_sale->channel_code][$customer->group_code][$customer->area_code])){
 							if(($account_sale->customer_code == $row->from_customer)){
 								$gsv += $account_sale->gsv;
 							}
