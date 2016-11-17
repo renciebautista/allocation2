@@ -146,7 +146,7 @@ class LeTemplateRepository  {
         if($tradedealscheme->tradedeal_uom_id == 3){
             $free = $tradedealscheme->free * $host_sku->pre_pcs_case;
         }
-            
+
     	$first_row = true;
     	$row = 2;
     	foreach ($sub_types as $value) {
@@ -284,7 +284,7 @@ class LeTemplateRepository  {
 			    			'A920- Country/Site/Outlet Sub Type',
 			    			'', 
 			    			'', 
-			    			$sub_type->l5_code,
+			    			$sub_type->sub_type,
 			    			'', 
 			    			$mat->host_code, 
 			    			'',
