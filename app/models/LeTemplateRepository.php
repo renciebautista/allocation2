@@ -138,18 +138,15 @@ class LeTemplateRepository  {
     		$min_buy = $tradedealscheme->buy * $host_sku->host_pcs_case;
     	}
 
-    	if($tradedeal->nonUlpPremium()){
-    		$free = $tradedealscheme->free;
-    	}else{
-    		$free = $tradedealscheme->free;
-	    	if($tradedealscheme->tradedeal_uom_id == 2){
-	    		$free = $tradedealscheme->free * 12;
-	    	}
+    	$free = $tradedealscheme->free;
+        if($tradedealscheme->tradedeal_uom_id == 2){
+            $free = $tradedealscheme->free * 12;
+        }
 
-	    	if($tradedealscheme->tradedeal_uom_id == 3){
-	    		$free = $tradedealscheme->free * $host_sku->pre_pcs_case;
-	    	}
-    	}
+        if($tradedealscheme->tradedeal_uom_id == 3){
+            $free = $tradedealscheme->free * $host_sku->pre_pcs_case;
+        }
+            
     	$first_row = true;
     	$row = 2;
     	foreach ($sub_types as $value) {
