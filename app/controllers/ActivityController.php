@@ -2924,11 +2924,11 @@ class ActivityController extends BaseController {
 						LeTemplateRepository::generateTemplate($scheme);
 					}
 				}
-				if (!$isError) {
-					return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity->id)) . "#tradedeal")
-						->with('class', 'alert-success')
-						->with('message', 'Tradedeal successfuly updated');
-				}
+				
+				return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity->id)) . "#tradedeal")
+					->with('class', 'alert-success')
+					->with('message', 'Tradedeal successfuly updated');
+				
 				
 			}
 			return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity->id)) . "#tradedeal")
