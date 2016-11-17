@@ -317,177 +317,176 @@ class LeTemplateRepository  {
     	$materials = TradedealSchemeSku::getHostSku($tradedealscheme);
     	$sub_types = TradedealSchemeSubType::getSchemeSubtypes($tradedealscheme);
 
-        $writer = WriterFactory::create(Type::CSV); // for CSV files
-        $writer->openToFile($file ); // write data to a file or to a PHP stream
-        $writer->addRow($header); // add a row at a time
+        // $writer = WriterFactory::create(Type::CSV); // for CSV files
+        // $writer->openToFile($file ); // write data to a file or to a PHP stream
+        // $writer->addRow($header); // add a row at a time
 
-        foreach ($allocations as $value) {
-         if($value->final_pcs > 0){
-             foreach ($sub_types as $sub_type) {
-                 foreach ($materials as $mat) {
-                     $row_data = array($value->scheme_code,
-                         $value->scheme_desc, 
-                         $io_number, 
-                         $start_date, 
-                         $end_date, 
-                         $total_deals, 
-                         'PC', 
-                         $total_deals, 
-                         'PC', 
-                         'C',
-                         $header_qty, 
-                         $value->plant_code, 
-                         $value->final_pcs, 
-                         $value->final_pcs, 
-                         'A920- Country/Site/Outlet Sub Type',
-                         '', 
-                         '', 
-                         $sub_type->sub_type,
-                         '', 
-                         $mat->host_code, 
-                         '',
-                         '',
-                         '',
-                         '',
-                         '',
-                         '',
-                         '',
-                         '',
-                         '',
-                         '',
-                         '',
-                         '',
-                         '',
-                         '',
-                         '',
-                         '',
-                         '',
-                         '',
-                         $tradedealscheme->pre_code,
-                         $get_mat,
-                         '',
-                         '',
-                         '',
-                         '',
-                         '',
-                         '',
-                         '',
-                         '',
-                         '',
-                         '',
-                         '',
-                         '',
-                         '',
-                         '',
-                         '',
-                         '',
-                         '',
-                         );
+        // foreach ($allocations as $value) {
+        //  if($value->final_pcs > 0){
+        //      foreach ($sub_types as $sub_type) {
+        //          foreach ($materials as $mat) {
+        //              $row_data = array($value->scheme_code,
+        //                  $value->scheme_desc, 
+        //                  $io_number, 
+        //                  $start_date, 
+        //                  $end_date, 
+        //                  $total_deals, 
+        //                  'PC', 
+        //                  $total_deals, 
+        //                  'PC', 
+        //                  'C',
+        //                  $header_qty, 
+        //                  $value->plant_code, 
+        //                  $value->final_pcs, 
+        //                  $value->final_pcs, 
+        //                  'A920- Country/Site/Outlet Sub Type',
+        //                  '', 
+        //                  '', 
+        //                  $sub_type->sub_type,
+        //                  '', 
+        //                  $mat->host_code, 
+        //                  '',
+        //                  '',
+        //                  '',
+        //                  '',
+        //                  '',
+        //                  '',
+        //                  '',
+        //                  '',
+        //                  '',
+        //                  '',
+        //                  '',
+        //                  '',
+        //                  '',
+        //                  '',
+        //                  '',
+        //                  '',
+        //                  '',
+        //                  '',
+        //                  $tradedealscheme->pre_code,
+        //                  $get_mat,
+        //                  '',
+        //                  '',
+        //                  '',
+        //                  '',
+        //                  '',
+        //                  '',
+        //                  '',
+        //                  '',
+        //                  '',
+        //                  '',
+        //                  '',
+        //                  '',
+        //                  '',
+        //                  '',
+        //                  '',
+        //                  '',
+        //                  '',
+        //                  );
 
-                    $writer->addRow($row_data);
-                 }
-             }
-         }
-        }
+        //             $writer->addRow($row_data);
+        //          }
+        //      }
+        //  }
+        // }
 
-        $writer->close();
+        // $writer->close();
 
 
-        // Excel::create($folder_name. ' - 4 Site Allocation', function($excel) use ($header, $allocations, $tradedealscheme, $sub_types, $materials, $io_number, $start_date, $end_date, $total_deals, $header_qty, $get_mat){
-        //     $excel->sheet('Sheet1', function($sheet) use ($header, $allocations, $sub_types, $materials, $tradedealscheme, $io_number, $start_date, $end_date, $total_deals, $header_qty, $get_mat) {
-        //         // $sheet->setColumnFormat(array(
-        //         //     'D' => 'yyyy-mm-dd'
-        //         // ));
-        //         // $sheet->setColumnFormat(array(
-        //         //     // 'A' => PHPExcel_Style_NumberFormat::FORMAT_NUMBER, 
-        //         //     // 'B' => PHPExcel_Style_NumberFormat::FORMAT_TEXT,       
-        //         //     // 'C' => PHPExcel_Style_NumberFormat::FORMAT_TEXT,       
-        //         //     'D' => PHPExcel_Style_NumberFormat::FORMAT_TEXT,  
-        //         //     'E' => PHPExcel_Style_NumberFormat::FORMAT_DATE_DDMMYYYY,  
-        //         //     // 'F' => PHPExcel_Style_NumberFormat::FORMAT_NUMBER     
-        //         // ));
-        //         $sheet->row(1, $header);
-        //         $s = explode('/', $start_date);
-        //         $s_date = implode("/", $s);
-        //         $e_date = '\"02/02/2017\"';
-        //         $row = 2;
-        //         foreach ($allocations as $value) {
-        //              if($value->final_pcs > 0){
-        //                  foreach ($sub_types as $sub_type) {
-        //                      foreach ($materials as $mat) {
-        //                          $row_data = array($value->scheme_code,
-        //                              $value->scheme_desc, 
-        //                              $io_number, 
-        //                              $s_date, 
-        //                              $e_date, 
-        //                              $total_deals, 
-        //                              'PC', 
-        //                              $total_deals, 
-        //                              'PC', 
-        //                              'C',
-        //                              $header_qty, 
-        //                              $value->plant_code, 
-        //                              $value->final_pcs, 
-        //                              $value->final_pcs, 
-        //                              'A920- Country/Site/Outlet Sub Type',
-        //                              '', 
-        //                              '', 
-        //                              $sub_type->sub_type,
-        //                              '', 
-        //                              $mat->host_code, 
-        //                              '',
-        //                              '',
-        //                              '',
-        //                              '',
-        //                              '',
-        //                              '',
-        //                              '',
-        //                              '',
-        //                              '',
-        //                              '',
-        //                              '',
-        //                              '',
-        //                              '',
-        //                              '',
-        //                              '',
-        //                              '',
-        //                              '',
-        //                              '',
-        //                              $tradedealscheme->pre_code,
-        //                              $get_mat,
-        //                              '',
-        //                              '',
-        //                              '',
-        //                              '',
-        //                              '',
-        //                              '',
-        //                              '',
-        //                              '',
-        //                              '',
-        //                              '',
-        //                              '',
-        //                              '',
-        //                              '',
-        //                              '',
-        //                              '',
-        //                              '',
-        //                              '',
-        //                              );
+        Excel::create($folder_name. ' - 4 Site Allocation', function($excel) use ($header, $allocations, $tradedealscheme, $sub_types, $materials, $io_number, $start_date, $end_date, $total_deals, $header_qty, $get_mat){
+            $excel->sheet('Sheet1', function($sheet) use ($header, $allocations, $sub_types, $materials, $tradedealscheme, $io_number, $start_date, $end_date, $total_deals, $header_qty, $get_mat) {
+                // $sheet->setColumnFormat(array(
+                //     'D' => 'yyyy-mm-dd'
+                // ));
+                $sheet->setColumnFormat(array(
+                    // 'A' => PHPExcel_Style_NumberFormat::FORMAT_NUMBER, 
+                    // 'B' => PHPExcel_Style_NumberFormat::FORMAT_TEXT,       
+                    // 'C' => PHPExcel_Style_NumberFormat::FORMAT_TEXT,       
+                    'D' => PHPExcel_Style_NumberFormat::FORMAT_TEXT,  
+                    'E' => PHPExcel_Style_NumberFormat::FORMAT_TEXT,  
+                    // 'F' => PHPExcel_Style_NumberFormat::FORMAT_NUMBER     
+                ));
+                $sheet->row(1, $header);
+                // $s = explode('/', $start_date);
+                // $s_date = implode("/", $s);
+                // $e_date = '\"02/02/2017\"';
+                $row = 2;
+                foreach ($allocations as $value) {
+                     if($value->final_pcs > 0){
+                         foreach ($sub_types as $sub_type) {
+                             foreach ($materials as $mat) {
+                                 $row_data = array($value->scheme_code,
+                                     $value->scheme_desc, 
+                                     $io_number, 
+                                     (string)$start_date, 
+                                     (string)$end_date, 
+                                     $total_deals, 
+                                     'PC', 
+                                     $total_deals, 
+                                     'PC', 
+                                     'C',
+                                     $header_qty, 
+                                     $value->plant_code, 
+                                     $value->final_pcs, 
+                                     $value->final_pcs, 
+                                     'A920- Country/Site/Outlet Sub Type',
+                                     '', 
+                                     '', 
+                                     $sub_type->sub_type,
+                                     '', 
+                                     $mat->host_code, 
+                                     '',
+                                     '',
+                                     '',
+                                     '',
+                                     '',
+                                     '',
+                                     '',
+                                     '',
+                                     '',
+                                     '',
+                                     '',
+                                     '',
+                                     '',
+                                     '',
+                                     '',
+                                     '',
+                                     '',
+                                     '',
+                                     $tradedealscheme->pre_code,
+                                     $get_mat,
+                                     '',
+                                     '',
+                                     '',
+                                     '',
+                                     '',
+                                     '',
+                                     '',
+                                     '',
+                                     '',
+                                     '',
+                                     '',
+                                     '',
+                                     '',
+                                     '',
+                                     '',
+                                     '',
+                                     '',
+                                     );
+                                $sheet->row($row, $row_data);
+                                $row++; 
+                             }
+                         }
+                     }
+                }
 
-        //                         $sheet->row($row, $row_data);
-        //                         $row++; 
-        //                      }
-        //                  }
-        //              }
-        //         }
-
-        //        // $sheet->getStyle('A10')
-        //        //      ->getNumberFormat()
-        //        //      ->setFormatCode(
-        //        //          '0000-000-0000'
-        //        //      );
-        //     });
-        // })->store('csv', storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name));
+               // $sheet->getStyle('A10')
+               //      ->getNumberFormat()
+               //      ->setFormatCode(
+               //          '0000-000-0000'
+               //      );
+            });
+        })->store('csv', storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name));
     	
     	// foreach ($allocations as $value) {
     	// 	if($value->final_pcs > 0){
