@@ -63,21 +63,24 @@ class LeTemplateRepository  {
 
 	private static function generateIndividualHeader($tradedealscheme, $tradedeal, $activity, $host_sku, $scheme_uom_abv, $scheme_uom_abv2 ){
 		$folder_name = self::getIndFileName($tradedealscheme, $scheme_uom_abv2, $host_sku);
-		$file = storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name).'/'.$folder_name. ' - 1 Header.csv';
+		// $file = storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name).'/'.$folder_name. ' - 1 Header.csv';
 
 		$allocations = TradedealSchemeAllocation::getAllocation($tradedealscheme, $host_sku);
     	if($tradedeal->nonUlpPremium()){
-    		$header = "DEAL ID,PROMO TYPE,IONUMBER,START DATE,END DATE,DEAL DESCRIPTION,DEAL AMOUNT,SALES ORG,DISTRIBUTOR ID,ALLOCATED BUDGET,Non Unilever Flag";
+    		$header = ['DEAL ID','PROMO TYPE','IONUMBER','START DATE','END DATE','DEAL DESCRIPTION','DEAL AMOUNT','SALES ORG','DISTRIBUTOR ID','ALLOCATED BUDGET','Non Unilever Flag'];
     		$free = $host_sku->pre_desc;
     	}else{
-    		$header = "DEAL ID,IONUMBER,START DATE,END DATE,DEAL DESCRIPTION,DEAL AMOUNT,SALES ORG,DISTRIBUTOR ID,ALLOCATED BUDGET";
+    		$header = ['DEAL ID','IONUMBER','START DATE','END DATE','DEAL DESCRIPTION','DEAL AMOUNT','SALES ORG','DISTRIBUTOR ID','ALLOCATED BUDGET'];
     		$free = $host_sku->pre_variant;
     	}
 
-    	if(!file_exists(dirname($file)))
-    		mkdir(dirname($file), 0777, true);
-    	File::delete($file);
-    	File::put($file, $header.PHP_EOL);
+    	// if(!file_exists(dirname($file)))
+    	// 	mkdir(dirname($file), 0777, true);
+    	// File::delete($file);
+    	// File::put($file, $header.PHP_EOL);
+
+        $csv = \League\Csv\Writer::createFromFileObject(new \SplTempFileObject());
+        $csv->insertOne($header);
 
     	$brand = $host_sku->brand_shortcut;
 
@@ -97,29 +100,48 @@ class LeTemplateRepository  {
     	$total_deals = TradedealSchemeAllocation::getTotalDeals($tradedealscheme,$host_sku);
     	$deal_amount =  number_format($total_deals * $host_sku->pre_cost, 2, '.', '');
 
-    	foreach ($allocations as $value) {
-    		if(($value->final_pcs > 0) && ( $value->ship_to_code != '')){
-    			if($tradedeal->nonUlpPremium()){
-		    		$contents = $value->scheme_code.','.'BBFREE'.','.$io_number.','.$start_date.','.$end_date.','.$value->scheme_desc.','.$deal_amount.','.'P001'.','.$value->plant_code.','.number_format($value->final_pcs * $host_sku->pre_cost, 2, '.', '').','.'X';	
-		    	}else{
-		    		$contents = $value->scheme_code.','.$io_number.','.$start_date.','.$end_date.','.$value->scheme_desc.','.$deal_amount.','.'P001'.','.$value->ship_to_code.','.number_format($value->final_pcs * $host_sku->pre_cost, 2, '.', '');
-		    	}
-		    	File::append($file, $contents.PHP_EOL);
-    		}
-    		
-    	}
+        Excel::create($folder_name. ' - 1 Header', function($excel) use ($header, $allocations, $tradedeal, $io_number, $start_date,$end_date, $deal_amount, $host_sku){
+            $excel->sheet('Sheet1', function($sheet) use ($header, $allocations, $tradedeal, $io_number, $start_date, $end_date, $deal_amount, $host_sku) {
+                $sheet->row(1, $header);
+                $row = 2;
+                foreach ($allocations as $value) {
+                    if(($value->final_pcs > 0) && ( $value->ship_to_code != '')){
+                        if($tradedeal->nonUlpPremium()){
+                            $contents = $value->scheme_code.','.'BBFREE'.','.$io_number.','.(string)$start_date.','.(string)$end_date.','.$value->scheme_desc.','.$deal_amount.','.'P001'.','.$value->plant_code.','.number_format($value->final_pcs * $host_sku->pre_cost, 2, '.', '').','.'X';    
+                        }else{
+                            $contents = $value->scheme_code.','.$io_number.','.(string)$start_date.','.(string)$end_date.','.$value->scheme_desc.','.$deal_amount.','.'P001'.','.$value->ship_to_code.','.number_format($value->final_pcs * $host_sku->pre_cost, 2, '.', '');
+                        }
+                        $row_data = explode(",", $contents);
+                        $sheet->row($row, $row_data);
+                        $row++;
+                    }
+                }
+            });
+        })->store('csv', storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name));
+
+
+    	// foreach ($allocations as $value) {
+    	// 	if(($value->final_pcs > 0) && ( $value->ship_to_code != '')){
+    	// 		if($tradedeal->nonUlpPremium()){
+		   //  		$contents = $value->scheme_code.','.'BBFREE'.','.$io_number.','.$start_date.','.$end_date.','.$value->scheme_desc.','.$deal_amount.','.'P001'.','.$value->plant_code.','.number_format($value->final_pcs * $host_sku->pre_cost, 2, '.', '').','.'X';	
+		   //  	}else{
+		   //  		$contents = $value->scheme_code.','.$io_number.','.$start_date.','.$end_date.','.$value->scheme_desc.','.$deal_amount.','.'P001'.','.$value->ship_to_code.','.number_format($value->final_pcs * $host_sku->pre_cost, 2, '.', '');
+		   //  	}
+		   //  	File::append($file, $contents.PHP_EOL);
+    	// 	}
+    	// }
 	}
 
 	private static function generateIndividualMechanics($tradedealscheme, $tradedeal, $activity, $host_sku, $scheme_uom_abv, $scheme_uom_abv2){
 		$folder_name = self::getIndFileName($tradedealscheme, $scheme_uom_abv2, $host_sku);
-		$file = storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name).'/'.$folder_name. ' - 2 Mechanics.csv';
+		// $file = storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name).'/'.$folder_name. ' - 2 Mechanics.csv';
 
-		if(!file_exists(dirname($file)))
-    		mkdir(dirname($file), 0777, true);
+		// if(!file_exists(dirname($file)))
+  //   		mkdir(dirname($file), 0777, true);
 
-    	File::delete($file);
-    	$header = "Promotion ID,Disc Seq,Buy Product,Buy Type (Value/Volume),Min Buy,Min Buy  UoM/Curr,Get Type,Get Material,Get Qty.,Get UOM,Outlet Type,Outlet Sub Type,Promotion Id,Exclude outlet";
-    	File::put($file, $header.PHP_EOL);
+  //   	File::delete($file);
+    	$header = ['Promotion ID','Disc Seq','Buy Product','Buy Type (Value/Volume)','Min Buy','Min Buy  UoM/Curr','Get Type','Get Material','Get Qty.','Get UOM','Outlet Type','Outlet Sub Type','Promotion Id','Exclude outlet'];
+    	// File::put($file',' $header.PHP_EOL);
 
     	$sub_types = TradedealSchemeSubType::getSchemeSubtypes($tradedealscheme);
     	$deal_id = TradedealSchemeAllocation::getSchemeCode($tradedealscheme, $host_sku);
@@ -147,50 +169,85 @@ class LeTemplateRepository  {
             $free = $tradedealscheme->free * $host_sku->pre_pcs_case;
         }
 
-    	$first_row = true;
-    	$row = 2;
-    	foreach ($sub_types as $value) {
-    		if($first_row){
-    			$row_data = array($deal_id->scheme_code, '1', $host_sku->host_code,'Volume', $min_buy, 'PC',
-		    		'O - AND', $host_sku->pre_code, $free, 'PC', '', $value->sub_type, '', '' );
-		    	$first_row = false;
-    		}else{
-    			$row_data = array('', '', '','', '', '',
-		    		'', '', '', '', '', $value->sub_type, '', '' );
-		    	$first_row = false;
-    		}
-    		$contents = implode(',', $row_data);
-    		File::append($file, $contents.PHP_EOL);
-    	}
+        Excel::create($folder_name. ' - 2 Mechanics', function($excel) use ($header, $sub_types, $deal_id, $host_sku, $free, $min_buy){
+            $excel->sheet('Sheet1', function($sheet) use ($header, $sub_types, $deal_id, $host_sku, $free, $min_buy) {
+                $sheet->row(1, $header);
+                $first_row = true;
+                $row = 2;
+                foreach ($sub_types as $value) {
+                    if($first_row){
+                         $row_data = array($deal_id->scheme_code, '1', $host_sku->host_code,'Volume', $min_buy, 'PC',
+                             'O - AND', $host_sku->pre_code, $free, 'PC', '', $value->sub_type, '', '' );
+                         $first_row = false;
+                    }else{
+                         $row_data = array('', '', '','', '', '',
+                             '', '', '', '', '', $value->sub_type, '', '' );
+                         $first_row = false;
+                    }
+                    $sheet->row($row, $row_data);
+                    $row++;
+                }
+            });
+        })->store('csv', storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name));
+
+    	// foreach ($sub_types as $value) {
+    	// 	if($first_row){
+    	// 		$row_data = array($deal_id->scheme_code, '1', $host_sku->host_code,'Volume', $min_buy, 'PC',
+		   //  		'O - AND', $host_sku->pre_code, $free, 'PC', '', $value->sub_type, '', '' );
+		   //  	$first_row = false;
+    	// 	}else{
+    	// 		$row_data = array('', '', '','', '', '',
+		   //  		'', '', '', '', '', $value->sub_type, '', '' );
+		   //  	$first_row = false;
+    	// 	}
+    	// 	$contents = implode(',', $row_data);
+    	// 	File::append($file, $contents.PHP_EOL);
+    	// }
 	}
 
 	private static function generateIndividualSiteAllocation($tradedealscheme, $tradedeal, $activity, $host_sku, $scheme_uom_abv, $scheme_uom_abv2){
 		$folder_name = self::getIndFileName($tradedealscheme, $scheme_uom_abv2, $host_sku);
-		$file = storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name).'/'.$folder_name. ' - 4 Site Allocation.csv';
+		// $file = storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name).'/'.$folder_name. ' - 4 Site Allocation.csv';
 
-		if(!file_exists(dirname($file)))
-    		mkdir(dirname($file), 0777, true);
+		// if(!file_exists(dirname($file)))
+  //   		mkdir(dirname($file), 0777, true);
 
-    	File::delete($file);
+  //   	File::delete($file);
 
     	$header = array('Promotion ID', 'Site ID', 'Budget', 'Currency', 'Quota', 'UoM');
-    	$contents = implode(',', $header);
-    	File::put($file, $contents.PHP_EOL);
+    	// $contents = implode(',', $header);
+    	// File::put($file, $contents.PHP_EOL);
 
     	$allocations = TradedealSchemeAllocation::getAllocation($tradedealscheme, $host_sku);
-    	foreach ($allocations as $value) {
-    		if($value->final_pcs > 0){
-    			$site_id = $value->plant_code;
-    			// if($tradedeal->nonUlpPremium()){
-	    		// 	$site_id = $value->plant_code;
-	    		// }else{
-	    		// 	$site_id = $value->ship_to_code;
-	    		// }
-	    		$row_data = array($value->scheme_code, $site_id, '', '', $value->final_pcs, 'SET');
-				$contents = implode(',', $row_data);
-    			File::append($file, $contents.PHP_EOL);
-    		}
-    	}
+
+        Excel::create($folder_name. ' - 4 Site Allocation', function($excel) use ($header, $allocations){
+            $excel->sheet('Sheet1', function($sheet) use ($header, $allocations) {
+                $sheet->row(1, $header);
+                $row = 2;
+                foreach ($allocations as $value) {
+                    if($value->final_pcs > 0){
+                        $site_id = $value->plant_code;
+                        $row_data = array($value->scheme_code, $site_id, '', '', $value->final_pcs, 'SET');
+                        $sheet->row($row, $row_data);
+                        $row++;
+                    }
+                }
+            });
+        })->store('csv', storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name));
+
+    // 	foreach ($allocations as $value) {
+    // 		if($value->final_pcs > 0){
+    // 			$site_id = $value->plant_code;
+    // 			// if($tradedeal->nonUlpPremium()){
+	   //  		// 	$site_id = $value->plant_code;
+	   //  		// }else{
+	   //  		// 	$site_id = $value->ship_to_code;
+	   //  		// }
+	   //  		$row_data = array($value->scheme_code, $site_id, '', '', $value->final_pcs, 'SET');
+				// $contents = implode(',', $row_data);
+    // 			File::append($file, $contents.PHP_EOL);
+    // 		}
+    // 	}
 	}
 
 	private static function generateCollective($tradedealscheme, $tradedeal, $activity, $host_skus, $scheme_uom_abv, $scheme_uom_abv2){
@@ -222,10 +279,8 @@ class LeTemplateRepository  {
 		    		'Get Mat 1', 'Get Qty 1','Get Mat 2', 'Get Qty 2','Get Mat 3', 'Get Qty 3','Get Mat 4', 'Get Qty 4',
 		    		'Get Mat 5', 'Get Qty 5','Get Mat 6', 'Get Qty 6','Get Mat 7', 'Get Qty 7','Get Mat 8', 'Get Qty 8',
 		    		'Get Mat 9', 'Get Qty 9','Get Mat 10', 'Get Qty 10');
-    	$contents = implode(',', $header);
-    	File::append($file, $contents.PHP_EOL);
-
-    	
+    	// $contents = implode(',', $header);
+    	// File::append($file, $contents.PHP_EOL);
 
     	$brands =[];
 
@@ -236,8 +291,7 @@ class LeTemplateRepository  {
     	if(!empty($budgets)){
     		if(isset($budgets[0])){
     			$io_number = $budgets[0]->io_number;
-    		}
-    		
+    		}	
     	}
 
     	$start_date = date('d/m/Y', strtotime($activity->eimplementation_date));
@@ -262,75 +316,247 @@ class LeTemplateRepository  {
     	$allocations = TradedealSchemeAllocation::getCollectiveAllocation($tradedealscheme);
     	$materials = TradedealSchemeSku::getHostSku($tradedealscheme);
     	$sub_types = TradedealSchemeSubType::getSchemeSubtypes($tradedealscheme);
-    	
-    	foreach ($allocations as $value) {
-    		if($value->final_pcs > 0){
-    			foreach ($sub_types as $sub_type) {
-    				foreach ($materials as $mat) {
-    					$row_data = array($value->scheme_code,
-    					 	$value->scheme_desc, 
-    					 	$io_number, 
-    					 	$start_date, 
-    					 	$end_date, 
-    					 	$total_deals, 
-    					 	'PC', 
-    					 	$total_deals, 
-    					 	'PC', 
-    					 	'C',
-			    			$header_qty, 
-			    			$value->plant_code, 
-			    			$value->final_pcs, 
-			    			$value->final_pcs, 
-			    			'A920- Country/Site/Outlet Sub Type',
-			    			'', 
-			    			'', 
-			    			$sub_type->sub_type,
-			    			'', 
-			    			$mat->host_code, 
-			    			'',
-			    			'',
-			    			'',
-			    			'',
-			    			'',
-			    			'',
-			    			'',
-			    			'',
-			    			'',
-			    			'',
-			    			'',
-			    			'',
-			    			'',
-			    			'',
-			    			'',
-			    			'',
-			    			'',
-			    			'',
-			    			$tradedealscheme->pre_code,
-			    			$get_mat,
-			    			'',
-			    			'',
-			    			'',
-			    			'',
-			    			'',
-			    			'',
-			    			'',
-			    			'',
-			    			'',
-			    			'',
-			    			'',
-			    			'',
-			    			'',
-			    			'',
-			    			'',
-			    			'',
-			    			'',
-			    			);
 
-    					$contents = implode(',', $row_data);
-						File::append($file, $contents.PHP_EOL);
-    				}
-	    		}
-    		}
-    	}
+        $writer = WriterFactory::create(Type::CSV); // for CSV files
+        $writer->openToFile($file ); // write data to a file or to a PHP stream
+        $writer->addRow($header); // add a row at a time
+
+        foreach ($allocations as $value) {
+         if($value->final_pcs > 0){
+             foreach ($sub_types as $sub_type) {
+                 foreach ($materials as $mat) {
+                     $row_data = array($value->scheme_code,
+                         $value->scheme_desc, 
+                         $io_number, 
+                         $start_date, 
+                         $end_date, 
+                         $total_deals, 
+                         'PC', 
+                         $total_deals, 
+                         'PC', 
+                         'C',
+                         $header_qty, 
+                         $value->plant_code, 
+                         $value->final_pcs, 
+                         $value->final_pcs, 
+                         'A920- Country/Site/Outlet Sub Type',
+                         '', 
+                         '', 
+                         $sub_type->sub_type,
+                         '', 
+                         $mat->host_code, 
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         $tradedealscheme->pre_code,
+                         $get_mat,
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         );
+
+                    $writer->addRow($row_data);
+                 }
+             }
+         }
+        }
+
+        $writer->close();
+
+
+        // Excel::create($folder_name. ' - 4 Site Allocation', function($excel) use ($header, $allocations, $tradedealscheme, $sub_types, $materials, $io_number, $start_date, $end_date, $total_deals, $header_qty, $get_mat){
+        //     $excel->sheet('Sheet1', function($sheet) use ($header, $allocations, $sub_types, $materials, $tradedealscheme, $io_number, $start_date, $end_date, $total_deals, $header_qty, $get_mat) {
+        //         // $sheet->setColumnFormat(array(
+        //         //     'D' => 'yyyy-mm-dd'
+        //         // ));
+        //         // $sheet->setColumnFormat(array(
+        //         //     // 'A' => PHPExcel_Style_NumberFormat::FORMAT_NUMBER, 
+        //         //     // 'B' => PHPExcel_Style_NumberFormat::FORMAT_TEXT,       
+        //         //     // 'C' => PHPExcel_Style_NumberFormat::FORMAT_TEXT,       
+        //         //     'D' => PHPExcel_Style_NumberFormat::FORMAT_TEXT,  
+        //         //     'E' => PHPExcel_Style_NumberFormat::FORMAT_DATE_DDMMYYYY,  
+        //         //     // 'F' => PHPExcel_Style_NumberFormat::FORMAT_NUMBER     
+        //         // ));
+        //         $sheet->row(1, $header);
+        //         $s = explode('/', $start_date);
+        //         $s_date = implode("/", $s);
+        //         $e_date = '\"02/02/2017\"';
+        //         $row = 2;
+        //         foreach ($allocations as $value) {
+        //              if($value->final_pcs > 0){
+        //                  foreach ($sub_types as $sub_type) {
+        //                      foreach ($materials as $mat) {
+        //                          $row_data = array($value->scheme_code,
+        //                              $value->scheme_desc, 
+        //                              $io_number, 
+        //                              $s_date, 
+        //                              $e_date, 
+        //                              $total_deals, 
+        //                              'PC', 
+        //                              $total_deals, 
+        //                              'PC', 
+        //                              'C',
+        //                              $header_qty, 
+        //                              $value->plant_code, 
+        //                              $value->final_pcs, 
+        //                              $value->final_pcs, 
+        //                              'A920- Country/Site/Outlet Sub Type',
+        //                              '', 
+        //                              '', 
+        //                              $sub_type->sub_type,
+        //                              '', 
+        //                              $mat->host_code, 
+        //                              '',
+        //                              '',
+        //                              '',
+        //                              '',
+        //                              '',
+        //                              '',
+        //                              '',
+        //                              '',
+        //                              '',
+        //                              '',
+        //                              '',
+        //                              '',
+        //                              '',
+        //                              '',
+        //                              '',
+        //                              '',
+        //                              '',
+        //                              '',
+        //                              $tradedealscheme->pre_code,
+        //                              $get_mat,
+        //                              '',
+        //                              '',
+        //                              '',
+        //                              '',
+        //                              '',
+        //                              '',
+        //                              '',
+        //                              '',
+        //                              '',
+        //                              '',
+        //                              '',
+        //                              '',
+        //                              '',
+        //                              '',
+        //                              '',
+        //                              '',
+        //                              '',
+        //                              );
+
+        //                         $sheet->row($row, $row_data);
+        //                         $row++; 
+        //                      }
+        //                  }
+        //              }
+        //         }
+
+        //        // $sheet->getStyle('A10')
+        //        //      ->getNumberFormat()
+        //        //      ->setFormatCode(
+        //        //          '0000-000-0000'
+        //        //      );
+        //     });
+        // })->store('csv', storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name));
+    	
+    	// foreach ($allocations as $value) {
+    	// 	if($value->final_pcs > 0){
+    	// 		foreach ($sub_types as $sub_type) {
+    	// 			foreach ($materials as $mat) {
+    	// 				$row_data = array($value->scheme_code,
+    	// 				 	$value->scheme_desc, 
+    	// 				 	$io_number, 
+    	// 				 	$start_date, 
+    	// 				 	$end_date, 
+    	// 				 	$total_deals, 
+    	// 				 	'PC', 
+    	// 				 	$total_deals, 
+    	// 				 	'PC', 
+    	// 				 	'C',
+			  //   			$header_qty, 
+			  //   			$value->plant_code, 
+			  //   			$value->final_pcs, 
+			  //   			$value->final_pcs, 
+			  //   			'A920- Country/Site/Outlet Sub Type',
+			  //   			'', 
+			  //   			'', 
+			  //   			$sub_type->sub_type,
+			  //   			'', 
+			  //   			$mat->host_code, 
+			  //   			'',
+			  //   			'',
+			  //   			'',
+			  //   			'',
+			  //   			'',
+			  //   			'',
+			  //   			'',
+			  //   			'',
+			  //   			'',
+			  //   			'',
+			  //   			'',
+			  //   			'',
+			  //   			'',
+			  //   			'',
+			  //   			'',
+			  //   			'',
+			  //   			'',
+			  //   			'',
+			  //   			$tradedealscheme->pre_code,
+			  //   			$get_mat,
+			  //   			'',
+			  //   			'',
+			  //   			'',
+			  //   			'',
+			  //   			'',
+			  //   			'',
+			  //   			'',
+			  //   			'',
+			  //   			'',
+			  //   			'',
+			  //   			'',
+			  //   			'',
+			  //   			'',
+			  //   			'',
+			  //   			'',
+			  //   			'',
+			  //   			'',
+			  //   			);
+
+    	// 				$contents = implode(',', $row_data);
+					// 	File::append($file, $contents.PHP_EOL);
+    	// 			}
+	    // 		}
+    	// 	}
+    	// }
 	}
 }

@@ -858,8 +858,10 @@
 								<div class="col-lg-6">
 								  	<div class="form-group">
 								  		<a class="btn btn-success btn-sm" href="{{action('ActivityController@exporttddetails', $activity->id);}}">Download Allocations</a>
+								  		@if($_ENV['MAIL_TEST'])
 										<a class="btn btn-success btn-sm" href="{{action('ActivityController@exporttradedeal', $activity->id);}}">Field Allocations</a>
 										<a class="btn btn-success btn-sm" href="{{action('TradealSchemeController@exportle', $activity->id);}}">Export LE Templates</a>
+										@endif
 								  	</div>
 							  	</div>
 						  	</div>
