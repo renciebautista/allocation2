@@ -2904,7 +2904,7 @@ class ActivityController extends BaseController {
 					
 					
 				    if (!$isError) {
-						Excel::selectSheets('allocations')->load($file_path, function($reader) use ($activity) {
+						Excel::selectSheets('Allocations')->load($file_path, function($reader) use ($activity) {
 							TradedealAllocRepository::manualUpload($reader->get(),$activity);
 						});
 				        
@@ -2924,10 +2924,12 @@ class ActivityController extends BaseController {
 						LeTemplateRepository::generateTemplate($scheme);
 					}
 				}
-
-				return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity->id)) . "#tradedeal")
-					->with('class', 'alert-success')
-					->with('message', 'Tradedeal successfuly updated');
+				if (!$isError) {
+					return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity->id)) . "#tradedeal")
+						->with('class', 'alert-success')
+						->with('message', 'Tradedeal successfuly updated');
+				}
+				
 			}
 			return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity->id)) . "#tradedeal")
 					->with('class', 'alert-danger')
