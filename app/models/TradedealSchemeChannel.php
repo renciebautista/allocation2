@@ -48,13 +48,16 @@ class TradedealSchemeChannel extends \Eloquent {
 			$sub_chns =  MtDtHieracry::getSubTypes($nodes[0], $nodes[1]);
 			$data = [];
 			foreach ($sub_chns as $sub_chn) {
-				$data[] = ['tradedeal_scheme_id' => $scheme->id, 'sub_type' => $sub_chn->l5_code, 'sub_type_desc' => $sub_chn->rtm_tag];
+				$data[] = ['tradedeal_scheme_id' => $scheme->id, 'sub_type' => $sub_chn->l5_code, 'sub_type_desc' => $sub_chn->rtm_tag,
+				'tradedeal_scheme_channel_id' => $selection->id];
 			}
 
 			if(!empty($data)){
 				TradedealSchemeSubType::insert($data);
 			}
 		}
+
+		TradedealChannelList::addChannel($activity,  $scheme->id,$selections);
 
 	}
 
@@ -89,9 +92,14 @@ class TradedealSchemeChannel extends \Eloquent {
 					$customer_codes[] = $area->customer_code;
 				}
 			}
-
 		}
 
 		return array_unique($customer_codes);
+	}
+
+	public static function getRtms($scheme, $scheme_channel){
+		self::whereNotIn('id', $scheme_channel)
+			->where('tradedeal_scheme_id', $scheme->id)
+			->get();
 	}
 }

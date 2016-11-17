@@ -17,4 +17,6 @@ class TradedealSchemeSubType extends \Eloquent {
 			->orderBy('sub_type_desc')
 			->get();
 	}
+
+	
 }

@@ -820,6 +820,12 @@
 														@if(!$x)
 														<?php $x = true; ?>
 														<td rowspan="{{$host_cnt}}" >
+															@if(!empty($scheme->rtms))
+															@foreach($scheme->rtms as $rtm)
+															{{ $rtm->rtm_tag }} </br>
+															@endforeach
+															@endif
+															
 															@foreach($scheme->channels as $channel)
 															{{ $channel->sub_type_desc }} </br>
 															@endforeach
