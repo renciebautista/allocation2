@@ -82,7 +82,7 @@ class LeTemplateRepository  {
     	$brand = $host_sku->brand_shortcut;
 
     	$budgets = ActivityBudget::getBudgets($activity->id);
-    	$io_number = '';
+    	$io_number = 'non-ULP PREMIUM';
     	if(!empty($budgets)){
     		if(isset($budgets[0])){
     			$io_number = $budgets[0]->io_number;
@@ -125,11 +125,16 @@ class LeTemplateRepository  {
     	$deal_id = TradedealSchemeAllocation::getSchemeCode($tradedealscheme, $host_sku);
 
     	$min_buy = $tradedealscheme->buy;
-    	if($tradedealscheme->tradedeal_type_id == 2){
+
+    	if($tradedealscheme->tradedeal_uom_id == 1){
+    		$min_buy = $tradedealscheme->buy;
+    	}
+
+    	if($tradedealscheme->tradedeal_uom_id == 2){
     		$min_buy = $tradedealscheme->buy * 12;
     	}
 
-    	if($tradedealscheme->tradedeal_type_id == 3){
+    	if($tradedealscheme->tradedeal_uom_id == 3){
     		$min_buy = $tradedealscheme->buy * $host_sku->host_pcs_case;
     	}
 
@@ -137,11 +142,11 @@ class LeTemplateRepository  {
     		$free = $tradedealscheme->free;
     	}else{
     		$free = $tradedealscheme->free;
-	    		if($tradedealscheme->tradedeal_type_id == 2){
+	    	if($tradedealscheme->tradedeal_uom_id == 2){
 	    		$free = $tradedealscheme->free * 12;
 	    	}
 
-	    	if($tradedealscheme->tradedeal_type_id == 3){
+	    	if($tradedealscheme->tradedeal_uom_id == 3){
 	    		$free = $tradedealscheme->free * $host_sku->pre_pcs_case;
 	    	}
     	}
@@ -230,7 +235,7 @@ class LeTemplateRepository  {
 		$sub_types = TradedealSchemeSubType::getSchemeSubtypes($tradedealscheme);
 
     	$budgets = ActivityBudget::getBudgets($activity->id);
-    	$io_number = '';
+    	$io_number = 'NO IO';
     	if(!empty($budgets)){
     		if(isset($budgets[0])){
     			$io_number = $budgets[0]->io_number;
@@ -244,15 +249,17 @@ class LeTemplateRepository  {
     	$total_deals = TradedealSchemeAllocation::where('tradedeal_scheme_id', $tradedealscheme->id)->sum('final_pcs');
 
 		$header_qty = $tradedealscheme->buy;
-
+		$get_mat = $tradedealscheme->free;
 		if($tradedealscheme->tradedeal_uom_id == 2){
     		$header_qty = $tradedealscheme->buy * 12;
+    		$get_mat = $tradedealscheme->free * 12;
     	}
 
     	if($tradedealscheme->tradedeal_uom_id == 3){
     		// problem with multiple host in level 3 collective
     		// use lowest pr host sku
     		$header_qty = $tradedealscheme->buy * $host_skus[0]->host_pcs_case;
+    		$get_mat = $tradedealscheme->free * $host_skus[0]->host_pcs_case;
     	}
 
     	$allocations = TradedealSchemeAllocation::getCollectiveAllocation($tradedealscheme);
@@ -302,7 +309,7 @@ class LeTemplateRepository  {
 			    			'',
 			    			'',
 			    			$tradedealscheme->pre_code,
-			    			$value->final_pcs,
+			    			$get_mat,
 			    			'',
 			    			'',
 			    			'',

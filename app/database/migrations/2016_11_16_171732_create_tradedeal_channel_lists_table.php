@@ -15,7 +15,7 @@ class CreateTradedealChannelListsTable extends Migration {
 		Schema::create('tradedeal_channel_lists', function(Blueprint $table)
 		{
 			$table->increments('id');
-			$table->string('parent_id');
+			$table->string('parent_id')->nullable();
 			$table->integer('tradedeal_scheme_id');
 			$table->string('title');
 			$table->boolean('isfolder');

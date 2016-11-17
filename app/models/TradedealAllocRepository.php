@@ -168,8 +168,12 @@ class TradedealAllocRepository  {
 		foreach ($host_skus as $row) {
 			$ref_sku[] = $row->ref_code;
 		}
+
+		$td_sub_channels = TradedealSchemeChannel::getSubChannels($tradealscheme);
 		
-		$gsvsales = $allocationRepo->customers($ref_sku, $_channels, $customers,$forced_areas);
+		$gsvsales = $allocationRepo->customers($ref_sku, $_channels, $customers,$forced_areas, $td_sub_channels);
+
+		// Helper::debug($gsvsales);
 		
 		if(!is_null($collective_premium)){
 			if(isset($collective_premium->pre_code)){

@@ -122,13 +122,25 @@ class TradedealSchemeAllocation extends \Eloquent {
 
 	public static function getAll($activity){
 		return self::select('tradedeals.activity_id','tradedeal_scheme_allocations.id as alloc_id', 'scheme_code', 'scheme_desc',
-		 	'tradedeal_schemes.name', 'pre_desc_variant',
+		 	'tradedeal_schemes.name', 'pre_desc_variant', 'tradedeal_scheme_allocations.pre_code',
 			'area_code', 'area', 'sold_to_code', 'sold_to', 'ship_to_code', 'plant_code', 'tradedeal_scheme_sku_id', 
 			'ship_to_name', 'computed_pcs', 'final_pcs', 'final_pcs as total_alloc', 'tradedeal_scheme_allocations.tradedeal_scheme_id')
 			->join('tradedeal_schemes', 'tradedeal_schemes.id', '=', 'tradedeal_scheme_allocations.tradedeal_scheme_id')
 			->join('tradedeal_types', 'tradedeal_types.id', '=', 'tradedeal_schemes.tradedeal_type_id')
 			->join('tradedeals', 'tradedeals.id', '=', 'tradedeal_schemes.tradedeal_id')
 			->where('tradedeals.activity_id', $activity->id)
+			->orderBy('tradedeal_scheme_allocations.id')
+			->get();
+	}
+
+	public static function getAllocationSummary($activity){
+		return self::select('tradedeals.activity_id','tradedeal_scheme_allocations.id as alloc_id', 'scheme_code', 'scheme_desc',DB::raw('sum(computed_pcs) as sum_computed'),
+			DB::raw('sum(final_pcs) as sum_final_pcs'))
+			->join('tradedeal_schemes', 'tradedeal_schemes.id', '=', 'tradedeal_scheme_allocations.tradedeal_scheme_id')
+			->join('tradedeal_types', 'tradedeal_types.id', '=', 'tradedeal_schemes.tradedeal_type_id')
+			->join('tradedeals', 'tradedeals.id', '=', 'tradedeal_schemes.tradedeal_id')
+			->where('tradedeals.activity_id', $activity->id)
+			->groupBy('scheme_code')
 			->get();
 	}
 	

@@ -431,4 +431,40 @@ class CustomerController extends \BaseController {
 		return \Response::json($data,200);
 	}
 
+	public function getpostedchannelcustomer(){
+		$id = \Input::get('id');
+		
+		$channels = \TradedealChannelList::where('tradedeal_scheme_id',$id)
+			->whereNull('parent_id')
+			->orderBy('id')
+			->get();
+
+		$data = array();
+		foreach ($channels as $channel) {
+			$rtms = \TradedealChannelList::where('tradedeal_scheme_id',$id)
+				->where('parent_id', $channel->key)
+				->orderBy('id')
+				->get();
+			$channel_children = array();
+			foreach ($rtms as $rtm) {
+				$customers = \ActivityCutomerList::where('activity_id',$id);
+				$channel_children[] = array(
+					'title' => $rtm->title,
+					'isFolder' => $rtm->isfolder,
+					'key' => $rtm->key,
+					'unselectable' => $rtm->unselectable,
+					'selected' => $rtm->selected					
+				);
+			}
+			$data[] = array(
+				'title' => $channel->title,
+				'isFolder' => $channel->isfolder,
+				'key' => $channel->key,
+				'unselectable' => $channel->unselectable,
+				'selected' => $channel->selected,
+				'children' => $channel_children
+				);
+		}
+		return \Response::json($data,200);
+	}
 }

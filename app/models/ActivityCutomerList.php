@@ -194,25 +194,58 @@ class ActivityCutomerList extends \Eloquent {
 	}
 
 	public static function getSelectedAreas($id){
-
 		$selected = ActivityCustomer::customers($id);
 		$areas = array();
 		foreach ($selected as $row) {
 			$_selected_customer = explode(".", $row);
+			if(substr($_selected_customer[0], 0, 1) == 'C'){
+				if(count($_selected_customer) == 1){
+					$selected_groups = self::where('parent_id',$_selected_customer[0])
+						->where('activity_id',$id)
+						->get();
+					foreach ($selected_groups as $selected_group) {
+						$sel_areas = self::where('parent_id',$selected_group->key)
+							->where('activity_id',$id)
+							->get();
+							foreach ($sel_areas as $sel_area) {
+								$areas[] = $sel_area->title;
+							}
+					}
+				}elseif(count($_selected_customer) == 2){
+					$sel_areas = self::where('parent_id',$row)
+						->where('activity_id',$id)
+						->get();
+					foreach ($sel_areas as $sel_area) {
+						$areas[] = $sel_area->title;
+					}
+				}elseif(count($_selected_customer)  > 2){
+					$sel_area = self::where('key',$_selected_customer[0].'.'.$_selected_customer[1].'.'.$_selected_customer[2])
+						->where('activity_id',$id)
+						->first();
+					$areas[] = $sel_area->title;
+				}else{
 
-			if(!empty($_selected_customer[1])){
-				$sel_area = self::where('key',$_selected_customer[0].'.'.$_selected_customer[1])->first();
-				$areas[$sel_area->key] = $sel_area->title;
-			}else{
-				//get all areas
-				$sel_areas = self::where('parent_id',$_selected_customer[0])->get();
-				foreach ($sel_areas as $sel_area) {
-					$areas[$sel_area->key] = $sel_area->title;
 				}
+				
+			}else{
+				if(!empty($_selected_customer[1])){
+					$sel_area = self::where('key',$_selected_customer[0].'.'.$_selected_customer[1])->first();
+					$areas[] = $sel_area->title;
+				}else{
+					//get all areas
+					$sel_areas = self::where('parent_id',$_selected_customer[0])
+						->where('activity_id',$id)
+						->get();
+					foreach ($sel_areas as $sel_area) {
+						$areas[] = $sel_area->title;
+					}
 
+				}
 			}
+
+			
 		}
-		return $areas;
+		return array_unique($areas) ;
 
 	}
 }

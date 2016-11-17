@@ -398,6 +398,8 @@ Route::group(array('before' => 'auth'), function()
 
 		Route::get('tdchannels','api\TradeChannelController@index');
 		Route::get('selectedtdchannels','api\TradeChannelController@selectedtdchannels');
+
+		Route::get('tdpostedchannels','api\CustomerController@getpostedchannelcustomer');
 	});//
 
 

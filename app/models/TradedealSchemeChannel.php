@@ -102,4 +102,23 @@ class TradedealSchemeChannel extends \Eloquent {
 			->where('tradedeal_scheme_id', $scheme->id)
 			->get();
 	}
+
+	public static function getSubChannels($scheme){
+		$data = new stdClass();
+		$records = self::where('tradedeal_scheme_id', $scheme->id)
+			->get();
+		foreach ($records as $row) {
+			$node = explode(".", $row->channel_node);
+			$sub_channels = SubChannel::where('channel_code', $node[0])
+				->where('rtm_tag', $node[1])
+				->get();
+			foreach ($sub_channels as $value) {
+				$data->coc_03_code[] = $value->coc_03_code;
+				$data->coc_04_code[] = $value->l4_code;
+				$data->coc_05_code[] = $value->l5_code;
+			}
+		}
+
+		return $data;
+	}
 }

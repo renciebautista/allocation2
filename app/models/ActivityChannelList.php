@@ -51,30 +51,17 @@ class ActivityChannelList extends \Eloquent {
 	}
 
 	public static function getSelectecdChannels($id){
-
 		$channels = array();
-
 		$channel_nodes = ActivityChannel2::where('activity_id',$id)->orderBy('id')->get();
-		// Helper::print_r($channel_nodes);
 		if(!empty($channel_nodes)){
 			foreach ($channel_nodes as $channel_node) {
 				$_selected_node = explode(".", $channel_node->channel_node);
-				$ch = self::where('key',$_selected_node[0])->first();
-				$_ch = $ch->title;
-				// if(!empty($_selected_node[1])){
-				// 	if($_selected_node[1] == "OTHERS"){
-				// 		$_ch .= " - OTHERS";
-				// 	}else{
-				// 		$_grp = AccountGroup::where('account_group_code',$_selected_node[1])->first();
-				// 		$_ch .= " - ".$_grp->account_group_name;
-				// 	}
-					
-					
-				// }
+				$ch = Channel::where('channel_code',$_selected_node[0])->first();
+				$_ch = $ch->channel_name;
 				$channels[] = $_ch;
 			}
 		}
-		return $channels;
+		return array_unique($channels);
 
 
 	}

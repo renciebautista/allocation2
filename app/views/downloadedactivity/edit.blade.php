@@ -61,7 +61,11 @@
 <ul class="nav nav-tabs">
 	<li class="active"><a id="tab-activity" aria-expanded="true" href="#activity">Activity Details</a></li>
 	<li class=""><a id="tab-customer" aria-expanded="false" href="#customer">Customer Details</a></li>
-	<li class=""><a id="tab-schemes" aria-expanded="false" href="#schemes">Schemes</a></li>
+	@if(!$activity->activitytype->with_tradedeal)
+		<li class=""><a id="tab-schemes" aria-expanded="false" href="#schemes">Schemes</a></li>
+	@else
+		<li class=""><a id="tab-tradedeal" aria-expanded="false" href="#tradedeal">Bonus Buy Free</a></li>
+	@endif
 	<li class=""><a id="tab-budget" aria-expanded="false" href="#budget">Budget Details</a></li>
 	<li class=""><a id="tab-timings" aria-expanded="false" href="#timings">Timings Details</a></li>
 	<li class=""><a id="tab-attachments" aria-expanded="false" href="#attachment">Attachments</a></li>
@@ -362,17 +366,6 @@
 									<div id="tree3"></div>
 									{{ Form::hidden('customers', null, array('id' => 'customers')) }}
 								</div>
-
-								<div class="col-lg-6">
-									{{ Form::label('tree4', 'Select DT Channels Involved', array('class' => 'control-label' )) }}<br>
-									<div id="chSel">
-										<a href="#" id="btnChSelectAll">Select all</a> |
-										<a href="#" id="btnChDeselectAll">Deselect all</a>
-									</div>
-									
-									<div id="tree4"></div>
-									{{ Form::hidden('channels_involved', null, array('id' => 'channels_involved')) }}
-								</div>
 							</div>	
 							<div class="row">
 								<div class="col-lg-6">
@@ -427,6 +420,7 @@
 		<br>
 	</div>
 
+	@if(!$activity->activitytype->with_tradedeal)
 	<!-- scheme details -->
 	<div class="tab-pane fade" id="schemes">
 		<br>
@@ -557,6 +551,338 @@
 		</div>
 		<br>
 	</div>
+
+	@else
+	<!-- trade details -->
+	<div class="tab-pane fade" id="tradedeal">
+		<br>
+		{{ Form::open(array('action' => array('ActivityController@updatetradedeal', $activity->id), 'method' => 'PUT', 'files'=>true, 'class' => 'bs-component','id' => 'updateTradedeal')) }}
+		<div class="panel panel-default">
+		  	<div class="panel-heading">Bonus Buy Free Details</div>
+
+		  	<div class="panel-body">
+				<div class="row">
+					<div class="col-lg-3">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('alloc_in_weeks', 'Allocation Worth (in weeks)', array('class' => 'control-label')) }}
+									{{ Form::text('alloc_in_weeks',($tradedeal) ? $tradedeal->alloc_in_weeks : '', array('class' => 'form-control')) }}
+								</div>
+							</div>
+						</div>
+					</div>	
+
+					<div class="col-lg-3">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('total_allocation_pcs', 'Total Allocation (Pcs)', array('class' => 'control-label')) }}
+									{{ Form::text('total_allocation_pcs',number_format($total_deals), array('class' => 'form-control', 'readonly' => '')) }}
+								</div>
+							</div>
+						</div>
+					</div>	
+
+					<div class="col-lg-3">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('total_premium_php', 'Total Premium (Php)', array('class' => 'control-label')) }}
+									{{ Form::text('total_premium_php',number_format($total_premium_cost,2), array('class' => 'form-control', 'readonly' => '')) }}								
+								</div>
+							</div>
+						</div>
+					</div>					
+				</div>
+
+
+		  	</div>
+		</div>
+
+		<div class="panel panel-default">
+		  	<div class="panel-heading">Premium Type</div>
+
+		  	<div class="panel-body">
+				
+				<div class="row">
+					<div class="col-lg-3">
+						<div class="form-group">
+							<div class="radio">
+							  	<label>
+							  		{{ Form::radio('non_ulp_premium', '1', (isset($tradedeal->non_ulp_premium)) ? $tradedeal->non_ulp_premium : 0,['id' => 'non_ulp_premium']) }} Non-ULP Premium
+							  	</label>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+
+					<div class="col-lg-3">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('non_ulp_premium_desc', 'Non-ULP Premium Description', array('class' => 'control-label')) }}
+									{{ Form::text('non_ulp_premium_desc',($tradedeal) ?  $tradedeal->non_ulp_premium_desc : '', array('class' => 'form-control', 'id' => 'non_ulp_premium_desc')) }}
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-lg-3">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('non_ulp_premium_code', 'PIMS Code', array('class' => 'control-label')) }}
+									{{ Form::text('non_ulp_premium_code',($tradedeal) ?  $tradedeal->non_ulp_premium_code : '', array('class' => 'form-control', 'id' => 'non_ulp_premium_code')) }}
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-lg-3">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('non_ulp_premium_cost', 'Unit Cost / Piece', array('class' => 'control-label')) }}
+									{{ Form::text('non_ulp_premium_cost',($tradedeal) ?  $tradedeal->non_ulp_premium_cost : '', array('class' => 'form-control', 'id' => 'non_ulp_premium_cost')) }}
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-lg-3">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('non_ulp_pcs_case', 'Piece / Case', array('class' => 'control-label')) }}
+									{{ Form::text('non_ulp_pcs_case',($tradedeal) ?  $tradedeal->non_ulp_pcs_case : '', array('class' => 'form-control', 'id' => 'non_ulp_pcs_case')) }}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-lg-3">
+						<div class="form-group">
+							<div class="radio">
+							  	<label>
+							    	{{ Form::radio('non_ulp_premium', '0', (isset($tradedeal->non_ulp_premium)) ? !$tradedeal->non_ulp_premium : 0,['id' => 'non_ulp_premium']) }} ULP Premium
+							  	</label>
+							</div>
+						</div>
+					</div>
+				</div>
+				<br>
+				<button class="btn btn-primary disable-button">Update</button>
+
+		  	</div>
+		</div>
+
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Select Participating SKU</h3>
+			</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-lg-12">
+						<button type="button" class="btn btn-primary btn-sm " id="add_sku">Add Participating SKU's</button>
+					</div>
+				</div>
+				<br>
+				<div >
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="form-group">
+								<div class="row">
+									<div class="col-lg-12">
+										<table id="participating_sku" class="table table-striped table-hover ">
+										<thead>
+											<tr>
+												<th>Host SKU</th>
+												<th>Unit Cost / Piece</th>
+												<th>Piece / Case</th>
+												<th>Variant Shortcut</th>
+												<th>Reference SKU</th>
+												<th>Premium SKU</th>
+												<th>Unit Cost / Piece</th>
+												<th>Piece / Case</th>
+												<th>Variant Shortcut</th>
+												<th></th>
+												<th></th>
+											</tr>
+										</thead>
+										<tbody>
+
+											
+										</tbody>
+									</table> 
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Schemes</h3>
+			</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-lg-12">
+						<a id="add_scheme" class="btn btn-primary btn-sm" href="{{action('ActivityController@createtradealscheme', $activity->id);}}">Add Scheme</a>
+					</div>
+				</div>
+				<br>
+				<div >
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="form-group">
+
+								
+
+								<div class="row">
+									<div class="col-lg-12">
+										<table id="scheme-table" class="table table-bordered">
+											<thead>
+												<tr>
+													<th colspan="2">Action</th>
+													<th>Scheme</th>
+													<th>UOM</th>
+													<th>Host SKU(s)</th>
+													<th>Premium SKU</th>
+													<th>Puchase Requirement</th>
+													<th>Cost To Sales</th>
+													<th style="width:20%">Channels Involved</th>
+												</tr>
+											</thead>
+											<tbody>
+										@if(count($tradedealschemes) == 0)
+										<tr>
+											<td colspan="9">No record found.</td>
+										</tr>
+										@endif
+										
+										@foreach($tradedealschemes as $scheme)
+												<?php $x = false; ?>
+												<?php $host_cnt = 1; ?>
+												@if(!empty($scheme->host_skus))
+												<?php $host_cnt = count($scheme->host_skus); ?>
+													@foreach($scheme->host_skus as $host_sku)
+													<?php $y = false; ?>
+													@if(!$x)
+													<tr id="{{$scheme->id}}" class="cl_{{$scheme->id}}">
+														<td rowspan="{{$host_cnt}}">
+															{{ HTML::linkAction('TradealSchemeController@edit','Edit', $scheme->id, array('class' => 'btn btn-success btn-xs')) }}
+															
+														</td>
+														<td rowspan="{{$host_cnt}}">
+															<a href="javascript:void(0)" id="{{$scheme->id}}" class="deletescheme btn btn-danger btn-xs">Delete</a>
+														</td>
+														<td rowspan="{{$host_cnt}}">{{ $scheme->name }}</td>
+														<td rowspan="{{$host_cnt}}">{{ $scheme->dealUom->tradedeal_uom }}</td>
+													@endif
+														@if(!$y)
+														<td>{{ $host_sku->desc_variant }} </td>
+														<td>{{ $host_sku->pre_variant }} </td>
+														<td>{{ number_format($host_sku->pur_req,2) }}</td>
+														<td>{{ number_format($host_sku->cost_to_sale,2) }} %</td>
+														<?php $y = true; ?>
+														@else
+														<td></td>
+														<td></td>
+														<td></td>
+														<td></td>
+														@endif
+														@if(!$x)
+														<?php $x = true; ?>
+														<td rowspan="{{$host_cnt}}" >
+															@if(!empty($scheme->rtms))
+															@foreach($scheme->rtms as $rtm)
+															{{ $rtm->rtm_tag }} </br>
+															@endforeach
+															@endif
+															
+															@foreach($scheme->channels as $channel)
+															{{ $channel->sub_type_desc }} </br>
+															@endforeach
+														</td>
+														@endif
+													</tr>
+													@endforeach
+												@endif
+											
+										@endforeach
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-6">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">Allocations</h3>
+					</div>
+					<div class="panel-body">
+						<div class="row">
+								<div class="col-lg-6">
+								  	<div class="form-group">
+								  		<a class="btn btn-success btn-sm" href="{{action('ActivityController@exporttddetails', $activity->id);}}">Download Allocations</a>
+										<a class="btn btn-success btn-sm" href="{{action('ActivityController@exporttradedeal', $activity->id);}}">Field Allocations</a>
+										<a class="btn btn-success btn-sm" href="{{action('TradealSchemeController@exportle', $activity->id);}}">Export LE Templates</a>
+								  	</div>
+							  	</div>
+						  	</div>
+						
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-6">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">Upload Force Allocation</h3>
+					</div>
+					<div class="panel-body">
+						<div class="row">
+								<div class="col-lg-6">
+								  	<div class="form-group">
+								  		{{ Form::label('remarks', 'Attach Excel File', array('class' => 'control-label')) }}
+								    	{{ Form::file('tdupload',array('id'=>'tdupload')) }}
+								    	<br>
+								    	<button class="btn btn-primary disable-button">Upload</button>
+								  	</div>
+							  	</div>
+						  	</div>
+						
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="form-group">
+					<button class="btn btn-primary disable-button">Update</button>
+					<button class="btn btn-default btn-style" type="submit">Back</button>
+					<button class="btn btn-primary btn-style" type="submit">Next</button>
+				</div>
+			</div>
+		</div>
+		{{ Form::close() }}
+	</div>
+	@endif
 
 	<!-- budget details -->
 	<div class="tab-pane fade" id="budget">
@@ -1082,6 +1408,10 @@
 
 @include('javascript.downloadedactivity.edit')
 
+@stop
+
+@section('add-script')
+	{{ HTML::script('assets/js/tradedeal.js') }}
 @stop
 
 @section('page-script')

@@ -27,21 +27,12 @@ function getCustomer(){
 					//}        
 				});
 			});
+
+			show_force_alloc();
 		}
 	});
 }
 
-function getChannel(){
-	$.ajax({
-		type: "GET",
-		url: "../../api/channelselected?id={{$activity->id}}",
-		success: function(data){
-			$.each(data, function(i, node) {
-				$("#tree4").fancytree("getTree").getNodeByKey(node).setSelected(true);
-			});
-		}
-	});
-}
 
 if(location.hash.length > 0){
 	var activeTab = $('[href=' + location.hash + ']');
@@ -508,18 +499,10 @@ $("#tree3").fancytree({
 		// $("#echoSelectionRootKeys3").text(selRootKeys.join(", "));
 
 		var keys = selRootKeys.join(".").split(".");
-		// console.log(keys);
-		if($.inArray('E1397', keys) != -1){
-			$("#tree4").fancytree("enable");
-			getChannel();
-		}else{
-			$("#tree4").fancytree("getTree").visit(function(node){
-		        node.setSelected(false);
-		    });
-			$("#tree4").fancytree("disable");
-		}
+		
 		$("#customers").val(selRootKeys.join(", "));
-		show_alloc();
+		//show_alloc();
+		show_force_alloc();
 	},
 	click: function(event, data) {
         $("#updateCustomer").addClass("dirty");
@@ -662,11 +645,11 @@ $('#allow_force').click(function() {
     // $this will contain a reference to the checkbox   
     if ($this.is(':checked')) {
         // the checkbox was checked 
-        //$('#force_alloc').find('input').removeAttr('disabled');
+        //$('#force_alloc').find('input').removeAttr('disabled ').removeClass('disabled-readonly');
        	show_force_alloc();
     } else {
         // the checkbox was unchecked
-        $('#force_alloc').find('input').attr('disabled','disabled');
+        $('#force_alloc').find('input').attr('disabled','disabled').addClass('disabled-readonly');
     }
 });
 
@@ -681,11 +664,12 @@ function show_force_alloc(){
 
 	$('input', $('#force_alloc')).each(function () {
 		if($.inArray($(this).attr("id"), a) != -1){
-			$(this).removeAttr('disabled');
+			$(this).removeAttr('disabled').removeClass('disabled-readonly');
 		}else{
-			$(this).attr('disabled','disabled');
+			$(this).attr('disabled','disabled').addClass('disabled-readonly');
 		}
 	});
+
 }
 <!-- schemes -->
 <!-- schemes -->
@@ -920,5 +904,7 @@ $("#submittogcm").validate({
     	$(element).closest('div').removeClass(errorClass).addClass(validClass);
   	}
 });
+
+
 
 @stop

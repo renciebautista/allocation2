@@ -42,7 +42,7 @@ class AllocationRepository2  {
 
 
 
-	public function customers($skus, $selected_channels, $selected_customers,$forced_areas){
+	public function customers($skus, $selected_channels, $selected_customers,$forced_areas, $td_sub_channels = null){
 
 		$this->_customers = $selected_customers;
 		$additionalsales = DB::table('split_old_customers')->get();
@@ -100,6 +100,7 @@ class AllocationRepository2  {
 		// get all child skus
 		$child_skus = self::getSkus($skus);
 		
+		// Helper::debug($child_skus);
 
 		$channels = array();
 		if(!empty($selected_channels)){
@@ -235,18 +236,38 @@ class AllocationRepository2  {
 			}
 		}
 
-		$this->account_sales = DB::table('mt_dt_sales')
-			->select(DB::raw('area_code, customer_code, plant_code, account_name, channel_code, sum(gsv) as gsv'))
-			->join('sub_channels', function($join)
-			{
-				$join->on('sub_channels.coc_03_code', '=', 'mt_dt_sales.coc_03_code');
-				$join->on('sub_channels.l4_code','=','mt_dt_sales.coc_04_code');
-				$join->on('sub_channels.l5_code','=','mt_dt_sales.coc_05_code');
-			})
-			->whereIn('child_sku_code', $child_skus)
-			->whereIn('channel_code', $channels)
-			->groupBy('area_code', 'customer_code', 'plant_code', 'account_name', 'channel_code')
-			->get();
+		if(is_null($td_sub_channels)){
+			$this->account_sales = DB::table('mt_dt_sales')
+				->select(DB::raw('area_code, customer_code, plant_code, account_name, channel_code, sum(gsv) as gsv'))
+				->join('sub_channels', function($join)
+				{
+					$join->on('sub_channels.coc_03_code', '=', 'mt_dt_sales.coc_03_code');
+					$join->on('sub_channels.l4_code','=','mt_dt_sales.coc_04_code');
+					$join->on('sub_channels.l5_code','=','mt_dt_sales.coc_05_code');
+				})
+				->whereIn('child_sku_code', $child_skus)
+				->whereIn('channel_code', $channels)
+
+				->groupBy('area_code', 'customer_code', 'plant_code', 'account_name', 'channel_code')
+				->get();
+		}else{
+			$this->account_sales = DB::table('mt_dt_sales')
+				->select(DB::raw('area_code, customer_code, plant_code, account_name, channel_code, sum(gsv) as gsv'))
+				->join('sub_channels', function($join)
+				{
+					$join->on('sub_channels.coc_03_code', '=', 'mt_dt_sales.coc_03_code');
+					$join->on('sub_channels.l4_code','=','mt_dt_sales.coc_04_code');
+					$join->on('sub_channels.l5_code','=','mt_dt_sales.coc_05_code');
+				})
+				->whereIn('child_sku_code', $child_skus)
+				->whereIn('mt_dt_sales.coc_03_code', $td_sub_channels->coc_03_code)
+				->whereIn('mt_dt_sales.coc_04_code', $td_sub_channels->coc_04_code)
+				->whereIn('mt_dt_sales.coc_05_code', $td_sub_channels->coc_05_code)
+				->groupBy('area_code', 'customer_code', 'plant_code', 'account_name', 'channel_code')
+				->get();
+
+		}
+		
 
 
 

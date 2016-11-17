@@ -233,7 +233,7 @@
         checkbox: true,
         selectMode: 3,
         source: {
-            url: "../../api/tdchannels?id={{$activity->id}}&sc={{$scheme->id}}"
+            url: "../../api/tdpostedchannels?id={{$scheme->id}}"
         },
         select: function(event, data) {
             // Get a list of all selected nodes, and convert to a key array:
@@ -252,19 +252,7 @@
     });
 
 
-    function getselectedChannels(){
-        $.ajax({
-            type: "GET",
-            url: "../../api/selectedtdchannels?id={{$scheme->id}}",
-            success: function(data){
-                $.each(data, function(i, node) {
-                    $("#tdtree").fancytree("getTree").getNodeByKey(node).setSelected(true);
-                });
-            }
-        });
-    }
-
-     getselectedChannels();
+    
 @stop
 
 
