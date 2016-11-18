@@ -48,17 +48,8 @@ class TradealSchemeController extends \BaseController {
 			$tradedeal_skus = TradedealPartSku::where('activity_id', $activity->id)->get();
 			$sel_hosts = TradedealSchemeSku::getSelected($scheme);
 
-			if($activity->status_id < 4){
-				return View::make('tradealscheme.show', compact('activity', 'tradedeal', 'scheme', 'dealtypes', 
+			return View::make('tradealscheme.show', compact('activity', 'tradedeal', 'scheme', 'dealtypes', 
 					'dealuoms', 'tradedeal_skus', 'channels', 'sel_channels', 'sel_hosts'));
-				
-				
-			}
-
-			// if($activity->status_id > 3){
-			// 	return View::make('tradealscheme.edit', compact('activity', 'tradedeal', 'scheme', 'dealtypes', 
-			// 	'dealuoms', 'tradedeal_skus', 'channels', 'sel_channels', 'sel_hosts'));
-			// }
 		}
 
 		

@@ -425,6 +425,7 @@ class ActivityController extends BaseController {
 				// $divisions = Sku::getDivisionLists();
 				$divisions = Pricelist::divisions();
 
+				$participating_skus = TradedealPartSku::getParticipatingSku($activity);
 				return View::make('downloadedactivity.edit', compact('activity', 'scope_types', 'planners', 'approvers', 'cycles',
 				 'activity_types', 'divisions' , 'sel_divisions','objectives',  'users', 'budgets', 'nobudgets', 'sel_planner','sel_approver',
 				 'sel_objectives',  'schemes', 'scheme_summary', 'networks', 'areas', 'timings' ,'sel_involves',
