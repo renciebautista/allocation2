@@ -218,10 +218,11 @@ class TradedealAllocRepository  {
 		}
 		if($uom == 3){
 			if(!is_null($collective_premium)){
+				
 				if(!$tradedeal->non_ulp_premium){
-					$uom_premium = $collective_premium->non_ulp_pcs_case;
-				}else{
 					$uom_premium = $collective_premium->pre_pcs_case;
+				}else{
+					$uom_premium = $collective_premium->non_ulp_pcs_case;
 				}
 			}else{
 				$uom_premium = $host_skus[0]->pre_pcs_case;
