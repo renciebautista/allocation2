@@ -875,6 +875,17 @@
 						<h3 class="panel-title">Upload Force Allocation</h3>
 					</div>
 					<div class="panel-body">
+
+						@if($tradedeal->forced_upload)
+						<div class="row">
+							<div class="col-lg-12">
+							  	<div class="form-group">
+							  		<div class="alert alert-danger" role="alert">Manual Force Upload is applied in this activity.</div>
+							  	</div>
+						  	</div>
+					  	</div>
+					  	@endif
+
 						<div class="row">
 								<div class="col-lg-6">
 								  	<div class="form-group">
@@ -1712,13 +1723,24 @@
 
 @section('page-script')
 
-$("#updateTradedeal").on("submit", function () {
+$("#updateTradedeal").on("submit", function (e) {
 	var form = $(this);
 	var url = form.prop('action');
 	if(form.valid()){
-		$(this).find(":submit").prop("disabled", true);
-    	$("#page").hide();
-		$("#pageloading").show();
+		@if($tradedeal->forced_upload)
+		if(!confirm("Are you sure to overwrite the manual upload allocation.")){
+	        e.preventDefault();
+	    }else{
+	    	$(this).find(":submit").prop("disabled", true);
+    		$("#page").hide();
+			$("#pageloading").show();
+		}
+		@else
+			$(this).find(":submit").prop("disabled", true);
+    		$("#page").hide();
+			$("#pageloading").show();
+		@endif
+		
 	}
     
 });

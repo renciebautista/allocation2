@@ -765,6 +765,25 @@ class ActivityController extends BaseController {
 				ActivityBackground::where('activity_id',$activity->id)->delete();
 				ActivityBanding::where('activity_id',$activity->id)->delete();
 				ActivityComment::where('activity_id',$activity->id)->delete();
+
+				// Tradedeal
+				$tradedeal = Tradedeal::getActivityTradeDeal($activity);
+				if(!empty($tradedeal)){
+					$tradedealschemes = TradedealScheme::where('tradedeal_id', $tradedeal->id)->get();
+					foreach ($tradedealschemes as $tradedealscheme) {
+						TradedealSchemeAllocation::where('tradedeal_scheme_id', $tradedealscheme->id)->delete();
+						TradedealSchemeSku::where('tradedeal_scheme_id', $tradedealscheme->id)->delete();
+						TradedealSchemeChannel::where('tradedeal_scheme_id', $tradedealscheme->id)->delete();
+						TradedealChannelList::where('tradedeal_scheme_id', $tradedealscheme->id)->delete();
+						TradedealSchemeSubType::where('tradedeal_scheme_id', $tradedealscheme->id)->delete();
+						$tradedealscheme->delete();
+					}
+					$tradedeal->delete();
+
+					TradedealPartSku::where('activity_id', $activity->id);
+					File::deleteDirectory(storage_path().'/le/'.$activity->id);
+				}
+
 				$activity->delete();
 
 				DB::commit();
@@ -2839,7 +2858,7 @@ class ActivityController extends BaseController {
 	}
 
 	public function updatetradedeal($id){
-		$activity = Activity::findOrFail($id);
+			$activity = Activity::findOrFail($id);
 
 		// $budgets = ActivityBudget::getBudgets($activity->id);
 		// if(count($budgets) > 0){
@@ -2864,6 +2883,7 @@ class ActivityController extends BaseController {
 				$tradedeal->non_ulp_premium_code = Input::get('non_ulp_premium_code');
 				$tradedeal->non_ulp_premium_cost = str_replace(",", "", Input::get('non_ulp_premium_cost'));
 				$tradedeal->non_ulp_pcs_case = Input::get('non_ulp_pcs_case');
+				$tradedeal->forced_upload = 0;
 				$tradedeal->save();
 
 				// if(count($channels) == 0){
@@ -2907,6 +2927,9 @@ class ActivityController extends BaseController {
 				    if (!$isError) {
 						Excel::selectSheets('Allocations')->load($file_path, function($reader) use ($activity) {
 							TradedealAllocRepository::manualUpload($reader->get(),$activity);
+							$tradedeal = Tradedeal::getActivityTradeDeal($activity);
+							$tradedeal->forced_upload = 1;
+							$tradedeal->update();
 						});
 				        
 				    }
@@ -2919,12 +2942,12 @@ class ActivityController extends BaseController {
 					}
 				}
 				
-				File::deleteDirectory(storage_path('le/'.$activity->id));
-				if(!empty($schemes)){
-					foreach ($schemes as $scheme) {
-						LeTemplateRepository::generateTemplate($scheme);
-					}
-				}
+				// File::deleteDirectory(storage_path('le/'.$activity->id));
+				// if(!empty($schemes)){
+				// 	foreach ($schemes as $scheme) {
+				// 		LeTemplateRepository::generateTemplate($scheme);
+				// 	}
+				// }
 				
 				return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity->id)) . "#tradedeal")
 					->with('class', 'alert-success')
@@ -3486,7 +3509,7 @@ class ActivityController extends BaseController {
 				TradedealSchemeChannel::createChannelSelection($scheme, $activity, Input::get('channels'));
 
 				TradedealAllocRepository::updateAllocation($scheme);
-				LeTemplateRepository::generateTemplate($scheme);
+				// LeTemplateRepository::generateTemplate($scheme);
 			}
 
 			return Redirect::to(URL::action('ActivityController@edit', array('id' => $activity->id)) . "#tradedeal")
@@ -3514,6 +3537,8 @@ class ActivityController extends BaseController {
 				TradedealSchemeAllocation::where('tradedeal_scheme_id', $tradedealscheme->id)->delete();
 				TradedealSchemeSku::where('tradedeal_scheme_id', $tradedealscheme->id)->delete();
 				TradedealSchemeChannel::where('tradedeal_scheme_id', $tradedealscheme->id)->delete();
+				TradedealChannelList::where('tradedeal_scheme_id', $tradedealscheme->id)->delete();
+				TradedealSchemeSubType::where('tradedeal_scheme_id', $tradedealscheme->id)->delete();
 				$tradedealscheme->delete();
 
 				File::deleteDirectory(storage_path('le/'.$tradedeal->activity_id.'/'.$tradedealscheme->id));
@@ -3527,7 +3552,7 @@ class ActivityController extends BaseController {
 		}
 	}
 
-	public function exporttradedeal($id){
+public function exporttradedeal($id){
 		$activity = Activity::findOrFail($id);
 		Excel::create($activity->circular_name, function($excel) use($activity){
 			$excel->sheet('SCHEME SUMMARY', function($sheet) use ($activity) {

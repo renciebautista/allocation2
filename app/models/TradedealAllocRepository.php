@@ -113,7 +113,7 @@ class TradedealAllocRepository  {
 	private static function weekly_run_rates($tradealscheme, $sold_to_gsv, $hostsku ){
 		$weekly_run_rates = 0;
 		if($tradealscheme->tradedeal_type_id == 1){
-			$weekly_run_rates = ( $sold_to_gsv / 52 ) * $hostsku[0]->host_cost * $hostsku[0]->ref_pcs_case;
+			$weekly_run_rates = ( $sold_to_gsv / 52 ) * $hostsku[0]->host_cost * $hostsku[0]->host_pcs_case;
 		}else if($tradealscheme->tradedeal_type_id == 2){
 			// $shipto_alloc->tradedeal_scheme_sku_id = $sku->id;
 			// $total_cost = 0;
@@ -125,7 +125,7 @@ class TradedealAllocRepository  {
 			// $weekly_run_rates = ( $sold_to_gsv / 52 ) * $total_cost * $host_sku[0]->ref_pcs_case ;
 			// $pur_req = $total_pur_req;
 		}else{
-			$weekly_run_rates = ( $sold_to_gsv / 52 ) * $hostsku[0]->host_cost * $hostsku[0]->ref_pcs_case;
+			$weekly_run_rates = ( $sold_to_gsv / 52 ) * $hostsku[0]->host_cost * $hostsku[0]->host_pcs_case;
 		}
 
 		return $weekly_run_rates;
@@ -153,11 +153,11 @@ class TradedealAllocRepository  {
 	}
 
 	private static function computed_pcs($weekly_run_rates,$alloc_in_weeks, $pur_req, $uom_multiplpier, $free){
-		$pcs = round((($weekly_run_rates * $alloc_in_weeks) / $pur_req) * $uom_multiplpier * $free);
+		$deals = round(($weekly_run_rates * $alloc_in_weeks) / $pur_req);
+		$pcs = $deals * $uom_multiplpier * $free;
 		if($pcs < 1){
 			$pcs = 0;
 		}
-
 		return $pcs;
 	}
 
@@ -208,6 +208,26 @@ class TradedealAllocRepository  {
 		if($uom == 3){
 			$uom_multiplpier = $host_skus[0]->host_pcs_case;
 		}
+
+		$uom_premium  = 1;
+		if($uom == 1){
+			$uom_premium  = 1;
+		}
+		if($uom == 2){
+			$uom_premium  = 12;
+		}
+		if($uom == 3){
+			if(!is_null($collective_premium)){
+				if(!$tradedeal->non_ulp_premium){
+					$uom_premium = $collective_premium->non_ulp_pcs_case;
+				}else{
+					$uom_premium = $collective_premium->pre_pcs_case;
+				}
+			}else{
+				$uom_premium = $host_skus[0]->pre_pcs_case;
+			}
+			
+		}
 		
 		$tradedeal_scheme_sku_id = 0;
 		if($tradealscheme->tradedeal_type_id == 1){
@@ -234,7 +254,7 @@ class TradedealAllocRepository  {
 							$alloc->sold_to_gsv = $shipto['gsv']; 
 							$alloc->weekly_run_rates = self::weekly_run_rates($tradealscheme, $shipto['gsv'], $host_skus);
 							$alloc->pur_req = self::purchase_requirement($tradealscheme, $shipto['gsv'], $uom_multiplpier, $host_skus);
-							$alloc->computed_pcs = self::computed_pcs($alloc->weekly_run_rates,$tradedeal->alloc_in_weeks, $alloc->pur_req, $uom_multiplpier, $tradealscheme->free);
+							$alloc->computed_pcs = self::computed_pcs($alloc->weekly_run_rates,$tradedeal->alloc_in_weeks, $alloc->pur_req, $uom_premium, $tradealscheme->free);
 							$alloc->manual_pcs = 0;
 							$alloc->final_pcs = $alloc->computed_pcs;
 							$alloc->prem_cost = $premium['cost'];

@@ -245,7 +245,7 @@ class TradealSchemeController extends \BaseController {
 			// update trade deal scheme allocations
 
 			TradedealAllocRepository::updateAllocation($scheme);
-			LeTemplateRepository::generateTemplate($scheme);
+			// LeTemplateRepository::generateTemplate($scheme);
 			
 			return Redirect::to(URL::action('ActivityController@edit', array('id' => $tradedeal->activity_id)) . "#tradedeal")
 				->with('class', 'alert-success')
@@ -273,10 +273,16 @@ class TradealSchemeController extends \BaseController {
 	}
 
 	public function exportle($id){
-		$zippy = Zippy::load();
 		$activity = Activity::findOrFail($id);
 		$tradedeal = Tradedeal::getActivityTradeDeal($activity);
+		$tradealschemes = TradedealScheme::where('tradedeal_id', $tradedeal->id)->get();
+		File::deleteDirectory(storage_path('le/'.$activity->id));
+		foreach ($tradealschemes as $scheme) {
+			LeTemplateRepository::generateTemplate($scheme);
+		}
 
+		$zippy = Zippy::load();
+		
 		$folders = array();
 		$foldername = preg_replace('/[^A-Za-z0-9 _ .-]/', '_', $activity->circular_name);
 		$folder_name = str_replace(":","_", $foldername);
@@ -287,7 +293,7 @@ class TradealSchemeController extends \BaseController {
 		$distination = storage_path().$path ;
 		
 		$folders = [];
-		$tradealschemes = TradedealScheme::where('tradedeal_id', $tradedeal->id)->get();
+		
 		foreach ($tradealschemes as $scheme) {
 			$_path = $distination.'/'.$scheme->id;
 			if(File::exists($_path)) {

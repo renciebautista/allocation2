@@ -358,7 +358,7 @@
 					<tr>
 						<td>Schemes</td>
 						<td>
-							@if(count($schemes)> 0)
+							@if(count($tradedealschemes) > 0)
 							<table class="sub-table">
 								<tr>
 									<th>Activity</th>

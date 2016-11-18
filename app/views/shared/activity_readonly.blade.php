@@ -849,9 +849,15 @@
 						<h3 class="panel-title">Upload Force Allocation</h3>
 					</div>
 					<div class="panel-body">
+						@if($tradedeal->forced_upload)
 						<div class="row">
-								
-						</div>
+							<div class="col-lg-12">
+							  	<div class="form-group">
+							  		<div class="alert alert-danger" role="alert">Manual Force Upload is applied in this activity.</div>
+							  	</div>
+						  	</div>
+					  	</div>
+					  	@endif
 					</div>
 				</div>
 			</div>
