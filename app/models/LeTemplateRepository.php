@@ -63,7 +63,6 @@ class LeTemplateRepository  {
 
 	private static function generateIndividualHeader($tradedealscheme, $tradedeal, $activity, $host_sku, $scheme_uom_abv, $scheme_uom_abv2 ){
 		$folder_name = self::getIndFileName($tradedealscheme, $scheme_uom_abv2, $host_sku);
-		// $file = storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name).'/'.$folder_name. ' - 1 Header.csv';
 
 		$allocations = TradedealSchemeAllocation::getAllocation($tradedealscheme, $host_sku);
     	if($tradedeal->nonUlpPremium()){
@@ -73,11 +72,6 @@ class LeTemplateRepository  {
     		$header = ['DEAL ID','IONUMBER','START DATE','END DATE','DEAL DESCRIPTION','DEAL AMOUNT','SALES ORG','DISTRIBUTOR ID','ALLOCATED BUDGET'];
     		$free = $host_sku->pre_variant;
     	}
-
-    	// if(!file_exists(dirname($file)))
-    	// 	mkdir(dirname($file), 0777, true);
-    	// File::delete($file);
-    	// File::put($file, $header.PHP_EOL);
 
     	$brand = $host_sku->brand_shortcut;
 
@@ -116,22 +110,11 @@ class LeTemplateRepository  {
             });
         })->store('csv', storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name));
 
-
-    	// foreach ($allocations as $value) {
-    	// 	if(($value->final_pcs > 0) && ( $value->ship_to_code != '')){
-    	// 		if($tradedeal->nonUlpPremium()){
-		   //  		$contents = $value->scheme_code.','.'BBFREE'.','.$io_number.','.$start_date.','.$end_date.','.$value->scheme_desc.','.$deal_amount.','.'P001'.','.$value->plant_code.','.number_format($value->final_pcs * $host_sku->pre_cost, 2, '.', '').','.'X';	
-		   //  	}else{
-		   //  		$contents = $value->scheme_code.','.$io_number.','.$start_date.','.$end_date.','.$value->scheme_desc.','.$deal_amount.','.'P001'.','.$value->ship_to_code.','.number_format($value->final_pcs * $host_sku->pre_cost, 2, '.', '');
-		   //  	}
-		   //  	File::append($file, $contents.PHP_EOL);
-    	// 	}
-    	// }
 	}
 
 	private static function generateIndividualMechanics($tradedealscheme, $tradedeal, $activity, $host_sku, $scheme_uom_abv, $scheme_uom_abv2){
 		$folder_name = self::getIndFileName($tradedealscheme, $scheme_uom_abv2, $host_sku);
-    	$header = ['Promotion ID','Disc Seq','Buy Product','Buy Type (Value/Volume)','Min Buy','Min Buy  UoM/Curr','Get Type','Get Material','Get Qty.','Get UOM','Outlet Type','Outlet Sub Type','Promotion Id','Exclude outlet'];
+    	$header = ['Promotion ID','Disc Seq','Buy Product','Buy Type (Value/Volume)','Min Buy','Min Buy  UoM/Curr','Get Type','Get Material','Get Qty.','Get UOM','Outlet Type','Outlet Sub Type', '','Promotion Id','Exclude outlet'];
 
     	$sub_types = TradedealSchemeSubType::getSchemeSubtypes($tradedealscheme);
     	$deal_id = TradedealSchemeAllocation::getSchemeCode($tradedealscheme, $host_sku);
