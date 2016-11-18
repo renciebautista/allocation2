@@ -218,7 +218,7 @@ class LeTemplateRepository  {
                 }
             });
         })->store('csv', storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name));
-
+	}
 
 	private static function generateCollective($tradedealscheme, $tradedeal, $activity, $host_skus, $scheme_uom_abv, $scheme_uom_abv2){
 		set_time_limit(0);
@@ -339,10 +339,10 @@ class LeTemplateRepository  {
                                      '',
                                      '',
                                      '',
+                                     '',
+                                     '',
                                      $tradedealscheme->pre_code,
                                      $get_mat,
-                                     '',
-                                     '',
                                      '',
                                      '',
                                      '',
