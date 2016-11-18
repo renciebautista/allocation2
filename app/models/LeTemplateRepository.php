@@ -263,12 +263,12 @@ class LeTemplateRepository  {
 
 		$folder_name .= implode("_", $x_brand);	
 
-		$file = storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name).'/'.$folder_name. ' - 1 Header.csv';
+		// $file = storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name).'/'.$folder_name. ' - 1 Header.csv';
 
-		if(!file_exists(dirname($file)))
-    		mkdir(dirname($file), 0777, true);
+		// if(!file_exists(dirname($file)))
+  //   		mkdir(dirname($file), 0777, true);
 
-    	File::delete($file);
+  //   	File::delete($file);
 
     	$header = array('Promotion Number', 'Promotion Description', 'U2K2 I/O No', 'Start Date', 'End Date',
 		    		'BUY Quota', 'Quota UOM', 'GET Quota', 'Quota UOM', 'Quantity Type', 'Header Qty', 'Site', 'Site BUY Quota',
@@ -393,7 +393,7 @@ class LeTemplateRepository  {
         // $writer->close();
 
 
-        Excel::create($folder_name. ' - 4 Site Allocation', function($excel) use ($header, $allocations, $tradedealscheme, $sub_types, $materials, $io_number, $start_date, $end_date, $total_deals, $header_qty, $get_mat){
+        Excel::create($folder_name, function($excel) use ($header, $allocations, $tradedealscheme, $sub_types, $materials, $io_number, $start_date, $end_date, $total_deals, $header_qty, $get_mat){
             $excel->sheet('Sheet1', function($sheet) use ($header, $allocations, $sub_types, $materials, $tradedealscheme, $io_number, $start_date, $end_date, $total_deals, $header_qty, $get_mat) {
                 // $sheet->setColumnFormat(array(
                 //     'D' => 'yyyy-mm-dd'

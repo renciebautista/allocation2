@@ -259,6 +259,7 @@ class TradedealAllocRepository  {
 							$alloc->final_pcs = $alloc->computed_pcs;
 							$alloc->prem_cost = $premium['cost'];
 							$alloc->computed_cost = $alloc->computed_pcs * $premium['cost'];
+							$alloc->deal_multiplier = $uom_premium;
 							$alloc->pre_code = $premium['pre_code'];
 							$alloc->pre_desc = $premium['pre_desc'];
 							$alloc->pre_desc_variant = $premium['pre_desc'].' '.$premium['variant'];
@@ -286,6 +287,7 @@ class TradedealAllocRepository  {
 						$alloc->final_pcs = $alloc->computed_pcs;
 						$alloc->prem_cost = $premium['cost'];
 						$alloc->computed_cost = $alloc->computed_pcs * $premium['cost'];
+						$alloc->deal_multiplier = $uom_premium;
 						$alloc->pre_code = $premium['pre_code'];
 						$alloc->pre_desc = $premium['pre_desc'];
 						$alloc->pre_desc_variant = $premium['pre_desc'].' '.$premium['variant'];
