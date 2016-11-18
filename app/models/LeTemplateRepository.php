@@ -310,87 +310,12 @@ class LeTemplateRepository  {
     		// problem with multiple host in level 3 collective
     		// use lowest pr host sku
     		$header_qty = $tradedealscheme->buy * $host_skus[0]->host_pcs_case;
-    		$get_mat = $tradedealscheme->free * $host_skus[0]->host_pcs_case;
+            $get_mat = $tradedealscheme->free * $tradedealscheme->pre_pcs_case;
     	}
 
     	$allocations = TradedealSchemeAllocation::getCollectiveAllocation($tradedealscheme);
     	$materials = TradedealSchemeSku::getHostSku($tradedealscheme);
     	$sub_types = TradedealSchemeSubType::getSchemeSubtypes($tradedealscheme);
-
-        // $writer = WriterFactory::create(Type::CSV); // for CSV files
-        // $writer->openToFile($file ); // write data to a file or to a PHP stream
-        // $writer->addRow($header); // add a row at a time
-
-        // foreach ($allocations as $value) {
-        //  if($value->final_pcs > 0){
-        //      foreach ($sub_types as $sub_type) {
-        //          foreach ($materials as $mat) {
-        //              $row_data = array($value->scheme_code,
-        //                  $value->scheme_desc, 
-        //                  $io_number, 
-        //                  $start_date, 
-        //                  $end_date, 
-        //                  $total_deals, 
-        //                  'PC', 
-        //                  $total_deals, 
-        //                  'PC', 
-        //                  'C',
-        //                  $header_qty, 
-        //                  $value->plant_code, 
-        //                  $value->final_pcs, 
-        //                  $value->final_pcs, 
-        //                  'A920- Country/Site/Outlet Sub Type',
-        //                  '', 
-        //                  '', 
-        //                  $sub_type->sub_type,
-        //                  '', 
-        //                  $mat->host_code, 
-        //                  '',
-        //                  '',
-        //                  '',
-        //                  '',
-        //                  '',
-        //                  '',
-        //                  '',
-        //                  '',
-        //                  '',
-        //                  '',
-        //                  '',
-        //                  '',
-        //                  '',
-        //                  '',
-        //                  '',
-        //                  '',
-        //                  '',
-        //                  '',
-        //                  $tradedealscheme->pre_code,
-        //                  $get_mat,
-        //                  '',
-        //                  '',
-        //                  '',
-        //                  '',
-        //                  '',
-        //                  '',
-        //                  '',
-        //                  '',
-        //                  '',
-        //                  '',
-        //                  '',
-        //                  '',
-        //                  '',
-        //                  '',
-        //                  '',
-        //                  '',
-        //                  '',
-        //                  );
-
-        //             $writer->addRow($row_data);
-        //          }
-        //      }
-        //  }
-        // }
-
-        // $writer->close();
 
 
         Excel::create($folder_name, function($excel) use ($header, $allocations, $tradedealscheme, $sub_types, $materials, $io_number, $start_date, $end_date, $total_deals, $header_qty, $get_mat){
