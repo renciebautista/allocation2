@@ -821,9 +821,9 @@
 														<?php $x = true; ?>
 														<td rowspan="{{$host_cnt}}" >
 															@if(!empty($scheme->rtms))
-															@foreach($scheme->rtms as $rtm)
-															{{ $rtm->rtm_tag }} </br>
-															@endforeach
+																@foreach($scheme->rtms as $rtm)
+																{{ $rtm->sold_to }} </br>
+																@endforeach
 															@endif
 															
 															@foreach($scheme->channels as $channel)

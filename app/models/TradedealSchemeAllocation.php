@@ -150,5 +150,13 @@ class TradedealSchemeAllocation extends \Eloquent {
 			->groupBy('scheme_code')
 			->get();
 	}
+
+	public static function getMTAccounts($scheme){
+		return self::where('tradedeal_scheme_id', $scheme->id)
+			->whereNull('plant_code')
+			->groupBy('sold_to')
+			->get();
+
+	}
 	
 }

@@ -88,7 +88,7 @@ class TradedealScheme extends \Eloquent {
 				$scheme_channel[] = $row->tradedeal_scheme_channel_id;
 			}
 
-			$rtms = TradedealSchemeChannel::getRtms($value, $scheme_channel);
+			$rtms = TradedealSchemeAllocation::getMTAccounts($value);
 			// Helper::debug($rtms);
 			$data[$key]->channels = $channels;
 			$data[$key]->rtms = $rtms;
