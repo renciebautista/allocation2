@@ -79,9 +79,6 @@ class LeTemplateRepository  {
     	// File::delete($file);
     	// File::put($file, $header.PHP_EOL);
 
-        $csv = \League\Csv\Writer::createFromFileObject(new \SplTempFileObject());
-        $csv->insertOne($header);
-
     	$brand = $host_sku->brand_shortcut;
 
     	$budgets = ActivityBudget::getBudgets($activity->id);
@@ -159,7 +156,6 @@ class LeTemplateRepository  {
         }
 
         if($tradedealscheme->tradedeal_uom_id == 3){
-
             $free = $tradedealscheme->free * $host_sku->pre_pcs_case;
         }
 
@@ -183,20 +179,6 @@ class LeTemplateRepository  {
                 }
             });
         })->store('csv', storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name));
-
-    	// foreach ($sub_types as $value) {
-    	// 	if($first_row){
-    	// 		$row_data = array($deal_id->scheme_code, '1', $host_sku->host_code,'Volume', $min_buy, 'PC',
-		   //  		'O - AND', $host_sku->pre_code, $free, 'PC', '', $value->sub_type, '', '' );
-		   //  	$first_row = false;
-    	// 	}else{
-    	// 		$row_data = array('', '', '','', '', '',
-		   //  		'', '', '', '', '', $value->sub_type, '', '' );
-		   //  	$first_row = false;
-    	// 	}
-    	// 	$contents = implode(',', $row_data);
-    	// 	File::append($file, $contents.PHP_EOL);
-    	// }
 	}
 
 	private static function generateIndividualSiteAllocation($tradedealscheme, $tradedeal, $activity, $host_sku, $scheme_uom_abv, $scheme_uom_abv2){
