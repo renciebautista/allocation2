@@ -1727,6 +1727,7 @@ $("#updateTradedeal").on("submit", function (e) {
 	var form = $(this);
 	var url = form.prop('action');
 	if(form.valid()){
+		@if(isset($tradedeal))
 		@if($tradedeal->forced_upload)
 		if(!confirm("Are you sure to overwrite the manual upload allocation.")){
 	        e.preventDefault();
@@ -1740,6 +1741,11 @@ $("#updateTradedeal").on("submit", function (e) {
     		$("#page").hide();
 			$("#pageloading").show();
 		@endif
+		@else
+		$(this).find(":submit").prop("disabled", true);
+    		$("#page").hide();
+			$("#pageloading").show();
+			@endif
 		
 	}
     
