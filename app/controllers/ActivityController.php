@@ -3772,6 +3772,7 @@ class ActivityController extends BaseController {
 				}
 				$row++;
 				$sheet->row($row, ['', '', '', $last_site.' Total']);	
+				
 				foreach ($col_pre as $col) {
 					$last_row = $row - 1;
 					$sum = "=SUM(".\PHPExcel_Cell::stringFromColumnIndex($col).$first_row.":".\PHPExcel_Cell::stringFromColumnIndex($col).$last_row.")";
@@ -3786,46 +3787,58 @@ class ActivityController extends BaseController {
 		    });
 	
 			$excel->sheet('OUTPUT FILE', function($sheet) use ($activity) {
-		    	$sheet->row(1, array('Site Code', 'Site Description', 'Promotion ID', 'Promo Description', 'Promo Type',
+				$tradedeal_skus = TradedealPartSku::where('activity_id', $activity->id)->groupBy('pre_code')->get();
+				$tradedeal = Tradedeal::getActivityTradeDeal($activity);
+				$allocations = TradedealSchemeAllocation::exportAlloc($tradedeal);
+
+				// $sheet->setWidth('A', 16);
+				// $sheet->setWidth('B', 13);
+				// $sheet->setWidth('C', 20);
+				// $sheet->setWidth('D', 10);
+				// $sheet->setWidth('E', 30);
+				// $sheet->setWidth('F', 15);
+				// $sheet->setWidth('G', 20);
+				// $sheet->setWidth('H', 5);
+
+				$row = 1;
+				$sheet->row($row, array('AREA', 'Distributor Code', 'Distributor Name', 'Site Code', 'Site Name', 'Scheme Code', 'Scheme Description',
+					'Promo Description', 'Promo Type',
 		    		'SKU Codes Involved', 'SKUs Involved', 'Premium Code', 'Premium',
 		    		'Outlet Sub Types Involved', 'Outlet Codes', 'Allocation (Pieces)', 'UOM', 'Source of Premium', 
 		    		'Start Date', 'End Date'));
+				$sheet->getStyle("A1:V1")->getFont()->setBold(true);
+			
+				$last_area = '';
+				$last_distributor = '';
+				$last_site = '';
+				$first_row = 3;
+				foreach ($allocations as $alloc) {
 
-		    	$sheet->getStyle("A1:N1")->getFont()->setBold(true);
+					$scheme = TradedealScheme::find($alloc->tradedeal_scheme_id);
 
-			    $datas = TradedealSchemeAllocation::select('scheme_code', 'scheme_desc', 'tradedeal_types.tradedeal_type', 
-			    	'tradedeal_scheme_sku_id', 'tradedeal_scheme_id', 'tradedeal_scheme_allocations.pre_code', 
-			    	'tradedeal_scheme_allocations.pre_desc', 'non_ulp_premium', DB::raw('sum(final_pcs) as total_alloc'),
-			    	'eimplementation_date', 'end_date', 'tradedeal_schemes.tradedeal_uom_id')
-			    	->join('tradedeal_schemes', 'tradedeal_schemes.id', '=', 'tradedeal_scheme_allocations.tradedeal_scheme_id')
-			    	->join('tradedeals', 'tradedeals.id', '=', 'tradedeal_schemes.tradedeal_id')
-			    	->join('tradedeal_types', 'tradedeal_types.id', '=', 'tradedeal_schemes.tradedeal_type_id')
-			    	->join('activities', 'activities.id', '=', 'tradedeals.activity_id')
-					->where('tradedeals.activity_id', $activity->id)
-					->groupBy('scheme_code')
-					->orderBy('tradedeal_type_id')
-					->orderBy('tradedeal_uom_id')
-					->get();
+					$row++;
+					if($alloc->tradedeal_uom_id == 1){
+						$pcs_deal = 1;
+					}
+					if($alloc->tradedeal_uom_id == 2){
+						$pcs_deal = 12;
+					}
+					if($alloc->tradedeal_uom_id == 3){
+						$pcs_deal = $alloc->pcs_case;
+					}
 
-				$cnt = 2;
-			    foreach ($datas as $row) {
-			    	$host_code = '';
+					$start_date = date('d/m/Y', strtotime($alloc->eimplementation_date));
+		    		$end_date = date('d/m/Y', strtotime($alloc->end_date));
+
+		    		$host_code = '';
 			    	$host_desc = '';
-			    	$scheme = TradedealScheme::find($row->tradedeal_scheme_id);
-			    	if($row->tradedeal_uom_id == 1){
-			    		$uom = 1;
-			    	}elseif ($row->tradedeal_uom_id == 2) {
-			    		$uom = 12;
-			    	}else{
-			    		$uom = $row->pre_pcs_case;
-			    	}
 
-			    	if($row->tradedeal_scheme_sku_id != 0){
-			    		$host_sku = TradedealSchemeSku::getHost($row->tradedeal_scheme_sku_id);
+			    	if($alloc->tradedeal_scheme_sku_id != 0){
+			    		$host_sku = TradedealSchemeSku::getHost($alloc->tradedeal_scheme_sku_id);
 			    		$host_code = $host_sku->host_code;
 			    		$host_desc = $host_sku->host_desc;
 			    	}else{
-			    		
+
 			    		$host_skus = TradedealSchemeSku::getHostSku($scheme);
 			    		$code = [];
 			    		$desc = [];
@@ -3840,16 +3853,13 @@ class ActivityController extends BaseController {
 
 			    	}
 
-			    	$pre_code = '';
-			    	$pre_desc = '';
+			    	$pre_code = $alloc->pre_code;
+			    	$pre_desc = $alloc->pre_desc;
 			    	$source = 'Ex-DT';
-			    	if(!$row->non_ulp_premium){
-			    		$pre_code = $row->pre_code;
-			    		$pre_desc = $row->pre_desc;
+			    	if(!$alloc->non_ulp_premium){
 			    		$source = 'Ex-ULP';
 			    	}else{
-			    		$pre_code = $scheme->pre_code;
-			    		$pre_desc = $scheme->pre_desc;
+			    		
 			    	}
 
 			    	$channels = TradedealSchemeSubType::getSchemeSubtypes($scheme);
@@ -3860,15 +3870,124 @@ class ActivityController extends BaseController {
 		    			$ch_desc[] = $channel->sub_type_desc;
 		    		}
 
-		    		$start_date = date('d/m/Y', strtotime($row->eimplementation_date));
-		    		$end_date = date('d/m/Y', strtotime($row->end_date));
+		    		$channel_code = implode("; ", $ch_code);
+			    	$channel_desc = implode("; ", $ch_desc);
+					
+					if($last_area == $alloc->area){
+						if($last_distributor == $alloc->sold_to_code){
+							if($last_site == $alloc->plant_code){
+								$sheet->row($row, ['', '', '', '', '', $alloc->scheme_code, $alloc->scheme_description, $alloc->scheme_desc, $alloc->tradedeal_type,$host_code, $host_desc, $pre_code, $pre_desc, $channel_code, $channel_desc, $alloc->final_pcs, $pcs_deal, $source, $start_date, $end_date]);
+							}else{
+								// $row++;
+								$first_row = $row;
+								$sheet->row($row, ['', '', '', $alloc->plant_code, $alloc->ship_to_name, $alloc->scheme_code, $alloc->scheme_description, $alloc->scheme_desc, $alloc->tradedeal_type, $host_code, $host_desc, $pre_code, $pre_desc, $channel_code, $channel_desc, $alloc->final_pcs, $pcs_deal, $source, $start_date, $end_date]);
+							}
+							
+						}else{
+							if($last_site != $alloc->plant_code){
+								// $row++;
+								$first_row = $row;
+							}
+							$sheet->row($row, ['', $alloc->sold_to_code, $alloc->sold_to, $alloc->plant_code, $alloc->ship_to_name, $alloc->scheme_code, $alloc->scheme_description, $alloc->scheme_desc, $alloc->tradedeal_type, $host_code, $host_desc, $pre_code, $pre_desc, $channel_code, $channel_desc, $alloc->final_pcs, $pcs_deal, $source, $start_date, $end_date]);
+							
+						}
+					}else{
+						if(($last_site != $alloc->plant_code) && ($last_site != '')){
+							// $row++;
+							$first_row = $row;
+						}
+						$sheet->row($row, [$alloc->area, $alloc->sold_to_code, $alloc->sold_to, $alloc->plant_code, $alloc->ship_to_name, $alloc->scheme_code, $alloc->scheme_description, $alloc->scheme_desc, $alloc->tradedeal_type, $host_code, $host_desc, $pre_code, $pre_desc, $channel_code, $channel_desc, $alloc->final_pcs, $pcs_deal, $source, $start_date, $end_date]);
+				
+					}
+
+					$last_area = $alloc->area;
+					$last_distributor = $alloc->sold_to_code;
+					$last_site = $alloc->plant_code;
+				}
+
+		  //   	$sheet->row(1, array('Site Code', 'Site Description', 'Promotion ID', 'Promo Description', 'Promo Type',
+		  //   		'SKU Codes Involved', 'SKUs Involved', 'Premium Code', 'Premium',
+		  //   		'Outlet Sub Types Involved', 'Outlet Codes', 'Allocation (Pieces)', 'UOM', 'Source of Premium', 
+		  //   		'Start Date', 'End Date'));
+
+		  //   	$sheet->getStyle("A1:N1")->getFont()->setBold(true);
+
+			 //    $datas = TradedealSchemeAllocation::select('scheme_code', 'scheme_desc', 'tradedeal_types.tradedeal_type', 
+			 //    	'tradedeal_scheme_sku_id', 'tradedeal_scheme_id', 'tradedeal_scheme_allocations.pre_code', 
+			 //    	'tradedeal_scheme_allocations.pre_desc', 'non_ulp_premium', DB::raw('sum(final_pcs) as total_alloc'),
+			 //    	'eimplementation_date', 'end_date', 'tradedeal_schemes.tradedeal_uom_id')
+			 //    	->join('tradedeal_schemes', 'tradedeal_schemes.id', '=', 'tradedeal_scheme_allocations.tradedeal_scheme_id')
+			 //    	->join('tradedeals', 'tradedeals.id', '=', 'tradedeal_schemes.tradedeal_id')
+			 //    	->join('tradedeal_types', 'tradedeal_types.id', '=', 'tradedeal_schemes.tradedeal_type_id')
+			 //    	->join('activities', 'activities.id', '=', 'tradedeals.activity_id')
+				// 	->where('tradedeals.activity_id', $activity->id)
+				// 	->groupBy('scheme_code')
+				// 	->orderBy('tradedeal_type_id')
+				// 	->orderBy('tradedeal_uom_id')
+				// 	->get();
+
+				// $cnt = 2;
+			 //    foreach ($datas as $row) {
+			 //    	$host_code = '';
+			 //    	$host_desc = '';
+			 //    	$scheme = TradedealScheme::find($row->tradedeal_scheme_id);
+			 //    	if($row->tradedeal_uom_id == 1){
+			 //    		$uom = 1;
+			 //    	}elseif ($row->tradedeal_uom_id == 2) {
+			 //    		$uom = 12;
+			 //    	}else{
+			 //    		$uom = $row->pre_pcs_case;
+			 //    	}
+
+			 //    	if($row->tradedeal_scheme_sku_id != 0){
+			 //    		$host_sku = TradedealSchemeSku::getHost($row->tradedeal_scheme_sku_id);
+			 //    		$host_code = $host_sku->host_code;
+			 //    		$host_desc = $host_sku->host_desc;
+			 //    	}else{
+			    		
+			 //    		$host_skus = TradedealSchemeSku::getHostSku($scheme);
+			 //    		$code = [];
+			 //    		$desc = [];
+			 //    		foreach ($host_skus as $key => $value) {
+
+			 //    			$code[] = $value->host_code;
+			 //    			$desc[] = $value->host_desc;
+			 //    		}
+
+			 //    		$host_code = implode("; ", $code);
+			 //    		$host_desc = implode("; ", $desc);
+
+			 //    	}
+
+			 //    	$pre_code = '';
+			 //    	$pre_desc = '';
+			 //    	$source = 'Ex-DT';
+			 //    	if(!$row->non_ulp_premium){
+			 //    		$pre_code = $row->pre_code;
+			 //    		$pre_desc = $row->pre_desc;
+			 //    		$source = 'Ex-ULP';
+			 //    	}else{
+			 //    		$pre_code = $scheme->pre_code;
+			 //    		$pre_desc = $scheme->pre_desc;
+			 //    	}
+
+			 //    	$channels = TradedealSchemeSubType::getSchemeSubtypes($scheme);
+			 //    	$ch_code = [];
+			 //    	$ch_desc = [];
+			 //    	foreach ($channels as $channel) {
+		  //   			$ch_code[] = $channel->sub_type;
+		  //   			$ch_desc[] = $channel->sub_type_desc;
+		  //   		}
+
+		  //   		$start_date = date('d/m/Y', strtotime($row->eimplementation_date));
+		  //   		$end_date = date('d/m/Y', strtotime($row->end_date));
 
 
 			    	
-			    	$sheet->row($cnt, array($row->scheme_code, $row->scheme_desc, $row->tradedeal_type, $host_code, $host_desc, $pre_code, $pre_desc,
-			    	implode('; ', $ch_code),implode('; ', $ch_desc), $row->total_alloc, $uom, $source,  $start_date, $end_date));
-			    	$cnt++;
-			    }
+			 //    	$sheet->row($cnt, array($row->scheme_code, $row->scheme_desc, $row->tradedeal_type, $host_code, $host_desc, $pre_code, $pre_desc,
+			 //    	implode('; ', $ch_code),implode('; ', $ch_desc), $row->total_alloc, $uom, $source,  $start_date, $end_date));
+			 //    	$cnt++;
+			 //    }
 		    });
 			
 			

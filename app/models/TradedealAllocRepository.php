@@ -153,7 +153,7 @@ class TradedealAllocRepository  {
 	}
 
 	private static function computed_pcs($weekly_run_rates,$alloc_in_weeks, $pur_req, $uom_multiplpier, $free){
-		$pcs = round(($weekly_run_rates * $alloc_in_weeks / $pur_req) * $uom_multiplpier * $free);
+		$pcs = round((($weekly_run_rates * $alloc_in_weeks) / $pur_req) * $uom_multiplpier * $free);
 		if($pcs < 1){
 			$pcs = 0;
 		}

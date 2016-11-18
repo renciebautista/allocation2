@@ -5,12 +5,17 @@ class TradedealSchemeAllocation extends \Eloquent {
 
 	public static function exportAlloc($tradedeal){
 		$query = sprintf("select area, sold_to_code, sold_to, plant_code,ship_to_name, scheme_code, tradedeal_schemes.name as scheme_description,
-			tradedeal_schemes.tradedeal_uom_id, 
-			COALESCE(tradedeal_part_skus.pre_pcs_case,tradedeal_schemes.pre_pcs_case) as pcs_case, pre_desc_variant, computed_pcs, final_pcs
+			tradedeal_schemes.tradedeal_uom_id, tradedeal_scheme_allocations.scheme_desc,tradedeal_types.tradedeal_type,
+			COALESCE(tradedeal_part_skus.pre_pcs_case,tradedeal_schemes.pre_pcs_case) as pcs_case, pre_desc_variant, computed_pcs, final_pcs,
+			activities.eimplementation_date, activities.end_date,tradedeals.non_ulp_premium, tradedeal_scheme_allocations.tradedeal_scheme_sku_id,
+			tradedeal_scheme_allocations.tradedeal_scheme_id, tradedeal_scheme_allocations.pre_code, tradedeal_scheme_allocations.pre_desc
 			from tradedeal_scheme_allocations 
 			right join tradedeal_schemes on tradedeal_schemes.id = tradedeal_scheme_allocations.tradedeal_scheme_id
+			right join tradedeal_types on tradedeal_types.id = tradedeal_schemes.tradedeal_type_id
 			left join tradedeal_scheme_skus on tradedeal_scheme_skus.id = tradedeal_scheme_allocations.tradedeal_scheme_sku_id
 			left join tradedeal_part_skus on tradedeal_part_skus.id = tradedeal_scheme_skus.tradedeal_part_sku_id
+			right join tradedeals on tradedeals.id = tradedeal_schemes.tradedeal_id
+			right join activities on activities.id = tradedeals.activity_id
 			where tradedeal_schemes.tradedeal_id = '%d' and  computed_pcs > 0 order by area, sold_to, ship_to_name, scheme_description",$tradedeal->id);
 
 		return DB::select(DB::raw($query));
