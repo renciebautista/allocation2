@@ -134,14 +134,7 @@ class LeTemplateRepository  {
 
 	private static function generateIndividualMechanics($tradedealscheme, $tradedeal, $activity, $host_sku, $scheme_uom_abv, $scheme_uom_abv2){
 		$folder_name = self::getIndFileName($tradedealscheme, $scheme_uom_abv2, $host_sku);
-		// $file = storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name).'/'.$folder_name. ' - 2 Mechanics.csv';
-
-		// if(!file_exists(dirname($file)))
-  //   		mkdir(dirname($file), 0777, true);
-
-  //   	File::delete($file);
     	$header = ['Promotion ID','Disc Seq','Buy Product','Buy Type (Value/Volume)','Min Buy','Min Buy  UoM/Curr','Get Type','Get Material','Get Qty.','Get UOM','Outlet Type','Outlet Sub Type','Promotion Id','Exclude outlet'];
-    	// File::put($file',' $header.PHP_EOL);
 
     	$sub_types = TradedealSchemeSubType::getSchemeSubtypes($tradedealscheme);
     	$deal_id = TradedealSchemeAllocation::getSchemeCode($tradedealscheme, $host_sku);
@@ -166,6 +159,7 @@ class LeTemplateRepository  {
         }
 
         if($tradedealscheme->tradedeal_uom_id == 3){
+
             $free = $tradedealscheme->free * $host_sku->pre_pcs_case;
         }
 
@@ -207,17 +201,7 @@ class LeTemplateRepository  {
 
 	private static function generateIndividualSiteAllocation($tradedealscheme, $tradedeal, $activity, $host_sku, $scheme_uom_abv, $scheme_uom_abv2){
 		$folder_name = self::getIndFileName($tradedealscheme, $scheme_uom_abv2, $host_sku);
-		// $file = storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name).'/'.$folder_name. ' - 4 Site Allocation.csv';
-
-		// if(!file_exists(dirname($file)))
-  //   		mkdir(dirname($file), 0777, true);
-
-  //   	File::delete($file);
-
     	$header = array('Promotion ID', 'Site ID', 'Budget', 'Currency', 'Quota', 'UoM');
-    	// $contents = implode(',', $header);
-    	// File::put($file, $contents.PHP_EOL);
-
     	$allocations = TradedealSchemeAllocation::getAllocation($tradedealscheme, $host_sku);
 
         Excel::create($folder_name. ' - 4 Site Allocation', function($excel) use ($header, $allocations){
@@ -235,20 +219,6 @@ class LeTemplateRepository  {
             });
         })->store('csv', storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name));
 
-    // 	foreach ($allocations as $value) {
-    // 		if($value->final_pcs > 0){
-    // 			$site_id = $value->plant_code;
-    // 			// if($tradedeal->nonUlpPremium()){
-	   //  		// 	$site_id = $value->plant_code;
-	   //  		// }else{
-	   //  		// 	$site_id = $value->ship_to_code;
-	   //  		// }
-	   //  		$row_data = array($value->scheme_code, $site_id, '', '', $value->final_pcs, 'SET');
-				// $contents = implode(',', $row_data);
-    // 			File::append($file, $contents.PHP_EOL);
-    // 		}
-    // 	}
-	}
 
 	private static function generateCollective($tradedealscheme, $tradedeal, $activity, $host_skus, $scheme_uom_abv, $scheme_uom_abv2){
 		set_time_limit(0);
@@ -263,13 +233,6 @@ class LeTemplateRepository  {
 
 		$folder_name .= implode("_", $x_brand);	
 
-		// $file = storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name).'/'.$folder_name. ' - 1 Header.csv';
-
-		// if(!file_exists(dirname($file)))
-  //   		mkdir(dirname($file), 0777, true);
-
-  //   	File::delete($file);
-
     	$header = array('Promotion Number', 'Promotion Description', 'U2K2 I/O No', 'Start Date', 'End Date',
 		    		'BUY Quota', 'Quota UOM', 'GET Quota', 'Quota UOM', 'Quantity Type', 'Header Qty', 'Site', 'Site BUY Quota',
 		    		'Site GET Quota', 'Level', 'Cluster', 'outlet type', 'Outlet sub typ', 'Perf store',
@@ -279,8 +242,7 @@ class LeTemplateRepository  {
 		    		'Get Mat 1', 'Get Qty 1','Get Mat 2', 'Get Qty 2','Get Mat 3', 'Get Qty 3','Get Mat 4', 'Get Qty 4',
 		    		'Get Mat 5', 'Get Qty 5','Get Mat 6', 'Get Qty 6','Get Mat 7', 'Get Qty 7','Get Mat 8', 'Get Qty 8',
 		    		'Get Mat 9', 'Get Qty 9','Get Mat 10', 'Get Qty 10');
-    	// $contents = implode(',', $header);
-    	// File::append($file, $contents.PHP_EOL);
+ 
 
     	$brands =[];
 
@@ -377,9 +339,9 @@ class LeTemplateRepository  {
                                      '',
                                      '',
                                      '',
-                                     '',
                                      $tradedealscheme->pre_code,
                                      $get_mat,
+                                     '',
                                      '',
                                      '',
                                      '',
@@ -404,12 +366,6 @@ class LeTemplateRepository  {
                          }
                      }
                 }
-
-               // $sheet->getStyle('A10')
-               //      ->getNumberFormat()
-               //      ->setFormatCode(
-               //          '0000-000-0000'
-               //      );
             });
         })->store('csv', storage_path('le/'.$activity->id.'/'.$tradedealscheme->id.'/'.$folder_name));
     	

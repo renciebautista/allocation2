@@ -3265,14 +3265,16 @@ class ActivityController extends BaseController {
 							$sku->update();
 						}
 					}
-
-					if($update_pre_variant){
-						$host_skus = TradedealPartSku::where('pre_code', $pre_sku->sap_code)->where('activity_id', $activity->id)->get();
-						foreach ($host_skus as $sku) {
-							$sku->pre_variant = $pre_variant;
-							$sku->update();
+					if($pre_variant != ''){
+						if($update_pre_variant){
+							$host_skus = TradedealPartSku::where('pre_code', $pre_sku->sap_code)->where('activity_id', $activity->id)->get();
+							foreach ($host_skus as $sku) {
+								$sku->pre_variant = $pre_variant;
+								$sku->update();
+							}
 						}
 					}
+					
 				}	
 
 			}
