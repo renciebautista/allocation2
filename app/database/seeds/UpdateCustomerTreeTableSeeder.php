@@ -8,7 +8,7 @@ class UpdateCustomerTreeTableSeeder extends Seeder {
 	public function run()
 	{
 		DB::table('customer_trees')->truncate();
-
+		
 		$channels = \DB::table('mt_dt_hieracry')
 				->select('channels.channel_code', 'channels.channel_name')
 				->join('sub_channels', 'sub_channels.coc_03_code', '=', 'mt_dt_hieracry.coc_03_code')

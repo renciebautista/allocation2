@@ -39,7 +39,6 @@ class UploadSales extends Command {
 	{
 		$this->line('Uploading sales.');
 		Artisan::call('db:seed', array('--class' => 'UpdateLatestSalesTableSeeder','--force' => true));
-
 		$this->line('Sales successfuly uploaded.');
 	}
 
