@@ -105,13 +105,16 @@ class UpdateCustomerTreeTableSeeder extends Seeder {
 									'group_code' => $group->group_code,
 									'area_code' => $area->area_code,
 									'customer_code' => $distributor->customer_code,
-									'plant_code' => $shipto->plant_code]);
+									'plant_code' => $shipto->plant_code,
+									'account_id' => '']);
 						}
 
 						CustomerTree::insert(['channel_code' => $channel->channel_code,
 									'group_code' => $group->group_code,
 									'area_code' => $area->area_code,
-									'customer_code' => $distributor->customer_code]);
+									'customer_code' => $distributor->customer_code,
+									'plant_code' => '',
+									'account_id' => '']);
 
 					}
 

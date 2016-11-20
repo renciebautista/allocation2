@@ -16,7 +16,7 @@ class UpdateLatestSalesTableSeeder extends Seeder {
 		// $this->call('DtSecondarySalesTableSeeder');
 		// $this->call('ShipToSalesTableSeeder');
 		// $this->call('OutletSalesTableSeeder');
-		// $this->call('MtDtSalesTableSeeder');
+		$this->call('MtDtSalesTableSeeder');
 
 		$this->call('MtDtHierarchyTableSeederTableSeeder');
 
