@@ -869,8 +869,9 @@ class WordDoc {
 						$tradetable->addCell(2000)->addText($host_sku->pre_variant,array('size' => 8,'align' => 'center'), $fontStyle);
 
 						if(!$x){
+							$cell = $tradetable->addCell(2700,$cellRowSpan);
 							if(!empty($scheme->rtms)){
-								$cell = $tradetable->addCell(2700);
+								
 								foreach ($scheme->rtms as $rtm) {
 									$innerCell = $cell->addTable('RTMS');
 									$innerCell->addRow();
@@ -879,7 +880,7 @@ class WordDoc {
 							}
 
 							if(!empty($scheme->rtms)){
-								$cell = $tradetable->addCell(2700,$cellRowSpan);
+								// $cell = $tradetable->addCell(2700,$cellRowSpan);
 								foreach ($scheme->channels as $channel) {
 									$innerCell = $cell->addTable('Channels');
 									$innerCell->addRow();
