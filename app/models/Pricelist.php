@@ -87,6 +87,7 @@ class Pricelist extends \Eloquent {
 					$cnt++;
 					$sku = self::where('sap_code',$row->sap_code)->first();
 					if(empty($sku)){
+						// Helper::debug($row);
 						$pricelist = new Pricelist;
 						$pricelist->cpg_code = $row->cpg_code;
 						$pricelist->cpg_desc = $row->cpg_desc;
@@ -106,7 +107,12 @@ class Pricelist extends \Eloquent {
 						$pricelist->case_code = $row->case_code;
 						$pricelist->price_case = $row->price_case;
 						$pricelist->price_case_tax = $row->price_case_tax;
-						$pricelist->price = $row->price;
+						if($row->price == ''){
+							$pricelist->price = 0;
+						}else{
+							$pricelist->price = $row->price;
+						}
+						
 						$pricelist->srp = $row->srp;
 						$pricelist->active = 1;
 						$pricelist->launch = 1;
