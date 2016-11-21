@@ -854,6 +854,7 @@
 						<h3 class="panel-title">Upload Force Allocation</h3>
 					</div>
 					<div class="panel-body">
+						@if(isset($tradedeal))
 						@if($tradedeal->forced_upload)
 						<div class="row">
 							<div class="col-lg-12">
@@ -862,6 +863,7 @@
 							  	</div>
 						  	</div>
 					  	</div>
+					  	@endif
 					  	@endif
 						<div class="row">
 								
