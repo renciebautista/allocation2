@@ -201,6 +201,10 @@
 			.alloc-header {
 				margin-bottom: 5px;
 			}
+
+			#allocations table tr td{
+				vertical-align: top;
+			}
 		</style>
 	</head>
 
@@ -355,54 +359,7 @@
 						</td>
 					</tr>
 					@else
-					<tr>
-						<td>Schemes</td>
-						<td>
-							@if(count($tradedealschemes) > 0)
-							<table class="sub-table">
-								<tr>
-									<th>Activity</th>
-									<th>Scheme Code</th>
-									<th>Scheme Description</th>
-									<th>Host Code</th>
-									<th>Host Description</th>
-									<th>Premium Code / PIMS Code</th>
-									<th>Premium Description</th>
-								</tr>
-								
-								@foreach($tradedealschemes as $scheme)
-												<?php $x = false; ?>
-												<?php $host_cnt = 1; ?>
-												@if(!empty($scheme->host_skus))
-												<?php $host_cnt = count($scheme->host_skus); ?>
-													@foreach($scheme->host_skus as $host_sku)
-													<?php $y = false; ?>
-													@if(!$x)
-													<tr>
-														<td rowspan="{{$host_cnt}}">{{ $scheme->name }}</td>
-													@endif
-														@if(!$y)
-														<td>{{ $host_sku->scheme_code }} </td>
-														<td>{{ $host_sku->scheme_desc }}</td>
-														<td>{{ $host_sku->host_code }}</td>
-														<td>{{ $host_sku->desc_variant }}</td>
-														<td>{{ $host_sku->pre_code }}</td>
-														<td>{{ $host_sku->pre_variant }}</td>
-														<?php $y = true; ?>
-														@endif
-														@if(!$x)
-														<?php $x = true; ?>
-														@endif
-													</tr>
-													@endforeach
-												@endif
-											
-										@endforeach
-								
-							</table>
-							@endif
-						</td>
-					</tr>
+					
 					@endif
 					@if(is_null($tradedeal))
 					<tr>
@@ -763,6 +720,7 @@
 			</div>
 			@endif
 
+			@if(!isset($tradedeal))
 			<div id="allocations">
 				<h2>Allocations</h2>
 				@foreach($schemes as $scheme)
@@ -862,6 +820,64 @@
 				@endfor
 				@endforeach
 			</div>
+			@else
+			<div id="allocations">
+				<h2>BBFREE Schemes</h2>
+				<h3>Download attach excel file for allocations.</h3>
+				<table class="sub-table">
+								<tr>
+									<th style="width:14%">Activity</th>
+									<th style="width:10%">Scheme Code</th>
+									<th style="width:14%">Scheme Description</th>
+									<th style="width:10%">Host Code</th>
+									<th style="width:14%">Host Description</th>
+									<th style="width:10%">Premium Code / PIMS Code</th>
+									<th style="width:14%">Premium Description</th>
+									<th >Channels Involved</th>
+								</tr>
+								
+								@foreach($tradedealschemes as $scheme)
+										<?php $x = false; ?>
+										<?php $host_cnt = 1; ?>
+										@if(!empty($scheme->host_skus))
+										<?php $host_cnt = count($scheme->host_skus); ?>
+											@foreach($scheme->host_skus as $host_sku)
+											<?php $y = false; ?>
+											@if(!$x)
+											<tr>
+												<td rowspan="{{$host_cnt}}">{{ $scheme->name }}</td>
+											@endif
+												@if(!$y)
+												<td>{{ $host_sku->scheme_code }} </td>
+												<td>{{ $host_sku->scheme_desc }}</td>
+												<td>{{ $host_sku->host_code }}</td>
+												<td>{{ $host_sku->desc_variant }}</td>
+												<td>{{ $host_sku->pre_code }}</td>
+												<td>{{ $host_sku->pre_variant }}</td>
+												<?php $y = true; ?>
+												@endif
+												@if(!$x)
+												<?php $x = true; ?>
+												<td rowspan="{{$host_cnt}}" >
+													@if(!empty($scheme->rtms))
+														@foreach($scheme->rtms as $rtm)
+														{{ $rtm->sold_to }} </br>
+														@endforeach
+													@endif
+													
+													@foreach($scheme->channels as $channel)
+													{{ $channel->sub_type_desc }} </br>
+													@endforeach
+												</td>
+												@endif
+											</tr>
+											@endforeach
+										@endif
+									
+								@endforeach
+								
+							</table>
+			@endif
 		</div>
 		
 	</body>
