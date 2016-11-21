@@ -869,14 +869,14 @@ class WordDoc {
 						$tradetable->addCell(2000)->addText($host_sku->pre_variant,array('size' => 8,'align' => 'center'), $fontStyle);
 
 						if(!$x){
-							// if(!empty($scheme->rtms)){
-							// 	$cell = $tradetable->addCell(1800);
-							// 	foreach ($scheme->rtms as $rtm) {
-							// 		$innerCell = $cell->addTable('RTMS');
-							// 		$innerCell->addRow();
-							// 		$innerCell->addCell(1800)->addText(htmlspecialchars($rtm->sold_to),array('size' => 8), $noSpace);
-							// 	}
-							// }
+							if(!empty($scheme->rtms)){
+								$cell = $tradetable->addCell(2700);
+								foreach ($scheme->rtms as $rtm) {
+									$innerCell = $cell->addTable('RTMS');
+									$innerCell->addRow();
+									$innerCell->addCell(1800)->addText(htmlspecialchars($rtm->sold_to),array('size' => 8), $noSpace);
+								}
+							}
 
 							if(!empty($scheme->rtms)){
 								$cell = $tradetable->addCell(2700,$cellRowSpan);
