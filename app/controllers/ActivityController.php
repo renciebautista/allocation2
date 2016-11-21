@@ -3819,22 +3819,17 @@ public function exporttradedeal($id){
 				$tradedeal = Tradedeal::getActivityTradeDeal($activity);
 				$allocations = TradedealSchemeAllocation::exportAlloc($tradedeal);
 
-				// $sheet->setWidth('A', 16);
-				// $sheet->setWidth('B', 13);
-				// $sheet->setWidth('C', 20);
-				// $sheet->setWidth('D', 10);
-				// $sheet->setWidth('E', 30);
-				// $sheet->setWidth('F', 15);
-				// $sheet->setWidth('G', 20);
-				// $sheet->setWidth('H', 5);
-
 				$row = 1;
 				$sheet->row($row, array('AREA', 'Distributor Code', 'Distributor Name', 'Site Code', 'Site Name', 'Scheme Code', 'Scheme Description',
 					'Promo Description', 'Promo Type',
 		    		'SKU Codes Involved', 'SKUs Involved', 'Premium Code', 'Premium',
 		    		'Outlet Sub Types Involved', 'Outlet Codes', 'Allocation (Pieces)', 'UOM', 'Source of Premium', 
 		    		'Start Date', 'End Date'));
+
 				$sheet->getStyle("A1:V1")->getFont()->setBold(true);
+				$sheet->getDefaultStyle()
+				    ->getAlignment()
+				    ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
 			
 				$last_area = '';
 				$last_distributor = '';
@@ -3901,36 +3896,36 @@ public function exporttradedeal($id){
 		    		$channel_code = implode("; ", $ch_code);
 			    	$channel_desc = implode("; ", $ch_desc);
 					
-					if($last_area == $alloc->area){
-						if($last_distributor == $alloc->sold_to_code){
-							if($last_site == $alloc->plant_code){
-								$sheet->row($row, ['', '', '', '', '', $alloc->scheme_code, $alloc->scheme_description, $alloc->scheme_desc, $alloc->tradedeal_type,$host_code, $host_desc, $pre_code, $pre_desc, $channel_code, $channel_desc, $alloc->final_pcs, $pcs_deal, $source, $start_date, $end_date]);
-							}else{
-								// $row++;
-								$first_row = $row;
-								$sheet->row($row, ['', '', '', $alloc->plant_code, $alloc->ship_to_name, $alloc->scheme_code, $alloc->scheme_description, $alloc->scheme_desc, $alloc->tradedeal_type, $host_code, $host_desc, $pre_code, $pre_desc, $channel_code, $channel_desc, $alloc->final_pcs, $pcs_deal, $source, $start_date, $end_date]);
-							}
+					// if($last_area == $alloc->area){
+					// 	if($last_distributor == $alloc->sold_to_code){
+					// 		if($last_site == $alloc->plant_code){
+					// 			$sheet->row($row, ['', '', '', '', '', $alloc->scheme_code, $alloc->scheme_description, $alloc->scheme_desc, $alloc->tradedeal_type,$host_code, $host_desc, $pre_code, $pre_desc, $channel_code, $channel_desc, $alloc->final_pcs, $pcs_deal, $source, $start_date, $end_date]);
+					// 		}else{
+					// 			// $row++;
+					// 			$first_row = $row;
+					// 			$sheet->row($row, ['', '', '', $alloc->plant_code, $alloc->ship_to_name, $alloc->scheme_code, $alloc->scheme_description, $alloc->scheme_desc, $alloc->tradedeal_type, $host_code, $host_desc, $pre_code, $pre_desc, $channel_code, $channel_desc, $alloc->final_pcs, $pcs_deal, $source, $start_date, $end_date]);
+					// 		}
 							
-						}else{
-							if($last_site != $alloc->plant_code){
-								// $row++;
-								$first_row = $row;
-							}
-							$sheet->row($row, ['', $alloc->sold_to_code, $alloc->sold_to, $alloc->plant_code, $alloc->ship_to_name, $alloc->scheme_code, $alloc->scheme_description, $alloc->scheme_desc, $alloc->tradedeal_type, $host_code, $host_desc, $pre_code, $pre_desc, $channel_code, $channel_desc, $alloc->final_pcs, $pcs_deal, $source, $start_date, $end_date]);
+					// 	}else{
+					// 		if($last_site != $alloc->plant_code){
+					// 			// $row++;
+					// 			$first_row = $row;
+					// 		}
+					// 		$sheet->row($row, ['', $alloc->sold_to_code, $alloc->sold_to, $alloc->plant_code, $alloc->ship_to_name, $alloc->scheme_code, $alloc->scheme_description, $alloc->scheme_desc, $alloc->tradedeal_type, $host_code, $host_desc, $pre_code, $pre_desc, $channel_code, $channel_desc, $alloc->final_pcs, $pcs_deal, $source, $start_date, $end_date]);
 							
-						}
-					}else{
-						if(($last_site != $alloc->plant_code) && ($last_site != '')){
-							// $row++;
-							$first_row = $row;
-						}
+					// 	}
+					// }else{
+					// 	if(($last_site != $alloc->plant_code) && ($last_site != '')){
+					// 		// $row++;
+					// 		$first_row = $row;
+					// 	}
 						$sheet->row($row, [$alloc->area, $alloc->sold_to_code, $alloc->sold_to, $alloc->plant_code, $alloc->ship_to_name, $alloc->scheme_code, $alloc->scheme_description, $alloc->scheme_desc, $alloc->tradedeal_type, $host_code, $host_desc, $pre_code, $pre_desc, $channel_code, $channel_desc, $alloc->final_pcs, $pcs_deal, $source, $start_date, $end_date]);
 				
-					}
+					// }
 
-					$last_area = $alloc->area;
-					$last_distributor = $alloc->sold_to_code;
-					$last_site = $alloc->plant_code;
+					// $last_area = $alloc->area;
+					// $last_distributor = $alloc->sold_to_code;
+					// $last_site = $alloc->plant_code;
 				}
 
 		  //   	$sheet->row(1, array('Site Code', 'Site Description', 'Promotion ID', 'Promo Description', 'Promo Type',

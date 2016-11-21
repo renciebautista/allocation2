@@ -46,6 +46,12 @@ class WordDoc {
 		$channels = ActivityChannelList::getSelectecdChannels($activity->id);
 
 		$schemes = Scheme::getList($activity->id);
+
+		$tradedeal = Tradedeal::getActivityTradeDeal($activity);
+		if($tradedeal != null){
+			$tradedealschemes = TradedealScheme::getScheme($tradedeal->id);
+		}
+
 		$skuinvolves = array();
 		foreach ($schemes as $scheme) {
 			$involves = SchemeHostSku::where('scheme_id',$scheme->id)
@@ -700,101 +706,197 @@ class WordDoc {
 			}
 		}
 		
-		// schemes
-		if(count($schemes) > 0){
+		if(!isset($tradedeal)){
+			// schemes
+			if(count($schemes) > 0){
+				$section->addPageBreak();
+				// New landscape section
+				$section = $phpWord->addSection(
+				    array('paperSize' => 'Letter','orientation' => 'landscape','marginLeft' => 600, 'marginRight' => 600, 'marginTop' => 600, 'marginBottom' => 600)
+				);
+				$_ap = 0;
+				foreach ($schemes as $scheme) {
+
+					$count = count($scheme->allocations);
+					$_all = $count * count($scheme);
+					$loops = (int) ($count / 20);
+					
+					$cnt = 0;
+					for ($i = 0; $i < $loops; $i++) { 
+						$last_count =  $cnt+20;
+						$x = $i +1;
+						$_ap++;
+						$section->addText(htmlspecialchars($scheme->name),array('bold'=>true,'size' => 10));
+						$section->addText($x.' of '.$loops,array('bold'=>true,'size' => 10));
+						if($scheme->compute == 2){
+							$section->addText("Allocation is not system generated. It is manually computed by the proponent.",array('bold'=>true,'size' => 10));
+						}
+						
+
+						$styleTable = array('borderSize' => 6, 'borderColor' => '000000', 'cellMargin' => 60);
+						$fontStyle = array('bold' => true, 'align' => 'center');
+						$phpWord->addTableStyle('Schemes Table', $styleTable);
+						$table = $section->addTable('Schemes Table');
+						$scheme_style = array('size' => 6);
+						$headStyle = array('spaceAfter' => 0,'align' => 'center');
+
+						$table->addRow();
+						$table->addCell(500)->addText('#',$scheme_style, $headStyle );
+						$table->addCell(1000)->addText('GROUP',$scheme_style, $headStyle);
+						$table->addCell(2000)->addText('AREA NAME',$scheme_style, $headStyle);
+						$table->addCell(2000)->addText('CUSTOMER SOLD TO',$scheme_style, $headStyle );
+						$table->addCell(2500)->addText('CUSTOMER SHIP TO NAME',$scheme_style, $headStyle);
+						$table->addCell(1000)->addText('CHANNEL',$scheme_style, $headStyle);
+						$table->addCell(2500)->addText('ACCOUNT NAME',$scheme_style, $headStyle);
+						$table->addCell(1000)->addText('IN DEALS',$scheme_style, $headStyle);
+						$table->addCell(1000)->addText('IN CASES',$scheme_style, $headStyle);
+
+						if(in_array(1,$required_budget_type)){
+							$table->addCell(1000)->addText('TTS BUDGET',$scheme_style, $headStyle);
+						}
+						
+						if(in_array(2,$required_budget_type)){
+							$table->addCell(1000)->addText('PE BUDGET',$scheme_style, $headStyle);
+						}
+
+						
+						
+
+						for ($x=$cnt; $x <= $last_count; $x++) { 
+							if($cnt == $count){
+								break;
+							}
+							$num = $x + 1;
+							$rowstyle = array('bgColor' => 'FFFFFF');
+							if((empty($scheme->allocations[$x]->customer_id)) && (empty($scheme->allocations[$x]->shipto_id))){
+								$rowstyle = array('bgColor' => 'd9edf7');
+							}
+							if((!empty($scheme->allocations[$x]->customer_id)) && (!empty($scheme->allocations[$x]->shipto_id))){
+
+								$rowstyle = array('bgColor' => 'fcf8e3');
+							}
+
+							$table->addRow();
+							$table->addCell(500,$rowstyle)->addText($num,$scheme_style, array('spaceAfter' => 0,'align' => 'right'));
+							$table->addCell(1000,$rowstyle)->addText(htmlspecialchars($scheme->allocations[$x]->group),$scheme_style, array('spaceAfter' => 0));
+							$table->addCell(2000,$rowstyle)->addText(htmlspecialchars($scheme->allocations[$x]->area),$scheme_style,array('spaceAfter' => 0));
+							$table->addCell(2000,$rowstyle)->addText(htmlspecialchars($scheme->allocations[$x]->sold_to),$scheme_style, array('spaceAfter' => 0));
+							$table->addCell(2500,$rowstyle)->addText(htmlspecialchars($scheme->allocations[$x]->ship_to),$scheme_style,array('spaceAfter' => 0));
+							$table->addCell(1000,$rowstyle)->addText(htmlspecialchars($scheme->allocations[$x]->channel),$scheme_style, array('spaceAfter' => 0));
+							$table->addCell(2500,$rowstyle)->addText(htmlspecialchars($scheme->allocations[$x]->outlet),$scheme_style,array('spaceAfter' => 0));
+							$table->addCell(1000,$rowstyle)->addText(number_format($scheme->allocations[$x]->in_deals),$scheme_style, array('spaceAfter' => 0,'align' => 'right'));
+							$table->addCell(1000,$rowstyle)->addText(number_format($scheme->allocations[$x]->in_cases),$scheme_style, array('spaceAfter' => 0,'align' => 'right'));
+
+							if(in_array(1,$required_budget_type)){
+								$table->addCell(1000,$rowstyle)->addText(number_format($scheme->allocations[$x]->tts_budget,2),$scheme_style, array('spaceAfter' => 0,'align' => 'right'));
+							}
+							
+							if(in_array(2,$required_budget_type)){
+								$table->addCell(1000,$rowstyle)->addText(number_format($scheme->allocations[$x]->pe_budget,2),$scheme_style, array('spaceAfter' => 0,'align' => 'right'));
+							}
+
+							$cnt++;
+						}
+						if($_ap < ($loops * count($schemes)) ){
+							$section->addPageBreak();
+						}
+					}
+				}
+			}
+		}else{
+
+			// $section->addTextBreak(1);
+			// $section->addText("Table with colspan and rowspan", $header);
+
+			// $styleTable = array('borderSize' => 6, 'borderColor' => '999999');
+			$cellRowSpan = array('vMerge' => 'restart', 'valign' => 'top');
+			$cellRowContinue = array('vMerge' => 'continue');
+			// $cellColSpan = array('gridSpan' => 2, 'valign' => 'center');
+			// $cellHCentered = array('align' => 'center');
+			$cellVCentered = array('valign' => 'top');
+
+			// $phpWord->addTableStyle('Colspan Rowspan', $styleTable);
+			// $table = $section->addTable('Colspan Rowspan');
+			// $table->addRow();
+			// $table->addCell(2000, $cellRowSpan)->addText('A', null, $cellHCentered);
+			// $table->addCell(4000, $cellColSpan)->addText('B', null, $cellHCentered);
+			// $table->addCell(2000, $cellRowSpan)->addText('E', null, $cellHCentered);
+			// $table->addRow();
+			// $table->addCell(null, $cellRowContinue);
+			// $table->addCell(2000, $cellVCentered)->addText('C', null, $cellHCentered);
+			// $table->addCell(2000, $cellVCentered)->addText('D', null, $cellHCentered);
+			// $table->addCell(null, $cellRowContinue);
+
 			$section->addPageBreak();
 			// New landscape section
 			$section = $phpWord->addSection(
 			    array('paperSize' => 'Letter','orientation' => 'landscape','marginLeft' => 600, 'marginRight' => 600, 'marginTop' => 600, 'marginBottom' => 600)
 			);
-			$_ap = 0;
-			foreach ($schemes as $scheme) {
+			$section->addText("BBFREE Schemes",array('bold'=>true,'size' => 10));
+			$section->addText("Download attached excel file for allocations.",array('size' => 10));
+			$section->addTextBreak(1);
+			// add table
+			$styleFirstRow = array('borderBottomSize' => 18, 'borderBottomColor' => '0000FF', 'bgColor' => '000000','color' => 'ffffff');
+			$phpWord->addTableStyle('Tradedeal Table', $styleTable, $styleFirstRow);
+			$tradetable = $section->addTable('Tradedeal Table');
+			$tradetable->addRow();
+			$tradetable->addCell(1800)->addText("Activity",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+			$tradetable->addCell(1400)->addText("Scheme Code",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+			$tradetable->addCell(2000)->addText("Scheme Description",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+			$tradetable->addCell(1400)->addText("Host Code",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+			$tradetable->addCell(2000)->addText("Host Description",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+			$tradetable->addCell(1400)->addText("Premium Code / PIMS Code",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+			$tradetable->addCell(2000)->addText("Premium Description",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+			$tradetable->addCell(2700)->addText("Channels Involved",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
 
-				$count = count($scheme->allocations);
-				$_all = $count * count($scheme);
-				$loops = (int) ($count / 20);
-				
-				$cnt = 0;
-				for ($i = 0; $i < $loops; $i++) { 
-					$last_count =  $cnt+20;
-					$x = $i +1;
-					$_ap++;
-					$section->addText(htmlspecialchars($scheme->name),array('bold'=>true,'size' => 10));
-					$section->addText($x.' of '.$loops,array('bold'=>true,'size' => 10));
-					if($scheme->compute == 2){
-						$section->addText("Allocation is not system generated. It is manually computed by the proponent.",array('bold'=>true,'size' => 10));
-					}
-					
-
-					$styleTable = array('borderSize' => 6, 'borderColor' => '000000', 'cellMargin' => 60);
-					$fontStyle = array('bold' => true, 'align' => 'center');
-					$phpWord->addTableStyle('Schemes Table', $styleTable);
-					$table = $section->addTable('Schemes Table');
-					$scheme_style = array('size' => 6);
-					$headStyle = array('spaceAfter' => 0,'align' => 'center');
-
-					$table->addRow();
-					$table->addCell(500)->addText('#',$scheme_style, $headStyle );
-					$table->addCell(1000)->addText('GROUP',$scheme_style, $headStyle);
-					$table->addCell(2000)->addText('AREA NAME',$scheme_style, $headStyle);
-					$table->addCell(2000)->addText('CUSTOMER SOLD TO',$scheme_style, $headStyle );
-					$table->addCell(2500)->addText('CUSTOMER SHIP TO NAME',$scheme_style, $headStyle);
-					$table->addCell(1000)->addText('CHANNEL',$scheme_style, $headStyle);
-					$table->addCell(2500)->addText('ACCOUNT NAME',$scheme_style, $headStyle);
-					$table->addCell(1000)->addText('IN DEALS',$scheme_style, $headStyle);
-					$table->addCell(1000)->addText('IN CASES',$scheme_style, $headStyle);
-
-					if(in_array(1,$required_budget_type)){
-						$table->addCell(1000)->addText('TTS BUDGET',$scheme_style, $headStyle);
-					}
-					
-					if(in_array(2,$required_budget_type)){
-						$table->addCell(1000)->addText('PE BUDGET',$scheme_style, $headStyle);
-					}
-
-					
-					
-
-					for ($x=$cnt; $x <= $last_count; $x++) { 
-						if($cnt == $count){
-							break;
+			foreach($tradedealschemes as $scheme){
+				$x = false;
+				$host_cnt = 1;
+				if(!empty($scheme->host_skus)){
+					$host_cnt = count($scheme->host_skus);
+					foreach($scheme->host_skus as $host_sku){
+						$tradetable->addRow();
+						if(!$x){
+							$tradetable->addCell(1800, $cellRowSpan)->addText($scheme->name,array('size' => 8,'align' => 'center'), $fontStyle);
+						}else{
+							$tradetable->addCell(null, $cellRowContinue);
 						}
-						$num = $x + 1;
-						$rowstyle = array('bgColor' => 'FFFFFF');
-						if((empty($scheme->allocations[$x]->customer_id)) && (empty($scheme->allocations[$x]->shipto_id))){
-							$rowstyle = array('bgColor' => 'd9edf7');
-						}
-						if((!empty($scheme->allocations[$x]->customer_id)) && (!empty($scheme->allocations[$x]->shipto_id))){
+						$tradetable->addCell(800)->addText($host_sku->scheme_code,array('size' => 8,'align' => 'center'), $fontStyle);
+						$tradetable->addCell(2000)->addText($host_sku->scheme_desc,array('size' => 8,'align' => 'center'), $fontStyle);
+						$tradetable->addCell(1400)->addText($host_sku->host_code,array('size' => 8,'align' => 'center'), $fontStyle);
+						$tradetable->addCell(2000)->addText($host_sku->desc_variant,array('size' => 8,'align' => 'center'), $fontStyle);
+						$tradetable->addCell(1400)->addText($host_sku->pre_code,array('size' => 8,'align' => 'center'), $fontStyle);
+						$tradetable->addCell(2000)->addText($host_sku->pre_variant,array('size' => 8,'align' => 'center'), $fontStyle);
 
-							$rowstyle = array('bgColor' => 'fcf8e3');
-						}
+						if(!$x){
+							// if(!empty($scheme->rtms)){
+							// 	$cell = $tradetable->addCell(1800);
+							// 	foreach ($scheme->rtms as $rtm) {
+							// 		$innerCell = $cell->addTable('RTMS');
+							// 		$innerCell->addRow();
+							// 		$innerCell->addCell(1800)->addText(htmlspecialchars($rtm->sold_to),array('size' => 8), $noSpace);
+							// 	}
+							// }
 
-						$table->addRow();
-						$table->addCell(500,$rowstyle)->addText($num,$scheme_style, array('spaceAfter' => 0,'align' => 'right'));
-						$table->addCell(1000,$rowstyle)->addText(htmlspecialchars($scheme->allocations[$x]->group),$scheme_style, array('spaceAfter' => 0));
-						$table->addCell(2000,$rowstyle)->addText(htmlspecialchars($scheme->allocations[$x]->area),$scheme_style,array('spaceAfter' => 0));
-						$table->addCell(2000,$rowstyle)->addText(htmlspecialchars($scheme->allocations[$x]->sold_to),$scheme_style, array('spaceAfter' => 0));
-						$table->addCell(2500,$rowstyle)->addText(htmlspecialchars($scheme->allocations[$x]->ship_to),$scheme_style,array('spaceAfter' => 0));
-						$table->addCell(1000,$rowstyle)->addText(htmlspecialchars($scheme->allocations[$x]->channel),$scheme_style, array('spaceAfter' => 0));
-						$table->addCell(2500,$rowstyle)->addText(htmlspecialchars($scheme->allocations[$x]->outlet),$scheme_style,array('spaceAfter' => 0));
-						$table->addCell(1000,$rowstyle)->addText(number_format($scheme->allocations[$x]->in_deals),$scheme_style, array('spaceAfter' => 0,'align' => 'right'));
-						$table->addCell(1000,$rowstyle)->addText(number_format($scheme->allocations[$x]->in_cases),$scheme_style, array('spaceAfter' => 0,'align' => 'right'));
-
-						if(in_array(1,$required_budget_type)){
-							$table->addCell(1000,$rowstyle)->addText(number_format($scheme->allocations[$x]->tts_budget,2),$scheme_style, array('spaceAfter' => 0,'align' => 'right'));
+							if(!empty($scheme->rtms)){
+								$cell = $tradetable->addCell(2700,$cellRowSpan);
+								foreach ($scheme->channels as $channel) {
+									$innerCell = $cell->addTable('Channels');
+									$innerCell->addRow();
+									$innerCell->addCell(2700)->addText(htmlspecialchars($channel->sub_type_desc),array('size' => 8), $noSpace);
+								}
+							}
+							
+							// $tradetable->addCell(1800, $cellRowSpan)->addText($scheme->name,array('size' => 8,'align' => 'center'), $fontStyle);
+							$x = true;
+						}else{
+							$tradetable->addCell(null, $cellRowContinue);
 						}
 						
-						if(in_array(2,$required_budget_type)){
-							$table->addCell(1000,$rowstyle)->addText(number_format($scheme->allocations[$x]->pe_budget,2),$scheme_style, array('spaceAfter' => 0,'align' => 'right'));
-						}
-
-						$cnt++;
-					}
-					if($_ap < ($loops * count($schemes)) ){
-						$section->addPageBreak();
 					}
 				}
-			}
+				
+			}				
 		}
 
 		return $phpWord;

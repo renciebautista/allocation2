@@ -823,7 +823,7 @@
 			@else
 			<div id="allocations">
 				<h2>BBFREE Schemes</h2>
-				<h3>Download attach excel file for allocations.</h3>
+				<h3>Download attached excel file for allocations.</h3>
 				<table class="sub-table">
 								<tr>
 									<th style="width:14%">Activity</th>
@@ -844,10 +844,11 @@
 											@foreach($scheme->host_skus as $host_sku)
 											<?php $y = false; ?>
 											@if(!$x)
-											<tr>
+												<tr>
 												<td rowspan="{{$host_cnt}}">{{ $scheme->name }}</td>
 											@endif
-												@if(!$y)
+
+											@if(!$y)
 												<td>{{ $host_sku->scheme_code }} </td>
 												<td>{{ $host_sku->scheme_desc }}</td>
 												<td>{{ $host_sku->host_code }}</td>
@@ -855,21 +856,22 @@
 												<td>{{ $host_sku->pre_code }}</td>
 												<td>{{ $host_sku->pre_variant }}</td>
 												<?php $y = true; ?>
-												@endif
-												@if(!$x)
+											@endif
+											
+											@if(!$x)
 												<?php $x = true; ?>
 												<td rowspan="{{$host_cnt}}" >
-													@if(!empty($scheme->rtms))
-														@foreach($scheme->rtms as $rtm)
-														{{ $rtm->sold_to }} </br>
-														@endforeach
-													@endif
-													
-													@foreach($scheme->channels as $channel)
-													{{ $channel->sub_type_desc }} </br>
+												@if(!empty($scheme->rtms))
+													@foreach($scheme->rtms as $rtm)
+													{{ $rtm->sold_to }} </br>
 													@endforeach
-												</td>
 												@endif
+												
+												@foreach($scheme->channels as $channel)
+												{{ $channel->sub_type_desc }} </br>
+												@endforeach
+												</td>
+											@endif
 											</tr>
 											@endforeach
 										@endif

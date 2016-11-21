@@ -136,7 +136,11 @@ class TradedealSchemeAllocation extends \Eloquent {
 			->join('tradedeal_types', 'tradedeal_types.id', '=', 'tradedeal_schemes.tradedeal_type_id')
 			->join('tradedeals', 'tradedeals.id', '=', 'tradedeal_schemes.tradedeal_id')
 			->where('tradedeals.activity_id', $activity->id)
-			->orderBy('tradedeal_scheme_allocations.id')
+			->orderBy('tradedeal_schemes.name')
+			->orderBy('scheme_code')
+			->orderBy('scheme_desc')
+			->orderBy('area')
+			->orderBy('sold_to')
 			->get();
 	}
 
