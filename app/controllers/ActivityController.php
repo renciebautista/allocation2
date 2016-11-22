@@ -15,16 +15,6 @@ class ActivityController extends BaseController {
 	 */
 	public function index()
 	{
-
-		// if(Auth::user()->hasRole("FIELD SALES")){
-		// 	Input::flash();
-		// 	$cycles = Cycle::getLists();
-		// 	$types = ActivityType::getLists();
-		// 	$scopes = ScopeType::getLists();
-		// 	$activities = Activity::searchField(Input::get('cy'),Input::get('ty'),Input::get('sc'),Input::get('title'));
-		// 	return View::make('dashboard.field',compact('activities', 'cycles','types','scopes'));
-		// }
-
 		if(Auth::user()->inRoles(['PROPONENT','FIELD SALES'])){
 			Input::flash();
 			$statuses = ActivityStatus::availableStatus();
@@ -84,7 +74,6 @@ class ActivityController extends BaseController {
 				return View::make('activity.create', compact('scope_types', 'planners', 'approvers', 'cycles',
 				 'activity_types', 'divisions' , 'objectives',  'users', 'type'));
 			}
-
 			return Response::make(View::make('shared/404'), 404);
 		}else{
 			$activity_types = ActivityType::getWithNetworks();
@@ -92,10 +81,7 @@ class ActivityController extends BaseController {
 			$objectives = Objective::getLists();
 			$divisions = Pricelist::divisions();
 			return View::make('activity.createcusomized', compact('cycles', 'activity_types', 'objectives', 'divisions'));
-			
 		}
-		
-		
 	}
 
 	/**
