@@ -248,6 +248,18 @@ class Pricelist extends \Eloquent {
 			foreach($data2 as $row) {
 			    $data->add($row);
 			}
+		}else{
+			$data2 = LaunchSkuAccess::select('sap_code', DB::raw('CONCAT(sap_desc, " - ", sap_code) AS full_desc'))
+			->join('pricelists','pricelists.sap_code','=','launch_sku_access.sku_code','left')
+			->where('launch_sku_access.user_id', Auth::user()->id)
+			->where('active',1)
+			->where('launch',1)
+			->whereIn('brand_desc',$filter)
+			->orderBy('full_desc')->get();
+
+			foreach($data2 as $row) {
+			    $data->add($row);
+			}
 		}
 		
 		return $data->lists('full_desc', 'sap_code');
