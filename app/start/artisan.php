@@ -23,4 +23,5 @@ Artisan::add(new UpdateScheme);
 Artisan::add(new ExportSales);
 Artisan::add(new MakeSob);
 Artisan::add(new ReleaseActivity);
+Artisan::add(new MakeFieldTradedeal);
 

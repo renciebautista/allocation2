@@ -12,6 +12,8 @@ class WordScheduler{
 
 		Artisan::call('make:word',array('id' => $data['id']));
 		
+		Artisan::call('make:fieldtradedeal',array('id' => $data['id']));
+		
 		$ejob->status = 'finished'; //Set job status to finished
 
 		$ejob->save();
