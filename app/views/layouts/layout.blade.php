@@ -277,7 +277,11 @@
 
 					<ul class="nav navbar-nav navbar-right">
 						<li class="dropdown">
-							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="download">{{ ucwords(strtolower(Auth::user()->getFullname())) }} [ {{ strtoupper(Auth::user()->department->department) }} ]<span class="caret"></span></a>
+							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="download">{{ ucwords(strtolower(Auth::user()->getFullname())) }} 
+								@if(isset(Auth::user()->department->department))
+								[ {{ strtoupper(Auth::user()->department->department) }} ]
+								@endif
+								<span class="caret"></span></a>
 							<ul class="dropdown-menu" aria-labelledby="download">  
 								<li>{{ HTML::linkAction('ProfileController@index', 'My Profile') }}</li>  
 								<li>{{ HTML::linkAction('ProfileController@changepassword', 'Change Password') }}</li>  

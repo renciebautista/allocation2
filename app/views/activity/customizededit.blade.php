@@ -487,17 +487,42 @@
 									{{ Form::hidden('customers', null, array('id' => 'customers')) }}
 								</div>
 
-								<div class="col-lg-6">
-									{{ Form::label('tree4', 'Select DT Channels Involved', array('class' => 'control-label' )) }}<br>
-									<div id="chSel">
-										<a href="#" id="btnChSelectAll">Select all</a> |
-										<a href="#" id="btnChDeselectAll">Deselect all</a>
-									</div>
-									
-									<div id="tree4"></div>
-									{{ Form::hidden('channels_involved', null, array('id' => 'channels_involved')) }}
-								</div>
+								
 							</div>	
+							<div class="row">
+								<div class="col-lg-6">
+									<div class="form-group">
+										<div class="checkbox">
+									        <label>
+									        	{{ Form::checkbox('allow_force', 1,$activity->allow_force,['id' => 'allow_force']) }} Enable Force Allocation
+									        </label>
+									    </div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div  class="col-lg-12">
+									<caption>Force Allocation</caption>
+									<table id="force_alloc" class="table table-striped table-condensed table-hover table-bordered">
+									  	<thead>
+										    <tr>
+										    	<th style="width:10%;">Group</th>
+										      	<th>Area</th>
+										      	<th>Sales Multiplier</th>
+										    </tr>
+									  	</thead>
+									  	<tbody>
+									  		@foreach($areas as $area)
+									  		<tr>
+									  			<td>{{ $area->group_name }}</td>
+									  			<td>{{ $area->area_name }}</td>
+								  				<td><input class="input-number disabled-readonly" id="{{ $area->area_code }}"  name="force_alloc[{{ $area->area_code }}]" value="{{ $area->multi }}" type="text"></td>
+									  		</tr>
+									  		@endforeach
+									  	</tbody>
+									</table> 
+								</div>
+						  	</div>
 							
 							
 						</div>

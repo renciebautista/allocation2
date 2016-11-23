@@ -119,6 +119,7 @@
 						<th class="center">Scope</th>
 						<th class="center">Activity Type</th>
 						<th class="center">Activity Title</th>
+						<th class="center">Proponent</th>
 						<th class="center">PMOG Partner</th>
 						<th class="center">Start Date</th>
 						<th class="center">End Date</th>
@@ -140,6 +141,7 @@
 						<td>{{ $activity->scope_name }}</td>
 						<td>{{ $activity->activity_type }}</td>
 						<td>{{ $activity->circular_name }}</td>
+						<td>{{ $activity->proponent }}</td>
 						<td>{{ $activity->planner }}</td>
 						<td>{{ date_format(date_create($activity->eimplementation_date),'m/d/Y') }}</td>
 						<td>{{ date_format(date_create($activity->end_date),'m/d/Y') }}</td>

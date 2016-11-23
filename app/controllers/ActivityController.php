@@ -593,7 +593,41 @@ class ActivityController extends BaseController {
 
 			$timings = ActivityTiming::getList($activity->id);
 
-			// $activity_roles = ActivityRole::getList($activity->id);
+			// tradedeal
+			$tradedeal = Tradedeal::getActivityTradeDeal($activity);
+
+			if($tradedeal != null){
+				$tradedeal_skus = TradedealPartSku::where('activity_id', $activity->id)->get();
+
+				$acdivisions = \ActivityDivision::getList($activity->id);
+				$accategories = \ActivityCategory::selected_category($activity->id);
+				$acbrands = \ActivityBrand::selected_brand($activity->id);
+
+				$host_skus = ActivitySku::tradedealSkus($activity);
+				$ref_skus = Sku::items($acdivisions,$accategories,$acbrands);
+
+				$pre_skus = \Pricelist::items();
+				$dealtypes = TradedealType::getList();
+				$dealuoms = TradedealUom::get()->lists('tradedeal_uom', 'id');
+
+				$tradedealschemes = [];
+				$total_deals = Tradedeal::total_deals($activity);
+				$total_premium_cost = Tradedeal::total_premium_cost($activity);
+				$tradedealschemes = TradedealScheme::getScheme($tradedeal->id);
+			}
+			// end tradedeal
+
+			$force_allocs = ForceAllocation::getlist($activity->id);
+			$areas = Area::getAreaWithGroup();
+
+			foreach ($areas as $key => $area) {
+				$area->multi = "1.00";
+				foreach ($force_allocs as $force_alloc) {
+					if($area->area_code == $force_alloc->area_code){
+						$area->multi = $force_alloc->multi;
+					}
+				}
+			}
 
 
 			$activity_types = ActivityType::getWithNetworks();
@@ -609,6 +643,9 @@ class ActivityController extends BaseController {
 			$ch_approvers = explode(",", $settings->customized_preapprover);
 
 			$activty_members = ActivityMember::memberList($activity);
+
+
+
 
 			if(Activity::myActivity($activity)){ // cmd / field
 				if($activity->status_id > 3){
@@ -657,7 +694,9 @@ class ActivityController extends BaseController {
 					 'activity_types', 'divisions' ,'objectives',  'users', 'budgets', 'nobudgets', 
 					 'sel_objectives', 'sel_divisions',  'schemes', 'scheme_summary', 'networks', 'timings' ,
 					 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings',
-					 'comments' ,'submitstatus', 'allowAdd', 'joborders', 'show_action', 'allowJo', 'timelines', 'activty_members'));
+					 'comments' ,'submitstatus', 'allowAdd', 'joborders', 'show_action', 'allowJo', 'timelines', 'activty_members',
+					 'tradedeal', 'tradedeal_skus', 'dealtypes', 'dealuoms', 'host_skus', 'ref_skus',
+					 'pre_skus', 'tradedealschemes', 'td_shiptos', 'td_premiums', 'total_deals', 'total_premium_cost', 'areas'));
 		}
 		
 	}
