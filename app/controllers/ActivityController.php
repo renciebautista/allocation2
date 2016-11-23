@@ -571,7 +571,93 @@ class ActivityController extends BaseController {
 			}
 		}else{ 
 			// customized
+			$approvers = User::getApprovers(['GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']);
+			$sel_approver = ActivityApprover::getList($activity->id);
+			$sel_objectives = ActivityObjective::getList($activity->id);
+			$sel_divisions = ActivityDivision::getList($activity->id);
+			
+			$objectives = Objective::getLists();
+			$budgets = ActivityBudget::getBudgets($activity->id);
+			$nobudgets = ActivityNobudget::getBudgets($activity->id);
+			$schemes = Scheme::getList($activity->id);
+			$scheme_summary = Scheme::getSummary($schemes);
+			$materials = ActivityMaterial::getList($activity->id);
+			// attachments
+			$fdapermits = ActivityFdapermit::getList($activity->id);
+			$fis = ActivityFis::getList($activity->id);
+			$artworks = ActivityArtwork::getList($activity->id);
+			$backgrounds = ActivityBackground::getList($activity->id);
+			$bandings = ActivityBanding::getList($activity->id);
+			// comments
+			$comments = ActivityComment::getList($activity->id);
 
+			$timings = ActivityTiming::getList($activity->id);
+
+			// $activity_roles = ActivityRole::getList($activity->id);
+
+
+			$activity_types = ActivityType::getWithNetworks();
+			$cycles = Cycle::getLists();
+			$divisions = Pricelist::divisions();
+
+			$allowAdd = false;
+			$show_action = true;
+			$allowJo = false;
+			$joborders = Joborder::getActivityJo($activity);
+			$view = 'activity.customizedreadonly';
+			$settings = Setting::find(1);
+			$ch_approvers = explode(",", $settings->customized_preapprover);
+
+			$activty_members = ActivityMember::memberList($activity);
+
+			if(Activity::myActivity($activity)){ // cmd / field
+				if($activity->status_id > 3){
+					$view = 'activity.customizedreadonly';
+					$submitstatus = array('2' => 'RECALL ACTIVITY');
+				}else{
+					$allowAdd = true;
+					$view = 'activity.customizededit';
+
+					if(ActivityMember::allowToSubmit($activity)){
+						$submitstatus = array('1' => 'SUBMIT ACTIVITY','4' => 'SAVE AS DRAFT');
+						$allowJo = true;
+					}else{
+						$submitstatus = array('4' => 'SAVE AS DRAFT');
+					}
+				}
+			}else{ //others
+				$activity_member = ActivityMember::myActivity($activity->id);
+				if($activity_member){ // members
+					if($activity_member->pre_approve){
+						if($activity->status_id > 3){
+							$view = 'activity.customizedreadonly';
+							$show_action = false;
+						}else{
+							$allowAdd = true;
+							$show_action = false;
+							$view = 'activity.customizedreadonly';
+						}
+					}else{
+						if(ActivityMember::allowToSubmit($activity)){
+							$show_action = false;
+							$view = 'activity.customizedreadonly';
+						}else{
+							return Response::make(View::make('shared/404'), 404);
+						}
+						
+					}
+					
+				}else{ 
+					return Response::make(View::make('shared/404'), 404);
+				}
+				
+			}
+			
+			return View::make($view, compact('activity', 'planners', 'approvers', 'sel_approver', 'cycles',
+					 'activity_types', 'divisions' ,'objectives',  'users', 'budgets', 'nobudgets', 
+					 'sel_objectives', 'sel_divisions',  'schemes', 'scheme_summary', 'networks', 'timings' ,
+					 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings',
+					 'comments' ,'submitstatus', 'allowAdd', 'joborders', 'show_action', 'allowJo', 'timelines', 'activty_members'));
 		}
 		
 	}
@@ -948,40 +1034,27 @@ class ActivityController extends BaseController {
 				->with('message', $message);
 	}
 
-	public function updateactivity($id){
-		if(Request::ajax()){
-			if(Auth::user()->hasRole("PROPONENT")){
-				$arr = DB::transaction(function() use ($id)  {
-					$activity = Activity::findOrFail($id);
-					
-					if(empty($activity)){
-						$arr['success'] = 0;
-						$arr['error'] = 'Activity not found';
-					}else{
-						$status_id = (int) Input::get('submitstatus');
-						$planner_count = ActivityPlanner::getPlannerCount($activity->id);
-						$activity_status = 3;
-						$pro_recall = 0;
-						$pmog_recall = 0;
-						$allow_comment = false;
-						$allow_update = false;
+	private function updateActivityStatus($activity){
+		$arr = DB::transaction(function() use ($activity)  {		
+			if(empty($activity)){
+				$arr['success'] = 0;
+				$arr['error'] = 'Activity not found';
+			}else{
+				$status_id = (int) Input::get('submitstatus');
+				$planner_count = ActivityPlanner::getPlannerCount($activity->id);
+				$activity_status = 3;
+				$pro_recall = 0;
+				$pmog_recall = 0;
+				$allow_comment = false;
+				$allow_update = false;
 
-						// save as draft
-						if($status_id == 4){
-							$comment_status = "SAVED AS DRAFT";
-							$class = "text-success";
-							$allow_comment = true;
-						}
+				// save as draft
+				if($status_id == 4){
+					$comment_status = "SAVED AS DRAFT";
+					$class = "text-success";
+					$allow_comment = true;
+				}
 
-						// recall activity
-						if($status_id == 2){
-							$comment_status = "RECALLED ACTIVITY";
-							$class = "text-warning";
-							ActivityApprover::resetAll($activity->id);
-							$allow_update = true;
-							$allow_comment = true;
-						}
-=======
 				// recall activity
 				if($status_id == 2){
 					$comment_status = "RECALLED THE ACTIVITY";
@@ -990,7 +1063,6 @@ class ActivityController extends BaseController {
 					$allow_update = true;
 					$allow_comment = true;
 				}
->>>>>>> customized
 
 				// submit activity
 				if($status_id == 1){
@@ -3059,7 +3131,6 @@ class ActivityController extends BaseController {
 		}
 	}
 
-<<<<<<< HEAD
 	public function updatetradedeal($id){
 			$activity = Activity::findOrFail($id);
 
@@ -4315,7 +4386,8 @@ public function exporttradedeal($id){
 		    });
 
 		})->download('xls');
-=======
+	}
+
 	public function addmember($id){
 		if(Request::ajax()){
 			$settings = Setting::find(1);
@@ -4693,7 +4765,6 @@ public function exporttradedeal($id){
 					->with('message', 'Activity was successfuly updated.');	
 			}	
 		}
->>>>>>> customized
 	}
 
 }
