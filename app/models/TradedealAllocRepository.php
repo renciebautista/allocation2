@@ -235,27 +235,165 @@ class TradedealAllocRepository  {
 			$tradedeal_scheme_sku_id = $host_skus[0]->id;
 		}
 
+		$ship_nodes = [];
+		$cust_nodes = [];
+		
+		
+		if(!empty($customers)){
+			foreach ($customers as $selected_customer) {
+				$n = explode('.', $selected_customer);
+				if(count($n) == 1){
+					$n_nodes = CustomerTree::where('channel_code', $n[0])->get();
+					foreach ($n_nodes as $n_node) {
+
+						if($n_node->plant_code != ''){
+							$ship_nodes[] = $n_node->plant_code;
+						}
+
+						$cust_nodes[] = $n_node->customer_code;
+
+					}
+					
+				}
+
+				if(count($n) == 2){
+					$n_nodes = CustomerTree::where('channel_code', $n[0])
+						->where('group_code', $n[1])
+						->get();
+					foreach ($n_nodes as $n_node) {
+						if($n_node->plant_code != ''){
+							$ship_nodes[] = $n_node->plant_code;
+						}
+
+						$cust_nodes[] = $n_node->customer_code;
+					}
+					
+				}
+
+				if(count($n) == 3){
+					$n_nodes = CustomerTree::where('channel_code', $n[0])
+						->where('group_code', $n[1])
+						->where('area_code', $n[2])
+						->get();
+					foreach ($n_nodes as $n_node) {
+						if($n_node->plant_code != ''){
+							$ship_nodes[] = $n_node->plant_code;
+						}
+
+						$cust_nodes[] = $n_node->customer_code;
+					}
+					
+				}
+
+				if(count($n) == 4){
+					$n_nodes = CustomerTree::where('channel_code', $n[0])
+						->where('group_code', $n[1])
+						->where('area_code', $n[2])
+						->where('customer_code', $n[3])
+						->get();
+					foreach ($n_nodes as $n_node) {
+						if($n_node->plant_code != ''){
+							$ship_nodes[] = $n_node->plant_code;
+						}
+
+						$cust_nodes[] = $n_node->customer_code;
+					}
+					
+				}
+
+				if(count($n) == 5){
+					$n_nodes = CustomerTree::where('channel_code', $n[0])
+						->where('group_code', $n[1])
+						->where('area_code', $n[2])
+						->where('customer_code', $n[3])
+						->where('plant_code', $n[4])
+						->get();
+					foreach ($n_nodes as $n_node) {
+						if($n_node->plant_code != ''){
+							$ship_nodes[] = $n_node->plant_code;
+						}
+
+						$cust_nodes[] = $n_node->customer_code;
+					}
+					
+				}
+
+				if(count($n) == 6){
+					$n_nodes = CustomerTree::where('channel_code', $n[0])
+						->where('group_code', $n[1])
+						->where('area_code', $n[2])
+						->where('customer_code', $n[3])
+						->where('plant_code', $n[4])
+						->where('account_id', $n[5])
+						->get();
+					foreach ($n_nodes as $n_node) {
+						if($n_node->plant_code != ''){
+							$ship_nodes[] = $n_node->plant_code;
+						}
+
+						$cust_nodes[] = $n_node->customer_code;
+					}
+					
+				}
+			}
+		}
+
+		$selected_customers = array_unique($cust_nodes);
+		// Helper::debug($selected_customers);
+		$selected_shiptos = array_unique($ship_nodes);
+
+
 		foreach ($gsvsales as $customer) {
-			if((in_array($customer->customer_code, $trade_customers))){
+			// if((in_array($customer->customer_code, $trade_customers))){
 				if($customer->trade_deal == 1){
-					if(!empty($customer->shiptos)){
-						foreach ($customer->shiptos as $shipto) {
+					if(in_array($customer->customer_code, $selected_customers)){
+						if(!empty($customer->shiptos)){
+							foreach ($customer->shiptos as $shipto) {
+								if(in_array($shipto['plant_code'], $selected_shiptos)){
+									$alloc = new TradedealSchemeAllocation;
+									$alloc->tradedeal_scheme_id = $tradealscheme->id;
+									$alloc->tradedeal_scheme_sku_id = $tradedeal_scheme_sku_id; 
+									$alloc->scheme_code = $deal_id; 
+									$alloc->scheme_desc = $scheme_desc;
+									$alloc->area_code = $customer->area_code;
+									$alloc->area = $customer->area_name;
+									$alloc->sold_to_code = $customer->customer_code;
+									$alloc->sold_to =  $customer->customer_name;
+									$alloc->ship_to_code = $shipto['ship_to_code'];
+									$alloc->plant_code = $shipto['plant_code'];
+									$alloc->ship_to_name = $shipto['ship_to_name'];
+									$alloc->sold_to_gsv = $shipto['gsv']; 
+									$alloc->weekly_run_rates = self::weekly_run_rates($tradealscheme, $shipto['gsv'], $host_skus);
+									$alloc->pur_req = self::purchase_requirement($tradealscheme, $shipto['gsv'], $uom_multiplpier, $host_skus);
+									$alloc->computed_pcs = self::computed_pcs($alloc->weekly_run_rates,$tradedeal->alloc_in_weeks, $alloc->pur_req, $uom_premium, $tradealscheme->free);
+									$alloc->manual_pcs = 0;
+									$alloc->final_pcs = $alloc->computed_pcs;
+									$alloc->prem_cost = $premium['cost'];
+									$alloc->computed_cost = $alloc->computed_pcs * $premium['cost'];
+									$alloc->deal_multiplier = $uom_premium;
+									$alloc->pre_code = $premium['pre_code'];
+									$alloc->pre_desc = $premium['pre_desc'];
+									$alloc->pre_desc_variant = $premium['pre_desc'].' '.$premium['variant'];
+									$alloc->save();
+								}
+							}
+						}else{
 							$alloc = new TradedealSchemeAllocation;
 							$alloc->tradedeal_scheme_id = $tradealscheme->id;
 							$alloc->tradedeal_scheme_sku_id = $tradedeal_scheme_sku_id; 
-							$alloc->scheme_code = $deal_id; 
+							$alloc->scheme_code = $deal_id;
 							$alloc->scheme_desc = $scheme_desc;
 							$alloc->area_code = $customer->area_code;
 							$alloc->area = $customer->area_name;
 							$alloc->sold_to_code = $customer->customer_code;
 							$alloc->sold_to =  $customer->customer_name;
-							$alloc->ship_to_code = $shipto['ship_to_code'];
-							$alloc->plant_code = $shipto['plant_code'];
-							$alloc->ship_to_name = $shipto['ship_to_name'];
-							$alloc->sold_to_gsv = $shipto['gsv']; 
-							$alloc->weekly_run_rates = self::weekly_run_rates($tradealscheme, $shipto['gsv'], $host_skus);
-							$alloc->pur_req = self::purchase_requirement($tradealscheme, $shipto['gsv'], $uom_multiplpier, $host_skus);
-							$alloc->computed_pcs = self::computed_pcs($alloc->weekly_run_rates,$tradedeal->alloc_in_weeks, $alloc->pur_req, $uom_premium, $tradealscheme->free);
+							// $alloc->ship_to_code = $shipto['ship_to_code'];
+							// $alloc->plant_code = $shipto['plant_code'];
+							// $alloc->ship_to_name = $shipto['ship_to_name'];
+							$alloc->sold_to_gsv = $customer->gsv; 
+							$alloc->weekly_run_rates = self::weekly_run_rates($tradealscheme, $customer->gsv, $host_skus);
+							$alloc->pur_req = self::purchase_requirement($tradealscheme, $customer->gsv, $uom_multiplpier, $host_skus);
+							$alloc->computed_pcs = self::computed_pcs($alloc->weekly_run_rates,$tradedeal->alloc_in_weeks, $alloc->pur_req, $uom_multiplpier, $tradealscheme->free);
 							$alloc->manual_pcs = 0;
 							$alloc->final_pcs = $alloc->computed_pcs;
 							$alloc->prem_cost = $premium['cost'];
@@ -266,36 +404,9 @@ class TradedealAllocRepository  {
 							$alloc->pre_desc_variant = $premium['pre_desc'].' '.$premium['variant'];
 							$alloc->save();
 						}
-						
-					}else{
-						$alloc = new TradedealSchemeAllocation;
-						$alloc->tradedeal_scheme_id = $tradealscheme->id;
-						$alloc->tradedeal_scheme_sku_id = $tradedeal_scheme_sku_id; 
-						$alloc->scheme_code = $deal_id;
-						$alloc->scheme_desc = $scheme_desc;
-						$alloc->area_code = $customer->area_code;
-						$alloc->area = $customer->area_name;
-						$alloc->sold_to_code = $customer->customer_code;
-						$alloc->sold_to =  $customer->customer_name;
-						// $alloc->ship_to_code = $shipto['ship_to_code'];
-						// $alloc->plant_code = $shipto['plant_code'];
-						// $alloc->ship_to_name = $shipto['ship_to_name'];
-						$alloc->sold_to_gsv = $customer->gsv; 
-						$alloc->weekly_run_rates = self::weekly_run_rates($tradealscheme, $customer->gsv, $host_skus);
-						$alloc->pur_req = self::purchase_requirement($tradealscheme, $customer->gsv, $uom_multiplpier, $host_skus);
-						$alloc->computed_pcs = self::computed_pcs($alloc->weekly_run_rates,$tradedeal->alloc_in_weeks, $alloc->pur_req, $uom_multiplpier, $tradealscheme->free);
-						$alloc->manual_pcs = 0;
-						$alloc->final_pcs = $alloc->computed_pcs;
-						$alloc->prem_cost = $premium['cost'];
-						$alloc->computed_cost = $alloc->computed_pcs * $premium['cost'];
-						$alloc->deal_multiplier = $uom_premium;
-						$alloc->pre_code = $premium['pre_code'];
-						$alloc->pre_desc = $premium['pre_desc'];
-						$alloc->pre_desc_variant = $premium['pre_desc'].' '.$premium['variant'];
-						$alloc->save();
 					}
 				}
-			}
+			// }
 		}
 	}
 

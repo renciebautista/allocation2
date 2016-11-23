@@ -3554,7 +3554,7 @@ class ActivityController extends BaseController {
 		}
 	}
 
-public function exporttradedeal($id){
+	public function exporttradedeal($id){
 		$activity = Activity::findOrFail($id);
 		Excel::create($activity->circular_name, function($excel) use($activity){
 			$excel->sheet('SCHEME SUMMARY', function($sheet) use ($activity) {
@@ -3928,92 +3928,7 @@ public function exporttradedeal($id){
 					// $last_site = $alloc->plant_code;
 				}
 
-		  //   	$sheet->row(1, array('Site Code', 'Site Description', 'Promotion ID', 'Promo Description', 'Promo Type',
-		  //   		'SKU Codes Involved', 'SKUs Involved', 'Premium Code', 'Premium',
-		  //   		'Outlet Sub Types Involved', 'Outlet Codes', 'Allocation (Pieces)', 'UOM', 'Source of Premium', 
-		  //   		'Start Date', 'End Date'));
-
-		  //   	$sheet->getStyle("A1:N1")->getFont()->setBold(true);
-
-			 //    $datas = TradedealSchemeAllocation::select('scheme_code', 'scheme_desc', 'tradedeal_types.tradedeal_type', 
-			 //    	'tradedeal_scheme_sku_id', 'tradedeal_scheme_id', 'tradedeal_scheme_allocations.pre_code', 
-			 //    	'tradedeal_scheme_allocations.pre_desc', 'non_ulp_premium', DB::raw('sum(final_pcs) as total_alloc'),
-			 //    	'eimplementation_date', 'end_date', 'tradedeal_schemes.tradedeal_uom_id')
-			 //    	->join('tradedeal_schemes', 'tradedeal_schemes.id', '=', 'tradedeal_scheme_allocations.tradedeal_scheme_id')
-			 //    	->join('tradedeals', 'tradedeals.id', '=', 'tradedeal_schemes.tradedeal_id')
-			 //    	->join('tradedeal_types', 'tradedeal_types.id', '=', 'tradedeal_schemes.tradedeal_type_id')
-			 //    	->join('activities', 'activities.id', '=', 'tradedeals.activity_id')
-				// 	->where('tradedeals.activity_id', $activity->id)
-				// 	->groupBy('scheme_code')
-				// 	->orderBy('tradedeal_type_id')
-				// 	->orderBy('tradedeal_uom_id')
-				// 	->get();
-
-				// $cnt = 2;
-			 //    foreach ($datas as $row) {
-			 //    	$host_code = '';
-			 //    	$host_desc = '';
-			 //    	$scheme = TradedealScheme::find($row->tradedeal_scheme_id);
-			 //    	if($row->tradedeal_uom_id == 1){
-			 //    		$uom = 1;
-			 //    	}elseif ($row->tradedeal_uom_id == 2) {
-			 //    		$uom = 12;
-			 //    	}else{
-			 //    		$uom = $row->pre_pcs_case;
-			 //    	}
-
-			 //    	if($row->tradedeal_scheme_sku_id != 0){
-			 //    		$host_sku = TradedealSchemeSku::getHost($row->tradedeal_scheme_sku_id);
-			 //    		$host_code = $host_sku->host_code;
-			 //    		$host_desc = $host_sku->host_desc;
-			 //    	}else{
-			    		
-			 //    		$host_skus = TradedealSchemeSku::getHostSku($scheme);
-			 //    		$code = [];
-			 //    		$desc = [];
-			 //    		foreach ($host_skus as $key => $value) {
-
-			 //    			$code[] = $value->host_code;
-			 //    			$desc[] = $value->host_desc;
-			 //    		}
-
-			 //    		$host_code = implode("; ", $code);
-			 //    		$host_desc = implode("; ", $desc);
-
-			 //    	}
-
-			 //    	$pre_code = '';
-			 //    	$pre_desc = '';
-			 //    	$source = 'Ex-DT';
-			 //    	if(!$row->non_ulp_premium){
-			 //    		$pre_code = $row->pre_code;
-			 //    		$pre_desc = $row->pre_desc;
-			 //    		$source = 'Ex-ULP';
-			 //    	}else{
-			 //    		$pre_code = $scheme->pre_code;
-			 //    		$pre_desc = $scheme->pre_desc;
-			 //    	}
-
-			 //    	$channels = TradedealSchemeSubType::getSchemeSubtypes($scheme);
-			 //    	$ch_code = [];
-			 //    	$ch_desc = [];
-			 //    	foreach ($channels as $channel) {
-		  //   			$ch_code[] = $channel->sub_type;
-		  //   			$ch_desc[] = $channel->sub_type_desc;
-		  //   		}
-
-		  //   		$start_date = date('d/m/Y', strtotime($row->eimplementation_date));
-		  //   		$end_date = date('d/m/Y', strtotime($row->end_date));
-
-
-			    	
-			 //    	$sheet->row($cnt, array($row->scheme_code, $row->scheme_desc, $row->tradedeal_type, $host_code, $host_desc, $pre_code, $pre_desc,
-			 //    	implode('; ', $ch_code),implode('; ', $ch_desc), $row->total_alloc, $uom, $source,  $start_date, $end_date));
-			 //    	$cnt++;
-			 //    }
 		    });
-			
-			
 		})->download('xls');
 	}
 
