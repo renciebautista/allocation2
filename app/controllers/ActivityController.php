@@ -1590,6 +1590,7 @@ class ActivityController extends BaseController {
 				DB::beginTransaction();
 
 				try {
+					
 					$_customers = Input::get('customers');
 					ActivityCustomer::where('activity_id',$id)->delete();
 
@@ -1652,7 +1653,7 @@ class ActivityController extends BaseController {
 					// dd(1);
 					// update all schemes
 					$schemes = Scheme::getList($activity->id);
-					// if (!App::environment('local')){
+					if (!$_ENV['MAIL_TEST']){
 						foreach ($schemes as $scheme) {
 							if($scheme->compute == 1){
 								$scheme->updating = 1;
@@ -1668,7 +1669,7 @@ class ActivityController extends BaseController {
 								$scheme->update();
 							}
 						}
-					// }
+					}
 					
 					// end update
 					$arr['success'] = 1;

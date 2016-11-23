@@ -312,4 +312,6 @@ class Customer extends \Eloquent {
 			DB::rollback();
 		}
 	}
+
+	
 }

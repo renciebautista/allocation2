@@ -508,6 +508,12 @@ Route::group(array('before' => 'auth'), function()
 		Route::post('shiptoplantcode/upload', 'ShiptoPlantCodeController@upload');
 		Route::resource('shiptoplantcode', 'ShiptoPlantCodeController');
 
+		Route::get('customer/branch', ['as' => 'customer.branch', 'uses' => 'CustomerController@branch']);
+		Route::get('customer/exportbranch', 'CustomerController@exportbranch');
+		Route::get('customer/importbranch', 'CustomerController@importbranch');
+		Route::post('customer/uploadbranch', 'CustomerController@uploadbranch');
+
+
 		Route::get('customer/export', 'CustomerController@export');
 		Route::get('customer/import', 'CustomerController@import');
 		Route::post('customer/upload', 'CustomerController@upload');

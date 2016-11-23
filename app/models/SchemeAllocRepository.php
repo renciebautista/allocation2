@@ -22,7 +22,12 @@ class SchemeAllocRepository
 		// Helper::debug($customers);
 
 		$_allocation = new AllocationRepository2;
-		$allocations = $_allocation->customers($skus, $_channels, $customers,$forced_areas);
+		if($activity->scope_type_id == 1){
+			$allocations = $_allocation->customers($skus, $_channels, $customers,$forced_areas);
+		}else{
+			$allocations = $_allocation->customers($skus, $_channels, $customers,$forced_areas, null, $activity);
+		}
+		
 
 		$_areasales =  $_allocation->area_sales();
 	   	// Helper::debug($allocations);
@@ -185,12 +190,17 @@ class SchemeAllocRepository
 
 					$_shipto_alloc = 0;
 					$s_multi = 0;
+
+
+
+					
+
 					if(!is_null($shipto['split'])){
 						if($scheme_alloc->sold_to_alloc > 0){
 							$s_multi = $shipto['split'] / 100;
 						}
 					}else{
-						if($shipto['gsv'] >0){
+						if($shipto['gsv'] > 0){
 							$s_multi = $shipto['gsv'] / $customer->ado_total;
 							// if(empty($customer->area_code_two)){
 							// 	$s_multi = $shipto['gsv'] / $customer->ado_total;
@@ -200,7 +210,7 @@ class SchemeAllocRepository
 						}
 					}
 
-					$_shipto_alloc = round($s_multi  * $scheme_alloc->sold_to_alloc);
+					$_shipto_alloc = round($s_multi * $scheme_alloc->sold_to_alloc);
 
 					$shipto_alloc->ship_to_alloc = $_shipto_alloc;
 					$shipto_alloc->multi = $s_multi;
@@ -324,8 +334,15 @@ class SchemeAllocRepository
 						   
 							$p = 0;
 							$f_p = 0;
-							if($customer->gsv > 0){
-								$x = round($account['gsv']/$customer->gsv * 100,5);
+							// if($customer->gsv > 0){
+							// 	$x = round($account['gsv']/$customer->gsv * 100,5);
+							// 	if($x > 0){
+							// 		$p = $x;
+							// 	}
+							// }
+
+							if($shipto['gsv'] > 0){
+								$x = round($account['gsv']/$shipto['gsv'] * 100,5);
 								if($x > 0){
 									$p = $x;
 								}
@@ -471,6 +488,7 @@ class SchemeAllocRepository
 				}
 			}
 		}
+		
 	}
 
 	public static function gettemplate($scheme){

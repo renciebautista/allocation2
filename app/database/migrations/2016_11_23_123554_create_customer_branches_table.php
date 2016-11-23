@@ -16,7 +16,8 @@ class CreateCustomerBranchesTable extends Migration {
 		{
 			$table->increments('id');
 			$table->string('customer_code');
-			$table->string('plant_code');
+			$table->string('plant_code')->nullable();
+			$table->string('distributor_code');
 			$table->string('branch_name');
 		});
 	}
