@@ -998,7 +998,8 @@ table .v-align{
     background-color:red;
 }
 
-.disabled-readonly {
+.disabled-readonly 
+{ 
 	cursor: not-allowed;
     background-color: #eeeeee;
     opacity: 1;
