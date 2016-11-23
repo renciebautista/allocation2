@@ -323,8 +323,15 @@ class SchemeAllocRepository
 						   
 							$p = 0;
 							$f_p = 0;
-							if($customer->gsv > 0){
-								$x = round($account['gsv']/$customer->gsv * 100,5);
+							// if($customer->gsv > 0){
+							// 	$x = round($account['gsv']/$customer->gsv * 100,5);
+							// 	if($x > 0){
+							// 		$p = $x;
+							// 	}
+							// }
+
+							if($shipto['gsv'] > 0){
+								$x = round($account['gsv']/$shipto['gsv'] * 100,5);
 								if($x > 0){
 									$p = $x;
 								}
