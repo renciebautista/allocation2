@@ -110,7 +110,7 @@
 							<div class="row">
 								<div class="col-lg-12">
 									{{ Form::label('scope', 'Scope', array('class' => 'control-label')) }}
-									{{ Form::select('scope', array('0' => 'PLEASE SELECT') + $scope_types, $activity->scope_type_id, array('class' => 'form-control')) }}
+									{{ Form::text('scope','NATIONAL', array('class' => 'form-control','readonly' => '')) }}
 								</div>
 							</div>
 						</div>

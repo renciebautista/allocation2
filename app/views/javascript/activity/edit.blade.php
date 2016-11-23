@@ -353,6 +353,7 @@ $('select#brand').multiselect({
 	includeSelectAllOption: true,
 	enableCaseInsensitiveFiltering: true,
 	enableFiltering: true,
+	numberDisplayed: 1,
 	onDropdownHide: function(event) {
 		updateskus();
 	}
@@ -363,7 +364,8 @@ $('select#objective').multiselect({
 	maxHeight: 200,
 	includeSelectAllOption: true,
 	enableCaseInsensitiveFiltering: true,
-	enableFiltering: true
+	enableFiltering: true,
+	numberDisplayed: 1
 });
 
 

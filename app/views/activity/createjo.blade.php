@@ -24,8 +24,7 @@
 @include('partials.notification')
 
 <div class="well ">
-	{{ Form::open(array('action' => array('SchemeController@store', $activity->id) ,'class' => 'bs-component' ,'id' => 'myform')) }}
-
+	{{ Form::open(array('action' => array('ActivityController@storejo', $activity->id) ,'class' => 'bs-component' ,'id' => 'myform', 'files'=>true)) }}
 	<div class="row">
 		<div class="col-lg-12">
 			<div class="form-group">
@@ -42,7 +41,6 @@
 		<div class="col-lg-12">
 			<div class="form-group">
 				<div class="row">
-
 					<div class="col-lg-6">
 						{{ Form::label('sub_task', 'Sub Task', array('class' => 'control-label')) }}
 						<select class="form-control" data-placeholder="SELECT SUB TASK" id="sub_task" name="sub_task">
@@ -60,11 +58,11 @@
 				<div class="row">
 					<div class="col-lg-3">
 						{{ Form::label('start_date', 'Start Date', array('class' => 'control-label')) }}
-						{{ Form::text('start_date','',array('class' => 'form-control', 'placeholder' => 'mm/dd/yyyy')) }}
+						{{ Form::text('start_date','',array('class' => 'form-control', 'placeholder' => 'mm/dd/yyyy', 'id' => 'start_date')) }}
 					</div>
 					<div class="col-lg-3">
 						{{ Form::label('end_date', 'End Date', array('class' => 'control-label')) }}
-						{{ Form::text('end_date','',array('class' => 'form-control', 'placeholder' => 'mm/dd/yyyy')) }}
+						{{ Form::text('end_date','',array('class' => 'form-control', 'placeholder' => 'mm/dd/yyyy', 'id' => 'end_date')) }}
 					</div>
 				</div>
 			</div>
@@ -75,9 +73,9 @@
 		<div class="col-lg-12">
 			<div class="form-group">
 				<div class="row">
-					<div class="col-lg-6">
-						{{ Form::label('assign_to', 'Assign To', array('class' => 'control-label')) }}
-						{{ Form::select('assign_to[]', array('0' => '') + $users, '', array('data-placeholder' => 'Select Assignee','id' => 'assign_to', 'class' => 'form-control')) }}
+					<div class="col-lg-12">
+						{{ Form::label('files', 'Attach Files', array('class' => 'control-label')) }}
+						<input type="file" name="files[]" id="filer_input" multiple="multiple">
 					</div>
 					
 				</div>
@@ -91,7 +89,7 @@
 				<div class="row">
 					<div class="col-lg-12">
 						{{ Form::label('details', 'Details', array('class' => 'control-label')) }}
-						{{ Form::textarea('details','',array('class' => 'form-control multiselect', 'placeholder' => 'Details')) }}
+						{{ Form::textarea('details','',array('class' => 'form-control multiselect', 'placeholder' => 'Details', 'id' => 'details')) }}
 					</div>
 					
 				</div>
@@ -99,19 +97,6 @@
 		</div>
 	</div>
 
-	<div class="row">
-		<div class="col-lg-12">
-			<div class="form-group">
-				<div class="row">
-					<div class="col-lg-12">
-						{{ Form::label('files', 'Attach Files', array('class' => 'control-label')) }}
-						<input type="file" multiple="multiple" class="multi"/>
-					</div>
-					
-				</div>
-			</div>
-		</div>
-	</div>
 
 	
 	<br>
@@ -120,7 +105,7 @@
 			<div class="form-group">
 				<div class="row">
 					<div class="col-lg-12">
-					<a class="btn btn-default" id="back" href="{{action('ActivityController@edit', $activity->id);}}#schemes">Back to Activity Details</a>
+					<a class="btn btn-default" id="back" href="{{action('ActivityController@edit', $activity->id);}}#jo">Back to Activity Details</a>
 					{{ Form::submit('Submit', array('class' => 'btn btn-primary')) }}
 					</div>
 				</div>

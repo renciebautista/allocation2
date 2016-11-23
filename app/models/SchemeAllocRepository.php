@@ -19,14 +19,15 @@ class SchemeAllocRepository
 
 		$_channels = ActivityChannel2::channels($scheme->activity_id);
 
+		// Helper::debug($customers);
 
 		$_allocation = new AllocationRepository2;
 		$allocations = $_allocation->customers($skus, $_channels, $customers,$forced_areas);
 
-		// Helper::debug($allocations);
-		
-		// $_areasales =  $_allocation->area_sales();
-	   		   	
+		$_areasales =  $_allocation->area_sales();
+	   	// Helper::debug($allocations);
+	   	// dd($allocations);
+
 		$total_sales = $_allocation->total_gsv();
 
 		$force_total_sales = $_allocation->force_total_gsv();

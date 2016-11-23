@@ -90,6 +90,20 @@
 				<h3 class="panel-title">Activity Details</h3>
 			</div>
 			<div class="panel-body">
+
+				<div class="row">
+					<div class="col-lg-6">
+						<div class="form-group">
+							<div class="row">
+								<div class="col-lg-12">
+									{{ Form::label('created_by', 'Created By', array('class' => 'control-label')) }}
+									{{ Form::text('created_by',$activity->createdby->getFullname(), array('class' => 'form-control','readonly' => '')) }}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				
 				<div class="row">
 					<div class="col-lg-6">
 						<div class="form-group">

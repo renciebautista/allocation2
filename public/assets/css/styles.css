@@ -958,6 +958,12 @@ table.dataTable thead tr.even th{
 	background-color: #f9f9f9;
 
 }
+.chosen-container{
+  width: 100% !important;
+}
+#joborder{
+	font-size: 12px;
+}
     
 .modal-wide .modal-dialog {
   width: 60%; /* or whatever you wish */
@@ -997,3 +1003,68 @@ table .v-align{
     background-color: #eeeeee;
     opacity: 1;
 }
+#joborder tr td:first-child {
+	font-weight: bold;
+	width: 15%;
+}
+#joborder tr td:nth-child(3) {
+	width: 15%;
+	font-weight: bold;
+}
+
+#joborder tr td:last-child {
+	width: 15%;
+}
+
+.comment_list {
+    width: 100%;
+    border-bottom: 1px solid #DBDBDB;
+    margin-bottom: 2px;
+    display: inline-block;
+   	margin-bottom: 10px;
+}
+.comment_list .comment {
+	/*font-size: 12px;*/
+	margin-left: 40px;
+}
+
+.comment_list h3 {
+    font-size: 17px;
+    font-weight: bold;
+    margin: 0px 0 6px;
+    color: #337ab7;
+}
+.comment_list h3 small {
+    float: right;
+    color: #ADABAB;
+    font-size: 12px;
+    line-height: 20px;
+}
+.attachment ul {
+    width: 100%;
+    list-style: none;
+    padding-left: 0;
+    display: inline-block;
+    margin-bottom: 30px;
+}
+.attachment ul li {
+    float: left;
+    width: 350px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+.attachment .file-name{
+	
+}
+
+.form-container{
+
+    margin-top: 10px;
+}
+
+div.mce-edit-area{
+    background:#FFF;
+    filter:none;
+	padding:5px; 
+}
+

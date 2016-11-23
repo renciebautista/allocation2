@@ -58,7 +58,12 @@
 		</div>
 
 		<div class="form-group">
-			{{ Form::label('group_id', 'Group', array('class' => 'control-label')) }}
+			{{ Form::label('department_id', 'Department', array('class' => 'control-label')) }}
+			{{ Form::select('department_id', array('0' => 'Please Select') + $departments, 'default', array('class' => 'form-control')) }}
+		</div>
+
+		<div class="form-group">
+			{{ Form::label('group_id', 'Role', array('class' => 'control-label')) }}
 			{{ Form::select('group_id', array('0' => 'Please Select') + $groups, 'default', array('class' => 'form-control')) }}
 		</div>
 

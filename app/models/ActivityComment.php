@@ -14,6 +14,6 @@ class ActivityComment extends \Eloquent {
     }
 
     public static function getList($activity_id){
-    	return self::where('activity_id', $activity_id)->orderBy('created_at','desc')->get();;
+    	return self::where('activity_id', $activity_id)->get();;
     }
 }

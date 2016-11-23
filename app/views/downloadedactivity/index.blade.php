@@ -98,7 +98,7 @@
 </div>
 
 <hr>
-
+<p class="pull-right"><b>{{ count($activities)}} record/s found.</b></p>
 <div class="row">
 	<div class="col-lg-12">
 		<div class="table-responsive">

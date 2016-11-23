@@ -154,4 +154,37 @@ class GroupController extends \BaseController {
 				->with('message', $message);
 	}
 
+	public function permissions($id){
+		$role = Role::findOrFail($id);
+		if (is_null($role))
+		{
+			return Redirect::route('group.index')
+				->with('class', 'alert-danger')
+				->with('message', 'Record does not exist.');
+		}
+		$permissions = Permission::all();
+		$role_permissions = Permission::getSelected($role);
+		return View::make('group.permissions', compact('role', 'permissions', 'role_permissions'));
+	}
+
+	public function updatepermissions($id){
+		$role = Role::findOrFail($id);
+		if (is_null($role))
+		{
+			return Redirect::route('group.index')
+				->with('class', 'alert-danger')
+				->with('message', 'Record does not exist.');
+		}
+
+		$permissions = Permission::all();
+		DB::table('permission_role')->where('role_id', $role->id)->delete();
+		if(Input::has('permission')){
+			$role->perms()->sync(Input::get('permission'));
+		}
+		
+
+		return Redirect::back()
+				->with('class', 'alert-success')
+				->with('message', 'Role permission successfully updated.');
+	}
 }
