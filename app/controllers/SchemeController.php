@@ -714,7 +714,7 @@ class SchemeController extends \BaseController {
 				}
 
 				SchemeAllocRepository::updateCosting($scheme);
-				// SchemeAllocRepository::fixUntallyAllocation($scheme);
+				SchemeAllocRepository::fixUntallyAllocation($scheme);
 			});
 
 			if ($isError) {
