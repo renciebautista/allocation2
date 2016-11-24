@@ -24,4 +24,5 @@ Artisan::add(new ExportSales);
 Artisan::add(new MakeSob);
 Artisan::add(new ReleaseActivity);
 Artisan::add(new MakeFieldTradedeal);
+Artisan::add(new GenerateLe);
 
