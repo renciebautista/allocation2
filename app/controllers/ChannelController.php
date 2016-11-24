@@ -107,6 +107,8 @@ class ChannelController extends \BaseController {
 				Channel::import($reader->get());
 			});
 
+			CustomerTree::updateTree();
+
 
 			if (File::exists($file_path))
 			{
