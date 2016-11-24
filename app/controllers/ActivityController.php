@@ -1658,7 +1658,6 @@ class ActivityController extends BaseController {
 							if($scheme->compute == 1){
 								$scheme->updating = 1;
 								$scheme->update();
-
 								if($_ENV['MAIL_TEST']){
 									Queue::push('SchemeScheduler', array('id' => $scheme->id),'scheme');
 								}else{
