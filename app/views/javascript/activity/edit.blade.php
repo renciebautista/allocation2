@@ -543,7 +543,9 @@ $("#btnCSelectAll").click(function(){
 
 $("form[id='updateCustomer']").on("submit",function(e){
 	var form = $(this);
+	$("#pageloading").show();
 	var url = form.prop('action');
+	$("#page").hide();
 	$.ajax({
 		url: url,
 		data: form.serialize(),

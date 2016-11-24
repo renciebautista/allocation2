@@ -1653,7 +1653,7 @@ class ActivityController extends BaseController {
 					// dd(1);
 					// update all schemes
 					$schemes = Scheme::getList($activity->id);
-					if (!$_ENV['MAIL_TEST']){
+					if (!App::environment('local')){
 						foreach ($schemes as $scheme) {
 							if($scheme->compute == 1){
 								$scheme->updating = 1;
@@ -1669,6 +1669,16 @@ class ActivityController extends BaseController {
 							}
 						}
 					}
+
+
+
+					// $tradedeal = Tradedeal::where('activity_id', $id)->first();
+					// if((!empty($tradedeal)) && (!$tradedeal->forced_upload)){
+					// 	$tradedeal_schemes = TradedealScheme::where('tradedeal_id', $tradedeal->id)->get();
+					// 	foreach ($tradedeal_schemes as $td_scheme) {
+					// 		TradedealAllocRepository::updateAllocation($td_scheme);
+					// 	}
+					// }
 					
 					// end update
 					$arr['success'] = 1;

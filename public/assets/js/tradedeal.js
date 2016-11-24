@@ -700,11 +700,4 @@ $(document).ready(function() {
 		e.preventDefault();
 	});
 
-
-	// $("form[id='updateTradedeal']").on("submit",function(e){
-	// 	var form = $(this);
-	// 	if(!confirm("Are you sure to overwrite the manual upload allocation.")){
-	//         e.preventDefault();
-	//     }
-	// });
 });

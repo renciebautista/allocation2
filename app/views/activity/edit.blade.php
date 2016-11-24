@@ -1749,7 +1749,6 @@ $("#updateTradedeal").on("submit", function (e) {
 			@endif
 		
 	}
-    
 });
 
 $("#variant, #pre_variant").attr('maxlength','6');
