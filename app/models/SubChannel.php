@@ -26,7 +26,7 @@ class SubChannel extends \Eloquent {
 		DB::beginTransaction();
 			try {
 				DB::table('sub_channels')->truncate();
-			$records->each(function($row)  {
+				$records->each(function($row)  {
 				if(!is_null($row->channel_code)){
 					$subchannel = new Subchannel;
 					$subchannel->coc_03_code = $row->coc_03_code;
