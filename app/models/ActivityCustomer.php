@@ -46,4 +46,108 @@ class ActivityCustomer extends \Eloquent {
 
 		return array_unique($channels); 
 	}
+
+	public static function getNodeSelection(){
+		$ship_nodes = [];
+		$cust_nodes = [];
+		
+		if(!empty($customers)){
+			foreach ($customers as $selected_customer) {
+				$n = explode('.', $selected_customer);
+				if(count($n) == 1){
+					$n_nodes = CustomerTree::where('channel_code', $n[0])->get();
+					foreach ($n_nodes as $n_node) {
+
+						if($n_node->plant_code != ''){
+							$ship_nodes[] = $n_node->plant_code;
+						}
+
+						$cust_nodes[] = $n_node->customer_code;
+
+					}
+					
+				}
+
+				if(count($n) == 2){
+					$n_nodes = CustomerTree::where('channel_code', $n[0])
+						->where('group_code', $n[1])
+						->get();
+					foreach ($n_nodes as $n_node) {
+						if($n_node->plant_code != ''){
+							$ship_nodes[] = $n_node->plant_code;
+						}
+
+						$cust_nodes[] = $n_node->customer_code;
+					}
+					
+				}
+
+				if(count($n) == 3){
+					$n_nodes = CustomerTree::where('channel_code', $n[0])
+						->where('group_code', $n[1])
+						->where('area_code', $n[2])
+						->get();
+					foreach ($n_nodes as $n_node) {
+						if($n_node->plant_code != ''){
+							$ship_nodes[] = $n_node->plant_code;
+						}
+
+						$cust_nodes[] = $n_node->customer_code;
+					}
+					
+				}
+
+				if(count($n) == 4){
+					$n_nodes = CustomerTree::where('channel_code', $n[0])
+						->where('group_code', $n[1])
+						->where('area_code', $n[2])
+						->where('customer_code', $n[3])
+						->get();
+					foreach ($n_nodes as $n_node) {
+						if($n_node->plant_code != ''){
+							$ship_nodes[] = $n_node->plant_code;
+						}
+
+						$cust_nodes[] = $n_node->customer_code;
+					}
+					
+				}
+
+				if(count($n) == 5){
+					$n_nodes = CustomerTree::where('channel_code', $n[0])
+						->where('group_code', $n[1])
+						->where('area_code', $n[2])
+						->where('customer_code', $n[3])
+						->where('plant_code', $n[4])
+						->get();
+					foreach ($n_nodes as $n_node) {
+						if($n_node->plant_code != ''){
+							$ship_nodes[] = $n_node->plant_code;
+						}
+
+						$cust_nodes[] = $n_node->customer_code;
+					}
+					
+				}
+
+				if(count($n) == 6){
+					$n_nodes = CustomerTree::where('channel_code', $n[0])
+						->where('group_code', $n[1])
+						->where('area_code', $n[2])
+						->where('customer_code', $n[3])
+						->where('plant_code', $n[4])
+						->where('account_id', $n[5])
+						->get();
+					foreach ($n_nodes as $n_node) {
+						if($n_node->plant_code != ''){
+							$ship_nodes[] = $n_node->plant_code;
+						}
+
+						$cust_nodes[] = $n_node->customer_code;
+					}
+					
+				}
+			}
+		}
+	}
 }
