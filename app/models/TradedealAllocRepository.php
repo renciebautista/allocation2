@@ -339,9 +339,7 @@ class TradedealAllocRepository  {
 		}
 
 		$selected_customers = array_unique($cust_nodes);
-		// Helper::debug($selected_customers);
 		$selected_shiptos = array_unique($ship_nodes);
-
 
 		foreach ($gsvsales as $customer) {
 			// if((in_array($customer->customer_code, $trade_customers))){
