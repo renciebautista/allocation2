@@ -1356,13 +1356,13 @@ class ActivityController extends BaseController {
 					}
 
 
-					$tradedeal = Tradedeal::where('activity_id', $id)->first();
-					if((!empty($tradedeal)) && (!$tradedeal->forced_upload)){
-						$tradedeal_schemes = TradedealScheme::where('tradedeal_id', $tradedeal->id)->get();
-						foreach ($tradedeal_schemes as $td_scheme) {
-							TradedealAllocRepository::updateAllocation($td_scheme);
-						}
-					}
+					// $tradedeal = Tradedeal::where('activity_id', $id)->first();
+					// if((!empty($tradedeal)) && (!$tradedeal->forced_upload)){
+					// 	$tradedeal_schemes = TradedealScheme::where('tradedeal_id', $tradedeal->id)->get();
+					// 	foreach ($tradedeal_schemes as $td_scheme) {
+					// 		TradedealAllocRepository::updateAllocation($td_scheme);
+					// 	}
+					// }
 					
 					// end update
 					$arr['success'] = 1;
