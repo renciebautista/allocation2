@@ -15,6 +15,7 @@ class TradedealAllocRepository  {
 	private static function save($tradealscheme){
 		$tradedeal = Tradedeal::find($tradealscheme->tradedeal_id);
 		$activity = Activity::find($tradedeal->activity_id);
+		$force_alloc = $activity->allow_force;
 		$forced_areas = ForceAllocation::getForcedAreas($tradedeal->activity_id);
 
 		$force_alloc = $activity->allow_force;
@@ -362,8 +363,17 @@ class TradedealAllocRepository  {
 									$alloc->ship_to_code = $shipto['ship_to_code'];
 									$alloc->plant_code = $shipto['plant_code'];
 									$alloc->ship_to_name = $shipto['ship_to_name'];
+
 									$alloc->sold_to_gsv = $shipto['gsv']; 
 									$alloc->weekly_run_rates = self::weekly_run_rates($tradealscheme, $shipto['gsv'], $host_skus);
+
+									if($force_alloc){
+										// Helper::debug();
+										if(array_key_exists($customer->area_code, $forced_areas)){
+											$alloc->forced_sold_to_gsv = $shipto['gsv'] * $forced_areas[$customer->area_code];
+										}
+									}
+									
 									$alloc->pur_req = self::purchase_requirement($tradealscheme, $shipto['gsv'], $uom_multiplpier, $host_skus);
 									$alloc->computed_pcs = self::computed_pcs($alloc->weekly_run_rates,$tradedeal->alloc_in_weeks, $alloc->pur_req, $uom_premium, $tradealscheme->free);
 									$alloc->manual_pcs = 0;
