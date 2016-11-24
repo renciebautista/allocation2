@@ -12,6 +12,11 @@ class Scheduler{
 
 		// Artisan::call('make:pdf');
 		Artisan::call('make:pdf',array('id' => $data['id']));
+
+		Artisan::call('make:fieldtradedeal',array('id' => $data['id']));
+
+		Artisan::call('make:letemplate',array('id' => $data['id']));
+
 		// File::append(storage_path().'/queue.txt',$data['string'].$job_id.PHP_EOL); //Add content to file
 		// File::append(storage_path().'/queue.txt',"Hello World!".PHP_EOL); //Add content to file
 		$ejob->status = 'finished'; //Set job status to finished
