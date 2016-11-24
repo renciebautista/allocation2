@@ -17,6 +17,8 @@ class TradedealAllocRepository  {
 		$activity = Activity::find($tradedeal->activity_id);
 		$forced_areas = ForceAllocation::getForcedAreas($tradedeal->activity_id);
 
+		$force_alloc = $activity->allow_force;
+
 		$customers = ActivityCustomer::customers($tradedeal->activity_id);
 		$_channels = ActivityChannel2::channels($tradedeal->activity_id);
 
@@ -55,7 +57,7 @@ class TradedealAllocRepository  {
 				$host_variant = substr(strtoupper($row->variant),0,1);
 				$series = TradeIndividualSeries::getSeries($month_year, $tradealscheme->id, $row->host_id);
 				$deal_id = 'B'.$month_year.$scheme_uom_abv.$brand.$host_variant .sprintf("%02d", $series->series);
-				self::generate_allocation($hostskus, $_channels, $customers,$forced_areas,$tradealscheme, $tradedeal, $deal_id, $trade_customers);
+				self::generate_allocation($hostskus, $_channels, $customers,$forced_areas,$tradealscheme, $tradedeal, $deal_id, $trade_customers, null, $force_alloc);
 
 			}
 		}else if($tradealscheme->tradedeal_type_id == 2){
@@ -105,7 +107,7 @@ class TradedealAllocRepository  {
 			$series = TradeCollectiveSeries::getSeries($month_year, $tradealscheme->id);
 			$deal_id = $month_year.$scheme_uom_abv.$brand_short_cut.sprintf("%02d", $series->series);
 
-			self::generate_allocation($lowest_skus, $_channels, $customers,$forced_areas, $tradealscheme, $tradedeal, $deal_id, $trade_customers, $collective_premium);
+			self::generate_allocation($lowest_skus, $_channels, $customers,$forced_areas, $tradealscheme, $tradedeal, $deal_id, $trade_customers, $collective_premium, $force_alloc);
 		}
 		
 	}
@@ -161,7 +163,7 @@ class TradedealAllocRepository  {
 		return $pcs;
 	}
 
-	private static function generate_allocation($host_skus, $_channels, $customers,$forced_areas, $tradealscheme, $tradedeal, $deal_id, $trade_customers, $collective_premium = null){
+	private static function generate_allocation($host_skus, $_channels, $customers,$forced_areas, $tradealscheme, $tradedeal, $deal_id, $trade_customers, $collective_premium = null, $force_alloc){
 		$allocationRepo = new AllocationRepository2;
 
 		$ref_sku = [];
