@@ -47,10 +47,9 @@ class ActivityCustomer extends \Eloquent {
 		return array_unique($channels); 
 	}
 
-	public static function getNodeSelection(){
-		$ship_nodes = [];
-		$cust_nodes = [];
-		
+
+	public static function getNodeSelection($customers){
+		$object = new stdClass();
 		if(!empty($customers)){
 			foreach ($customers as $selected_customer) {
 				$n = explode('.', $selected_customer);
@@ -59,10 +58,10 @@ class ActivityCustomer extends \Eloquent {
 					foreach ($n_nodes as $n_node) {
 
 						if($n_node->plant_code != ''){
-							$ship_nodes[] = $n_node->plant_code;
+							$object->ship_nodes[] = $n_node->plant_code;
 						}
 
-						$cust_nodes[] = $n_node->customer_code;
+						$object->cust_nodes[] = $n_node->customer_code;
 
 					}
 					
@@ -74,10 +73,10 @@ class ActivityCustomer extends \Eloquent {
 						->get();
 					foreach ($n_nodes as $n_node) {
 						if($n_node->plant_code != ''){
-							$ship_nodes[] = $n_node->plant_code;
+							$object->ship_nodes[] = $n_node->plant_code;
 						}
 
-						$cust_nodes[] = $n_node->customer_code;
+						$object->cust_nodes[] = $n_node->customer_code;
 					}
 					
 				}
@@ -89,10 +88,10 @@ class ActivityCustomer extends \Eloquent {
 						->get();
 					foreach ($n_nodes as $n_node) {
 						if($n_node->plant_code != ''){
-							$ship_nodes[] = $n_node->plant_code;
+							$object->ship_nodes[] = $n_node->plant_code;
 						}
 
-						$cust_nodes[] = $n_node->customer_code;
+						$object->cust_nodes[] = $n_node->customer_code;
 					}
 					
 				}
@@ -105,10 +104,10 @@ class ActivityCustomer extends \Eloquent {
 						->get();
 					foreach ($n_nodes as $n_node) {
 						if($n_node->plant_code != ''){
-							$ship_nodes[] = $n_node->plant_code;
+							$object->ship_nodes[] = $n_node->plant_code;
 						}
 
-						$cust_nodes[] = $n_node->customer_code;
+						$object->cust_nodes[] = $n_node->customer_code;
 					}
 					
 				}
@@ -122,10 +121,10 @@ class ActivityCustomer extends \Eloquent {
 						->get();
 					foreach ($n_nodes as $n_node) {
 						if($n_node->plant_code != ''){
-							$ship_nodes[] = $n_node->plant_code;
+							$object->ship_nodes[] = $n_node->plant_code;
 						}
 
-						$cust_nodes[] = $n_node->customer_code;
+						$object->cust_nodes[] = $n_node->customer_code;
 					}
 					
 				}
@@ -140,14 +139,16 @@ class ActivityCustomer extends \Eloquent {
 						->get();
 					foreach ($n_nodes as $n_node) {
 						if($n_node->plant_code != ''){
-							$ship_nodes[] = $n_node->plant_code;
+							$object->ship_nodes[] = $n_node->plant_code;
 						}
 
-						$cust_nodes[] = $n_node->customer_code;
+						$object->cust_nodes[] = $n_node->customer_code;
 					}
 					
 				}
 			}
 		}
+
+		return $object;
 	}
 }

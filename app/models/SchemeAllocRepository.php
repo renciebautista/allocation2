@@ -25,7 +25,7 @@ class SchemeAllocRepository
 		if($activity->scope_type_id == 1){
 			$allocations = $_allocation->customers($skus, $_channels, $customers,$forced_areas);
 		}else{
-			$allocations = $_allocation->customers($skus, $_channels, $customers,$forced_areas, null, $activity);
+			$allocations = $_allocation->customers($skus, $_channels, $customers,$forced_areas, null, true);
 		}
 		
 
