@@ -592,21 +592,29 @@ $('#allow_force').click(function() {
 
 function show_force_alloc(){
 	var a = [];
-    $.each( selectedkeys, function( key, value ) {
-    	var arr = value.split('.');
-    	$.each( arr, function( key, value2 ) {
-    		a.push(value2);
-    	});
-	});
 
-	$('input', $('#force_alloc')).each(function () {
-		if($.inArray($(this).attr("id"), a) != -1){
-			$(this).removeAttr('disabled').removeClass('disabled-readonly');
-		}else{
-			$(this).attr('disabled','disabled').addClass('disabled-readonly');
-		}
-	});
+	if(selectedkeys != null){
+		$.each(selectedkeys, function( key, value ) {
+	    	var arr = value.split('.');
+	    	$.each( arr, function( key, value2 ) {
+	    		a.push(value2);
+	    	});
+		});
+
+		$('input', $('#force_alloc')).each(function () {
+			if($.inArray($(this).attr("id"), a) != -1){
+				if($("#allow_force").is(':checked')){
+					$(this).removeAttr('disabled').removeClass('disabled-readonly');
+				}
+				
+			}else{
+				$(this).attr('disabled','disabled').addClass('disabled-readonly');
+			}
+		});
+	}
+    
 }
+
 <!-- schemes -->
 
 <!-- trade deal -->
