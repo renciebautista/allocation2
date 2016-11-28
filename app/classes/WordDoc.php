@@ -879,7 +879,7 @@ class WordDoc {
 								}
 							}
 
-							if(!empty($scheme->rtms)){
+							if(!empty($scheme->channels)){
 								// $cell = $tradetable->addCell(2700,$cellRowSpan);
 								foreach ($scheme->channels as $channel) {
 									$innerCell = $cell->addTable('Channels');

@@ -34,4 +34,17 @@ ul {
     border: 0.1px solid #000000;
 }
 
+.trade-table{
+    padding: 3px;
+}
+.trade-table tr > th {
+    background-color: #000000;
+    color: #FFFFFF;
+    border: 0.1px solid #000000;
+
+}
+.trade-table tr > td {
+    border: 0.1px solid #000000;
+}
+
 </style>

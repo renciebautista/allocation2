@@ -867,9 +867,11 @@
 													@endforeach
 												@endif
 												
-												@foreach($scheme->channels as $channel)
-												{{ $channel->sub_type_desc }} </br>
-												@endforeach
+												@if(!empty($scheme->channels))
+													@foreach($scheme->channels as $channel)
+													{{ $channel->sub_type_desc }} </br>
+													@endforeach
+												@endif
 												</td>
 											@endif
 											</tr>

@@ -259,4 +259,58 @@ class DownloadsController extends \BaseController {
 		}
 
 	}
+
+	public function letemplates(){
+		Input::flash();
+		// if(Auth::user()->hasRole("ADMINISTRATOR")){
+		// 	$cycles = Cycle::getAllCycles(Input::get('search'));
+		// 	return View::make('downloads.cyclesledmin',compact('cycles'));
+		// }else{
+			$cycles = Cycle::getReleasedCyclesWithTradeDeal(Input::get('search'));
+			return View::make('downloads.cyclesle',compact('cycles'));
+		// }
+	}
+
+	public function downloadletemplates($id){
+		$zippy = Zippy::load();
+		$cycle = Cycle::where('id',$id)->first();
+
+		$zip_path = storage_path().'/zipped/userle/'.$cycle->cycle_name.'.zip';
+
+		File::delete($zip_path);
+		$with_files = false;
+
+		$activities = Activity::select('activities.id', 'activities.circular_name')
+			->join('activity_types', 'activity_types.id', '=', 'activities.activity_type_id')
+			->where('activity_types.with_tradedeal',1)
+			->where('activities.created_by', Auth::user()->id)
+			->where('cycle_id',$cycle->id)
+			->where('status_id',9)
+			->where('disable',0)
+			->get();
+
+		if(count($activities) > 0){
+			$folders = [];
+			foreach ($activities as $activity) {
+				$tradedeal = Tradedeal::getActivityTradeDeal($activity);
+
+				$tradealschemes = TradedealScheme::where('tradedeal_id', $tradedeal->id)->get();
+
+				$foldername = preg_replace('/[^A-Za-z0-9 _ .-]/', '_', $activity->circular_name);
+				$folder_name = str_replace(":","_", $foldername);
+
+				$distination = storage_path().'/le/'.$activity->id ;
+
+				foreach ($tradealschemes as $scheme) {
+					$_path = $distination.'/'.$scheme->id;
+					$folders[$folder_name. '/'.$scheme->name] = $_path;
+				}
+			}
+		}
+
+		$archive = $zippy->create($zip_path,$folders,true);
+		return Response::download($zip_path);
+
+		
+	}
 }
