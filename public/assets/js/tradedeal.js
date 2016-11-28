@@ -184,7 +184,8 @@ $(document).ready(function() {
 		        	$('#host_pcs_case').val('');
 		        	
 		        	if(data.sku !== null){
-		        		$('#host_cost_pcs').val(data.sku.price);
+		        		var price = data.sku.price_case/data.sku.pack_size;
+		        		$('#host_cost_pcs').val(accounting.formatNumber(price, 2, ",","."));
 		        		$('#host_pcs_case').val(data.sku.pack_size);
 		        	}else{
 		        		$('#variant').val('').removeAttr('readonly');
@@ -224,7 +225,8 @@ $(document).ready(function() {
 			        	$('#epre_pcs_case').val('');
 			        	
 			        	if(data.sku !== null){
-			        		$('#pre_cost_pcs').val(data.sku.price);
+			        		var price = data.sku.price_case/data.sku.pack_size;
+		        			$('#pre_cost_pcs').val(accounting.formatNumber(price, 2, ",","."));
 			        		$('#pre_pcs_case').val(data.sku.pack_size);
 			        	}else{
 			        		$('#pre_variant').val('').removeAttr('readonly');
@@ -271,7 +273,9 @@ $(document).ready(function() {
 		        	$('#ehost_pcs_case').val('');
 		        	
 		        	if(data.sku !== null){
-		        		$('#ehost_cost_pcs').val(data.sku.price);
+		        		var price = data.sku.price_case/data.sku.pack_size;
+		        		$('#ehost_cost_pcs').val(accounting.formatNumber(price, 2, ",","."));
+		        		// $('#ehost_cost_pcs').val(data.sku.price);
 		        		$('#ehost_pcs_case').val(data.sku.pack_size);
 		        	}else{
 		        		$('#evariant').val('').removeAttr('readonly');
@@ -311,7 +315,9 @@ $(document).ready(function() {
 			        	$('#epre_cost_pcs').val('');
 			        	$('#epre_pcs_case').val('');
 			        	if(data.sku !== null){
-			        		$('#epre_cost_pcs').val(data.sku.price);
+			        		var price = data.sku.price_case/data.sku.pack_size;
+		        			$('#epre_cost_pcs').val(accounting.formatNumber(price, 2, ",","."));
+			        		// $('#epre_cost_pcs').val(data.sku.price);
 			        		$('#epre_pcs_case').val(data.sku.pack_size);
 			        	}else{
 			        		$('#epre_variant').val('').removeAttr('readonly');
