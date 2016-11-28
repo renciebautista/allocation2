@@ -29,7 +29,9 @@ class TradedealScheme extends \Eloquent {
 		}
 
 		foreach ($data as $key => $value) {
-			$channels = TradedealSchemeSubType::getSchemeSubtypes($value);
+
+			// $channels = TradedealSchemeSubType::getSchemeSubtypes($value);
+			$channels = TradedealSchemeChannel::getChannelsInvolved($value);
 
 			$tradeal = Tradedeal::find($value->tradedeal_id);
 			if($value->tradedeal_type_id == 1){
@@ -83,15 +85,15 @@ class TradedealScheme extends \Eloquent {
 				$data[$key]->host_skus = $_host;
 			}
 
-			$scheme_channel = [];
-			foreach ($channels as $row) {
-				$scheme_channel[] = $row->tradedeal_scheme_channel_id;
-			}
+			// $scheme_channel = [];
+			// foreach ($channels as $row) {
+			// 	$scheme_channel[] = $row->tradedeal_scheme_channel_id;
+			// }
 
-			$rtms = TradedealSchemeAllocation::getMTAccounts($value);
+			// $rtms = TradedealSchemeAllocation::getMTAccounts($value);
 			// Helper::debug($rtms);
 			$data[$key]->channels = $channels;
-			$data[$key]->rtms = $rtms;
+			// $data[$key]->rtms = $rtms;
 			
 		}
 		return $data;
