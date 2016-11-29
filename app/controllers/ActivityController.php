@@ -3283,13 +3283,14 @@ class ActivityController extends BaseController {
 							}
 						}
 					}
+					
 
-					$schemes = TradedealScheme::where('tradedeal_id', $tradedeal->id)->get();
-					if(!empty($schemes)){
-						foreach ($schemes as $scheme) {
-							TradedealAllocRepository::updateAllocation($scheme);
-						}
-					}
+					// $schemes = TradedealScheme::where('tradedeal_id', $tradedeal->id)->get();
+					// if(!empty($schemes)){
+					// 	foreach ($schemes as $scheme) {
+					// 		TradedealAllocRepository::updateAllocation($scheme);
+					// 	}
+					// }
 
 
 					
