@@ -663,7 +663,7 @@
 						<div class="form-group">
 							<div class="row">
 								<div class="col-lg-12">
-									{{ Form::label('non_ulp_premium_cost', 'Unit Cost / Piece', array('class' => 'control-label')) }}
+									{{ Form::label('non_ulp_premium_cost', 'Unit Cost / Piece (LPBT)', array('class' => 'control-label')) }}
 									{{ Form::text('non_ulp_premium_cost',($tradedeal) ?  $tradedeal->non_ulp_premium_cost : '', array('class' => 'form-control', 'id' => 'non_ulp_premium_cost')) }}
 								</div>
 							</div>
@@ -720,12 +720,12 @@
 										<thead>
 											<tr>
 												<th>Host SKU</th>
-												<th>Unit Cost / Piece</th>
+												<th>Unit Cost / Piece (LPBT)</th>
 												<th>Piece / Case</th>
 												<th>Variant Shortcut</th>
 												<th>Reference SKU</th>
 												<th>Premium SKU</th>
-												<th>Unit Cost / Piece</th>
+												<th>Unit Cost / Piece (LPBT)</th>
 												<th>Piece / Case</th>
 												<th>Variant Shortcut</th>
 												<th></th>
@@ -1467,7 +1467,7 @@
 						</tr>
 						
 						<tr>
-							<td>Unit Cost / Piece</td>
+							<td>Unit Cost / Piece (LPBT)</td>
 							<td>
 								<div class="row">
 								  <div class="col-lg-12">
@@ -1519,7 +1519,7 @@
 							</td>
 						</tr>
 						<tr class="pre-sku ulppremium">
-							<td>Unit Cost / Piece</td>
+							<td>Unit Cost / Piece (LPBT)</td>
 							<td>
 								<input class="form-control" name="pre_cost_pcs" type="text" value="0" id="pre_cost_pcs" readonly =''>
 							</td>
@@ -1542,7 +1542,7 @@
 							</td>
 						</tr>
 						<tr class="pre-sku">
-							<td>Unit Cost / Piece</td>
+							<td>Unit Cost / Piece (LPBT)</td>
 							<td>
 								<input class="form-control" name="pre_cost_pcs" type="text" value="{{ $tradedeal->non_ulp_premium_cost}}" id="pre_cost_pcs" readonly =''>
 							</td>
@@ -1590,7 +1590,7 @@
 						</tr>
 						
 						<tr>
-							<td>Unit Cost / Piece</td>
+							<td>Unit Cost / Piece (LPBT)</td>
 							<td>
 								<div class="row">
 								  <div class="col-lg-12">
@@ -1653,7 +1653,7 @@
 							</td>
 						</tr>
 						<tr class="pre-sku ulppremium">
-							<td>Unit Cost / Piece</td>
+							<td>Unit Cost / Piece (LPBT)</td>
 							<td>
 								<input class="form-control" name="epre_cost_pcs" type="text" value="0" id="epre_cost_pcs" readonly =''>
 							</td>
@@ -1687,7 +1687,7 @@
 							</td>
 						</tr>
 						<tr class="pre-sku">
-							<td>Unit Cost / Piece</td>
+							<td>Unit Cost / Piece (LPBT)</td>
 							<td>
 								<input class="form-control" name="epre_cost_pcs" type="text" value="{{ $tradedeal->non_ulp_premium_cost}}" id="epre_cost_pcs" readonly =''>
 							</td>

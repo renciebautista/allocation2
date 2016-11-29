@@ -20,6 +20,17 @@ class MtDtHieracry extends \Eloquent {
 	// }
 
 	public static function getAllHierarcy(){
+		// select *
+		// from mt_dt_hieracry
+		// right join areas on areas.area_code = mt_dt_hieracry.area_code
+		// right join groups on groups.group_code = areas.group_code
+		// right join customers on customers.customer_code = mt_dt_hieracry.customer_code
+		// left join ship_tos on ship_tos.plant_code = mt_dt_hieracry.plant_code
+		// left join ship_to_plant_codes on ship_to_plant_codes.distributor_code = mt_dt_hieracry.distributor_code
+		// left join accounts on (mt_dt_hieracry.account_name = accounts.account_name AND ship_tos.ship_to_code = accounts.ship_to_code)
+		// left join sub_channels on (mt_dt_hieracry.coc_03_code = sub_channels.coc_03_code AND mt_dt_hieracry.coc_04_code = sub_channels.l4_code AND mt_dt_hieracry.coc_05_code = sub_channels.l5_code)
+		// left join channels on channels.channel_code = sub_channels.channel_code
+		
 		$query = sprintf('select mt_dt_hieracry.id as mt_dt_hieracry_id,
 			mt_dt_hieracry.area_code as mt_dt_hieracry_area_code, mt_dt_hieracry.customer_code as mt_dt_hieracry_customer_code, mt_dt_hieracry.distributor_code as mt_dt_hieracry_distributor_code, mt_dt_hieracry.plant_code as mt_dt_hieracry_plant_code, mt_dt_hieracry.account_name as mt_dt_hieracry_account_name, mt_dt_hieracry.coc_03_code as mt_dt_hieracry_coc_03_code, mt_dt_hieracry.coc_04_code as mt_dt_hieracry_coc_04_code, mt_dt_hieracry.coc_05_code as mt_dt_hieracry_coc_05_code,
 			areas.id as areas_id, areas.group_code as areas_group_code, areas.area_code as areas_area_code, areas.area_name as areas_area_name,
