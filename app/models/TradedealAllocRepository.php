@@ -387,11 +387,11 @@ class TradedealAllocRepository  {
 											$alloc->forced_computed_pcs = self::computed_pcs($alloc->forced_weekly_run_rates,$tradedeal->alloc_in_weeks, $alloc->pur_req, $uom_premium, $tradealscheme->free);
 
 											$alloc->final_pcs = $alloc->forced_computed_pcs;
-											$alloc->computed_cost = $alloc->forced_computed_pcs * $premium['cost'];
+											$alloc->computed_cost = $alloc->final_pcs * $premium['cost'];
 										}
 									}else{
 										$alloc->final_pcs = $alloc->computed_pcs;
-										$alloc->computed_cost = $alloc->computed_pcs * $premium['cost'];
+										$alloc->computed_cost = $alloc->final_pcs * $premium['cost'];
 									}
 
 									$alloc->save();
@@ -429,11 +429,11 @@ class TradedealAllocRepository  {
 									$alloc->forced_computed_pcs = self::computed_pcs($alloc->forced_weekly_run_rates,$tradedeal->alloc_in_weeks, $alloc->pur_req, $uom_premium, $tradealscheme->free);
 
 									$alloc->final_pcs = $alloc->forced_computed_pcs;
-									$alloc->computed_cost = $alloc->forced_computed_pcs * $premium['cost'];
+									$alloc->computed_cost = $alloc->final_pcs * $premium['cost'];
 								}
 							}else{
 								$alloc->final_pcs = $alloc->computed_pcs;
-								$alloc->computed_cost = $alloc->computed_pcs * $premium['cost'];
+								$alloc->computed_cost = $alloc->final_pcs * $premium['cost'];
 							}
 							$alloc->save();
 						}

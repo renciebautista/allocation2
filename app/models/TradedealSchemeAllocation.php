@@ -16,7 +16,7 @@ class TradedealSchemeAllocation extends \Eloquent {
 			left join tradedeal_part_skus on tradedeal_part_skus.id = tradedeal_scheme_skus.tradedeal_part_sku_id
 			right join tradedeals on tradedeals.id = tradedeal_schemes.tradedeal_id
 			right join activities on activities.id = tradedeals.activity_id
-			where tradedeal_schemes.tradedeal_id = '%d' and  computed_pcs > 0 order by area, sold_to, ship_to_name, scheme_description",$tradedeal->id);
+			where tradedeal_schemes.tradedeal_id = '%d' and  final_pcs > 0 order by area, sold_to, ship_to_name, scheme_description",$tradedeal->id);
 
 		return DB::select(DB::raw($query));
 	}
@@ -55,7 +55,7 @@ class TradedealSchemeAllocation extends \Eloquent {
 				$alloc = self::getShipToPremiumAlloc($premium, $value);
 				// Helper::debug($alloc);
 				if(!empty($alloc)){
-					$computed_pcs = $alloc[0]->computed_pcs;
+					$computed_pcs = $alloc[0]->final_pcs;
 				}
 
 				if($value->tradedeal_uom_id == 1){
