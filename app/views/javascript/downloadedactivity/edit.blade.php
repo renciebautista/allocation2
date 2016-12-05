@@ -118,7 +118,6 @@ function checkDirty(target_id,callback) {
 $('#updateActivity,#updateCustomer,#updateBilling,#updatetimings').areYouSure();
 
 $("a[href='#customer']").on('shown.bs.tab', function(e) {
-	$("#tree4").fancytree("disable");
     getCustomer();
 });
 
@@ -503,20 +502,7 @@ $("#tree3").fancytree({
 		$("#customers").val(selRootKeys.join(", "));
 		//show_alloc();
 		show_force_alloc();
-	},
-	click: function(event, data) {
-        $("#updateCustomer").addClass("dirty");
-        if(data.targetType == "checkbox"){
-        	//console.log(data.node.tree);
-	        var keys = data.node.key.split(".");
-	        if($.inArray('E1397', keys) != -1){
-				$("#tree4").fancytree("getTree").visit(function(node){
-			        node.setSelected(true);
-			    });
-			}
-    	}
-       
-    }
+	}
 });
 
 
@@ -536,72 +522,7 @@ $("#btnCSelectAll").click(function(){
 
 
 
-$("#tree4").fancytree({
-	extensions: [],
-	checkbox: true,
-	selectMode: 3,
-	source: {
-		url: "../../api/channels?id={{$activity->id}}"
-	},
-	select: function(event, data) {
-		// Get a list of all selected TOP nodes
-		var selRootNodes = data.tree.getSelectedNodes(true);
-		// ... and convert to a key array:
-		var selRootKeys = $.map(selRootNodes, function(node){
-		  return node.key;
-		});
 
-
-		var keys = selRootKeys.join(".").split(".");
-		$("#channels_involved").val(selRootKeys.join(", "));
-	},
-	click: function(event, data) {
-        $("#updateCustomer").addClass("dirty");
-    },
-});
-
-$("#btnChDeselectAll").click(function(){
-	if(!$("#tree4").hasClass( "ui-fancytree-disabled" )){
-		$("#tree4").fancytree("getTree").visit(function(node){
-	    	node.setSelected(false);
-	  	});
-	}
-  	
-  	return false;
-});
-$("#btnChSelectAll").click(function(){
-	if(!$("#tree4").hasClass( "ui-fancytree-disabled" )){
-		$("#tree4").fancytree("getTree").visit(function(node){
-	    	node.setSelected(true);
-	  	});
-	}
-
-  	
-  	return false;
-});
-
-function updatechannel(){
-	$.ajax({
-		type: "GET",
-		url: "{{ URL::action('ActivityController@channels', $activity->id ) }}",
-		success: function(data){
-			$('select#channel').empty();
-			$.each(data.selection, function(i, text) {
-				var sel_class = '';
-				if(data.selected.length > 0){
-					if($.inArray( i,data.selected ) > -1){
-						sel_class = 'selected="selected"';
-					}
-				}else{
-					sel_class = 'selected="selected"';
-				}
-				
-				$('<option '+sel_class+' value="'+i+'">'+text+'</option>').appendTo($('select#channel')); 
-			});
-		$('select#channel').multiselect('rebuild');
-	   }
-	});
-}
 
 
 $("form[id='updateCustomer']").on("submit",function(e){
