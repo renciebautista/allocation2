@@ -67,8 +67,14 @@ class TradedealScheme extends \Eloquent {
 				$o = new stdClass();
 				$o->host_code = implode(" / ", $_host_code);
 				$o->desc_variant = implode(" / ", $_host_sku);
-				$o->scheme_desc = $c_deal_id->scheme_desc;
-				$o->scheme_code = $c_deal_id->scheme_code;
+				if(isset($c_deal_id->scheme_desc)){
+					$o->scheme_desc = $c_deal_id->scheme_desc;
+				}
+
+				if(isset($c_deal_id->scheme_code)){
+					$o->scheme_code = $c_deal_id->scheme_code;
+				}
+				
 				$o->pre_code = $value->pre_code;
 				if($tradeal->nonUlpPremium()){
 					$o->pre_variant = $value->pre_desc .' '.$value->pre_variant;

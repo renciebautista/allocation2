@@ -394,7 +394,7 @@
 									  		<tr>
 									  			<td>{{ $area->group_name }}</td>
 									  			<td>{{ $area->area_name }}</td>
-								  				<td><input class="input-number" id="{{ $area->area_code }}"  name="force_alloc[{{ $area->area_code }}]" value="{{ $area->multi }}" type="text"></td>
+								  				<td><input class="input-number disabled-readonly" id="{{ $area->area_code }}"  name="force_alloc[{{ $area->area_code }}]" value="{{ $area->multi }}" type="text"></td>
 									  		</tr>
 									  		@endforeach
 									  	</tbody>
