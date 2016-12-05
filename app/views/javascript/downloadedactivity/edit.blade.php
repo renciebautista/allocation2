@@ -18,14 +18,13 @@ function getCustomer(){
 		url: "../../api/customerselected?id={{$activity->id}}",
 		success: function(data){
 			$.each(data, function(i, node) {
-				 $("#tree3").fancytree("getTree").getNodeByKey(node).setSelected(true);
-				// console.log(node);
-				$("#tree3").fancytree("getTree").visit(function(node){
+				$("#tree3").fancytree("getTree").getNodeByKey(node).setSelected(true);
+				//$("#tree3").fancytree("getTree").visit(function(node){
 					///if(node.key == node.text){
 						///console.log(node);
 						//node.setSelected(true);
 					//}        
-				});
+				//});
 			});
 
 			show_force_alloc();
@@ -576,21 +575,27 @@ $('#allow_force').click(function() {
 
 function show_force_alloc(){
 	var a = [];
-    $.each( selectedkeys, function( key, value ) {
-    	var arr = value.split('.');
-    	$.each( arr, function( key, value2 ) {
-    		a.push(value2);
-    	});
-	});
 
-	$('input', $('#force_alloc')).each(function () {
-		if($.inArray($(this).attr("id"), a) != -1){
-			$(this).removeAttr('disabled').removeClass('disabled-readonly');
-		}else{
-			$(this).attr('disabled','disabled').addClass('disabled-readonly');
-		}
-	});
+	if(selectedkeys != null){
+		$.each(selectedkeys, function( key, value ) {
+	    	var arr = value.split('.');
+	    	$.each( arr, function( key, value2 ) {
+	    		a.push(value2);
+	    	});
+		});
 
+		$('input', $('#force_alloc')).each(function () {
+			if($.inArray($(this).attr("id"), a) != -1){
+				if($("#allow_force").is(':checked')){
+					$(this).removeAttr('disabled').removeClass('disabled-readonly');
+				}
+				
+			}else{
+				$(this).attr('disabled','disabled').addClass('disabled-readonly');
+			}
+		});
+	}
+    
 }
 <!-- schemes -->
 <!-- schemes -->
