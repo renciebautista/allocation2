@@ -422,6 +422,8 @@ class MakePdf extends Command {
 			$pdf_name = preg_replace('/[^A-Za-z0-9 _ .-]/', '_', $activity->circular_name);
 			$filepath = '/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
 
+			// dd($filepath);
+
 			$path = storage_path().$filepath;
 			if(!File::exists($path)) {
 				File::makeDirectory($path);

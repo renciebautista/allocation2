@@ -318,7 +318,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>DT Channel/s Involved</td>
+						<td>Channel/s Involved</td>
 						<td>
 							@if(!empty($areas))
 							<ul>
