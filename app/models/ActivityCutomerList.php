@@ -239,13 +239,12 @@ class ActivityCutomerList extends \Eloquent {
 					foreach ($sel_areas as $sel_area) {
 						$areas[] = $sel_area->title;
 					}
-
 				}
 			}
-
-			
 		}
-		return array_unique($areas) ;
+
+		asort($areas);
+		return  array_unique($areas) ;
 
 	}
 }
