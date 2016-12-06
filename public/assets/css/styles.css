@@ -886,6 +886,27 @@ h2, .h2 {
 	width: 5%;
 }
 
+.bbfree {
+    width: 100%;
+}
+
+.bbfree tr > th {
+  	background-color: #000000;
+    color: #FFFFFF;
+    border: 1px solid #000000;
+    padding: 5px;
+}
+
+.bbfree tr > td {
+    border: 1px solid #000000;
+    padding: 5px;
+    vertical-align: top;
+}
+
+#allocations textarea {
+    width: 100%;
+}
+
 .filters .checkbox {
 	margin: 0px;
 }

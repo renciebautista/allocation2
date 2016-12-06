@@ -152,12 +152,12 @@ class MakeFieldTradedeal extends Command {
 
 						$row = 2;
 						$sheet->row($row, array('AREA', 'Distributor Code', 'Distributor Name', 'Site Code', 'Site Name', 'Scheme Code', 'Scheme Description', 'UOM'));
-						$sheet->getStyle("A2:N2")->getFont()->setBold(true);
+
 
 						$sheet->getDefaultStyle()
 						    ->getAlignment()
 						    ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-						    
+
 						// premuim
 						$premiums = [];
 						foreach ($tradedeal_skus as $sku) {
@@ -180,8 +180,22 @@ class MakeFieldTradedeal extends Command {
 					        )
 					    );
 
+					    
+
 						$d_col = $col -1;
 						$sheet->mergeCells(\PHPExcel_Cell::stringFromColumnIndex(8).'1:'.\PHPExcel_Cell::stringFromColumnIndex($d_col).'1');
+						$sheet->getStyle(\PHPExcel_Cell::stringFromColumnIndex(8).'1:'.\PHPExcel_Cell::stringFromColumnIndex($d_col).'1')
+							->applyFromArray(array(
+						    'fill' => array(
+						        'type'  => PHPExcel_Style_Fill::FILL_SOLID,
+						        'color' => array('rgb' => '091462')
+						    )
+						));
+
+						$sheet->cells(\PHPExcel_Cell::stringFromColumnIndex(8).'1:'.\PHPExcel_Cell::stringFromColumnIndex($d_col).'1', function($cells) {
+							$cells->setFontColor('#ffffff');
+						});
+
 						$sheet->getStyle(\PHPExcel_Cell::stringFromColumnIndex(8).'1:'.\PHPExcel_Cell::stringFromColumnIndex($d_col).'1')->applyFromArray($style);
 
 
@@ -192,8 +206,35 @@ class MakeFieldTradedeal extends Command {
 							$col++;
 						}
 						$d_col++;
+
 						$p_col = $col - 1;
+
+						$sheet->getStyle('A2:'.\PHPExcel_Cell::stringFromColumnIndex($d_col).'2')
+							->getFont()
+							->setBold(true);
+						
+						// Set background color for a specific cell
+						$sheet->getStyle('A2:'.\PHPExcel_Cell::stringFromColumnIndex($p_col).'2')->applyFromArray(array(
+						    'fill' => array(
+						        'type'  => PHPExcel_Style_Fill::FILL_SOLID,
+						        'color' => array('rgb' => 'DAEBF8')
+						    )
+						));
+
 						$sheet->mergeCells(\PHPExcel_Cell::stringFromColumnIndex($d_col).'1:'.\PHPExcel_Cell::stringFromColumnIndex($p_col).'1');
+						$sheet->getStyle(\PHPExcel_Cell::stringFromColumnIndex($d_col).'1:'.\PHPExcel_Cell::stringFromColumnIndex($p_col).'1')
+							->applyFromArray(array(
+						    'fill' => array(
+						        'type'  => PHPExcel_Style_Fill::FILL_SOLID,
+						        'color' => array('rgb' => '7F00A1')
+						    )
+						));
+
+						$sheet->cells(\PHPExcel_Cell::stringFromColumnIndex($d_col).'1:'.\PHPExcel_Cell::stringFromColumnIndex($p_col).'1', function($cells) {
+							$cells->setFontColor('#ffffff');
+						});
+
+
 						$sheet->getStyle(\PHPExcel_Cell::stringFromColumnIndex($d_col).'1:'.\PHPExcel_Cell::stringFromColumnIndex($p_col).'1')->applyFromArray($style);
 
 						$sheet->getStyle('I2:R2')->getAlignment()
@@ -238,6 +279,13 @@ class MakeFieldTradedeal extends Command {
 											$sheet->setCellValueByColumnAndRow($col,$row,$sum);
 										}
 
+										$sheet->getStyle('D'.$row.':'.\PHPExcel_Cell::stringFromColumnIndex($p_col).$row)->applyFromArray(array(
+										    'fill' => array(
+										        'type'  => PHPExcel_Style_Fill::FILL_SOLID,
+										        'color' => array('rgb' => 'DAEBF8')
+										    )
+										));
+
 										$row++;
 										$first_row = $row;
 										$sheet->row($row, ['', '', '', $alloc->plant_code, $alloc->ship_to_name, $alloc->scheme_code, $alloc->scheme_description, $pcs_deal]);
@@ -258,6 +306,14 @@ class MakeFieldTradedeal extends Command {
 											$sum = "=SUM(".\PHPExcel_Cell::stringFromColumnIndex($col).$first_row.":".\PHPExcel_Cell::stringFromColumnIndex($col).$last_row.")";
 											$sheet->setCellValueByColumnAndRow($col,$row,$sum);
 										}
+
+										$sheet->getStyle('D'.$row.':'.\PHPExcel_Cell::stringFromColumnIndex($p_col).$row)->applyFromArray(array(
+										    'fill' => array(
+										        'type'  => PHPExcel_Style_Fill::FILL_SOLID,
+										        'color' => array('rgb' => 'DAEBF8')
+										    )
+										));
+
 										$row++;
 										$first_row = $row;
 									}
@@ -276,6 +332,14 @@ class MakeFieldTradedeal extends Command {
 												$sum = "=SUM(".\PHPExcel_Cell::stringFromColumnIndex($col).$first_row.":".\PHPExcel_Cell::stringFromColumnIndex($col).$last_row.")";
 												$sheet->setCellValueByColumnAndRow($col,$row,$sum);
 											}
+
+											$sheet->getStyle('D'.$row.':'.\PHPExcel_Cell::stringFromColumnIndex($p_col).$row)->applyFromArray(array(
+											    'fill' => array(
+											        'type'  => PHPExcel_Style_Fill::FILL_SOLID,
+											        'color' => array('rgb' => 'DAEBF8')
+											    )
+											));
+
 											$row++;
 											$first_row = $row;
 										}
@@ -303,6 +367,13 @@ class MakeFieldTradedeal extends Command {
 										$sheet->setCellValueByColumnAndRow($col,$row,$sum);
 									}
 
+									$sheet->getStyle('D'.$row.':'.\PHPExcel_Cell::stringFromColumnIndex($p_col).$row)->applyFromArray(array(
+									    'fill' => array(
+									        'type'  => PHPExcel_Style_Fill::FILL_SOLID,
+									        'color' => array('rgb' => 'DAEBF8')
+									    )
+									));
+
 									$row++;
 									$first_row = $row;
 								}else{
@@ -319,6 +390,14 @@ class MakeFieldTradedeal extends Command {
 											$sum = "=SUM(".\PHPExcel_Cell::stringFromColumnIndex($col).$first_row.":".\PHPExcel_Cell::stringFromColumnIndex($col).$last_row.")";
 											$sheet->setCellValueByColumnAndRow($col,$row,$sum);
 										}
+
+										$sheet->getStyle('D'.$row.':'.\PHPExcel_Cell::stringFromColumnIndex($p_col).$row)->applyFromArray(array(
+										    'fill' => array(
+										        'type'  => PHPExcel_Style_Fill::FILL_SOLID,
+										        'color' => array('rgb' => 'DAEBF8')
+										    )
+										));
+
 										$row++;
 										$first_row = $row;
 									}
@@ -349,6 +428,13 @@ class MakeFieldTradedeal extends Command {
 							$sum = "=SUM(".\PHPExcel_Cell::stringFromColumnIndex($col).$first_row.":".\PHPExcel_Cell::stringFromColumnIndex($col).$last_row.")";
 							$sheet->setCellValueByColumnAndRow($col,$row,$sum);
 						}		
+
+						$sheet->getStyle('D'.$row.':'.\PHPExcel_Cell::stringFromColumnIndex($p_col).$row)->applyFromArray(array(
+						    'fill' => array(
+						        'type'  => PHPExcel_Style_Fill::FILL_SOLID,
+						        'color' => array('rgb' => 'DAEBF8')
+						    )
+						));
 				    });
 			
 					$excel->sheet('OUTPUT FILE', function($sheet) use ($activity) {
@@ -467,6 +553,8 @@ class MakeFieldTradedeal extends Command {
 
 				    });
 				})->store('xls',storage_path().$filepath);
+
+				$this->line(storage_path().$filepath);
 			}
 		}
 	}

@@ -881,6 +881,7 @@
 								@endforeach
 								
 							</table>
+			</div>
 			@endif
 		</div>
 		

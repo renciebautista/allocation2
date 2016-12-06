@@ -134,7 +134,7 @@ class TradedealSchemeChannel extends \Eloquent {
 			$data[] = $o;
 
 		}
-
+		asort($data);
 		return $data;
 	}
 }
