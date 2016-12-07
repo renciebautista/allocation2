@@ -53,7 +53,7 @@
 
 	<h1>Hi {{ ucwords(strtolower($user)) }}!</h1>
 	<p>Please see below summary of <?php echo count($activities); ?> approved circular/s.  PDF copy of circulars and attachments are ready for download.</p>
-	<p>You may also download talker layered artworks from >> </p> <a href="https://www.dropbox.com/sh/klqlb83wyq2ayir/AAAeO61d8W7ifvdfCxfVUl9ca?dl=0"> https://www.dropbox.com/sh/klqlb83wyq2ayir/AAAeO61d8W7ifvdfCxfVUl9ca?dl=0</a>
+	<p>You may also download talker layered artworks from >> <a href="https://www.dropbox.com/sh/klqlb83wyq2ayir/AAAeO61d8W7ifvdfCxfVUl9ca?dl=0"> https://www.dropbox.com/sh/klqlb83wyq2ayir/AAAeO61d8W7ifvdfCxfVUl9ca?dl=0</a></p> 
 	<ul>
 		@foreach($cycles as $cycle)
 		<li>{{ HTML::linkAction('DownloadsController@downloadcycle' , 'Download '. $cycle->cycle_name,$cycle->id) }}</li>
