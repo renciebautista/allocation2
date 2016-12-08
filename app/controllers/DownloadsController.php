@@ -290,8 +290,10 @@ class DownloadsController extends \BaseController {
 			->where('disable',0)
 			->get();
 
+		$folders = [];
+
 		if(count($activities) > 0){
-			$folders = [];
+			
 			foreach ($activities as $activity) {
 				$tradedeal = Tradedeal::getActivityTradeDeal($activity);
 
@@ -308,7 +310,7 @@ class DownloadsController extends \BaseController {
 				}
 			}
 		}
-
+		dd($folders);
 		$archive = $zippy->create($zip_path,$folders,true);
 		return Response::download($zip_path);
 
