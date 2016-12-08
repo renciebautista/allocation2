@@ -275,8 +275,13 @@ class DownloadsController extends \BaseController {
 		$zippy = Zippy::load();
 		$cycle = Cycle::where('id',$id)->first();
 		$user_id = Auth::user()->id;
+		$folder_path = storage_path().'/zipped/le/'.$user_id;
 
-		$zip_path = storage_path().'/zipped/le/'.$user_id.'/'.$cycle->cycle_name.'.zip';
+		if(!File::exists($folder_path)) {
+			File::makeDirectory($folder_path);
+		}
+
+		$zip_path = $folder_path.'/'.$cycle->cycle_name.'.zip';
 
 		File::delete($zip_path);
 		$with_files = false;
