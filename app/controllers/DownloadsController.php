@@ -274,8 +274,9 @@ class DownloadsController extends \BaseController {
 	public function downloadletemplates($id){
 		$zippy = Zippy::load();
 		$cycle = Cycle::where('id',$id)->first();
+		$user_id = Auth::user()->id;
 
-		$zip_path = storage_path().'/zipped/le/'.Auth::user()->id().'/'.$cycle->cycle_name.'.zip';
+		$zip_path = storage_path().'/zipped/le/'.$user_id.'/'.$cycle->cycle_name.'.zip';
 
 		File::delete($zip_path);
 		$with_files = false;
@@ -283,7 +284,7 @@ class DownloadsController extends \BaseController {
 		$activities = Activity::select('activities.id', 'activities.circular_name')
 			->join('activity_types', 'activity_types.id', '=', 'activities.activity_type_id')
 			->where('activity_types.with_tradedeal',1)
-			->where('activities.created_by', Auth::user()->id)
+			->where('activities.created_by', $user_id)
 			->where('cycle_id',$cycle->id)
 			->where('status_id',9)
 			->where('disable',0)
