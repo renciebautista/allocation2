@@ -74,8 +74,8 @@ class DownloadsController extends \BaseController {
 			
 		}
 		if($with_files){
-			dd($folders);
-			// $archive = $zippy->create($zip_path,$folders, true);
+			// dd($folders);
+			$archive = $zippy->create($zip_path,$folders, true);
 			return Response::download($zip_path);
 		}else{
 			return View::make('downloads.norecordfound');
