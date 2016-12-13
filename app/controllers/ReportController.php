@@ -200,6 +200,31 @@ class ReportController extends \BaseController {
 			}
 		}
 
+		// tradedeal
+		$tradedeal = Tradedeal::getActivityTradeDeal($activity);
+		$tradedeal_skus = TradedealPartSku::where('activity_id', $activity->id)->get();
+
+		$acdivisions = \ActivityDivision::getList($activity->id);
+		$accategories = \ActivityCategory::selected_category($activity->id);
+		$acbrands = \ActivityBrand::selected_brand($activity->id);
+
+		$host_skus = ActivitySku::tradedealSkus($activity);
+		$ref_skus = Sku::items($acdivisions,$accategories,$acbrands);
+
+		$pre_skus = \Pricelist::items();
+		$dealtypes = TradedealType::getList();
+		$dealuoms = TradedealUom::get()->lists('tradedeal_uom', 'id');
+
+		$tradedealschemes = [];
+		$total_deals = Tradedeal::total_deals($activity);
+		$total_premium_cost = Tradedeal::total_premium_cost($activity);
+
+		if($tradedeal != null){
+			$tradedealschemes = TradedealScheme::getScheme($tradedeal->id);
+		}
+		$participating_skus = TradedealPartSku::getParticipatingSku($activity);
+		// end tradedeal
+
 		$divisions = Sku::getDivisionLists();
 		$route = 'reports.activities';
 		$recall = $activity->pro_recall;
@@ -209,7 +234,8 @@ class ReportController extends \BaseController {
 		 'objectives',  'users', 'budgets', 'nobudgets','sel_approver',
 		 'sel_objectives',  'schemes', 'scheme_summary', 'networks','areas',
 		 'scheme_customers', 'scheme_allcations', 'materials', 'force_allocs','sel_involves',
-		 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings', 'comments' , 'route', 'recall', 'submit_action'));
+		 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings', 'comments' , 'route', 'recall', 'submit_action',
+		 'tradedeal','total_deals', 'total_premium_cost', 'participating_skus', 'tradedealschemes'));
 	}
 
 	public function scheme($id){

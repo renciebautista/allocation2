@@ -15,7 +15,10 @@ class TradedealAllocRepository  {
 	private static function save($tradealscheme){
 		$tradedeal = Tradedeal::find($tradealscheme->tradedeal_id);
 		$activity = Activity::find($tradedeal->activity_id);
+		$force_alloc = $activity->allow_force;
 		$forced_areas = ForceAllocation::getForcedAreas($tradedeal->activity_id);
+
+		$force_alloc = $activity->allow_force;
 
 		$customers = ActivityCustomer::customers($tradedeal->activity_id);
 		$_channels = ActivityChannel2::channels($tradedeal->activity_id);
@@ -55,7 +58,7 @@ class TradedealAllocRepository  {
 				$host_variant = substr(strtoupper($row->variant),0,1);
 				$series = TradeIndividualSeries::getSeries($month_year, $tradealscheme->id, $row->host_id);
 				$deal_id = 'B'.$month_year.$scheme_uom_abv.$brand.$host_variant .sprintf("%02d", $series->series);
-				self::generate_allocation($hostskus, $_channels, $customers,$forced_areas,$tradealscheme, $tradedeal, $deal_id, $trade_customers);
+				self::generate_allocation($hostskus, $_channels, $customers,$forced_areas,$tradealscheme, $tradedeal, $deal_id, $trade_customers, null, $force_alloc);
 
 			}
 		}else if($tradealscheme->tradedeal_type_id == 2){
@@ -105,7 +108,7 @@ class TradedealAllocRepository  {
 			$series = TradeCollectiveSeries::getSeries($month_year, $tradealscheme->id);
 			$deal_id = $month_year.$scheme_uom_abv.$brand_short_cut.sprintf("%02d", $series->series);
 
-			self::generate_allocation($lowest_skus, $_channels, $customers,$forced_areas, $tradealscheme, $tradedeal, $deal_id, $trade_customers, $collective_premium);
+			self::generate_allocation($lowest_skus, $_channels, $customers,$forced_areas, $tradealscheme, $tradedeal, $deal_id, $trade_customers, $collective_premium, $force_alloc);
 		}
 		
 	}
@@ -131,7 +134,7 @@ class TradedealAllocRepository  {
 		return $weekly_run_rates;
 	}
 
-	private static function purchase_requirement($tradealscheme, $sold_to_gsv, $uom_multiplpier, $hostsku ){
+	private static function purchase_requirement($tradealscheme, $uom_multiplpier, $hostsku ){
 		$purchase_requirement = 0;
 		if($tradealscheme->tradedeal_type_id == 1){
 			$purchase_requirement = $hostsku[0]->host_cost * $tradealscheme->buy * $uom_multiplpier;
@@ -161,7 +164,7 @@ class TradedealAllocRepository  {
 		return $pcs;
 	}
 
-	private static function generate_allocation($host_skus, $_channels, $customers,$forced_areas, $tradealscheme, $tradedeal, $deal_id, $trade_customers, $collective_premium = null){
+	private static function generate_allocation($host_skus, $_channels, $customers,$forced_areas, $tradealscheme, $tradedeal, $deal_id, $trade_customers, $collective_premium = null, $force_alloc){
 		$allocationRepo = new AllocationRepository2;
 
 		$ref_sku = [];
@@ -265,18 +268,37 @@ class TradedealAllocRepository  {
 									$alloc->ship_to_code = $shipto['ship_to_code'];
 									$alloc->plant_code = $shipto['plant_code'];
 									$alloc->ship_to_name = $shipto['ship_to_name'];
+
 									$alloc->sold_to_gsv = $shipto['gsv']; 
 									$alloc->weekly_run_rates = self::weekly_run_rates($tradealscheme, $shipto['gsv'], $host_skus);
-									$alloc->pur_req = self::purchase_requirement($tradealscheme, $shipto['gsv'], $uom_multiplpier, $host_skus);
+									
+									$alloc->pur_req = self::purchase_requirement($tradealscheme, $uom_multiplpier, $host_skus);
 									$alloc->computed_pcs = self::computed_pcs($alloc->weekly_run_rates,$tradedeal->alloc_in_weeks, $alloc->pur_req, $uom_premium, $tradealscheme->free);
+
 									$alloc->manual_pcs = 0;
-									$alloc->final_pcs = $alloc->computed_pcs;
+									
 									$alloc->prem_cost = $premium['cost'];
-									$alloc->computed_cost = $alloc->computed_pcs * $premium['cost'];
+									
 									$alloc->deal_multiplier = $uom_premium;
 									$alloc->pre_code = $premium['pre_code'];
 									$alloc->pre_desc = $premium['pre_desc'];
 									$alloc->pre_desc_variant = $premium['pre_desc'].' '.$premium['variant'];
+
+									if($force_alloc){
+										if(array_key_exists($customer->area_code, $forced_areas)){
+											$forced_gsv = $shipto['gsv'] * $forced_areas[$customer->area_code];
+											$alloc->forced_sold_to_gsv = $forced_gsv;
+											$alloc->forced_weekly_run_rates = self::weekly_run_rates($tradealscheme, $forced_gsv, $host_skus);
+											$alloc->forced_computed_pcs = self::computed_pcs($alloc->forced_weekly_run_rates,$tradedeal->alloc_in_weeks, $alloc->pur_req, $uom_premium, $tradealscheme->free);
+
+											$alloc->final_pcs = $alloc->forced_computed_pcs;
+											$alloc->computed_cost = $alloc->final_pcs * $premium['cost'];
+										}
+									}else{
+										$alloc->final_pcs = $alloc->computed_pcs;
+										$alloc->computed_cost = $alloc->final_pcs * $premium['cost'];
+									}
+
 									$alloc->save();
 								}
 							}
@@ -295,16 +317,29 @@ class TradedealAllocRepository  {
 							// $alloc->ship_to_name = $shipto['ship_to_name'];
 							$alloc->sold_to_gsv = $customer->gsv; 
 							$alloc->weekly_run_rates = self::weekly_run_rates($tradealscheme, $customer->gsv, $host_skus);
-							$alloc->pur_req = self::purchase_requirement($tradealscheme, $customer->gsv, $uom_multiplpier, $host_skus);
+							$alloc->pur_req = self::purchase_requirement($tradealscheme, $uom_multiplpier, $host_skus);
 							$alloc->computed_pcs = self::computed_pcs($alloc->weekly_run_rates,$tradedeal->alloc_in_weeks, $alloc->pur_req, $uom_multiplpier, $tradealscheme->free);
 							$alloc->manual_pcs = 0;
-							$alloc->final_pcs = $alloc->computed_pcs;
 							$alloc->prem_cost = $premium['cost'];
-							$alloc->computed_cost = $alloc->computed_pcs * $premium['cost'];
 							$alloc->deal_multiplier = $uom_premium;
 							$alloc->pre_code = $premium['pre_code'];
 							$alloc->pre_desc = $premium['pre_desc'];
 							$alloc->pre_desc_variant = $premium['pre_desc'].' '.$premium['variant'];
+
+							if($force_alloc){
+								if(array_key_exists($customer->area_code, $forced_areas)){
+									$forced_gsv = $customer->gsv * $forced_areas[$customer->area_code];
+									$alloc->forced_sold_to_gsv = $forced_gsv;
+									$alloc->forced_weekly_run_rates = self::weekly_run_rates($tradealscheme, $forced_gsv, $host_skus);
+									$alloc->forced_computed_pcs = self::computed_pcs($alloc->forced_weekly_run_rates,$tradedeal->alloc_in_weeks, $alloc->pur_req, $uom_premium, $tradealscheme->free);
+
+									$alloc->final_pcs = $alloc->forced_computed_pcs;
+									$alloc->computed_cost = $alloc->final_pcs * $premium['cost'];
+								}
+							}else{
+								$alloc->final_pcs = $alloc->computed_pcs;
+								$alloc->computed_cost = $alloc->final_pcs * $premium['cost'];
+							}
 							$alloc->save();
 						}
 					}

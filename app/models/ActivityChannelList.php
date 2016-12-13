@@ -61,6 +61,7 @@ class ActivityChannelList extends \Eloquent {
 				$channels[] = $_ch;
 			}
 		}
+		asort($channels);
 		return array_unique($channels);
 
 

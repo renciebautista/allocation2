@@ -29,7 +29,9 @@ class TradedealScheme extends \Eloquent {
 		}
 
 		foreach ($data as $key => $value) {
-			$channels = TradedealSchemeSubType::getSchemeSubtypes($value);
+
+			// $channels = TradedealSchemeSubType::getSchemeSubtypes($value);
+			$channels = TradedealSchemeChannel::getChannelsInvolved($value);
 
 			$tradeal = Tradedeal::find($value->tradedeal_id);
 			if($value->tradedeal_type_id == 1){
@@ -54,19 +56,29 @@ class TradedealScheme extends \Eloquent {
 			// }
 
 			if($value->tradedeal_type_id == 3){
+				$_host = [];
 				$c_deal_id = TradedealSchemeAllocation::getCollecttiveSchemeCode($value);
 				$host_skus = TradedealSchemeSku::getHostSku($value);
 				$_host_sku = [];
 				$_host_code = [];
+
 				foreach ($host_skus as $host_sku) {
 					$_host_sku[] = $host_sku->host_desc.' '.$host_sku->variant;
 					$_host_code[] = $host_sku->host_code;
 				}
+
 				$o = new stdClass();
 				$o->host_code = implode(" / ", $_host_code);
 				$o->desc_variant = implode(" / ", $_host_sku);
-				$o->scheme_desc = $c_deal_id->scheme_desc;
-				$o->scheme_code = $c_deal_id->scheme_code;
+
+				if(isset($c_deal_id->scheme_desc)){
+					$o->scheme_desc = $c_deal_id->scheme_desc;
+				}
+
+				if(isset($c_deal_id->scheme_code)){
+					$o->scheme_code = $c_deal_id->scheme_code;
+				}
+				
 				$o->pre_code = $value->pre_code;
 				if($tradeal->nonUlpPremium()){
 					$o->pre_variant = $value->pre_desc .' '.$value->pre_variant;
@@ -83,15 +95,15 @@ class TradedealScheme extends \Eloquent {
 				$data[$key]->host_skus = $_host;
 			}
 
-			$scheme_channel = [];
-			foreach ($channels as $row) {
-				$scheme_channel[] = $row->tradedeal_scheme_channel_id;
-			}
+			// $scheme_channel = [];
+			// foreach ($channels as $row) {
+			// 	$scheme_channel[] = $row->tradedeal_scheme_channel_id;
+			// }
 
-			$rtms = TradedealSchemeAllocation::getMTAccounts($value);
+			// $rtms = TradedealSchemeAllocation::getMTAccounts($value);
 			// Helper::debug($rtms);
 			$data[$key]->channels = $channels;
-			$data[$key]->rtms = $rtms;
+			// $data[$key]->rtms = $rtms;
 			
 		}
 		return $data;

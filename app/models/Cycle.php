@@ -141,6 +141,20 @@ class Cycle extends \Eloquent {
 				 ->get();
 	}
 
+	public static function getReleasedCyclesWithTradeDeal($filter){
+		return DB::table('activities')
+				 ->select('cycles.cycle_name', 'cycles.id',DB::raw('count(activities.id) as total'))
+				 ->join('cycles','activities.cycle_id','=','cycles.id')
+				 ->join('tradedeals','tradedeals.activity_id','=','activities.id')
+				 ->where('cycles.cycle_name', 'LIKE' ,"%$filter%")
+				 ->where('activities.status_id',9)
+				 ->where('activities.created_by',Auth::user()->id)
+				 ->where('activities.disable',0)
+				 ->groupBy('activities.cycle_id')
+				 ->orderBy('cycles.release_date')
+				 ->get();
+	}
+
 	public static function getAllCycles($filter){
 		$query = sprintf("select cycles.id, cycles.cycle_name,
 			count(activities.id) as total_cycle,

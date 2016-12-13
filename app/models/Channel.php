@@ -60,6 +60,7 @@ class Channel extends \Eloquent {
 	public static function import($records){
 		DB::beginTransaction();
 			try {
+				
 			DB::table('channels')->truncate();
 			DB::table('sub_channels')->truncate();
 

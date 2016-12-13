@@ -153,11 +153,17 @@ class SubmittedActivityController extends \BaseController {
 		// dd($schemes);
 		// comments
 		$comments = ActivityComment::getList($activity->id);
+
+		$tradedeal = Tradedeal::getActivityTradeDeal($activity);
+		if($tradedeal != null){
+			$tradedealschemes = TradedealScheme::getScheme($tradedeal->id);
+		}
+
 		return View::make('submittedactivity.edit',compact('activity','comments','approver', 'objectives', 'valid',
 			'activity' ,'approvers', 'planner','budgets','nobudgets','schemes','skuinvolves', 'sku_involves',
 			'materials','non_ulp','networks','artworks', 'pis' , 'areas','channels', 
 			'fdapermits','fis', 'backgrounds', 'bandings' ,'activity_roles',
-			'activityIdList','id_index','status', 'soballocation'));
+			'activityIdList','id_index','status', 'soballocation', 'tradedeal', 'tradedealschemes'));
 	}
 
 	public function updateactivity($id)

@@ -21,12 +21,7 @@ function getCustomer(){
 		success: function(data){
 			$.each(data, function(i, node) {
 				$("#tree3").fancytree("getTree").getNodeByKey(node).setSelected(true);
-				//$("#tree3").fancytree("getTree").visit(function(node){
-					///if(node.key == node.text){
-						///console.log(node);
-						//node.setSelected(true);
-					//}        
-				//});
+				
 			});
 
 			show_force_alloc();
@@ -508,7 +503,7 @@ $("#tree3").fancytree({
 
 		var keys = selRootKeys.join(".").split(".");
 		// console.log(keys);
-		
+
 		$("#customers").val(selRootKeys.join(", "));
 		
 		show_force_alloc();
@@ -592,6 +587,7 @@ $('#allow_force').click(function() {
     }
 });
 
+
 function show_force_alloc(){
 	var a = [];
 
@@ -616,6 +612,7 @@ function show_force_alloc(){
 	}
     
 }
+
 <!-- schemes -->
 
 <!-- trade deal -->

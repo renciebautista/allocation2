@@ -48,6 +48,12 @@ class MakeWord extends Command {
 			$worddoc = new WordDoc($activity->id);
 			$pdf_name = preg_replace('/[^A-Za-z0-9 _ .-]/', '_', $activity->circular_name);
 			$filepath = '/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
+
+			$path = storage_path().$filepath;
+			if(!File::exists($path)) {
+				File::makeDirectory($path);
+			}
+			
 			$word_path = storage_path().$filepath.'/'. str_replace(":","_", $pdf_name).'.docx';
 			$worddoc->save($word_path);
 

@@ -54,6 +54,12 @@ class MakePdf extends Command {
 
 			$schemes = Scheme::getList($activity->id);
 
+
+			$tradedeal = Tradedeal::getActivityTradeDeal($activity);
+			if($tradedeal != null){
+				$tradedealschemes = TradedealScheme::getScheme($tradedeal->id);
+			}
+
 			$skuinvolves = array();
 			foreach ($schemes as $scheme) {
 				$involves = SchemeHostSku::where('scheme_id',$scheme->id)
@@ -300,107 +306,129 @@ class MakePdf extends Command {
 
 			$required_budget_type = ActivityTypeBudgetRequired::required($activity->activity_type_id);
 
-			if(count($schemes) > 0){
-				$pdf->SetFont('helvetica', '', 6);
-				foreach ($schemes as $scheme) {
-					$count = count($scheme->allocations);
-					$loops = (int) ($count / 34);
-					if($count %34 != 0) {
-					  $loops = $loops+1;
-					}
-					$scheme_count  = count($schemes);
-					$body ='';
-					
-					$cnt = 0;
-					for ($i = 0; $i <= $loops; $i++) { 
-						$allocs = array();
-						$body ='';
-						$last_count =  $cnt+34;
-						for ($x=$cnt; $x <= $last_count; $x++) { 
-							if($cnt == $count){
-								break;
-							}
-							$num = $x + 1;
-							$class = '';
-							if((empty($scheme->allocations[$x]->customer_id)) && (empty($scheme->allocations[$x]->shipto_id))){
-								$class = 'style="background-color: #d9edf7;"';
-							}
-							if((!empty($scheme->allocations[$x]->customer_id)) && (!empty($scheme->allocations[$x]->shipto_id))){
-								$class = 'style="background-color: #fcf8e3;"';
-							}
-
-							$tts = '';
-							$pe = '';
-							if(in_array(1,$required_budget_type)){
-								$tts = '<td style="width:50px;border: 1px solid #000000; text-align:right;">'.number_format($scheme->allocations[$x]->tts_budget,2).'</td>';
-							}
-							
-							if(in_array(2,$required_budget_type)){
-								$pe = '<td style="width:50px;border: 1px solid #000000; text-align:right;">'.number_format($scheme->allocations[$x]->pe_budget,2).'</td>';
-							}
-
-							$body .='<tr '.$class.'>
-									<td style="width:20px;border: 1px solid #000000; text-align:right;">'.$num.'</td>
-									<td style="width:30px;border: 1px solid #000000;">'.$scheme->allocations[$x]->group.'</td>
-									<td style="width:80px;border: 1px solid #000000;">'.$scheme->allocations[$x]->area.'</td>
-									<td style="width:100px;border: 1px solid #000000;">'.$scheme->allocations[$x]->sold_to.'</td>
-									<td style="width:120px;border: 1px solid #000000;">'.$scheme->allocations[$x]->ship_to.'</td>
-									<td style="width:60px;border: 1px solid #000000;;">'.$scheme->allocations[$x]->channel.'</td>
-									<td style="width:130px;border: 1px solid #000000;">'.$scheme->allocations[$x]->outlet.'</td>
-									<td style="width:50px;border: 1px solid #000000; text-align:right;">'.number_format($scheme->allocations[$x]->in_deals).'</td>
-									<td style="width:50px;border: 1px solid #000000; text-align:right;">'.number_format($scheme->allocations[$x]->in_cases).'</td>'.
-									$tts.
-									$pe.
-								'</tr>';
-							$cnt++;
+			if(!isset($tradedeal)){
+				if(count($schemes) > 0){
+					$pdf->SetFont('helvetica', '', 6);
+					foreach ($schemes as $scheme) {
+						$count = count($scheme->allocations);
+						$loops = (int) ($count / 34);
+						if($count %34 != 0) {
+						  $loops = $loops+1;
 						}
-						if(!empty($body)){
-							$x = $i +1;
-							$table = '<h2>'.$scheme->name.'</h2>
-							<h2>'.$x.' of '.$loops.'</h2>';
+						$scheme_count  = count($schemes);
+						$body ='';
+						
+						$cnt = 0;
+						for ($i = 0; $i <= $loops; $i++) { 
+							$allocs = array();
+							$body ='';
+							$last_count =  $cnt+34;
+							for ($x=$cnt; $x <= $last_count; $x++) { 
+								if($cnt == $count){
+									break;
+								}
+								$num = $x + 1;
+								$class = '';
+								if((empty($scheme->allocations[$x]->customer_id)) && (empty($scheme->allocations[$x]->shipto_id))){
+									$class = 'style="background-color: #d9edf7;"';
+								}
+								if((!empty($scheme->allocations[$x]->customer_id)) && (!empty($scheme->allocations[$x]->shipto_id))){
+									$class = 'style="background-color: #fcf8e3;"';
+								}
 
-							if($scheme->compute == 2){
-								$table .= '<h2>Allocation is not system generated. It is manually computed by the proponent.</h2>';
-							}
-							$tts_header = '';
-							$pe_header = '';
-							if(in_array(1,$required_budget_type)){
-								$tts_header = '<th style="width:50px;border: 1px solid #000000; text-align:center;">TTS BUDGET</th>';
-							}
-							
-							if(in_array(2,$required_budget_type)){
-								$pe_header = '<th style="width:50px;border: 1px solid #000000; text-align:center;">PE BUDGET</th>';
-							}
+								$tts = '';
+								$pe = '';
+								if(in_array(1,$required_budget_type)){
+									$tts = '<td style="width:50px;border: 1px solid #000000; text-align:right;">'.number_format($scheme->allocations[$x]->tts_budget,2).'</td>';
+								}
+								
+								if(in_array(2,$required_budget_type)){
+									$pe = '<td style="width:50px;border: 1px solid #000000; text-align:right;">'.number_format($scheme->allocations[$x]->pe_budget,2).'</td>';
+								}
 
-							$table .= '<table width="100%" style="padding:2px;">
-								<thead>
-									<tr>
-										<th style="width:20px;border: 1px solid #000000; text-align:center;">#</th>
-										<th style="width:30px;border: 1px solid #000000; text-align:center;">GROUP</th>
-										<th style="width:80px;border: 1px solid #000000; text-align:center;">AREA NAME</th>
-										<th style="width:100px;border: 1px solid #000000; text-align:center;">CUSTOMER SOLD TO</th>
-										<th style="width:120px;border: 1px solid #000000; text-align:center;">CUSTOMER SHIP TO NAME</th>
-										<th style="width:60px;border: 1px solid #000000; text-align:center;">CHANNEL</th>
-										<th style="width:130px;border: 1px solid #000000; text-align:center;">ACCOUNT NAME</th> 
-										<th style="width:50px;border: 1px solid #000000; text-align:center;">IN DEALS</th>
-										<th style="width:50px;border: 1px solid #000000; text-align:center;">IN CASES</th>'.
-										$tts_header.
-										$pe_header.
-									'</tr>
-								</thead>
-							  	<tbody>'.
-							  		$body. 
-							  	'</tbody>
-							</table> ';
-							$pdf->AddPage($orientation = 'L',$format = '',$keepmargins = false,$tocpage = false );
-							$pdf->writeHTML($table, $ln=true, $fill=false, $reset=false, $cell=false, $align='');
+								$body .='<tr '.$class.'>
+										<td style="width:20px;border: 1px solid #000000; text-align:right;">'.$num.'</td>
+										<td style="width:30px;border: 1px solid #000000;">'.$scheme->allocations[$x]->group.'</td>
+										<td style="width:80px;border: 1px solid #000000;">'.$scheme->allocations[$x]->area.'</td>
+										<td style="width:100px;border: 1px solid #000000;">'.$scheme->allocations[$x]->sold_to.'</td>
+										<td style="width:120px;border: 1px solid #000000;">'.$scheme->allocations[$x]->ship_to.'</td>
+										<td style="width:60px;border: 1px solid #000000;;">'.$scheme->allocations[$x]->channel.'</td>
+										<td style="width:130px;border: 1px solid #000000;">'.$scheme->allocations[$x]->outlet.'</td>
+										<td style="width:50px;border: 1px solid #000000; text-align:right;">'.number_format($scheme->allocations[$x]->in_deals).'</td>
+										<td style="width:50px;border: 1px solid #000000; text-align:right;">'.number_format($scheme->allocations[$x]->in_cases).'</td>'.
+										$tts.
+										$pe.
+									'</tr>';
+								$cnt++;
+							}
+							if(!empty($body)){
+								$x = $i +1;
+								$table = '<h2>'.$scheme->name.'</h2>
+								<h2>'.$x.' of '.$loops.'</h2>';
+
+								if($scheme->compute == 2){
+									$table .= '<h2>Allocation is not system generated. It is manually computed by the proponent.</h2>';
+								}
+								$tts_header = '';
+								$pe_header = '';
+								if(in_array(1,$required_budget_type)){
+									$tts_header = '<th style="width:50px;border: 1px solid #000000; text-align:center;">TTS BUDGET</th>';
+								}
+								
+								if(in_array(2,$required_budget_type)){
+									$pe_header = '<th style="width:50px;border: 1px solid #000000; text-align:center;">PE BUDGET</th>';
+								}
+
+								$table .= '<table width="100%" style="padding:2px;">
+									<thead>
+										<tr>
+											<th style="width:20px;border: 1px solid #000000; text-align:center;">#</th>
+											<th style="width:30px;border: 1px solid #000000; text-align:center;">GROUP</th>
+											<th style="width:80px;border: 1px solid #000000; text-align:center;">AREA NAME</th>
+											<th style="width:100px;border: 1px solid #000000; text-align:center;">CUSTOMER SOLD TO</th>
+											<th style="width:120px;border: 1px solid #000000; text-align:center;">CUSTOMER SHIP TO NAME</th>
+											<th style="width:60px;border: 1px solid #000000; text-align:center;">CHANNEL</th>
+											<th style="width:130px;border: 1px solid #000000; text-align:center;">ACCOUNT NAME</th> 
+											<th style="width:50px;border: 1px solid #000000; text-align:center;">IN DEALS</th>
+											<th style="width:50px;border: 1px solid #000000; text-align:center;">IN CASES</th>'.
+											$tts_header.
+											$pe_header.
+										'</tr>
+									</thead>
+								  	<tbody>'.
+								  		$body. 
+								  	'</tbody>
+								</table> ';
+								$pdf->AddPage($orientation = 'L',$format = '',$keepmargins = false,$tocpage = false );
+								$pdf->writeHTML($table, $ln=true, $fill=false, $reset=false, $cell=false, $align='');
+							}
 						}
 					}
 				}
+			}else{
+
+				$pdf->AddPage($orientation = 'L',$format = '',$keepmargins = false,$tocpage = false );
+				$pdf->SetFont('helvetica', '', 8);
+				$tradedeal_view = "";
+				$tradedeal_view .= View::make('pdf.style')->render();
+				$tradedeal_view .= View::make('pdf.tradedeal_view',compact('tradedealschemes'))->render();
+				// Helper::debug($tradedeal_view);
+				$pdf->writeHTML($tradedeal_view , $ln=true, $fill=false, $reset=false, $cell=false, $align='');
 			}
+			
+
+
 			
 			$pdf_name = preg_replace('/[^A-Za-z0-9 _ .-]/', '_', $activity->circular_name);
 			$filepath = '/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
+
+			// dd($filepath);
+
+			$path = storage_path().$filepath;
+			if(!File::exists($path)) {
+				File::makeDirectory($path);
+			}
+			
 			$pdf_path = storage_path().$filepath.'/'. str_replace(":","_", $pdf_name).'.pdf';
 			$pdf->Output($pdf_path,'F');
 			$this->line($pdf_path);

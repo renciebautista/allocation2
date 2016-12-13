@@ -121,4 +121,20 @@ class TradedealSchemeChannel extends \Eloquent {
 
 		return $data;
 	}
+
+	public static function getChannelsInvolved($scheme){
+		$data = [];
+		$records = self::where('tradedeal_scheme_id', $scheme->id)
+			->get();
+
+		foreach ($records as $row) {
+			$node = explode(".", $row->channel_node);
+			$o = new stdClass();
+			$o->sub_type_desc  = $node[1];
+			$data[] = $o;
+
+		}
+		asort($data);
+		return $data;
+	}
 }

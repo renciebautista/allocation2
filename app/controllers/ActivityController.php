@@ -1670,15 +1670,13 @@ class ActivityController extends BaseController {
 						}
 					}
 
-
-
-					// $tradedeal = Tradedeal::where('activity_id', $id)->first();
-					// if((!empty($tradedeal)) && (!$tradedeal->forced_upload)){
-					// 	$tradedeal_schemes = TradedealScheme::where('tradedeal_id', $tradedeal->id)->get();
-					// 	foreach ($tradedeal_schemes as $td_scheme) {
-					// 		TradedealAllocRepository::updateAllocation($td_scheme);
-					// 	}
-					// }
+					$tradedeal = Tradedeal::where('activity_id', $id)->first();
+					if((!empty($tradedeal)) && (!$tradedeal->forced_upload)){
+						$tradedeal_schemes = TradedealScheme::where('tradedeal_id', $tradedeal->id)->get();
+						foreach ($tradedeal_schemes as $td_scheme) {
+							TradedealAllocRepository::updateAllocation($td_scheme);
+						}
+					}
 					
 					// end update
 					$arr['success'] = 1;
@@ -3598,6 +3596,16 @@ class ActivityController extends BaseController {
 						}
 					}
 					
+					$tradedeal->forced_upload = 0;
+					$tradedeal->update();
+					
+					$schemes = TradedealScheme::where('tradedeal_id', $tradedeal->id)->get();
+					if(!empty($schemes)){
+						foreach ($schemes as $scheme) {
+							TradedealAllocRepository::updateAllocation($scheme);
+						}
+					}
+					
 				}	
 
 			}
@@ -3987,7 +3995,12 @@ class ActivityController extends BaseController {
 
 				$row = 2;
 				$sheet->row($row, array('AREA', 'Distributor Code', 'Distributor Name', 'Site Code', 'Site Name', 'Scheme Code', 'Scheme Description', 'UOM'));
-				$sheet->getStyle("A2:N2")->getFont()->setBold(true);
+
+
+				$sheet->getDefaultStyle()
+				    ->getAlignment()
+				    ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+
 				// premuim
 				$premiums = [];
 				foreach ($tradedeal_skus as $sku) {
@@ -4010,8 +4023,22 @@ class ActivityController extends BaseController {
 			        )
 			    );
 
+			    
+
 				$d_col = $col -1;
 				$sheet->mergeCells(\PHPExcel_Cell::stringFromColumnIndex(8).'1:'.\PHPExcel_Cell::stringFromColumnIndex($d_col).'1');
+				$sheet->getStyle(\PHPExcel_Cell::stringFromColumnIndex(8).'1:'.\PHPExcel_Cell::stringFromColumnIndex($d_col).'1')
+					->applyFromArray(array(
+				    'fill' => array(
+				        'type'  => PHPExcel_Style_Fill::FILL_SOLID,
+				        'color' => array('rgb' => '091462')
+				    )
+				));
+
+				$sheet->cells(\PHPExcel_Cell::stringFromColumnIndex(8).'1:'.\PHPExcel_Cell::stringFromColumnIndex($d_col).'1', function($cells) {
+					$cells->setFontColor('#ffffff');
+				});
+
 				$sheet->getStyle(\PHPExcel_Cell::stringFromColumnIndex(8).'1:'.\PHPExcel_Cell::stringFromColumnIndex($d_col).'1')->applyFromArray($style);
 
 
@@ -4022,8 +4049,35 @@ class ActivityController extends BaseController {
 					$col++;
 				}
 				$d_col++;
+
 				$p_col = $col - 1;
+
+				$sheet->getStyle('A2:'.\PHPExcel_Cell::stringFromColumnIndex($d_col).'2')
+					->getFont()
+					->setBold(true);
+				
+				// Set background color for a specific cell
+				$sheet->getStyle('A2:'.\PHPExcel_Cell::stringFromColumnIndex($p_col).'2')->applyFromArray(array(
+				    'fill' => array(
+				        'type'  => PHPExcel_Style_Fill::FILL_SOLID,
+				        'color' => array('rgb' => 'DAEBF8')
+				    )
+				));
+
 				$sheet->mergeCells(\PHPExcel_Cell::stringFromColumnIndex($d_col).'1:'.\PHPExcel_Cell::stringFromColumnIndex($p_col).'1');
+				$sheet->getStyle(\PHPExcel_Cell::stringFromColumnIndex($d_col).'1:'.\PHPExcel_Cell::stringFromColumnIndex($p_col).'1')
+					->applyFromArray(array(
+				    'fill' => array(
+				        'type'  => PHPExcel_Style_Fill::FILL_SOLID,
+				        'color' => array('rgb' => '7F00A1')
+				    )
+				));
+
+				$sheet->cells(\PHPExcel_Cell::stringFromColumnIndex($d_col).'1:'.\PHPExcel_Cell::stringFromColumnIndex($p_col).'1', function($cells) {
+					$cells->setFontColor('#ffffff');
+				});
+
+
 				$sheet->getStyle(\PHPExcel_Cell::stringFromColumnIndex($d_col).'1:'.\PHPExcel_Cell::stringFromColumnIndex($p_col).'1')->applyFromArray($style);
 
 				$sheet->getStyle('I2:R2')->getAlignment()
@@ -4051,6 +4105,7 @@ class ActivityController extends BaseController {
 					
 					if($last_area == $alloc->area){
 						if($last_distributor == $alloc->sold_to_code){
+
 							if($last_site == $alloc->plant_code){
 								$sheet->row($row, ['', '', '', '', '', $alloc->scheme_code, $alloc->scheme_description, $pcs_deal]);
 							}else{
@@ -4066,6 +4121,13 @@ class ActivityController extends BaseController {
 									$sum = "=SUM(".\PHPExcel_Cell::stringFromColumnIndex($col).$first_row.":".\PHPExcel_Cell::stringFromColumnIndex($col).$last_row.")";
 									$sheet->setCellValueByColumnAndRow($col,$row,$sum);
 								}
+
+								$sheet->getStyle('D'.$row.':'.\PHPExcel_Cell::stringFromColumnIndex($p_col).$row)->applyFromArray(array(
+								    'fill' => array(
+								        'type'  => PHPExcel_Style_Fill::FILL_SOLID,
+								        'color' => array('rgb' => 'DAEBF8')
+								    )
+								));
 
 								$row++;
 								$first_row = $row;
@@ -4087,12 +4149,51 @@ class ActivityController extends BaseController {
 									$sum = "=SUM(".\PHPExcel_Cell::stringFromColumnIndex($col).$first_row.":".\PHPExcel_Cell::stringFromColumnIndex($col).$last_row.")";
 									$sheet->setCellValueByColumnAndRow($col,$row,$sum);
 								}
+
+								$sheet->getStyle('D'.$row.':'.\PHPExcel_Cell::stringFromColumnIndex($p_col).$row)->applyFromArray(array(
+								    'fill' => array(
+								        'type'  => PHPExcel_Style_Fill::FILL_SOLID,
+								        'color' => array('rgb' => 'DAEBF8')
+								    )
+								));
+
 								$row++;
 								$first_row = $row;
 							}
+
+							if($last_distributor != $alloc->sold_to_code){
+								if($alloc->plant_code == ''){
+									$sheet->row($row, ['', '', '', $last_distributor.' Total']);
+									foreach ($col_pre as $col) {
+										$last_row = $row - 1;
+										$sum = "=SUM(".\PHPExcel_Cell::stringFromColumnIndex($col).$first_row.":".\PHPExcel_Cell::stringFromColumnIndex($col).$last_row.")";
+										$sheet->setCellValueByColumnAndRow($col,$row,$sum);
+									}
+
+									foreach ($col_pre_x as $col) {
+										$last_row = $row - 1;
+										$sum = "=SUM(".\PHPExcel_Cell::stringFromColumnIndex($col).$first_row.":".\PHPExcel_Cell::stringFromColumnIndex($col).$last_row.")";
+										$sheet->setCellValueByColumnAndRow($col,$row,$sum);
+									}
+
+									$sheet->getStyle('D'.$row.':'.\PHPExcel_Cell::stringFromColumnIndex($p_col).$row)->applyFromArray(array(
+									    'fill' => array(
+									        'type'  => PHPExcel_Style_Fill::FILL_SOLID,
+									        'color' => array('rgb' => 'DAEBF8')
+									    )
+									));
+
+									$row++;
+									$first_row = $row;
+								}
+							}
+
 							$sheet->row($row, ['', $alloc->sold_to_code, $alloc->sold_to, $alloc->plant_code, $alloc->ship_to_name, $alloc->scheme_code, $alloc->scheme_description, $pcs_deal]);
 							$sheet->setCellValueByColumnAndRow($col_pre[$alloc->pre_desc_variant],$row, $alloc->final_pcs / $pcs_deal);
 							$sheet->setCellValueByColumnAndRow($col_pre_x[$alloc->pre_desc_variant],$row, $alloc->final_pcs);
+
+
+
 						}
 					}else{
 						if(($last_site != $alloc->plant_code) && ($last_site != '')){
@@ -4109,18 +4210,53 @@ class ActivityController extends BaseController {
 								$sheet->setCellValueByColumnAndRow($col,$row,$sum);
 							}
 
+							$sheet->getStyle('D'.$row.':'.\PHPExcel_Cell::stringFromColumnIndex($p_col).$row)->applyFromArray(array(
+							    'fill' => array(
+							        'type'  => PHPExcel_Style_Fill::FILL_SOLID,
+							        'color' => array('rgb' => 'DAEBF8')
+							    )
+							));
+
 							$row++;
 							$first_row = $row;
+						}else{
+							if(!empty($last_distributor)){
+								$sheet->row($row, ['', '', '', $last_distributor.' Total']);
+								foreach ($col_pre as $col) {
+									$last_row = $row - 1;
+									$sum = "=SUM(".\PHPExcel_Cell::stringFromColumnIndex($col).$first_row.":".\PHPExcel_Cell::stringFromColumnIndex($col).$last_row.")";
+									$sheet->setCellValueByColumnAndRow($col,$row,$sum);
+								}
+
+								foreach ($col_pre_x as $col) {
+									$last_row = $row - 1;
+									$sum = "=SUM(".\PHPExcel_Cell::stringFromColumnIndex($col).$first_row.":".\PHPExcel_Cell::stringFromColumnIndex($col).$last_row.")";
+									$sheet->setCellValueByColumnAndRow($col,$row,$sum);
+								}
+
+								$sheet->getStyle('D'.$row.':'.\PHPExcel_Cell::stringFromColumnIndex($p_col).$row)->applyFromArray(array(
+								    'fill' => array(
+								        'type'  => PHPExcel_Style_Fill::FILL_SOLID,
+								        'color' => array('rgb' => 'DAEBF8')
+								    )
+								));
+
+								$row++;
+								$first_row = $row;
+							}
+							
 						}
+
 						$sheet->row($row, [$alloc->area, $alloc->sold_to_code, $alloc->sold_to, $alloc->plant_code, $alloc->ship_to_name, $alloc->scheme_code, $alloc->scheme_description, $pcs_deal]);
 						$sheet->setCellValueByColumnAndRow($col_pre[$alloc->pre_desc_variant],$row, $alloc->final_pcs / $pcs_deal);
-						$sheet->setCellValueByColumnAndRow($col_pre_x[$alloc->pre_desc_variant],$row, $alloc->final_pcs);
+						$sheet->setCellValueByColumnAndRow($col_pre_x[$alloc->pre_desc_variant],$row, $alloc->final_pcs);		
 					}
 
 					$last_area = $alloc->area;
 					$last_distributor = $alloc->sold_to_code;
 					$last_site = $alloc->plant_code;
 				}
+
 				$row++;
 				$sheet->row($row, ['', '', '', $last_site.' Total']);	
 				
@@ -4135,6 +4271,13 @@ class ActivityController extends BaseController {
 					$sum = "=SUM(".\PHPExcel_Cell::stringFromColumnIndex($col).$first_row.":".\PHPExcel_Cell::stringFromColumnIndex($col).$last_row.")";
 					$sheet->setCellValueByColumnAndRow($col,$row,$sum);
 				}		
+
+				$sheet->getStyle('D'.$row.':'.\PHPExcel_Cell::stringFromColumnIndex($p_col).$row)->applyFromArray(array(
+				    'fill' => array(
+				        'type'  => PHPExcel_Style_Fill::FILL_SOLID,
+				        'color' => array('rgb' => 'DAEBF8')
+				    )
+				));
 		    });
 	
 			$excel->sheet('OUTPUT FILE', function($sheet) use ($activity) {

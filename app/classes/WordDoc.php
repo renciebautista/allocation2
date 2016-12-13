@@ -197,7 +197,7 @@ class WordDoc {
 			array('desc' => 'Budget IO PE', 'value' => $budgets),
 			array('desc' => 'SKU/s Involved', 'value' => $sku_involves),
 			array('desc' => 'Area/s Involved', 'value' => $areas),
-			array('desc' => 'DT Channel/s Involved', 'value' => $channels),
+			array('desc' => 'Channel/s Involved', 'value' => $channels),
 			array('desc' => 'Schemes', 'value' => $schemes),
 			array('desc' => 'SKU/s Involved Per Scheme', 'value' => $skuinvolves),
 			array('desc' => 'Timings', 'value' => $networks),
@@ -293,7 +293,7 @@ class WordDoc {
 						
 					}
 				}
-			}elseif($title['desc'] == 'DT Channel/s Involved'){
+			}elseif($title['desc'] == 'Channel/s Involved'){
 				if(count($title['value'])>0){
 					$table->addRow();
 					$table->addCell(1800)->addText($title['desc'],array('bold'=>true,'size' => 8), $noSpace);
@@ -879,7 +879,7 @@ class WordDoc {
 								}
 							}
 
-							if(!empty($scheme->rtms)){
+							if(!empty($scheme->channels)){
 								// $cell = $tradetable->addCell(2700,$cellRowSpan);
 								foreach ($scheme->channels as $channel) {
 									$innerCell = $cell->addTable('Channels');

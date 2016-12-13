@@ -102,7 +102,7 @@
 		@endif
 		@if(count($channels) > 0)
 		<tr nobr="true">
-			<td><b>DT Channel/s Involved</b></td>
+			<td><b>Channel/s Involved</b></td>
 			<td>
 				@if(!empty($channels))
 				<ul>

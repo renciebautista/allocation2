@@ -67,7 +67,7 @@
                             <th>Qty</th>
                             <th>Host SKU</th>
                             <th>Variant Shortcut</th>
-                            <th class="right">Unit Cost / Piece</th>
+                            <th class="right">Unit Cost / Piece (LPBT)</th>
                             <th class="right">Piece / Case</th>
                             <th>Premium SKU</th>
                             <th>Variant Shortcut</th>

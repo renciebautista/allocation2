@@ -247,6 +247,7 @@
 							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="report">Exports <span class="caret"></span></a>
 							<ul class="dropdown-menu" aria-labelledby="report">
 								<li>{{ HTML::linkAction('DownloadsController@cycles' , 'Download Activities') }}</li>  
+								<li>{{ HTML::linkAction('DownloadsController@letemplates' , 'Download LE Templates') }}</li>  
 							</ul>
 						</li>
 
