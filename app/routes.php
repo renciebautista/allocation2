@@ -273,6 +273,8 @@ Route::group(array('before' => 'auth'), function()
 
 	Route::get('sob/download', ['as' => 'sob.download', 'uses' => 'SobController@download']);
 	Route::post('sob/downloadreport', ['as' => 'sob.downloadreport', 'uses' => 'SobController@downloadreport']);
+
+	Route::get('activitycalendar', ['as' => 'activitycalendar.index', 'uses' => 'ActivityCalendarController@index']);
 	
 
 	// Route::get('sob/booking', ['as' => 'sob.booking', 'uses' => 'SobController@booking']);
@@ -398,6 +400,9 @@ Route::group(array('before' => 'auth'), function()
 		Route::get('getnewmembers', 'api\UserController@getnewmembers');
 
 		Route::get('subtask', 'api\SubTaskController@getsubtask');
+
+		Route::get('activities',  ['as' => 'activities.index', 'uses' => 'api\ActivityController@index']);
+
 	});//
 
 
@@ -542,6 +547,7 @@ Route::group(array('before' => 'auth'), function()
 		
 		Route::get('reports/{id}/review', ['as' => 'reports.review', 'uses' => 'ReportController@review']);
 		Route::get('reports/{id}/scheme/', ['as' => 'reports.scheme', 'uses' => 'ReportController@scheme']);
+
 	});
 
 });

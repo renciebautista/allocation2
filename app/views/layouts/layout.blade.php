@@ -32,6 +32,8 @@
 		{{ HTML::style('assets/plugins/jQuery.filer-1.0.5/css/jquery.filer.css') }}
 		{{ HTML::style('assets/plugins/jQuery.filer-1.0.5/css/themes/jquery.filer-dragdropbox-theme.css') }}
 
+		{{ HTML::style('assets/plugins/fullcalendar/dist/fullcalendar.css') }}
+
 		{{ HTML::style('assets/css/timeline.css') }}
 		{{ HTML::style('assets/css/styles.css') }}
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -214,6 +216,8 @@
 
 								<li>{{ HTML::linkAction('AllocationReportController@index' , 'Allocation Report') }}</li>
 
+								<li>{{ HTML::linkAction('ActivityCalendarController@index' , 'Activity Calendar') }}</li>
+
 
 								@if(Auth::user()->inRoles(['ADMINISTRATOR','PROPONENT','PMOG PLANNER','COM APPROVER','CD OPS APPROVER','CMD DIRECTOR','SOB ASSISTANT']))
 								<li>{{ HTML::linkAction('SobController@index' , 'Sales Order Booking Report') }}</li>
@@ -386,6 +390,8 @@
 	{{ HTML::script('assets/plugins/jQuery.filer-1.0.5/js/jquery.filer.min.js') }}
 
 	{{ HTML::script('assets/plugins/tinymce/js/tinymce/tinymce.min.js') }}
+
+	{{ HTML::script('assets/plugins/fullcalendar/dist/fullcalendar.min.js') }}
 	
 	{{ HTML::script('assets/js/function.js') }}
 
@@ -432,7 +438,7 @@
 		        });
 		      }, 60000); // every minute
 		    });
-		@endif
+			@endif
 
 
 		});

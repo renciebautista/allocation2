@@ -1090,4 +1090,23 @@ class Activity extends \Eloquent {
 	public static function getCustomIdList(){
 		return ActivityMember::getActivities(Auth::user()->id);
 	}
+
+	public static function getReleased(){
+
+		$data = self::select('circular_name as title', 
+			'eimplementation_date as start',
+			'scope_type_id as type')
+			->where('status_id', '=', 9)
+			->orderBy('eimplementation_date')
+			->orderBy('scope_type_id')
+			->get();
+
+		foreach ($data as $value) {
+			if($value->type == 2){
+				$value->color = '#257e4a';
+			}
+		}
+
+		return $data;
+	}
 }
