@@ -17,7 +17,7 @@ class AddTradeDealTagOnActivityTypesTable extends Migration {
 		{
 			if (!Schema::hasColumn('activity_types', 'with_tradedeal'))
 			{
-			    // $table->boolean('with_tradedeal')->default(false)->after('with_sob');
+			    $table->boolean('with_tradedeal')->default(false)->after('with_sob');
 			}
 			
 		});
