@@ -1089,3 +1089,6 @@ div.mce-edit-area{
 	padding:5px; 
 }
 
+.fc-list-item-time {
+	display:  none;
+}

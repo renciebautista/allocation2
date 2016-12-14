@@ -1091,12 +1091,14 @@ class Activity extends \Eloquent {
 		return ActivityMember::getActivities(Auth::user()->id);
 	}
 
-	public static function getReleased(){
+	public static function getReleased($request){
 
 		$data = self::select('circular_name as title', 
 			'eimplementation_date as start',
 			'scope_type_id as type')
 			->where('status_id', '=', 9)
+			->where('eimplementation_date', '>=', $request['start'])
+			->where('eimplementation_date', '<=', $request['end'])
 			->orderBy('eimplementation_date')
 			->orderBy('scope_type_id')
 			->get();
