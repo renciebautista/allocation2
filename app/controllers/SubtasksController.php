@@ -144,4 +144,32 @@ class SubtasksController extends \BaseController {
 		//
 	}
 
+
+	public function upload(){
+		return View::make('subtasks.upload');
+	}
+
+	public function uploadtask(){
+		if(Input::hasFile('file')){
+			$file_path = Input::file('file')->move(storage_path().'/uploads/temp/',Input::file('file')->getClientOriginalName());
+			Excel::selectSheets('Sheet1')->load($file_path, function($reader) {
+				SubTask::import($reader->get());
+			});
+
+
+			if (File::exists($file_path))
+			{
+			    File::delete($file_path);
+			}
+			
+			return Redirect::action('SubtasksController@index')
+					->with('class', 'alert-success')
+					->with('message', 'Sub Task successfuly updated');
+		}else{
+
+			return Redirect::action('SubtasksController@upload')
+				->with('class', 'alert-danger')
+				->with('message', 'A file upload is required.');
+		}
+	}
 }

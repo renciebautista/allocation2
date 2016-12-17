@@ -52,6 +52,7 @@
 								<button type="submit" class="btn btn-success"><i class="fa fa-search"></i> Search</button>
 								
 								<a href="{{ URL::action('SubtasksController@create') }}" class="btn btn-primary"><i class="fa fa-plus"></i> Sub Task</a>
+								<a href="{{ URL::action('SubtasksController@upload') }}" class="btn btn-primary">Upload File</a>
 							</div>
 						</div>
 					</div>
@@ -76,6 +77,8 @@
 						<th>Sub Task</th>
 						<th>Assigned Department</th>
 						<th>Lead Time (days)</th>
+						<th>Estimated Cost</th>
+						<th>Weight</th>
 						<th colspan="2" style="text-align:center;">Action</th>
 					</tr>
 				</thead>
@@ -91,6 +94,8 @@
 						<td>{{ $task->sub_task }}</td>
 						<td>{{ $task->department }}</td>
 						<td>{{ $task->lead_time }}</td>
+						<td>{{ number_format($task->cost,2) }}</td>
+						<td>{{ $task->weight }}</td>
 						<td class="action">
 							{{ HTML::linkAction('SubtasksController@edit','Edit', $task->id, array('class' => 'btn btn-info btn-xs')) }}
 						</td>

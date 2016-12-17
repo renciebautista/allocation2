@@ -4613,8 +4613,7 @@ class ActivityController extends BaseController {
 			$joborder->sub_task_id = $subtask->id;
 			$joborder->sub_task = $subtask->sub_task;
 			$joborder->department_id = $subtask->department_id;
-			$joborder->start_date = date('Y-m-d',strtotime(Input::get('start_date')));
-			$joborder->end_date = date('Y-m-d',strtotime(Input::get('end_date')));
+			$joborder->target_date = date('Y-m-d',strtotime(Input::get('target_date')));
 			$joborder->save();
 
 			$comment = JoborderComment::create(['joborder_id' => $joborder->id, 

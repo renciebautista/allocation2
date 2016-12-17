@@ -34,8 +34,8 @@
 							<td colspan="3">{{ $joborder->sub_task }}</td> 
 						</tr> 
 						<tr> 
-							<td>Start Date</td> 
-							<td colspan="3">{{ date_format(date_create($joborder->start_date),'m/d/Y') }}</td> 
+							<td>Target Date</td> 
+							<td colspan="3">{{ date_format(date_create($joborder->target_date),'m/d/Y') }}</td> 
 						</tr>
 						<tr> 
 							<td>End Date</td> 

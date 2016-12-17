@@ -57,12 +57,8 @@
 			<div class="form-group">
 				<div class="row">
 					<div class="col-lg-3">
-						{{ Form::label('start_date', 'Start Date', array('class' => 'control-label')) }}
-						{{ Form::text('start_date','',array('class' => 'form-control', 'placeholder' => 'mm/dd/yyyy', 'id' => 'start_date')) }}
-					</div>
-					<div class="col-lg-3">
-						{{ Form::label('end_date', 'End Date', array('class' => 'control-label')) }}
-						{{ Form::text('end_date','',array('class' => 'form-control', 'placeholder' => 'mm/dd/yyyy', 'id' => 'end_date')) }}
+						{{ Form::label('target_date', 'Target Date', array('class' => 'control-label')) }}
+						{{ Form::text('target_date','',array('class' => 'form-control', 'placeholder' => 'mm/dd/yyyy', 'id' => 'target_date')) }}
 					</div>
 				</div>
 			</div>

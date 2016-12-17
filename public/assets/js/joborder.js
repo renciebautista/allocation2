@@ -2,6 +2,12 @@ $(document).ready(function(){
 	var hostname = 'http://' + $(location).attr('host');
 	var activity_id = $('#act_id').val();
 
+	$('#target_date').datetimepicker({
+		pickTime: false,
+		calendarWeeks: true,
+		minDate: moment()
+	}).mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
+
 	$('#start_date').datetimepicker({
 		pickTime: false,
 		calendarWeeks: true,
@@ -56,10 +62,7 @@ $(document).ready(function(){
 			is_natural_no_zero: true,
 			required: true
 		},
-		start_date: {
-			required: true,
-		},
-		end_date: {
+		target_date: {
 			required: true,
 		},
 		details: {

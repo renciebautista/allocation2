@@ -543,6 +543,9 @@ Route::group(array('before' => 'auth'), function()
 		Route::resource('departments', 'DepartmentsController');
 
 		Route::resource('tasks', 'TasksController');
+
+		Route::get('subtasks/upload', ['as' => 'subtasks.upload', 'uses' => 'SubtasksController@upload']);
+		Route::post('subtasks/upload', ['as' => 'subtasks.uploadtask', 'uses' => 'SubtasksController@uploadtask']);
 		Route::resource('subtasks', 'SubtasksController');
 		
 		Route::get('reports/{id}/review', ['as' => 'reports.review', 'uses' => 'ReportController@review']);
