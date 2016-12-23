@@ -8,24 +8,6 @@ $(document).ready(function(){
 		minDate: moment()
 	}).mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
 
-	$('#start_date').datetimepicker({
-		pickTime: false,
-		calendarWeeks: true,
-		minDate: moment()
-	}).mask("99/99/9999",{placeholder:"mm/dd/yyyy"})
-	.on("dp.change", function (e) {
-        $('#end_date').data("DateTimePicker").setMinDate(e.date);
-    });
-
-	$('#end_date').datetimepicker({
-		pickTime: false,
-		calendarWeeks: true,
-		minDate: moment()
-	}).mask("99/99/9999",{placeholder:"mm/dd/yyyy"})
-	.on("dp.change", function (e) {
-        $('#start_date').data("DateTimePicker").setMaxDate(e.date);
-    });
-
 	$('select#task').on("change",function(){
 		$.ajax({
 			type: "GET",

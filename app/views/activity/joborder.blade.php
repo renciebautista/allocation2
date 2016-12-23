@@ -6,67 +6,12 @@
 <div class="row">
   	<div class="col-lg-10 col-md-offset-1">
   		@include('partials.notification')
-  		<div class="panel panel-default">
-			<div class="panel-heading">Job Order Details</div>
-			<div class="panel-body">
-				<table id="joborder" class="table table-bordered"> 
-					<tbody>
-						<tr> 
-							<td>Job Order #</td> 
-							<td>{{ $joborder->id }}</td> 
-							<td>Date Created</td> 
-							<td>{{ date_format(date_create($joborder->created_at),'m/d/Y H:m:s') }}</td> 
-						</tr>
-						<tr> 
-							<td>Revision Count</td> 
-							<td colspan="3">{{ $joborder->activity->id}} - {{ $joborder->activity->circular_name }}</td> 
-						</tr>
-						<tr> 
-							<td>Activity</td> 
-							<td colspan="3">{{ $joborder->activity->id}} - {{ $joborder->activity->circular_name }}</td> 
-						</tr>
-						<tr> 
-							<td>Status</td> 
-							<td colspan="3">{{ $joborder->status->joborder_status }}</td> 
-						</tr>
-						<tr> 
-							<td>Task</td> 
-							<td colspan="3">{{ $joborder->task }}</td> 
-						</tr> 
-						<tr> 
-							<td>Sub Task</td> 
-							<td colspan="3">{{ $joborder->sub_task }}</td> 
-						</tr> 
-						<tr> 
-							<td>Target Date</td> 
-							<td colspan="3">{{ date_format(date_create($joborder->target_date),'m/d/Y') }}</td> 
-						</tr>
-						<tr> 
-							<td>Estimated Start Date</td> 
-							<td colspan="3">{{ date_format(date_create($joborder->end_date),'m/d/Y') }}</td> 
-						</tr>
-						<tr> 
-							<td>Estimated End Date</td> 
-							<td colspan="3">{{ date_format(date_create($joborder->end_date),'m/d/Y') }}</td> 
-						</tr>
-						<tr> 
-							<td>Created By</td> 
-							<td colspan="3">
-								{{ $joborder->createdBy->getFullname() }}
-							</td> 
-						</tr>
-						<tr> 
-							<td>Assigned To</td> 
-							<td colspan="3">
-								@if($joborder->assigned_to > 0)
-								{{ $joborder->assignedto->getFullname() }}
-								@endif
-							</td> 
-						</tr>
-					</tbody>
-				</table>
-			</div>		
+
+  		<div class="form-group">
+			{{ HTML::linkAction('ActivityController@edit', 'Back', array('id' => $joborder->activity_id), array('class' => 'btn btn-default')) }}
 		</div>
+
+		@include('shared.jodetails')
 
 		<div class="panel panel-default">
 			<div class="panel-heading">Final Artworks</div>
@@ -78,14 +23,17 @@
 						<a target="_blank"href="{{route('joborders.artworkdownload', $file->random_name)}}">
 							{{ HTML::image('jorderartwork/'.$file->random_name, $file->file_name) }}
 						</a>
+						@if($joborder->joborder_status_id < 4)
 						{{ Form::open(array('method' => 'DELETE', 'action' => array('ActivityController@joborderartworkdelete', $file->random_name))) }}  
 						{{ Form::submit('Remove', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}
 						{{ Form::close() }}
+						@endif
 					</li>
 					
 					@endforeach
 					</ul>
 				</div>
+				@if($joborder->joborder_status_id < 4)
 					{{ Form::open(array('action' => array('ActivityController@joborderuploadphoto', $joborder->id) ,'class' => 'bs-component' ,'id' => 'myform', 'files'=>true)) }}
 					<div class="form-container">
 						<div class="form-group">
@@ -97,31 +45,10 @@
 					</div>	
 					{{ Form::close() }}
 					<hr>
+				@endif
 				</div>	
 		</div>
 
-		<div class="panel panel-default">
-			<div class="panel-heading">Insert Comment</div>
-			<div class="panel-body">
-				<div>
-					{{ Form::open(array('route' => array('joborders.update', $joborder->id), 'method' => 'PUT',  'class' => 'bs-component', 'files'=>true)) }}			
-					<div class="form-container">
-						<div class="form-group">
-							<input type="file" name="files" id="filer_input2" multiple="multiple">
-						</div>
-						<div class="form-group">
-							<textarea name="comment" id="comment"></textarea>
-						</div>
-						
-						<div class="form-group">
-							{{ HTML::linkAction('ActivityController@edit', 'Back', array($joborder->activity_id,'#jo'), array('class' => 'btn btn-default')) }}
-							<button class="btn btn-primary btn-style" type="submit">Submit</button>
-						</div>
-					</div>
-					{{ Form::close()}}	
-				</div>
-			</div>
-		</div>
 
 		<div class="panel panel-default">
 			<div class="panel-heading">Comments</div>
@@ -158,7 +85,32 @@
 		</div>
 
 		
-  		
+  				@if($joborder->joborder_status_id < 4)
+
+		<div class="panel panel-default">
+			<div class="panel-heading">Insert Comment</div>
+			<div class="panel-body">
+				<div>
+					{{ Form::open(array('route' => array('joborders.update', $joborder->id), 'method' => 'PUT',  'class' => 'bs-component', 'files'=>true)) }}			
+					<div class="form-container">
+						<div class="form-group">
+							<input type="file" name="files" id="filer_input2" multiple="multiple">
+						</div>
+						<div class="form-group">
+							<textarea name="comment" id="comment"></textarea>
+						</div>
+						
+						<div class="form-group">
+							{{ HTML::linkAction('ActivityController@edit', 'Back', array($joborder->activity_id,'#jo'), array('class' => 'btn btn-default')) }}
+							<button class="btn btn-primary btn-style" type="submit">Submit</button>
+						</div>
+					</div>
+					{{ Form::close()}}	
+				</div>
+			</div>
+		</div>
+
+		@endif
 		
   	</div>
 </div>

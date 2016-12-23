@@ -4588,7 +4588,7 @@ class ActivityController extends BaseController {
 	public function joborder($id){
 		$joborder = Joborder::findOrFail($id);
 		$artworks = JoborderArtwork::where('joborder_id', $joborder->id)->get();
-		$comments = $joborder->comments()->orderBy('created_at', 'desc')->get();
+		$comments = $joborder->comments()->orderBy('created_at', 'asc')->get();
 		return View::make('activity.joborder',compact('joborder', 'comments', 'artworks'));
 	}
 
@@ -4605,6 +4605,8 @@ class ActivityController extends BaseController {
 		$subtask = SubTask::findOrFail(Input::get('sub_task'));
 		$validation = Validator::make(Input::all(), Joborder::$rules);
 		if($validation->passes()){
+			$subtask = SubTask::find($subtask->id);
+
 			$joborder = new Joborder;
 			$joborder->activity_id = $activity->id;
 			$joborder->created_by = Auth::id();
@@ -4614,6 +4616,9 @@ class ActivityController extends BaseController {
 			$joborder->sub_task = $subtask->sub_task;
 			$joborder->department_id = $subtask->department_id;
 			$joborder->target_date = date('Y-m-d',strtotime(Input::get('target_date')));
+			$joborder->weight = $subtask->weight;
+			$joborder->cost = $subtask->cost;
+			$joborder->revision = 0;
 			$joborder->save();
 
 			$comment = JoborderComment::create(['joborder_id' => $joborder->id, 
@@ -4642,7 +4647,7 @@ class ActivityController extends BaseController {
 				
 			}
 
-			$url = route('joborders.edit', $joborder->id); 
+			$url = route('activity.joborder', $joborder->id); 
 			$message = '<a href="'.$url.'" class="linked-object-link">Job Order #'.$joborder->id.'</a>';
 			ActivityTimeline::addTimeline($activity, Auth::user(), "created a job order",$message);
 
