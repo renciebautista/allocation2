@@ -51,7 +51,8 @@ return array(
 
 		'iron' => array(
 			'driver'  => 'iron',
-			'host'    => 'mq-aws-us-east-1.iron.io',
+			// 'host'    => 'mq-aws-us-east-1.iron.io',
+			'host' 	=> 'mq-aws-us-east-1-1.iron.io',
 			'token'   => 'Qgol2SuOMdg4m9lKU_6dtAd0pR4',
 			'project' => '556545f963ab970008000006',
 			'queue'   => 'etop',
