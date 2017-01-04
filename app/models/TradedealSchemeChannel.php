@@ -30,9 +30,9 @@ class TradedealSchemeChannel extends \Eloquent {
 
 					foreach ($sub_channels as $av_ch) {
 						$key = $node[0].'.'.$av_ch->rtm_tag;
-						if(!in_array($key, $all_nodes)){
+						// if(!in_array($key, $all_nodes)){
 							self::insert(array('tradedeal_scheme_id' => $scheme->id, 'channel_node' => $key));
-						}
+						// }
 					}
 				}
 			}

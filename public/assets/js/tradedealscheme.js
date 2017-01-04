@@ -62,7 +62,7 @@ $(document).ready(function() {
 	$('#deal_type, #uom').change(function() {
 		changeName();
 	});
-	$('#buy, #free, .qty').on('blur',function() {
+	$('#buy, #additional_name, #free, .qty').on('blur',function() {
 		changeName();
 	})
 
@@ -73,8 +73,12 @@ $(document).ready(function() {
 		var buy = $('#buy').val();
 		var free = $('#free').val();
 		var uom = $("#uom option:selected").text();
+		var add_name = $("#additional_name").val();
+		if(!!add_name){
+			add_name = add_name.toUpperCase();
+		}
 		$('.input-pcs').text(uom);
-		$('#scheme_name').val(type+" "+buy +"+"+free+" "+uom);
+		$('#scheme_name').val(type+" "+buy +"+"+free+" "+uom + " "+add_name);
 		var individual = $("#deal_type option:selected").val();
 		if(individual == 1){
 			$('.collective').hide();

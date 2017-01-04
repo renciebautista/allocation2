@@ -3390,6 +3390,7 @@ class ActivityController extends BaseController {
 					$scheme->tradedeal_id = $tradedeal->id;
 					// $scheme->name = $deal_type->tradedeal_type.": ".$buy."+".$free." ".$uom->tradedeal_uom;
 					$scheme->name = strtoupper(Input::get('scheme_name'));
+					$scheme->additional_name = strtoupper(Input::get('additional_name'));
 					$scheme->tradedeal_type_id = $deal_type->id;
 					$scheme->buy = $buy;
 					$scheme->free = $free;
