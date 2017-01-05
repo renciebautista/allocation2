@@ -44,7 +44,9 @@ class MakeFieldTradedeal extends Command {
 			$tradedeal = Tradedeal::getActivityTradeDeal($activity);
 			if(!empty($tradedeal)){
 				$filepath = '/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
-				Excel::create($activity->circular_name. ' BBFEE', function($excel) use($activity){
+				$file = preg_replace('/[^A-Za-z0-9 _ .-]/', '_', $activity->circular_name);
+				$file_name = str_replace(":","_", $file);	
+				Excel::create($file_name. ' BBFEE', function($excel) use($activity){
 					$excel->sheet('SCHEME SUMMARY', function($sheet) use ($activity) {
 						$sheet->setCellValueByColumnAndRow(0,1, 'Activity Title:');
 						$sheet->setCellValueByColumnAndRow(1,1, $activity->circular_name);
