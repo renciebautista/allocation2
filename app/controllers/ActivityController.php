@@ -2777,17 +2777,23 @@ class ActivityController extends BaseController {
 
 				// copy all file
 				$path = storage_path().'/uploads/'.$new_activity->cycle_id.'/'.$new_activity->activity_type_id;
+				// Helper::debug($path);
 				if(!File::exists($path)) {
-
-					File::makeDirectory($path);
-
+					try {
+						File::makeDirectory($path);
+					} catch (Exception $e) {
+						mkdir($path, 0755, true); 
+					}
 				}
 				$path2 = storage_path().'/uploads/'.$new_activity->cycle_id.'/'.$new_activity->activity_type_id.'/'.$new_activity->id;
 
 				if(!File::exists($path2)) {
-
-					File::makeDirectory($path2);
-
+					try {
+						File::makeDirectory($path2);
+					} catch (Exception $e) {
+						mkdir($path2, 0755, true);
+					}
+					
 					$old_path = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
 					File::copyDirectory($old_path, $path2);
 
