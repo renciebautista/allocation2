@@ -30,7 +30,7 @@ class SchemeAllocRepository
 		
 
 		$_areasales =  $_allocation->area_sales();
-	   	Helper::debug($allocations);
+	   	// Helper::debug($allocations);
 	   	// dd($allocations);
 
 		$total_sales = $_allocation->total_gsv();

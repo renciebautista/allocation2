@@ -114,6 +114,12 @@
 						@endif
 
 						<div class="checkbox"> <label> <input name="return" type="checkbox"> Return Job Order </label> </div>
+						<ul>
+
+						@foreach($revisions as $revison)
+						<li>{{ $revison->description }}</li>
+						@endforeach
+							</ul>
 
 						<div class="form-group">
 							<textarea name="comment" id="comment"></textarea>

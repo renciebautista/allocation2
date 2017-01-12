@@ -216,22 +216,11 @@
 
 								<li>{{ HTML::linkAction('AllocationReportController@index' , 'Allocation Report') }}</li>
 
-								<li>{{ HTML::linkAction('ActivityCalendarController@index' , 'Activity Calendar') }}</li>
-
 
 								@if(Auth::user()->inRoles(['ADMINISTRATOR','PROPONENT','PMOG PLANNER','COM APPROVER','CD OPS APPROVER','CMD DIRECTOR','SOB ASSISTANT']))
 								<li>{{ HTML::linkAction('SobController@index' , 'Sales Order Booking Report') }}</li>
 								@endif
 								
-
-
-								@if(Auth::user()->inRoles(['ADMINISTRATOR']))
-								<li><a href="#">Calendar of Activities</a></li>
-								<li><a href="#">Activity Details Report</a></li>  
-								<li><a href="#">Activity Timings Report</a></li>
-								<li><a href="#">PIS Summary Report</a></li>
-								@endif
-
 								
 							</ul>
 						</li>
@@ -256,7 +245,16 @@
 						</li>
 
 						<li class="dropdown">
-							{{ HTML::linkAction('CycleController@calendar', 'TOP Calendar',null, array()) }}
+							<li class="dropdown">
+								<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="report">TOP Calendar <span class="caret"></span></a>
+								<ul class="dropdown-menu" aria-labelledby="report">
+									<li>{{ HTML::linkAction('CycleController@calendar', 'TOP Deadlines',null, array()) }}</li>  
+									<li>{{ HTML::linkAction('ActivityCalendarController@index' , 'Activity Calendar') }}</li>
+
+								</ul>
+							</li>
+
+							
 							
 						</li>
 

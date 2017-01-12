@@ -70,8 +70,10 @@ class MyJobOrderController extends \BaseController {
 			$jostatus = JoborderStatus::getLists();
 			$joudpatestatus = JoborderStatus::getUpdateLists();
 			$dept_users = User::getDepartmentStaff($joborder->department_id);
-			$staff =true;
-			return View::make('myjoborders.edit',compact('joborder', 'comments', 'artworks', 'jostatus', 'dept_users', 'joudpatestatus', 'staff'));
+			$revisions = RevisionWeight::all();
+			$staff = true;
+			return View::make('myjoborders.edit',compact('joborder', 'comments', 'artworks', 'jostatus', 'dept_users',
+			 'joudpatestatus', 'staff', 'revisions'));
 		}
 		
 	}
