@@ -39,6 +39,7 @@ class TradeChannelController extends \BaseController {
 		$final_nodes = array_diff($all_nodes,$scheme_selection);
 
 		$selected_channels = \ActivityCustomer::getSelectedChannels($activity);
+		
 		$channels = \DB::table('sub_channels')
 			->join('channels', 'channels.channel_code', '=', 'sub_channels.channel_code')
 			->where('trade_deal', 1)
