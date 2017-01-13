@@ -23,7 +23,7 @@ class SchemeAllocRepository
 		$_allocation = new AllocationRepository2;
 		$allocations = $_allocation->customers($skus, $_channels, $customers,$forced_areas);
 
-		// Helper::debug($allocations);
+		Helper::debug($allocations);
 		
 		// $_areasales =  $_allocation->area_sales();
 	   		   	
