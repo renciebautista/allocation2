@@ -13,16 +13,61 @@ $(window).load(function() {
       	events: hostname + '/api/activities',
         eventOrder: '-type,title',
         eventRender: function (event, element) {
-          element.attr('href', 'javascript:void(0);');
+          // 
+          // element.attr('href', 'javascript:void(0);');
+          if(event.type == 1){
+            element.click(function() {
+                $.colorbox({href:hostname + '/reports/'+event.actid+'/preview', iframe:true, width:"80%", height:"100%"});
+                // $("#startTime").html(moment(event.start).format('LL'));
+                // $("#endTime").html(moment(event.end_date).format('LL'));
+                // $("#eventTitle").html(event.title);
+                // $("#eventInfo").html(event.description);
+                // if(event.type == 2){
+                //   $("#link").hide();
+                // }else{
+                //   $("#link").show();
+                // }
+                // $("#eventLink").attr('href',hostname + '/reports/'+event.actid+'/preview');
+                // $("#eventContent").dialog({ modal: true, title: "ETOP Activity", width:400});
+
+            });
+          }else{
+            
+            element.attr('href', 'javascript:void(0);');
           element.click(function() {
               $("#startTime").html(moment(event.start).format('LL'));
               $("#endTime").html(moment(event.end_date).format('LL'));
               $("#eventTitle").html(event.title);
               $("#eventInfo").html(event.description);
-              $("#eventLink").attr('href', event.url);
+              if(event.type == 2){
+                $("#link").hide();
+              }else{
+                $("#link").show();
+              }
+              // $("#eventLink").attr('href',hostname + '/reports/'+event.acid+'/preview');
               $("#eventContent").dialog({ modal: true, title: "ETOP Activity", width:400});
+
           });
+          }
+          
       }
+      //   eventRender: function (event, element) {
+      //     element.attr('href', 'javascript:void(0);');
+      //     element.click(function() {
+      //         $("#startTime").html(moment(event.start).format('LL'));
+      //         $("#endTime").html(moment(event.end_date).format('LL'));
+      //         $("#eventTitle").html(event.title);
+      //         $("#eventInfo").html(event.description);
+      //         if(event.type == 2){
+      //           $("#link").hide();
+      //         }else{
+      //           $("#link").show();
+      //         }
+      //         $("#eventLink").attr('href',hostname + '/reports/'+event.acid+'/preview');
+      //         $("#eventContent").dialog({ modal: true, title: "ETOP Activity", width:400});
+
+      //     });
+      // }
         // eventMouseover: function (data, event, view) {
         //     tooltip = '<div class="tooltiptopicevent" style="width:auto;height:auto;background:#feb811;position:absolute;z-index:10001;padding:10px 10px 10px 10px ;  line-height: 200%;">' + 'title: ' + ': ' + data.title + '</br>' + 'start: ' + ': ' + data.start + '</div>';
         //     $("body").append(tooltip);

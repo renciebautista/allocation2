@@ -1095,7 +1095,7 @@ class Activity extends \Eloquent {
 
 		$data = self::select('circular_name as title', 
 			'eimplementation_date as start', 'end_date as end_date',
-			'scope_type_id as type')
+			'scope_type_id as type', 'id as actid')
 			->where('status_id', '=', 9)
 			->where('eimplementation_date', '>=', $request['start'])
 			->where('eimplementation_date', '<=', $request['end'])
