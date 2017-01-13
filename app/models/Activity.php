@@ -1099,8 +1099,8 @@ class Activity extends \Eloquent {
 			->where('status_id', '=', 9)
 			->where('eimplementation_date', '>=', $request['start'])
 			->where('eimplementation_date', '<=', $request['end'])
-			->orderBy('eimplementation_date')
 			->orderBy('scope_type_id')
+			->orderBy('eimplementation_date')
 			->get();
 
 		foreach ($data as $value) {
