@@ -11,8 +11,7 @@ $(window).load(function() {
       	selectHelper: false,
       	editable: false,
       	events: hostname + '/api/activities',
-        displayEventEnd: false, 
-
+        eventOrder: '-type,title',
         eventRender: function (event, element) {
           element.attr('href', 'javascript:void(0);');
           element.click(function() {
