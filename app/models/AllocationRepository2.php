@@ -395,7 +395,7 @@ class AllocationRepository2  {
 									}
 								}
 							}
-
+							$same_shipto->branch_total = 0;
 							$same_shipto->basegsv = $same_shipto->gsv;
 							$same_shipto->addgsv = self::getAdditionalCustomerGsv($additionalsales, $_base_sales, $channels, $cust_nodes, $customer->customer_code);
 							$same_shipto->gsv += $same_shipto->addgsv;
@@ -408,6 +408,7 @@ class AllocationRepository2  {
 									$_branch->account_group_code = '';
 									$_branch->account_group_name = '';
 									$_branch->account_name = $_branch->branch_name;
+									$_branch->basegsv = 0;
 									$_branch->gsv = 0;
 
 									foreach ($this->account_sales as $account_sale) {
@@ -420,18 +421,27 @@ class AllocationRepository2  {
 										}
 									}
 
+									$_branch->basegsv = $_branch->gsv;
 									$_branch->shipto_gsv = $same_shipto->gsv;
 									if($_branch->split != null){
 										$_branch->gsv = ($same_shipto->gsv * $_branch->split ) / 100;
-									}else{
-										$_branch->gsv = ($_branch->gsv * $customer->multiplier ) / 100;
 									}
+									$_branch->gsv = ($_branch->gsv * $customer->multiplier ) / 100;
 
-									$same_shipto->accounts[] = (array) $_branch;
+									$same_shipto->branch_total += $_branch->gsv;
+									$same_shipto->accounts[] = (array)$_branch;
 								}
 							}
-
-							$customer->shiptos[] = (array)	$same_shipto;
+							
+							if(!empty($same_shipto->accounts)){
+								$multi = 0;
+								foreach ($same_shipto->accounts as $index => $row) {
+									$multi = $same_shipto->accounts[$index]['basegsv'] / $same_shipto->branch_total;
+									$same_shipto->accounts[$index]['gsv'] = round(($multi * $same_shipto->accounts[$index]['shipto_gsv']),3); 
+								}
+							}
+														
+							$customer->shiptos[] = (array)$same_shipto;
 						}else{
 							// foreach ($_shiptos as $key => $_shipto) {
 							// 	if(in_array($_shipto->plant_code, $selected_shipto_lists)){
