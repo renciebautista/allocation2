@@ -34,6 +34,8 @@
 
 		{{ HTML::style('assets/plugins/fullcalendar/dist/fullcalendar.css') }}
 
+		{{ HTML::style('assets/plugins/jquery-popover/css/bootstrap-popover-x.min.css') }}
+
 		{{ HTML::style('assets/css/timeline.css') }}
 		{{ HTML::style('assets/css/styles.css') }}
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -390,6 +392,8 @@
 	{{ HTML::script('assets/plugins/tinymce/js/tinymce/tinymce.min.js') }}
 
 	{{ HTML::script('assets/plugins/fullcalendar/dist/fullcalendar.min.js') }}
+
+	{{ HTML::script('assets/plugins/jquery-popover/js/bootstrap-popover-x.min.js') }}
 	
 	{{ HTML::script('assets/js/function.js') }}
 
