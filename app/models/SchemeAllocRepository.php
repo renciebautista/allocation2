@@ -22,17 +22,12 @@ class SchemeAllocRepository
 		// Helper::debug($customers);
 
 		$_allocation = new AllocationRepository2;
-<<<<<<< HEAD
-		$allocations = $_allocation->customers($skus, $_channels, $customers,$forced_areas);
-
-		Helper::debug($allocations);
-=======
+		
 		if($activity->scope_type_id == 1){
 			$allocations = $_allocation->customers($skus, $_channels, $customers,$forced_areas);
 		}else{
 			$allocations = $_allocation->customers($skus, $_channels, $customers,$forced_areas, null, true);
 		}
->>>>>>> custom2
 		
 
 		$_areasales =  $_allocation->area_sales();
