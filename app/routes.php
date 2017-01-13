@@ -176,6 +176,27 @@ Route::group(array('before' => 'auth'), function()
 
 	Route::post('activity/{id}/duplicate','ActivityController@duplicate');
 	Route::get('activity/{id}/summary','ActivityController@summary');
+
+	Route::get('activity/{id}/members', 'ActivityController@members');
+	Route::post('activity/{id}/addmember', 'ActivityController@addmember');
+	Route::post('activity/{id}/removemember', 'ActivityController@removemember');
+	Route::post('activity/{id}/reapprove', 'ActivityController@reapprove');
+
+	Route::get('activity/{id}/createjo', ['as' => 'activity.createjo', 'uses' => 'ActivityController@createjo']);
+	Route::post('activity/{id}/createjo', ['as' => 'activity.storejo', 'uses' => 'ActivityController@storejo']);
+
+	// customized
+	Route::post('activity/updatecustom/{id}',['as' => 'activity.updatecustom', 'uses' => 'ActivityController@updatecustom']);
+	Route::get('activity/preapprove',['as' => 'activity.preapprove', 'uses' => 'ActivityController@preapprove']);
+	Route::get('activity/preapprove/{id}',['as' => 'activity.preapproveedit', 'uses' => 'ActivityController@preapproveedit']);
+	Route::get('activity/create/{id}',['as' => 'activity.create', 'uses' => 'ActivityController@create']);
+	Route::post('activity/store/{id}',['as' => 'activity.store', 'uses' => 'ActivityController@store']);
+
+	Route::post('activity/comment/{id}',['as' => 'activity.storecomment', 'uses' => 'ActivityController@storecomment']);
+
+	Route::get('activity/{id}/joborder', ['as' => 'activity.joborder', 'uses' => 'ActivityController@joborder']);
+	Route::post('activity/{id}/joborderuploadphoto', 'ActivityController@joborderuploadphoto');
+	Route::delete('activity/joborderartworkdelete/{file}', 'ActivityController@joborderartworkdelete');
 	
 	Route::resource('activity', 'ActivityController');
 	
@@ -252,6 +273,8 @@ Route::group(array('before' => 'auth'), function()
 
 	Route::get('sob/download', ['as' => 'sob.download', 'uses' => 'SobController@download']);
 	Route::post('sob/downloadreport', ['as' => 'sob.downloadreport', 'uses' => 'SobController@downloadreport']);
+
+	Route::get('activitycalendar', ['as' => 'activitycalendar.index', 'uses' => 'ActivityCalendarController@index']);
 	
 
 	// Route::get('sob/booking', ['as' => 'sob.booking', 'uses' => 'SobController@booking']);
@@ -264,6 +287,13 @@ Route::group(array('before' => 'auth'), function()
 
 	Route::resource('faq', 'FaqController');
 
+	Route::post('joborders/{id}/uploadphoto', ['as' => 'joborders.uploadphoto', 'uses' => 'JoborderController@uploadphoto']);
+	Route::delete('joborders/artworkdelete/{file}', ['as' => 'joborders.artworkdelete', 'uses' => 'JoborderController@artworkdelete']);
+	Route::get('joborderimage/{random_name}', ['as' => 'joborders.download', 'uses' => 'JoborderController@download']);
+	Route::get('joborders/assigned', ['as' => 'joborders.assigned', 'uses' => 'JoborderController@assigned']);
+	Route::resource('joborders', 'JoborderController');
+
+	Route::resource('myjoborders', 'MyJobOrderController');
 	
 	Route::get('images/{cycle_id}/{type_id}/{activity_id}/{name}', function($cycle_id = null,$type_id = null,$activity_id = null,$name = null)
 	{
@@ -276,6 +306,36 @@ Route::group(array('before' => 'auth'), function()
 		}
 	});
 
+	Route::get('commentimage/{name}', function($name = null)
+	{
+		$file = CommentFile::where('random_name', $name)->first();
+		if(!empty($file)){
+			$path = storage_path().'/joborder_files/'.$file->random_name;
+			if (file_exists($path)) { 
+				$image = Image::create($path);
+				$image->resize(350, 350, 1);
+				return $image->show();
+			}
+		}
+		
+	});
+
+	Route::get('jorderartwork/{name}', function($name = null)
+	{
+		$file = JoborderArtwork::where('random_name', $name)->first();
+		if(!empty($file)){
+			$path = storage_path().'/joborder_files/'.$file->random_name;
+			if (file_exists($path)) { 
+				$image = Image::create($path);
+				$image->resize(350, 350, 1);
+				return $image->show();
+			}
+		}
+		
+	});
+
+	Route::get('jorderartworkdownload/{random_name}', ['as' => 'joborders.artworkdownload', 'uses' => 'JoborderController@jorderartworkdownload']);
+
 	Route::get('fdapermit/{cycle_id}/{type_id}/{activity_id}/{name}', function($cycle_id = null,$type_id = null,$activity_id = null,$name = null)
 	{
 		$path = storage_path().'/uploads/'.$cycle_id.'/'. $type_id.'/'. $activity_id.'/'. $name;
@@ -285,6 +345,8 @@ Route::group(array('before' => 'auth'), function()
 			return $image->show();
 		}
 	});
+
+
 
 	Route::group(array('prefix' => 'api'), function()
 	{
@@ -335,6 +397,12 @@ Route::group(array('before' => 'auth'), function()
 		Route::get('selectedtdchannels','api\TradeChannelController@selectedtdchannels');
 
 		Route::get('tdpostedchannels','api\CustomerController@getpostedchannelcustomer');
+		Route::get('getnewmembers', 'api\UserController@getnewmembers');
+
+		Route::get('subtask', 'api\SubTaskController@getsubtask');
+
+		Route::get('activities',  ['as' => 'activities.index', 'uses' => 'api\ActivityController@index']);
+
 	});//
 
 
@@ -348,6 +416,8 @@ Route::group(array('before' => 'auth'), function()
 		Route::get('launchskus/export','LaunchSkuController@export');
 		Route::resource('launchskus','LaunchSkuController');
 
+		Route::get('group/{id}/permissions','GroupController@permissions');
+		Route::post('group/{id}/updatepermissions','GroupController@updatepermissions');
 		Route::resource('group', 'GroupController');
 
 		Route::get('customerremap/export', 'CustomerRemapController@export');
@@ -377,6 +447,12 @@ Route::group(array('before' => 'auth'), function()
 		Route::get('shiptoplantcode/import', 'ShiptoPlantCodeController@import');
 		Route::post('shiptoplantcode/upload', 'ShiptoPlantCodeController@upload');
 		Route::resource('shiptoplantcode', 'ShiptoPlantCodeController');
+
+		Route::get('customer/branch', ['as' => 'customer.branch', 'uses' => 'CustomerController@branch']);
+		Route::get('customer/exportbranch', 'CustomerController@exportbranch');
+		Route::get('customer/importbranch', 'CustomerController@importbranch');
+		Route::post('customer/uploadbranch', 'CustomerController@uploadbranch');
+
 
 		Route::get('customer/export', 'CustomerController@export');
 		Route::get('customer/import', 'CustomerController@import');
@@ -431,6 +507,10 @@ Route::group(array('before' => 'auth'), function()
 		Route::get('users/{id}/approve', 'UsersController@approve');
 		Route::post('users/{id}/setapprove', 'UsersController@setapprove');
 		Route::post('users/{id}/deny', 'UsersController@deny');
+
+		Route::get('users/updateinfo', 'UsersController@updateinfo');
+		Route::post('users/uploadinfo', 'UsersController@uploadinfo');
+
 		Route::resource('users', 'UsersController');
 		
 		Route::post('cycle/rerun', 'CycleController@rerun');
@@ -457,8 +537,20 @@ Route::group(array('before' => 'auth'), function()
 
 		Route::resource('sobholiday', 'SobholidaysController');
 
+		Route::get('departments/export', ['as' => 'departments.export', 'uses' => 'DepartmentsController@export']);
+		Route::get('departments/upload', ['as' => 'departments.upload', 'uses' => 'DepartmentsController@upload']);
+		Route::post('departments/upload', ['as' => 'departments.uploaddepartment', 'uses' => 'DepartmentsController@uploaddepartment']);
+		Route::resource('departments', 'DepartmentsController');
+
+		Route::resource('tasks', 'TasksController');
+
+		Route::get('subtasks/upload', ['as' => 'subtasks.upload', 'uses' => 'SubtasksController@upload']);
+		Route::post('subtasks/upload', ['as' => 'subtasks.uploadtask', 'uses' => 'SubtasksController@uploadtask']);
+		Route::resource('subtasks', 'SubtasksController');
+		
 		Route::get('reports/{id}/review', ['as' => 'reports.review', 'uses' => 'ReportController@review']);
 		Route::get('reports/{id}/scheme/', ['as' => 'reports.scheme', 'uses' => 'ReportController@scheme']);
+
 	});
 
 });

@@ -6,7 +6,7 @@
 <div class="page-header" id="banner">
 	<div class="row">
 		<div class="col-lg-8 col-md-7 col-sm-6">
-			<h1>New Group</h1>
+			<h1>New Role</h1>
 		</div>
 	</div>
 </div>
@@ -18,8 +18,8 @@
 	<div class="col-lg-6">
 	{{ Form::open(array('action' => 'GroupController@store','class' => 'bs-component' , 'id' => 'myform')) }}
 		<div class="form-group">
-			{{ Form::label('name', 'Group Name', array('class' => 'control-label')) }}
-			{{ Form::text('name','',array('class' => 'form-control', 'placeholder' => 'Group Name')) }}
+			{{ Form::label('name', 'Role Name', array('class' => 'control-label')) }}
+			{{ Form::text('name','',array('class' => 'form-control', 'placeholder' => 'Role Name')) }}
 		</div>
 
 		<div class="form-group">

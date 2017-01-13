@@ -135,4 +135,51 @@ class CustomerController extends \BaseController {
 		
 	}
 
+
+	public function branch()
+	{
+		Input::flash();
+		$branches = CustomerBranch::search(Input::all());
+		return View::make('customer.branch',compact('branches'));
+	}
+
+	public function importbranch(){
+		return View::make('customer.importbranch');
+	}
+
+	public function exportbranch(){
+		$customers = CustomerBranch::getExport();
+		Excel::create("Customer Branches", function($excel) use($customers){
+			$excel->sheet('Sheet1', function($sheet) use($customers) {
+				$sheet->fromModel($customers,null, 'A1', true);
+
+			})->download('xls');
+		});
+	}
+
+	public function uploadbranch(){
+		if(Input::hasFile('file')){
+			$file_path = Input::file('file')->move(storage_path().'/uploads/temp/',Input::file('file')->getClientOriginalName());
+			Excel::selectSheets('Sheet1')->load($file_path, function($reader) {
+				CustomerBranch::importbranch($reader->get());
+			});
+
+
+			if (File::exists($file_path))
+			{
+			    File::delete($file_path);
+			}
+			
+			return Redirect::action('CustomerController@branch')
+					->with('class', 'alert-success')
+					->with('message', 'Customer list successfuly updated');
+		}else{
+
+			return Redirect::action('CustomerController@importbranch')
+				->with('class', 'alert-danger')
+				->with('message', 'A file upload is required.');
+		}
+		
+	}
+
 }

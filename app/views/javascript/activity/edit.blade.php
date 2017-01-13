@@ -29,6 +29,7 @@ function getCustomer(){
 	});
 }
 
+
 if(location.hash.length > 0){
 	var activeTab = $('[href=' + location.hash + ']');
 	activeTab && activeTab.tab('show');
@@ -116,7 +117,6 @@ $('#updateActivity,#updateCustomer,#updateBilling,#updatetimings, #updateTradede
 
 
 $("a[href='#customer']").on('shown.bs.tab', function(e) {
-	$("#tree5").fancytree("disable");
     getCustomer();
 });
 
@@ -336,6 +336,7 @@ $('select#brand').multiselect({
 	includeSelectAllOption: true,
 	enableCaseInsensitiveFiltering: true,
 	enableFiltering: true,
+	numberDisplayed: 1,
 	onDropdownHide: function(event) {
 		updateskus();
 	}
@@ -346,7 +347,8 @@ $('select#objective').multiselect({
 	maxHeight: 200,
 	includeSelectAllOption: true,
 	enableCaseInsensitiveFiltering: true,
-	enableFiltering: true
+	enableFiltering: true,
+	numberDisplayed: 1
 });
 
 
@@ -501,6 +503,7 @@ $("#tree3").fancytree({
 
 		var keys = selRootKeys.join(".").split(".");
 		// console.log(keys);
+
 		$("#customers").val(selRootKeys.join(", "));
 		
 		show_force_alloc();

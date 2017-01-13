@@ -28,6 +28,13 @@
 
 		{{ HTML::style('assets/plugins/offline/offline-theme-default.css') }}
 		{{ HTML::style('assets/plugins/offline/offline-language-english.css') }}
+
+		{{ HTML::style('assets/plugins/jQuery.filer-1.0.5/css/jquery.filer.css') }}
+		{{ HTML::style('assets/plugins/jQuery.filer-1.0.5/css/themes/jquery.filer-dragdropbox-theme.css') }}
+
+		{{ HTML::style('assets/plugins/fullcalendar/dist/fullcalendar.css') }}
+
+		{{ HTML::style('assets/css/timeline.css') }}
 		{{ HTML::style('assets/css/styles.css') }}
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
@@ -58,18 +65,33 @@
 
 				<div class="navbar-collapse collapse" id="navbar-main">
 					<ul class="nav navbar-nav">
-						@if(Auth::user()->inRoles(['PROPONENT','PMOG PLANNER','GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR']))
+						@if(Auth::user()->inRoles(['PROPONENT','PMOG PLANNER','GCOM APPROVER','CD OPS APPROVER','CMD DIRECTOR', 'FIELD SALES']))
 						<li class="dropdown">
 							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="transaction">My Activities <span class="caret"></span></a>
 							<ul class="dropdown-menu" aria-labelledby="transaction">
-								@if(Auth::user()->inRoles(['PROPONENT']))
+								@if(Auth::user()->inRoles(['PROPONENT', 'FIELD SALES']))
 								<li>{{ HTML::linkRoute('activity.index', 'All') }}</li> 
 								<li>{{ HTML::linkAction('activity.index' , 'Unreleased',array('st' => ['1','2','3','4','5','6','7','8'],'title' => '')) }}</li>  
 								<li>{{ HTML::linkAction('activity.index' , 'Released',array('st' => ['9'],'title' => '')) }}</li>  
-								<li>{{ HTML::linkRoute('activity.create', 'Add New Activity') }}</li> 
+
+								@if(Auth::user()->ability([], ['create_national', 'create_customized']))
+								<li class="dropdown-submenu">
+								    <a tabindex="0" data-toggle="dropdown">New Activity</a>
+								    <ul class="dropdown-menu">
+								    	@if(Auth::user()->ability([], ['create_national']))
+								      	<li>{{ HTML::linkAction('ActivityController@create', 'National', [1]) }}</li> 
+								      	@endif
+										@if(Auth::user()->ability([], ['create_customized']))
+										<li>{{ HTML::linkAction('ActivityController@create', 'Customized', [2]) }}</li>
+										@endif
+								    </ul>
+								</li>
+								@endif
+						
+								 
 								@endif
 
-								@if(Auth::user()->inRoles(['PMOG PLANNER','FIELD SALES']))
+								@if(Auth::user()->inRoles(['PMOG PLANNER']))
 								<li>{{ HTML::linkRoute('activity.index', 'All') }}</li> 
 								<li>{{ HTML::linkAction('activity.index' , 'Unreleased',array('st' => ['1','2','3','4','5','6','7','8'],'title' => '')) }}</li>  
 								<li>{{ HTML::linkAction('activity.index' , 'Released',array('st' => ['9'],'title' => '')) }}</li>  
@@ -83,9 +105,14 @@
 								@if(Auth::user()->inRoles(['CMD DIRECTOR']))
 								<li>{{ HTML::linkAction('submittedactivity.index' , 'For Approval',array('st' => ['7'],'title' => '')) }}</li>  
 								@endif 
+
+								@if(Auth::user()->isChannelApprover())
+								<li>{{ HTML::linkAction('activity.preapprove' , 'Customized For Approval') }}</li>  
+								@endif
 							</ul>
 						</li>
 						@endif
+						
 						
 						@if(Auth::user()->hasRole("ADMINISTRATOR"))
 						<li class="dropdown">
@@ -94,11 +121,14 @@
 								<li class="dropdown-submenu">
 								    <a tabindex="0" data-toggle="dropdown">Users Maintenance</a>
 								    <ul class="dropdown-menu">
-								      <li>{{ HTML::linkRoute('group.index', 'Group') }}</li>  
-											<li>{{ HTML::linkAction('UsersController@index' , 'User') }}</li>
-											<li>{{ HTML::linkAction('UsersController@forapproval' , 'User For Approval') }}</li>
+								      	<li>{{ HTML::linkRoute('group.index', 'Roles') }}</li>  
+								      	<li>{{ HTML::linkAction('DepartmentsController@index' , 'Departments') }}</li>
+										<li>{{ HTML::linkAction('UsersController@index' , 'Users') }}</li>
+										<li>{{ HTML::linkAction('UsersController@forapproval' , 'Users For Approval') }}</li>
 								    </ul>
 								</li> 
+
+
 
 								<li class="dropdown-submenu">
 								    <a tabindex="0" data-toggle="dropdown">Activity Maintenance</a>
@@ -135,6 +165,7 @@
 								    <ul class="dropdown-menu">
 								      	<li>{{ HTML::linkRoute('area.index', 'Area') }}</li>  
 										<li>{{ HTML::linkRoute('customer.index', 'Customer') }}</li> 
+										<li>{{ HTML::linkRoute('customer.branch', 'Customer Branch') }}</li> 
 										<li>{{ HTML::linkRoute('customerremap.index', 'Customer Inactive / Active Mapping') }}</li>  
 										<li>{{ HTML::linkRoute('shipto.index', 'Ship To') }}</li>  
 										<li>{{ HTML::linkRoute('shiptoplantcode.index', 'Ship To / Plant Code Mapping') }}</li>  
@@ -145,6 +176,25 @@
 										<li>{{ HTML::linkRoute('customermaster.exportall', 'MT DT Hierarchy') }}</li> 
 								    </ul>
 								</li>
+
+								<li class="dropdown-submenu">
+								    <a tabindex="0" data-toggle="dropdown">Job Order Maintenance</a>
+								    <ul class="dropdown-menu">
+								      	<li>{{ HTML::linkRoute('tasks.index', 'Tasks') }}</li>  
+										<li>{{ HTML::linkRoute('subtasks.index', 'Sub Tasks') }}</li>  
+								    </ul>
+								</li> 
+							</ul>
+						</li>
+						@endif
+
+						@if(Auth::user()->ability([], ['manage_department_jo', 'manage_my_jo']))
+						<li class="dropdown">
+							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="transaction">Job Orders <span class="caret"></span></a>
+							<ul class="dropdown-menu" aria-labelledby="transaction">
+								<li>{{ HTML::linkRoute('joborders.index' , 'Department Job Orders',array('st' => ['1'])) }}</li>  
+								<li>{{ HTML::linkRoute('myjoborders.index', 'My Job Orders') }}</li>
+								
 							</ul>
 						</li>
 						@endif
@@ -171,15 +221,6 @@
 								<li>{{ HTML::linkAction('SobController@index' , 'Sales Order Booking Report') }}</li>
 								@endif
 								
-
-
-								@if(Auth::user()->inRoles(['ADMINISTRATOR']))
-								<li><a href="#">Calendar of Activities</a></li>
-								<li><a href="#">Activity Details Report</a></li>  
-								<li><a href="#">Activity Timings Report</a></li>
-								<li><a href="#">PIS Summary Report</a></li>
-								@endif
-
 								
 							</ul>
 						</li>
@@ -204,7 +245,16 @@
 						</li>
 
 						<li class="dropdown">
-							{{ HTML::linkAction('CycleController@calendar', 'TOP Calendar',null, array()) }}
+							<li class="dropdown">
+								<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="report">TOP Calendar <span class="caret"></span></a>
+								<ul class="dropdown-menu" aria-labelledby="report">
+									<li>{{ HTML::linkAction('CycleController@calendar', 'TOP Deadlines',null, array()) }}</li>  
+									<li>{{ HTML::linkAction('ActivityCalendarController@index' , 'Activity Calendar') }}</li>
+
+								</ul>
+							</li>
+
+							
 							
 						</li>
 
@@ -231,7 +281,11 @@
 
 					<ul class="nav navbar-nav navbar-right">
 						<li class="dropdown">
-							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="download">{{ ucwords(strtolower(Auth::user()->getFullname())) }} [ {{ Auth::user()->roles[0]->name }} ]<span class="caret"></span></a>
+							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="download">{{ ucwords(strtolower(Auth::user()->getFullname())) }} 
+								@if(isset(Auth::user()->department->department))
+								[ {{ strtoupper(Auth::user()->department->department) }} ]
+								@endif
+								<span class="caret"></span></a>
 							<ul class="dropdown-menu" aria-labelledby="download">  
 								<li>{{ HTML::linkAction('ProfileController@index', 'My Profile') }}</li>  
 								<li>{{ HTML::linkAction('ProfileController@changepassword', 'Change Password') }}</li>  
@@ -331,11 +385,15 @@
 
 	{{ HTML::script('assets/plugins/kartik/js/dependent-dropdown.min.js') }}
 	
+	{{ HTML::script('assets/plugins/jQuery.filer-1.0.5/js/jquery.filer.min.js') }}
+
+	{{ HTML::script('assets/plugins/tinymce/js/tinymce/tinymce.min.js') }}
+
+	{{ HTML::script('assets/plugins/fullcalendar/dist/fullcalendar.min.js') }}
+	
 	{{ HTML::script('assets/js/function.js') }}
 
 	@yield('add-script')
-
-
 
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -360,9 +418,7 @@
 			$("#pageloading").hide();
 
 			@yield('scripts')
-			
 			@section('page-script')
-
 			@show
 
 			@if (Auth::user())
@@ -380,7 +436,7 @@
 		        });
 		      }, 60000); // every minute
 		    });
-		@endif
+			@endif
 
 
 		});

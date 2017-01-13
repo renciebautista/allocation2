@@ -1325,9 +1325,6 @@
 
 @section('page-script')
 
-
-
-
 if(location.hash.length > 0){
 	var activeTab = $('[href=' + location.hash + ']');
 	activeTab && activeTab.tab('show');

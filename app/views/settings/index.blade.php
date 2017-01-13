@@ -37,6 +37,11 @@
 			{{ Form::text('pasword_expiry', $settings->pasword_expiry ,array('class' => 'form-control', 'placeholder' => 'Password Expiry (days)')) }}
 		</div>
 
+		<div class="form-group">
+			{{ Form::label('customized_preapprover', 'Customized Activity Pre Approver Department Code (use comma seperated)', array('class' => 'control-label')) }}
+			{{ Form::text('customized_preapprover', $settings->customized_preapprover ,array('class' => 'form-control', 'placeholder' => 'Customized Activity Pre Approver Department Code')) }}
+		</div>
+
 
 		<br>
 		<div class="form-group">

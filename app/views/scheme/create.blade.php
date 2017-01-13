@@ -70,6 +70,8 @@
 		</div>
 	</div>
 
+	@if($activity->scope_type_id == 1)
+
 	<div class="row">
 		<div class="col-lg-12">
 			<div class="form-group">
@@ -105,6 +107,7 @@
 			</div>
 		</div>
 	</div>
+	@endif
 
 	<div class="row">
 		<div class="col-lg-4">
@@ -173,6 +176,8 @@
 		</div>
 	</div>
 
+	
+
 	<div class="row">
 		<div class="col-lg-4">
 			<div class="form-group">
@@ -209,6 +214,7 @@
 		</div>
 	</div>
 
+	@if($activity->scope_type_id == 1)
 	<div class="row">
 		<div class="col-lg-4">
 			<div class="form-group">
@@ -241,7 +247,7 @@
 			</div>
 		</div>
 	</div>
-
+	@endif
 
 	<div class="row">
 		<div class="col-lg-4">

@@ -49,6 +49,11 @@
 			{{ Form::text('last_name', $user->last_name,array('class' => 'form-control', 'placeholder' => 'Last Name')) }}
 		</div>
 
+		<div class="form-group">
+			{{ Form::label('department_id', 'Department', array('class' => 'control-label')) }}
+			{{ Form::select('department_id', array('0' => 'Please Select') + $departments, $user->department_id, array('class' => 'form-control')) }}
+		</div>
+
 
 		<div class="form-group">
 			{{ Form::label('group_id', 'Group', array('class' => 'control-label')) }}

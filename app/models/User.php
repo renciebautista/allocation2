@@ -10,14 +10,19 @@ class User extends Eloquent implements ConfideUserInterface {
 
     
     public static $rules = array(
-    	'username' => 'required|unique:users',
+    	'username' => 'required|alpha_num|unique:users',
     	'password' => 'required|min:6|confirmed',
 		'password_confirmation' => 'same:password',
 		'email' => 'required|email|unique:users',
 		'first_name' => 'required',
 		'last_name' => 'required',
-		'group_id' => 'required|integer|min:1'
+		'group_id' => 'required|integer|min:1',
+		'department_id' => 'required|integer|min:1',
 	);
+
+	public function department(){
+		return $this->belongsTo('Department','department_id','id');
+	}
 
   public static function forApproval(){
   	return self::select('users.id', 'users.first_name', 'users.last_name','users.email','users.contact_no')
@@ -26,9 +31,10 @@ class User extends Eloquent implements ConfideUserInterface {
   }
 
 
-	public static function search($status,$type,$search){
-		return self::select('users.id', 'users.first_name', 'users.last_name','users.email','users.active')
+	public static function search($department, $status, $type, $search){
+		return self::select('users.id', 'users.first_name', 'users.last_name','users.email','users.active', 'department')
 			->join('assigned_roles', 'users.id', '=', 'assigned_roles.user_id')
+			->join('departments', 'departments.id', '=', 'users.department_id', 'left')
 			->where(function($query) use ($search){
 				$query->where('first_name', 'LIKE' ,"%$search%")
 					->orwhere('last_name', 'LIKE' ,"%$search%")
@@ -47,6 +53,12 @@ class User extends Eloquent implements ConfideUserInterface {
 			->where(function($query) use ($type){
 				if($type > 0){
 					$query->where('role_id', $type);
+				}
+					
+			})
+			->where(function($query) use ($department){
+				if($department > 0){
+					$query->where('department_id', $department);
 				}
 					
 			})
@@ -247,6 +259,69 @@ class User extends Eloquent implements ConfideUserInterface {
         }
 
         return false;
+	}
+
+	public static function getUsers($activity, $departments = null){
+		$activity_members = ActivityMember::where('activity_id', $activity->id)->get();
+		$users = [];
+		foreach ($activity_members as $member) {
+			$users[] = $member->user_id;
+		}
+		$users[] = Auth::user()->id;
+		return self::select(DB::raw("CONCAT(first_name,' ', last_name) as fullname"), 'id' )
+			->where('active',1)
+			->where('department_id', '>', 1)
+			->where(function($query) use ($departments){
+				if($departments != null){
+					$query->whereIn('department_id', $departments);
+				}
+			})
+			->whereNotIn('id',$users )
+			->lists('fullname', 'id');
+	}
+
+	public static function getAll(){
+		return self::select(DB::raw("CONCAT(first_name,' ', last_name) as fullname"), 'id' )
+			->where('active',1)
+			->orderBy('fullname')
+			->lists('fullname', 'id');
+	}
+
+	public static function updateinfo($records){
+		DB::beginTransaction();
+			try {
+				$records->each(function($row)  {
+				if(!is_null($row->email_address)){
+					$user = User::where('email', $row->email_address)->first();
+					if(!empty($user)){
+						$department = Department::firstOrCreate(['department' => $row->department]);
+						$user->department_id = $department->id;
+						$user->save();
+					}
+				}
+				
+			});
+			DB::commit();
+		} catch (\Exception $e) {
+			// dd($e);
+			DB::rollback();
+		}
+	}
+
+	public static function getDepartmentStaff($department_id){
+		
+		return self::select(DB::raw("CONCAT(first_name,' ', last_name) as fullname"), 'id' )
+			->where('active',1)
+			->where('department_id',$department_id)
+			->orderBy('fullname')
+			->lists('fullname', 'id');
+	}
+
+	public function isChannelApprover(){
+		$settings = Setting::where('id', 1)->first();
+		$pre_channels = explode(",", $settings->customized_preapprover);
+
+		return in_array(Auth::user()->department_id, $pre_channels);
 	}
 	
 }

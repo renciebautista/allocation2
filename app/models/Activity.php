@@ -4,7 +4,7 @@ class Activity extends \Eloquent {
 	protected $fillable = [];
 
 	public static $rules = array(
-		'scope' => 'required|integer|min:1',
+		// 'scope' => 'required|integer|min:1',
 		// 'planner' => 'required|integer|min:1',
 		// 'approver' => 'required|integer|min:1',
 		'activity_type' => 'required|integer|min:1',
@@ -45,6 +45,11 @@ class Activity extends \Eloquent {
     public function objectives()
     {
         return $this->belongsToMany('Objective','activity_objectives');
+    }
+
+    public function timelines()
+    {
+        return $this->hasMany('ActivityTimeline');
     }
 
    	public function pmog()
@@ -272,10 +277,10 @@ class Activity extends \Eloquent {
 	}
 
 	public static function search($user_id = 0,$status,$cycle,$scope,$type,$pmog,$title){
-		return self::select('activities.id','activities.circular_name','activities.edownload_date',
+		$national = self::select('activities.id','activities.circular_name','activities.edownload_date',
 			'activities.eimplementation_date','activities.end_date','activities.billing_date',
 			'activity_statuses.status','cycles.cycle_name','pdf','word',
-			'scope_types.scope_name','activity_types.activity_type',
+			'scope_types.scope_name','activity_types.activity_type','created_by',
 			DB::raw('CONCAT(users.first_name, " ", users.last_name) AS planner'),
 			DB::raw('CONCAT(propo.first_name, " ", propo.last_name) AS proponent'),
 			'activities.status_id','activities.disable')
@@ -323,6 +328,56 @@ class Activity extends \Eloquent {
 			->orderBy('activities.circular_name')
 			->orderBy('activities.id')
 			->get();
+
+		
+
+
+		$customized = self::select('activities.id','activities.circular_name','activities.edownload_date',
+			'activities.eimplementation_date','activities.end_date','activities.billing_date',
+			'activity_statuses.status','cycles.cycle_name',
+			'scope_types.scope_name','activity_types.activity_type','created_by',
+			DB::raw('CONCAT(propo.first_name, " ", propo.last_name) AS proponent'))
+			->join('activity_statuses', 'activities.status_id','=','activity_statuses.id')
+			->join('cycles', 'activities.cycle_id','=','cycles.id')
+			->join('scope_types', 'activities.scope_type_id','=','scope_types.id')
+			->join('activity_types', 'activities.activity_type_id','=','activity_types.id')
+			->join('activity_members', 'activities.id','=','activity_members.activity_id')
+			->join('users', 'activity_members.user_id','=','users.id')
+			->join('users as propo', 'activities.created_by','=','propo.id')
+			->where('activity_members.user_id',$user_id)
+			->where(function($query) use ($title){
+				$query->where('activities.circular_name', 'LIKE' ,"%$title%");
+			})
+			->where(function($query) use ($status){
+				if($status > 0){
+					$query->whereIn('activities.status_id', $status);
+				}
+			})
+			->where(function($query) use ($cycle){
+				if($cycle > 0){
+					$query->whereIn('activities.cycle_id', $cycle);
+				}
+			})
+			->where(function($query) use ($scope){
+				if($scope > 0){
+					$query->whereIn('activities.scope_type_id', $scope);
+				}
+			})
+			->where(function($query) use ($type){
+				if($type > 0){
+					$query->whereIn('activities.activity_type_id', $type);
+				}
+			})
+			->orderBy('activity_types.activity_type')
+			->orderBy('activities.circular_name')
+			->orderBy('activities.id')
+			->get();
+
+		$newColection = $customized->reject(function($element) {
+		    return !ActivityMember::allowToSubmit($element);
+		});
+
+		return $national->merge($newColection);
 	}
 
 	public static function search2($user_id = 0,$status,$cycle,$scope,$type,$pmog,$title){
@@ -381,7 +436,7 @@ class Activity extends \Eloquent {
 	}
 
 	public static function searchDownloaded($user_id,$proponent_id,$status,$cycle,$scope,$type,$title){
-		return self::select('activities.id','activities.circular_name','activities.edownload_date',
+		$national = self::select('activities.id','activities.circular_name','activities.edownload_date',
 			'activities.eimplementation_date','activities.end_date','activities.billing_date',
 			'activity_statuses.status','cycles.cycle_name',
 			'scope_types.scope_name','activity_types.activity_type',
@@ -427,6 +482,55 @@ class Activity extends \Eloquent {
 			->orderBy('activities.circular_name')
 			->orderBy('activities.id')
 			->get();
+
+		$customized = self::select('activities.id','activities.circular_name','activities.edownload_date',
+			'activities.eimplementation_date','activities.end_date','activities.billing_date',
+			'activity_statuses.status','cycles.cycle_name',
+			'scope_types.scope_name','activity_types.activity_type',
+			DB::raw('CONCAT(propo.first_name, " ", propo.last_name) AS proponent'))
+			->join('activity_statuses', 'activities.status_id','=','activity_statuses.id')
+			->join('cycles', 'activities.cycle_id','=','cycles.id')
+			->join('scope_types', 'activities.scope_type_id','=','scope_types.id')
+			->join('activity_types', 'activities.activity_type_id','=','activity_types.id')
+			->join('activity_members', 'activities.id','=','activity_members.activity_id')
+			->join('users', 'activity_members.user_id','=','users.id')
+			->join('users as propo', 'activities.created_by','=','propo.id')
+			->where('activity_members.user_id',$user_id)
+			->where('activity_members.activity_member_status_id', '>', 1)
+			->where(function($query) use ($proponent_id){
+				if($proponent_id > 0){
+					$query->whereIn('activities.created_by', $proponent_id);
+				}
+			})
+			->where(function($query) use ($title){
+				$query->where('activities.circular_name', 'LIKE' ,"%$title%");
+			})
+			->where(function($query) use ($status){
+				if($status > 0){
+					$query->whereIn('activities.status_id', $status);
+				}
+			})
+			->where(function($query) use ($cycle){
+				if($cycle > 0){
+					$query->whereIn('activities.cycle_id', $cycle);
+				}
+			})
+			->where(function($query) use ($scope){
+				if($scope > 0){
+					$query->whereIn('activities.scope_type_id', $scope);
+				}
+			})
+			->where(function($query) use ($type){
+				if($type > 0){
+					$query->whereIn('activities.activity_type_id', $type);
+				}
+			})
+			->orderBy('activity_types.activity_type')
+			->orderBy('activities.circular_name')
+			->orderBy('activities.id')
+			->get();
+
+		return $national->merge($customized);
 	}
 
 	public static function PmogForApproval($user_id){
@@ -930,5 +1034,81 @@ class Activity extends \Eloquent {
 		}else{
 			return false;
 		}
+	}
+
+	public static function getCustomProponent($user_id){
+		return self::select('proponent_name','created_by')
+				->join('activity_members', 'activities.id', '=', 'activity_members.activity_id')
+				->where('scope_type_id', 2)
+				->where('activity_members.activity_member_status_id', 1)
+				->where('activity_members.user_id',$user_id)
+				->groupBy('created_by')
+				->orderBy('proponent_name')
+				->lists('proponent_name', 'created_by');
+	}
+
+	public static function searchCustomForApproval($user_id, $proponent_id, $title, $cycle, $type){
+		return self::select('activities.id','activities.circular_name','activities.edownload_date',
+			'activities.eimplementation_date','activities.end_date','activities.billing_date',
+			'activity_statuses.status','cycles.cycle_name',
+			'scope_types.scope_name','activity_types.activity_type',
+			DB::raw('CONCAT(propo.first_name, " ", propo.last_name) AS proponent'))
+			->join('activity_statuses', 'activities.status_id','=','activity_statuses.id')
+			->join('cycles', 'activities.cycle_id','=','cycles.id')
+			->join('scope_types', 'activities.scope_type_id','=','scope_types.id')
+			->join('activity_types', 'activities.activity_type_id','=','activity_types.id')
+			->join('activity_members', 'activities.id','=','activity_members.activity_id')
+			->join('users', 'activity_members.user_id','=','users.id')
+			->join('users as propo', 'activities.created_by','=','propo.id')
+			->where('activity_members.user_id',$user_id)
+			->where('scope_type_id', 2)
+			->where('activity_members.activity_member_status_id', 1)
+			->where(function($query) use ($proponent_id){
+				if($proponent_id > 0){
+					$query->whereIn('activities.created_by', $proponent_id);
+				}
+			})
+			->where(function($query) use ($title){
+				$query->where('activities.circular_name', 'LIKE' ,"%$title%");
+			})
+			->where(function($query) use ($cycle){
+				if($cycle > 0){
+					$query->whereIn('activities.cycle_id', $cycle);
+				}
+			})
+			->where(function($query) use ($type){
+				if($type > 0){
+					$query->whereIn('activities.activity_type_id', $type);
+				}
+			})
+			->orderBy('activity_types.activity_type')
+			->orderBy('activities.circular_name')
+			->orderBy('activities.id')
+			->get();
+	}
+
+	public static function getCustomIdList(){
+		return ActivityMember::getActivities(Auth::user()->id);
+	}
+
+	public static function getReleased($request){
+
+		$data = self::select('circular_name as title', 
+			'eimplementation_date as start',
+			'scope_type_id as type')
+			->where('status_id', '=', 9)
+			->where('eimplementation_date', '>=', $request['start'])
+			->where('eimplementation_date', '<=', $request['end'])
+			->orderBy('eimplementation_date')
+			->orderBy('scope_type_id')
+			->get();
+
+		foreach ($data as $value) {
+			if($value->type == 2){
+				$value->color = '#257e4a';
+			}
+		}
+
+		return $data;
 	}
 }

@@ -6,6 +6,7 @@
 /app/database/seeds/seed_files/*
 /app/storage/exports/*
 /app/storage/joborder_files/*
+/app/storage/le/*
 /public/barcode/*
 /app/storage/le/*
 /public/barcode/*

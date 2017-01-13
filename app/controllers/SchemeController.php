@@ -246,7 +246,9 @@ class SchemeController extends \BaseController {
 			return View::make('activity.updating');
 		}
 
+
 		if((Activity::myActivity($activity)) || (ActivityPlanner::myActivity($activity->id))){
+		// if(Auth::user()->hasRole("PROPONENT")){
 			$activity_schemes = Scheme::getIdList($activity->id);
 			$id_index = array_search($id, $activity_schemes);
 
@@ -409,7 +411,8 @@ class SchemeController extends \BaseController {
 
 			$sobdivisions = Pricelist::divisions();
 
-			if(Auth::user()->hasRole("PROPONENT")){
+			// if(Auth::user()->hasRole("PROPONENT")){
+			if(Activity::myActivity($activity)){
 				if($activity->status_id < 4){
 					return View::make('scheme.edit',compact('scheme', 'activity_schemes', 'id_index', 'activity', 'skus', 'sel_skus', 'sel_hosts',
 						'sel_premuim','allocations', 'total_sales', 'qty','id','total_gsv', 'ac_groups', 'groups','host_sku','premuim_sku',
@@ -421,7 +424,8 @@ class SchemeController extends \BaseController {
 				}
 			}
 
-			if(Auth::user()->hasRole("PMOG PLANNER")){
+			// if(Auth::user()->hasRole("PMOG PLANNER")){
+			if(ActivityPlanner::myActivity($activity->id)){
 				if($activity->status_id == 4){
 					return View::make('scheme.edit',compact('scheme', 'activity_schemes', 'id_index', 'activity', 'skus', 'sel_skus', 'sel_hosts',
 						'sel_premuim','allocations', 'total_sales', 'qty','id', 'summary', 'total_gsv','ac_groups', 'groups','host_sku','premuim_sku',
@@ -448,8 +452,8 @@ class SchemeController extends \BaseController {
 	 */
 	public function update($id)
 	{
-		// $scheme = Scheme::find($id);
-		// SchemeAllocRepository::updateAllocation(Input::get('skus'),$scheme);
+		$scheme = Scheme::find($id);
+		SchemeAllocRepository::updateAllocation(Input::get('skus'),$scheme);
 		// dd(Input::all());
 		$validation = Validator::make(Input::all(), Scheme::$rules);
 

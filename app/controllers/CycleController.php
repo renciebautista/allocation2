@@ -314,10 +314,8 @@ class CycleController extends \BaseController {
 					}else{
 
 					}
-					
 				}
 			}
-			
 			
 
 			if(Input::get('submit') == "doc"){
