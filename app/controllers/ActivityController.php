@@ -2953,15 +2953,162 @@ class ActivityController extends BaseController {
 						}
 					}
 				}
+
+				// duplicate trade deals
+				$tradedeal_activity = Tradedeal::getActivityTradeDeal($activity);
+				if($tradedeal_activity != null){
+					$_part_sku = [];
+					// copy participating skus
+					$partskus = TradedealPartSku::where('activity_id',$activity->id)
+						->orderBy('id')
+						->get();
+					foreach ($partskus as $partsku) {
+						$new_partsku = new TradedealPartSku;
+						$new_partsku->activity_id = $new_activity->id;
+						$new_partsku->host_code = $partsku->host_code;
+						$new_partsku->host_desc = $partsku->host_desc;
+						$new_partsku->variant = $partsku->variant;
+						$new_partsku->brand_shortcut = $partsku->brand_shortcut;
+						$new_partsku->host_sku_format = $partsku->host_sku_format;
+						$new_partsku->host_cost = $partsku->host_cost;
+						$new_partsku->host_pcs_case = $partsku->host_pcs_case;
+						$new_partsku->ref_code = $partsku->ref_code;
+						$new_partsku->ref_desc = $partsku->ref_desc;
+						$new_partsku->ref_pcs_case = $partsku->ref_pcs_case;
+						$new_partsku->pre_code = $partsku->pre_code;
+						$new_partsku->pre_desc = $partsku->pre_desc;
+						$new_partsku->pre_variant = $partsku->pre_variant;
+						$new_partsku->pre_brand_shortcut = $partsku->pre_brand_shortcut;
+						$new_partsku->pre_sku_format = $partsku->pre_sku_format;
+						$new_partsku->pre_cost = $partsku->pre_cost;
+						$new_partsku->pre_pcs_case = $partsku->pre_pcs_case;
+						$new_partsku->save();
+
+						$_part_sku[$partsku->id] = $new_partsku->id;
+					}
+
+					// copy trade deals
+					$tradedeals = Tradedeal::where('activity_id',$activity->id)
+						->orderBy('id')
+						->get();
+					foreach ($tradedeals as $tradedeal) {
+						$new_tradedeal = new Tradedeal;
+						$new_tradedeal->activity_id = $new_activity->id;
+						$new_tradedeal->alloc_in_weeks = $tradedeal->alloc_in_weeks;
+						$new_tradedeal->non_ulp_premium = $tradedeal->non_ulp_premium;
+						$new_tradedeal->non_ulp_premium_desc = $tradedeal->non_ulp_premium_desc;
+						$new_tradedeal->non_ulp_premium_code = $tradedeal->non_ulp_premium_code;
+						$new_tradedeal->non_ulp_premium_cost = $tradedeal->non_ulp_premium_cost;
+						$new_tradedeal->non_ulp_pcs_case = $tradedeal->non_ulp_pcs_case;
+						$new_tradedeal->forced_upload = $tradedeal->forced_upload;
+						$new_tradedeal->save();
+
+						// copy tradedealscheme
+						$tradedealschemes = TradedealScheme::where('tradedeal_id',$tradedeal->id)
+							->orderBy('id')
+							->get();
+
+						$_scheme_channels = [];
+						foreach ($tradedealschemes as $tradedealscheme) {
+							$new_tradedealscheme = new TradedealScheme;
+							$new_tradedealscheme->tradedeal_id = $new_tradedeal->id;
+							$new_tradedealscheme->name = $tradedealscheme->name;
+							$new_tradedealscheme->additional_name = $tradedealscheme->additional_name;
+							$new_tradedealscheme->tradedeal_type_id = $tradedealscheme->tradedeal_type_id;
+							$new_tradedealscheme->buy = $tradedealscheme->buy;
+							$new_tradedealscheme->free = $tradedealscheme->free;
+							$new_tradedealscheme->pre_id = $tradedealscheme->pre_id;
+							$new_tradedealscheme->coverage = $tradedealscheme->coverage;
+							$new_tradedealscheme->tradedeal_uom_id = $tradedealscheme->tradedeal_uom_id;
+							$new_tradedealscheme->pre_code = $tradedealscheme->pre_code;
+							$new_tradedealscheme->pre_desc = $tradedealscheme->pre_desc;
+							$new_tradedealscheme->pre_cost = $tradedealscheme->pre_cost;
+							$new_tradedealscheme->pre_pcs_case = $tradedealscheme->pre_pcs_case;
+							$new_tradedealscheme->pcs_deal = $tradedealscheme->pcs_deal;
+							$new_tradedealscheme->pur_req = $tradedealscheme->pur_req;
+							$new_tradedealscheme->free_cost = $tradedealscheme->free_cost;
+							$new_tradedealscheme->cost_to_sale = $tradedealscheme->cost_to_sale;
+							$new_tradedealscheme->save();
+
+							// copy scheme selected channels
+							$scheme_channels = TradedealSchemeChannel::where('tradedeal_scheme_id',$tradedealscheme->id)
+								->orderBy('id')
+								->get();
+							foreach ($scheme_channels as $scheme_channel) {
+								$new_scheme_channel = new TradedealSchemeChannel;
+								$new_scheme_channel->tradedeal_scheme_id = $new_tradedealscheme->id;
+								$new_scheme_channel->channel_node = $scheme_channel->channel_node;
+								$new_scheme_channel->save();
+
+								$_scheme_channels[$scheme_channel->id] = $new_scheme_channel->id;
+							}
+
+							
+							// copy scheme skus
+							$scheme_skus = TradedealSchemeSku::where('tradedeal_scheme_id',$tradedealscheme->id)
+								->orderBy('id')
+								->get();
+							// Helper::debug($_scheme_channels);
+
+							foreach ($scheme_skus as $scheme_sku) {
+								$new_scheme_sku = new TradedealSchemeSku;
+								$new_scheme_sku->tradedeal_scheme_id = $new_tradedealscheme->id;
+								$new_scheme_sku->tradedeal_part_sku_id = $_part_sku[$scheme_sku->tradedeal_part_sku_id];
+								$new_scheme_sku->qty = $scheme_sku->qty;
+								$new_scheme_sku->pur_req = $scheme_sku->pur_req;
+								$new_scheme_sku->free_cost = $scheme_sku->free_cost;
+								$new_scheme_sku->cost_to_sale = $scheme_sku->cost_to_sale;
+								$new_scheme_sku->save();
+							}
+
+							// copy scheme sub types
+							$scheme_subtypes = TradedealSchemeSubType::where('tradedeal_scheme_id',$tradedealscheme->id)
+								->orderBy('id')
+								->get();
+							foreach ($scheme_subtypes as $scheme_subtype) {
+								$new_scheme_subtype = new TradedealSchemeSubType;
+								$new_scheme_subtype->tradedeal_scheme_id = $new_tradedealscheme->id;
+								$new_scheme_subtype->sub_type = $scheme_subtype->sub_type;
+								$new_scheme_subtype->sub_type_desc = $scheme_subtype->sub_type_desc;
+								$new_scheme_subtype->tradedeal_scheme_channel_id = $_scheme_channels[$scheme_subtype->tradedeal_scheme_channel_id];
+								$new_scheme_subtype->save();
+							}
+
+						}
+
+						$new_schemes = TradedealScheme::where('tradedeal_id', $new_tradedeal->id)->get();
+						if(!empty($new_schemes)){
+							foreach ($new_schemes as $new_scheme) {
+								TradedealAllocRepository::updateAllocation($new_scheme);
+							}
+						}
+					}
+
+
+				}
+
+
+				// 
+
 				// copy all file
 				$path = storage_path().'/uploads/'.$new_activity->cycle_id.'/'.$new_activity->activity_type_id;
+				// Helper::debug($path);
 				if(!File::exists($path)) {
-					File::makeDirectory($path);
+					try {
+						File::makeDirectory($path);
+					} catch (Exception $e) {
+						mkdir($path, 0755, true); 
+					}
 				}
 				$path2 = storage_path().'/uploads/'.$new_activity->cycle_id.'/'.$new_activity->activity_type_id.'/'.$new_activity->id;
-				if(!File::exists($path2)) {
-					File::makeDirectory($path2);
 
+				if(!File::exists($path2)) {
+					try {
+						File::makeDirectory($path2);
+					} catch (Exception $e) {
+						mkdir($path2, 0755, true);
+					}
+					
 					$old_path = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
 					File::copyDirectory($old_path, $path2);
 
@@ -3703,6 +3850,7 @@ class ActivityController extends BaseController {
 					$scheme->tradedeal_id = $tradedeal->id;
 					// $scheme->name = $deal_type->tradedeal_type.": ".$buy."+".$free." ".$uom->tradedeal_uom;
 					$scheme->name = strtoupper(Input::get('scheme_name'));
+					$scheme->additional_name = strtoupper(Input::get('additional_name'));
 					$scheme->tradedeal_type_id = $deal_type->id;
 					$scheme->buy = $buy;
 					$scheme->free = $free;
@@ -4404,7 +4552,7 @@ class ActivityController extends BaseController {
 			$excel->sheet('Allocations', function($sheet) use ($activity) {
 				$allocations = TradedealSchemeAllocation::getAll($activity);
 				$sheet->row(1, array( 'ID', 'Activity ID', 'Activity Description', 'Scheme Code', 'Scheme Description', 'Host SKU Code', 'Host SKU', 'Premium SKU Code', 'Premium SKU', 'Area Code', 
-					'Area', 'Sold To Code', 'Sold To', 'U2K2 Code', 'Ship To Code', 'Ship To Name', 'Computed Allocation', 'Final Allocation', 'New Allocation'));
+					'Area', 'Sold To Code', 'Sold To', 'U2K2 Code', 'Ship To Code', 'Ship To Name', '# of deals', 'Computed Allocation (Pieces) ', 'Final Allocation (Pieces) ', 'New Allocation (Pieces) '));
 
 				$sheet->setAutoFilter();
 				$row = 2;
@@ -4447,7 +4595,10 @@ class ActivityController extends BaseController {
 							$host_code = $colhostskucode[$alloc->tradedeal_scheme_id];
 						}
 					}
-					
+					$num_of_deal  = 0;
+					if($alloc->final_pcs > 0){
+						$num_of_deal = $alloc->final_pcs / $alloc->deal_multiplier;
+					}
 					$sheet->row($row, array(
 						$alloc->alloc_id, 
 						$alloc->activity_id, 
@@ -4465,6 +4616,7 @@ class ActivityController extends BaseController {
 						$alloc->ship_to_code, 
 						$alloc->plant_code, 
 						$alloc->ship_to_name, 
+						$num_of_deal, 
 						$alloc->computed_pcs, 
 						$alloc->final_pcs, 
 						$alloc->total_alloc));
@@ -4474,7 +4626,7 @@ class ActivityController extends BaseController {
 
 				$sheet->getProtection()->setPassword('tradedeal');
 				$sheet->getProtection()->setSheet(true);
-				$sheet->getStyle('S2:S'.$cnt)->getProtection()->setLocked(PHPExcel_Style_Protection::PROTECTION_UNPROTECTED);
+				$sheet->getStyle('T2:T'.$cnt)->getProtection()->setLocked(PHPExcel_Style_Protection::PROTECTION_UNPROTECTED);
 		    });
 
 			$excel->sheet('ALLOCATION SUMMARY', function($sheet) use ($activity) {
@@ -4588,7 +4740,7 @@ class ActivityController extends BaseController {
 	public function joborder($id){
 		$joborder = Joborder::findOrFail($id);
 		$artworks = JoborderArtwork::where('joborder_id', $joborder->id)->get();
-		$comments = $joborder->comments()->orderBy('created_at', 'desc')->get();
+		$comments = $joborder->comments()->orderBy('created_at', 'asc')->get();
 		return View::make('activity.joborder',compact('joborder', 'comments', 'artworks'));
 	}
 
@@ -4605,6 +4757,8 @@ class ActivityController extends BaseController {
 		$subtask = SubTask::findOrFail(Input::get('sub_task'));
 		$validation = Validator::make(Input::all(), Joborder::$rules);
 		if($validation->passes()){
+			$subtask = SubTask::find($subtask->id);
+
 			$joborder = new Joborder;
 			$joborder->activity_id = $activity->id;
 			$joborder->created_by = Auth::id();
@@ -4613,8 +4767,10 @@ class ActivityController extends BaseController {
 			$joborder->sub_task_id = $subtask->id;
 			$joborder->sub_task = $subtask->sub_task;
 			$joborder->department_id = $subtask->department_id;
-			$joborder->start_date = date('Y-m-d',strtotime(Input::get('start_date')));
-			$joborder->end_date = date('Y-m-d',strtotime(Input::get('end_date')));
+			$joborder->target_date = date('Y-m-d',strtotime(Input::get('target_date')));
+			$joborder->weight = $subtask->weight;
+			$joborder->cost = $subtask->cost;
+			$joborder->revision = 0;
 			$joborder->save();
 
 			$comment = JoborderComment::create(['joborder_id' => $joborder->id, 
@@ -4643,7 +4799,7 @@ class ActivityController extends BaseController {
 				
 			}
 
-			$url = route('joborders.edit', $joborder->id); 
+			$url = route('activity.joborder', $joborder->id); 
 			$message = '<a href="'.$url.'" class="linked-object-link">Job Order #'.$joborder->id.'</a>';
 			ActivityTimeline::addTimeline($activity, Auth::user(), "created a job order",$message);
 

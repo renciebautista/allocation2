@@ -6,8 +6,7 @@ class Joborder extends \Eloquent {
 	public static $rules = array(
 		'task' => 'required|integer|min:1',
 		'sub_task' => 'required|integer|min:1',
-		'start_date' => 'required',
-		'end_date' => 'required',
+		'target_date' => 'required',
 		'details' => 'required'
 	);
 

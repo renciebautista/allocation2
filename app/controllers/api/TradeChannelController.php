@@ -29,15 +29,17 @@ class TradeChannelController extends \BaseController {
 
 		$all_selected_nodes = \TradedealSchemeChannel::getallselected($activity);
 		$all_nodes = [];
-		if(!empty($all_selected_nodes)){
-			foreach ($all_selected_nodes as $sel) {
-				$all_nodes[] = $sel->channel_node;
-			}
-		}
+		
+		// if(!empty($all_selected_nodes)){
+		// 	foreach ($all_selected_nodes as $sel) {
+		// 		$all_nodes[] = $sel->channel_node;
+		// 	}
+		// }
 
 		$final_nodes = array_diff($all_nodes,$scheme_selection);
 
 		$selected_channels = \ActivityCustomer::getSelectedChannels($activity);
+		
 		$channels = \DB::table('sub_channels')
 			->join('channels', 'channels.channel_code', '=', 'sub_channels.channel_code')
 			->where('trade_deal', 1)

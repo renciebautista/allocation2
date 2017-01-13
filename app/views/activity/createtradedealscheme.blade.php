@@ -28,9 +28,13 @@
                 <div class="col-lg-12">
                     <div class="form-group">
                         <div class="row">
-                            <div class="col-lg-12">
+                            <div class="col-lg-6">
                                 {{ Form::label('scheme_name', 'Scheme Name', array('class' => 'control-label')) }}
                                 {{ Form::text('scheme_name','', array('id' => 'scheme_name', 'class' => 'form-control', 'id' => 'scheme_name', 'readonly' => '')) }}
+                            </div>
+                            <div class="col-lg-6">
+                                {{ Form::label('additional_name', 'Additional Name', array('class' => 'control-label')) }}
+                                {{ Form::text('additional_name','', array('id' => 'additional_name', 'class' => 'form-control', 'id' => 'additional_name')) }}
                             </div>
                         </div>
                     </div>

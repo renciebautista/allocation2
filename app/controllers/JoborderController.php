@@ -68,9 +68,11 @@ class JoborderController extends \BaseController {
 			return Response::make(View::make('shared/404'), 404);
 		}else{
 			$artworks = JoborderArtwork::where('joborder_id', $joborder->id)->get();
-			$comments = $joborder->comments()->orderBy('created_at', 'desc')->get();
+			$comments = $joborder->comments()->orderBy('created_at', 'asc')->get();
 			$jostatus = JoborderStatus::getLists();
-			$joudpatestatus = JoborderStatus::getUpdateLists();
+
+			$joudpatestatus = ['1' => 'RETURN TO ASSIGNEE', '2' => 'CLOSE JOB ORDER', '3' => 'CANCEL JOB ORDER'];
+
 			$dept_users = User::getDepartmentStaff($joborder->department_id);
 			$staff = false;
 			return View::make('joborders.edit',compact('joborder', 'comments', 'artworks', 'jostatus', 'dept_users', 'joudpatestatus', 'staff'));
@@ -166,6 +168,35 @@ class JoborderController extends \BaseController {
 		if(Input::has('assigned_to')){
 			$joborder->assigned_to = Input::get('assigned_to');
 			$joborder->joborder_status_id = 2;
+			$joborder->revision = 1;
+			$joborder->save();
+		}
+
+		if(Input::has('start_date')){
+			$joborder->start_date = date('Y-m-d',strtotime(Input::get('start_date')));
+			$joborder->end_date = date('Y-m-d',strtotime(Input::get('end_date')));
+			$joborder->save();
+		}
+
+		if(Input::has('return')){
+			$joborder->joborder_status_id = 3;
+			$joborder->save();
+		}
+
+		if(Input::has('jo_status')){
+			if(Input::get('jo_status') == 1){
+				$joborder->joborder_status_id = 2;
+				$joborder->revision = $joborder->revision + 1;
+			}
+
+			if(Input::get('jo_status') == 2){
+				$joborder->joborder_status_id = 5;
+			}
+
+			if(Input::get('jo_status') == 3){
+				$joborder->joborder_status_id = 4;
+			}
+
 			$joborder->save();
 		}
 

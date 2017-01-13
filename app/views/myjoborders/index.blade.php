@@ -83,9 +83,11 @@
 						<th>Task</th>
 						<th>Sub Task</th>
 						<th>Department</th>						
-						<th>Start Date</th>
-						<th>End Date</th>
+						<th>Target Date</th>
+						<th>Estimated Start Date</th>
+						<th>Estimated End Date</th>
 						<th>Date Created</th>
+						<th>Revisions</th>
 						<th>Status</th>
 						<th>Action</th>
 					</tr>
@@ -100,9 +102,21 @@
 			  			<td>{{ $jo->sub_task }}</td>
 			  			<td>{{ $jo->department->department }}</td>
 			  			
-			  			<td>{{ date_format(date_create($jo->start_date),'m/d/Y') }}</td>
-			  			<td>{{ date_format(date_create($jo->end_date),'m/d/Y') }}</td>
+			  			<td>{{ date_format(date_create($jo->target_date),'m/d/Y') }}</td>
+			  			<td>
+			  				@if($jo->start_date !=  '0000-00-00')
+			  				{{ date_format(date_create($jo->start_date),'m/d/Y') }}
+			  				@endif
+			  			</td>
+			  			<td>
+			  				@if($jo->end_date !=  '0000-00-00')
+			  				{{ date_format(date_create($jo->end_date),'m/d/Y') }}
+			  				@endif
+			  			</td>
+
+
 			  			<td>{{ date_format(date_create($jo->created_at),'m/d/Y H:m:s') }}</td>
+			  			<td>{{ $jo->revision }}</td>
 			  			<td>{{ $jo->status->joborder_status }}</td>
 			  			<td>
 			  				{{ HTML::linkAction('MyJobOrderController@edit','View', $jo->id, array('class' => 'btn btn-success btn-xs')) }}

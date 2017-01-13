@@ -22,6 +22,7 @@ class SchemeAllocRepository
 		// Helper::debug($customers);
 
 		$_allocation = new AllocationRepository2;
+		
 		if($activity->scope_type_id == 1){
 			$allocations = $_allocation->customers($skus, $_channels, $customers,$forced_areas);
 		}else{
@@ -317,7 +318,6 @@ class SchemeAllocRepository
 
 							$account_alloc->outlet = $account['account_name'];
 
-
 							if($account['gsv'] > 0){
 								$account_alloc->outlet_to_gsv = $account['gsv'];
 							}else{
@@ -334,12 +334,6 @@ class SchemeAllocRepository
 						   
 							$p = 0;
 							$f_p = 0;
-							// if($customer->gsv > 0){
-							// 	$x = round($account['gsv']/$customer->gsv * 100,5);
-							// 	if($x > 0){
-							// 		$p = $x;
-							// 	}
-							// }
 
 							if($shipto['gsv'] > 0){
 								$x = round($account['gsv']/$shipto['gsv'] * 100,5);
@@ -404,85 +398,87 @@ class SchemeAllocRepository
 							$account_alloc->show = true;
 							$account_alloc->save();
 						}
+						if($activity->scope_type_id == 1){
+							if(empty($customer->area_code_two)){
+								$_others_alloc = 0;
+								$f_others_alloc = 0;
+								$others_alloc = new SchemeAllocation;
+								$others_alloc->scheme_id = $scheme->id;
+								$others_alloc->customer_id = $scheme_alloc->id;
+								$others_alloc->shipto_id = $shipto_alloc->id;
 
-						if(empty($customer->area_code_two)){
-							$_others_alloc = 0;
-							$f_others_alloc = 0;
-							$others_alloc = new SchemeAllocation;
-							$others_alloc->scheme_id = $scheme->id;
-							$others_alloc->customer_id = $scheme_alloc->id;
-							$others_alloc->shipto_id = $shipto_alloc->id;
+								$others_alloc->group_code = $customer->group_code;
+								$others_alloc->group = $customer->group_name;
 
-							$others_alloc->group_code = $customer->group_code;
-							$others_alloc->group = $customer->group_name;
+								$others_alloc->area_code = $customer->area_code;
+								$others_alloc->area = $customer->area_name;
 
-							$others_alloc->area_code = $customer->area_code;
-							$others_alloc->area = $customer->area_name;
-
-							$others_alloc->sold_to_code = $customer->customer_code;
-							if(!empty($shipto['sold_to_code'])){
-								$others_alloc->sob_customer_code = $shipto['sold_to_code'];
-							}
-							
-							$others_alloc->sold_to = $customer->customer_name;
-
-							$others_alloc->ship_to_code = $shipto['ship_to_code'];
-							$others_alloc->ship_to = $shipto['ship_to_name'];	
-
-							$others_alloc->channel_code = 'OTHERS';
-							$others_alloc->channel = 'OTHERS';				
-							
-							$others_alloc->outlet = 'OTHERS';
-							$others_alloc->outlet_to_gsv = 0;
-							if($others > 0){
-								$_others_alloc = $others;
-							}
-							$others_alloc->outlet_to_alloc = 0;
-
-							if($_others_alloc > 0){
-								$others_alloc->outlet_to_alloc = $_others_alloc;
-							}
-							
-							if(($_others_alloc > 0) && ($account_alloc->final_alloc > 0)){
-								$others_alloc->multi = $_others_alloc/$account_alloc->final_alloc;
-							}else{
-								$others_alloc->multi = 0;
-							}
-							$others_alloc->computed_alloc = $_others_alloc;
-
-							if($force_alloc){
-								if($fothers > 0){
-									$f_others_alloc = $fothers;
+								$others_alloc->sold_to_code = $customer->customer_code;
+								if(!empty($shipto['sold_to_code'])){
+									$others_alloc->sob_customer_code = $shipto['sold_to_code'];
 								}
-								$others_alloc->force_alloc = $f_others_alloc;
-								$others_alloc->final_alloc = $f_others_alloc;
+								
+								$others_alloc->sold_to = $customer->customer_name;
 
-							}else{
-								$others_alloc->force_alloc = 0;
-								$others_alloc->final_alloc = $_others_alloc;
-							}
+								$others_alloc->ship_to_code = $shipto['ship_to_code'];
+								$others_alloc->ship_to = $shipto['ship_to_name'];	
 
-
-							$in_deals = 0;
-							$in_cases = 0;
-							if($scheme->activity->activitytype->uom == 'CASES'){
-								$in_deals = $others_alloc->final_alloc * $scheme->deals;
-								$in_cases = $others_alloc->final_alloc;
-								$tts_budget = $others_alloc->final_alloc * $scheme->deals * $scheme->srp_p; 
-							}else{
-								if($others_alloc->final_alloc > 0){
-									$in_cases = round($others_alloc->final_alloc/$scheme->deals);
-									$in_deals =  $others_alloc->final_alloc;
+								$others_alloc->channel_code = 'OTHERS';
+								$others_alloc->channel = 'OTHERS';				
+								
+								$others_alloc->outlet = 'OTHERS';
+								$others_alloc->outlet_to_gsv = 0;
+								if($others > 0){
+									$_others_alloc = $others;
 								}
-								$tts_budget = $others_alloc->final_alloc * $scheme->srp_p; 
+								$others_alloc->outlet_to_alloc = 0;
+
+								if($_others_alloc > 0){
+									$others_alloc->outlet_to_alloc = $_others_alloc;
+								}
+								
+								if(($_others_alloc > 0) && ($account_alloc->final_alloc > 0)){
+									$others_alloc->multi = $_others_alloc/$account_alloc->final_alloc;
+								}else{
+									$others_alloc->multi = 0;
+								}
+								$others_alloc->computed_alloc = $_others_alloc;
+
+								if($force_alloc){
+									if($fothers > 0){
+										$f_others_alloc = $fothers;
+									}
+									$others_alloc->force_alloc = $f_others_alloc;
+									$others_alloc->final_alloc = $f_others_alloc;
+
+								}else{
+									$others_alloc->force_alloc = 0;
+									$others_alloc->final_alloc = $_others_alloc;
+								}
+
+
+								$in_deals = 0;
+								$in_cases = 0;
+								if($scheme->activity->activitytype->uom == 'CASES'){
+									$in_deals = $others_alloc->final_alloc * $scheme->deals;
+									$in_cases = $others_alloc->final_alloc;
+									$tts_budget = $others_alloc->final_alloc * $scheme->deals * $scheme->srp_p; 
+								}else{
+									if($others_alloc->final_alloc > 0){
+										$in_cases = round($others_alloc->final_alloc/$scheme->deals);
+										$in_deals =  $others_alloc->final_alloc;
+									}
+									$tts_budget = $others_alloc->final_alloc * $scheme->srp_p; 
+								}
+								$others_alloc->in_deals = $in_deals;
+								$others_alloc->in_cases = $in_cases;
+								$others_alloc->tts_budget = $tts_budget;
+								$others_alloc->pe_budget = $others_alloc->final_alloc *  $scheme->other_cost; 
+								$others_alloc->show = true;
+								$others_alloc->save();
 							}
-							$others_alloc->in_deals = $in_deals;
-							$others_alloc->in_cases = $in_cases;
-							$others_alloc->tts_budget = $tts_budget;
-							$others_alloc->pe_budget = $others_alloc->final_alloc *  $scheme->other_cost; 
-							$others_alloc->show = true;
-							$others_alloc->save();
 						}
+						
 						
 					}
 				}

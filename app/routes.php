@@ -194,7 +194,7 @@ Route::group(array('before' => 'auth'), function()
 
 	Route::post('activity/comment/{id}',['as' => 'activity.storecomment', 'uses' => 'ActivityController@storecomment']);
 
-	Route::get('activity/{id}/joborder', 'ActivityController@joborder');
+	Route::get('activity/{id}/joborder', ['as' => 'activity.joborder', 'uses' => 'ActivityController@joborder']);
 	Route::post('activity/{id}/joborderuploadphoto', 'ActivityController@joborderuploadphoto');
 	Route::delete('activity/joborderartworkdelete/{file}', 'ActivityController@joborderartworkdelete');
 	
@@ -543,6 +543,9 @@ Route::group(array('before' => 'auth'), function()
 		Route::resource('departments', 'DepartmentsController');
 
 		Route::resource('tasks', 'TasksController');
+
+		Route::get('subtasks/upload', ['as' => 'subtasks.upload', 'uses' => 'SubtasksController@upload']);
+		Route::post('subtasks/upload', ['as' => 'subtasks.uploadtask', 'uses' => 'SubtasksController@uploadtask']);
 		Route::resource('subtasks', 'SubtasksController');
 		
 		Route::get('reports/{id}/review', ['as' => 'reports.review', 'uses' => 'ReportController@review']);

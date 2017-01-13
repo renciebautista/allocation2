@@ -12,9 +12,10 @@ class JoborderStatusSeederTableSeeder extends Seeder {
 
 		DB::statement("INSERT INTO joborder_status (id, joborder_status) VALUES
 			(1, 'UNASSIGNED'),
-			(2, 'ON-GOING'),
-			(3, 'CANCELED'),
-			(4, 'CLOSED');");
+			(2, 'ASSIGNED'),
+			(3, 'RETURNED'),
+			(4, 'CANCELED'),
+			(5, 'CLOSED');");
 		DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 	}
 

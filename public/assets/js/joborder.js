@@ -2,23 +2,11 @@ $(document).ready(function(){
 	var hostname = 'http://' + $(location).attr('host');
 	var activity_id = $('#act_id').val();
 
-	$('#start_date').datetimepicker({
+	$('#target_date').datetimepicker({
 		pickTime: false,
 		calendarWeeks: true,
 		minDate: moment()
-	}).mask("99/99/9999",{placeholder:"mm/dd/yyyy"})
-	.on("dp.change", function (e) {
-        $('#end_date').data("DateTimePicker").setMinDate(e.date);
-    });
-
-	$('#end_date').datetimepicker({
-		pickTime: false,
-		calendarWeeks: true,
-		minDate: moment()
-	}).mask("99/99/9999",{placeholder:"mm/dd/yyyy"})
-	.on("dp.change", function (e) {
-        $('#start_date').data("DateTimePicker").setMaxDate(e.date);
-    });
+	}).mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
 
 	$('select#task').on("change",function(){
 		$.ajax({
@@ -56,10 +44,7 @@ $(document).ready(function(){
 			is_natural_no_zero: true,
 			required: true
 		},
-		start_date: {
-			required: true,
-		},
-		end_date: {
+		target_date: {
 			required: true,
 		},
 		details: {

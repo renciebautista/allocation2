@@ -6,59 +6,13 @@
 <div class="row">
   	<div class="col-lg-10 col-md-offset-1">
   		@include('partials.notification')
-  		<div class="panel panel-default">
-			<div class="panel-heading">Job Order Details</div>
-			<div class="panel-body">
-				<table id="joborder" class="table table-bordered"> 
-					<tbody>
-						<tr> 
-							<td>Job Order #</td> 
-							<td>{{ $joborder->id }}</td> 
-							<td>Date Created</td> 
-							<td>{{ date_format(date_create($joborder->created_at),'m/d/Y H:m:s') }}</td> 
-						</tr>
-						<tr> 
-							<td>Activity</td> 
-							<td colspan="3">{{ $joborder->activity->id}} - {{ $joborder->activity->circular_name }}</td> 
-						</tr>
-						<tr> 
-							<td>Status</td> 
-							<td colspan="3">{{ $joborder->status->joborder_status }}</td> 
-						</tr>
-						<tr> 
-							<td>Task</td> 
-							<td colspan="3">{{ $joborder->task }}</td> 
-						</tr> 
-						<tr> 
-							<td>Sub Task</td> 
-							<td colspan="3">{{ $joborder->sub_task }}</td> 
-						</tr> 
-						<tr> 
-							<td>Start Date</td> 
-							<td colspan="3">{{ date_format(date_create($joborder->start_date),'m/d/Y') }}</td> 
-						</tr>
-						<tr> 
-							<td>End Date</td> 
-							<td colspan="3">{{ date_format(date_create($joborder->end_date),'m/d/Y') }}</td> 
-						</tr>
-						<tr> 
-							<td>Created By</td> 
-							<td colspan="3">
-								{{ $joborder->createdBy->getFullname() }}
-							</td> 
-						</tr>
-						<tr> 
-							<td>Assigned To</td> 
-							<td colspan="3">
-								@if($joborder->assigned_to > 0)
-								{{ $joborder->assignedto->getFullname() }}
-								@endif
-							</td> 
-						</tr>
-					</tbody>
-				</table>
-			</div>		
+  		
+  		<div class="form-group">
+			{{ HTML::linkAction('JoborderController@index', 'Back', array(), array('class' => 'btn btn-default')) }}
 		</div>
+		
+  				@include('shared.jodetails')
+
 
 		<div class="panel panel-default">
 			<div class="panel-heading">Final Artworks</div>
@@ -70,26 +24,12 @@
 						<a target="_blank"href="{{route('joborders.artworkdownload', $file->random_name)}}">
 							{{ HTML::image('jorderartwork/'.$file->random_name, $file->file_name) }}
 						</a>
-						{{ Form::open(array('method' => 'DELETE', 'action' => array('JoborderController@artworkdelete', $file->random_name))) }}  
-						{{ Form::submit('Remove', array('class'=> 'btn btn-danger btn-xs','onclick' => "if(!confirm('Are you sure to delete this record?')){return false;};")) }}
-						{{ Form::close() }}
 					</li>
 					
 					@endforeach
 					</ul>
-				</div>
-					{{ Form::open(array('action' => array('JoborderController@uploadphoto', $joborder->id) ,'class' => 'bs-component' ,'id' => 'myform', 'files'=>true)) }}
-					<div class="form-container">
-						<div class="form-group">
-							<input type="file" name="files[]" id="filer_input1" multiple="multiple">
-						</div>
-						<div class="form-group">
-							<button class="btn btn-primary btn-style" type="submit">Submit</button>
-						</div>
-					</div>	
-					{{ Form::close() }}
-					<hr>
-				</div>	
+				</div>		
+			</div>	
 		</div>
 
 		<div class="panel panel-default">
@@ -125,7 +65,7 @@
 				</div>
 			</div>	
 		</div>
-
+		@if($joborder->joborder_status_id < 4)
 		<div class="panel panel-default">
 			<div class="panel-heading">Insert Comment</div>
 			<div class="panel-body">
@@ -141,29 +81,33 @@
 							<div class="row">
 								<div class="col-lg-6">
 									{{ Form::label('assigned_to', 'Assign To', array('class' => 'control-label')) }}
-									{{ Form::select('assigned_to', array('0' => 'Please Select') + $dept_users, [], array('class' => 'form-control')) }}
+									{{ Form::select('assigned_to', array('0' => 'Please Select') + $dept_users, $joborder->assigned_to, array('class' => 'form-control')) }}
 								</div>
 							</div>
-							
 						</div>
 						<br>
 						@endif
+
 						<div class="form-group">
 							<textarea name="comment" id="comment"></textarea>
 						</div>
+
+						@if($joborder->joborder_status_id == 3)
 						@if(!$staff)
-						@if(($joborder->joborder_status_id > 1) && (Auth::user()->ability([], ['manage_department_jo'])))
-						<div class="form-group">
-							<div class="row">
-								<div class="col-lg-6">
-									{{ Form::label('status', 'Status', array('class' => 'control-label')) }}
-									{{ Form::select('jo_status', array('0' => 'Please Select') + $joudpatestatus, [], array('class' => 'form-control')) }}
+							@if(($joborder->joborder_status_id > 1) && (Auth::user()->ability([], ['manage_department_jo'])))
+							<div class="form-group">
+								<div class="row">
+									<div class="col-lg-6">
+										{{ Form::label('status', 'Status', array('class' => 'control-label')) }}
+										{{ Form::select('jo_status', $joudpatestatus, [], array('class' => 'form-control')) }}
+									</div>
 								</div>
 							</div>
-							
-						</div>
+							@endif
 						@endif
+
 						@endif
+
 						<br>
 						
 						<div class="form-group">
@@ -179,7 +123,7 @@
 				</div>
 			</div>
 		</div>
-  		
+  		@endif
 		
   	</div>
 </div>
@@ -188,6 +132,25 @@
 @stop
 
 @section('page-script')
+
+	$('#start_date').datetimepicker({
+		pickTime: false,
+		calendarWeeks: true,
+		minDate: moment()
+	}).mask("99/99/9999",{placeholder:"mm/dd/yyyy"})
+	.on("dp.change", function (e) {
+        $('#end_date').data("DateTimePicker").setMinDate(e.date);
+    });
+
+	$('#end_date').datetimepicker({
+		pickTime: false,
+		calendarWeeks: true,
+		minDate: moment()
+	}).mask("99/99/9999",{placeholder:"mm/dd/yyyy"})
+	.on("dp.change", function (e) {
+        $('#start_date').data("DateTimePicker").setMaxDate(e.date);
+    });
+
 	$('#filer_input1').filer({
 	    changeInput: true,
 	    showThumbs: true,

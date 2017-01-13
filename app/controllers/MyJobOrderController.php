@@ -66,12 +66,14 @@ class MyJobOrderController extends \BaseController {
 			return Response::make(View::make('shared/404'), 404);
 		}else{
 			$artworks = JoborderArtwork::where('joborder_id', $joborder->id)->get();
-			$comments = $joborder->comments()->orderBy('created_at', 'desc')->get();
+			$comments = $joborder->comments()->orderBy('created_at', 'asc')->get();
 			$jostatus = JoborderStatus::getLists();
 			$joudpatestatus = JoborderStatus::getUpdateLists();
 			$dept_users = User::getDepartmentStaff($joborder->department_id);
-			$staff =true;
-			return View::make('joborders.edit',compact('joborder', 'comments', 'artworks', 'jostatus', 'dept_users', 'joudpatestatus', 'staff'));
+			$revisions = RevisionWeight::all();
+			$staff = true;
+			return View::make('myjoborders.edit',compact('joborder', 'comments', 'artworks', 'jostatus', 'dept_users',
+			 'joudpatestatus', 'staff', 'revisions'));
 		}
 		
 	}
