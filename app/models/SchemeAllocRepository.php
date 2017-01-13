@@ -30,7 +30,7 @@ class SchemeAllocRepository
 		
 
 		$_areasales =  $_allocation->area_sales();
-	   	// Helper::debug($allocations);
+	   	Helper::debug($allocations);
 	   	// dd($allocations);
 
 		$total_sales = $_allocation->total_gsv();
@@ -317,7 +317,6 @@ class SchemeAllocRepository
 
 							$account_alloc->outlet = $account['account_name'];
 
-
 							if($account['gsv'] > 0){
 								$account_alloc->outlet_to_gsv = $account['gsv'];
 							}else{
@@ -334,12 +333,6 @@ class SchemeAllocRepository
 						   
 							$p = 0;
 							$f_p = 0;
-							// if($customer->gsv > 0){
-							// 	$x = round($account['gsv']/$customer->gsv * 100,5);
-							// 	if($x > 0){
-							// 		$p = $x;
-							// 	}
-							// }
 
 							if($shipto['gsv'] > 0){
 								$x = round($account['gsv']/$shipto['gsv'] * 100,5);

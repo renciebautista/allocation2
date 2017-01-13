@@ -284,9 +284,6 @@ class AllocationRepository2  {
 			
 		}
 		
-
-
-
 		foreach ($customers as $key => $customer) {
 			$allow_customer = true;
 			if($customer->active == 1){
@@ -386,6 +383,20 @@ class AllocationRepository2  {
 							$same_shipto->addgsv = 0;
 							$same_shipto->area_code = $customer->area_code;
 
+							
+
+							foreach ($this->account_sales as $account_sale) {
+								if(isset($cust_nodes[$account_sale->channel_code][$customer->group_code][$customer->area_code])){
+									if(in_array($customer->customer_code, $cust_nodes[$account_sale->channel_code][$customer->group_code][$customer->area_code])){
+										if($customer->customer_code == $account_sale->customer_code){
+											$same_shipto->gsv += $account_sale->gsv;
+										}							
+									}
+								}
+							}
+
+							$same_shipto->gsv = ($same_shipto->gsv * $customer->multiplier ) / 100;
+
 							foreach ($_branches as $_branch) {
 								if($_branch->customer_code == $customer->customer_code){
 									$_branch->channel_code = '';
@@ -405,17 +416,14 @@ class AllocationRepository2  {
 										}
 									}
 
-									$same_shipto->accounts[] = (array) $_branch;
-								}
-							}
-
-							foreach ($this->account_sales as $account_sale) {
-								if(isset($cust_nodes[$account_sale->channel_code][$customer->group_code][$customer->area_code])){
-									if(in_array($customer->customer_code, $cust_nodes[$account_sale->channel_code][$customer->group_code][$customer->area_code])){
-										if($customer->customer_code == $account_sale->customer_code){
-											$same_shipto->gsv += $account_sale->gsv;
-										}							
+									$_branch->shipto_gsv = $same_shipto->gsv;
+									if($_branch->split != null){
+										$_branch->gsv = ($same_shipto->gsv * $_branch->split ) / 100;
+									}else{
+										$_branch->gsv = ($_branch->gsv * $customer->multiplier ) / 100;
 									}
+
+									$same_shipto->accounts[] = (array) $_branch;
 								}
 							}
 
@@ -424,6 +432,29 @@ class AllocationRepository2  {
 							foreach ($_shiptos as $key => $_shipto) {
 								if(in_array($_shipto->plant_code, $selected_shipto_lists)){
 									if($customer->customer_code == $_shipto->customer_code){
+
+										$_shipto->area_code = $customer->area_code;
+
+										// start ship to sales
+										$_shipto->gsv = 0;
+										$_shipto->addgsv = 0;
+										foreach ($this->account_sales as $account_sale) {
+											if(isset($ship_nodes[$account_sale->channel_code][$customer->group_code][$customer->area_code][$customer->customer_code])){
+												if(in_array($_shipto->plant_code, $ship_nodes[$account_sale->channel_code][$customer->group_code][$customer->area_code][$customer->customer_code])){
+													if(($customer->customer_code == $account_sale->customer_code) && ($_shipto->plant_code == $account_sale->plant_code)){
+														$_shipto->gsv += $account_sale->gsv;
+													}
+												}
+											}
+										}
+			
+
+										$_shipto->gsv = ($_shipto->gsv * $customer->multiplier ) / 100;
+										// end ship to sales
+
+										$customer_gsv += $_shipto->gsv;
+										$ado_total += $_shipto->gsv;
+
 										foreach ($_branches as $_branch) {
 											if($_branch->plant_code == $_shipto->plant_code){
 												$_branch->channel_code = '';
@@ -442,36 +473,17 @@ class AllocationRepository2  {
 														}
 													}
 												}
-
+												$_branch->shipto_gsv = $_shipto->gsv;
+												if($_branch->split != null){
+													$_branch->gsv = ($_shipto->gsv * $_branch->split ) / 100;
+												}else{
+													$_branch->gsv = ($_branch->gsv * $customer->multiplier ) / 100;
+												}
+												
 												$_shipto->accounts[] = (array) $_branch;
 											}
 										}
 
-										$_shipto->area_code = $customer->area_code;
-
-										// start ship to sales
-										$_shipto->gsv = 0;
-										$_shipto->addgsv = 0;
-										foreach ($this->account_sales as $account_sale) {
-											if(isset($ship_nodes[$account_sale->channel_code][$customer->group_code][$customer->area_code][$customer->customer_code])){
-												if(in_array($_shipto->plant_code, $ship_nodes[$account_sale->channel_code][$customer->group_code][$customer->area_code][$customer->customer_code])){
-													if(($customer->customer_code == $account_sale->customer_code) && ($_shipto->plant_code == $account_sale->plant_code)){
-														$_shipto->gsv += $account_sale->gsv;
-													}
-												}
-											}
-										}
-
-										$add_gsv = self::getAdditionalShipGsv($additionalsales, $_base_sales, $channels, $ship_nodes, $customer->customer_code, $_shipto->plant_code);
-										$_shipto->gsv += $add_gsv;
-										$_shipto->addgsv = $add_gsv;
-			
-
-										$_shipto->gsv = ($_shipto->gsv * $customer->multiplier ) / 100;
-										// end ship to sales
-
-										$customer_gsv += $_shipto->gsv;
-										$ado_total += $_shipto->gsv;
 										$customer->shiptos[] = (array)	$_shipto;
 
 										if(array_key_exists($customer->area_code, $forced_areas)){
@@ -489,7 +501,7 @@ class AllocationRepository2  {
 						}
 					}
 					
-					$customer->adde_gsv = 0; 
+					$customer->add_gsv = 0; 
 					$no_shipto = ShipTo::where('customer_code', $customer->customer_code)->get();
 					if(count($no_shipto) == 0){
 						foreach ($this->account_sales as $account_sale) {
@@ -501,8 +513,8 @@ class AllocationRepository2  {
 								}
 							}
 						}
-
-						$customer_gsv += self::getAdditionalCustomerGsv($additionalsales, $_base_sales, $channels, $cust_nodes, $customer->customer_code);
+						$customer->add_gsv = self::getAdditionalCustomerGsv($additionalsales, $_base_sales, $channels, $cust_nodes, $customer->customer_code);
+						$customer_gsv += $customer->add_gsv;
 					}
 
 					$customer->ado_total = $customer_gsv;
