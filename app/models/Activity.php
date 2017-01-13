@@ -1094,7 +1094,7 @@ class Activity extends \Eloquent {
 	public static function getReleased($request){
 
 		$data = self::select('circular_name as title', 
-			'eimplementation_date as start',
+			'eimplementation_date as start', 'end_date as end_date',
 			'scope_type_id as type')
 			->where('status_id', '=', 9)
 			->where('eimplementation_date', '>=', $request['start'])

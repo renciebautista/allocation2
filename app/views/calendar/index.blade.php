@@ -14,6 +14,14 @@
 
 <div id='calendar'></div>
 
+<div id="eventContent" title="Event Details" style="display:none;">
+	Title: <span id="eventTitle"></span><br>
+	<hr>
+    Start: <span id="startTime"></span><br>
+    End: <span id="endTime"></span><br><br>
+    <!-- <p id="eventInfo"></p> -->
+    <!-- <p><strong><a id="eventLink" href="" target="_blank">Read More</a></strong></p> -->
+</div>
 
 @stop
 
