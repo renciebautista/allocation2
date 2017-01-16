@@ -293,6 +293,26 @@ class SubmittedActivityController extends \BaseController {
 						
 					ActivityApprover::resetAll($activity->id);	
 					$message = "Activity successfully denied.";
+
+					$user = User::find($activity->created_by);
+					$data['fullname'] = $user->first_name . ' ' . $user->last_name;
+					$data['user'] = $user;
+					$data['to_user'] = $user->first_name;
+					$data['line1'] = "<p><b>".$activity->circular_name."</b> has been denied by <b>".Auth::user()->first_name." ".Auth::user()->last_name."</b>.</p>";
+					$data['line2']= "<p>You may view this activity through this link >> <a href=".route('activity.edit',$activity->id)."> ".route('activity.edit', $activity->id)."</a></p>";
+					$data['subject'] = "CUSTOMIZED ACTIVITY - DENIED";
+					$data['activity'] = Activity::getDetails($activity->id);
+					if($_ENV['MAIL_TEST']){
+						Mail::send('emails.customized', $data, function($message) use ($data){
+							$message->to("rbautista@chasetech.com", $data['fullname']);
+							$message->bcc("Grace.Erum@unilever.com");
+							$message->subject($data['subject']);
+						});
+					}else{
+						Mail::send('emails.customized', $data, function($message) use ($data){
+							$message->to(trim(strtolower($user->email)), $data['fullname'])->subject($data['subject']);
+						});
+					}
 				}
 
 				$remarks = "";

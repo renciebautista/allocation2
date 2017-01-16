@@ -59,42 +59,42 @@
 	<table width="100%" border="0" cellspacing="0" cellpadding="5">
 		<thead>
 			<tr class="blue">
-				<th class="center header1" colspan="12">Summary of Activities</th>
+				<th class="center header1" colspan="12">Timings Details</th>
 			</tr>
 			<tr class="blue">
-				<th class="center"></th>
-				<th class="center">ID</th>
-				<th class="center">Status</th>
-				<th class="center">TOP Cycle</th>
-				<th class="center">Scope</th>
-				<th class="center">Activity Type</th>
-				<th class="center">Activity Title</th>
-				<th class="center">Proponent</th>
-				<th class="center">PMOG Partner</th>
+				<th class="center">Task ID</th>
+				<th class="center">Milestone</th>
+				<th class="center">Task</th>
+				<th class="center">Team Responsible</th>
+				<th class="center">Duration (days)</th>
+				<th class="center">Depends On</th>
 				<th class="center">Start Date</th>
 				<th class="center">End Date</th>
-				<th class="center">Billing Deadline</th>
+				<th class="center">Final Start Date</th>
+				<th class="center">Final End Date</th>
 			</tr>
 		</thead>
 		<tbody>
-			
-				<td class="right">1</td>
-				<td class="right">{{ $activity->id }}</td>
-				<td class="center">{{ $activity->status }}</td>
-				<td class="center">{{ $activity->cycle_name }}</td>
-				<td class="center">{{ $activity->scope_name }}</td>
-				<td class="center">{{ $activity->activity_type }}</td>
-				<td class="center">{{ $activity->circular_name }}</td>
-				<td class="center">{{ $activity->proponent }}</td>
-				<td class="center">{{ $activity->planner }}</td>
-				<td class="center">{{ date_format(date_create($activity->eimplementation_date),'m/d/Y') }}</td>
-				<td class="center">{{ date_format(date_create($activity->end_date),'m/d/Y') }}</td>
-				@if($activity->billing_date != "")
-				<td class="center">{{ date_format(date_create($activity->billing_date),'m/d/Y') }}</td>
-				@else
-				<td class="center"></td>
-				@endif
-			
+			@if(count($timings) == 0)
+			<tr>
+				<td colspan="10">No record found!</td>
+			</tr>
+			@else
+			@foreach($timings as $timing)
+			<tr>
+				<td>{{ $timing->task_id }}</td>
+				<td>{{ $timing->milestone }}</td>
+				<td>{{ $timing->task }}</td>
+				<td>{{ $timing->responsible }}</td>
+				<td>{{ $timing->duration }}</td>
+				<td>{{ $timing->depend_on }}</td>
+				<td>{{ date_format(date_create($timing->start_date),'m/d/Y') }}</td>
+				<td>{{ date_format(date_create($timing->end_date),'m/d/Y') }}</td>
+				<td>{{ date_format(date_create($timing->final_start_date),'m/d/Y') }}</td>
+				<td>{{ date_format(date_create($timing->finanl_end_date),'m/d/Y') }}</td>
+			</tr>
+			@endforeach
+			@endif
 		</tbody>
 		</table> 
 	<hr>

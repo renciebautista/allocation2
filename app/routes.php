@@ -255,7 +255,7 @@ Route::group(array('before' => 'auth'), function()
 
 
 	Route::post('submittedactivity/{id}/updateactivity', 'SubmittedActivityController@updateactivity');
-	Route::get('submittedactivity/{id}/edit', 'SubmittedActivityController@edit');
+	Route::get('submittedactivity/{id}/edit', array('as' => 'submittedactivity.edit', 'uses' => 'SubmittedActivityController@edit'));
 	Route::get('submittedactivity', array('as' => 'submittedactivity.index', 'uses' => 'SubmittedActivityController@index'));
 	// Route::get('submittedactivity', 'SubmittedActivityController@index');
 	// Route::resource('submittedactivity', 'SubmittedActivityController');

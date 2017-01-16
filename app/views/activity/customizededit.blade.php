@@ -1296,6 +1296,16 @@ $('INPUT[type="file"]').change(function () {
             this.value = '';
     }
 });
+
+$("form[id='updatetimings']").on("submit",function(e){
+	$("#page").hide();
+	$("#pageloading").show();
+});
+
+$("form[id='submitactivity']").on("submit",function(e){
+	$("#page").hide();
+	$("#pageloading").show();
+});
 @stop
 
 

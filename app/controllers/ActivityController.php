@@ -1103,6 +1103,7 @@ class ActivityController extends BaseController {
 					$allow_comment = true;
 				}
 
+				$_approvers = [];
 				// submit activity
 				if($status_id == 1){
 					if(count($planner_count) > 0){
@@ -1166,6 +1167,28 @@ class ActivityController extends BaseController {
 									$approver->show = 1;
 									$approver->for_approval = 1;
 									$approver->update();
+
+									$_approvers[] = $gcom_approver->user_id;
+
+									// $user = User::find($gcom_approver->user_id);
+									// $data['fullname'] = $user->first_name . ' ' . $user->last_name;
+									// $data['user'] = $user;
+									// $data['to_user'] = $user->first_name;
+									// $data['line1'] = "<p><b>".$activity->circular_name."</b> has been submitted by <b>".Auth::user()->first_name." ".Auth::user()->last_name."</b> for your approval.</p>";
+									// $data['line2']= "<p>You may view this activity through this link >> <a href=".route('submittedactivity.edit',$activity->id)."> ".route('submittedactivity.edit', $activity->id)."</a></p>";
+									// $data['subject'] = "CUSTOMIZED ACTIVITY - FOR APPROVAL";
+									// $data['activity'] = Activity::getDetails($activity->id);
+									// if($_ENV['MAIL_TEST']){
+									// 	Mail::send('emails.customized', $data, function($message) use ($data){
+									// 		$message->to("rbautista@chasetech.com", $data['fullname']);
+									// 		$message->bcc("Grace.Erum@unilever.com");
+									// 		$message->subject($data['subject']);
+									// 	});
+									// }else{
+									// 	Mail::send('emails.customized', $data, function($message) use ($data){
+									// 		$message->to(trim(strtolower($user->email)), $data['fullname'])->subject($data['subject']);
+									// 	});
+									// }
 								}
 							}else{
 								// check if there is CD OPS Approver
@@ -1179,6 +1202,28 @@ class ActivityController extends BaseController {
 										$approver->show = 1;
 										$approver->for_approval = 1;
 										$approver->update();
+
+										$_approvers[] = $cdops_approver->user_id;
+
+										// $user = User::find($cdops_approver->user_id);
+										// $data['fullname'] = $user->first_name . ' ' . $user->last_name;
+										// $data['user'] = $user;
+										// $data['to_user'] = $user->first_name;
+										// $data['line1'] = "<p><b>".$activity->circular_name."</b> has been submitted by <b>".Auth::user()->first_name." ".Auth::user()->last_name."</b> for your approval.</p>";
+										// $data['line2']= "<p>You may view this activity through this link >> <a href=".route('submittedactivity.edit',$activity->id)."> ".route('submittedactivity.edit', $activity->id)."</a></p>";
+										// $data['subject'] = "CUSTOMIZED ACTIVITY - FOR APPROVAL";
+										// $data['activity'] = Activity::getDetails($activity->id);
+										// if($_ENV['MAIL_TEST']){
+										// 	Mail::send('emails.customized', $data, function($message) use ($data){
+										// 		$message->to("rbautista@chasetech.com", $data['fullname']);
+										// 		$message->bcc("Grace.Erum@unilever.com");
+										// 		$message->subject($data['subject']);
+										// 	});
+										// }else{
+										// 	Mail::send('emails.customized', $data, function($message) use ($data){
+										// 		$message->to(trim(strtolower($user->email)), $data['fullname'])->subject($data['subject']);
+										// 	});
+										// }
 									}
 								}else{
 									// check if there is CMD DIRECTOR Approver
@@ -1192,7 +1237,30 @@ class ActivityController extends BaseController {
 											$approver->show = 1;
 											$approver->for_approval = 1;
 											$approver->update();
+
+											$_approvers[] = $cmd_approver->user_id;
+
+											// $user = User::find($cmd_approver->user_id);
+											// $data['fullname'] = $user->first_name . ' ' . $user->last_name;
+											// $data['user'] = $user;
+											// $data['to_user'] = $user->first_name;
+											// $data['line1'] = "<p><b>".$activity->circular_name."</b> has been submitted by <b>".Auth::user()->first_name." ".Auth::user()->last_name."</b> for your approval.</p>";
+											// $data['line2']= "<p>You may view this activity through this link >> <a href=".route('submittedactivity.edit',$activity->id)."> ".route('submittedactivity.edit', $activity->id)."</a></p>";
+											// $data['subject'] = "CUSTOMIZED ACTIVITY - FOR APPROVAL";
+											// $data['activity'] = Activity::getDetails($activity->id);
+											// if($_ENV['MAIL_TEST']){
+											// 	Mail::send('emails.customized', $data, function($message) use ($data){
+											// 		$message->to("rbautista@chasetech.com", $data['fullname']);
+											// 		$message->bcc("Grace.Erum@unilever.com");
+											// 		$message->subject($data['subject']);
+											// 	});
+											// }else{
+											// 	Mail::send('emails.customized', $data, function($message) use ($data){
+											// 		$message->to(trim(strtolower($user->email)), $data['fullname'])->subject($data['subject']);
+											// 	});
+											// }
 										}
+
 									}
 								}
 							}
@@ -1224,6 +1292,30 @@ class ActivityController extends BaseController {
 					$arr['success'] = 1;
 					Session::flash('class', 'alert-success');
 					Session::flash('message', 'Activity successfully updated.');
+				}
+
+				if(count($_approvers) > 0){
+					foreach ($_approvers as $_approver) {
+						$user = User::find($_approver);
+						$data['fullname'] = $user->first_name . ' ' . $user->last_name;
+						$data['user'] = $user;
+						$data['to_user'] = $user->first_name;
+						$data['line1'] = "<p><b>".$activity->circular_name."</b> has been submitted by <b>".Auth::user()->first_name." ".Auth::user()->last_name."</b> for your approval.</p>";
+						$data['line2']= "<p>You may view this activity through this link >> <a href=".route('submittedactivity.edit',$activity->id)."> ".route('submittedactivity.edit', $activity->id)."</a></p>";
+						$data['subject'] = "CUSTOMIZED ACTIVITY - FOR APPROVAL";
+						$data['activity'] = Activity::getDetails($activity->id);
+						if($_ENV['MAIL_TEST']){
+							Mail::send('emails.customized', $data, function($message) use ($data){
+								$message->to("rbautista@chasetech.com", $data['fullname']);
+								$message->bcc("Grace.Erum@unilever.com");
+								$message->subject($data['subject']);
+							});
+						}else{
+							Mail::send('emails.customized', $data, function($message) use ($data){
+								$message->to(trim(strtolower($user->email)), $data['fullname'])->subject($data['subject']);
+							});
+						}
+					}
 				}
 				
 				
@@ -3283,7 +3375,7 @@ class ActivityController extends BaseController {
 				$members = ActivityMember::where('pre_approve', 1)
 					->where('activity_id', $activity->id)
 					->get();
-				$data['activity'] = Activity::getDetails($activity->id);
+				$data['timings'] = ActivityTiming::getList($activity->id);
 
 				foreach ($members as $member) {
 					$user = User::find($member->user_id);
@@ -3296,7 +3388,7 @@ class ActivityController extends BaseController {
 
 					$data['subject'] = "CUSTOMIZED ACTIVITY - TIMINGS UPDATED";
 					if($_ENV['MAIL_TEST']){
-						Mail::send('emails.customized', $data, function($message) use ($data){
+						Mail::send('emails.customized2', $data, function($message) use ($data){
 							$message->to("rbautista@chasetech.com", $data['fullname']);
 							$message->bcc("Grace.Erum@unilever.com");
 							$message->subject($data['subject']);
@@ -3307,6 +3399,29 @@ class ActivityController extends BaseController {
 						});
 					}
 				}
+
+				// if(Auth::user()->id != $activity->created_by){
+				// 	$user = User::find($activity->created_by);
+				// 	$data['fullname'] = $user->first_name . ' ' . $user->last_name;
+				// 	$data['user'] = $user;
+				// 	$data['to_user'] = $user->first_name;
+				// 	$data['line1'] = "<p><b>".Auth::user()->first_name. " ". Auth::user()->last_name."</b> has updated timing details for <b>".$activity->circular_name."</b>.</p>";
+				// 	$data['line2']= "<p>You may view this activity through this link >> <a href=".route('activity.preapproveedit',$activity->id)."> ".route('activity.preapproveedit', $activity->id)."</a></p>";
+				// 	$data['line3']= "<p>Please details below:</p>";
+
+				// 	$data['subject'] = "CUSTOMIZED ACTIVITY - TIMINGS UPDATED";
+				// 	if($_ENV['MAIL_TEST']){
+				// 		Mail::send('emails.customized2', $data, function($message) use ($data){
+				// 			$message->to("rbautista@chasetech.com", $data['fullname']);
+				// 			$message->bcc("Grace.Erum@unilever.com");
+				// 			$message->subject($data['subject']);
+				// 		});
+				// 	}else{
+				// 		Mail::send('emails.customized2', $data, function($message) use ($data){
+				// 			$message->to(trim(strtolower($user->email)), $data['fullname'])->subject($data['subject']);
+				// 		});
+				// 	}
+				// }
 			}
 
 			$arr['success'] = 1;
