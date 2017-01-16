@@ -19,14 +19,48 @@ Queue::getIron()->ssl_verifypeer = false;
 */
 
 
-Route::get('test', function(){
-	$activity = Activity::find(699);
-	$tradedeal = Tradedeal::getActivityTradeDeal($activity);
-	if($tradedeal != null){
-		$tradedealschemes = TradedealScheme::getScheme($tradedeal->id);
-	}
+Route::get('mail', function(){
+	$activity = Activity::getDetails(809);
+	$user = User::find(11);
+	// for approval
+	// $line1 = "<p>You have been added as an activity approver for <b>".$activity->circular_name."</b>.</p>";
+	// $line2 = "<p>You may view this activity through this link >> <a href=".route('activity.preapproveedit',$activity->id)."> ".route('activity.preapproveedit', $activity->id)."</a></p>";
 
-	return View::make('pdf.tradedeal_view',compact('tradedealschemes'));
+	// channel approved
+	// $line1 = "<p><b>".$activity->circular_name."</b> has been approved by <b>". ucwords(strtolower($user->first_name)). " ". ucwords(strtolower($user->last_name))."</b>. You may now start planning and adding members to your activity.</p>";
+	// $line2 = "<p>You may view and edit this activity thru this link >> <a href=".route('activity.edit',$activity->id)."> ".route('activity.edit', $activity->id)."</a></p>";
+
+	// channel denied
+	// $line1 = "<p><b>".$activity->circular_name."</b> has been denied by <b>". ucwords(strtolower($user->first_name)). " ". ucwords(strtolower($user->last_name))."</b>.</p>";
+	// $line2 = "<p>You may view comments and edit this activity thru this link >> <a href=".route('activity.edit',$activity->id)."> ".route('activity.edit', $activity->id)."</a></p>";
+
+
+	// for pmog member
+	// $line1 = "<p>You have been added as an activity member for <b>".$activity->circular_name."</b>.</p>";
+	// $line2 = "<p>You may view/edit this activity through this link >> <a href=".route('activity.preapproveedit',$activity->id)."> ".route('activity.preapproveedit', $activity->id)."</a></p>";
+
+	// for field member
+	// $line1 = "<p>You have been added as an activity member for <b>".$activity->circular_name."</b>.</p>";
+	// $line2 = "<p>You may view this activity through this link >> <a href=".route('activity.preapproveedit',$activity->id)."> ".route('activity.preapproveedit', $activity->id)."</a></p>";
+
+	// removed
+	// $line1 = "<p>You have been remove as an activity member/approver for <b>".$activity->circular_name."</b>.</p>";
+
+	// add scheme
+	// $line1 = "<p>Activity proponent has added additonal scheme for <b>".$activity->circular_name."</b>.</p>";
+	// $line2 = "<p>You may view this activity through this link >> <a href=".route('activity.preapprove
+
+	// update propoent fot timings details
+	// $line1 = "<p><b>". ucwords(strtolower($user->first_name)). " ". ucwords(strtolower($user->last_name))."</b> has updated timing details for <b>".$activity->circular_name."</b>.</p>";
+	// $line2 = "<p>Please details below:</p>";
+	// $line3 = "<p>You may view this activity through this link >> </p>";
+
+	// submission of aticity to approver
+	// $line1 = "<p>Activity Title has been submitted by activity proponent for your approval.</p>";
+	// $line2 = "<p>You may view this activity through this link >> <a href=".route('activity.preapproveedit',$activity->id)."> ".route('activity.preapproveedit', $activity->id)."</a></p>";
+
+
+	return View::make('emails.customized',compact('user', 'activity', 'line1', 'line2'));
 });
 //---------------------------------------------------
 Route::post('queue/massmail', function()

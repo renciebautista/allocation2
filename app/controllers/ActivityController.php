@@ -3278,6 +3278,36 @@ class ActivityController extends BaseController {
 				
 			}
 			
+			if($activity->scope_type_id == 1){
+			}else{
+				$members = ActivityMember::where('pre_approve', 1)
+					->where('activity_id', $activity->id)
+					->get();
+				$data['activity'] = Activity::getDetails($activity->id);
+
+				foreach ($members as $member) {
+					$user = User::find($member->user_id);
+					$data['fullname'] = $user->first_name . ' ' . $user->last_name;
+					$data['user'] = $user;
+					$data['to_user'] = $user->first_name;
+					$data['line1'] = "<p><b>".Auth::user()->first_name. " ". Auth::user()->last_name."</b> has updated timing details for <b>".$activity->circular_name."</b>.</p>";
+					$data['line2']= "<p>You may view this activity through this link >> <a href=".route('activity.preapproveedit',$activity->id)."> ".route('activity.preapproveedit', $activity->id)."</a></p>";
+					$data['line3']= "<p>Please details below:</p>";
+
+					$data['subject'] = "CUSTOMIZED ACTIVITY - TIMINGS UPDATED";
+					if($_ENV['MAIL_TEST']){
+						Mail::send('emails.customized', $data, function($message) use ($data){
+							$message->to("rbautista@chasetech.com", $data['fullname']);
+							$message->bcc("Grace.Erum@unilever.com");
+							$message->subject($data['subject']);
+						});
+					}else{
+						Mail::send('emails.customized2', $data, function($message) use ($data){
+							$message->to(trim(strtolower($user->email)), $data['fullname'])->subject($data['subject']);
+						});
+					}
+				}
+			}
 
 			$arr['success'] = 1;
 			Session::flash('class', 'alert-success');
@@ -4668,6 +4698,15 @@ class ActivityController extends BaseController {
 					$new_user->department = $user->department->department;
 					if(in_array($user->department_id, $approvers)){
 						$new_user->pre_approve = 1;
+
+						$data['activity'] = Activity::getDetails($id);
+						$data['fullname'] = $fullname;
+						$data['user'] = $user;
+						$data['to_user'] = $user->first_name;
+						$data['line1'] = "<p>You have been added as an activity approver for <b>".$activity->circular_name."</b>.</p>";
+						$data['line2']= "<p>You may view/edit this activity through this link >> <a href=".route('activity.preapproveedit',$activity->id)."> ".route('activity.preapproveedit', $activity->id)."</a></p>";
+
+						
 					}
 					
 					$remarks = $fullname .' is added as an activity pre-approver.';
@@ -4675,10 +4714,31 @@ class ActivityController extends BaseController {
 					if(!in_array($user->department_id, $approvers)){
 						$new_user->activity_member_status_id = 3;
 						$remarks = $fullname .' is added as an expectator.';
+
+						$data['activity'] = Activity::getDetails($id);
+						$data['fullname'] = $fullname;
+						$data['user'] = $user;
+						$data['to_user'] = $user->first_name;
+						$data['line1'] = "<p>You have been added as an activity member for <b>".$activity->circular_name."</b>.</p>";
+						$data['line2']= "<p>You may view this activity through this link >> <a href=".route('activity.preapproveedit',$activity->id)."> ".route('activity.preapproveedit', $activity->id)."</a></p>";
+
 					}
 					$new_user->save();
 
 					ActivityTimeline::addTimeline($activity, Auth::user(), "add a member", $remarks);
+
+					$data['subject'] = 'CUSTOMIZED ACTIVITY - APPROVER';
+					if($_ENV['MAIL_TEST']){
+						Mail::send('emails.customized', $data, function($message) use ($data){
+							$message->to("rbautista@chasetech.com", $data['fullname']);
+							$message->bcc("Grace.Erum@unilever.com");
+							$message->subject($data['subject']);
+						});
+					}else{
+						Mail::send('emails.customized', $data, function($message) use ($data){
+							$message->to(trim(strtolower($user->email)), $data['fullname'])->subject($data['subject']);
+						});
+					}
 
 				}else{
 					$err[] = 'User not found.';
@@ -4707,6 +4767,28 @@ class ActivityController extends BaseController {
 				$member->delete();
 
 				ActivityTimeline::addTimeline($activity, Auth::user(), "removed a member", $member->user_desc .' is removed as activity member.');
+				$user = User::find($member->user_id);
+				$fullname = $user->first_name . ' ' . $user->last_name;
+
+				$data['activity'] = Activity::getDetails($member->activity_id);
+				$data['fullname'] = $fullname;
+				$data['user'] = $user;
+				$data['to_user'] = $user->first_name;
+				$data['line1'] = "<p>You have been remove as an activity member/approver for <b>".$activity->circular_name."</b>.</p>";
+				$data['line2']= "";
+				$data['subject'] = 'CUSTOMIZED ACTIVITY - REMOVED MEMBER';
+				if($_ENV['MAIL_TEST']){
+					Mail::send('emails.customized', $data, function($message) use ($data){
+						$message->to("rbautista@chasetech.com", $data['fullname']);
+						$message->bcc("Grace.Erum@unilever.com");
+						$message->subject($data['subject']);
+					});
+				}else{
+					Mail::send('emails.customized', $data, function($message) use ($data){
+						$message->to(trim(strtolower($user->email)), $data['fullname'])->subject($data['subject']);
+					});
+				}
+
 				return Redirect::to(URL::action('ActivityController@edit', array('id' => $member->activity_id)) . "#member")
 					->with('class', 'alert-success')
 					->with('message', 'Member successfuly removed.');
@@ -5005,14 +5087,43 @@ class ActivityController extends BaseController {
 		}else{
 			$member = ActivityMember::myActivity($activity->id);
 			if((!empty($member)) && ($member->activity_member_status_id = 1)){
+				$created_by = User::find($activity->created_by);
+				$user = User::find($member->user_id);
+				$data['activity'] = Activity::getDetails($id);
+				$data['fullname'] = $created_by->first_name . ' ' . $created_by->last_name;
+				$data['user'] = $user;
+				$data['to_user'] = $created_by->first_name;
+				$data['created_by'] = $created_by;
+
 				if(Input::get('update_status') == '1'){
 					$member->activity_member_status_id = 3;
 					$member->update();
 					ActivityTimeline::addTimeline($activity, Auth::user(), "approved the activity",Input::get('submitremarks'));
+					
+					$data['line1'] = "<p><b>".$activity->circular_name."</b> has been approved by <b>". ucwords(strtolower($user->first_name)). " ". ucwords(strtolower($user->last_name))."</b>. You may now start planning and adding members to your activity.</p>";
+					$data['line2'] = "<p>You may view and edit this activity thru this link >> <a href=".route('activity.edit',$activity->id)."> ".route('activity.edit', $activity->id)."</a></p>";
+					$data['subject']= 'CUSTOMIZED ACTIVITY - APPROVED';
 				}else{
 					$member->activity_member_status_id = 2;
 					$member->update();
 					ActivityTimeline::addTimeline($activity, Auth::user(), "denied the activity",Input::get('submitremarks'));
+
+					$data['line1'] = "<p><b>".$activity->circular_name."</b> has been denied by <b>". ucwords(strtolower($user->first_name)). " ". ucwords(strtolower($user->last_name))."</b>.</p>";
+					$data['line2'] = "<p>You may view comments and edit this activity thru this link >> <a href=".route('activity.edit',$activity->id)."> ".route('activity.edit', $activity->id)."</a></p>";
+					$data['subject'] = 'CUSTOMIZED ACTIVITY - DENIED';
+					
+				}
+
+				if($_ENV['MAIL_TEST']){
+					Mail::send('emails.customized', $data, function($message) use ($data){
+						$message->to("rbautista@chasetech.com", $data['fullname']);
+						$message->bcc("Grace.Erum@unilever.com");
+						$message->subject($data['subject']);
+					});
+				}else{
+					Mail::send('emails.customized', $data, function($message) use ($data){
+						$message->to(trim(strtolower($created_by->email)), $data['fullname'])->subject($data['subject']);
+					});
 				}
 			}
 

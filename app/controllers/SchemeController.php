@@ -203,6 +203,35 @@ class SchemeController extends \BaseController {
 				
 				SchemeAllocRepository::fixUntallyAllocation($scheme);
 
+				if($scheme->activity->scope_type_id == 1){
+				}else{
+					$members = ActivityMember::where('pre_approve', 1)
+						->where('activity_id', $scheme->activity_id)
+						->get();
+					$data['activity'] = Activity::getDetails($scheme->activity_id);
+
+					foreach ($members as $member) {
+						$user = User::find($member->user_id);
+						$data['fullname'] = $user->first_name . ' ' . $user->last_name;
+						$data['user'] = $user;
+						$data['to_user'] = $user->first_name;
+						$data['line1'] = "<p><b>".Auth::user()->first_name. " ". Auth::user()->last_name."</b> has added additonal scheme for <b>".$scheme->activity->circular_name."</b>.</p>";
+						$data['line2']= "<p>You may view this activity through this link >> <a href=".route('activity.preapproveedit',$activity->id)."> ".route('activity.preapproveedit', $activity->id)."</a></p>";
+						$data['subject'] = "CUSTOMIZED ACTIVITY - NEW SCHEME ADDED";
+						if($_ENV['MAIL_TEST']){
+							Mail::send('emails.customized', $data, function($message) use ($data){
+								$message->to("rbautista@chasetech.com", $data['fullname']);
+								$message->bcc("Grace.Erum@unilever.com");
+								$message->subject($data['subject']);
+							});
+						}else{
+							Mail::send('emails.customized', $data, function($message) use ($data){
+								$message->to(trim(strtolower($user->email)), $data['fullname'])->subject($data['subject']);
+							});
+						}
+					}
+				}
+
 				return $scheme->id;
 			});
 			return Redirect::to(URL::action('SchemeController@edit', array('id' => $insert_id)))
@@ -715,6 +744,9 @@ class SchemeController extends \BaseController {
 
 				SchemeAllocRepository::updateCosting($scheme);
 				SchemeAllocRepository::fixUntallyAllocation($scheme);
+
+
+				
 			});
 
 			if ($isError) {

@@ -1062,4 +1062,13 @@ $('.datatable').DataTable({
 	"paging": false,
 	"bSort": false
 });
+
+$("form[id='updatecustom']").on("submit",function(e){
+	var form = $(this);
+	$('#myAction').modal('hide');
+	$("#page").hide();
+	$("#pageloading").show();
+});
+
+
 @stop

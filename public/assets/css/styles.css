@@ -1092,3 +1092,11 @@ div.mce-edit-area{
 .fc-list-item-time {
 	display:  none;
 }
+
+.tooltip.top .tooltip-inner{
+	text-align:center;
+	background-color:#245973;
+	-webkit-border-radius:5px;
+	-moz-border-radius:5px;
+	border-radius:5px
+}

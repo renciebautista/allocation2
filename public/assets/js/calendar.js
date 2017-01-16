@@ -13,6 +13,7 @@ $(window).load(function() {
       	events: hostname + '/api/activities',
         eventOrder: '-type,title',
         eventRender: function (event, element) {
+          $(element).tooltip({title: event.title}); 
           // 
           // element.attr('href', 'javascript:void(0);');
           if(event.type == 1){
@@ -50,7 +51,8 @@ $(window).load(function() {
           });
           }
           
-      }
+      },
+
       //   eventRender: function (event, element) {
       //     element.attr('href', 'javascript:void(0);');
       //     element.click(function() {
