@@ -20,13 +20,17 @@ Queue::getIron()->ssl_verifypeer = false;
 
 
 Route::get('test', function(){
-	$activity = Activity::find(699);
-	$tradedeal = Tradedeal::getActivityTradeDeal($activity);
-	if($tradedeal != null){
-		$tradedealschemes = TradedealScheme::getScheme($tradedeal->id);
-	}
+	// $activity = Activity::find(699);
+	// $tradedeal = Tradedeal::getActivityTradeDeal($activity);
+	// if($tradedeal != null){
+	// 	$tradedealschemes = TradedealScheme::getScheme($tradedeal->id);
+	// }
 
-	return View::make('pdf.tradedeal_view',compact('tradedealschemes'));
+	// return View::make('pdf.tradedeal_view',compact('tradedealschemes'));
+
+	$data = \Customer::getChannelCustomerList();
+
+	Helper::debug($data);
 });
 //---------------------------------------------------
 Route::post('queue/massmail', function()

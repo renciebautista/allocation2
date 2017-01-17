@@ -143,7 +143,7 @@ class ActivityCutomerList extends \Eloquent {
 									// $shipto_selected = self::isSelected($group['key'].".".$area['key'].".".$soldto['key'].".".$shipto['key'],$selected_customers) || $area_selected;
 									$customer_selected = self::isSelected($customer['key'],$selected_customers) || $area_selected;
 									$data[] = array('activity_id' => $activity_id,
-										'parent_id' => $customer['key'],
+										'parent_id' => $area['key'],
 										'title' => $customer['title'], 
 										'isfolder' => isset($customer['isfolder']) ? $customer['isfolder'] : null, 
 										'key' => $customer['key'], 
@@ -155,7 +155,7 @@ class ActivityCutomerList extends \Eloquent {
 												// $account_selected = self::isSelected($group['key'].".".$area['key'].".".$soldto['key'].".".$shipto['key'].".".$account['key'],$selected_customers) ||  $shipto_selected;
 												$shipto_selected = self::isSelected($shipto['key'],$selected_customers) ||  $customer_selected;
 												$data[] = array('activity_id' => $activity_id,
-													'parent_id' => $shipto['key'],
+													'parent_id' => $customer['key'],
 													'title' => $shipto['title'], 
 													'isfolder' => isset($shipto['isfolder']) ? $shipto['isfolder'] : null, 
 													'key' => $shipto['key'], 
