@@ -3,12 +3,35 @@
 class TradedealSchemeAllocation extends \Eloquent {
 	protected $fillable = [];
 
+	public static function getSummary($tradedeal){
+		$data = [];
+		$records = self::join('tradedeal_schemes', 'tradedeal_schemes.id', '=', 'tradedeal_scheme_allocations.tradedeal_scheme_id')
+			->where('tradedeal_schemes.tradedeal_id', $tradedeal->id)
+			->orderBy('area')
+			->orderBy('sold_to')
+			->orderBy('ship_to_name')
+			->get();
+
+		return $records;
+
+		// foreach ($records as $row) {
+		// 	$alloc = new stdClass();
+		// 	$alloc->area_code = $row->area_code;
+		// 	$alloc->area = $row->area;
+		// 	$alloc->sold_to = [];
+		// 	$data[] = $alloc;
+		// }
+
+		// Helper::debug($data);
+	}
+
 	public static function exportAlloc($tradedeal){
 		$query = sprintf("select area, sold_to_code, sold_to, plant_code,ship_to_name, scheme_code, tradedeal_schemes.name as scheme_description,
 			tradedeal_schemes.tradedeal_uom_id, tradedeal_scheme_allocations.scheme_desc,tradedeal_types.tradedeal_type,
 			COALESCE(tradedeal_part_skus.pre_pcs_case,tradedeal_schemes.pre_pcs_case) as pcs_case, pre_desc_variant, computed_pcs, final_pcs,
 			activities.eimplementation_date, activities.end_date,tradedeals.non_ulp_premium, tradedeal_scheme_allocations.tradedeal_scheme_sku_id,
-			tradedeal_scheme_allocations.tradedeal_scheme_id, tradedeal_scheme_allocations.pre_code, tradedeal_scheme_allocations.pre_desc
+			tradedeal_scheme_allocations.tradedeal_scheme_id, tradedeal_scheme_allocations.pre_code, tradedeal_scheme_allocations.pre_desc,
+			tradedeal_scheme_allocations.computed_cost
 			from tradedeal_scheme_allocations 
 			right join tradedeal_schemes on tradedeal_schemes.id = tradedeal_scheme_allocations.tradedeal_scheme_id
 			right join tradedeal_types on tradedeal_types.id = tradedeal_schemes.tradedeal_type_id
