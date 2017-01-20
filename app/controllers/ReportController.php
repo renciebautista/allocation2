@@ -221,6 +221,7 @@ class ReportController extends \BaseController {
 
 		if($tradedeal != null){
 			$tradedealschemes = TradedealScheme::getScheme($tradedeal->id);
+			$trade_allocations = TradedealSchemeAllocation::getSummary($tradedeal);
 		}
 		$participating_skus = TradedealPartSku::getParticipatingSku($activity);
 		// end tradedeal
@@ -235,7 +236,7 @@ class ReportController extends \BaseController {
 		 'sel_objectives',  'schemes', 'scheme_summary', 'networks','areas',
 		 'scheme_customers', 'scheme_allcations', 'materials', 'force_allocs','sel_involves',
 		 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings', 'comments' , 'route', 'recall', 'submit_action',
-		 'tradedeal','total_deals', 'total_premium_cost', 'participating_skus', 'tradedealschemes'));
+		 'tradedeal','total_deals', 'total_premium_cost', 'participating_skus', 'tradedealschemes', 'tradedeal_skus', 'trade_allocations'));
 	}
 
 	public function scheme($id){
