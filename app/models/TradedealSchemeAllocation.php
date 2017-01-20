@@ -4,25 +4,132 @@ class TradedealSchemeAllocation extends \Eloquent {
 	protected $fillable = [];
 
 	public static function getSummary($tradedeal){
+
+		$area_query = sprintf("select area, area_code
+			from tradedeal_scheme_allocations 
+			right join tradedeal_schemes on tradedeal_schemes.id = tradedeal_scheme_allocations.tradedeal_scheme_id
+			where tradedeal_schemes.tradedeal_id = '%d' 
+			group by area_code
+			order by area",$tradedeal->id);
+
+		$areas =  DB::select(DB::raw($area_query));
+
+
+		$dist_query = sprintf("select area, area_code, sold_to_code, sold_to
+			from tradedeal_scheme_allocations 
+			right join tradedeal_schemes on tradedeal_schemes.id = tradedeal_scheme_allocations.tradedeal_scheme_id
+			where tradedeal_schemes.tradedeal_id = '%d'
+			group by area_code,  sold_to_code
+			order by area, sold_to",$tradedeal->id);
+
+		$distributors =  DB::select(DB::raw($dist_query));
+
+
+		$ship_to_query = sprintf("select area, area_code, sold_to_code, sold_to, plant_code,ship_to_name
+			from tradedeal_scheme_allocations 
+			right join tradedeal_schemes on tradedeal_schemes.id = tradedeal_scheme_allocations.tradedeal_scheme_id
+			where tradedeal_schemes.tradedeal_id = '%d'
+			group by area_code,  sold_to_code, plant_code
+			order by area, sold_to, ship_to_name",$tradedeal->id);
+
+		$shiptos =  DB::select(DB::raw($ship_to_query));
+
+		// $schemequery = sprintf("select area, area_code, sold_to_code, sold_to, plant_code,ship_to_name, scheme_code, tradedeal_schemes.name as scheme_description
+		// 	from tradedeal_scheme_allocations 
+		// 	right join tradedeal_schemes on tradedeal_schemes.id = tradedeal_scheme_allocations.tradedeal_scheme_id
+		// 	where tradedeal_schemes.tradedeal_id = '%d'
+		// 	group by area_code,  sold_to_code, plant_code, scheme_code
+		// 	order by area, sold_to, ship_to_name, scheme_description",$tradedeal->id);
+
+		// $schemes =  DB::select(DB::raw($schemequery));
+
+
+		$query = sprintf("select area, area_code, sold_to_code, sold_to, plant_code,ship_to_name, scheme_code, tradedeal_schemes.name as scheme_description,
+			tradedeal_schemes.tradedeal_uom_id, tradedeal_scheme_allocations.scheme_desc,tradedeal_types.tradedeal_type,
+			COALESCE(tradedeal_part_skus.pre_pcs_case,tradedeal_schemes.pre_pcs_case) as pcs_case, pre_desc_variant, computed_pcs, final_pcs,
+			activities.eimplementation_date, activities.end_date,tradedeals.non_ulp_premium, tradedeal_scheme_allocations.tradedeal_scheme_sku_id,
+			tradedeal_scheme_allocations.tradedeal_scheme_id, tradedeal_scheme_allocations.pre_code, tradedeal_scheme_allocations.pre_desc,
+			tradedeal_scheme_allocations.computed_cost
+			from tradedeal_scheme_allocations 
+			right join tradedeal_schemes on tradedeal_schemes.id = tradedeal_scheme_allocations.tradedeal_scheme_id
+			right join tradedeal_types on tradedeal_types.id = tradedeal_schemes.tradedeal_type_id
+			left join tradedeal_scheme_skus on tradedeal_scheme_skus.id = tradedeal_scheme_allocations.tradedeal_scheme_sku_id
+			left join tradedeal_part_skus on tradedeal_part_skus.id = tradedeal_scheme_skus.tradedeal_part_sku_id
+			right join tradedeals on tradedeals.id = tradedeal_schemes.tradedeal_id
+			right join activities on activities.id = tradedeals.activity_id
+			where tradedeal_schemes.tradedeal_id = '%d' 
+			order by area, sold_to, ship_to_name, tradedeal_scheme_id, scheme_code",$tradedeal->id);
+
+		$records =  DB::select(DB::raw($query));
+
+		
+
 		$data = [];
-		$records = self::join('tradedeal_schemes', 'tradedeal_schemes.id', '=', 'tradedeal_scheme_allocations.tradedeal_scheme_id')
-			->where('tradedeal_schemes.tradedeal_id', $tradedeal->id)
-			->orderBy('area')
-			->orderBy('sold_to')
-			->orderBy('ship_to_name')
-			->get();
+		foreach ($areas as $row) {
+			$area = new stdClass();
+			$area->area = $row->area;
+			$area->area_code = $row->area_code;
+			$area_total = [];
+			foreach ($distributors as $dist) {
+				if($dist->area_code == $row->area_code){
+					$dist_obj = new stdClass();
+					$dist_obj->sold_to_code = $dist->sold_to_code;
+					$dist_obj->sold_to = $dist->sold_to;
+					$dist_to_total = [];
+					foreach ($shiptos as $shipto) {
+						if(($row->area_code == $shipto->area_code) && ($dist->sold_to_code == $shipto->sold_to_code)){
+							$shipto_obj = new stdClass();
+							$shipto_obj->plant_code = $shipto->plant_code;
+							$shipto_obj->ship_to_name = $shipto->ship_to_name;
+							$ship_to_total = [];
+							foreach ($records as $scheme) {
+								if(($row->area_code == $scheme->area_code) 
+									&& ($dist->sold_to_code == $scheme->sold_to_code)
+									&& ($shipto->plant_code == $scheme->plant_code)
+									){
+									$scheme_obj = new stdClass();
+									$scheme_obj->scheme_code = $scheme->scheme_code;
+									$scheme_obj->scheme_description = $scheme->scheme_description;
+									$scheme_obj->premiums[$scheme->pre_desc_variant] = $scheme->final_pcs;
+									if(!isset($ship_to_total[$scheme->pre_desc_variant])){
+										$ship_to_total[$scheme->pre_desc_variant] = 0;
+									}
+									$ship_to_total[$scheme->pre_desc_variant] += $scheme->final_pcs;
+									
+									$shipto_obj->schemes[] = $scheme_obj;
+								}			
+							}
 
-		return $records;
+							foreach ($ship_to_total as $key => $value) {
+								if(!isset($dist_to_total[$key])){
+									$dist_to_total[$key] = 0;
+								}
+								$dist_to_total[$key] += $value;
+							}
+							
 
-		// foreach ($records as $row) {
-		// 	$alloc = new stdClass();
-		// 	$alloc->area_code = $row->area_code;
-		// 	$alloc->area = $row->area;
-		// 	$alloc->sold_to = [];
-		// 	$data[] = $alloc;
-		// }
+							$shipto_obj->ship_to_total = $ship_to_total;
+							$dist_obj->shipto[] = $shipto_obj;
+						}
+					}
 
-		// Helper::debug($data);
+					foreach ($dist_to_total as $key => $value) {
+						if(!isset($area_total[$key])){
+							$area_total[$key] = 0;
+						}
+						$area_total[$key] += $value;
+					}
+
+					$dist_obj->dist_total = $dist_to_total;
+					$area->dist[] = $dist_obj;
+				}
+			}
+			$area->area_total = $area_total;
+			$data[] = $area;
+		}
+
+		// Helper::debug($data);	
+		return $data;
 	}
 
 	public static function exportAlloc($tradedeal){
@@ -39,7 +146,9 @@ class TradedealSchemeAllocation extends \Eloquent {
 			left join tradedeal_part_skus on tradedeal_part_skus.id = tradedeal_scheme_skus.tradedeal_part_sku_id
 			right join tradedeals on tradedeals.id = tradedeal_schemes.tradedeal_id
 			right join activities on activities.id = tradedeals.activity_id
-			where tradedeal_schemes.tradedeal_id = '%d' and  final_pcs > 0 order by area, sold_to, ship_to_name, scheme_description",$tradedeal->id);
+			where tradedeal_schemes.tradedeal_id = '%d' 
+			and  final_pcs > 0 
+			order by area, sold_to, ship_to_name, tradedeal_scheme_id, scheme_code",$tradedeal->id);
 
 		return DB::select(DB::raw($query));
 	}

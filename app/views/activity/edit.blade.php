@@ -905,6 +905,8 @@
 			</div>
 		</div>
 
+		@include('shared.tradealloc')
+
 		<div class="row">
 			<div class="col-lg-12">
 				<div class="form-group">
@@ -1720,8 +1722,10 @@
 
 @stop
 
+
 @section('add-script')
 	{{ HTML::script('assets/js/tradedeal.js') }}
+	{{ HTML::script('assets/js/tradetable.js') }}
 @stop
 
 @section('page-script')

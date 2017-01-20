@@ -1019,3 +1019,40 @@ table .v-align{
     background-color: #eeeeee;
     opacity: 1;
 }
+
+.treegrid tr:first-child td:first-child, .treegrid tr:first-child td:first-child + td,
+.treegrid tr:first-child td:first-child + td + td, .treegrid tr:first-child td:first-child + td + td+ td{
+   border-right: 1px solid #ffffff;
+}
+
+
+
+.treegrid .light-blue {
+    color: #000;
+    background-color: #d9edf7;
+    border: 1px solid #dddddd;
+}
+
+.treegrid .light-orange {
+    color: #000;
+    background-color: #fcf8e3;
+    border: 1px solid #dddddd;
+}
+
+.treegrid .light-green {
+    color: #000;
+    background-color: #c1ffbd;
+    border: 1px solid #dddddd;
+}
+.treegrid .alloc {
+    text-align: right;
+}
+
+.treegrid .premiums {
+    text-align: center;
+    width: 10px;
+    font-weight: bold;
+}
+.treegrid .total {
+    font-weight: bold;
+}

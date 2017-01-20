@@ -28,6 +28,9 @@
 
 		{{ HTML::style('assets/plugins/offline/offline-theme-default.css') }}
 		{{ HTML::style('assets/plugins/offline/offline-language-english.css') }}
+
+		{{ HTML::style('assets/plugins/treegrid/css/jquery.treegrid.css') }}
+		
 		{{ HTML::style('assets/css/styles.css') }}
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
@@ -330,6 +333,9 @@
 	{{ HTML::script('assets/plugins/offline/offline.min.js') }}
 
 	{{ HTML::script('assets/plugins/kartik/js/dependent-dropdown.min.js') }}
+
+	{{ HTML::script('assets/plugins/treegrid/js/jquery.treegrid.js') }}
+	{{ HTML::script('assets/plugins/treegrid/js/jquery.treegrid.bootstrap3.js') }}
 	
 	{{ HTML::script('assets/js/function.js') }}
 
