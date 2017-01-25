@@ -46,6 +46,7 @@ class MakeFieldTradedeal extends Command {
 				$filepath = '/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
 				$file = preg_replace('/[^A-Za-z0-9 _ .-]/', '_', $activity->circular_name);
 				$file_name = str_replace(":","_", $file);	
+				$file_name = str_replace("/","_", $file_name);	
 				Excel::create($file_name. ' BBFEE', function($excel) use($activity){
 					$excel->sheet('SCHEME SUMMARY', function($sheet) use ($activity) {
 						$sheet->setCellValueByColumnAndRow(0,1, 'Activity Title:');
