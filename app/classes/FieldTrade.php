@@ -22,6 +22,9 @@ class FieldTrade {
 	}
 
 	public function generate($activity){
+
+		// test data
+		
 		if(!empty($activity)){
 			$tradedeal = Tradedeal::getActivityTradeDeal($activity);
 			if(!empty($tradedeal)){
