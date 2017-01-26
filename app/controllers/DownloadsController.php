@@ -266,7 +266,7 @@ class DownloadsController extends \BaseController {
 			$cycles = Cycle::getReleasedCyclesWithTradeDeal(Input::get('search'));
 			return View::make('downloads.cyclesledmin',compact('cycles'));
 		}else{
-			$cycles = Cycle::getReleasedCyclesWithTradeDeal(Input::get('search'), Auth::user);
+			$cycles = Cycle::getReleasedCyclesWithTradeDeal(Input::get('search'), Auth::user());
 			return View::make('downloads.cyclesle',compact('cycles'));
 		}
 	}
@@ -274,7 +274,9 @@ class DownloadsController extends \BaseController {
 	public function downloadletemplates($id){
 		$zippy = Zippy::load();
 		$cycle = Cycle::where('id',$id)->first();
+
 		$user_id = Auth::user()->id;
+
 		$folder_path = storage_path().'/zipped/le/'.$user_id;
 
 		if(!File::exists($folder_path)) {
@@ -295,8 +297,6 @@ class DownloadsController extends \BaseController {
 			->where('disable',0)
 			->get();
 
-		
-
 		if(count($activities) > 0){
 			$folders = [];
 			foreach ($activities as $activity) {
@@ -306,6 +306,7 @@ class DownloadsController extends \BaseController {
 
 				$foldername = preg_replace('/[^A-Za-z0-9 _ .-]/', '_', $activity->circular_name);
 				$folder_name = str_replace(":","_", $foldername);
+				$folder_name = str_replace("/","_", $foldername);
 
 				$distination = storage_path().'/le/'.$activity->id ;
 
