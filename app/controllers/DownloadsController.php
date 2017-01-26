@@ -262,13 +262,13 @@ class DownloadsController extends \BaseController {
 
 	public function letemplates(){
 		Input::flash();
-		// if(Auth::user()->hasRole("ADMINISTRATOR")){
-		// 	$cycles = Cycle::getAllCycles(Input::get('search'));
-		// 	return View::make('downloads.cyclesledmin',compact('cycles'));
-		// }else{
+		if(Auth::user()->hasRole("ADMINISTRATOR")){
 			$cycles = Cycle::getReleasedCyclesWithTradeDeal(Input::get('search'));
+			return View::make('downloads.cyclesledmin',compact('cycles'));
+		}else{
+			$cycles = Cycle::getReleasedCyclesWithTradeDeal(Input::get('search'), Auth::user);
 			return View::make('downloads.cyclesle',compact('cycles'));
-		// }
+		}
 	}
 
 	public function downloadletemplates($id){
