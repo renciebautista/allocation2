@@ -221,6 +221,7 @@ class ReportController extends \BaseController {
 
 		if($tradedeal != null){
 			$tradedealschemes = TradedealScheme::getScheme($tradedeal->id);
+			$trade_allocations = TradedealSchemeAllocation::getSummary($tradedeal);
 		}
 		$participating_skus = TradedealPartSku::getParticipatingSku($activity);
 		// end tradedeal
@@ -229,13 +230,13 @@ class ReportController extends \BaseController {
 		$route = 'reports.activities';
 		$recall = $activity->pro_recall;
 		$submit_action = 'ActivityController@updateactivity';
-		return View::make('shared.activity_readonly', compact('activity', 'sel_planner', 'approvers', 
+		return View::make('activity.activityreadonly', compact('activity', 'sel_planner', 'approvers', 
 		 'sel_divisions','divisions', 'timings',
 		 'objectives',  'users', 'budgets', 'nobudgets','sel_approver',
 		 'sel_objectives',  'schemes', 'scheme_summary', 'networks','areas',
 		 'scheme_customers', 'scheme_allcations', 'materials', 'force_allocs','sel_involves',
 		 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings', 'comments' , 'route', 'recall', 'submit_action',
-		 'tradedeal','total_deals', 'total_premium_cost', 'participating_skus', 'tradedealschemes'));
+		 'tradedeal','total_deals', 'total_premium_cost', 'participating_skus', 'tradedealschemes', 'tradedeal_skus', 'trade_allocations'));
 	}
 
 	public function scheme($id){

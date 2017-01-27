@@ -204,10 +204,9 @@ class Customer extends \Eloquent {
 							->get();
 						$distributor_children = [];
 						foreach ($shiptos as $shipto) {
+							$shipto_children = array();
 							if($shipto->ship_to_code != '') {
-								$shipto_children = array();
-
-								$accounts =  \DB::table('customer_trees')
+								$accounts = \DB::table('customer_trees')
 									->select('accounts.id', 'account_name')
 									->join('accounts', 'accounts.id', '=', 'customer_trees.account_id')
 									->where('customer_trees.channel_code', $channel->channel_code)
@@ -218,7 +217,7 @@ class Customer extends \Eloquent {
 									->orderBy('accounts.account_name')
 									->get();
 									
-								if(count($accounts)>0){
+								if(!empty($accounts)){
 									$shipto_children = array();
 									
 									foreach ($accounts as $account) {

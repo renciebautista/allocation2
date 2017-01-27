@@ -79,7 +79,7 @@ class DownloadedActivityController extends \BaseController {
 			$route = 'downloadedactivity.index';
 			$recall = $activity->pmog_recall;
 			$submit_action = 'DownloadedActivityController@submittogcm';
-			return View::make('shared.activity_readonly', compact('activity', 'sel_planner', 'approvers', 'division',
+			return View::make('activity.activityreadonly', compact('activity', 'sel_planner', 'approvers', 'division',
 			 'objectives',  'users', 'budgets', 'nobudgets','sel_approver',
 			 'sel_objectives', 'channels', 'sel_channels', 'schemes', 'networks',
 			 'scheme_customers', 'scheme_allcations', 'materials', 'force_allocs',

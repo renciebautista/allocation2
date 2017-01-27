@@ -293,6 +293,7 @@ class ActivityController extends BaseController {
 
 			if($tradedeal != null){
 				$tradedealschemes = TradedealScheme::getScheme($tradedeal->id);
+				$trade_allocations = TradedealSchemeAllocation::getSummary($tradedeal);
 			}
 			// end tradedeal
 
@@ -321,7 +322,7 @@ class ActivityController extends BaseController {
 				 'sel_objectives',  'schemes', 'scheme_summary', 'networks', 'areas', 'timings' ,'sel_involves',
 				 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings',
 				 'force_allocs', 'comments' ,'submitstatus', 'tradedeal', 'tradedeal_skus', 'dealtypes', 'dealuoms', 'host_skus', 'ref_skus',
-				 'pre_skus', 'tradedealschemes', 'td_shiptos', 'td_premiums', 'total_deals', 'total_premium_cost'));
+				 'pre_skus', 'tradedealschemes', 'td_shiptos', 'td_premiums', 'total_deals', 'total_premium_cost',  'trade_allocations'));
 			}
 
 			if($activity->status_id > 3){
@@ -333,13 +334,13 @@ class ActivityController extends BaseController {
 
 				$participating_skus = TradedealPartSku::getParticipatingSku($activity);
 
-				return View::make('shared.activity_readonly', compact('activity', 'sel_planner', 'approvers', 
+				return View::make('activity.activityreadonly', compact('activity', 'sel_planner', 'approvers', 
 				 'sel_divisions','divisions', 'timings',
 				 'objectives',  'users', 'budgets', 'nobudgets','sel_approver',
 				 'sel_objectives',  'schemes', 'scheme_summary', 'networks','areas',
 				 'scheme_customers', 'scheme_allcations', 'materials', 'force_allocs','sel_involves',
 				 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings', 'comments' ,'submitstatus', 'route', 'recall', 'submit_action',
-				 'tradedeal', 'total_deals', 'total_premium_cost', 'tradedealschemes', 'participating_skus'));
+				 'tradedeal', 'total_deals', 'total_premium_cost', 'tradedealschemes', 'participating_skus', 'tradedeal_skus', 'trade_allocations'));
 			}
 		}
 
@@ -441,7 +442,7 @@ class ActivityController extends BaseController {
 
 				$participating_skus = TradedealPartSku::getParticipatingSku($activity);
 				
-				return View::make('shared.activity_readonly', compact('activity', 'sel_planner', 'approvers', 'sel_divisions','divisions' ,
+				return View::make('activity.activityreadonly', compact('activity', 'sel_planner', 'approvers', 'sel_divisions','divisions' ,
 				 'objectives',  'users', 'budgets', 'nobudgets','sel_approver',
 				 'sel_objectives',  'schemes', 'scheme_summary', 'networks', 'areas',
 				 'scheme_customers', 'scheme_allcations', 'materials', 'force_allocs', 'timings' ,'sel_involves',
@@ -2638,15 +2639,162 @@ class ActivityController extends BaseController {
 						}
 					}
 				}
+
+				// duplicate trade deals
+				$tradedeal_activity = Tradedeal::getActivityTradeDeal($activity);
+				if($tradedeal_activity != null){
+					$_part_sku = [];
+					// copy participating skus
+					$partskus = TradedealPartSku::where('activity_id',$activity->id)
+						->orderBy('id')
+						->get();
+					foreach ($partskus as $partsku) {
+						$new_partsku = new TradedealPartSku;
+						$new_partsku->activity_id = $new_activity->id;
+						$new_partsku->host_code = $partsku->host_code;
+						$new_partsku->host_desc = $partsku->host_desc;
+						$new_partsku->variant = $partsku->variant;
+						$new_partsku->brand_shortcut = $partsku->brand_shortcut;
+						$new_partsku->host_sku_format = $partsku->host_sku_format;
+						$new_partsku->host_cost = $partsku->host_cost;
+						$new_partsku->host_pcs_case = $partsku->host_pcs_case;
+						$new_partsku->ref_code = $partsku->ref_code;
+						$new_partsku->ref_desc = $partsku->ref_desc;
+						$new_partsku->ref_pcs_case = $partsku->ref_pcs_case;
+						$new_partsku->pre_code = $partsku->pre_code;
+						$new_partsku->pre_desc = $partsku->pre_desc;
+						$new_partsku->pre_variant = $partsku->pre_variant;
+						$new_partsku->pre_brand_shortcut = $partsku->pre_brand_shortcut;
+						$new_partsku->pre_sku_format = $partsku->pre_sku_format;
+						$new_partsku->pre_cost = $partsku->pre_cost;
+						$new_partsku->pre_pcs_case = $partsku->pre_pcs_case;
+						$new_partsku->save();
+
+						$_part_sku[$partsku->id] = $new_partsku->id;
+					}
+
+					// copy trade deals
+					$tradedeals = Tradedeal::where('activity_id',$activity->id)
+						->orderBy('id')
+						->get();
+					foreach ($tradedeals as $tradedeal) {
+						$new_tradedeal = new Tradedeal;
+						$new_tradedeal->activity_id = $new_activity->id;
+						$new_tradedeal->alloc_in_weeks = $tradedeal->alloc_in_weeks;
+						$new_tradedeal->non_ulp_premium = $tradedeal->non_ulp_premium;
+						$new_tradedeal->non_ulp_premium_desc = $tradedeal->non_ulp_premium_desc;
+						$new_tradedeal->non_ulp_premium_code = $tradedeal->non_ulp_premium_code;
+						$new_tradedeal->non_ulp_premium_cost = $tradedeal->non_ulp_premium_cost;
+						$new_tradedeal->non_ulp_pcs_case = $tradedeal->non_ulp_pcs_case;
+						$new_tradedeal->forced_upload = $tradedeal->forced_upload;
+						$new_tradedeal->save();
+
+						// copy tradedealscheme
+						$tradedealschemes = TradedealScheme::where('tradedeal_id',$tradedeal->id)
+							->orderBy('id')
+							->get();
+
+						$_scheme_channels = [];
+						foreach ($tradedealschemes as $tradedealscheme) {
+							$new_tradedealscheme = new TradedealScheme;
+							$new_tradedealscheme->tradedeal_id = $new_tradedeal->id;
+							$new_tradedealscheme->name = $tradedealscheme->name;
+							$new_tradedealscheme->additional_name = $tradedealscheme->additional_name;
+							$new_tradedealscheme->tradedeal_type_id = $tradedealscheme->tradedeal_type_id;
+							$new_tradedealscheme->buy = $tradedealscheme->buy;
+							$new_tradedealscheme->free = $tradedealscheme->free;
+							$new_tradedealscheme->pre_id = $tradedealscheme->pre_id;
+							$new_tradedealscheme->coverage = $tradedealscheme->coverage;
+							$new_tradedealscheme->tradedeal_uom_id = $tradedealscheme->tradedeal_uom_id;
+							$new_tradedealscheme->pre_code = $tradedealscheme->pre_code;
+							$new_tradedealscheme->pre_desc = $tradedealscheme->pre_desc;
+							$new_tradedealscheme->pre_cost = $tradedealscheme->pre_cost;
+							$new_tradedealscheme->pre_pcs_case = $tradedealscheme->pre_pcs_case;
+							$new_tradedealscheme->pcs_deal = $tradedealscheme->pcs_deal;
+							$new_tradedealscheme->pur_req = $tradedealscheme->pur_req;
+							$new_tradedealscheme->free_cost = $tradedealscheme->free_cost;
+							$new_tradedealscheme->cost_to_sale = $tradedealscheme->cost_to_sale;
+							$new_tradedealscheme->save();
+
+							// copy scheme selected channels
+							$scheme_channels = TradedealSchemeChannel::where('tradedeal_scheme_id',$tradedealscheme->id)
+								->orderBy('id')
+								->get();
+							foreach ($scheme_channels as $scheme_channel) {
+								$new_scheme_channel = new TradedealSchemeChannel;
+								$new_scheme_channel->tradedeal_scheme_id = $new_tradedealscheme->id;
+								$new_scheme_channel->channel_node = $scheme_channel->channel_node;
+								$new_scheme_channel->save();
+
+								$_scheme_channels[$scheme_channel->id] = $new_scheme_channel->id;
+							}
+
+							
+							// copy scheme skus
+							$scheme_skus = TradedealSchemeSku::where('tradedeal_scheme_id',$tradedealscheme->id)
+								->orderBy('id')
+								->get();
+							// Helper::debug($_scheme_channels);
+
+							foreach ($scheme_skus as $scheme_sku) {
+								$new_scheme_sku = new TradedealSchemeSku;
+								$new_scheme_sku->tradedeal_scheme_id = $new_tradedealscheme->id;
+								$new_scheme_sku->tradedeal_part_sku_id = $_part_sku[$scheme_sku->tradedeal_part_sku_id];
+								$new_scheme_sku->qty = $scheme_sku->qty;
+								$new_scheme_sku->pur_req = $scheme_sku->pur_req;
+								$new_scheme_sku->free_cost = $scheme_sku->free_cost;
+								$new_scheme_sku->cost_to_sale = $scheme_sku->cost_to_sale;
+								$new_scheme_sku->save();
+							}
+
+							// copy scheme sub types
+							$scheme_subtypes = TradedealSchemeSubType::where('tradedeal_scheme_id',$tradedealscheme->id)
+								->orderBy('id')
+								->get();
+							foreach ($scheme_subtypes as $scheme_subtype) {
+								$new_scheme_subtype = new TradedealSchemeSubType;
+								$new_scheme_subtype->tradedeal_scheme_id = $new_tradedealscheme->id;
+								$new_scheme_subtype->sub_type = $scheme_subtype->sub_type;
+								$new_scheme_subtype->sub_type_desc = $scheme_subtype->sub_type_desc;
+								$new_scheme_subtype->tradedeal_scheme_channel_id = $_scheme_channels[$scheme_subtype->tradedeal_scheme_channel_id];
+								$new_scheme_subtype->save();
+							}
+
+						}
+
+						$new_schemes = TradedealScheme::where('tradedeal_id', $new_tradedeal->id)->get();
+						if(!empty($new_schemes)){
+							foreach ($new_schemes as $new_scheme) {
+								TradedealAllocRepository::updateAllocation($new_scheme);
+							}
+						}
+					}
+
+
+				}
+
+
+				// 
+
 				// copy all file
 				$path = storage_path().'/uploads/'.$new_activity->cycle_id.'/'.$new_activity->activity_type_id;
+				// Helper::debug($path);
 				if(!File::exists($path)) {
-					File::makeDirectory($path);
+					try {
+						File::makeDirectory($path);
+					} catch (Exception $e) {
+						mkdir($path, 0755, true); 
+					}
 				}
 				$path2 = storage_path().'/uploads/'.$new_activity->cycle_id.'/'.$new_activity->activity_type_id.'/'.$new_activity->id;
-				if(!File::exists($path2)) {
-					File::makeDirectory($path2);
 
+				if(!File::exists($path2)) {
+					try {
+						File::makeDirectory($path2);
+					} catch (Exception $e) {
+						mkdir($path2, 0755, true);
+					}
+					
 					$old_path = storage_path().'/uploads/'.$activity->cycle_id.'/'.$activity->activity_type_id.'/'.$activity->id;
 					File::copyDirectory($old_path, $path2);
 
@@ -3575,515 +3723,8 @@ class ActivityController extends BaseController {
 
 	public function exporttradedeal($id){
 		$activity = Activity::findOrFail($id);
-		Excel::create($activity->circular_name, function($excel) use($activity){
-			$excel->sheet('SCHEME SUMMARY', function($sheet) use ($activity) {
-				$sheet->setCellValueByColumnAndRow(0,1, 'Activity Title:');
-				$sheet->setCellValueByColumnAndRow(1,1, $activity->circular_name);
-				$sheet->setCellValueByColumnAndRow(0,2, 'Start Date:');
-				$sheet->setCellValueByColumnAndRow(1,2, date('d/m/Y', strtotime($activity->eimplementation_date)));
-				$sheet->setCellValueByColumnAndRow(0,3, 'End Date:');
-				$sheet->setCellValueByColumnAndRow(1,3, date('d/m/Y', strtotime($activity->end_date)));
-
-				$sheet->row(5, array('ACTIVITY', 'Scheme Code', 'Scheme Description', 'HOST CODE', 'HOST DESCRIPTION', 'PREMIUM CODE / PIMS CODE', 'Premium SKU', 'Master Outlet Subtype Name', 'Master Outlet Subtype Code'));
-				$sheet->getStyle("A5:I5")->getFont()->setBold(true);
-				$row = 6;
-
-				$tradedeal = Tradedeal::getActivityTradeDeal($activity);
-				$tradedealschemes = TradedealScheme::where('tradedeal_id',$tradedeal->id)
-					->orderBy('tradedeal_type_id')
-					->orderBy('tradedeal_uom_id')
-					->get();
-				foreach ($tradedealschemes as $scheme) {
-						$sheet->setCellValueByColumnAndRow(0,$row, $scheme->name);
-						if($scheme->tradedeal_type_id == 1){
-							$host_skus = TradedealSchemeSku::getHostSku($scheme);
-							$sku_cnt = count($host_skus);
-							foreach ($host_skus as $key => $host_sku) {
-								$deal_id = TradedealSchemeAllocation::getSchemeCode($scheme, $host_sku);
-								$sheet->setCellValueByColumnAndRow(1,$row, $deal_id->scheme_code);
-								$sheet->setCellValueByColumnAndRow(2,$row, $deal_id->scheme_desc);
-								$sheet->setCellValueByColumnAndRow(3,$row, $host_sku->host_code);
-								$sheet->setCellValueByColumnAndRow(4,$row, $host_sku->host_desc. ' '.$host_sku->variant);
-								$sheet->setCellValueByColumnAndRow(5,$row, $host_sku->pre_code);
-								$sheet->setCellValueByColumnAndRow(6,$row, $host_sku->pre_desc. ' '.$host_sku->pre_variant);	
-								$row++;	
-							}
-							$row = $row - $sku_cnt;
-							$channels = TradedealSchemeSubType::getSchemeSubtypes($scheme);
-							$ch_cnt = count($channels);
-							foreach ($channels as $channel) {
-								$sheet->setCellValueByColumnAndRow(7,$row, $channel->sub_type_desc);
-								$sheet->setCellValueByColumnAndRow(8,$row, $channel->sub_type);
-								$row++;
-							}
-
-							if($ch_cnt < $sku_cnt){
-								$x = $sku_cnt - $ch_cnt;
-								$row = $row + $x;
-							}
-						}
-						if($scheme->tradedeal_type_id == 2){
-							
-						}
-
-						if($scheme->tradedeal_type_id == 3){
-							$host_skus = TradedealSchemeSku::getHostSku($scheme);
-							$deal_id = TradedealSchemeAllocation::getCollecttiveSchemeCode($scheme);
-							$sheet->setCellValueByColumnAndRow(1,$row, $deal_id->scheme_code);
-							$sheet->setCellValueByColumnAndRow(2,$row, $deal_id->scheme_desc);
-							$host_skus = TradedealSchemeSku::getHostSku($scheme);
-							$sku_cnt = count($host_skus);
-							foreach ($host_skus as $key => $host_sku) {
-								$sheet->setCellValueByColumnAndRow(3,$row, $host_sku->host_code);
-								$sheet->setCellValueByColumnAndRow(4,$row, $host_sku->host_desc. ' '.$host_sku->variant);	
-								$row++;	
-							}
-							$row = $row - $sku_cnt;
-
-							if($tradedeal->non_ulp_premium){
-								$sheet->setCellValueByColumnAndRow(5,$row, $scheme->pre_code);
-								$sheet->setCellValueByColumnAndRow(6,$row, $scheme->pre_desc .' '.$scheme->pre_variant);
-							}else{
-								$part_sku = TradedealPartSku::find($scheme->pre_id);
-								$sheet->setCellValueByColumnAndRow(5,$row, $part_sku->pre_code);
-								$sheet->setCellValueByColumnAndRow(6,$row, $part_sku->pre_desc .' '.$part_sku->pre_variant);
-							}
-
-							$channels = TradedealSchemeSubType::getSchemeSubtypes($scheme);
-							$ch_cnt = count($channels);
-							foreach ($channels as $channel) {
-								$sheet->setCellValueByColumnAndRow(7,$row, $channel->sub_type_desc);
-								$sheet->setCellValueByColumnAndRow(8,$row, $channel->sub_type);
-								$row++;
-							}
-
-							if($ch_cnt < $sku_cnt){
-								$x = $sku_cnt - $ch_cnt;
-								$row = $row + $x;
-							}
-							
-						}					
-				}
-		    });
-
-		    $excel->sheet('ALLOCATIONS', function($sheet) use ($activity) {
-		    	
-				$tradedeal_skus = TradedealPartSku::where('activity_id', $activity->id)->groupBy('pre_code')->get();
-				$tradedeal = Tradedeal::getActivityTradeDeal($activity);
-				$allocations = TradedealSchemeAllocation::exportAlloc($tradedeal);
-
-				$sheet->setWidth('A', 16);
-				$sheet->setWidth('B', 13);
-				$sheet->setWidth('C', 20);
-				$sheet->setWidth('D', 10);
-				$sheet->setWidth('E', 30);
-				$sheet->setWidth('F', 15);
-				$sheet->setWidth('G', 20);
-				$sheet->setWidth('H', 5);
-
-				$row = 2;
-				$sheet->row($row, array('AREA', 'Distributor Code', 'Distributor Name', 'Site Code', 'Site Name', 'Scheme Code', 'Scheme Description', 'UOM'));
-
-
-				$sheet->getDefaultStyle()
-				    ->getAlignment()
-				    ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-
-				// premuim
-				$premiums = [];
-				foreach ($tradedeal_skus as $sku) {
-					$premiums[] = $sku->pre_desc. ' '. $sku->pre_variant;
-				}
-
-				$col = 8;
-				$col_pre = [];
-				$col_pre_x = [];
-				$sheet->setCellValueByColumnAndRow($col,1, 'DEALS');
-				foreach ($premiums as $premuim) {
-					$sheet->setCellValueByColumnAndRow($col,2, $premuim);
-					$sheet->setWidth(PHPExcel_Cell::stringFromColumnIndex($col), 10);
-					$col_pre[$premuim] = $col;
-					$col++;
-				}
-				$style = array(
-			        'alignment' => array(
-			            'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
-			        )
-			    );
-
-			    
-
-				$d_col = $col -1;
-				$sheet->mergeCells(\PHPExcel_Cell::stringFromColumnIndex(8).'1:'.\PHPExcel_Cell::stringFromColumnIndex($d_col).'1');
-				$sheet->getStyle(\PHPExcel_Cell::stringFromColumnIndex(8).'1:'.\PHPExcel_Cell::stringFromColumnIndex($d_col).'1')
-					->applyFromArray(array(
-				    'fill' => array(
-				        'type'  => PHPExcel_Style_Fill::FILL_SOLID,
-				        'color' => array('rgb' => '091462')
-				    )
-				));
-
-				$sheet->cells(\PHPExcel_Cell::stringFromColumnIndex(8).'1:'.\PHPExcel_Cell::stringFromColumnIndex($d_col).'1', function($cells) {
-					$cells->setFontColor('#ffffff');
-				});
-
-				$sheet->getStyle(\PHPExcel_Cell::stringFromColumnIndex(8).'1:'.\PHPExcel_Cell::stringFromColumnIndex($d_col).'1')->applyFromArray($style);
-
-
-				$sheet->setCellValueByColumnAndRow($col,1, 'PREMIUMS');
-				foreach ($premiums as $premuim) {
-					$sheet->setCellValueByColumnAndRow($col,2, $premuim);
-					$col_pre_x[$premuim] = $col;
-					$col++;
-				}
-				$d_col++;
-
-				$p_col = $col - 1;
-
-				$sheet->getStyle('A2:'.\PHPExcel_Cell::stringFromColumnIndex($d_col).'2')
-					->getFont()
-					->setBold(true);
-				
-				// Set background color for a specific cell
-				$sheet->getStyle('A2:'.\PHPExcel_Cell::stringFromColumnIndex($p_col).'2')->applyFromArray(array(
-				    'fill' => array(
-				        'type'  => PHPExcel_Style_Fill::FILL_SOLID,
-				        'color' => array('rgb' => 'DAEBF8')
-				    )
-				));
-
-				$sheet->mergeCells(\PHPExcel_Cell::stringFromColumnIndex($d_col).'1:'.\PHPExcel_Cell::stringFromColumnIndex($p_col).'1');
-				$sheet->getStyle(\PHPExcel_Cell::stringFromColumnIndex($d_col).'1:'.\PHPExcel_Cell::stringFromColumnIndex($p_col).'1')
-					->applyFromArray(array(
-				    'fill' => array(
-				        'type'  => PHPExcel_Style_Fill::FILL_SOLID,
-				        'color' => array('rgb' => '7F00A1')
-				    )
-				));
-
-				$sheet->cells(\PHPExcel_Cell::stringFromColumnIndex($d_col).'1:'.\PHPExcel_Cell::stringFromColumnIndex($p_col).'1', function($cells) {
-					$cells->setFontColor('#ffffff');
-				});
-
-
-				$sheet->getStyle(\PHPExcel_Cell::stringFromColumnIndex($d_col).'1:'.\PHPExcel_Cell::stringFromColumnIndex($p_col).'1')->applyFromArray($style);
-
-				$sheet->getStyle('I2:R2')->getAlignment()
-					->applyFromArray(array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER))
-					->setWrapText(true);
-
-				$sheet->setWidth(\PHPExcel_Cell::stringFromColumnIndex($col), 10);
-
-
-				$last_area = '';
-				$last_distributor = '';
-				$last_site = '';
-				$first_row = 3;
-				foreach ($allocations as $alloc) {
-					$row++;
-					if($alloc->tradedeal_uom_id == 1){
-						$pcs_deal = 1;
-					}
-					if($alloc->tradedeal_uom_id == 2){
-						$pcs_deal = 12;
-					}
-					if($alloc->tradedeal_uom_id == 3){
-						$pcs_deal = $alloc->pcs_case;
-					}
-					
-					if($last_area == $alloc->area){
-						if($last_distributor == $alloc->sold_to_code){
-
-							if($last_site == $alloc->plant_code){
-								$sheet->row($row, ['', '', '', '', '', $alloc->scheme_code, $alloc->scheme_description, $pcs_deal]);
-							}else{
-								$sheet->row($row, ['', '', '', $last_site.' Total']);
-								foreach ($col_pre as $col) {
-									$last_row = $row - 1;
-									$sum = "=SUM(".\PHPExcel_Cell::stringFromColumnIndex($col).$first_row.":".\PHPExcel_Cell::stringFromColumnIndex($col).$last_row.")";
-									$sheet->setCellValueByColumnAndRow($col,$row,$sum);
-								}
-
-								foreach ($col_pre_x as $col) {
-									$last_row = $row - 1;
-									$sum = "=SUM(".\PHPExcel_Cell::stringFromColumnIndex($col).$first_row.":".\PHPExcel_Cell::stringFromColumnIndex($col).$last_row.")";
-									$sheet->setCellValueByColumnAndRow($col,$row,$sum);
-								}
-
-								$sheet->getStyle('D'.$row.':'.\PHPExcel_Cell::stringFromColumnIndex($p_col).$row)->applyFromArray(array(
-								    'fill' => array(
-								        'type'  => PHPExcel_Style_Fill::FILL_SOLID,
-								        'color' => array('rgb' => 'DAEBF8')
-								    )
-								));
-
-								$row++;
-								$first_row = $row;
-								$sheet->row($row, ['', '', '', $alloc->plant_code, $alloc->ship_to_name, $alloc->scheme_code, $alloc->scheme_description, $pcs_deal]);
-							}
-							$sheet->setCellValueByColumnAndRow($col_pre[$alloc->pre_desc_variant],$row, $alloc->final_pcs / $pcs_deal);
-							$sheet->setCellValueByColumnAndRow($col_pre_x[$alloc->pre_desc_variant],$row, $alloc->final_pcs);
-						}else{
-							if($last_site != $alloc->plant_code){
-								$sheet->row($row, ['', '', '', $last_site.' Total']);
-								foreach ($col_pre as $col) {
-									$last_row = $row - 1;
-									$sum = "=SUM(".\PHPExcel_Cell::stringFromColumnIndex($col).$first_row.":".\PHPExcel_Cell::stringFromColumnIndex($col).$last_row.")";
-									$sheet->setCellValueByColumnAndRow($col,$row,$sum);
-								}
-
-								foreach ($col_pre_x as $col) {
-									$last_row = $row - 1;
-									$sum = "=SUM(".\PHPExcel_Cell::stringFromColumnIndex($col).$first_row.":".\PHPExcel_Cell::stringFromColumnIndex($col).$last_row.")";
-									$sheet->setCellValueByColumnAndRow($col,$row,$sum);
-								}
-
-								$sheet->getStyle('D'.$row.':'.\PHPExcel_Cell::stringFromColumnIndex($p_col).$row)->applyFromArray(array(
-								    'fill' => array(
-								        'type'  => PHPExcel_Style_Fill::FILL_SOLID,
-								        'color' => array('rgb' => 'DAEBF8')
-								    )
-								));
-
-								$row++;
-								$first_row = $row;
-							}
-
-							if($last_distributor != $alloc->sold_to_code){
-								if($alloc->plant_code == ''){
-									$sheet->row($row, ['', '', '', $last_distributor.' Total']);
-									foreach ($col_pre as $col) {
-										$last_row = $row - 1;
-										$sum = "=SUM(".\PHPExcel_Cell::stringFromColumnIndex($col).$first_row.":".\PHPExcel_Cell::stringFromColumnIndex($col).$last_row.")";
-										$sheet->setCellValueByColumnAndRow($col,$row,$sum);
-									}
-
-									foreach ($col_pre_x as $col) {
-										$last_row = $row - 1;
-										$sum = "=SUM(".\PHPExcel_Cell::stringFromColumnIndex($col).$first_row.":".\PHPExcel_Cell::stringFromColumnIndex($col).$last_row.")";
-										$sheet->setCellValueByColumnAndRow($col,$row,$sum);
-									}
-
-									$sheet->getStyle('D'.$row.':'.\PHPExcel_Cell::stringFromColumnIndex($p_col).$row)->applyFromArray(array(
-									    'fill' => array(
-									        'type'  => PHPExcel_Style_Fill::FILL_SOLID,
-									        'color' => array('rgb' => 'DAEBF8')
-									    )
-									));
-
-									$row++;
-									$first_row = $row;
-								}
-							}
-
-							$sheet->row($row, ['', $alloc->sold_to_code, $alloc->sold_to, $alloc->plant_code, $alloc->ship_to_name, $alloc->scheme_code, $alloc->scheme_description, $pcs_deal]);
-							$sheet->setCellValueByColumnAndRow($col_pre[$alloc->pre_desc_variant],$row, $alloc->final_pcs / $pcs_deal);
-							$sheet->setCellValueByColumnAndRow($col_pre_x[$alloc->pre_desc_variant],$row, $alloc->final_pcs);
-
-
-
-						}
-					}else{
-						if(($last_site != $alloc->plant_code) && ($last_site != '')){
-							$sheet->row($row, ['', '', '', $last_site.' Total']);
-							foreach ($col_pre as $col) {
-								$last_row = $row - 1;
-								$sum = "=SUM(".\PHPExcel_Cell::stringFromColumnIndex($col).$first_row.":".\PHPExcel_Cell::stringFromColumnIndex($col).$last_row.")";
-								$sheet->setCellValueByColumnAndRow($col,$row,$sum);
-							}
-
-							foreach ($col_pre_x as $col) {
-								$last_row = $row - 1;
-								$sum = "=SUM(".\PHPExcel_Cell::stringFromColumnIndex($col).$first_row.":".\PHPExcel_Cell::stringFromColumnIndex($col).$last_row.")";
-								$sheet->setCellValueByColumnAndRow($col,$row,$sum);
-							}
-
-							$sheet->getStyle('D'.$row.':'.\PHPExcel_Cell::stringFromColumnIndex($p_col).$row)->applyFromArray(array(
-							    'fill' => array(
-							        'type'  => PHPExcel_Style_Fill::FILL_SOLID,
-							        'color' => array('rgb' => 'DAEBF8')
-							    )
-							));
-
-							$row++;
-							$first_row = $row;
-						}else{
-							if(!empty($last_distributor)){
-								$sheet->row($row, ['', '', '', $last_distributor.' Total']);
-								foreach ($col_pre as $col) {
-									$last_row = $row - 1;
-									$sum = "=SUM(".\PHPExcel_Cell::stringFromColumnIndex($col).$first_row.":".\PHPExcel_Cell::stringFromColumnIndex($col).$last_row.")";
-									$sheet->setCellValueByColumnAndRow($col,$row,$sum);
-								}
-
-								foreach ($col_pre_x as $col) {
-									$last_row = $row - 1;
-									$sum = "=SUM(".\PHPExcel_Cell::stringFromColumnIndex($col).$first_row.":".\PHPExcel_Cell::stringFromColumnIndex($col).$last_row.")";
-									$sheet->setCellValueByColumnAndRow($col,$row,$sum);
-								}
-
-								$sheet->getStyle('D'.$row.':'.\PHPExcel_Cell::stringFromColumnIndex($p_col).$row)->applyFromArray(array(
-								    'fill' => array(
-								        'type'  => PHPExcel_Style_Fill::FILL_SOLID,
-								        'color' => array('rgb' => 'DAEBF8')
-								    )
-								));
-
-								$row++;
-								$first_row = $row;
-							}
-							
-						}
-
-						$sheet->row($row, [$alloc->area, $alloc->sold_to_code, $alloc->sold_to, $alloc->plant_code, $alloc->ship_to_name, $alloc->scheme_code, $alloc->scheme_description, $pcs_deal]);
-						$sheet->setCellValueByColumnAndRow($col_pre[$alloc->pre_desc_variant],$row, $alloc->final_pcs / $pcs_deal);
-						$sheet->setCellValueByColumnAndRow($col_pre_x[$alloc->pre_desc_variant],$row, $alloc->final_pcs);		
-					}
-
-					$last_area = $alloc->area;
-					$last_distributor = $alloc->sold_to_code;
-					$last_site = $alloc->plant_code;
-				}
-
-				$row++;
-				$sheet->row($row, ['', '', '', $last_site.' Total']);	
-				
-				foreach ($col_pre as $col) {
-					$last_row = $row - 1;
-					$sum = "=SUM(".\PHPExcel_Cell::stringFromColumnIndex($col).$first_row.":".\PHPExcel_Cell::stringFromColumnIndex($col).$last_row.")";
-					$sheet->setCellValueByColumnAndRow($col,$row,$sum);
-				}	
-
-				foreach ($col_pre_x as $col) {
-					$last_row = $row - 1;
-					$sum = "=SUM(".\PHPExcel_Cell::stringFromColumnIndex($col).$first_row.":".\PHPExcel_Cell::stringFromColumnIndex($col).$last_row.")";
-					$sheet->setCellValueByColumnAndRow($col,$row,$sum);
-				}		
-
-				$sheet->getStyle('D'.$row.':'.\PHPExcel_Cell::stringFromColumnIndex($p_col).$row)->applyFromArray(array(
-				    'fill' => array(
-				        'type'  => PHPExcel_Style_Fill::FILL_SOLID,
-				        'color' => array('rgb' => 'DAEBF8')
-				    )
-				));
-		    });
-	
-			$excel->sheet('OUTPUT FILE', function($sheet) use ($activity) {
-				$tradedeal_skus = TradedealPartSku::where('activity_id', $activity->id)->groupBy('pre_code')->get();
-				$tradedeal = Tradedeal::getActivityTradeDeal($activity);
-				$allocations = TradedealSchemeAllocation::exportAlloc($tradedeal);
-
-				$row = 1;
-				$sheet->row($row, array('AREA', 'Distributor Code', 'Distributor Name', 'Site Code', 'Site Name', 'Scheme Code', 'Scheme Description',
-					'Promo Description', 'Promo Type',
-		    		'SKU Codes Involved', 'SKUs Involved', 'Premium Code', 'Premium',
-		    		'Outlet Sub Types Involved', 'Outlet Codes', 'Allocation (Pieces)', 'UOM', 'Source of Premium', 
-		    		'Start Date', 'End Date'));
-
-				$sheet->getStyle("A1:V1")->getFont()->setBold(true);
-				$sheet->getDefaultStyle()
-				    ->getAlignment()
-				    ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-			
-				$last_area = '';
-				$last_distributor = '';
-				$last_site = '';
-				$first_row = 3;
-				foreach ($allocations as $alloc) {
-
-					$scheme = TradedealScheme::find($alloc->tradedeal_scheme_id);
-
-					$row++;
-					if($alloc->tradedeal_uom_id == 1){
-						$pcs_deal = 1;
-					}
-					if($alloc->tradedeal_uom_id == 2){
-						$pcs_deal = 12;
-					}
-					if($alloc->tradedeal_uom_id == 3){
-						$pcs_deal = $alloc->pcs_case;
-					}
-
-					$start_date = date('d/m/Y', strtotime($alloc->eimplementation_date));
-		    		$end_date = date('d/m/Y', strtotime($alloc->end_date));
-
-		    		$host_code = '';
-			    	$host_desc = '';
-
-			    	if($alloc->tradedeal_scheme_sku_id != 0){
-			    		$host_sku = TradedealSchemeSku::getHost($alloc->tradedeal_scheme_sku_id);
-			    		$host_code = $host_sku->host_code;
-			    		$host_desc = $host_sku->host_desc;
-			    	}else{
-
-			    		$host_skus = TradedealSchemeSku::getHostSku($scheme);
-			    		$code = [];
-			    		$desc = [];
-			    		foreach ($host_skus as $key => $value) {
-
-			    			$code[] = $value->host_code;
-			    			$desc[] = $value->host_desc;
-			    		}
-
-			    		$host_code = implode("; ", $code);
-			    		$host_desc = implode("; ", $desc);
-
-			    	}
-
-			    	$pre_code = $alloc->pre_code;
-			    	$pre_desc = $alloc->pre_desc;
-			    	$source = 'Ex-DT';
-			    	if(!$alloc->non_ulp_premium){
-			    		$source = 'Ex-ULP';
-			    	}else{
-			    		
-			    	}
-
-			    	$channels = TradedealSchemeSubType::getSchemeSubtypes($scheme);
-			    	$ch_code = [];
-			    	$ch_desc = [];
-			    	foreach ($channels as $channel) {
-		    			$ch_code[] = $channel->sub_type;
-		    			$ch_desc[] = $channel->sub_type_desc;
-		    		}
-
-		    		$channel_code = implode("; ", $ch_code);
-			    	$channel_desc = implode("; ", $ch_desc);
-					
-					// if($last_area == $alloc->area){
-					// 	if($last_distributor == $alloc->sold_to_code){
-					// 		if($last_site == $alloc->plant_code){
-					// 			$sheet->row($row, ['', '', '', '', '', $alloc->scheme_code, $alloc->scheme_description, $alloc->scheme_desc, $alloc->tradedeal_type,$host_code, $host_desc, $pre_code, $pre_desc, $channel_code, $channel_desc, $alloc->final_pcs, $pcs_deal, $source, $start_date, $end_date]);
-					// 		}else{
-					// 			// $row++;
-					// 			$first_row = $row;
-					// 			$sheet->row($row, ['', '', '', $alloc->plant_code, $alloc->ship_to_name, $alloc->scheme_code, $alloc->scheme_description, $alloc->scheme_desc, $alloc->tradedeal_type, $host_code, $host_desc, $pre_code, $pre_desc, $channel_code, $channel_desc, $alloc->final_pcs, $pcs_deal, $source, $start_date, $end_date]);
-					// 		}
-							
-					// 	}else{
-					// 		if($last_site != $alloc->plant_code){
-					// 			// $row++;
-					// 			$first_row = $row;
-					// 		}
-					// 		$sheet->row($row, ['', $alloc->sold_to_code, $alloc->sold_to, $alloc->plant_code, $alloc->ship_to_name, $alloc->scheme_code, $alloc->scheme_description, $alloc->scheme_desc, $alloc->tradedeal_type, $host_code, $host_desc, $pre_code, $pre_desc, $channel_code, $channel_desc, $alloc->final_pcs, $pcs_deal, $source, $start_date, $end_date]);
-							
-					// 	}
-					// }else{
-					// 	if(($last_site != $alloc->plant_code) && ($last_site != '')){
-					// 		// $row++;
-					// 		$first_row = $row;
-					// 	}
-						$sheet->row($row, [$alloc->area, $alloc->sold_to_code, $alloc->sold_to, $alloc->plant_code, $alloc->ship_to_name, $alloc->scheme_code, $alloc->scheme_description, $alloc->scheme_desc, $alloc->tradedeal_type, $host_code, $host_desc, $pre_code, $pre_desc, $channel_code, $channel_desc, $alloc->final_pcs, $pcs_deal, $source, $start_date, $end_date]);
-				
-					// }
-
-					// $last_area = $alloc->area;
-					// $last_distributor = $alloc->sold_to_code;
-					// $last_site = $alloc->plant_code;
-				}
-
-		    });
-		})->download('xls');
+		$fieldfile = new FieldTrade($activity->id);
+		$fieldfile->download();
 	}
 
 	public function exporttddetails($id){
@@ -4092,7 +3733,7 @@ class ActivityController extends BaseController {
 			$excel->sheet('Allocations', function($sheet) use ($activity) {
 				$allocations = TradedealSchemeAllocation::getAll($activity);
 				$sheet->row(1, array( 'ID', 'Activity ID', 'Activity Description', 'Scheme Code', 'Scheme Description', 'Host SKU Code', 'Host SKU', 'Premium SKU Code', 'Premium SKU', 'Area Code', 
-					'Area', 'Sold To Code', 'Sold To', 'U2K2 Code', 'Ship To Code', 'Ship To Name', 'Computed Allocation', 'Final Allocation', 'New Allocation'));
+					'Area', 'Sold To Code', 'Sold To', 'U2K2 Code', 'Ship To Code', 'Ship To Name', '# of deals', 'Computed Allocation (Pieces) ', 'Final Allocation (Pieces) ', 'New Allocation (Pieces) '));
 
 				$sheet->setAutoFilter();
 				$row = 2;
@@ -4135,7 +3776,10 @@ class ActivityController extends BaseController {
 							$host_code = $colhostskucode[$alloc->tradedeal_scheme_id];
 						}
 					}
-					
+					$num_of_deal  = 0;
+					if($alloc->final_pcs > 0){
+						$num_of_deal = $alloc->final_pcs / $alloc->deal_multiplier;
+					}
 					$sheet->row($row, array(
 						$alloc->alloc_id, 
 						$alloc->activity_id, 
@@ -4153,6 +3797,7 @@ class ActivityController extends BaseController {
 						$alloc->ship_to_code, 
 						$alloc->plant_code, 
 						$alloc->ship_to_name, 
+						$num_of_deal, 
 						$alloc->computed_pcs, 
 						$alloc->final_pcs, 
 						$alloc->total_alloc));
@@ -4162,7 +3807,7 @@ class ActivityController extends BaseController {
 
 				$sheet->getProtection()->setPassword('tradedeal');
 				$sheet->getProtection()->setSheet(true);
-				$sheet->getStyle('S2:S'.$cnt)->getProtection()->setLocked(PHPExcel_Style_Protection::PROTECTION_UNPROTECTED);
+				$sheet->getStyle('T2:T'.$cnt)->getProtection()->setLocked(PHPExcel_Style_Protection::PROTECTION_UNPROTECTED);
 		    });
 
 			$excel->sheet('ALLOCATION SUMMARY', function($sheet) use ($activity) {
