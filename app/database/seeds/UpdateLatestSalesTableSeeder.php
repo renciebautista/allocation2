@@ -19,19 +19,19 @@ class UpdateLatestSalesTableSeeder extends Seeder {
 
 
 
-		// $this->call('MtDtSalesTableSeeder');
-		// echo "Sales uploaded".PHP_EOL; 
-		// $this->call('MtDtHierarchyTableSeederTableSeeder');
-		// echo "Mt Dt Hierarchy created".PHP_EOL; 
-		// $this->call('UpdateCustomerTreeTableSeeder');
-		// echo "Customer Tree created".PHP_EOL; 
-		// $timeSecond = strtotime(date('Y-m-d H:i:s'));
-		// $differenceInSeconds = $timeSecond - $timeFirst;
-		// echo  'Time used ' . $differenceInSeconds . " sec";
+		$this->call('MtDtSalesTableSeeder');
+		echo "Sales uploaded".PHP_EOL; 
+		$this->call('MtDtHierarchyTableSeederTableSeeder');
+		echo "Mt Dt Hierarchy created".PHP_EOL; 
+		$this->call('UpdateCustomerTreeTableSeeder');
+		echo "Customer Tree created".PHP_EOL; 
+		$timeSecond = strtotime(date('Y-m-d H:i:s'));
+		$differenceInSeconds = $timeSecond - $timeFirst;
+		echo  'Time used ' . $differenceInSeconds . " sec";
 
 		Mail::send('emails.confirm', [], function($message) {
           	$message->to("rbautista@chasetech.com");
-			// $message->bcc("rosarah.reyes@unilever.com");
+			$message->bcc("rosarah.reyes@unilever.com");
 			$message->subject('Upload Sales Complete');
         });
 
