@@ -29,7 +29,7 @@ class UpdateLatestSalesTableSeeder extends Seeder {
 		// $differenceInSeconds = $timeSecond - $timeFirst;
 		// echo  'Time used ' . $differenceInSeconds . " sec";
 
-		Mail::send('emails.signup', [], function($message) {
+		Mail::send('emails.confirm', [], function($message) {
           	$message->to("rbautista@chasetech.com");
 			// $message->bcc("rosarah.reyes@unilever.com");
 			$message->subject('Upload Sales Complete');
