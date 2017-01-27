@@ -58,9 +58,12 @@ class MtDtSalesTableSeeder extends CsvSeeder {
 
 		// update plant code mapping
 		$mappings = ShipToPlantCode::all();
+		$cnt = 1;
 		foreach ($mappings as $row) {
+			echo $cnt.PHP_EOL;
 			MtDtSales::where('distributor_code', $row->distributor_code)
 				->update(['plant_code' => $row->plant_code]);
+			$cnt++;
 		}
 	}
 

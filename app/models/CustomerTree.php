@@ -161,7 +161,7 @@ class CustomerTree extends \Eloquent {
 									'account_id' => $account->id]);
 								}
 							}
-
+							
 							CustomerTree::insert(['channel_code' => $channel->channel_code,
 									'group_code' => $group->group_code,
 									'area_code' => $area->area_code,
@@ -176,14 +176,9 @@ class CustomerTree extends \Eloquent {
 									'customer_code' => $distributor->customer_code,
 									'plant_code' => '',
 									'account_id' => '']);
-
 					}
-
-
 				}
 			}
-
-
 		}
 	}
 }

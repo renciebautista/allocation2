@@ -16,15 +16,21 @@ class UpdateLatestSalesTableSeeder extends Seeder {
 		// $this->call('DtSecondarySalesTableSeeder');
 		// $this->call('ShipToSalesTableSeeder');
 		// $this->call('OutletSalesTableSeeder');
-		$this->call('MtDtSalesTableSeeder');
+		// $this->call('MtDtSalesTableSeeder');
+		// echo "Sales uploaded".PHP_EOL; 
+		// $this->call('MtDtHierarchyTableSeederTableSeeder');
+		// echo "Mt Dt Hierarchy created".PHP_EOL; 
+		// $this->call('UpdateCustomerTreeTableSeeder');
+		// echo "Customer Tree created".PHP_EOL; 
+		// $timeSecond = strtotime(date('Y-m-d H:i:s'));
+		// $differenceInSeconds = $timeSecond - $timeFirst;
+		// echo  'Time used ' . $differenceInSeconds . " sec";
 
-		$this->call('MtDtHierarchyTableSeederTableSeeder');
-
-		$this->call('UpdateCustomerTreeTableSeeder');
-
-		$timeSecond = strtotime(date('Y-m-d H:i:s'));
-		$differenceInSeconds = $timeSecond - $timeFirst;
-		echo  'Time used ' . $differenceInSeconds . " sec";
+		Mail::send('emails.confirm',[], function($message){
+          	$message->to("rbautista@chasetech.com");
+			// $message->bcc("rosarah.reyes@unilever.com");
+			$message->subject('Upload Sales Complete');
+        });
 
 		DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 	}
