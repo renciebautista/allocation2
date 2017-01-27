@@ -291,6 +291,7 @@ class ActivityController extends BaseController {
 			$total_deals = Tradedeal::total_deals($activity);
 			$total_premium_cost = Tradedeal::total_premium_cost($activity);
 
+			$trade_allocations = [];
 			if($tradedeal != null){
 				$tradedealschemes = TradedealScheme::getScheme($tradedeal->id);
 				$trade_allocations = TradedealSchemeAllocation::getSummary($tradedeal);

@@ -905,7 +905,11 @@
 			</div>
 		</div>
 
+		@if(count($trade_allocations) > 0)
+
 		@include('shared.tradealloc')
+		
+		@endif
 
 		<div class="row">
 			<div class="col-lg-12">
