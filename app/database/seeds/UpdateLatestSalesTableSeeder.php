@@ -16,6 +16,9 @@ class UpdateLatestSalesTableSeeder extends Seeder {
 		// $this->call('DtSecondarySalesTableSeeder');
 		// $this->call('ShipToSalesTableSeeder');
 		// $this->call('OutletSalesTableSeeder');
+
+
+
 		// $this->call('MtDtSalesTableSeeder');
 		// echo "Sales uploaded".PHP_EOL; 
 		// $this->call('MtDtHierarchyTableSeederTableSeeder');
@@ -26,7 +29,7 @@ class UpdateLatestSalesTableSeeder extends Seeder {
 		// $differenceInSeconds = $timeSecond - $timeFirst;
 		// echo  'Time used ' . $differenceInSeconds . " sec";
 
-		Mail::send('emails.confirm',[], function($message){
+		Mail::send('emails.signup', [], function($message) {
           	$message->to("rbautista@chasetech.com");
 			// $message->bcc("rosarah.reyes@unilever.com");
 			$message->subject('Upload Sales Complete');
