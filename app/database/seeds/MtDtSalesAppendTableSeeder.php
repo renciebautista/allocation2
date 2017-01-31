@@ -3,7 +3,7 @@
 // Composer: "fzaninotto/faker": "v1.3.0"
 use Flynsarmy\CsvSeeder\CsvSeeder;
 
-class MtDtSalesAppendTableSeeder extends Seeder {
+class MtDtSalesAppendTableSeeder extends CsvSeeder {
 
 	public function __construct()
 	{
