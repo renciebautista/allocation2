@@ -20,6 +20,7 @@ class UpdateLatestSalesTableSeeder extends Seeder {
 
 
 		$this->call('MtDtSalesTableSeeder');
+		$this->call('MtDtSalesAppendTableSeeder');
 		echo "Sales uploaded".PHP_EOL; 
 		$this->call('MtDtHierarchyTableSeederTableSeeder');
 		echo "Mt Dt Hierarchy created".PHP_EOL; 
