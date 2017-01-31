@@ -412,8 +412,10 @@ class ActivityController extends BaseController {
 			$total_deals = Tradedeal::total_deals($activity);
 			$total_premium_cost = Tradedeal::total_premium_cost($activity);
 
+			$trade_allocations = [];
 			if($tradedeal != null){
 				$tradedealschemes = TradedealScheme::getScheme($tradedeal->id);
+				$trade_allocations = TradedealSchemeAllocation::getSummary($tradedeal);
 			}
 			// end tradedeal
 
@@ -433,7 +435,7 @@ class ActivityController extends BaseController {
 				 'sel_objectives',  'schemes', 'scheme_summary', 'networks', 'areas', 'timings' ,'sel_involves',
 				 'scheme_customers', 'scheme_allcations', 'materials', 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings',
 				 'force_allocs', 'comments' ,'submitstatus', 'tradedeal_skus',
-				 'tradedeal', 'total_deals', 'total_premium_cost', 'tradedealschemes', 'participating_skus'));
+				 'tradedeal', 'total_deals', 'total_premium_cost', 'tradedealschemes', 'participating_skus', 'trade_allocations'));
 			}else{
 				$submitstatus = array('3' => 'RECALL ACTIVITY');
 				$divisions = Sku::getDivisionLists();
@@ -448,7 +450,7 @@ class ActivityController extends BaseController {
 				 'sel_objectives',  'schemes', 'scheme_summary', 'networks', 'areas',
 				 'scheme_customers', 'scheme_allcations', 'materials', 'force_allocs', 'timings' ,'sel_involves',
 				 'fdapermits', 'fis', 'artworks', 'backgrounds', 'bandings', 'comments' ,'submitstatus', 'route', 'recall', 'submit_action', 'tradedeal_skus',
-				 'tradedeal', 'total_deals', 'total_premium_cost', 'tradedealschemes', 'participating_skus'));
+				 'tradedeal', 'total_deals', 'total_premium_cost', 'tradedealschemes', 'participating_skus', 'trade_allocations'));
 			}
 		}
 	}
