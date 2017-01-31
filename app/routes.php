@@ -538,6 +538,12 @@ Route::group(array('before' => 'auth'), function()
 
 		Route::get('reports/{id}/review', ['as' => 'reports.review', 'uses' => 'ReportController@review']);
 		Route::get('reports/{id}/scheme/', ['as' => 'reports.scheme', 'uses' => 'ReportController@scheme']);
+
+
+		Route::get('accountgroup/export', 'AccountGroupController@export');
+		Route::get('accountgroup/import', 'AccountGroupController@import');
+		Route::post('accountgroup/upload', 'AccountGroupController@upload');
+		Route::resource('accountgroup', 'AccountGroupController');
 	});
 
 });

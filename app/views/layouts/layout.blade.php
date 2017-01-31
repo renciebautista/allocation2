@@ -142,6 +142,7 @@
 										<li>{{ HTML::linkRoute('shipto.index', 'Ship To') }}</li>  
 										<li>{{ HTML::linkRoute('shiptoplantcode.index', 'Ship To / Plant Code Mapping') }}</li>  
 										<li>{{ HTML::linkRoute('account.index', 'Account') }}</li> 
+										<li>{{ HTML::linkRoute('accountgroup.index', 'Account Group') }}</li> 
 										<li>{{ HTML::linkRoute('channel.index', 'Channel / Sub Channel') }}</li> 
 										
 										<li>{{ HTML::linkRoute('customermaster.index', 'Customer & Sales Masterfile') }}</li> 
