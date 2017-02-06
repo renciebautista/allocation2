@@ -475,16 +475,16 @@ class AllocationRepository2  {
 
 				foreach ($_base_sales as $account_sale) {
 					if(isset($cust_nodes[$account_sale->channel_code][$customer->group_code][$customer->area_code])){
-						if(in_array($to_customer, $cust_nodes[$account_sale->channel_code][$customer->group_code][$customer->area_code])){
+						if(in_array($customer->customer_code, $cust_nodes[$account_sale->channel_code][$customer->group_code][$customer->area_code])){
 							if(($account_sale->customer_code == $row->from_customer)){
 								$gsv += $account_sale->gsv;
-							}
+							}							
 						}
 					}
 				}
+
 				$gsv = ($gsv * $row->split) / 100;
 			}
-			$gsv = ($gsv * $row->split) / 100;
 		}
 		return $gsv;
 	}
