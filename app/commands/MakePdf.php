@@ -58,6 +58,8 @@ class MakePdf extends Command {
 			$tradedeal = Tradedeal::getActivityTradeDeal($activity);
 			if($tradedeal != null){
 				$tradedealschemes = TradedealScheme::getScheme($tradedeal->id);
+				$tradedeal_skus = TradedealPartSku::where('activity_id', $activity->id)->get();
+				$trade_allocations = TradedealSchemeAllocation::getSummary($tradedeal);
 			}
 
 			$skuinvolves = array();
@@ -412,6 +414,14 @@ class MakePdf extends Command {
 				$tradedeal_view = "";
 				$tradedeal_view .= View::make('pdf.style')->render();
 				$tradedeal_view .= View::make('pdf.tradedeal_view',compact('tradedealschemes'))->render();
+				// Helper::debug($tradedeal_view);
+				$pdf->writeHTML($tradedeal_view , $ln=true, $fill=false, $reset=false, $cell=false, $align='');
+
+				$pdf->AddPage($orientation = 'L',$format = '',$keepmargins = false,$tocpage = false );
+				$pdf->SetFont('helvetica', '', 8);
+				$tradedeal_view = "";
+				$tradedeal_view .= View::make('pdf.style')->render();
+				$tradedeal_view .= View::make('pdf.allocationsummary',compact('tradedeal_skus', 'trade_allocations'))->render();
 				// Helper::debug($tradedeal_view);
 				$pdf->writeHTML($tradedeal_view , $ln=true, $fill=false, $reset=false, $cell=false, $align='');
 			}

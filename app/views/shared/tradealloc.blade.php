@@ -88,18 +88,7 @@
 									
 									<tr class="total">
 										
-										<td colspan="5" style="text-align:right">Sub Total Allocation</td>
-										@foreach($tradedeal_skus as $sku)
-										<td class="alloc">
-											@if(isset($total[$sku->pre_desc. ' '. $sku->pre_variant]))
-											{{ number_format($total[$sku->pre_desc. ' '. $sku->pre_variant]) }}
-											@endif
-										</td>
-										@endforeach
-									</tr>
-									<tr class="total">
-										
-										<td colspan="5" style="text-align:right">Grand Total Allocation</td>
+										<td colspan="5" style="text-align:right">Total Allocation</td>
 										<td colspan="{{count($tradedeal_skus)}}" style="text-align:right">
 											<?php $t = 0; ?>
 											@foreach($total as $x)

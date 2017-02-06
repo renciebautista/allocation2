@@ -50,6 +50,8 @@ class WordDoc {
 		$tradedeal = Tradedeal::getActivityTradeDeal($activity);
 		if($tradedeal != null){
 			$tradedealschemes = TradedealScheme::getScheme($tradedeal->id);
+			$tradedeal_skus = TradedealPartSku::where('activity_id', $activity->id)->get();
+			$trade_allocations = TradedealSchemeAllocation::getSummary($tradedeal);
 		}
 
 		$skuinvolves = array();
@@ -805,27 +807,14 @@ class WordDoc {
 			}
 		}else{
 
-			// $section->addTextBreak(1);
-			// $section->addText("Table with colspan and rowspan", $header);
-
-			// $styleTable = array('borderSize' => 6, 'borderColor' => '999999');
 			$cellRowSpan = array('vMerge' => 'restart', 'valign' => 'top');
 			$cellRowContinue = array('vMerge' => 'continue');
-			// $cellColSpan = array('gridSpan' => 2, 'valign' => 'center');
-			// $cellHCentered = array('align' => 'center');
 			$cellVCentered = array('valign' => 'top');
 
-			// $phpWord->addTableStyle('Colspan Rowspan', $styleTable);
-			// $table = $section->addTable('Colspan Rowspan');
-			// $table->addRow();
-			// $table->addCell(2000, $cellRowSpan)->addText('A', null, $cellHCentered);
-			// $table->addCell(4000, $cellColSpan)->addText('B', null, $cellHCentered);
-			// $table->addCell(2000, $cellRowSpan)->addText('E', null, $cellHCentered);
-			// $table->addRow();
-			// $table->addCell(null, $cellRowContinue);
-			// $table->addCell(2000, $cellVCentered)->addText('C', null, $cellHCentered);
-			// $table->addCell(2000, $cellVCentered)->addText('D', null, $cellHCentered);
-			// $table->addCell(null, $cellRowContinue);
+			$fontStyle = array('spaceAfter' => 0,'align' => 'left');
+			$fontStyle_alloc = array('spaceAfter' => 0,'align' => 'right');
+			$headStyle = array('bold' => true, 'align' => 'center');
+
 
 			$section->addPageBreak();
 			// New landscape section
@@ -840,14 +829,14 @@ class WordDoc {
 			$phpWord->addTableStyle('Tradedeal Table', $styleTable, $styleFirstRow);
 			$tradetable = $section->addTable('Tradedeal Table');
 			$tradetable->addRow();
-			$tradetable->addCell(1800)->addText("Activity",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-			$tradetable->addCell(1400)->addText("Scheme Code",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-			$tradetable->addCell(2000)->addText("Scheme Description",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-			$tradetable->addCell(1400)->addText("Host Code",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-			$tradetable->addCell(2000)->addText("Host Description",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-			$tradetable->addCell(1400)->addText("Premium Code / PIMS Code",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-			$tradetable->addCell(2000)->addText("Premium Description",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
-			$tradetable->addCell(2700)->addText("Channels Involved",array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+			$tradetable->addCell(1800)->addText("Activity",array('bold'=>true,'size' => 8,'align' => 'center'), $headStyle);
+			$tradetable->addCell(1400)->addText("Scheme Code",array('bold'=>true,'size' => 8,'align' => 'center'), $headStyle);
+			$tradetable->addCell(2000)->addText("Scheme Description",array('bold'=>true,'size' => 8,'align' => 'center'), $headStyle);
+			$tradetable->addCell(1400)->addText("Host Code",array('bold'=>true,'size' => 8,'align' => 'center'), $headStyle);
+			$tradetable->addCell(2000)->addText("Host Description",array('bold'=>true,'size' => 8,'align' => 'center'), $headStyle);
+			$tradetable->addCell(1400)->addText("Premium Code / PIMS Code",array('bold'=>true,'size' => 8,'align' => 'center'), $headStyle);
+			$tradetable->addCell(2000)->addText("Premium Description",array('bold'=>true,'size' => 8,'align' => 'center'), $headStyle);
+			$tradetable->addCell(2700)->addText("Channels Involved",array('bold'=>true,'size' => 8,'align' => 'center'), $headStyle);
 
 			foreach($tradedealschemes as $scheme){
 				$x = false;
@@ -857,16 +846,16 @@ class WordDoc {
 					foreach($scheme->host_skus as $host_sku){
 						$tradetable->addRow();
 						if(!$x){
-							$tradetable->addCell(1800, $cellRowSpan)->addText($scheme->name,array('size' => 8,'align' => 'center'), $fontStyle);
+							$tradetable->addCell(1800, $cellRowSpan)->addText($scheme->name,array('size' => 8,'align' => 'left'), $fontStyle);
 						}else{
 							$tradetable->addCell(null, $cellRowContinue);
 						}
-						$tradetable->addCell(800)->addText($host_sku->scheme_code,array('size' => 8,'align' => 'center'), $fontStyle);
-						$tradetable->addCell(2000)->addText($host_sku->scheme_desc,array('size' => 8,'align' => 'center'), $fontStyle);
-						$tradetable->addCell(1400)->addText($host_sku->host_code,array('size' => 8,'align' => 'center'), $fontStyle);
-						$tradetable->addCell(2000)->addText($host_sku->desc_variant,array('size' => 8,'align' => 'center'), $fontStyle);
-						$tradetable->addCell(1400)->addText($host_sku->pre_code,array('size' => 8,'align' => 'center'), $fontStyle);
-						$tradetable->addCell(2000)->addText($host_sku->pre_variant,array('size' => 8,'align' => 'center'), $fontStyle);
+						$tradetable->addCell(800)->addText($host_sku->scheme_code,array('size' => 8,'align' => 'left'), $fontStyle);
+						$tradetable->addCell(2000)->addText($host_sku->scheme_desc,array('size' => 8,'align' => 'left'), $fontStyle);
+						$tradetable->addCell(1400)->addText($host_sku->host_code,array('size' => 8,'align' => 'left'), $fontStyle);
+						$tradetable->addCell(2000)->addText($host_sku->desc_variant,array('size' => 8,'align' => 'left'), $fontStyle);
+						$tradetable->addCell(1400)->addText($host_sku->pre_code,array('size' => 8,'align' => 'left'), $fontStyle);
+						$tradetable->addCell(2000)->addText($host_sku->pre_variant,array('size' => 8,'align' => 'left'), $fontStyle);
 
 						if(!$x){
 							$cell = $tradetable->addCell(2700,$cellRowSpan);
@@ -898,6 +887,87 @@ class WordDoc {
 				}
 				
 			}				
+
+			$section->addPageBreak();
+			// New landscape section
+			$section = $phpWord->addSection(
+			    array('paperSize' => 'Letter','orientation' => 'landscape','marginLeft' => 600, 'marginRight' => 600, 'marginTop' => 600, 'marginBottom' => 600)
+			);
+			$section->addText("Allocation Breakdown Summary",array('bold'=>true,'size' => 10));
+			$section->addTextBreak(1);
+
+			$margin = 13000 - (count($tradedeal_skus) * 500);
+			// dd($margin);
+			$styleFirstRow = array('borderBottomSize' => 18, 'borderBottomColor' => '0000FF','color' => '000000');
+			$phpWord->addTableStyle('Allocation Breakdown Table', $styleTable, $styleFirstRow);
+			$tradetable = $section->addTable('Allocation Breakdown Table');
+			$tradetable->addRow();
+			$tradetable->addCell(null, ['gridSpan' => 5]);
+			foreach($tradedeal_skus as $sku){
+				$tradetable->addCell(500)->addText($sku->pre_desc. ' '. $sku->pre_variant ,array('bold'=>true,'size' => 8,'align' => 'center'), $fontStyle);
+			}
+
+			foreach ($trade_allocations as $area){
+				$tradetable->addRow();
+				$tradetable->addCell(null, [ 'gridSpan' => 5])->addText($area->area . ' TOTAL',array('size' => 8,'align' => 'left'), $fontStyle);
+				// $tradetable->addCell();
+				foreach($tradedeal_skus as $sku){
+					if(isset($area->area_total[$sku->pre_desc. ' '. $sku->pre_variant])){
+						if(!isset($total[$sku->pre_desc. ' '. $sku->pre_variant])){
+							$total[$sku->pre_desc. ' '. $sku->pre_variant] = 0;
+						}
+						$total[$sku->pre_desc. ' '. $sku->pre_variant] +=  $area->area_total[$sku->pre_desc. ' '. $sku->pre_variant];
+						$tradetable->addCell(500)->addText(number_format($area->area_total[$sku->pre_desc. ' '. $sku->pre_variant]),array('size' => 8,'align' => 'right'), $fontStyle_alloc);					}
+
+				}
+				foreach ($area->dist as $dist ){
+					$tradetable->addRow();
+					$tradetable->addCell(500, array('bgColor' => 'c1ffbd'))->addText("",array('size' => 8,'align' => 'left'), $fontStyle);
+					$tradetable->addCell(null, [ 'gridSpan' => 4, 'bgColor' => 'c1ffbd'])->addText($dist->sold_to . ' TOTAL',array('size' => 8,'align' => 'left'), $fontStyle);
+					foreach($tradedeal_skus as $sku){
+						if(isset($dist->dist_total[$sku->pre_desc. ' '. $sku->pre_variant])){
+							$tradetable->addCell(500, array('bgColor' => 'c1ffbd'))->addText(number_format($dist->dist_total[$sku->pre_desc. ' '. $sku->pre_variant]),array('size' => 8,'align' => 'right'), $fontStyle_alloc);
+						}
+					}
+					foreach ($dist->shipto as $site){
+						$tradetable->addRow();
+						$tradetable->addCell(500, array('bgColor' => 'd9edf7'))->addText("",array('size' => 8,'align' => 'left'), $fontStyle);
+						$tradetable->addCell(500, array('bgColor' => 'd9edf7'))->addText("",array('size' => 8,'align' => 'left'), $fontStyle);
+						$tradetable->addCell(null, [ 'gridSpan' => 3, 'bgColor' => 'd9edf7'])->addText($site->ship_to_name. ' TOTAL',array('size' => 8,'align' => 'left'), $fontStyle);
+
+						foreach($tradedeal_skus as $sku){
+							if(isset($site->ship_to_total[$sku->pre_desc. ' '. $sku->pre_variant])){
+								$tradetable->addCell(500,array('bgColor' => 'd9edf7'))->addText(number_format($site->ship_to_total[$sku->pre_desc. ' '. $sku->pre_variant]),array('size' => 8,'align' => 'right'), $fontStyle_alloc);
+							}
+						}
+						foreach ($site->schemes as $scheme){
+							$tradetable->addRow();
+							$tradetable->addCell(500,array('bgColor' => 'fcf8e3'))->addText("",array('size' => 8,'align' => 'left'), $fontStyle);
+							$tradetable->addCell(500,array('bgColor' => 'fcf8e3'))->addText("",array('size' => 8,'align' => 'left'), $fontStyle);
+							$tradetable->addCell(500,array('bgColor' => 'fcf8e3'))->addText("",array('size' => 8,'align' => 'left'), $fontStyle);
+							$tradetable->addCell(2000,array('bgColor' => 'fcf8e3'))->addText($scheme->scheme_code,array('size' => 8,'align' => 'left'), $fontStyle);
+							$tradetable->addCell($margin,array('bgColor' => 'fcf8e3'))->addText($scheme->scheme_description,array('size' => 8,'align' => 'left'), $fontStyle);
+							foreach($tradedeal_skus as $sku){
+								if(isset($scheme->premiums[$sku->pre_desc. ' '. $sku->pre_variant])){
+									$tradetable->addCell(500,array('bgColor' => 'fcf8e3'))->addText(number_format($scheme->premiums[$sku->pre_desc. ' '. $sku->pre_variant]),array('size' => 8,'align' => 'right'), $fontStyle_alloc);
+								}
+							}
+						}
+					}
+				}
+			}
+
+			$t = 0; 
+			foreach($total as $x){
+				$t+=$x;
+			}
+
+			$tradetable->addRow();
+			$tradetable->addCell(null, [ 'gridSpan' => 5])->addText("Total Allocation",array('bold'=>true,'size' => 8,'align' => 'right'), $fontStyle_alloc);
+			$tradetable->addCell(500)->addText(number_format($t),array('bold'=>true,'size' => 8,'align' => 'right'), $fontStyle_alloc);
+
+
+			
 		}
 
 		return $phpWord;

@@ -47,4 +47,18 @@ ul {
     border: 0.1px solid #000000;
 }
 
+.trade-table-summary{
+    width: 100%;
+    padding: 3px;
+}
+.trade-table-summary tr > th {
+    background-color: #000000;
+    color: #FFFFFF;
+    border: 0.1px solid #000000;
+
+}
+.trade-table-summary tr > td {
+    border: 0.1px solid #000000;
+}
+
 </style>

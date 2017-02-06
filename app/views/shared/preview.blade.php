@@ -878,9 +878,11 @@
 											@endforeach
 										@endif
 									
-								@endforeach
-								
-							</table>
+								@endforeach				
+				</table>
+
+			
+				@include('shared.allocationsummary')
 			</div>
 			@endif
 		</div>
